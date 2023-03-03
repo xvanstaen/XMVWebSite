@@ -56,7 +56,7 @@
 </div>
 
   <!-- ======== FOOTER ======== -->
-<div class='myfooter' >
+<div class='myfooter'  *ngIf="routing_code!==5">
   <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
       <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
       <br> 
@@ -107,10 +107,17 @@
 
 
 <ng-template #secondevent> 
-  <div  *ngIf="routing_code===3; else wrongevent">
+  <div  *ngIf="routing_code===3; else fitness">
     <app-Event-27AUG2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
           [LoginTable_DecryptPSW]="Table_DecryptPSW" (returnDATA)="GetUpdatedTable($event)">
     </app-Event-27AUG2022>
+  </div> 
+</ng-template>
+<ng-template #fitness> 
+  <div  *ngIf="routing_code===5; else wrongevent">
+    <app-fitness-stat  [XMVConfig]="ConfigXMV" [configServer]="configServer" 
+    >
+  </app-fitness-stat>
   </div> 
 </ng-template>
 

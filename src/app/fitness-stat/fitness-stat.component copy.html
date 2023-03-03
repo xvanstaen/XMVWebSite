@@ -1,0 +1,108 @@
+<div style="margin: 50px">
+
+<h1 style="color:red;">My Fitness Statistics!</h1>
+
+<h2 style="color:blue;">Log your performance</h2>
+<div style="margin-top: 40px;"></div>
+<div *ngIf='DisplayCalendar===true'>
+    <span class='mainbody'>  
+        <div style="margin: 10px"></div>
+      <app-one-calendar [Input_MinDate]="Input_MinDate" [Input_MaxDate]="Input_MaxDate" 
+      [Input_Travel_O_R]="Input_Travel_O_R" (my_SelectedDate)='SelectedDate($event)'>  </app-one-calendar>
+  </span>  
+</div>
+<div *ngIf='DisplayCalendar===false'>
+    <span> Display the date
+  </span>  
+</div>
+
+<div class="errorboxOW"  >
+    {{error_msg}}  
+</div>
+
+
+
+
+<!-- ======================================================================================= -->
+
+<div class="specialDiv">
+    <span class="selectOptions">Select the weight</span>
+    <select id="weightSelect" (input)='LogWeight($event)' >
+        
+        <option value=""></option>
+        <option   *ngFor="let ListW of TheWeights; let i=index;" value={{ListW.lbsnb}} > 
+            {{ListW.lbsnb}}{{ListW.lbs}} -- {{ListW.kgnb  | number:'1.2-2'}} {{ListW.kg }}
+        </option>
+    </select>
+</div>
+
+<div class="specialDiv">
+    <span class="selectOptions">Select the exercise</span>
+    <select id="exerciseSelect"  (input)='LogExercise($event)'>
+        
+        <option value=""></option>
+        <option   *ngFor="let ListE of List_exercise; let i=index;" value={{ListE}}  > 
+            {{ListE}}
+        </option>
+    </select>
+</div>
+<!--
+<div class="specialDiv">
+    <span class="selectOptions">Sessions</span>
+    <span   *ngFor="let session of Sessions; let i=index;"  > 
+       <span style="font-size:8px; " *ngIf="session>-1"> #{{i+1}}  <input  type='number' value={{Sessions[i]}} style="width:32px;font-size:12px;" id='A{{i}}' (input)='LogSession($event)'></span>
+       <span style="font-size:8px; " *ngIf="session<0"> #{{i+1}}  <input  type='number' value=0 style="width:32px;font-size:12px;" id='A{{i}}' (input)='LogSession($event)'></span>
+                        
+    </span>
+</div>
+-->
+<!--
+<div class="specialDiv">
+    <span class="selectOptions">Sessions</span>
+    <span   *ngFor="let session of Sessions; let i=index;"  > 
+       <span style="font-size:8px; "> #{{i+1}}</span>   <textarea  type='number' value={{Sessions[i]}} style="width:32px;font-size:12px;" id='A{{i}}' (input)='LogSession($event)'></textarea>
+           
+    </span>
+</div>
+-->
+<div class="specialDiv">
+    <span class="selectOptions" >Sessions</span>
+
+        <span style="font-size:12px;">#1</span>     <textarea type='number' value={{Sessions[0]}} style="width:32px;height:30px;font-size:12px;" id=A0 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #2 </span>    <textarea  type='number' value={{Sessions[1]}} style="width:32px;height:30px;font-size:12px;" id=A1 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #3 </span>    <textarea type='number' value={{Sessions[2]}} style="width:32px;height:30px; font-size:12px;" id=A2 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #4 </span>    <textarea  type='number' value={{Sessions[3]}} style="width:32px;font-size:12px;" id=A3 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #5 </span>    <textarea  type='number' value={{Sessions[4]}} style="width:32px;font-size:12px;" id=A4 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #6 </span>    <textarea  type='number' value={{Sessions[5]}} style="width:32px;font-size:12px;" id=A5 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #7 </span>    <textarea  type='number' value={{Sessions[6]}} style="width:32px;font-size:12px;" id=A6 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #8 </span>    <textarea type='number' value={{Sessions[7]}} style="width:32px;font-size:12px;" id=A7 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #9 </span>    <textarea  type='number' value={{Sessions[8]}} style="width:32px;font-size:12px;" id=A8 (input)='LogSession($event)'></textarea>
+       <span style="font-size:8px; "> #10 </span>    <textarea  type='number' value={{Sessions[9]}} style="width:32px;font-size:12px;" id=A9 (input)='LogSession($event)'></textarea>
+                   
+
+</div>
+
+<div class="specialDiv">
+    <button id='but_1' class="sizeButtons" (click)="SaveRecord()"> Save</button>
+    <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
+</div>
+
+<div class="specialDiv">
+    <h2 style="margin-top: 130px; color:blue;">List all records</h2>
+
+    <li style="list-style-type: none;" *ngFor="let msg of  myFitness.body; let i=index;">  
+        <span style="color:blue;" >{{i+1}} - {{msg.name}}</span>
+        
+        <span  *ngFor="let myWeights of myFitness.body[i].exercise; let j=index">  
+            <span *ngIf="myWeights.weight.lbsnb!==0" ><br>
+                {{myWeights.weight.kgnb | number:'1.2-2'}} {{myWeights.weight.kg}} - {{myWeights.weight.lbsnb}} {{myWeights.weight.lbs}}  -- 
+            </span>
+
+            <span  *ngFor="let myExercise of myFitness.body[i].exercise[j].seances; let k=index">  
+                
+                <span> x{{myExercise}}</span>
+
+            </span>
+        </span>
+    </li>
+</div>

@@ -200,6 +200,10 @@ GetObject(event:number){
                 else if (this.Encrypt_Data.UserId==='Event-27AUG2022'){
                     this.routing_code=3;
                   }
+        // don't use routing_code===4
+                else if (this.Encrypt_Data.UserId==='Fitness'){
+                    this.routing_code=5;
+                  }
                 else if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
                     this.routing_code=1;
 

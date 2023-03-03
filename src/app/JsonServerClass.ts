@@ -200,4 +200,40 @@ export class configServer{
   baseUrl:string= '';
 }
 
+export class FormatWeight{
+  kgnb:number=0; kg:string='kg';lbsnb:number=0;lbs:string='lbs'
+};
+
+
+export class Fitness{
+  date_exercise:Date= new Date();
+  body:Array<any>=[
+    {
+      name:'',
+      exercise:[
+        {
+          weight:0,
+          seances:[]
+        }
+             ]
+    }
+  ];
+  
+}
+
+export class ArrayNewWeight {
+  weight:number=0;
+  seances:Array<number>=[]
+}
+
+export class ArrayNewBody {
+  name:string='';
+  exercise:Array<any>=[
+    {
+      weight:0,
+      seances:[]
+    }
+         ]
+}
+
 

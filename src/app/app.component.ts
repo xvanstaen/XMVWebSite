@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
 export class AppComponent {
   constructor(
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMangoDB: ManageMangoDBService,
     ) {}
       // import configuration files
       // access MongoDB
@@ -33,7 +33,7 @@ export class AppComponent {
       InitconfigServer.baseUrl='https://test-server-359505.uc.r.appspot.com';
       
       InitconfigServer.GoogleProjectId='ConfigDB';
-      this.ManageMangoDBService.findConfigbyURL(InitconfigServer, 'configServer', '')
+      this.ManageMangoDB.findConfigbyURL(InitconfigServer, 'configServer', '')
       .subscribe(
         data => {
          // test if data is an array if (Array.isArray(data)===true){}

@@ -1,0 +1,230 @@
+body{
+  max-width: 1800px;
+  margin-left:10px;
+}
+
+
+td{
+  width:35px;  
+  padding-left:5px; 
+  border:solid 0px red;
+}
+
+
+
+.specialDiv{
+  position:relative; 
+  margin-top:10px; 
+  margin-left:10px; 
+  float:left;
+  display:block;
+  width:90%;
+  height:40px;
+  border:solid 0px blue;
+}
+
+.blockBody{
+  position:relative; 
+  margin-top:30px; 
+  margin-left:10px; 
+  float:left;
+  display:block;
+  width:90%;
+  height:40px;
+  background-color: lightblue;
+  
+}
+
+.selectbody{
+  color:red; 
+  font-size: 22px; 
+  display:block; 
+  border: solid 0px red;
+  float:left;
+  margin-left:10px;
+  padding-top:5px;
+}
+
+.posBinBody{
+  float:left; 
+  margin-left:50px; 
+  padding-top:5px;
+  margin-top:4px;
+}
+
+.blockOptions{
+  position:relative; 
+  margin-top:30px; 
+  margin-left:10px; 
+  float:left;
+  display:block;
+  width:90%;
+  height:40px;
+  max-width: 500px;
+  
+}
+.selectOptions{
+  color:blue; 
+  font-size: 18px; 
+  
+  display:block; 
+  border: solid 0px red;
+  float:left;
+  margin-left:10px;
+}
+
+
+.newOptions{
+  color:blue; 
+  font-size: 22px; 
+  width: 40%; 
+  max-width: 250px;
+  display:block; 
+  float:left;
+  margin-left:20px;
+  padding-top:5px;
+}
+
+.posBin{
+  float:right; 
+  margin-right:100px; 
+  margin-top:0px;
+}
+.iconBin{
+  width:22px; 
+  height:22px; 
+  font-size:16px;
+  background-color: cyan;
+  color:red;
+  padding-left:3px;
+  padding-top:3px;
+  
+}
+
+.iconBin:hover{
+  color:blue; 
+}
+
+
+
+
+.even{
+  color:blue;
+  background-color: lightgrey;
+}
+
+.odd{
+  color:black;
+  background-color: lightcyan;
+}
+
+.objectHeader{
+  font-family: 'Roboto';
+  height:60px;
+  margin-left:30px;
+  font-size:20px;  
+  width:85%;
+  font-weight: bold;
+  display:block;
+  border:solid 2px blue;
+  padding-top:15px;
+  background-color: cyan;
+  text-align: center;
+  color:red;
+  }
+
+.object{
+font-family: 'Roboto';
+height:60px;
+margin-left:30px;
+font-size:16px;  
+width:85%;
+font-weight: bold;
+display:block;
+border:solid 2px blue;
+padding-top:15px;
+padding-left:10px;
+}
+
+
+.object li {
+cursor: pointer;
+border-radius: 4px;
+display: block;
+border: solid 0px black;
+}
+
+.object li.selected:hover {
+background-color: #0b9db1 !important;
+border: solid 1px blue(0, 255, 42);
+}
+
+.object li:hover {
+color: #607D8B;
+background-color: rgb(30, 216, 200);
+left: .1em;
+border: solid 1px black;
+}
+
+
+.object:hover{
+background-color: cyan;
+font-size:18px;  
+}
+
+
+.sizeButtons{
+  width:100px;
+  height:40px;
+  background-color:cyan;
+  font-size:14px;
+  border: solid 1px blue;
+  margin-left:50px;
+}
+
+.sizeButtons:hover{
+  color:rgb(48, 89, 159);
+}
+
+.inputSession{
+ 
+  font-size:14px;
+  margin-left:5px; 
+  width:40px;
+  height:30px;
+  font-size:14px; 
+  color:red;
+}
+
+.inputSession:hover{
+  background-color: rgb(22, 92, 162);
+  font-size:16px;
+  color:rgb(45, 5, 5);
+}
+
+      /*** ====================================== ***/
+    /*** ============== @media 790 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 900px) {
+      .objectHeader{
+        
+        font-size:16px;  
+        
+        }
+ 
+      .object{
+      height:40px;
+      font-size:12px;  
+      }
+      
+
+      .object:hover{
+      font-size:14px;  
+      }
+
+
+      .inputSession:hover{
+        font-size:16px;
+
+      }
+    }

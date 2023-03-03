@@ -1,9 +1,10 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatIconModule} from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
+import { CommonModule,  DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { MatDialogModule} from '@angular/material/dialog';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,7 +24,8 @@ import { AdminLoginComponent}  from './Special-Services/AdminLogin.component';
 import { AdminConsoleComponent}  from './Special-Services/AdminConsole.component';
 import { ListBucketContentComponent}  from './Special-Services/ListBucketContent.component';
 import { ChangeSaveFileNameComponent}  from './Special-Services/ChangeSaveFileName.component';
-
+import { OneCalendarComponent } from './one-calendar/one-calendar.component';
+import { FitnessStatComponent } from './fitness-stat/fitness-stat.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,6 +44,9 @@ import { ChangeSaveFileNameComponent}  from './Special-Services/ChangeSaveFileNa
     AdminConsoleComponent,
     ListBucketContentComponent,
     ChangeSaveFileNameComponent,
+    FitnessStatComponent,
+    OneCalendarComponent,
+
 
   ],
   imports: [
@@ -50,10 +55,14 @@ import { ChangeSaveFileNameComponent}  from './Special-Services/ChangeSaveFileNa
     CommonModule,
     FormsModule,
     MatIconModule,
+    MatDialogModule,
     ReactiveFormsModule,
     HttpClientModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [
+    DatePipe, 
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
