@@ -172,15 +172,16 @@ if (ref_OW==='' && ref_RET===''){
  
         objtoreturn.dayspermonth1= days_month_array(objtoreturn.display_monthnb, objtoreturn.display_yearnb,objtoreturn.weekday_c);
         objtoreturn.monthname_c =  StringOfMonths[ objtoreturn.display_monthnb-1].TheMonth;
-  
-        work_date.setDate(1);
-        work_date.setMonth( objtoreturn.display_nmonthnb-1);
-        work_date.setFullYear( objtoreturn.display_nyearnb);
-        objtoreturn.weekday_n= work_date.getDay();
-  
-        objtoreturn.dayspermonth2= days_month_array( objtoreturn.display_nmonthnb,  objtoreturn.display_nyearnb, objtoreturn.weekday_n);
-        objtoreturn.monthname_n=  StringOfMonths[ objtoreturn.display_nmonthnb-1].TheMonth;
 
+        if (objtoreturn.display_nmonthnb!==0 && objtoreturn.display_nyearnb!==0 ){
+                work_date.setDate(1);
+                work_date.setMonth( objtoreturn.display_nmonthnb-1);
+                work_date.setFullYear( objtoreturn.display_nyearnb);
+                objtoreturn.weekday_n= work_date.getDay();
+        
+                objtoreturn.dayspermonth2= days_month_array( objtoreturn.display_nmonthnb,  objtoreturn.display_nyearnb, objtoreturn.weekday_n);
+                objtoreturn.monthname_n=  StringOfMonths[ objtoreturn.display_nmonthnb-1].TheMonth;
+        }
     
    return(objtoreturn);
 

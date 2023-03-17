@@ -38,6 +38,14 @@ export class ListBucketContentComponent {
     ) {}
   
     @Input() configServer=new configServer;
+    @Input() NbRefresh_Bucket=0;
+    @Input() ConfigXMV=new XMVConfig;
+    @Input() Bucket_Name:string='';
+    @Output() Return_SelectedBucketInfo=new EventEmitter<OneBucketInfo>();
+    
+    @Output() Return_Data= new EventEmitter<any>();
+
+    SelectedBucketInfo=new OneBucketInfo;
     myHeader=new HttpHeaders();    
     getScreenWidth: any;
     getScreenHeight: any;
@@ -68,12 +76,7 @@ export class ListBucketContentComponent {
     Error_Access_Server:string='';
 
 
-    @Input() ConfigXMV=new XMVConfig;
-    @Input() Bucket_Name:string='';
-    SelectedBucketInfo=new OneBucketInfo;
-    @Output() Return_SelectedBucketInfo=new EventEmitter<OneBucketInfo>();
-    
-    @Output() Return_Data= new EventEmitter<any>();
+
 
     fileRetrieved:boolean=false;
          // ACCESS TO GOOGLE STORAGE
@@ -155,8 +158,6 @@ RetrieveAllObjects(){
         this.Error_Access_Server='INIT - error status==> '+ error_handler.status+ '   Error url==>  '+ error_handler.url;
       } 
       )
-  
-    
   }
 
 
@@ -165,7 +166,7 @@ RetrieveAllObjects(){
   if (this.IsngInitDone===true){
       for (const propName in changes){
         const j=changes[propName];
-        if (propName==='Bucket_Name'){
+        if (propName==='Bucket_Name' || this.NbRefresh_Bucket!==0){
          // const to=JSON.stringify(j.currentValue);
          // const from=JSON.stringify(j.previousValue);
          

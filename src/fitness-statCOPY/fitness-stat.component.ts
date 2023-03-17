@@ -9,25 +9,27 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { Fitness } from '../JsonServerClass';
-import { FormatWeight } from '../JsonServerClass';
-import { ArrayNewWeight } from '../JsonServerClass';
-import { ArrayNewBody } from '../JsonServerClass';
-import { BucketList } from '../JsonServerClass';
-import { Bucket_List_Info } from '../JsonServerClass';
+import { Fitness } from '../app/JsonServerClass';
+import { FormatWeight } from '../app/JsonServerClass';
+import { ArrayNewWeight } from '../app/JsonServerClass';
+import { ArrayNewBody } from '../app/JsonServerClass';
+import { BucketList } from '../app/JsonServerClass';
+import { Bucket_List_Info } from '../app/JsonServerClass';
+import {manage_input} from '../app/manageinput';
+import {eventoutput, thedateformat} from '../app/apt_code_name';
+
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+import { configServer } from '../app/JsonServerClass';
+import { XMVConfig } from '../app/JsonServerClass';
 import { environment } from 'src/environments/environment';
-import { LoginIdentif } from '../JsonServerClass';
-import {manage_input} from '../manageinput';
-import {eventoutput, thedateformat} from '../apt_code_name';
-
-import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
-import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { LoginIdentif } from '../app/JsonServerClass';
+import { ManageGoogleService } from 'src/app/services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/services/ManageMangoDB.service';
 import {AccessConfigService} from 'src/app/Services/access-config.service';
+
+
 
 export class RefFormPerf{
   ref_body: number=1;
@@ -42,7 +44,7 @@ export class ConfigFitness{
   Activity:Array<any>=[
       {
       Activity_name:'', // workout, running, etc.
-      Activity_date: new Date(),
+      Activity_date: Date(),
       exercise:[{
         Body_name:'', // part of the body: shoulder, leg, type of running exercise such as fraction
         BodyExercise:
@@ -57,7 +59,6 @@ export class ConfigFitness{
 
 export class ClassActivity{
   Activity_name:string=''; // workout, running, etc.
-  Activity_date= new Date();
   exercise:Array<any>=[{
     Body_name:'', // part of the body: shoulder, leg, type of running exercise such as fraction
     BodyExercise:
@@ -83,6 +84,7 @@ export class ClassExercise{
         seance:Array<any>=[{nb:0}]
 }
 
+
 @Component({
   selector: 'app-fitness-stat',
   templateUrl: './fitness-stat.component.html',
@@ -102,25 +104,25 @@ export class FitnessStatComponent implements OnInit {
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
     //private TheConfig: AccessConfigService,
-   ) {  this.Performanceform = this.fb.group({ 
+   ) { this.Performanceform = this.fb.group({ 
               select_weight: this.fb.array([
               ]),
-          });
+        });
         this.TheExerciseform = this.fb.group({ 
           date_exercise: new FormControl(),
           select_body: this.fb.array([
           ]),
-          });
+        });
         this.TheConfigForm=this.fb.group({
           MyActivity: new FormControl(''),
           MyBody: new FormControl(''),
           MyExercise: new FormControl(''),
           MyNbSessions: new FormControl(0),
           Sessions: this.fb.array([]),
-          });
+        });
       }
 
-      get TabSessions(){
+get TabSessions(){
         return this.TheConfigForm.controls["Sessions"] as FormArray; 
     }
 
@@ -175,25 +177,40 @@ FormPerformance():FormGroup {
 
 IsTestBoolean:boolean=true;
 
+FillFirstGroup={
+  MyActivity: '',
+  MyBody: '',
+  MyExercise: '',
+  MyNbSessions: 0,
+
+}
+
 FillFormBody={
     body:'',
     ref_body:1
+   };
+FillTabSessions={
+    nb:0,
    };
 
 FillFormPerf=new RefFormPerf;
 
 IsSaveConfirmed:boolean=false;
+
 SpecificForm=new FormGroup({
   FileName: new FormControl(''),
-})
+});
+
+MyTestForm=new FormGroup({
+  TheBody: new FormControl(''),
+  TheActivity: new FormControl(''),
+});
 
 NewconfigServer=new configServer;
 isConfigServerRetrieved:boolean=false;
 NewXMVConfig=new XMVConfig;
 
 NewConfigFitness=new ConfigFitness;
-TabOfId:Array<any>=[];
-
 
 HTTP_Address:string='';
 HTTP_AddressPOST:string='';
@@ -220,17 +237,11 @@ EventHTTPReceived:Array<boolean>=[false,false,false,false,false,false];
 id_Animation:Array<number>=[0,0,0,0,0];
 TabLoop:Array<number>=[0,0,0,0,0];
   
-inputDate:string='';
-TabinputDate:Array<any>=[];
-ErrorinputDate:Array<any>=[];
-TabIsDateWrong:Array<boolean>=[];
-
 selected_date=new Date();
 isSelectedDate:boolean=false;
 selected_year:number=0;
 selected_month:number=0;
 selected_day:number=0;
-
 
 minDate_year:number=0;
 minDate_month:number=0;
@@ -245,15 +256,15 @@ today_year:number=0;
 datePipeMin:any;
 datePipeMax:any;
 datePipeToday:any;
-datePipeSelected:any;
 
 minDate=new Date(1900,0,1); // month is always -1 as start for occurrence 0
 maxDate=new Date();
 todayDate=new Date();
-ref_format=new thedateformat;
-myObj=new eventoutput;
+
 Input_Travel_O_R:string='';
 
+ref_format=new thedateformat;
+myObj=new eventoutput;
 
 TheWeights:Array<FormatWeight>=[]; // can come from Google Storage
 RefFormatWeight=new FormatWeight;
@@ -280,15 +291,58 @@ getScreenWidth: any;
 getScreenHeight: any;
 device_type:string='';
 
-NameConfigFitness:string='';
+
 DisplayCalendar:boolean=true;
 ObjectIsRetrieved:boolean=false;
-ConfigExist:boolean=false;
+
 Draw_Line:string='-';
-TabDisplayCalendar:Array<boolean>=[];
-TabDisplayId:Array<number>=[];
-theID:number=0;
-DisplayCalendarOnly:boolean=true;
+
+//Id must be unique across all users ==> create a Config object with Id's 
+//Name of Object Config Fitness is 'Config'+Id+'-'+User-Id
+NameConfigFitness:string='';
+ConfigExist:boolean=false;
+
+IsCreateConfig:boolean=false;
+
+FillInConfig(event:any){
+  const cc=event.target.value;//seance
+  const bb=parseInt(event.target.id.substring(6))+1;
+  const dd=event.target.id.substring(0,6);
+  if (dd==='seance'){
+    this.FillTabSessions.nb=cc;
+    this.TabSessions.controls[bb-1].setValue(this.FillTabSessions);
+  }
+  var i=0;
+  var j=0;
+  if (this.IsCreateConfig===true){
+    //this.FillFirstGroup=this.GetFirstGroup.controls[0].value;
+    this.FillFirstGroup.MyActivity=this.TheConfigForm.controls['MyActivity'].value;
+    this.FillFirstGroup.MyBody=this.TheConfigForm.controls['MyBody'].value;
+    this.FillFirstGroup.MyExercise=this.TheConfigForm.controls['MyExercise'].value;
+    this.FillFirstGroup.MyNbSessions=this.TheConfigForm.controls['MyNbSessions'].value;
+
+    const a=this.FillFirstGroup.MyActivity;
+    const b=this.FillFirstGroup.MyBody;
+    const c=this.FillFirstGroup.MyExercise;
+    const d=this.FillFirstGroup.MyNbSessions;
+    if (this.FillFirstGroup.MyNbSessions>0 && this.TabSessions.length<this.FillFirstGroup.MyNbSessions){      
+        for (i=this.TabSessions.length; i<this.FillFirstGroup.MyNbSessions; i++){
+          this.TabSessions.push(this.FormSessions());
+          this.FillTabSessions.nb=0;
+          this.TabSessions.controls[this.TabSessions.length-1].setValue(this.FillTabSessions);
+        }
+      } else if (this.FillFirstGroup.MyNbSessions>0 && this.TabSessions.length>this.FillFirstGroup.MyNbSessions){
+        for (i=this.TabSessions.length; i>this.FillFirstGroup.MyNbSessions; i--){
+          this.TabSessions.removeAt(i-1);
+       }
+      }
+    }
+  
+  //if (this.TheConfigForm.controls['Sessions'].length!==0){
+      //const e=this.TheConfigForm.controls['Sessions[0]'].value
+  //}
+}
+
 RemoveTypeExercise(event:any){
   var refer_body=parseInt(event.target.id.substring(1))+1;
   var iBody=1;
@@ -326,100 +380,11 @@ onWindowResize() {
     this.getScreenHeight = window.innerHeight;
     this.Draw_Line='-'.repeat(this.getScreenWidth*0.8);
   }
-  ClassActiv = new ClassActivity;
-  ClassBod= new ClassBody;
-  ClassExec= new ClassExercise;
 
-ngOnInit(){
-  this.getScreenWidth = window.innerWidth;
-  this.getScreenHeight = window.innerHeight;
-  this.DisplayCalendarOnly=true;
-  this.DisplayCalendar=false;
-  this.ref_format.length_day=2;
-  this.ref_format.length_month=2;
-  this.ref_format.length_year=4;
-  this.ref_format.MyDateFormat="dd-MM-yyyy";
-  this.ref_format.separator_char="-";
-  
-  // input will be tested against the date format
-  this.ref_format.day_position = this.ref_format.MyDateFormat.indexOf("d")+1;
-  if (this.ref_format.day_position===0) {this.ref_format.day_position = this.ref_format.MyDateFormat.indexOf("D")+1};
-  this.ref_format.month_position = this.ref_format.MyDateFormat.indexOf("m")+1;
-  if (this.ref_format.month_position===0) {this.ref_format.month_position = this.ref_format.MyDateFormat.indexOf("M")+1};
-  this.ref_format.year_position = this.ref_format.MyDateFormat.indexOf("y")+1;
-  if (this.ref_format.year_position===0) {this.ref_format.year_position = this.ref_format.MyDateFormat.indexOf("Y")+1};
-  
-  this.ref_format.separator_one_p=this.ref_format.MyDateFormat.indexOf(this.ref_format.separator_char)+1;
-  this.ref_format.separator_two_p= this.ref_format.separator_one_p+this.ref_format.MyDateFormat.substr(this.ref_format.separator_one_p,this.ref_format.MyDateFormat.length-this.ref_format.separator_one_p).indexOf(this.ref_format.separator_char)+1;
-  
-  
-  this.minDate_year=parseInt(formatDate(this.minDate,'yyyy',this.locale));
-  this.minDate_month=parseInt(formatDate(this.minDate,'MM',this.locale));
-  this.minDate_day=parseInt(formatDate(this.minDate,'dd',this.locale));
-  this.datePipeMin = this.datePipe.transform(this.minDate,"YYYY-MM-dd");
-  
-  this.maxDate_year=parseInt(formatDate(this.maxDate,'yyyy',this.locale));
-  this.maxDate_month=parseInt(formatDate(this.maxDate,'MM',this.locale));
-  this.maxDate_day=parseInt(formatDate(this.maxDate,'dd',this.locale));
-  this.datePipeMax = formatDate(this.maxDate,"yyyy-MM-dd",this.locale);
-  
-  this.today_year=parseInt(formatDate(Date.now(),'YYYY',this.locale));
-  //this.today_month=parseInt(formatDate(Date.now(),'MM',this.locale));
-  //this.today_day=parseInt(formatDate(Date.now(),'dd',this.locale));
-  this.datePipeToday = this.datePipe.transform(this.todayDate,"yyyy-MM-dd");
-  
-  this.NewConfigFitness.firstname=this.identification.firstname;
-  this.NewConfigFitness.lastname=this.identification.surname;
-  this.NewConfigFitness.user_id=this.identification.id;
-  this.NewConfigFitness.Activity[0].Activity_name='';
-  this.datePipeSelected = this.datePipe.transform(this.todayDate,"dd-MM-yyyy");
-  this.NewConfigFitness.Activity[0].Activity_date=this.datePipeSelected;
-  this.NewConfigFitness.Activity[0].exercise[0].Body_name='';
-  this.NewConfigFitness.Activity[0].exercise[0].BodyExercise[0].Exercise_name='';
-  this.NewConfigFitness.Activity[0].exercise[0].BodyExercise[0].seance[0].nb=0;
-  this.TabinputDate[0]=this.datePipeSelected;
-  this.ErrorinputDate[0]='';
-  this.TabIsDateWrong[0]=true;
-
-  
-  if (this.configServer.GoogleProjectId===''){
-    this.RetrieveConfig();
-  } else{
-    if (this.identification.ownBuckets!== undefined && this.identification.ownBuckets.length>0){
-      this.Google_Bucket_Name=this.identification.ownBuckets[0].name;
-  
-    }
-    this.GetAllObjects();
-    this.isConfigServerRetrieved=true;
-  
-    this.Google_Bucket_Name="Config"+this.identification.id+'-'+this.identification.UserId;
-    this.GetRecord('config');
-  }
-  
-  // weights to be selected by user when exercising
-  this.FillTabWeight();
-  this.scroller.scrollToAnchor('targetTop');
-  }
-
-
+inputDate:string='';
 onInput(event:any){
-    
-    this.findIds(event.target.id);
-    //event.target.value;
-    if (event.target.id.substring(0,4)==='Acti'){
-      this.NewConfigFitness.Activity[this.TabOfId[0]].Activity_name=event.target.value;
-    } else  if (event.target.id.substring(0,4)==='Body'){
-      this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].Body_name=event.target.value;
-    } else if (event.target.id.substring(0,4)==='Exec'){
-      this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise[this.TabOfId[2]].Exercise_name=event.target.value;
-    } else  if (event.target.id.substring(0,4)==='Sean'){
-      this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise[this.TabOfId[2]].seance[this.TabOfId[3]].nb=event.target.value;
-    }
-
-  }
-
-CheckDate(event:any){
   const id =parseInt(event.target.id.substring(5)); 
+  const aa=event.target.value; 
 
   this.inputDate = event.target.value;
   const work_string=event.inputType ;
@@ -440,99 +405,118 @@ CheckDate(event:any){
 
     this.inputDate=this.myObj.theInput;
     this.error_msg=this.myObj.error_msg;
-    this.TabIsDateWrong[id]=true;
+
     if (this.myObj.type_error===0 && this.inputDate.length===this.ref_format.MyDateFormat.length){
       this.selected_date.setDate(parseInt( this.myObj.input_day));
       this.selected_date.setMonth(parseInt(this. myObj.input_month)-1);
       this.selected_date.setFullYear(parseInt( this.myObj.input_year));
-      
-      this.datePipeSelected = this.datePipe.transform(this.selected_date,"dd-MM-yyyy");
-      this.NewConfigFitness.Activity[id].Activity_date=this.datePipeSelected;
-      this.TabinputDate[id]=this.inputDate;
-      this.ErrorinputDate[id]='';
-      this.TabIsDateWrong[id]=false;
+      this.NewConfigFitness.Activity[id].Activity_date=this.selected_date;
       
     } 
     else if (this.myObj.type_error===0 && this.inputDate.length!==this.ref_format.MyDateFormat.length){
-      this.TabinputDate[id]=this.inputDate;
-      this.ErrorinputDate[id]='Date not complete yet';
-    } else {
-      this.ErrorinputDate[id]=this.error_msg;
+      this.error_msg='Date not complete yet';
     }
+
 }
 
-addItem(event:any){
+ngOnInit(){
+this.getScreenWidth = window.innerWidth;
+this.getScreenHeight = window.innerHeight;
 
-  this.findIds(event.target.id);
+this.ref_format.length_day=2;
+this.ref_format.length_month=2;
+this.ref_format.length_year=4;
+this.ref_format.MyDateFormat="dd-MM-yyyy";
+this.ref_format.separator_char="-";
 
-  if (event.target.id.substring(0,4)==='Acti'){
-    this.ClassActiv = new ClassActivity;
-    this.NewConfigFitness.Activity.push(this.ClassActiv);
-    this.NewConfigFitness.Activity[this.NewConfigFitness.Activity.length-1].Activity_name='';
-    this.datePipeSelected = this.datePipe.transform(this.todayDate,"dd-MM-yyyy");
-    this.NewConfigFitness.Activity[this.NewConfigFitness.Activity.length-1].Activity_date=this.datePipeSelected;
-    this.TabinputDate[this.NewConfigFitness.Activity.length-1]=this.datePipeSelected;
-    this.TabIsDateWrong[this.NewConfigFitness.Activity.length-1]=false;
+// input will be tested against the date format
+this.ref_format.day_position = this.ref_format.MyDateFormat.indexOf("d")+1;
+if (this.ref_format.day_position===0) {this.ref_format.day_position = this.ref_format.MyDateFormat.indexOf("D")+1};
+this.ref_format.month_position = this.ref_format.MyDateFormat.indexOf("m")+1;
+if (this.ref_format.month_position===0) {this.ref_format.month_position = this.ref_format.MyDateFormat.indexOf("M")+1};
+this.ref_format.year_position = this.ref_format.MyDateFormat.indexOf("y")+1;
+if (this.ref_format.year_position===0) {this.ref_format.year_position = this.ref_format.MyDateFormat.indexOf("Y")+1};
 
-    this.NewConfigFitness.Activity[this.NewConfigFitness.Activity.length-1].exercise[0].Body_name='';
-    this.NewConfigFitness.Activity[this.NewConfigFitness.Activity.length-1].exercise[0].BodyExercise[0].Exercise_name='';
-    this.NewConfigFitness.Activity[this.NewConfigFitness.Activity.length-1].exercise[0].BodyExercise[0].seance[0].nb=0;
+this.ref_format.separator_one_p=this.ref_format.MyDateFormat.indexOf(this.ref_format.separator_char)+1;
+this.ref_format.separator_two_p= this.ref_format.separator_one_p+this.ref_format.MyDateFormat.substr(this.ref_format.separator_one_p,this.ref_format.MyDateFormat.length-this.ref_format.separator_one_p).indexOf(this.ref_format.separator_char)+1;
 
 
+this.minDate_year=parseInt(formatDate(this.minDate,'yyyy',this.locale));
+this.minDate_month=parseInt(formatDate(this.minDate,'MM',this.locale));
+this.minDate_day=parseInt(formatDate(this.minDate,'dd',this.locale));
+this.datePipeMin = this.datePipe.transform(this.minDate,"YYYY-MM-dd");
+
+this.maxDate_year=parseInt(formatDate(this.maxDate,'yyyy',this.locale));
+this.maxDate_month=parseInt(formatDate(this.maxDate,'MM',this.locale));
+this.maxDate_day=parseInt(formatDate(this.maxDate,'dd',this.locale));
+this.datePipeMax = formatDate(this.maxDate,"yyyy-MM-dd",this.locale);
+
+this.today_year=parseInt(formatDate(Date.now(),'YYYY',this.locale));
+//this.today_month=parseInt(formatDate(Date.now(),'MM',this.locale));
+//this.today_day=parseInt(formatDate(Date.now(),'dd',this.locale));
+this.datePipeToday = this.datePipe.transform(this.todayDate,"yyyy-MM-dd");
+
+/*********************/
+var ClassActiv = new ClassActivity;
+var ClassBod= new ClassBody;
+var ClassExec= new ClassExercise;
+
+this.NewConfigFitness.firstname=this.identification.firstname;
+this.NewConfigFitness.lastname=this.identification.surname;
+this.NewConfigFitness.user_id=this.identification.id;
 
 
-  } else  if (event.target.id.substring(0,4)==='Body'){
-        this.ClassBod= new ClassBody;
-        this.NewConfigFitness.Activity[this.TabOfId[0]].exercise.push(this.ClassBod);
-        const j=this.NewConfigFitness.Activity[this.TabOfId[0]].exercise.length;
-        this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[j-1].Body_name='';
-  }  else  if (event.target.id.substring(0,4)==='Exec'){
-    this.ClassExec= new ClassExercise;
-    this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise.push(this.ClassExec);
-    const k=this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise.length;
-    this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise[k-1].Exercise_name='';
-  } else  if (event.target.id.substring(0,4)==='Sean'){
-        this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise[this.TabOfId[2]].seance.push({nb:0});
-        const l=this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise[this.TabOfId[2]].seance.length;
-        this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise[this.TabOfId[2]].seance[l-1].nb=0;
+var i=0; var j=0; var k=0; var l=0;
+for (i=0; i<1; i++){
+  
+  //if (i!==0){
+    ClassActiv = new ClassActivity;
+    this.NewConfigFitness.Activity.push(ClassActiv);
+  //}
+  
+  this.NewConfigFitness.Activity[i].Activity_name='';
+  for (j=0; j<1; j++){
+   // if (j!==0){
+      ClassBod= new ClassBody;
+      this.NewConfigFitness.Activity[i].exercise.push(ClassBod);
+    //}
+    this.NewConfigFitness.Activity[i].exercise[j].Body_name='';
+    for (k=0; k<1; k++){
+      if (k!==0){
+        ClassExec= new ClassExercise;
+        this.NewConfigFitness.Activity[i].exercise[j].BodyExercise.push(ClassExec);
       }
-}
+      this.NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].Exercise_name='';
+        for (l=0; l<1; l++){
+          //if (l!==0){
 
-delItem(event:any){
-  this.findIds(event.target.id);
-
-  if (event.target.id.substring(0,4)==='Acti'){
-    this.NewConfigFitness.Activity.splice(this.TabOfId[0],1);
-  } else  if (event.target.id.substring(0,4)==='Body'){
-        this.NewConfigFitness.Activity[this.TabOfId[0]].exercise.splice(this.TabOfId[1],1);
-  }  else  if (event.target.id.substring(0,4)==='Exec'){
-      this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise.splice(this.TabOfId[2],1);
-  } else  if (event.target.id.substring(0,4)==='Sean'){
-        this.NewConfigFitness.Activity[this.TabOfId[0]].exercise[this.TabOfId[1]].BodyExercise[this.TabOfId[2]].seance.splice(this.TabOfId[3],1);
-      }
-
-}
-
-
-findIds(theId:string){
-var TabDash=[];
-this.TabOfId.splice(0,this.TabOfId.length);
-var j=-1;
-for (var i=4; i<theId.length; i++){
-  if (theId.substring(i,i+1)==='-'){
-      j++;
-      TabDash[j]=i+1;
-      TabDash.push(0);
+            this.NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].seance.push({nb:0});
+          //}
+          this.NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].seance[l].nb=i*1000+j*100+k*10+l;
+        }
+    }
   }
+  
 }
-TabDash[j+1]=theId.length+1;
 
-i=0;
-for (j=0; j<TabDash.length-1; j++){
-  this.TabOfId[i]=parseInt(theId.substring(TabDash[j],TabDash[j+1]-1));
-  this.TabOfId.push(0);
-  i++;
+
+if (this.configServer.GoogleProjectId===''){
+  this.RetrieveConfig();
+} else{
+  if (this.identification.ownBuckets!== undefined && this.identification.ownBuckets.length>0){
+    this.Google_Bucket_Name=this.identification.ownBuckets[0].name;
+
+  }
+  this.GetAllObjects();
+  this.isConfigServerRetrieved=true;
+
+  this.Google_Bucket_Name="Config"+this.identification.id+'-'+this.identification.UserId;
+  this.GetRecord('config');
 }
+
+// weights to be selected by user when exercising
+this.FillTabWeight();
+this.scroller.scrollToAnchor('targetTop');
 }
 
 CreateRecord(){
@@ -544,34 +528,94 @@ CreateRecord(){
   }
 }
 
+
+
+LogWeight(event:any){
+  var iBody=0;
+  this.message='';
+  if (event.target.value!==''){
+      const theBodyRef=parseInt(event.target.id.substring(1));
+      this.FillFormPerf=new RefFormPerf;
+      this.FillFormPerf.ref_body=parseInt(event.target.id.substring(1)); // lbs
+      this.FillFormPerf.weight_type=event.target.value; // lbs
+      for (this.i=0; this.i<10; this.i++){
+        this.FillFormPerf.select_session[this.i]=0;
+      }
+      this.PerformanceData.push(this.FormPerformance());
+      this.PerformanceData.controls[this.PerformanceData.length-1].setValue(this.FillFormPerf); 
+  }  
+}
+
+LogExercise(event:any){
+
+  this.message='';
+  if (event.target.value!==''){
+    this.selectedIndex=event.target.selectedIndex-1;
+  }
+
+  this.FillFormBody.ref_body=this.TypeExerciseData.length+1;
+  this.FillFormBody.body=event.target.value;
+  this.TypeExerciseData.push(this.FormExercice());
+  this.TypeExerciseData.controls[this.TypeExerciseData.length-1].setValue(this.FillFormBody);
+}
+
+LogSession(event:any){ // NOT NEEDED ANYMORE
+  // purpose is just to store what has been modified
+  // format of id is RnSn
+  // find position of S
+  if (isNaN(event.target.value)){
+    this.message='Please enter a numeric value';
+  } else {
+    this.message='';
+    
+    const S_Pos = event.target.id.indexOf('S');
+    const Record=parseInt(event.target.id.substring(1,S_Pos));
+    const Session=parseInt(event.target.id.substring(S_Pos+1));
+
+   
+    if ((event.target.value)!==''){
+      //this.ArrayFillFormPerf[Record].select_session[Session]=parseInt(event.target.value);
+    } else {
+      
+      //this.ArrayFillFormPerf[Record].select_session[Session]=0;
+    }
+  }
+}
+
 ConfirmSave(){
     this.IsSaveConfirmed = true;
 }
 
+SaveRecord(){
+// create object in Google Storage
+this.IsSaveConfirmed = false;
+const FileToSave=this.SpecificForm.controls['FileName'].value ;
+this.message='';
 
-SaveNewRecord(){
-  // create object in Google Storage
-  this.IsSaveConfirmed = false;
+// transfer from FormGroup to record to save
+this.FormToRecord();
 
-  this.message='';
-  
-  this.Google_Object_Name = this.SpecificForm.controls['FileName'].value ;
-  
-  var file=new File ([JSON.stringify(this.NewConfigFitness)],this.Google_Object_Name, {type: 'application/json'});
-  
-  this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
-  //this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
-  .subscribe(res => {
-    //**this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
-            this.message='File "'+ this.Google_Object_Name +'" is successfully stored in the cloud';
-        },
-        error_handler => {
-          //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
-          this.message='File' + this.Google_Object_Name +' *** Save action failed - status is '+error_handler.status;
-        } 
-      )
-  
-  }
+this.myTime=new Date();
+this.myDate= this.myTime.toString().substring(4,15);
+this.thetime=this.myDate+this.myTime.getTime();
+
+this.Google_Object_Name = FileToSave;
+
+var file=new File ([JSON.stringify(this.ResultFitness)],this.Google_Object_Name, {type: 'application/json'});
+
+this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
+//this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
+.subscribe(res => {
+  //**this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
+          this.message='File "'+ FileToSave +'" is successfully stored in the cloud';
+      },
+      error_handler => {
+        //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
+        this.message='Save action failed - status is '+error_handler.status;
+      } 
+    )
+
+}
 
 GetAllObjects(){
   // bucket name is ListOfObject.config
@@ -617,16 +661,23 @@ GetRecord(event:string){
                 
                if (event==='data'){   
                 this.EventHTTPReceived[0]=true;            
-                  this.NewConfigFitness= new ConfigFitness;
-                  this.NewConfigFitness=data;
-
+                  this.ResultFitness.body.splice(0,this.ResultFitness.body.length);
+                  for (jWeight=this.PerformanceData.length; this.PerformanceData.length>0; jWeight--){
+                      this.PerformanceData.removeAt(jWeight-1);
+                  }
+                  for (jWeight=this.TypeExerciseData.length; this.TypeExerciseData.length>0; jWeight--){
+                    this.TypeExerciseData.removeAt(jWeight-1);
+                }
+                  this.ResultFitness=data;
+                  this.selected_date=this.ResultFitness.date_exercise;
                   this.Input_Travel_O_R='O';
                   this.isSelectedDate=true;
+                  this.RecordToForm();
                   this.ObjectIsRetrieved=true;
                   
                 } else if (event==='config'){ 
-                    this.EventHTTPReceived[1]=true;
-                    this.ConfigExist=true;
+                  this.EventHTTPReceived[1]=true;
+                  this.ConfigExist=true;
                   }
                 this.error_msg='';
               },
@@ -648,22 +699,40 @@ GetRecord(event:string){
   }
 
 CancelRecord(){
-    this.NewConfigFitness.Activity.splice(1,this.NewConfigFitness.Activity.length);
-    this.NewConfigFitness.Activity[0].exercise.splice(1,this.NewConfigFitness.Activity[0].exercise.length);
-    this.NewConfigFitness.Activity[0].exercise[0].BodyExercise.splice(1,this.NewConfigFitness.Activity[0].exercise[0].BodyExercise.length);
-    this.NewConfigFitness.Activity[0].exercise[0].BodyExercise[0].seance.splice(1,this.NewConfigFitness.Activity[0].exercise[0].BodyExercise[0].seance.length)
-  
-    this.NewConfigFitness.Activity[0].Activity_name='';
-    this.NewConfigFitness.Activity[0].Activity_date='';
-    this.NewConfigFitness.Activity[0].exercise[0].Body_name='';
-    this.NewConfigFitness.Activity[0].exercise[0].BodyExercise[0].Exercise_name='';
-    this.NewConfigFitness.Activity[0].exercise[0].BodyExercise[0].seance[0].nb=0;
-    this.TabinputDate.splice(1, this.TabinputDate.length);
-  }
+  var jWeight=0;
+  this.error_msg='';
+  this.message='';
+  //this.IsSaveConfirmed = false;
+  this.selected_date=new Date("2000/01/01");
+  this.ObjectIsRetrieved= false;
+  this.DisplayListOfObjects=false;
+  this.isSelectedDate=false;
 
-// this.scroller.scrollToAnchor('AccessToListFiles');
+  this.ResultFitness.body.splice(0,this.ResultFitness.body.length);
+  for (jWeight=this.PerformanceData.length; this.PerformanceData.length>0; jWeight--){
+      this.PerformanceData.removeAt(jWeight-1);
+  }
+  for (jWeight=this.TypeExerciseData.length; this.TypeExerciseData.length>0; jWeight--){
+      this.TypeExerciseData.removeAt(jWeight-1);
+ }
+ this.GetAllObjects();
+ this.scroller.scrollToAnchor('AccessToListFiles');
+ this.Google_Object_Name='';
+ this.SpecificForm.controls['FileName'].setValue('');
+}
+
 CancelSave(){
 this.IsSaveConfirmed=false;
+}
+
+CreateConfig(event:string){
+  if (event==='Y'){
+      this.IsCreateConfig=true;
+
+
+  } else {
+      this.IsCreateConfig=false;
+  }
 }
 
 waitHTTP(loop:number, max_loop:number, eventNb:number){
@@ -742,41 +811,21 @@ RetrieveSelectedFile(event:any){
 
 
 SelectedDate(event:any){
-  this.error_msg='';
-  this.DisplayCalendar=false;
-  var theID=0;
-  for (theID=0; this.TabDisplayCalendar[theID]===false; theID++){};
+
   this.selected_year=parseInt(formatDate(event,'yyyy',this.locale));
   this.selected_month=parseInt(formatDate(event,'MM',this.locale));
   this.selected_day=parseInt(formatDate(event,'dd',this.locale));
   this.selected_date=event;
-  const theDatePipe = this.datePipe.transform(this.selected_date,"dd-MM-yyyy");
-  if (theDatePipe!=="01-01-1000"){
-
-      
-      this.Input_Travel_O_R='O';
-
-      this.datePipeSelected = this.datePipe.transform(this.selected_date,"dd-MM-yyyy");
-      this.NewConfigFitness.Activity[theID].Activity_date=this.datePipeSelected;
-      this.TabinputDate[theID]=this.datePipeSelected;
-      this.ErrorinputDate[theID]='';
-      this.TabIsDateWrong[theID]=false;
-      this.isSelectedDate=true;
-  }
-  this.TabDisplayCalendar[theID]=false; 
+  this.Input_Travel_O_R='O';
+  this.ResultFitness.date_exercise=this.selected_date;
+  this.TheExerciseform.controls['date_exercise'].setValue(this.selected_date);
+  this.isSelectedDate=true;
 }
 
 
+ActionCalendar(){
+  this.DisplayCalendar=true;
 
-ActionCalendar(event:any){
-  var i=0;
-  for (i=0; this.TabDisplayCalendar[i]===false; i++){};
-  if (this.TabDisplayCalendar.length===0 || i>this.TabDisplayCalendar.length-1 || this.TabDisplayCalendar[i]===false){
-      this.findIds(event.target.id);
-      this.TabDisplayCalendar[this.TabOfId[0]]=true;
-      this.TabDisplayId[this.TabOfId[0]]=this.TabOfId[0];
-      this.DisplayCalendar=true;
-  } else {this.error_msg = ' close the calendar which is already open for another activity'}
 }
 
 FillTabWeight(){
@@ -795,8 +844,90 @@ FillTabWeight(){
     }
   }
 
+FormToRecord(){
+  
+  var k=0;
+  var jRecord=0;
+  var refer_body=0;
+  var iBody=0;
+  var jWeight=0;
+  this.ResultFitness.body.splice(0,this.ResultFitness.body.length);
+  this.ResultFitness.date_exercise=this.TheExerciseform.controls['date_exercise'].value
+
+  for (iBody=0; iBody<this.TypeExerciseData.length; iBody++ ){
+        this.FillFormBody=this.TypeExerciseData.controls[iBody].value;
+        if (this.ResultFitness.body.length<iBody+1){
+          this.NewBody= new ArrayNewBody;
+          this.ResultFitness.body.push(this.NewBody);
+        }
+        this.ResultFitness.body[iBody].name = this.FillFormBody.body;
+        refer_body= this.FillFormBody.ref_body;
+        jRecord=0;
+        for (jWeight=0; jWeight<this.PerformanceData.length; jWeight++){
+         
+          this.FillFormPerf=new RefFormPerf;
+          this.FillFormPerf=this.PerformanceData.controls[jWeight].value;
+          
+          if (this.FillFormPerf.ref_body===refer_body){
+              if (this.ResultFitness.body[iBody].exercise.length<jRecord+1){
+                this.NewWeight=  new ArrayNewWeight;
+                this.ResultFitness.body[iBody].exercise.push(this.NewWeight);
+              }
+              
+              this.ResultFitness.body[iBody].exercise[jRecord].weight=this.FillFormPerf.weight_type;
+                for (k=0; k<10; k++){
+                  this.ResultFitness.body[iBody].exercise[jRecord].seances[k]=this.FillFormPerf.select_session[k];
+                }
+                jRecord++
+            }
+
+        }
+        
+  }
+  
+
+}
+
+RecordToForm(){
+ 
+  var k=0;
+  var jRecord=0;
+  var refer_body='';
+  var iBody=0;
+  var jWeight=0;
 
 
+  this.TheExerciseform.controls['date_exercise'].setValue(this.ResultFitness.date_exercise);
+  
+  for (iBody=0; iBody<this.ResultFitness.body.length; iBody++ ){
+       
+        this.FillFormBody.ref_body=iBody+1;
+        this.FillFormBody.body=this.ResultFitness.body[iBody].name;
+        if (this.TypeExerciseData.length<iBody+1){
+          this.TypeExerciseData.push(this.FormExercice());
+        }
+        this.TypeExerciseData.controls[this.TypeExerciseData.length-1].setValue(this.FillFormBody);
+        refer_body= this.ResultFitness.body[iBody].name;
+        jRecord=0;
+        for (jWeight=0; jWeight<this.ResultFitness.body[iBody].exercise.length; jWeight++){
+         // if (this.ResultFitness.body[iBody].name===refer_body){    
+              this.FillFormPerf=new RefFormPerf;
+              this.FillFormPerf.ref_body=iBody+1;    
+              this.FillFormPerf.weight_type=this.ResultFitness.body[iBody].exercise[jWeight].weight;
+              this.FillFormPerf.select_session=this.ResultFitness.body[iBody].exercise[jWeight].seances;
+            
+              this.PerformanceData.push(this.FormPerformance());
+              this.PerformanceData.controls[this.PerformanceData.length-1].setValue(this.FillFormPerf);
+
+              // }
+       
+          //  }
+                jRecord++
+            }
+
+        }
+        
+  }
 
   
 }

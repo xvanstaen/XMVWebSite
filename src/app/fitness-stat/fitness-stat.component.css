@@ -1,15 +1,140 @@
 body{
-  max-width: 1800px;
+  max-width: 1000px;
   margin-left:10px;
 }
 
+div{
+  --margLeft: 10px;
+  --LabWidth: 360px;
+}
 
+.BlueBorder{
+  border: solid 2px blue;
+}
+
+.RedBorder{
+  border: solid 2px red;
+}
+
+.BorderSetEven{
+  border: solid 3px blue;
+  width:100%;
+}
+
+.BorderSetOdd{
+  border: solid 3px red;
+  width:100%;
+}
+
+.labelActiv{
+  margin-left: var(--margLeft);
+  width:var(--LabWidth);
+  background-color: lightblue;
+}
+
+.labelBody{
+  margin-left: calc(var(--margLeft) * 2);
+  width:calc(var(--LabWidth) - var(--margLeft));
+  background-color: lightcyan;
+  float:none;
+}
+
+.labelExec{
+  margin-left: calc(var(--margLeft) * 3);
+  width:calc(var(--LabWidth) - calc( 2 * var(--margLeft)));
+  background-color: lightgreen;
+  float:none;
+}
+
+.labelSean{
+  margin-left: calc(var(--margLeft) * 4);
+  width:80px;
+  float:none;
+  display:inline-block;
+}
+
+.skipLine{
+  width:100%;
+  height:2px;
+  display:inline-block;
+  
+}
+
+.inputSean{
+  margin-left: 10px;
+  width:35px;
+  height:30px;
+  font-size:14px;
+
+}
+
+.inputSean:hover{
+  background-color: cyan;
+  font-size:14px;
+}
+
+.inputText{
+  width:160px;
+  height:30px;
+  font-size:14px;
+  background-color: lightgrey;
+  margin-left:6px;
+}
+
+.inputText:hover{
+  color:darkblue;
+  font-size:16px;
+  background-color: grey;
+}
+
+.labelDate{
+  width:50px;
+  color:blue;
+  font-size:14px;
+  margin-left: 25px;
+  float:none;
+}
+
+.theDate{
+  width:160px;
+  height:30px;
+  font-size:14px;
+  background-color: lightcyan;
+  color:blue;
+}
+.theDateBuffer{
+  width:1px;
+  margin-top:10px;
+}
+
+.theDate:hover{
+  font-size:16px;
+  background-color: lightgrey;
+  color:red;
+}
+.posCalendar{
+  /*
+  margin-left: 20px; 
+  margin-top:-10px;
+
+  */
+  float:none; 
+  width:45px; 
+  height:55px;
+  font-size:25px;
+  color:blue;
+  padding-left:10px;
+  padding-top:13px;
+  vertical-align: middle;
+}
+.posCalendar:hover{
+ color:red;
+}
 td{
   width:35px;  
   padding-left:5px; 
   border:solid 0px red;
 }
-
 
 
 .specialDiv{
@@ -19,7 +144,7 @@ td{
   float:left;
   display:block;
   width:90%;
-  height:40px;
+  height:10px;
   border:solid 0px blue;
 }
 
@@ -90,6 +215,28 @@ td{
   margin-right:100px; 
   margin-top:0px;
 }
+
+.iconBuffer{
+  width:22px; 
+  height:22px; 
+  font-size:16px;
+  margin-left:10px;
+  display:inline-block;
+  float:none;
+}
+
+.iconAdd{
+  width:22px; 
+  height:22px; 
+  font-size:16px;
+  background-color: cyan;
+  color:blue;
+  padding-left:3px;
+  padding-top:3px;
+  vertical-align: middle;
+  margin-left:10px;
+}
+
 .iconBin{
   width:22px; 
   height:22px; 
@@ -98,6 +245,7 @@ td{
   color:red;
   padding-left:3px;
   padding-top:3px;
+  margin-left:10px;
   
 }
 
@@ -105,7 +253,9 @@ td{
   color:blue; 
 }
 
-
+.iconAdd:hover{
+  background-color:grey; 
+}
 
 
 .even{
@@ -203,13 +353,57 @@ font-size:18px;
 }
 
       /*** ====================================== ***/
-    /*** ============== @media 790 ================ ***/
+    /*** ============== @media 1010 ================ ***/
     /*** ====================================== ***/
-    @media only screen and (max-width: 900px) {
+    @media only screen and (max-width: 1010px) {
+      body{
+        max-width: 620px;
+      }
+
+      div{
+        --margLeft: 10px;
+        --LabWidth: 160px;
+      }
+
+      .inputText{
+        width:100px;
+      }
+
+      .labelDate{
+        /*
+        width: calc(var(--LabWidth) - var(--margLeft) + 38px);
+        margin-left: calc(var(--margLeft) * 2);
+        text-align: right;
+        */
+        width:80px;
+        margin-left:calc(var(--LabWidth) + var(--margLeft) - 80px);
+        
+        background-color: cyan;
+        text-align: right;
+      }
+
+      .theDate{
+        width:100px;
+        margin-top:10px;
+        margin-left:10px;
+      }
+
+      .theDateBuffer{
+        width:27px;
+        display:inline-block;
+      }
+
+      .labelBody{
+        margin-left: calc(var(--margLeft) * 2);
+        width:calc(var(--LabWidth) - var(--margLeft));
+      }
+
+      .labelSean{
+        margin-left: calc(var(--margLeft) * 3);
+      }
+      
       .objectHeader{
-        
         font-size:16px;  
-        
         }
  
       .object{

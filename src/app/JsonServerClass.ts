@@ -26,6 +26,10 @@ export class BioData{
       UserId:string='';
       psw:string='';
       phone:string='';
+      firstname:string='';
+      surname:string='';
+      apps:Array<string>=[];
+      ownBuckets:Array<any>=[{name:""}];
     };
 
   export class EventAug {

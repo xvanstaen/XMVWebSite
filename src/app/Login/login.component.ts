@@ -189,10 +189,16 @@ GetObject(event:number){
               // send information to XMV Company so that user does not need to re-enter when back on Login page
                 this.my_output1.emit(this.Encrypt_Data);
                 
-                for (this.i=0; this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId!==this.ConfigXMV.UserSpecific[this.i].id; this.i++){}
+               for (this.i=0; this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId!==this.ConfigXMV.UserSpecific[this.i].id; this.i++){}
+                if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
+                  this.routing_code=1;
 
-                
-                
+                } 
+                else if (this.Encrypt_Data.apps!== undefined && this.Encrypt_Data.apps.length>0){
+
+                  this.routing_code=1;// IF IT WORKS THEN ALL THE BELOW WILL BE DELETED
+              } else
+         
                 if (this.Encrypt_Data.UserId==='Event-02JUL2022' || this.Encrypt_Data.UserId==='HO'){
                     this.routing_code=2;
                     window.location.href = "https://xvanstaen.github.io/WeddingPhoto";
@@ -201,9 +207,6 @@ GetObject(event:number){
                     this.routing_code=3;
                   }
         // don't use routing_code===4
-                else if (this.Encrypt_Data.UserId==='Fitness'){
-                    this.routing_code=5;
-                  }
                 else if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
                     this.routing_code=1;
 
@@ -217,7 +220,7 @@ GetObject(event:number){
                   this.my_output2.emit(this.routing_code.toString());
                   }
               else{
-                this.text_error="identification failed in getObject(); retry";
+                this.text_error="identification failed - retry";
               }
             },
             error_handler => {

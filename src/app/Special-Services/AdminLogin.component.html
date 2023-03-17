@@ -10,176 +10,48 @@
 
 
 <div *ngIf="Error_Access_Server!==''">
-  <span style='margin-top:10px; margin-left:30px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
+  <span style='margin-top:10px; margin-left:30px; color:red; font-size:22px;'> Error access to the server : {{Error_Access_Server}}
   </span>
 </div>
-<span style='margin-top:20px; margin-left:30px;color:blue; font-size:16px;'>{{Message}}</span>
+<span style='margin-top:20px; margin-left:30px;color:blue; font-size:22px;'>{{Message}}</span>
 
 
 <div *ngIf="ContentTodisplay===true">
-  <br><br>
-   <h3>
-          Do you want to convert this file in the EventAug readable format?
-   </h3>
-          <button id="butt11" (click)="DisplayEventAug('YES')"  class="butt">Yes</button>
-          <button id="butt11" (click)="DisplayEventAug('NO')"   class="butt">No</button>
-    <br><br><br><br>
-    <h4>Content reference from file &nbsp;SelectedBucketInfo.name}}</h4>
-    <textarea readonly class="inputObject inputColorRef">
+      <br><br>
+  
+      <h4>Content reference from file &nbsp;SelectedBucketInfo.name}}</h4>
+      <textarea readonly class="inputObject inputColorRef">
           {{ContentObjectRef}}
-    </textarea>
-    <br>
-    <h4>Content to modify </h4>
-    <textarea  class="inputObject inputColor" (input)='ModifContent($event)' type='text' [value]="ContentObject">  </textarea>
+      </textarea>
+      <br>
+      <h4>Content to modify </h4> <span style='margin-top:20px; margin-left:30px;color:red; font-size:20px;'>Attention: {{General_Info}} <br>
+                                    <span *ngIf="WrongNbRecords>0" style='margin-top:20px; margin-left:30px;color:red; font-size:16px;'>
+                                          {{WrongNbRecords}} &nbsp;records have a wrong format
+                                    </span>
+                              </span>
 
-    
-      <br> <br>
+            <div *ngFor="let content of TabContent; let i=index">
+
+                  <label *ngIf="IsATable===false" style='margin-top:20px; margin-left:30px;color:blue; font-size:20px;'>record:&nbsp;{{i+1}} - userid= {{theReceivedData.UserId}}</label>
+                  <label *ngIf="IsATable===true" style='margin-top:20px; margin-left:30px;color:blue; font-size:20px;'>record:&nbsp;{{i+1}} - userid= {{theReceivedData[i].UserId}}</label>
+                  <textarea  class="inputObject inputColor" id='C{{i}}' (input)='ModifContent($event)' type='text' value='{{content}}'>  </textarea>
+                  <span style='margin-top:20px; margin-left:30px;color:red; font-size:20px;'>{{TabErrorContent[i]}}</span>
+                  <br> <br>
+
+      </div>
+     
       <h4> If you change the psw then it must be encrypted (default values are key=2 and method=AES)</h4>
       <h4> psw:</h4> <textarea  class="pswField inputColor" (input)='ModifPSW($event)' 
                   type='text' [value]="Decrypt">  </textarea>
       <br> <br> <h4>Encrypted psw is </h4><textarea readonly class="pswField inputColorRef">{{Encrypt}}</textarea>
-    
-    <span *ngIf="ContentModified===true">
-    <!--
-    Do you want to save your modifications?
-          <button id="butt12" (click)="SaveModif('YES')" class="butt">Yes</button>
-          <button id="butt12" (click)="SaveModif('NO')" class="butt">No</button>
-          <app-ChangeSaveFileName [configServer]="configServer" [SelectedBucketInfo]="SelectedBucketInfo" [DataToHttpPost]="ContentObject" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
-    -->
-      <div *ngIf= "DataType==='Test'">
+      <span style='margin-top:20px; margin-left:30px;color:red; font-size:20px;'>{{error_message}}</span>
+      
+      <span *ngIf="ContentModified===true">
             <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [configServer]="configServer"
-            [DataToHttpPost]="TabTestProd[3].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
-      </div>
-      <div *ngIf="DataType==='Prod'">
-            <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [configServer]="configServer"
-            [DataToHttpPost]="TabTestProd[2].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
-      </div>
+            [ContentObject]='TabModifiedContent' [IsATable]='IsATable' (SaveStatus)="BackToSaveFile($event)"> </app-ChangeSaveFileName>
       </span>
 </div>
 
 
-<div *ngIf=" ObjectTodisplay===true">
-    <div id='targetConfirm' ></div>
-    <div *ngIf="ConfirmSaveTest===false && ConfirmSaveProd===false">
-        <br><br>
-              <h3>Copy from reference table &nbsp;</h3>
-              <span *ngIf="DataType==='Prod'">
-                    <button class="butt" id='copyProd' (click)="Copy('Prod')" >Prod </button> &nbsp;
-              </span>
-              <span *ngIf="DataType==='Test'">
-                  <button  class="butt"id='copyTest' (click)="Copy('Test')" >Test</button>
-              </span>
-    </div>
 
-    <div id='SelectedFile' ></div>
-    <div *ngIf="ConfirmSaveTest===true && DataType==='Test'">
-
-          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [configServer]="configServer"
-          [DataToHttpPost]="TabTestProd[3].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
-    </div>
-    <div *ngIf="DataType==='Prod' && ConfirmSaveProd===true">
-          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [configServer]="configServer"
-          [DataToHttpPost]="TabTestProd[2].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
-    </div>
-    <!--
-    <div *ngIf="ConfirmSaveTest===true">
-        <span style="margin-top:20px;">&nbsp;</span>
-          <h3>Please confirm you want to save Test data</h3>
-          <button  id='Conf1' (click)="saveRecord('Yes')" class="butt">Yes </button>
-          <button  id='Conf2' (click)="saveRecord('No')" class="butt">No </button>
-    </div>
-    <div *ngIf="ConfirmSaveProd===true">
-        <span style="margin-top:20px;">&nbsp;</span>
-        <h3>Please confirm you want to save Prod data</h3>
-        <button  id='Conf3' (click)="saveRecord('Yes')" class="butt">Yes </button>
-        <button  id='Conf4' (click)="saveRecord('No')" class="butt">No </button>
-    </div>
-    -->
-    <div *ngIf="TabTestProd.length>1">
-          <div *ngIf="isFormFilled===true">
-            <form  [formGroup]="myForm"   >
-                <div formArrayName="tabEvent">
-                    <div style="margin-top:50px;">
-                        <div *ngIf="ConfirmSaveTest===false && ConfirmSaveProd===false">
-                            <span *ngIf="ProdTestFiles==='Both'">
-                                <h3>Select which type of data you want to display</h3>
-                                <button  class="butt" id='ProcessP' (click)="Process('Prod')" >Prod </button> &nbsp;
-                                <button class="butt" id='ProcessT' (click)="Process('Test')" >Test</button>
-                                <br><br>
-                          </span>
-                        </div>
-                      <div *ngIf="DataType==='Prod'"><h2>Production data</h2></div>
-                      <div *ngIf="DataType==='Test'" ><h2>Test data</h2></div>
-                    </div>  
-                    <span *ngFor="let EventForm of theEvent.controls; let i = index">
-                      <div [formGroupName]="i">
-                            
-                        
-                        <div *ngIf="((DataType==='Test' && i>EventProdLength-1 && i<EventProdLength+EventTestLength) || (DataType==='Prod' && i<EventProdLength))">
-
-                            <div>
-                                <span  class="labelrecord">Record number </span>
-                                <span  *ngIf="DataType==='Test'">
-                                      <span class="recordNb">{{i-EventProdLength+1}}  </span>
-                                      <button  class="butt" style="margin-top:-3px;" id='DelT' 
-                                                      (click)='DeleteItem(i-EventProdLength+EventTestLength)'>Delete</button>
-                                </span>
-                                  
-                                <span  *ngIf="DataType==='Prod'"> 
-                                      <span class="recordNb">{{i+1}}   </span>
-                                      <button class="butt savePos" id='DelP'  (click)='DeleteItem(i+1)'>Delete</button>
-                                </span>
-                               
-                                <button id='save' class="butt savePos"   (click)="ConfirmSave(DataType)">Save</button> 
-                                
-                                <button id="butt14" style='font-size:10px; margin-left:5px;'(click)="goUpandDown('Selection')">Top</button>
-
-                                 
-                            </div>
-                            <div class="breakline"> &nbsp;</div>
-                            <div><span class="labelbucket  common odd"> Ref User Id</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].UserId}}</span></div>
-                            <div><label class="labelbucket common"> User Id</label><input class="input common" formControlName="UserId" id="UserId" type="text"  ></div>
-                            <div><span class="labelbucket common odd"> Ref Firstname</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].firstname}}</span></div>
-                            <div><label class="labelbucket common">Firstname</label><input  class="input common" formControlName="firstname" id="firstname" type="text"  ></div>
-                            <div> <span class="labelbucket common odd"> Ref Surname</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].surname}}</span></div>
-                            <div> <label class="labelbucket common">Surname</label><input  class="input common" formControlName="surname" id="surname" type="text"  ></div>
-                            <div> <span class="labelbucket common odd"> Ref psw</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].psw}}</span></div>
-                            <div><label class="labelbucket common">psw</label><textarea class="input common" formControlName="psw" (input)="managePSW(i)" id="psw" type="text"  ></textarea></div>
-                            <div><span class="labelbucket common odd"> Ref method</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].method}}</span></div>
-                            <div><label class="labelbucket common">method</label><input class="input common"  formControlName="method" id="method" type="text"  ></div>
-                            <div><span class="labelbucket common odd"> Ref key</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].key}}</span></div>
-                            <div><label class="labelbucket common">key</label><input class="input common"  formControlName="key" id="key" type="text"  ></div>
-                            <div><span class="labelbucket common odd"> Ref Id</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].id}}</span></div>
-                            <div><label class="labelbucket common">Id</label><input class="input common"  formControlName="id" id="id" type="text"  ></div>
-                            <div><span class="labelbucket common odd"> Ref night</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].night}}</span></div>
-                            <div> <label class="labelbucket common">night</label><input class="input common"  formControlName="night" id="night" type="text"  ></div>
-                            <div>  <span class="labelbucket common odd"> Ref brunch</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].brunch}}</span></div>
-                            <div> <label class="labelbucket common">brunch</label><input class="input common"  formControlName="brunch" id="brunch" type="text"  ></div>
-                            <div> <span class="labelbucket common odd"> Ref nbinvitees</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].nbinvitees}}</span></div>
-                            <div><label class="labelbucket common">nbinvitees</label><input class="input common"  formControlName="nbinvitees" id="nbinvitees" type="number"  ></div>
-                            <div> <span class="labelbucket common odd"> Ref my comments</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].myComment}} &nbsp;</span></div>
-                            <div>  <label class="labelbucket common">my comments</label><input class="input common"  formControlName="myComment" id="myComment" type="text"  ></div>
-                            <div> <span class="labelbucket common odd"  style="height:50px;"> Ref your comment</span><span class=" bucket common odd" style="overflow:scroll; height:50px;"  >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].yourComment}}</span></div>
-                            <div style=" margin-top:5px;"> <label class= "urCommentsLabel" >your comments</label> </div><div  class="urComments" style='display:inline-flex;' ><textarea  style="width:100%;" formControlName="yourComment" id="yourComment" type="text"  ></textarea></div>
-                            <!--
-                            <div> <label class= "urCommentsLabel" >your comments</label><input class="urComments"  formControlName="yourComment" id="yourComment" type="text"  ></div>
-                            -->
-                            <div style=" float:none; font-style:5px;">&nbsp;</div>
-                            <div style=" margin-top:-15px;">  <span class="labelbucket common odd"> Ref timeStamp</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].timeStamp}}</span></div>
-                            <div>  <label class="labelbucket common">timeStamp</label><input class="input common"  formControlName="timeStamp" id="timeStamp" type="text"  ></div>
-                            <br><br>
-                            <div> <span class="labelbucket common empty">&nbsp;</span><span class="bucket common empty"   >&nbsp;</span></div>  
-
-                              <br>
-                        </div>
-                      
-                      </div>
-                    </span>  
-                 <br><br>  
-                </div>
-            </form>
-          </div>
-      </div>
-  </div>
-<br><br>
 </body>

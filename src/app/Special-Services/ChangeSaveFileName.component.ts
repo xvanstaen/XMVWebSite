@@ -9,16 +9,6 @@ import { encrypt, decrypt} from '../EncryptDecryptServices';
 import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
 
-import { XMVConfig } from '../JsonServerClass';
-import { msginLogConsole } from '../consoleLog';
-import { LoginIdentif } from '../JsonServerClass';
-
-import { environment } from 'src/environments/environment';
-import { EventAug } from '../JsonServerClass';
-import { EventCommentStructure } from '../JsonServerClass';
-import { TableOfEventLogin } from '../JsonServerClass';
-import { BucketList } from '../JsonServerClass';
-import { Bucket_List_Info } from '../JsonServerClass';
 import { OneBucketInfo } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
 import { Return_Data } from '../JsonServerClass';
@@ -45,13 +35,15 @@ export class ChangeSaveFileNameComponent {
     @Input() SelectedBucketInfo=new OneBucketInfo;
     @Output() SaveStatus=new EventEmitter<Return_Data>();
     @Input() configServer=new configServer;
+    @Input() ContentObject:any;
+    @Input() IsATable:boolean=false;
 
     FileName:string='';
     Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
     isObjectToSave:boolean=false;
     ConfirmSave=true;
     Return_SaveStatus=new Return_Data;
-
+    
     ngOnInit(){
         const myTime=new Date();
         const myDate= myTime.toString().substring(4,25);
@@ -73,7 +65,6 @@ export class ChangeSaveFileNameComponent {
             this.isObjectToSave=false;
             this.ConfirmSave=true;
             this.Return_SaveStatus.SaveIsCancelled=true;
-            
         }
         this.SaveStatus.emit(this.Return_SaveStatus);
     }
@@ -81,58 +72,39 @@ export class ChangeSaveFileNameComponent {
 
   SaveFile(){
     let FileToSave:any;
-    FileToSave=this.DataToHttpPost;
-    let Table_User_Data:Array<EventAug>=[];
-    if (Array.isArray(this.DataToHttpPost)===true){
-        if (this.DataToHttpPost[0].night!==undefined){
-          // this is type EventAUG
-          // Delete all records which are flagged with keyword 'RECORD IS DELETED' in UserId field
-      
-          for (let j=0; j<this.DataToHttpPost.length; j++){
-            if (this.DataToHttpPost[j].UserId!=='RECORD IS DELETED'){
-              const Individual_User_Data= new EventAug;
-              Table_User_Data.push(Individual_User_Data);
-              Table_User_Data[Table_User_Data.length-1]=this.DataToHttpPost[j];
-            }
-          }
-          if (this.DataToHttpPost.length===1){
-                FileToSave=Table_User_Data[0];
-          } else {
-                FileToSave=Table_User_Data;
-            }
-      }
 
-     }
+    if (this.IsATable===true){
+      FileToSave=this.ContentObject;
+    } else {FileToSave=this.ContentObject[0];}
 
-    const HTTP_Address=this.Google_Bucket_Access_RootPOST + this.SelectedBucketInfo.bucket+ "/o?name=" + this.FileName   + "&uploadType=media" ;
-    
-    // USE SERVICES - CALL API SERVER INSTEAD OF http.post
-    //
-    // update the file
-    
-    var file=new File ([JSON.stringify(FileToSave)],this.FileName,{type: 'application/json'});
-        //this.http.post(HTTP_Address,  FileToSave  )
-    this.ManageGoogleService.uploadObject(this.configServer, this.SelectedBucketInfo.bucket, file )
-        .subscribe(
-          (res) => {
-            if (res.type===4){
-              this.Return_SaveStatus.Message='File is saved';
-              this.Return_SaveStatus.Error_Access_Server='';
-              this.Return_SaveStatus.Error_code=0;
-              this.isObjectToSave=false;
-              this.Return_SaveStatus.SaveIsCancelled=true;
-              console.log(this.Return_SaveStatus.Message);
-              this.SaveStatus.emit(this.Return_SaveStatus);
-            }
-          },
-           (error_handler) => {
-                this.Return_SaveStatus.Error_Access_Server=error_handler.status + ' url='+ error_handler.url;
-                this.Return_SaveStatus.Error_code=error_handler.status;
-                console.log(this.Return_SaveStatus.Error_Access_Server);
-                this.SaveStatus.emit(this.Return_SaveStatus);
-              } 
-            )
-    }
+    if (this.Return_SaveStatus.Message===''){
+        const HTTP_Address=this.Google_Bucket_Access_RootPOST + this.SelectedBucketInfo.bucket+ "/o?name=" + this.FileName   + "&uploadType=media" ;
+        
+        var file=new File ([JSON.stringify(FileToSave)],this.FileName,{type: 'application/json'});
+        this.ManageGoogleService.uploadObject(this.configServer, this.SelectedBucketInfo.bucket, file )
+          .subscribe(
+            (res) => {
+              if (res.type===4){
+                  this.Return_SaveStatus.Message='File is saved';
+                  this.Return_SaveStatus.Error_Access_Server='';
+                  this.Return_SaveStatus.Error_code=0;
+                  this.isObjectToSave=false;
+                  this.Return_SaveStatus.SaveIsCancelled=true;
+                  console.log(this.Return_SaveStatus.Message);
+                  this.SaveStatus.emit(this.Return_SaveStatus);
+              }
+            },
+            (error_handler) => {
+                  this.Return_SaveStatus.Error_Access_Server=error_handler.status + ' url='+ error_handler.url;
+                  this.Return_SaveStatus.Error_code=error_handler.status;
+                  console.log(this.Return_SaveStatus.Error_Access_Server);
+                  this.SaveStatus.emit(this.Return_SaveStatus);
+                } 
+              )
+      } else 
+          {this.Return_SaveStatus.Message='issue with variable "DataToHttpPost" which is undefined';}
+    } 
+  
 
   }
 

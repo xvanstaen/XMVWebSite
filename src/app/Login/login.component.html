@@ -115,9 +115,8 @@
 </ng-template>
 <ng-template #fitness> 
   <div  *ngIf="routing_code===5; else wrongevent">
-    <app-fitness-stat  [XMVConfig]="ConfigXMV" [configServer]="configServer" 
-    >
-  </app-fitness-stat>
+    <app-fitness-stat  [identification]="Encrypt_Data" [XMVConfig]="ConfigXMV" [configServer]="configServer">
+    </app-fitness-stat>
   </div> 
 </ng-template>
 

@@ -5,25 +5,8 @@
 
 <body>
 
-<h2 style="margin-top:70px;"><br></h2>
-<h1 style="color:red; font-size:26px; margin-top: 50px; display:block; text-align:center; width:100%">My Fitness Performance!</h1>
-
-<div style="margin-top:40px; margin-left:30px; " id='targetTop'>
-    <div *ngIf='DisplayCalendar===true'>
-        <span class='mainbody'>  
-            <div style="margin: 10px"></div>
-                    <app-one-calendar [Input_MinDate]="Input_MinDate" [Input_MaxDate]="Input_MaxDate" 
-                    [Input_SelectedDate]="selected_date" [Input_IsSelectedDate]="isSelectedDate"
-                    [Input_Travel_O_R]="Input_Travel_O_R" (my_SelectedDate)='SelectedDate($event)'>  </app-one-calendar>
-        </span>  
-    </div>
-
-</div>
-
-<div *ngIf='DisplayCalendar===false'>
-    <span> ==== Display the date === </span>  
-</div>
-
+<h2 style="margin-top:5px;"><br></h2>
+<h1 style="color:red; font-size:26px; margin-top: 5px; display:block; text-align:center; width:100%">My Fitness Performance!</h1>
 
 <div class="specialDiv">
     <span style="font-size:16px; color:red; margin-left:30px;"  >
@@ -31,184 +14,139 @@
     </span>
 </div>
 
-
-
-<div *ngIf="ObjectIsRetrieved===true">
-    <form  [formGroup]="TheExerciseform" >
-        <div formArrayName="select_body" >
-           
-                <span *ngFor="let select_body of TypeExerciseData.controls; let i = index">
-                    <div [formGroupName]="i" >
-
-                        <div class="blockBody" >
-                           <label class="selectbody"> {{select_body.value.body}}</label>
-                            <span class="posBinBody">
-                                <mat-icon  class="material-icons-outlined iconBin" (click)="RemoveTypeExercise($event)" id='R{{i}}'>
-                                    delete 
-                                </mat-icon>
-                            </span>
-                        </div>
-                            
-                        <form  [formGroup]="Performanceform" >
-                                <div formArrayName="select_weight" >
-                                    <span *ngFor="let select_weight of PerformanceData.controls; let j = index">
-                                            
-                                        <div [formGroupName]="j" >
-                                        <div *ngIf="select_weight.value.ref_body-1===i">
-                                                
-                                            <div  *ngFor="let ListW of TheWeights; let n index" > 
-                                    
-                                                <div class="blockOptions" *ngIf="ListW.lbsnb==select_weight.value.weight_type">
-                                                   
-                                                    <label class="selectOptions">Sessions:
-                                                            {{ListW.lbsnb}}{{ListW.lbs}} -- {{ListW.kgnb  | number:'1.1-1'}} {{ListW.kg }}
-                                                    </label> 
-                                                    <span  class="posBin">
-                                                        <mat-icon class="material-icons-outlined iconBin" (click)="RemoveWeight($event)" id='R{{j}}'>
-                                                            delete 
-                                                        </mat-icon>
-                                                    </span>
-
-                                                            
-                                                </div>
-                                            </div>
-                                            <div formArrayName="select_session" >
-                                                   
-                                                <span *ngIf="getScreenWidth>900">
-                                                    <table id="TestTable" style="width:90%; margin-left:10px;"  *ngFor="let theSession of select_weight.value.select_session; let k=index"> 
-                                                        <tr select_weight.value.select_session *ngIf="k===0"> 
-                                                            <td >#1 </td>
-                                                            <td > <input  style="width:40px;" id='R{{j}}S{{0}}'   [formControlName]="k" value='{{select_weight.value.select_session[0]}}' type='number' ></td>
-                                                            <td >#2 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{1}}'   [formControlName]="k+1" value='{{select_weight.value.select_session[1]}}' type='number' ></td>
-                                                            <td >#3 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{2}}'   [formControlName]="k+2" value='{{select_weight.value.select_session[2]}}' type='number' ></td>
-                                                            <td >#4 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{3}}'    [formControlName]="k+3" value='{{select_weight.value.select_session[3]}}' type='number'  ></td>
-                                                            <td >#5 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{4}}'   [formControlName]="k+4" value='{{select_weight.value.select_session[4]}}' type='number' ></td>
-                                                            <td >#6 </td>
-                                                            <td > <input  style="width:42px;" id='R{{j}}S{{5}}'  [formControlName]="k+5" value='{{select_weight.value.select_session[5]}}' type='number'  ></td>
-                                                            <td >#7 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{6}}'  [formControlName]="k+6" value='{{select_weight.value.select_session[6]}}' type='number'  ></td>
-                                                            <td >#8</td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{7}}'  [formControlName]="k+7" value='{{select_weight.value.select_session[7]}}' type='number'  ></td>
-                                                            <td >#9 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{8}}'  [formControlName]="k+8" value='{{select_weight.value.select_session[8]}}' type='number'  ></td>
-                                                            <td >#10 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{9}}'  [formControlName]="k+9" value='{{select_weight.value.select_session[9]}}' type='number'  ></td>
-                                                        </tr>
-                                                    </table>
-                                                        <!--[formControlName]="k" type="number"  -->
-                                                </span>
-
-                                                <span *ngIf="getScreenWidth<901" > 
-                                                    <table id="TestTable" style="width:50%; margin-left:10px;"  *ngFor="let theSession of select_weight.value.select_session; let k=index"> 
-                                                        <tr select_weight.value.select_session *ngIf="k===0"> 
-                                                            <td >#1 </td>
-                                                            <td > <input  style="width:40px;" id='R{{j}}S{{0}}'   [formControlName]="k" value='{{select_weight.value.select_session[0]}}' type='number' ></td>
-                                                            <td >#2 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{1}}'   [formControlName]="k+1" value='{{select_weight.value.select_session[1]}}' type='number' ></td>
-                                                            <td >#3 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{2}}'   [formControlName]="k+2" value='{{select_weight.value.select_session[2]}}' type='number' ></td>
-                                                            <td >#4 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{3}}'    [formControlName]="k+3" value='{{select_weight.value.select_session[3]}}' type='number'  ></td>
-                                                            <td >#5 </td>
-                                                            <td > <input   style="width:40px;" id='R{{j}}S{{4}}'   [formControlName]="k+4" value='{{select_weight.value.select_session[4]}}' type='number' ></td>
-                                                        </tr>
-                                                   
-                                                            <tr select_weight.value.select_session *ngIf="k===0"> 
-                                                                <td >#6 </td>
-                                                                <td > <input  style="width:42px;" id='R{{j}}S{{5}}'  [formControlName]="k+5" value='{{select_weight.value.select_session[5]}}' type='number'  ></td>
-                                                                <td >#7 </td>
-                                                                <td > <input   style="width:40px;" id='R{{j}}S{{6}}'  [formControlName]="k+6" value='{{select_weight.value.select_session[6]}}' type='number'  ></td>
-                                                                <td >#8</td>
-                                                                <td > <input   style="width:40px;" id='R{{j}}S{{7}}'  [formControlName]="k+7" value='{{select_weight.value.select_session[7]}}' type='number'  ></td>
-                                                                <td >#9 </td>
-                                                                <td > <input   style="width:40px;" id='R{{j}}S{{8}}'  [formControlName]="k+8" value='{{select_weight.value.select_session[8]}}' type='number'  ></td>
-                                                                <td >#10 </td>
-                                                                <td > <input   style="width:40px;" id='R{{j}}S{{9}}'  [formControlName]="k+9" value='{{select_weight.value.select_session[9]}}' type='number'  ></td>
-                                                            </tr>
-                                                    </table>
-                                                    <br><br>
-                                                </span>
-                                            </div>                                               
-                                        </div>  
-                                        </div>
-                                    </span>  
-                                </div> <!-- end div=formArrayName="select_weight"-->
-                                <div > <!--  class="specialDiv" is removed -->
-                                    <span *ngIf="this.PerformanceData.length===0">
-                                        <label style="margin-top:40px"><br>&nbsp;</label>
-                                    </span>
-                                    <label class="newOptions">New weight </label>
-                                    <select  style="margin-top:10px; height:20px;" id='W{{select_body.value.ref_body}}' (input)='LogWeight($event)' >
-                                            
-                                        <option value=""></option>
-                                        <option   *ngFor="let ListW of TheWeights; let l=index;" value={{ListW.lbsnb}} > 
-                                                {{ListW.lbsnb}}{{ListW.lbs}} -- {{ListW.kgnb  | number:'1.2-2'}} {{ListW.kg }}
-                                        </option>
-                                    </select>
-                                       
-                                </div>
-                        </form>
-                    </div>
-                </span>
-                <div class="blockBody" style="margin-top:20px;">
-                    <label class="newOptions" style="color:red">Other body</label>
-                    <select style="margin-top:10px; height:20px;" id="exerciseSelect"   (input)='LogExercise($event)'>          
-                        <option value={{i}}></option>
-                        <option   *ngFor="let ListE of List_exercise;" value={{ListE}}  > 
-                            {{ListE}}
-                        </option>
-                    </select>
+<div class="specialDiv"> <!-- create a record -->
+<br><br>
+    <div  *ngFor="let TabActivity of NewConfigFitness.Activity; let i=index"  [ngClass]="{'RedBorder':  i % 2 !==0, 'BlueBorder':  i % 2 ===0}">
+<div>
+        <span class="skipLine" ></span>
+       
+        <label class="labelActiv">Activity</label>
+        <span *ngIf="NewConfigFitness.Activity.length>1">
+            <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Acti-{{i}}'>
+                delete 
+            </mat-icon>
+        </span>
+        <span *ngIf="NewConfigFitness.Activity.length===1">
+            <span class="iconBuffer">&nbsp;</span>
+        </span>
+        <input id="Acti-{{i}}" (input)="onInput($event)" class="inputText" type="text" value="{{NewConfigFitness.Activity[i].Activity_name}}" >
+        <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Acti-{{i}}'>
+            add_circle
+        </mat-icon>  
     
-                </div>
-                <div  style="margin-top:120px;">
-                    <span *ngIf="IsSaveConfirmed===false && this.PerformanceData.length!==0">
-                        <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button>
-                        <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
-                        <span style="font-size:16px; color:red; margin-left:30px;"  >
-                           <br>{{message}}  
-                        </span>
-                    </span>
-    
-
-                    
-                    <span *ngIf="IsSaveConfirmed===true">
-                        <form  [formGroup]="SpecificForm" >
-                            Please enter the name of the file you want to save your data in :
-                            <input type='text' formControlName="FileName" >
-                            <button id='but_3' class="sizeButtons" (click)="SaveRecord()">Confirm</button>
-                            <button id='but_4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
-                        </form>
-                        
-                    </span>
-                    <br><br><br>
-                </div>
-    
-                <div  *ngIf="DisplayListOfObjects===true">
-                    <br>
-                        <span class="objectHeader">LIST OF OBJECTS STORED IN THE CLOUD</span>
-                        <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
-                              (click)="RetrieveSelectedFile(ListObject)">  
-                            <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
-                            <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
-                      </li>
-                      <br><br>
-                      <button id='but_5' class="sizeButtons" (click)="GetAllObjects()">Refresh list</button>
-                      <br><br> <br><br>
-                </div>
-                <div *ngIf="DisplayListOfObjects===false">
-                        <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>
-                        {{HTTP_Address}}
-                </div>
+    <span class="skipLine">&nbsp;</span>
+        <label class="labelDate">Date</label>
+        <span class="theDateBuffer">&nbsp;</span>
+        <input class="theDate" id="Date-{{i}}"  type="text" value="{{TabinputDate[i]}}" (input)="CheckDate($event)">
+        <mat-icon  id="Date-{{i}}" class="material-icons-outlined posCalendar" (click)="ActionCalendar($event)" >
+            calendar_month
+        </mat-icon>
+        <div *ngIf='TabDisplayCalendar[i]===true'>
+            <span class='mainbody'>  
+                <div style="margin: 10px"></div>
+                        <app-one-calendar [Input_MinDate]="minDate" [Input_MaxDate]="maxDate" [DisplayCalendarOnly]="DisplayCalendarOnly"
+                        [Input_SelectedDate]="selected_date" [Input_IsSelectedDate]="isSelectedDate" 
+                        [Input_Travel_O_R]="Input_Travel_O_R" 
+                        (my_SelectedDate)='SelectedDate($event)'>  </app-one-calendar>
+            </span>  
         </div>
-    </form>
+    
+        <span class="skipLine">&nbsp;</span>
+        <span *ngFor="let TabBody of NewConfigFitness.Activity[i].exercise; let j=index">
+            <label class="labelBody">Body</label>
+            <span *ngIf="NewConfigFitness.Activity[i].exercise.length>1">
+                <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Body-{{i}}-{{j}}'>
+                    delete 
+                </mat-icon>
+            </span>
+            <span *ngIf="NewConfigFitness.Activity[i].exercise.length===1">
+                <span class="iconBuffer">&nbsp;</span>
+            </span>
 
+            <input id="Body-{{i}}-{{j}}" (input)="onInput($event)" class="inputText" type="text" value="{{NewConfigFitness.Activity[i].exercise[j].Body_name}}">
+            <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Body-{{i}}-{{j}}'>
+                add_circle
+            </mat-icon>  
+            <span class="skipLine">&nbsp;</span>
+            <span *ngFor="let TabExec of NewConfigFitness.Activity[i].exercise[j].BodyExercise; let k=index">
+                <label class="labelExec">Exercise</label>
+                <span *ngIf="NewConfigFitness.Activity[i].exercise[j].BodyExercise.length>1">
+                    <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Exec-{{i}}-{{j}}-{{k}}'>
+                        delete 
+                    </mat-icon>
+                </span>
+                <span *ngIf="NewConfigFitness.Activity[i].exercise[j].BodyExercise.length===1">
+                    <span class="iconBuffer">&nbsp;</span>
+                </span>
+                <input id="Exec-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputText" type="text" value="{{NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].Exercise_name}}">
+                <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Exec-{{i}}-{{j}}-{{k}}'>
+                    add_circle
+                </mat-icon>  
+                <span class="skipLine">&nbsp;</span>
+                <label class="labelSean">Seance(s)</label>
+                <span *ngFor="let Seance of NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].seance; let l=index">
+                    <span *ngIf="getScreenWidth<620 && l>0 && l % 3 ===0" class="skipLine">
+                        &nbsp;
+                    </span>
+                    <span *ngIf="getScreenWidth>619  && l>0 && l % 5 ===0" class="skipLine">
+                        &nbsp;
+                    </span>
+
+
+                    <label *ngIf="getScreenWidth<620 && l>0 && l % 3 ===0" class="labelSean">&nbsp;</label>
+                    <label *ngIf="getScreenWidth>619  && l>0 && l % 5 ===0" class="labelSean">&nbsp;</label>
+                    
+                    
+                    <span *ngIf="NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].seance.length>1">
+                        
+                        <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Sean-{{i}}-{{j}}-{{k}}-{{l}}'>
+                            delete 
+                        </mat-icon>
+                    
+                
+                    </span>
+                    <input id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)" class="inputSean" type="text" value="{{Seance.nb}}">
+                    <span *ngIf="NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].seance.length-1===l">
+                        <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Sean-{{i}}-{{j}}-{{k}}-{{l}}'>
+                            add_circle
+                        </mat-icon>  
+                    </span>
+                </span>
+                <br><br>
+           
+            </span>
+
+     
+
+        </span>
+    </div>
 </div>
+    <div  style="margin-top:120px;">
+        <span *ngIf="IsSaveConfirmed===false">
+            <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button>
+            <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
+            <span style="font-size:16px; color:red; margin-left:30px;"  >
+               <br>{{message}}  
+            </span>
+        </span>
 
-<div *ngIf="ObjectIsRetrieved===false">
+
+        
+        <span *ngIf="IsSaveConfirmed===true">
+            <form  [formGroup]="SpecificForm" >
+                Please enter the name of the file you want to save your data in :
+                <input type='text' formControlName="FileName" >
+                <button id='but_3' class="sizeButtons" (click)="SaveNewRecord()">Confirm</button>
+                <button id='but_4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
+            </form>
+            
+        </span>
+        <br><br><br>
+    </div>
+
+
+
+
     <div *ngIf="DisplayListOfObjects===true">
     <form  [formGroup]="TheExerciseform" >
         <div class="specialDiv" id="AccessToListFiles">

@@ -32,17 +32,11 @@ export class OneCalendarComponent implements OnInit {
   @Input() Input_Travel_O_R:string='';
   @Input() Input_SelectedDate=new Date();
   @Input() Input_IsSelectedDate:boolean=false;
-  @Output() my_SelectedDate= new EventEmitter<Date>();
+  @Input() DisplayCalendarOnly:boolean=false;
+  @Output() my_SelectedDate= new EventEmitter<any>();
 
-  myObj:eventoutput = {
-    error_msg:"",
-    type_error:0,
-    theInput:"",
-    input_year:"",
-    input_month:"",
-    input_day:"",
-  }
-
+  myObj= new eventoutput;
+  
   initObj:fillcalendar = {
     monthname_c:'',
     monthname_n:'',
@@ -105,19 +99,7 @@ export class OneCalendarComponent implements OnInit {
   Display_p_holder_ow:string='Y';
   Display_p_holder_r:string='Y';
 
-  ref_format: thedateformat = {
-      MyDateFormat:"",
-      separator_char:"",
-      separator_one_p:0,
-      separator_two_p:0,
-      day_position:0,
-      year_position:0,
-      month_position:0,
-
-      length_year:0,
-      length_month:0,
-      length_day:0,
-  }
+  ref_format= new thedateformat;
 
   type_input:string='';
   type_arrow:string='';
@@ -151,7 +133,15 @@ export class OneCalendarComponent implements OnInit {
   minDate=new Date();
  
   datePipeMin?: any;
+  
   FormatValidationOnly:boolean=true;
+  ToReturn={theID:0, theDate:new Date()};
+
+  DaySelection={
+    day:0,
+    month:0,
+    year:0
+   }
 
   constructor(
     public matDialog: MatDialog,
@@ -263,17 +253,23 @@ export class OneCalendarComponent implements OnInit {
       this.StringOfDays[this.i].DoW = WeekDays[this.i].DoW.substr(0,this.nb_char);
     }
   }
-
+ 
   OnCancel() {
     // if any, date input by user is ignored
     
     // trigger the event through Output to reset this.DisplayCalendar to false so that the calendar will not be displayed in fitness-stat
 
     //this.dialogRef.close(this.TheCalendarform.value);
+
+    
     this.DisplayCalendar=false;
     this.IsDateSelected=false;
     this.initObj.input_OW='';
-    
+    if (this.DisplayCalendarOnly===true){
+      const datePipe_OW=new Date(1000,0,1);
+      this.my_SelectedDate.emit(datePipe_OW);
+      //this.my_SelectedDate.emit(this.ToReturn);
+    }
    }
 
   OnInputOW(event:any){
@@ -395,11 +391,7 @@ export class OneCalendarComponent implements OnInit {
     this.DisplayCalendar=false;
    }
 
-   DaySelection={
-    day:0,
-    month:0,
-    year:0
-   }
+
   onSelectCalendOne(array_month:DaysOfMonths){
     this.type_error=0; 
     this.error_msg='';

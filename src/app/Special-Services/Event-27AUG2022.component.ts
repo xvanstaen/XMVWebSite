@@ -3,7 +3,7 @@ import { Component, OnInit , Input, Output, EventEmitter, ViewChild, SimpleChang
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
 
 import { encrypt, decrypt} from '../EncryptDecryptServices';
@@ -35,74 +35,29 @@ export class Event27AugComponent {
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
     private ManageMangoDBService: ManageMangoDBService,
+    private fb: FormBuilder,
     ) {}
   
+    @Input() LoginTable_User_Data:Array<EventAug>=[];
+    @Input() LoginTable_DecryptPSW:Array<string>=[];
+    @Input() ConfigXMV=new XMVConfig;
+    @Input() identification= new LoginIdentif;
+    @Input() configServer = new configServer;
+    @Output() returnDATA= new EventEmitter<any>();
+    
     PhotoNbForm: FormGroup = new FormGroup({ 
       SelectNb: new FormControl(),
       Width: new FormControl(),
       Height: new FormControl(),
     });
 
-    
-
-    myHeader=new HttpHeaders();
-    isDeleted:boolean=false;
-    getScreenWidth: any;
-    getScreenHeight: any;
-    device_type:string='';
-    yourLanguage:string='FR'; 
-
-    @Input() LoginTable_User_Data:Array<EventAug>=[];
-    @Input() LoginTable_DecryptPSW:Array<string>=[];
-    @Input() ConfigXMV=new XMVConfig;
-    @Input() identification= new LoginIdentif;
-    @Input() configServer = new configServer;
-
-    Total={
-      brunch:0,
-      practice:0,
-      petanqueS:0,
-      petanqueD:0,
-      golfS9:0,
-      golfS18:0,
-      golfD9:0,
-      golfD18:0
-    }
-
-
-
-    FrenchLabels=['Formulaire', 'Nombre de personnes','Plat principal','Bœuf', 'Poisson', "Reste la nuit à l'hotel", 'Oui', 'Non',
-          "Si vous voulez jouer au golf merci d'indiquer",'jour','Samedi', 'Dimanche', 'nombre de joueurs', 'nombre de trous','trous',
-          'Nos commentaires','Vos commentaires (i.e. restriction nourriture, autres)','Valider', 'Adresse',"Dîner"];
-    EnglishLabels=['Form', 'Number of people','Main dish','Beef', 'Fish', 'Spend the night at the hotel', 'Yes', 'No',
-          'If you want to play golf please indicate','day','Saturday', 'Sunday', 'number of people', 'number of holes','holes',
-          'Our comments','Your feedback (e.g. food requirements, others)','Validate', 'Address',"Dinner"];
-    LanguageLabels=['', '','','', '', '', 'Yes', 'No',
-          'If you want to play golf please indicate','','Saturday', 'Sunday', 'number of people', 'number of holes','holes',
-          '','Your feedback (e.g. food requirements, others)','Validate', 'Address',""];
-
-    @Output() returnDATA= new EventEmitter<any>();
-
-    myLogConsole:boolean=false;
-    myConsole:Array<string>=[];
-    SaveConsoleFinished:boolean=true;
-
-    pagePhotos:boolean=false;
-
-    WeddingPhotos:Array<StructurePhotos>=[];
-
-    Admin_UserId:string="XMVIT-Admin"; //======================
-    invite:boolean=true;
-    total_invitee:number=0;
-    total_rooms:number=0;
-    resetAccess:boolean=false;
-
-    myDate:string='';
-    myTime=new Date();
-    thetime:string='';
-
-    MrName:string='';
-    MrsName:string='';
+    LoginDataForm= new FormGroup({
+      userId: new FormControl(''),
+      psw: new FormControl(''),
+      firstname: new  FormControl(''),
+      surname: new  FormControl(''),
+      apps:this.fb.array([]),
+    });
 
     myForm = new FormGroup({
       userId: new FormControl(''),
@@ -128,6 +83,62 @@ export class Event27AugComponent {
       
     });
 
+    myHeader=new HttpHeaders();
+    isDeleted:boolean=false;
+    getScreenWidth: any;
+    getScreenHeight: any;
+    device_type:string='';
+    yourLanguage:string='FR'; 
+
+
+
+    Total={
+      brunch:0,
+      practice:0,
+      petanqueS:0,
+      petanqueD:0,
+      golfS9:0,
+      golfS18:0,
+      golfD9:0,
+      golfD18:0
+    }
+
+
+
+    FrenchLabels=['Formulaire', 'Nombre de personnes','Plat principal','Bœuf', 'Poisson', "Reste la nuit à l'hotel", 'Oui', 'Non',
+          "Si vous voulez jouer au golf merci d'indiquer",'jour','Samedi', 'Dimanche', 'nombre de joueurs', 'nombre de trous','trous',
+          'Nos commentaires','Vos commentaires (i.e. restriction nourriture, autres)','Valider', 'Adresse',"Dîner"];
+    EnglishLabels=['Form', 'Number of people','Main dish','Beef', 'Fish', 'Spend the night at the hotel', 'Yes', 'No',
+          'If you want to play golf please indicate','day','Saturday', 'Sunday', 'number of people', 'number of holes','holes',
+          'Our comments','Your feedback (e.g. food requirements, others)','Validate', 'Address',"Dinner"];
+    LanguageLabels=['', '','','', '', '', 'Yes', 'No',
+          'If you want to play golf please indicate','','Saturday', 'Sunday', 'number of people', 'number of holes','holes',
+          '','Your feedback (e.g. food requirements, others)','Validate', 'Address',""];
+
+  
+
+    myLogConsole:boolean=false;
+    myConsole:Array<string>=[];
+    SaveConsoleFinished:boolean=true;
+
+    pagePhotos:boolean=false;
+
+    WeddingPhotos:Array<StructurePhotos>=[];
+
+    Admin_UserId:string="XMVIT-Admin"; //======================
+    invite:boolean=true;
+    total_invitee:number=0;
+    total_rooms:number=0;
+    resetAccess:boolean=false;
+
+    myDate:string='';
+    myTime=new Date();
+    thetime:string='';
+
+    MrName:string='';
+    MrsName:string='';
+
+    
     Encrypt:string='';
     Decrypt:string='';
     Crypto_Method:string='AES';
@@ -236,7 +247,7 @@ ngOnInit(){
       });
 
       // Admin features which purpose is to list all the records and update any field
-      if (this.identification.UserId===this.Admin_UserId) {
+      if (this.identification.apps[0]==="this.Admin_UserId" || this.identification.apps[0]==="ALL") {
         // administrator is connected
         this.invite=false;
 
@@ -262,7 +273,8 @@ ngOnInit(){
             
         this.ConvertComment();
         this.CommentStructure.readAccess ++;
-        this.Table_User_Data[this.identification.id].yourComment=JSON.stringify(this.CommentStructure);
+        //this.Table_User_Data[this.identification.id].yourComment=JSON.stringify(this.CommentStructure);
+        this.Table_User_Data[this.identification.id].yourComment=this.CommentStructure;
         this.SaveRecord();
 
         }
@@ -329,7 +341,8 @@ ConfirmData(){
       this.CommentStructure.bouleSunday=this.myForm.controls['bouleSunday'].value;
 
       this.CommentStructure.writeAccess ++;
-      this.Table_User_Data[i].yourComment=JSON.stringify(this.CommentStructure);
+      //this.Table_User_Data[i].yourComment=JSON.stringify(this.CommentStructure);
+      this.Table_User_Data[i].yourComment=this.CommentStructure;
       this.updateRecord=1;
       this.init=false;
       this.SaveRecord();
@@ -352,7 +365,7 @@ ValidateRecord(){
                   this.Table_User_Data.push(this.Individual_User_Data);
 
                   this.i=this.Table_User_Data.length-1;
-                  this.Table_User_Data[this.i]=this.Table_User_Data[0];
+                  //this.Table_User_Data[this.i]=this.Table_User_Data[0];
                   this.identification.id=this.i;
                 } 
               }
@@ -383,7 +396,8 @@ ValidateRecord(){
             this.myForm.controls['writeAccess'].setValue(0);
             this.resetAccess=false;
           }
-          this.Table_User_Data[this.i].yourComment=JSON.stringify(this.CommentStructure);
+          //this.Table_User_Data[this.i].yourComment=JSON.stringify(this.CommentStructure);
+          this.Table_User_Data[this.i].yourComment=this.CommentStructure;
 
           this.Table_User_Data[this.i].id=this.i;
           this.Table_User_Data[this.i].key=2;
@@ -464,7 +478,8 @@ count_invitees(ConvertComment:string){
     if (ConvertComment==='Y'){
         this.identification.id=this.i;
         this.ConvertComment();
-        this.Table_User_Data[this.i].yourComment=JSON.stringify(this.CommentStructure);
+        //this.Table_User_Data[this.i].yourComment=JSON.stringify(this.CommentStructure);
+        this.Table_User_Data[this.i].yourComment=this.CommentStructure;
         if (this.CommentStructure.practiceSaturday==='y'){
             this.Total.practice=this.Total.practice+ Number(this.Table_User_Data[this.i].nbinvitees);
           }
@@ -503,7 +518,14 @@ ConvertComment(){
   if (this.Table_User_Data[this.identification.id].timeStamp===undefined){
     this.Table_User_Data[this.identification.id].timeStamp= this.thetime;
   }
+
+  try{
   this.CommentStructure=JSON.parse(this.Table_User_Data[this.identification.id].yourComment);
+  }
+  catch(err){
+    this.CommentStructure=this.Table_User_Data[this.identification.id].yourComment;
+  }
+
 
   if (this.CommentStructure.dishMr==='M'){
     this.CommentStructure.dishMr='B';
@@ -583,6 +605,7 @@ SaveRecord(){
       this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId ;
       //**this.LogMsgConsole('SaveRecord(), update individual object '+ this.Table_User_Data[this.identification.id].UserId);
       
+      //var file=new File ([JSON.stringify(this.Table_User_Data[this.identification.id])],this.Table_User_Data[this.identification.id].UserId ,{type: 'application/json'});
       var file=new File ([JSON.stringify(this.Table_User_Data[this.identification.id])],this.Table_User_Data[this.identification.id].UserId ,{type: 'application/json'});
       this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
       //this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )

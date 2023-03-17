@@ -96,6 +96,10 @@ export class AdminJsonComponent {
     theReceivedData:any;
     isDataReceived:boolean=false;
     SpecificConfigFormat:string='';
+    NbRefresh_Bucket:number=0;
+
+    TabAppsAutho:Array<any>=[];
+    Max_Apps:number=8;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -119,7 +123,27 @@ ngOnInit(){
       //this.waitHTTP(this.TabLoop[0], 20000, 0);
       
       //this.AccessMongo(); TESTING OF HTTP.POST
-      this.getBucket()
+      this.getBucket();
+      var i=0;
+      for (i=0; i<this.Max_Apps; i++){
+        this.TabAppsAutho[i]='N';
+      }
+      if (this.identification.apps[0]==='ALL'){
+          for (i=0; i<this.Max_Apps; i++){
+            this.TabAppsAutho[i]='Y';
+          }
+      } else {
+          for (i=0; i<this.identification.apps.length; i++){
+            if (this.identification.apps[i]==='Bucket')     {this.TabAppsAutho[0]='Y';}
+            else if (this.identification.apps[i]==='Photos'){this.TabAppsAutho[1]='Y';}
+            else if (this.identification.apps[i]==='27Aug'){this.TabAppsAutho[2]='Y';}
+            else if (this.identification.apps[i]==='Contact'){this.TabAppsAutho[3]='Y';}
+            else if (this.identification.apps[i]==='Login'){this.TabAppsAutho[4]='Y';}
+            else if (this.identification.apps[i]==='Console'){this.TabAppsAutho[5]='Y';}
+            else if (this.identification.apps[i]==='Config'){this.TabAppsAutho[6]='Y';}
+            else if (this.identification.apps[i]==='Fitness'){this.TabAppsAutho[7]='Y';}
+        }
+      }
 
   }    
 ActionMessage:string='';
@@ -142,6 +166,7 @@ Process(event:string){
   } else if (event==='Login'){
     this.ActionMessage='Administration of Logins';
     this.GoToComponent=4; 
+    this.NbRefresh_Bucket=0;
     this.Google_Bucket_Name=this.ListOfBucket.Login;
   } else if (event==='Console'){
     this.GoToComponent=5;
@@ -152,8 +177,12 @@ Process(event:string){
     this.Google_Bucket_Name=this.ListOfBucket.Config;
     this.GoToComponent=6;
     this.scroller.scrollToAnchor('targetConfig');
+  }   else if (event==='Fitness'){
+    this.GoToComponent=7;
+  }  else if (event==='Refresh_Login'){
+    this.NbRefresh_Bucket++; 
   }
-  }
+}
 
 getBucket(){
   this.Error_Access_Server='';
