@@ -89,98 +89,23 @@ export class ClassExercise{
   styleUrls: ['./fitness-stat.component.css'],
 })
 export class FitnessStatComponent implements OnInit {
-  TheExerciseform:FormGroup; 
-  Performanceform:FormGroup; 
-  TheConfigForm:FormGroup;
+
   constructor(   
-    private fb: FormBuilder,
-    private router:Router,
     private http: HttpClient,
+    private fb: FormBuilder,
     private scroller: ViewportScroller,
     private ManageMangoDBService: ManageMangoDBService,
     private ManageGoogleService: ManageGoogleService,
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
     //private TheConfig: AccessConfigService,
-   ) {  this.Performanceform = this.fb.group({ 
-              select_weight: this.fb.array([
-              ]),
-          });
-        this.TheExerciseform = this.fb.group({ 
-          date_exercise: new FormControl(),
-          select_body: this.fb.array([
-          ]),
-          });
-        this.TheConfigForm=this.fb.group({
-          MyActivity: new FormControl(''),
-          MyBody: new FormControl(''),
-          MyExercise: new FormControl(''),
-          MyNbSessions: new FormControl(0),
-          Sessions: this.fb.array([]),
-          });
-      }
-
-      get TabSessions(){
-        return this.TheConfigForm.controls["Sessions"] as FormArray; 
-    }
-
-get GetFirstGroup(){
-  return this.TheConfigForm.controls["FirstGroup"] as FormArray; 
-}
-  
-get TypeExerciseData(){
-      return this.TheExerciseform.controls["select_body"] as FormArray; 
-  }
-
-get PerformanceData(){
-      return this.Performanceform.controls["select_weight"] as FormArray; 
-  }
-
-FormFirstGroup():FormGroup {
-    return this.fb.group ({
-      MyActivity: 'workout with weights',
-      MyBody: 'shoulder',
-      MyExercise: '50kg',
-      MyNbSessions: 5,
-    })
-  }
-
-FormSessions():FormGroup {
-  return this.fb.group ({
-    nb: 0
-  })
-}
-
-FormExercice():FormGroup {
-    return this.fb.group ({
-            body:'AZ', 
-            ref_body: 1
-    })
-  }
-
-FormPerformance():FormGroup {
-    return this.fb.group ({
-          ref_body: 1,
-          weight_type:1, 
-          select_session: this.fb.array([new FormControl(0), new FormControl(0), new FormControl(0), new FormControl(0),
-            new FormControl(0), new FormControl(0), new FormControl(0), new FormControl(0), new FormControl(0),
-            new FormControl(0)
-          ])
-    })
-  }
+   ) { }
 
 @Input() XMVConfig=new XMVConfig;
 @Input() configServer = new configServer;
 @Input() identification= new LoginIdentif;
 
 IsTestBoolean:boolean=true;
-
-FillFormBody={
-    body:'',
-    ref_body:1
-   };
-
-FillFormPerf=new RefFormPerf;
 
 IsSaveConfirmed:boolean=false;
 SpecificForm=new FormGroup({
@@ -192,8 +117,6 @@ isConfigServerRetrieved:boolean=false;
 NewXMVConfig=new XMVConfig;
 
 NewConfigFitness=new ConfigFitness;
-TabOfId:Array<any>=[];
-
 
 HTTP_Address:string='';
 HTTP_AddressPOST:string='';
@@ -208,9 +131,9 @@ myListOfObjects=new Bucket_List_Info;
 DisplayListOfObjects:boolean=false;
 
 // used to create object name in Google Storage
-myDate:string='';
-myTime=new Date();
-thetime:string='';
+//myDate:string='';
+//myTime=new Date();
+//thetime:string='';
 
 Error_Access_Server:string='';
 message:string='';
@@ -220,16 +143,6 @@ EventHTTPReceived:Array<boolean>=[false,false,false,false,false,false];
 id_Animation:Array<number>=[0,0,0,0,0];
 TabLoop:Array<number>=[0,0,0,0,0];
   
-inputDate:string='';
-TabinputDate:Array<any>=[];
-ErrorinputDate:Array<any>=[];
-TabIsDateWrong:Array<boolean>=[];
-
-selected_date=new Date();
-isSelectedDate:boolean=false;
-selected_year:number=0;
-selected_month:number=0;
-selected_day:number=0;
 
 
 minDate_year:number=0;
@@ -267,20 +180,14 @@ List_exercise:Array<string>=[
 
 selectedIndex:number=0;
 
-NewWeight=  new ArrayNewWeight;
-
-NewBody= new ArrayNewBody;
-
-ResultFitness=new Fitness;
-
-i:number=0;
-j:number=0;
-
 getScreenWidth: any;
 getScreenHeight: any;
 device_type:string='';
 
-NameConfigFitness:string='';
+ClassActiv = new ClassActivity;
+ClassBod= new ClassBody;
+ClassExec= new ClassExercise;
+
 DisplayCalendar:boolean=true;
 ObjectIsRetrieved:boolean=false;
 ConfigExist:boolean=false;
@@ -289,36 +196,17 @@ TabDisplayCalendar:Array<boolean>=[];
 TabDisplayId:Array<number>=[];
 theID:number=0;
 DisplayCalendarOnly:boolean=true;
-RemoveTypeExercise(event:any){
-  var refer_body=parseInt(event.target.id.substring(1))+1;
-  var iBody=1;
-  for (iBody=this.PerformanceData.length; iBody>0; iBody--){
-    if (this.PerformanceData.controls[iBody-1].value.ref_body===refer_body){
+TabOfId:Array<any>=[];
+inputDate:string='';
+TabinputDate:Array<any>=[];
+ErrorinputDate:Array<any>=[];
+TabIsDateWrong:Array<boolean>=[];
 
-      this.PerformanceData.removeAt(iBody-1);
-    } else if (this.PerformanceData.controls[iBody-1].value.ref_body>refer_body){
-
-      this.FillFormPerf=new RefFormPerf;
-      this.FillFormPerf=this.PerformanceData.controls[iBody-1].value;
-      this.FillFormPerf.ref_body--;
-      this.PerformanceData.controls[iBody-1].setValue(this.FillFormPerf);
-    }
-  }
-  for (iBody=this.TypeExerciseData.length; iBody>0; iBody--){
-    if (this.TypeExerciseData.controls[iBody-1].value.ref_body===refer_body){
-      this.TypeExerciseData.removeAt(iBody-1);
-    } else if (this.TypeExerciseData.controls[iBody-1].value.ref_body>refer_body){
-      this.FillFormBody=this.TypeExerciseData.controls[iBody-1].value;
-      this.FillFormBody.ref_body--;
-      this.TypeExerciseData.controls[iBody-1].setValue(this.FillFormBody);
-    }
-  }
-}
-
-RemoveWeight(event:any){
-  const RecordWeight=parseInt(event.target.id.substring(1));
-  this.PerformanceData.removeAt(RecordWeight);
-}
+selected_date=new Date();
+isSelectedDate:boolean=false;
+selected_year:number=0;
+selected_month:number=0;
+selected_day:number=0;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -326,9 +214,7 @@ onWindowResize() {
     this.getScreenHeight = window.innerHeight;
     this.Draw_Line='-'.repeat(this.getScreenWidth*0.8);
   }
-  ClassActiv = new ClassActivity;
-  ClassBod= new ClassBody;
-  ClassExec= new ClassExercise;
+
 
 ngOnInit(){
   this.getScreenWidth = window.innerWidth;
@@ -545,7 +431,14 @@ CreateRecord(){
 }
 
 ConfirmSave(){
+  var i=0;
+  
+  for (i=0; i<this.ErrorinputDate.length && this.ErrorinputDate[i]===''; i++){
+  }
+  if (i===this.ErrorinputDate.length) {
     this.IsSaveConfirmed = true;
+    this.error_msg='';
+  } else {this.error_msg='correct your error';}
 }
 
 
@@ -745,7 +638,8 @@ SelectedDate(event:any){
   this.error_msg='';
   this.DisplayCalendar=false;
   var theID=0;
-  for (theID=0; this.TabDisplayCalendar[theID]===false; theID++){};
+  var i=0;
+  for (theID=0; this.TabDisplayCalendar[theID]===false || this.TabDisplayCalendar[theID]===undefined; theID++){};
   this.selected_year=parseInt(formatDate(event,'yyyy',this.locale));
   this.selected_month=parseInt(formatDate(event,'MM',this.locale));
   this.selected_day=parseInt(formatDate(event,'dd',this.locale));
@@ -762,41 +656,58 @@ SelectedDate(event:any){
       this.ErrorinputDate[theID]='';
       this.TabIsDateWrong[theID]=false;
       this.isSelectedDate=true;
+  } else {
+      for (i=0; i<this.ErrorinputDate.length; i++){
+        if (this.Error_OpenCalendar===this.ErrorinputDate[i]){
+          this.ErrorinputDate[i]='';
+        }
+      }
   }
   this.TabDisplayCalendar[theID]=false; 
 }
 
 
-
+Error_OpenCalendar:string='close the calendar which is already open for another activity';
 ActionCalendar(event:any){
   var i=0;
-  for (i=0; this.TabDisplayCalendar[i]===false; i++){};
+  var SaveTabOfId:Array<number>=[];
+
+  for (i=0; (this.TabDisplayCalendar[i]===false || this.TabDisplayCalendar[i]=== undefined) && i<this.TabDisplayCalendar.length; i++){};
   if (this.TabDisplayCalendar.length===0 || i>this.TabDisplayCalendar.length-1 || this.TabDisplayCalendar[i]===false){
       this.findIds(event.target.id);
       this.TabDisplayCalendar[this.TabOfId[0]]=true;
       this.TabDisplayId[this.TabOfId[0]]=this.TabOfId[0];
       this.DisplayCalendar=true;
-  } else {this.error_msg = ' close the calendar which is already open for another activity'}
+  } else {
+    SaveTabOfId[0]=this.TabOfId[0];
+    for (i=1; i<this.TabOfId.length; i++){
+        SaveTabOfId.push(0);
+        SaveTabOfId[i]=this.TabOfId[i];
+    }
+    this.findIds(event.target.id);
+    this.ErrorinputDate[this.TabOfId[0]] = this.Error_OpenCalendar;
+    for (i=0; i<SaveTabOfId.length-1; i++){
+      this.TabOfId[i]=SaveTabOfId[i];
+    }
+  }
 }
 
 FillTabWeight(){
   const max_lbs=140;
-  this.j=0;
+  var j=0;
+  var i=0;
   this.RefFormatWeight.lbsnb=8;
   this.RefFormatWeight.kgnb=this.RefFormatWeight.lbsnb*this.lbs_kg;
   this.TheWeights[0]=this.RefFormatWeight;
-  for (this.i=10 ; this.i<max_lbs; this.i=this.i+10){
-    this.j=this.j+1;
+  for (i=10 ; i<max_lbs; i=i+10){
+    j=j+1;
     this.RefFormatWeight=new FormatWeight;
     this.TheWeights.push(this.RefFormatWeight);
-    this.RefFormatWeight.lbsnb=this.i;
+    this.RefFormatWeight.lbsnb=i;
     this.RefFormatWeight.kgnb=this.RefFormatWeight.lbsnb*this.lbs_kg;
-    this.TheWeights[this.j]=this.RefFormatWeight;
+    this.TheWeights[j]=this.RefFormatWeight;
     }
   }
-
-
-
 
   
 }

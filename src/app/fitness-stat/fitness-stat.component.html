@@ -34,13 +34,15 @@
             add_circle
         </mat-icon>  
     
-    <span class="skipLine">&nbsp;</span>
-        <label class="labelDate">Date</label>
+    <span *ngIf="ErrorinputDate[i]!==''" style="margin-left:20px; color:red; font:12px;">{{ErrorinputDate[i]}}</span>
+    <span class="skipLine">&nbsp;</span>    
+    <label class="labelDate">Date</label>
         <span class="theDateBuffer">&nbsp;</span>
         <input class="theDate" id="Date-{{i}}"  type="text" value="{{TabinputDate[i]}}" (input)="CheckDate($event)">
         <mat-icon  id="Date-{{i}}" class="material-icons-outlined posCalendar" (click)="ActionCalendar($event)" >
             calendar_month
         </mat-icon>
+        
         <div *ngIf='TabDisplayCalendar[i]===true'>
             <span class='mainbody'>  
                 <div style="margin: 10px"></div>
@@ -112,16 +114,12 @@
                         </mat-icon>  
                     </span>
                 </span>
-                <br><br>
-           
+<br><br>
             </span>
-
-     
-
         </span>
     </div>
 </div>
-    <div  style="margin-top:120px;">
+    <div  style="margin-top:60px;">
         <span *ngIf="IsSaveConfirmed===false">
             <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button>
             <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
@@ -130,12 +128,11 @@
             </span>
         </span>
 
-
-        
         <span *ngIf="IsSaveConfirmed===true">
             <form  [formGroup]="SpecificForm" >
                 Please enter the name of the file you want to save your data in :
                 <input type='text' formControlName="FileName" >
+                <br><br>
                 <button id='but_3' class="sizeButtons" (click)="SaveNewRecord()">Confirm</button>
                 <button id='but_4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
             </form>
@@ -144,11 +141,8 @@
         <br><br><br>
     </div>
 
-
-
-
     <div *ngIf="DisplayListOfObjects===true">
-    <form  [formGroup]="TheExerciseform" >
+    
         <div class="specialDiv" id="AccessToListFiles">
             <span class="objectHeader">LIST OF OBJECTS STORED IN THE CLOUD</span>
             <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
@@ -156,11 +150,13 @@
                 <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
                 <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
             </li>
+            <!--
             <br><br>
             <button id='but_0' class="sizeButtons" style=' width:140px' (click)="CreateRecord()">Create new file</button>
+            -->
             <div class="specialDiv"> </div>
         </div>
-    </form>
+    
     </div>
     <div *ngIf="DisplayListOfObjects===false" class="specialDiv">
             <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>

@@ -192,7 +192,7 @@ export function manage_input(
                     myObj.type_error=7;
             } else 
               {
-                  if ( datePipeInput>= datePipeMax){ // check input date with Max date
+                  if ( datePipeInput> datePipeMax){ // check input date with Max date
                 // date is out of range
                     myObj.error_msg = "invalid date; cannot be over " + datePipeMax;
                     myObj.type_error=8;
