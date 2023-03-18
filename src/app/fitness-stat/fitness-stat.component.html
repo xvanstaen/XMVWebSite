@@ -14,10 +14,10 @@
     </span>
 </div>
 
-<div class="specialDiv"> <!-- create a record -->
+
 <br><br>
-    <div  *ngFor="let TabActivity of NewConfigFitness.Activity; let i=index"  [ngClass]="{'RedBorder':  i % 2 !==0, 'BlueBorder':  i % 2 ===0}">
-<div>
+<div  *ngFor="let TabActivity of NewConfigFitness.Activity; let i=index"  [ngClass]="{'RedBorder':  i % 2 !==0, 'BlueBorder':  i % 2 ===0}">
+    <div>
         <span class="skipLine" ></span>
        
         <label class="labelActiv">Activity</label>
@@ -138,13 +138,13 @@
             </form>
             
         </span>
-        <br><br><br>
+        <br><br>
     </div>
 
-    <div *ngIf="DisplayListOfObjects===true">
+    <div style="margin-top:10px;" id="AccessToListFiles" *ngIf="DisplayListOfObjects===true">
     
-        <div class="specialDiv" id="AccessToListFiles">
-            <span class="objectHeader">LIST OF OBJECTS STORED IN THE CLOUD</span>
+        
+            <div class="objectHeader">LIST OF OBJECTS STORED IN THE CLOUD</div>
             <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
                   (click)="RetrieveSelectedFile(ListObject)">  
                 <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
@@ -154,8 +154,7 @@
             <br><br>
             <button id='but_0' class="sizeButtons" style=' width:140px' (click)="CreateRecord()">Create new file</button>
             -->
-            <div class="specialDiv"> </div>
-        </div>
+        
     
     </div>
     <div *ngIf="DisplayListOfObjects===false" class="specialDiv">
@@ -163,7 +162,7 @@
             {{HTTP_Address}}
     </div>
 
-</div>
-<br><br><br>
+<br><br>
+
 
 </body>

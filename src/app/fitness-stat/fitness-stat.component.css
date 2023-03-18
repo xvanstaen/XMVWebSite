@@ -10,20 +10,12 @@ div{
 
 .BlueBorder{
   border: solid 2px blue;
+  width:98%;
 }
 
 .RedBorder{
   border: solid 2px red;
-}
-
-.BorderSetEven{
-  border: solid 3px blue;
-  width:100%;
-}
-
-.BorderSetOdd{
-  border: solid 3px red;
-  width:100%;
+  width:98%;
 }
 
 .labelActiv{
@@ -146,6 +138,7 @@ td{
   width:90%;
   height:10px;
   border:solid 0px blue;
+  
 }
 
 .blockBody{
