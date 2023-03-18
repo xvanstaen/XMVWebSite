@@ -526,12 +526,12 @@ GetRecord(event:string){
               error_handler => {
                 if (event==='data'){
                   this.EventHTTPReceived[0]=true;
-                  this.EventHTTPReceived[i]=true;
                   console.log('GetRecord() - error handler');
                   this.error_msg='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
                 } else if (event==='config'){
                   this.error_msg=''
                   this.ConfigExist=false;
+                  this.Google_Bucket_Name='xav_fitness'; 
                   this.EventHTTPReceived[1]=true;
                 }   
             
