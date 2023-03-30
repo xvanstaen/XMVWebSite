@@ -6,7 +6,114 @@ body{
 div{
   --margLeft: 10px;
   --LabWidth: 360px;
+  --textWidth: 160px;
+  --textMarLeft:16px;
+  --labWidthSean:80px;
+  --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+  --DropLeftPerf:calc( var(--margLeft) + var(--labWidthSean) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
 }
+
+
+#TheSports{
+  color: green;
+  background: white;
+  font-size: 30px;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: contents; 
+}
+
+
+.dropdown-content {
+  margin-top:0px;
+  position: absolute;
+  z-index: 1;
+  display: none;
+} 
+
+/* Links inside the dropdown */
+.dropdown-content span {
+  color: black;
+
+ /* 
+  width:180px;
+  height:40px;
+  margin-left:-190px;
+  margin-top:0px;
+
+ */
+  text-align:left;
+  text-decoration: none;
+  display: contents;
+
+}
+
+.dropdown-options{
+  padding-top:7px;
+  height:40px; 
+  width:220px;
+  font-size:14px;
+  padding-left:10px;
+}
+
+.dropdown-options-even{
+  background-color: white;
+}
+
+.dropdown-options-odd{
+  background-color: #dedcdc;
+}
+
+.dropdown-options-odd:hover{
+  background-color:rgb(197, 201, 217);
+  color:rgb(59, 22, 207);
+  font-weight:bold;
+}
+
+.dropdown-options-even:hover{
+  background-color:rgb(208, 210, 222);
+  color:rgb(59, 22, 207);
+}
+
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+  font-size:12px;
+  font-weight: bold;
+  margin-top:-20px;
+  margin-left:25px;
+
+  cursor: pointer;
+  background-color: cyan;
+  border: 2px solid red;
+
+  /*
+  background-color: #f1f1f1;
+  min-width: 70px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  
+  margin-left:-20px;
+  */
+}
+   
+.arrow_down{
+  margin-top:0px;
+ /*  display:table;
+ */
+  cursor: pointer;
+  margin-left:5px;
+  color:blue;
+ 
+  }
+
+.arrow_down_size{
+  font-size:28px;
+} 
+
 
 .BlueBorder{
   border: solid 2px blue;
@@ -18,13 +125,13 @@ div{
   width:98%;
 }
 
-.labelActiv{
+.labelSport{
   margin-left: var(--margLeft);
   width:var(--LabWidth);
   background-color: lightblue;
 }
 
-.labelBody{
+.labelActiv{
   margin-left: calc(var(--margLeft) * 2);
   width:calc(var(--LabWidth) - var(--margLeft));
   background-color: lightcyan;
@@ -40,7 +147,7 @@ div{
 
 .labelSean{
   margin-left: calc(var(--margLeft) * 4);
-  width:80px;
+  width:var(--labWidthSean);
   float:none;
   display:inline-block;
 }
@@ -66,11 +173,11 @@ div{
 }
 
 .inputText{
-  width:160px;
+  width:var(--textWidth,160px);
   height:30px;
   font-size:14px;
   background-color: lightgrey;
-  margin-left:6px;
+  margin-left:var(--textMarLeft,6px);
 }
 
 .inputText:hover{
@@ -355,11 +462,14 @@ font-size:18px;
 
       div{
         --margLeft: 10px;
-        --LabWidth: 160px;
+        --LabWidth: 120px;
+        --textWidth:80px;
+        --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+        --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
       }
 
       .inputText{
-        width:100px;
+        width:var(--textWidth,100px);
       }
 
       .labelDate{
@@ -370,13 +480,13 @@ font-size:18px;
         */
         width:80px;
         margin-left:calc(var(--LabWidth) + var(--margLeft) - 80px);
-        
+        padding-right: 10px;
         background-color: cyan;
         text-align: right;
       }
 
       .theDate{
-        width:100px;
+        width:var(--textWidth);
         margin-top:10px;
         margin-left:10px;
       }
@@ -386,13 +496,18 @@ font-size:18px;
         display:inline-block;
       }
 
-      .labelBody{
+      .labelActiv{
         margin-left: calc(var(--margLeft) * 2);
         width:calc(var(--LabWidth) - var(--margLeft));
       }
 
       .labelSean{
         margin-left: calc(var(--margLeft) * 3);
+      }
+      
+      .dropdown-options{
+        width:160px;
+        font-size:12px;
       }
       
       .objectHeader{

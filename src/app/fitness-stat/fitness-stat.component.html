@@ -16,24 +16,55 @@
 
 
 <br><br>
-<div  *ngFor="let TabActivity of NewConfigFitness.Activity; let i=index"  [ngClass]="{'RedBorder':  i % 2 !==0, 'BlueBorder':  i % 2 ===0}">
+<div id="theTop"></div>
+<div *ngFor="let theSport of NewPerformanceFitness.Sport; let i=index"  [ngClass]="{'RedBorder':  i % 2 !==0, 'BlueBorder':  i % 2 ===0}">
     <div>
         <span class="skipLine" ></span>
        
-        <label class="labelActiv">Activity</label>
-        <span *ngIf="NewConfigFitness.Activity.length>1">
-            <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Acti-{{i}}'>
+        <label class="labelSport">Sport</label>
+        <span *ngIf="NewPerformanceFitness.Sport.length>1">
+            <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Spor-{{i}}'>
                 delete 
             </mat-icon>
         </span>
-        <span *ngIf="NewConfigFitness.Activity.length===1">
+        <span *ngIf="NewPerformanceFitness.Sport.length===1">
             <span class="iconBuffer">&nbsp;</span>
         </span>
-        <input id="Acti-{{i}}" (input)="onInput($event)" class="inputText" type="text" value="{{NewConfigFitness.Activity[i].Activity_name}}" >
-        <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Acti-{{i}}'>
+       
+        <input id="Spor-{{i}}" (input)="onInput($event)" class="inputText" type="text" value="{{theSport.Sport_name}}" >
+      
+      <!-- DOES NOT WORK WELL WITH FIREFOX
+       <input list="TheSports" (input)="onInput($event)" id="lSpo-{{i}}" name="{{NewPerformanceFitness.Sport[i].Sport_name}}">
+ 
+       <datalist  id="TheSports"  >
+           <option [value]="">
+            <option class="DropDownList"  *ngFor="let sport of ListSports; let m=index;" [value]="sport" style="color:blue;">{{m}}-{{ListSports[m]}}
+    
+        </datalist>
+    -->
+        <span class="dropdown arrow_down">
+            <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('Sport')" >
+              arrow_drop_down
+            </mat-icon>
+
+<!-- Dropdown list for Sports is from the Config file (TabSport)      [style.margin-left.px]="calcPos"-->       
+                <div  *ngIf='detectArrow===true' class="dropdown-content"  style="margin-left:var(--DropLeft); margin-top:-30px;">
+                    <span *ngFor="let sport of MyConfigFitness.TabSport; let m=index;" >
+                        <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"  
+                        (click)="onInput($event)" id="lSpo-{{i}}" [value]="sport.name" >{{sport.name}}</li>
+                    
+                 
+                    </span>
+    
+                </div>
+              </span>
+        
+        <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Spor-{{i}}'>
             add_circle
         </mat-icon>  
     
+        
+<!-- Manage the date and call calendar if click on icon -->
     <span *ngIf="ErrorinputDate[i]!==''" style="margin-left:20px; color:red; font:12px;">{{ErrorinputDate[i]}}</span>
     <span class="skipLine">&nbsp;</span>    
     <label class="labelDate">Date</label>
@@ -54,39 +85,97 @@
         </div>
     
         <span class="skipLine">&nbsp;</span>
-        <span *ngFor="let TabBody of NewConfigFitness.Activity[i].exercise; let j=index">
-            <label class="labelBody">Body</label>
-            <span *ngIf="NewConfigFitness.Activity[i].exercise.length>1">
-                <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Body-{{i}}-{{j}}'>
+        <span *ngFor="let theActivity of NewPerformanceFitness.Sport[i].exercise; let j=index">
+            <label class="labelActiv">Activity</label>
+            <span *ngIf="NewPerformanceFitness.Sport[i].exercise.length>1">
+                <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Acti-{{i}}-{{j}}'>
                     delete 
                 </mat-icon>
             </span>
-            <span *ngIf="NewConfigFitness.Activity[i].exercise.length===1">
+            <span *ngIf="NewPerformanceFitness.Sport[i].exercise.length===1">
                 <span class="iconBuffer">&nbsp;</span>
             </span>
 
-            <input id="Body-{{i}}-{{j}}" (input)="onInput($event)" class="inputText" type="text" value="{{NewConfigFitness.Activity[i].exercise[j].Body_name}}">
-            <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Body-{{i}}-{{j}}'>
+            <input id="Acti-{{i}}-{{j}}" (input)="onInput($event)" class="inputText" type="text" value="{{theActivity.Activity_name}}">
+           
+            <span class="dropdown arrow_down">
+                <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('Activity')" >
+                  arrow_drop_down
+                </mat-icon>
+    
+        <!-- the dialogue box should include parameter that are related to this workout in MyConfigFitness.ActivityName and not in the MyConfigFitness.TabActivity
+        Correspondance Sport between NerPerformance and Config is provided by TabPerfConfig which is initialised by LinkPerfConfig() ==== MyConfigFitness.ListSport[TabPerfConfig[i]].Activity_name
+    -->        <div *ngIf="detectArrow===true && OpenDialogue[1]===true && TabPerfConfig[i]!== undefined" class="dropdown-content " style="margin-left:var(--DropLeft); margin-top:-30px;" >
+                    <span *ngFor="let activ of MyConfigFitness.ListSport[TabPerfConfig[i]].activityName; let m=index;" >
+                         <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"   
+                            (click)="onInput($event)" id="lAct-{{i}}-{{j}}" [value]="activ" >{{activ}}</li>
+                        
+                    </span>
+                </div> 
+                <div *ngIf="detectArrow===true && (OpenDialogue[1]===false || TabPerfConfig[i]=== undefined)" class="dropdown-content" style="margin-left:var(--DropLeft); margin-top:-30px;" >
+                    <span *ngFor="let activ of MyConfigFitness.TabActivity; let m=index;" >
+                         <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"   
+                            (click)="onInput($event)" id="lAct-{{i}}-{{j}}" [value]="activ.name" >{{activ.name}}</li>
+                        
+                    </span>
+                </div>
+            </span>
+           
+            <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Acti-{{i}}-{{j}}'>
                 add_circle
             </mat-icon>  
             <span class="skipLine">&nbsp;</span>
-            <span *ngFor="let TabExec of NewConfigFitness.Activity[i].exercise[j].BodyExercise; let k=index">
+
+
+            <span *ngFor="let TabExec of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise; let k=index">
                 <label class="labelExec">Exercise</label>
-                <span *ngIf="NewConfigFitness.Activity[i].exercise[j].BodyExercise.length>1">
+                <span *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise.length>1">
                     <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Exec-{{i}}-{{j}}-{{k}}'>
                         delete 
                     </mat-icon>
                 </span>
-                <span *ngIf="NewConfigFitness.Activity[i].exercise[j].BodyExercise.length===1">
+                <span *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise.length===1">
                     <span class="iconBuffer">&nbsp;</span>
                 </span>
-                <input id="Exec-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputText" type="text" value="{{NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].Exercise_name}}">
+
+                <!--unit used for the exercise (kg, sec, etc.)-->
+                <input id="Exec-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputText" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
+                <input id="uExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputText" style='width:50px;' type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">
+ 
+    <!-- the dialogue box should include parameter that are related to this workout in MyConfigFitness.ActivityUnits and not in the MyConfigFitness.TabUnits
+        Must check which Sport it relates to
+    -->              
+                <span class="dropdown arrow_down">
+                    <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('Exercise')" >
+                      arrow_drop_down
+                    </mat-icon>
+                    
+                    <div *ngIf="detectArrow===true && OpenDialogue[2]===true && TabPerfConfig[i]!== undefined" class="dropdown-content" style="margin-left:var(--DropLeft); margin-top:-30px;">
+                        <span *ngFor="let units of MyConfigFitness.ListSport[TabPerfConfig[i]].activityUnit; let m=index;" >
+                                <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"  
+                                (click)="onInput($event)" id="lExe-{{i}}-{{j}}-{{k}}" [value]="MyConfigFitness.ListSport[TabPerfConfig[i]].activityUnit[m]" >{{units}}</li>
+                            
+                         
+                        </span>
+            
+                    </div>
+                    <div *ngIf="detectArrow===true && (OpenDialogue[2]===false || TabPerfConfig[i]=== undefined)" class="dropdown-content" style="margin-left:var(--DropLeft); margin-top:-30px;">
+                        <span *ngFor="let units of MyConfigFitness.TabUnits; let m=index;" >
+                                <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"  
+                                (click)="onInput($event)" id="lExe-{{i}}-{{j}}-{{k}}" [value]="units.name" >{{units.name}}</li>
+                            
+                         
+                        </span>
+            
+                    </div>
+                </span> 
+
                 <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Exec-{{i}}-{{j}}-{{k}}'>
                     add_circle
                 </mat-icon>  
                 <span class="skipLine">&nbsp;</span>
-                <label class="labelSean">Seance(s)</label>
-                <span *ngFor="let Seance of NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].seance; let l=index">
+                <label *ngIf='NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance.length!==0' class="labelSean">Seance(s)</label>
+                <span *ngFor="let Seance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let l=index">
                     <span *ngIf="getScreenWidth<620 && l>0 && l % 3 ===0" class="skipLine">
                         &nbsp;
                     </span>
@@ -99,7 +188,7 @@
                     <label *ngIf="getScreenWidth>619  && l>0 && l % 5 ===0" class="labelSean">&nbsp;</label>
                     
                     
-                    <span *ngIf="NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].seance.length>1">
+                    <span *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance.length>1">
                         
                         <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Sean-{{i}}-{{j}}-{{k}}-{{l}}'>
                             delete 
@@ -108,12 +197,99 @@
                 
                     </span>
                     <input id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)" class="inputSean" type="text" value="{{Seance.nb}}">
-                    <span *ngIf="NewConfigFitness.Activity[i].exercise[j].BodyExercise[k].seance.length-1===l">
+                    <span *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance.length-1===l">
                         <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Sean-{{i}}-{{j}}-{{k}}-{{l}}'>
                             add_circle
                         </mat-icon>  
                     </span>
+                </span> <!-- end ngFor Seance-->
+
+                <!--=====  Result ======= -->
+            <span *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result!==undefined ">
+                
+                <span *ngFor="let Result of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result; let p=index">
+                    
+                    <span class="skipLine">&nbsp;</span>
+                    <span *ngIf="p!==0">
+                        <span class="labelSean">&nbsp;</span>
+                        
+                        
+                    </span>
+                    <label *ngIf="p===0" class="labelSean">Result
+                        
+                    </label>
+
+
+                    <span *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result.length>1">
+               
+
+                        <mat-icon  class="material-icons-outlined iconBin" (click)="delItem($event)" id='Resu-{{i}}-{{j}}-{{k}}-{{p}}'>
+                            delete 
+                        </mat-icon>
+                
+                    </span>
+                    <input id="tPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputText" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result[p].perf_type}}">
+                  
+
+                <span class="dropdown arrow_down">
+                        <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('Exercise')" >
+                          arrow_drop_down
+                        </mat-icon>   
+                    <div *ngIf="detectArrow===true && OpenDialogue[3]===true && TabPerfConfig[i]!== undefined" class="dropdown-content" style="margin-left:var(--DropLeftPerf); margin-top:-30px;">
+                        <span *ngFor="let perf of MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf; let m=index;" >
+                                <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"  
+                                (click)="onInputPerf($event)" id="ltPerf-{{i}}-{{j}}-{{k}}-{{p}}" [value]="MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf[m]" >{{perf}}</li>
+                            
+                         
+                        </span>
+            
+                    </div>
+                    <div *ngIf="detectArrow===true && (OpenDialogue[3]===false || TabPerfConfig[i]=== undefined)" class="dropdown-content" style="margin-left:var(--DropLeftPerf); margin-top:-30px;">
+                        <span *ngFor="let perfType of MyConfigFitness.TabPerfType; let m=index;" >
+                                <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"  
+                                (click)="onInputPerf($event)" id="ltPerf-{{i}}-{{j}}-{{k}}-{{p}}" [value]="perfType.name" >{{perfType.name}}</li>
+                            
+                         
+                        </span>
+            
+                    </div>
                 </span>
+
+                    <input id="vPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputSean" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result[p].perf}}">
+                    <input id="uPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputSean" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result[p].unit}}">
+<!-- Arrow for the unit of Result-->
+                <span class="dropdown arrow_down">
+                    <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('Exercise')" >
+                    arrow_drop_down
+                    </mat-icon>   
+                <div *ngIf="detectArrow===true && OpenDialogue[4]===true && TabPerfConfig[i]!== undefined" class="dropdown-content" style="margin-left:calc(var(--DropLeftPerf) + 30px); margin-top:-30px;">
+                    <span *ngFor="let perfUnit of MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerfUnit; let n=index;" >
+                            <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"  
+                            (click)="onInputPerf($event)" id="luPerf-{{i}}-{{j}}-{{k}}-{{p}}" [value]="MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerfUnit[n].unit" >{{perfUnit}}</li>
+                        
+                    
+                    </span>
+
+                </div>
+                <div *ngIf="detectArrow===true && (OpenDialogue[4]===false || TabPerfConfig[i]=== undefined)" class="dropdown-content" style="margin-left:calc(var(--DropLeftPerf) + 30px); margin-top:-30px;">
+                    <span *ngFor="let perfUnit of MyConfigFitness.TabPerfUnit; let n=index;" >
+                            <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"  
+                            (click)="onInputPerf($event)" id="luPerf-{{i}}-{{j}}-{{k}}-{{p}}" [value]="perfUnit.name" >{{perfUnit.name}}</li>
+                        
+                    
+                    </span>
+
+                </div>
+                </span>
+
+                    <span *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result.length-1===p">
+                        <mat-icon class="material-icons-outlined iconAdd" (click)="addItem($event)"  id='Resu-{{i}}-{{j}}-{{k}}-{{p}}'>
+                            add_circle
+                        </mat-icon>  
+                    </span>
+                    
+                </span> <!-- end ngFor Result-->
+            </span>
 <br><br>
             </span>
         </span>
@@ -140,8 +316,8 @@
         </span>
         <br><br>
     </div>
-
-    <div style="margin-top:10px;" id="AccessToListFiles" *ngIf="DisplayListOfObjects===true">
+    <div id="AccessToListFiles"></div>
+    <div style="margin-top:10px;"  *ngIf="DisplayListOfObjects===true">
     
         
             <div class="objectHeader">LIST OF OBJECTS STORED IN THE CLOUD</div>
@@ -163,6 +339,272 @@
     </div>
 
 <br><br>
+<!-- Manage the config file -->
+<div> <h1>MANAGE CONFIGURATION OF FITNESS</h1>
+    <div *ngFor=" let sports of MyConfigFitness.ListSport; let i=index">
 
+        <label class="labelSport">Sports</label> <br>
+        <span *ngIf="MyConfigFitness.ListSport.length>1"> 
+            <mat-icon  class="material-icons-outlined iconBin" (click)="delConfig($event)" id='dSpo-{{i}}'>
+                delete 
+            </mat-icon>
+        </span>
+        <input id='cSpo-{{i}}' (input)="onInputList($event)" class="inputText" type="text" value="{{MyConfigFitness.ListSport[i].sportName}}" > 
+        
+        <span class="dropdown arrow_down">
+            <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('lActivity')" >
+              arrow_drop_down
+            </mat-icon>
+            
+            <div *ngIf="detectArrow===true && OpenDialogue[6]===true" class="dropdown-content" style="margin-left:130px; margin-top:-30px;">
+                <span *ngFor="let selSport of MyConfigFitness.TabSport; let m=index;">
+                     <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"   
+                        (click)="onClickList($event)" id="lSport-{{i}}" [value]="selSport.name" >{{selSport.name}}</li>
+                    
+                </span>
+            </div>
+        </span>
+        
+        <span > 
+            <mat-icon class="material-icons-outlined iconAdd" (click)="addConfig($event)"  id='aSpo-{{i}}'>
+                add_circle
+            </mat-icon>  
+        </span>
+        <br><br>    
+        <label class="labelActiv"> List of activities</label>
+        <div *ngFor=" let Name of MyConfigFitness.ListSport[i].activityName; let k=index">
+            <span *ngIf="MyConfigFitness.ListSport[i].activityName.length>1"> 
+                <mat-icon  class="material-icons-outlined iconBin" (click)="delConfig($event)" id='dAct-{{i}}-{{k}}'>
+                    delete 
+                </mat-icon>
+            </span>
+            <input id='cAct-{{i}}-{{k}}' (input)="onInputList($event)" class="inputText" type="text" value="{{MyConfigFitness.ListSport[i].activityName[k]}}" > 
+            
+            <span class="dropdown arrow_down">
+                <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('lActivity')" >
+                  arrow_drop_down
+                </mat-icon>
+                
+                <div *ngIf="detectArrow===true && OpenDialogue[7]===true" class="dropdown-content" style="margin-left:130px; margin-top:-30px;">
+                    <span *ngFor="let activity of MyConfigFitness.TabActivity; let m=index;">
+                         <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"   
+                            (click)="onClickList($event)" id="lActivity-{{i}}-{{k}}" [value]="activity.name" >{{activity.name}}</li>
+                        
+                    </span>
+                </div>
+            </span>
+            
+            
+            <span *ngIf="MyConfigFitness.ListSport[i].activityName.length===k+1"> 
+                <mat-icon class="material-icons-outlined iconAdd" (click)="addConfig($event)"  id='aAct-{{i}}-{{k}}'>
+                    add_circle
+                </mat-icon>  
+            </span>
+
+        </div>
+        <br><br>
+        <label class="labelActiv"> List of units</label>
+        <div *ngFor=" let Unit of MyConfigFitness.ListSport[i].activityUnit; let k=index">
+            <span *ngIf="MyConfigFitness.ListSport[i].activityUnit.length>1"> 
+                <mat-icon  class="material-icons-outlined iconBin" (click)="delConfig($event)" id='dUniExer-{{i}}-{{k}}'>
+                    delete 
+                </mat-icon>
+            </span>
+            <input class="inputText" type="text" value="{{Unit}}" id='cUni-{{i}}-{{k}}' (input)="onInputList($event)"> 
+            
+            <span class="dropdown arrow_down">
+                <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('lUnit')" >
+                  arrow_drop_down
+                </mat-icon>
+                
+                <div *ngIf="detectArrow===true && OpenDialogue[8]===true" class="dropdown-content" style="margin-left:130px; margin-top:-30px;">
+                    <span *ngFor="let selUnit of MyConfigFitness.TabUnits; let m=index;">
+                         <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"   
+                            (click)="onClickList($event)" id="lUnit-{{i}}-{{k}}" [value]="selUnit.name" >{{selUnit.name}}</li>
+                        
+                    </span>
+                </div>
+            </span>
+            
+            <span *ngIf="MyConfigFitness.ListSport[i].activityUnit.length===k+1"> 
+                <mat-icon class="material-icons-outlined iconAdd" (click)="addConfig($event)"  id='aUni-{{i}}-{{k}}'>
+                    add_circle
+                </mat-icon>  
+            </span>
+
+        </div>
+<br><br>
+        <label  style="width:300px; background-color:cyan; margin-left:10px;"> List of Type Performance</label>
+        <div *ngFor=" let Perf of MyConfigFitness.ListSport[i].activityPerf; let k=index">
+            <span *ngIf="MyConfigFitness.ListSport[i].activityPerf.length>1"> 
+                <mat-icon  class="material-icons-outlined iconBin" (click)="delConfig($event)" id='dPerType-{{i}}-{{k}}'>
+                    delete 
+                </mat-icon>
+            </span>
+            <input class="inputText" type="text" value="{{Perf}}" id='cPerType-{{i}}-{{k}}' (input)="onInputList($event)"> 
+            <span class="dropdown arrow_down">
+                <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('lPerf')" >
+                  arrow_drop_down
+                </mat-icon>
+                
+                <div *ngIf="detectArrow===true && OpenDialogue[9]===true" class="dropdown-content" style="margin-left:130px; margin-top:-30px;">
+                    <span *ngFor="let selPerfType of MyConfigFitness.TabPerfType; let m=index;">
+                         <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"   
+                            (click)="onClickList($event)" id="lPerfType-{{i}}-{{k}}" [value]="selPerfType.name" >{{selPerfType.name}}</li>
+                        
+                    </span>
+                </div>
+            </span>
+            
+            <span *ngIf="MyConfigFitness.ListSport[i].activityPerf.length===k+1"> 
+                <mat-icon class="material-icons-outlined iconAdd" (click)="addConfig($event)"  id='aPerType-{{i}}-{{k}}'>
+                    add_circle
+                </mat-icon>  
+            </span>
+
+        </div>
+        <br><br>
+        <label  style="width:300px; background-color:cyan; margin-left:10px;"> List of Unit for Type Performance</label>
+        <div *ngFor=" let PerfUnit of MyConfigFitness.ListSport[i].activityPerfUnit; let k=index">
+            <span *ngIf="MyConfigFitness.ListSport[i].activityPerfUnit.length>1"> 
+                <mat-icon  class="material-icons-outlined iconBin" (click)="delConfig($event)" id='dPerUnit-{{i}}-{{k}}'>
+                    delete 
+                </mat-icon>
+            </span>
+            <input class="inputText" type="text" value="{{PerfUnit}}" id='cPerUnit-{{i}}-{{k}}' (input)="onInputList($event)"> 
+            <span class="dropdown arrow_down">
+                <mat-icon class="material-symbols-outlined arrow_down_size" (click)="onArrow('lPerf')" >
+                  arrow_drop_down
+                </mat-icon>
+                
+                <div *ngIf="detectArrow===true && OpenDialogue[10]===true" class="dropdown-content" style="margin-left:130px; margin-top:-30px;">
+                    <span *ngFor="let selPerfUnit of MyConfigFitness.TabPerfUnit; let m=index;">
+                         <li class="dropdown-options dropdown-options-even" style="list-style: none; list-style-type: none;"   
+                            (click)="onClickList($event)" id="lUnitPerf-{{i}}-{{k}}" [value]="selPerfUnit.name" >{{selPerfUnit.name}}</li>
+                        
+                    </span>
+                </div>
+            </span>
+            
+            <span *ngIf="MyConfigFitness.ListSport[i].activityPerfUnit.length===k+1"> 
+                <mat-icon class="material-icons-outlined iconAdd" (click)="addConfig($event)"  id='aPerUnit-{{i}}-{{k}}'>
+                    add_circle
+                </mat-icon>  
+            </span>
+
+        </div>
+        <br><br>
+    </div>
+    <span *ngIf="isConfigConfirmed===false">
+        <button id='but_1' class="sizeButtons" (click)="ConfirmConfig()"> Save</button>
+        <button id='but_2' class="sizeButtons" (click)="CancelConfig()"> Cancel</button>
+        <span style="font-size:16px; color:red; margin-left:30px;"  >
+           <br>{{message}}  
+        </span>
+    </span>
+
+    <span *ngIf="isConfigConfirmed===true">
+        <form  [formGroup]="SpecificForm" >
+            Please enter the name of the config file you want to save your data in :
+            <input type='text' formControlName="FileName" >
+            <br><br>
+            <button id='but_3' class="sizeButtons" (click)="SaveConfigFtiness()">Confirm</button>
+            <button id='but_4' class="sizeButtons" (click)="CancelConfig()"> Cancel</button>
+        </form>
+        
+    </span>
+    <br><br><br>
+
+
+<!-- Manage lists that are in ConfigFitness -->
+<h1>MANAGE SPECIFIC LISTS IN CONFIGURATION OF FITNESS</h1>
+    <label class="labelActiv"> List of sports</label>
+    <div *ngFor=" let lSpo of MyConfigFitness.TabSport; let i=index">
+        <span *ngIf="MyConfigFitness.TabSport.length>1"> 
+            <mat-icon  class="material-icons-outlined iconBin" (click)="delList($event)" id='dSpo-{{i}}}'>
+                delete 
+            </mat-icon>
+        </span>
+        <input class="inputText" type="text" [value]=" lSpo.name" id='inSport-{{i}}' (input)="onInputTab($event)">  
+        <span *ngIf="MyConfigFitness.TabSport.length===i+1"> 
+            <mat-icon class="material-icons-outlined iconAdd" (click)="addList($event)"  id='aSpo'>
+                add_circle
+            </mat-icon>  
+        </span>
+    </div>
+    <br>
+    <label class="labelActiv"> List of activities</label>
+    <div *ngFor=" let lAct of MyConfigFitness.TabActivity; let i=index">
+        <span *ngIf="MyConfigFitness.TabActivity.length>1"> 
+            <mat-icon  class="material-icons-outlined iconBin" (click)="delList($event)" id='dAct-{{i}}}'>
+                delete 
+            </mat-icon>
+        </span>
+        <input class="inputText" type="text" [value]="lAct.name" id='inAct-{{i}}' (input)="onInputTab($event)">  
+        <span *ngIf="MyConfigFitness.TabActivity.length===i+1">
+            <mat-icon class="material-icons-outlined iconAdd" (click)="addList($event)"  id='aAct'>
+                    add_circle
+            </mat-icon>  
+        </span>
+
+    </div>
+    <br><br>
+    <label class="labelActiv"> List of units</label>
+    <div *ngFor=" let lUni of MyConfigFitness.TabUnits; let i=index">
+        <span *ngIf="MyConfigFitness.TabUnits.length>1"> 
+            <mat-icon  class="material-icons-outlined iconBin" (click)="delList($event)" id='dUniExer-{{i}}}'>
+                delete 
+            </mat-icon>
+        </span>
+        <input class="inputText" type="text" value="{{lUni.name}}" id='inUnit-{{i}}' (input)="onInputTab($event)">  
+        <span *ngIf="MyConfigFitness.TabUnits.length===i+1"> 
+            <mat-icon class="material-icons-outlined iconAdd" (click)="addList($event)"  id='aUni'>
+                    add_circle
+            </mat-icon>  
+        </span>
+
+    </div>
+
+    <br><br>
+    <label  style="width:300px; background-color:cyan; margin-left:10px;"> List of Type Performance</label>
+    <div *ngFor=" let lPer of MyConfigFitness.TabPerfType; let i=index">
+        <span *ngIf="MyConfigFitness.TabPerfType.length>1"> 
+            <mat-icon  class="material-icons-outlined iconBin" (click)="delList($event)" id='dPer-{{i}}}'>
+                delete 
+            </mat-icon>
+        </span>
+        <span *ngIf="MyConfigFitness.TabPerfType.length===0"> 
+            <span  class=" iconBuffer" >&nbsp;&nbsp;&nbsp;</span>
+        </span>
+        <input class="inputText" type="text" value="{{lPer.name}}" id='inPerf-{{i}}' (input)="onInputTab($event)">  
+        <span *ngIf="MyConfigFitness.TabPerfType.length===i+1"> 
+            <mat-icon class="material-icons-outlined iconAdd" (click)="addList($event)"  id='aPer'>
+                    add_circle
+            </mat-icon>  
+        </span>
+
+    </div>
+    <br><br>
+    <label  style="width:300px; background-color:lightblue;  margin-left:10px;"> List of Unit for Type Performance</label>
+    <div *ngFor=" let lUniPerf of MyConfigFitness.TabPerfUnit; let i=index">
+        <span *ngIf="MyConfigFitness.TabPerfUnit.length>1"> 
+            <mat-icon  class="material-icons-outlined iconBin" (click)="delList($event)" id='dUnitPerf-{{i}}}'>
+                delete 
+            </mat-icon>
+        </span>
+        <span *ngIf="MyConfigFitness.TabPerfUnit.length===0"> 
+            <span  class=" iconBuffer" >&nbsp;&nbsp;&nbsp;</span>
+        </span>
+        <input class="inputText" type="text"   value="{{lUniPerf.name}}" id='inUnitPerf-{{i}}' (input)="onInputTab($event)">  
+        <span *ngIf="MyConfigFitness.TabPerfUnit.length===i+1"> 
+                <mat-icon class="material-icons-outlined iconAdd" (click)="addList($event)"  id='aUnitPerf'>
+                        add_circle
+                </mat-icon>  
+        </span>
+       
+
+    </div>
+
+</div>
 
 </body>
