@@ -36,13 +36,15 @@ export class ConfigFitness{
   lastname:string='';
   TabSport:Array<any>=[{name:''}];
   TabActivity:Array<any>=[{name:''}];
+  TabExercise:Array<any>=[{name:''}];
   TabUnits:Array<any>=[{name:''}];
   TabPerfType:Array<any>=[{name:''}];
   TabPerfUnit:Array<any>=[{name:''}];
   ListSport:Array<any>=[
   {
       sportName:'',         // workout, running,cycling etc.
-      activityName:[],  // shoulder, leg, intervals, abs
+      activityName:[],  // shoulder, leg, intervals, abs, cardio, insanity
+      activityExercise:[], //push up
       activityUnit:[],  // Weigtht (kg, lbs),  Time (sec, min, hr)
                         // Speed/Pace (km/h, min/km), Quantity 
       activityPerf:[],  // Avg Pace; Avg Moving Pace; Avg Speed; Avg Moving Speed; Total time; Total Moving time
@@ -53,6 +55,7 @@ export class ConfigFitness{
 export class ConfigSport{
   sportName:string='';         // workout, running,cycling etc.
   activityName:Array<string>=[];  // shoulder, leg, intervals, abs
+  activityExercise:Array<string>=[]; //push up
   activityUnit:Array<string>=[];  // Weigtht (kg, lbs),  Time (sec, min, hr)
   activityPerf:Array<string>=[];  // avg space
   activityPerfUnit:Array<string>=[];  // Distance (m, km), Speed (km/h), Quantity                 
@@ -357,13 +360,15 @@ TabPerfConfig:Array<number>=[];
 LinkPerfConfig(){
   var i=0;
   var j=0;
+ 
   this.TabPerfConfig.splice(0,this.TabPerfConfig.length);
-  this.TabPerfConfig[i]=j;
+  
   for (i=0; i<this.NewPerformanceFitness.Sport.length; i++){
       for (j=0; (j<this.MyConfigFitness.ListSport.length && this.NewPerformanceFitness.Sport[i].Sport_name !== this.MyConfigFitness.ListSport[j].sportName); j++){
       }
       if (j<this.MyConfigFitness.ListSport.length && this.NewPerformanceFitness.Sport[i].Sport_name === this.MyConfigFitness.ListSport[j].sportName){
         this.TabPerfConfig[i]=j;
+        
       }
   }
 }
@@ -379,7 +384,7 @@ prev_Dialogue:number=0;
 
 
 onArrow(event:string){
-  this.OpenDialogue[this.prev_Dialogue]=false;
+    this.OpenDialogue[this.prev_Dialogue]=false;
 
  
   if (  event.substring(0,5)==='Sport'){
@@ -397,6 +402,9 @@ onArrow(event:string){
   } else if (  event.substring(0,8)==='PerfUnit'){
     this.prev_Dialogue=4;
     this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,12)==='ExerciseName'){
+    this.prev_Dialogue=5;
+    this.OpenDialogue[this.prev_Dialogue]=true;
   } 
   
     else if (  event.substring(0,6)==='lSport'){
@@ -413,6 +421,9 @@ onArrow(event:string){
     this.OpenDialogue[this.prev_Dialogue]=true;
   } else if (  event.substring(0,9)==='lPerfUnit'){
     this.prev_Dialogue=10;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,9)==='lExercise'){
+    this.prev_Dialogue=11;
     this.OpenDialogue[this.prev_Dialogue]=true;
   } 
 }
@@ -435,7 +446,7 @@ onInput(event:any){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].Activity_name=event.target.textContent;
     
       // value of the exercise
-    } else if (event.target.id.substring(0,4)==='Exec'){
+    } else if (event.target.id.substring(0,4)==='nExe'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Exercise_name=event.target.value;
     
       // unit of the value of the exercise
@@ -443,7 +454,11 @@ onInput(event:any){
         this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Exercise_unit=event.target.value;
     
       // unit of the value of the exercise from the list
-    } else if (event.target.id.substring(0,4)==='lExe'){
+    } else if (event.target.id.substring(0,8)==='lExeName'){
+      this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Exercise_name=event.target.textContent;
+      
+      // unit of the value of the exercise from the list
+    } else if (event.target.id.substring(0,8)==='lExeUnit'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Exercise_unit=event.target.textContent;
       
       // number of sessions (seances)
@@ -488,6 +503,8 @@ onInputList(event:any){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].sportName=event.target.value;
   } else if (event.target.id.substring(0,4)==='cAct'){ // input activity (e.g intervals)
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName[this.TabOfId[1]]=event.target.value;
+  } else if (event.target.id.substring(0,4)==='cExe'){ // input activity (e.g intervals)
+    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise[this.TabOfId[1]]=event.target.value;
   } else if (event.target.id.substring(0,4)==='cUni'){ // input unit (e.g. kg, km/h)
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit[this.TabOfId[1]]=event.target.value;
   } else if (event.target.id.substring(0,8)==='cPerType'){ // input type of performance (e.g avg speed)
@@ -508,7 +525,9 @@ onInputTab(event:any){
     this.MyConfigFitness.TabSport[this.TabOfId[0]].name=event.target.value;
   } else if (event.target.id.substring(0,5)==='inAct'){
     this.MyConfigFitness.TabActivity[this.TabOfId[0]].name=event.target.value;
-  } else if (event.target.id.substring(0,10)==='inUnitPerf'){
+  } else if (event.target.id.substring(0,5)==='inExe'){
+    this.MyConfigFitness.TabExercise[this.TabOfId[0]].name=event.target.value;
+  }else if (event.target.id.substring(0,10)==='inUnitPerf'){
     this.MyConfigFitness.TabPerfUnit[this.TabOfId[0]].name=event.target.value;
   } else if (event.target.id.substring(0,6)==='inUnit'){
     this.MyConfigFitness.TabUnits[this.TabOfId[0]].name=event.target.value;
@@ -527,7 +546,9 @@ onClickList(event:any){
     this.MyConfigFitness.ListSport[this.TabOfId[1]].sportName=event.target.textContent;
   } else if (event.target.id.substring(0,9)==='lActivity'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName[this.TabOfId[1]]=event.target.textContent;
-  }  else if (event.target.id.substring(0,9)==='lPerfType'){
+  }  else if (event.target.id.substring(0,9)==='lExercise'){
+    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise[this.TabOfId[1]]=event.target.textContent;
+  } else if (event.target.id.substring(0,9)==='lPerfType'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerf[this.TabOfId[1]]=event.target.textContent;
   } else if (event.target.id.substring(0,9)==='lUnitPerf'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit[this.TabOfId[1]]=event.target.textContent;
@@ -646,13 +667,17 @@ addConfig(event:any){
     const l=this.MyConfigFitness.ListSport.length-1;
     this.MyConfigFitness.ListSport[l].sportName='';
     this.MyConfigFitness.ListSport[l].activityName.push('');
+    this.MyConfigFitness.ListSport[l].activityExercise.push('');
     this.MyConfigFitness.ListSport[l].activityUnit.push('');
     this.MyConfigFitness.ListSport[l].activityPerf.push('');
     this.MyConfigFitness.ListSport[l].activityPerfUnit.push('');
   } else if (event.target.id.substring(0,4)==='aAct'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName.push('');
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName.length-1]='';
-  } else if (event.target.id.substring(0,4)==='aUni'){
+  } else if (event.target.id.substring(0,4)==='aExe'){
+    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise.push('');
+    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise.length-1]='';
+  }else if (event.target.id.substring(0,4)==='aUni'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit.push('');
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit.length-1]='';
   }  else if (event.target.id.substring(0,8)==='aPerType'){
@@ -672,7 +697,9 @@ delConfig(event:any){
     this.MyConfigFitness.ListSport.splice(this.TabOfId[0],1);
   } else  if (event.target.id.substring(0,4)==='dAct'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName.splice(this.TabOfId[1],1);
-  } else  if (event.target.id.substring(0,8)==='dUniExer'){
+  } else  if (event.target.id.substring(0,4)==='dExe'){
+    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise.splice(this.TabOfId[1],1);
+  }else  if (event.target.id.substring(0,8)==='dUniExer'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit.splice(this.TabOfId[1],1);
   } else  if (event.target.id.substring(0,8)==='dPerType'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerf.splice(this.TabOfId[1],1);
@@ -689,7 +716,10 @@ addList(event:any){
   } else if (event.target.id.substring(0,4)==='aAct'){
     this.MyConfigFitness.TabActivity.push({name:''});
 
-  } else if (event.target.id.substring(0,4)==='aPer'){
+  } else if (event.target.id.substring(0,4)==='aExe'){
+    this.MyConfigFitness.TabExercise.push({name:''});
+
+  }else if (event.target.id.substring(0,4)==='aPer'){
     this.MyConfigFitness.TabPerfType.push({name:''});
 
   } else if (event.target.id.substring(0,9)==='aUnitPerf'){
@@ -709,7 +739,10 @@ delList(event:any){
   } else if (event.target.id.substring(0,4)==='dAct'){
     this.MyConfigFitness.TabActivity.splice(this.TabOfId[0],1);
 
-  } else if (event.target.id.substring(0,4)==='dPer'){
+  } else if (event.target.id.substring(0,4)==='dExe'){
+    this.MyConfigFitness.TabExercise.splice(this.TabOfId[0],1);
+
+  }else if (event.target.id.substring(0,4)==='dPer'){
     this.MyConfigFitness.TabPerfType.splice(this.TabOfId[0],1);
 
   } else if (event.target.id.substring(0,8)==='dUniExer'){
@@ -824,7 +857,7 @@ GetRecord(event:string){
                           }
                         }
                     }
-                    for (l=0; l<6; l++){ // l=5 not used yet
+                    for (l=0; l<6; l++){ 
                       this.OpenDialogue[l]=false;
                     }
 
@@ -852,6 +885,10 @@ GetRecord(event:string){
                       this.MyConfigFitness.TabActivity=this.theConfig.TabActivity;
                     } else {this.MyConfigFitness.TabActivity[0].name=''};
 
+                    if (this.theConfig.TabExercise!==undefined){
+                      this.MyConfigFitness.TabExercise=this.theConfig.TabExercise;
+                    } else {this.MyConfigFitness.TabExercise[0].name=''};
+
                     if (this.theConfig.TabPerfType[0].name!==undefined){
                       this.MyConfigFitness.TabPerfType=this.theConfig.TabPerfType;
                     } else {this.MyConfigFitness.TabPerfType[0].name=''};
@@ -869,13 +906,15 @@ GetRecord(event:string){
                         const TheSport=new ConfigSport;
                         this.MyConfigFitness.ListSport.push(TheSport);
                         const l=this.MyConfigFitness.ListSport.length-1;
-                        //this.MyConfigFitness.ListSport[l].sportName='';
-                        //this.MyConfigFitness.ListSport[l].activityName.push('');
-                        //this.MyConfigFitness.ListSport[l].activityUnit.push('');
-                        //this.MyConfigFitness.ListSport[l].activityPerf.push('');
-                        //this.MyConfigFitness.ListSport[l].activityPerfUnit.push('');
                       }
                       this.MyConfigFitness.ListSport[i].activityName=this.theConfig.ListSport[i].activityName;
+                      if (this.theConfig.ListSport[i].activityExercise!==undefined){
+                        if (this.theConfig.ListSport[i].activityExercise.length===0){
+                          this.MyConfigFitness.ListSport[i].activityExercise[0]='';
+                        } else {
+                          this.MyConfigFitness.ListSport[i].activityExercise=this.theConfig.ListSport[i].activityExercise;
+                        }
+                       } 
                       if (this.theConfig.ListSport[i].activityPerf!==undefined){
                             if (this.theConfig.ListSport[i].activityPerf.length===0){
                               this.MyConfigFitness.ListSport[i].activityPerf[0]='';
