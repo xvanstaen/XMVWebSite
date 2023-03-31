@@ -375,14 +375,52 @@ initOpenDialogue(){
   }
 }
 
-detectArrow:boolean=false;
+prev_Dialogue:number=0;
+
+
 onArrow(event:string){
-  this.detectArrow=true;  
+  this.OpenDialogue[this.prev_Dialogue]=false;
+
+ 
+  if (  event.substring(0,5)==='Sport'){
+    this.prev_Dialogue=0;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,8)==='Activity'){
+    this.prev_Dialogue=1;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,12)==='ExerciseUnit'){
+    this.prev_Dialogue=2;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,8)==='PerfType'){
+    this.prev_Dialogue=3;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,8)==='PerfUnit'){
+    this.prev_Dialogue=4;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } 
+  
+    else if (  event.substring(0,6)==='lSport'){
+    this.prev_Dialogue=6;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,9)==='lActivity'){
+    this.prev_Dialogue=7;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,5)==='lUnit'){
+    this.prev_Dialogue=8;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,9)==='lPerfType'){
+    this.prev_Dialogue=9;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.substring(0,9)==='lPerfUnit'){
+    this.prev_Dialogue=10;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } 
 }
 
 onInput(event:any){
   // This is only used for NewPerformanceFitness
-    this.detectArrow=false;
+    
+    this.OpenDialogue[this.prev_Dialogue]=false;
     this.findIds(event.target.id);
     //event.target.value;
     if (  event.target.id.substring(0,4)==='Spor'){
@@ -416,7 +454,8 @@ onInput(event:any){
 
   onInputPerf(event:any){
      // This is only used for NewPerformanceFitness
-     this.detectArrow=false;
+    
+     this.OpenDialogue[this.prev_Dialogue]=false;
      this.findIds(event.target.id);
       // for sports such as runnning/cycling, result of the performance with type of perf (e.g. avd speed), the value of the perforamnce and the unit of that value (e.g. km/h) 
     if (event.target.id.substring(0,5)==='tPerf'){
@@ -441,7 +480,8 @@ onInput(event:any){
 
 onInputList(event:any){
   // This is only used for myConfigFitness
-  this.detectArrow=false;
+  
+  this.OpenDialogue[this.prev_Dialogue]=false;
   this.findIds(event.target.id);
   // configuration
   if (event.target.id.substring(0,4)==='cSpo'){ // input sport (e.g. running)
@@ -459,7 +499,8 @@ onInputList(event:any){
 
 onInputTab(event:any){
     // This is only used for myConfigFitness
-    this.detectArrow=false;
+   
+    this.OpenDialogue[this.prev_Dialogue]=false;
     this.findIds(event.target.id);
     // ==== management of the tables
     // data coming from user input
@@ -477,7 +518,8 @@ onInputTab(event:any){
 }
 
 onClickList(event:any){
-  this.detectArrow=false;
+ 
+  this.OpenDialogue[this.prev_Dialogue]=false;
   this.findIds(event.target.id);
     // ==== management of the tables
     // data coming from dropdown list
@@ -496,6 +538,7 @@ onClickList(event:any){
 
 // date entered manually
 CheckDate(event:any){
+  this.OpenDialogue[this.prev_Dialogue]=false;
   const id =parseInt(event.target.id.substring(5)); 
 
   this.inputDate = event.target.value;
@@ -539,7 +582,7 @@ CheckDate(event:any){
 
 // Add and Delete items related to NewPerformanceFitness
 addItem(event:any){
-
+  this.OpenDialogue[this.prev_Dialogue]=false;
   this.findIds(event.target.id);
 
   if (event.target.id.substring(0,4)==='Spor'){
@@ -578,6 +621,7 @@ addItem(event:any){
 
 delItem(event:any){
   this.findIds(event.target.id);
+  this.OpenDialogue[this.prev_Dialogue]=false;
   if (event.target.id.substring(0,4)==='Spor'){
     this.NewPerformanceFitness.Sport.splice(this.TabOfId[0],1);
   } else  if (event.target.id.substring(0,4)==='Acti'){
@@ -594,6 +638,7 @@ delItem(event:any){
 
 // Add and Delete items related to ConfigFitness
 addConfig(event:any){
+  this.OpenDialogue[this.prev_Dialogue]=false;
   this.findIds(event.target.id);
   if (event.target.id.substring(0,4)==='aSpo'){
     const TheSport=new ConfigSport;
@@ -621,6 +666,7 @@ addConfig(event:any){
 }
 
 delConfig(event:any){
+  this.OpenDialogue[this.prev_Dialogue]=false;
   this.findIds(event.target.id);
   if (event.target.id.substring(0,4)==='dSpo'){
     this.MyConfigFitness.ListSport.splice(this.TabOfId[0],1);
@@ -636,6 +682,7 @@ delConfig(event:any){
 }
 
 addList(event:any){
+  this.OpenDialogue[this.prev_Dialogue]=false;
   if (event.target.id.substring(0,4)==='aSpo'){
     this.MyConfigFitness.TabSport.push({name:''});
 
@@ -654,6 +701,7 @@ addList(event:any){
 }
 
 delList(event:any){
+  this.OpenDialogue[this.prev_Dialogue]=false;
   this.findIds(event.target.id);
   if (event.target.id.substring(0,4)==='dSpo'){
     this.MyConfigFitness.TabSport.splice(this.TabOfId[0],1);
@@ -735,6 +783,7 @@ GetAllObjects(){
 theConfig=new ConfigFitness;
 GetRecord(event:string){
   // get object in Google Storage
+  this.OpenDialogue[this.prev_Dialogue]=false;
   var i=0;
   var j=0;
   var k=0;
@@ -776,7 +825,7 @@ GetRecord(event:string){
                         }
                     }
                     for (l=0; l<6; l++){ // l=5 not used yet
-                      this.OpenDialogue[l]=true;
+                      this.OpenDialogue[l]=false;
                     }
 
                   }
@@ -849,7 +898,7 @@ GetRecord(event:string){
 
                     this.ConfigExist=true;
                     for (l=6; l<11; l++){ // l=5 not used yet
-                      this.OpenDialogue[l]=true;
+                      this.OpenDialogue[l]=false;
                     }
                     
                     if (this.MyConfigFitness.TabSport[0].name===undefined || this.MyConfigFitness.TabSport.length===0){ 
@@ -874,6 +923,7 @@ GetRecord(event:string){
   }
 
 ConfirmSave(){
+  this.OpenDialogue[this.prev_Dialogue]=false;
   var i=0;
   
   for (i=0; i<this.ErrorinputDate.length && this.ErrorinputDate[i]===''; i++){
