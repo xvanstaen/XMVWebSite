@@ -1,20 +1,118 @@
 body{
   max-width: 1000px;
-  margin-left:10px;
+  margin-left:var(--margLeft);
 }
 
 div{
+  --iconWidth: 22px;
   --margLeft: 10px;
   --LabWidth: 360px;
   --textWidth: 160px;
   --textMarLeft:16px;
   --labWidthSean:80px;
+  --fieldHeight:30px;
   --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
   --DropLeftPerf:calc( var(--margLeft) + var(--labWidthSean) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
 }
 
+.theDiv{
+  /*
+  background-color:lightyellow;
+  */
+  height:40px;
+  display:block;
+  width:95%;
+  margin-top:0px;
+  float:left;
+  border:solid rgb(2, 2, 13) 0px;
+  margin-left:5px;
+}
 
-#TheSports{
+.GroundCyan{
+  background-color: cyan;
+}
+
+.GroundGrey{
+  background-color: lightgrey;
+}
+
+.topDiv{
+  /*
+  background-color:lightpink;
+  */
+  height:34px;
+  display:block;
+  float:left;
+  border:solid blue 0px;
+}
+
+.topDivwidth{
+  width:  calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 50px ) ;
+}
+
+.topDivExeOne{
+  width:  80px;
+  margin-left:30px;
+}
+
+.topDivExeTwo{
+  width:  calc( (calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 50px )) - 140px);
+}
+
+.labelSport{
+  margin-left: var(--margLeft);
+  width:var(--LabWidth);
+  /*
+  background-color: lightblue;
+  border:solid 2px red; 
+  */
+} 
+
+.labelActiv{
+  margin-left: calc(var(--margLeft) * 2);
+  width:calc(var(--LabWidth) - var(--margLeft));
+  /*
+  background-color: lightcyan;
+  */
+  float:none;
+}
+
+.labelExec{
+  margin-left: calc(var(--margLeft) * 3);
+  width:calc(var(--LabWidth) - calc( 2 * var(--margLeft)) - 120px);
+  /*
+  background-color: lightgreen;
+  */
+  float:none;
+}
+
+.labelSean{
+  margin-left: calc(var(--margLeft) * 4);
+  width:var(--labWidthSean);
+  float:none;
+}
+
+.labelList{
+  margin-left: 15px;
+  width:95%;
+  display:block;
+  border:solid blue 2px;
+  height: 30px;
+  text-align: center;
+  padding-top: 2px;
+  font-size: 16px;
+  background-color: cyan;
+}
+
+.skipLine{
+  margin-left:5px;
+  width:95%;
+  height:4px;
+  display:inline-block;
+  border:solid red 0px;
+ 
+}
+#TheSports{ /* NOT USED */
   color: green;
   background: white;
   font-size: 30px;
@@ -26,7 +124,6 @@ div{
   display: contents; 
 }
 
-
 .dropdown-content {
   margin-top:0px;
   position: absolute;
@@ -37,18 +134,9 @@ div{
 /* Links inside the dropdown */
 .dropdown-content span {
   color: black;
-
- /* 
-  width:180px;
-  height:40px;
-  margin-left:-190px;
-  margin-top:0px;
-
- */
   text-align:left;
   text-decoration: none;
   display: contents;
-
 }
 
 .dropdown-options{
@@ -77,7 +165,9 @@ div{
   background-color:rgb(208, 210, 222);
   color:rgb(59, 22, 207);
 }
-
+.force-scroll {
+  overflow-y: scroll;
+  }
 
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
@@ -90,30 +180,19 @@ div{
   cursor: pointer;
   background-color: cyan;
   border: 2px solid red;
-
-  /*
-  background-color: #f1f1f1;
-  min-width: 70px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  
-  margin-left:-20px;
-  */
 }
    
 .arrow_down{
-  margin-top:0px;
- /*  display:table;
- */
   cursor: pointer;
-  margin-left:5px;
   color:blue;
- 
-  }
+}
 
 .arrow_down_size{
+  margin-top:3px;
   font-size:28px;
+  margin-left:1px;
+  float:left;
 } 
-
 
 .BlueBorder{
   border: solid 2px blue;
@@ -122,49 +201,14 @@ div{
 
 .RedBorder{
   border: solid 2px red;
-  width:98%;
-}
-
-.labelSport{
-  margin-left: var(--margLeft);
-  width:var(--LabWidth);
-  background-color: lightblue;
-}
-
-.labelActiv{
-  margin-left: calc(var(--margLeft) * 2);
-  width:calc(var(--LabWidth) - var(--margLeft));
-  background-color: lightcyan;
-  float:none;
-}
-
-.labelExec{
-  margin-left: calc(var(--margLeft) * 3);
-  width:calc(var(--LabWidth) - calc( 2 * var(--margLeft)));
-  background-color: lightgreen;
-  float:none;
-}
-
-.labelSean{
-  margin-left: calc(var(--margLeft) * 4);
-  width:var(--labWidthSean);
-  float:none;
-  display:inline-block;
-}
-
-.skipLine{
-  width:100%;
-  height:2px;
-  display:inline-block;
-  
+  width:98%; 
 }
 
 .inputSean{
   margin-left: 10px;
   width:35px;
-  height:30px;
+  height:var(--fieldHeight);
   font-size:14px;
-
 }
 
 .inputSean:hover{
@@ -174,10 +218,11 @@ div{
 
 .inputText{
   width:var(--textWidth,160px);
-  height:30px;
+  height:var(--fieldHeight);
   font-size:14px;
   background-color: lightgrey;
-  margin-left:var(--textMarLeft,6px);
+  
+  float:right;
 }
 
 .inputText:hover{
@@ -187,36 +232,48 @@ div{
 }
 
 .labelDate{
-  width:50px;
-  color:blue;
   font-size:14px;
-  margin-left: 25px;
-  float:none;
+  margin-left: calc(var(--margLeft) * 2);
+  width:calc(var(--LabWidth) - var(--margLeft) );
+  /* 
+   65px icon calendar
+    background-color: cyan;  
+  */
+  height:var(--fieldHeight);
+  margin-top:0px; 
+  float:left; 
+  padding-top:8px;
+  text-align: right;
+  padding-right: 10px;
 }
 
-.theDate{
-  width:160px;
-  height:30px;
+.inputDate{
   font-size:14px;
+  font-weight: bold;
   background-color: lightcyan;
   color:blue;
+  width:100px; 
+  height:var(--fieldHeight);
+  /*vertical-align: middle;*/
+  float:right;
 }
+
 .theDateBuffer{
   width:1px;
   margin-top:10px;
 }
 
-.theDate:hover{
+.inputDate:hover{
   font-size:16px;
   background-color: lightgrey;
   color:red;
 }
 .posCalendar{
   /*
-  margin-left: 20px; 
-  margin-top:-10px;
-
+  
   */
+  margin-left: 10px; 
+  margin-top:-10px;
   float:none; 
   width:45px; 
   height:55px;
@@ -226,15 +283,16 @@ div{
   padding-top:13px;
   vertical-align: middle;
 }
+
 .posCalendar:hover{
  color:red;
 }
+
 td{
   width:35px;  
   padding-left:5px; 
   border:solid 0px red;
 }
-
 
 .specialDiv{
   position:relative; 
@@ -245,7 +303,6 @@ td{
   width:90%;
   height:10px;
   border:solid 0px blue;
-  
 }
 
 .blockBody{
@@ -257,7 +314,6 @@ td{
   width:90%;
   height:40px;
   background-color: lightblue;
-  
 }
 
 .selectbody{
@@ -286,18 +342,16 @@ td{
   width:90%;
   height:40px;
   max-width: 500px;
-  
 }
+
 .selectOptions{
   color:blue; 
   font-size: 18px; 
-  
   display:block; 
   border: solid 0px red;
   float:left;
   margin-left:10px;
 }
-
 
 .newOptions{
   color:blue; 
@@ -333,8 +387,9 @@ td{
   color:blue;
   padding-left:3px;
   padding-top:3px;
-  vertical-align: middle;
+  float:left;
   margin-left:10px;
+  margin-top:4px;
 }
 
 .iconBin{
@@ -346,7 +401,10 @@ td{
   padding-left:3px;
   padding-top:3px;
   margin-left:10px;
-  
+}
+
+.iconBinMrgLeft{
+  margin-left:18px;
 }
 
 .iconBin:hover{
@@ -356,7 +414,6 @@ td{
 .iconAdd:hover{
   background-color:grey; 
 }
-
 
 .even{
   color:blue;
@@ -396,7 +453,6 @@ padding-top:15px;
 padding-left:10px;
 }
 
-
 .object li {
 cursor: pointer;
 border-radius: 4px;
@@ -416,12 +472,10 @@ left: .1em;
 border: solid 1px black;
 }
 
-
 .object:hover{
 background-color: cyan;
 font-size:18px;  
 }
-
 
 .sizeButtons{
   width:100px;
@@ -437,7 +491,6 @@ font-size:18px;
 }
 
 .inputSession{
- 
   font-size:14px;
   margin-left:5px; 
   width:40px;
@@ -458,53 +511,88 @@ font-size:18px;
     @media only screen and (max-width: 1010px) {
       body{
         max-width: 620px;
+        font-size:10px;
       }
 
       div{
         --margLeft: 10px;
-        --LabWidth: 120px;
+        --LabWidth: 80px;
         --textWidth:80px;
         --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
         --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
       }
 
+      .topDivwidth{
+        width:  calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 70px ) ;
+      }
+
       .inputText{
-        width:var(--textWidth,100px);
+        width:var(--textWidth,80px);
+        font-size:10px;
+      }
+
+      .inputSean{
+        font-size:10px;
+      }
+
+      .inputSean:hover{
+        font-size:10px;
       }
 
       .labelDate{
-        /*
-        width: calc(var(--LabWidth) - var(--margLeft) + 38px);
-        margin-left: calc(var(--margLeft) * 2);
+        width:60px;
+        margin-left:calc(var(--LabWidth) + var(--margLeft) - 60px);
+        padding-right: 20px;
         text-align: right;
-        */
+        font-size: 10px;
+        font-weight: bold;
+      }
+
+      .inputDate{
         width:80px;
-        margin-left:calc(var(--LabWidth) + var(--margLeft) - 80px);
-        padding-right: 10px;
-        background-color: cyan;
-        text-align: right;
+        font-size:10px;
       }
 
-      .theDate{
-        width:var(--textWidth);
-        margin-top:10px;
-        margin-left:10px;
+      .inputDate:hover{
+        font-size:10px;
       }
 
-      .theDateBuffer{
-        width:27px;
-        display:inline-block;
-      }
 
       .labelActiv{
         margin-left: calc(var(--margLeft) * 2);
         width:calc(var(--LabWidth) - var(--margLeft));
       }
 
+      .labelExec{
+        margin-left: calc(var(--margLeft) * 3);
+        width:calc(var(--LabWidth) - calc( 2 * var(--margLeft)) - 1px);
+      }
+
       .labelSean{
         margin-left: calc(var(--margLeft) * 3);
+        width:calc(var(--LabWidth) - calc( 3 * var(--margLeft)) - 1px);
       }
       
+
+
+
+      .topDivwidth{
+        width:  calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 40px ) ;
+        
+      }
+      
+      
+      .topDivExeOne{
+        width:  40px;
+        margin-left:5px;
+      }
+      
+      
+      .topDivExeTwo{
+        width:  calc( (calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 50px )) - 10px);
+       
+      }
+
       .dropdown-options{
         width:160px;
         font-size:12px;
@@ -526,7 +614,7 @@ font-size:18px;
 
 
       .inputSession:hover{
-        font-size:16px;
+        font-size:12px;
 
       }
     }

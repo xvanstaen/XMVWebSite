@@ -25,9 +25,9 @@ import { LoginIdentif } from '../JsonServerClass';
 import {manage_input} from '../manageinput';
 import {eventoutput, thedateformat} from '../apt_code_name';
 
-import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
-import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
-import {AccessConfigService} from 'src/app/Services/access-config.service';
+import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
+import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 
 
 export class ConfigFitness{
@@ -219,6 +219,10 @@ List_exercise:Array<string>=[
 'legs', 'shoulders', 'chest', 'biceps', 'triceps (pull)', 'triceps (behind head)','push-up'
 ]
 
+prev_Dialogue:number=0;
+max_dialogue:number=20;
+TabPerfConfig:Array<number>=[];
+
 selectedIndex:number=0;
 
 getScreenWidth: any;
@@ -265,26 +269,26 @@ Error_OpenCalendar:string='close the calendar which is already open for another 
 onWindowResize() {
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
+    /*
     this.calcPos=Math.round(0.40 * this.getScreenWidth);
     if (this.getScreenWidth>1010){
       this.calcPos=446;
     } else {
       this.calcPos=180;
     }
-    
-    
+    */
   }
 
 ngOnInit(){
   this.getScreenWidth = window.innerWidth;
   this.getScreenHeight = window.innerHeight;
-
+  /*
   if (this.getScreenWidth>1010){
     this.calcPos=546;
   } else {
     this.calcPos=280;
   }
-
+  */
   this.DisplayCalendarOnly=true;
   this.DisplayCalendar=false;
   this.ref_format.length_day=2;
@@ -356,7 +360,6 @@ ngOnInit(){
   this.scroller.scrollToAnchor('targetTop');
   }
 
-TabPerfConfig:Array<number>=[];
 LinkPerfConfig(){
   var i=0;
   var j=0;
@@ -375,39 +378,46 @@ LinkPerfConfig(){
 
 initOpenDialogue(){
   var i=0;
-  for (i=0; i<12; i++){
+  for (i=0; i<this.max_dialogue; i++){
     this.OpenDialogue[i]=false;
   }
 }
 
-prev_Dialogue:number=0;
+
+
+theArrow(event:any){
+  this.OpenDialogue[this.prev_Dialogue]=false;
+
+  this.findIds(event.target.id);
+
+  if (  event.target.id.substring(0,5)==='Sport'){
+    this.prev_Dialogue=0;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.target.id.substring(0,8)==='Activity'){
+    this.prev_Dialogue=1;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.target.id.substring(0,12)==='ExerciseUnit'){
+    this.prev_Dialogue=2;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.target.id.substring(0,8)==='PerfType'){
+    this.prev_Dialogue=3;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.target.id.substring(0,8)==='PerfUnit'){
+    this.prev_Dialogue=4;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } else if (  event.target.id.substring(0,12)==='ExerciseName'){
+    this.prev_Dialogue=5;
+    this.OpenDialogue[this.prev_Dialogue]=true;
+  } 
+}
 
 
 onArrow(event:string){
     this.OpenDialogue[this.prev_Dialogue]=false;
 
- 
-  if (  event.substring(0,5)==='Sport'){
-    this.prev_Dialogue=0;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,8)==='Activity'){
-    this.prev_Dialogue=1;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,12)==='ExerciseUnit'){
-    this.prev_Dialogue=2;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,8)==='PerfType'){
-    this.prev_Dialogue=3;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,8)==='PerfUnit'){
-    this.prev_Dialogue=4;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,12)==='ExerciseName'){
-    this.prev_Dialogue=5;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } 
+
   
-    else if (  event.substring(0,6)==='lSport'){
+  if (  event.substring(0,6)==='lSport'){
     this.prev_Dialogue=6;
     this.OpenDialogue[this.prev_Dialogue]=true;
   } else if (  event.substring(0,9)==='lActivity'){
@@ -772,23 +782,17 @@ findIds(theId:string){
   i=0;
   for (j=0; j<TabDash.length-1; j++){
     this.TabOfId[i]=parseInt(theId.substring(TabDash[j],TabDash[j+1]-1));
-    this.TabOfId.push(0);
+    //this.TabOfId.push(0);
     i++;
   }
 }
 
-CreateRecord(){ // not used
-  this.ObjectIsRetrieved=true; 
-  this.message='';
-  this.error_msg='';
-  if (this.isSelectedDate===false){
-    this.SelectedDate(this.todayDate);
-  }
-}
 
 
 GetAllObjects(){
   // bucket name is ListOfObject.config
+  // this.scroller.scrollToAnchor('targetTopObjects');
+  this.scroller.scrollToAnchor('theTop');
   var i=0;
   this.error_msg='';
   this.HTTP_Address=this.Google_Bucket_Access_Root+ this.Google_Bucket_Name + "/o"  ;
@@ -803,7 +807,7 @@ GetAllObjects(){
                       }
                 }
                 this.DisplayListOfObjects=true;
-                this.scroller.scrollToAnchor('targetTopObjects');
+               
           },
           error_handler => {
                 console.log('RetrieveAllObjects() - error handler; HTTP='+this.HTTP_Address);
@@ -816,6 +820,7 @@ GetAllObjects(){
 theConfig=new ConfigFitness;
 GetRecord(event:string){
   // get object in Google Storage
+  this.scroller.scrollToAnchor('theTop');
   this.OpenDialogue[this.prev_Dialogue]=false;
   var i=0;
   var j=0;
@@ -848,17 +853,14 @@ GetRecord(event:string){
                     for (j=0; j<this.NewPerformanceFitness.Sport[i].exercise.length; j++){
                         for (k=0; k<this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise.length; k++){
                           if (this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result===undefined){
-                            this.ClassExec = new ClassExercise;
-                            this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k]=this.ClassExec;
-                            this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name=data.Sport[i].exercise[j].ActivityExercise[k].Exercise_name;
-                            this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit=data.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit;
-                            this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance=data.Sport[i].exercise[j].ActivityExercise[k].seance;
+                              this.ClassExec = new ClassExercise;
+                              this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k]=this.ClassExec;
+                              this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name=data.Sport[i].exercise[j].ActivityExercise[k].Exercise_name;
+                              this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit=data.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit;
+                              this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance=data.Sport[i].exercise[j].ActivityExercise[k].seance;
 
                           }
                         }
-                    }
-                    for (l=0; l<6; l++){ 
-                      this.OpenDialogue[l]=false;
                     }
 
                   }
@@ -902,43 +904,42 @@ GetRecord(event:string){
                     } else {this.MyConfigFitness.TabPerfUnit[0].name=''};
                     
                     for (i=0; i<this.theConfig.ListSport.length; i++){
-                      if (i>0){
-                        const TheSport=new ConfigSport;
-                        this.MyConfigFitness.ListSport.push(TheSport);
-                        const l=this.MyConfigFitness.ListSport.length-1;
-                      }
-                      this.MyConfigFitness.ListSport[i].activityName=this.theConfig.ListSport[i].activityName;
-                      if (this.theConfig.ListSport[i].activityExercise!==undefined){
-                        if (this.theConfig.ListSport[i].activityExercise.length===0){
-                          this.MyConfigFitness.ListSport[i].activityExercise[0]='';
-                        } else {
-                          this.MyConfigFitness.ListSport[i].activityExercise=this.theConfig.ListSport[i].activityExercise;
-                        }
-                       } 
-                      if (this.theConfig.ListSport[i].activityPerf!==undefined){
-                            if (this.theConfig.ListSport[i].activityPerf.length===0){
-                              this.MyConfigFitness.ListSport[i].activityPerf[0]='';
-                            } else {
-                              this.MyConfigFitness.ListSport[i].activityPerf=this.theConfig.ListSport[i].activityPerf;
+                            if (i>0){
+                              const TheSport=new ConfigSport;
+                              this.MyConfigFitness.ListSport.push(TheSport);
+                              const l=this.MyConfigFitness.ListSport.length-1;
                             }
-                      } else {this.MyConfigFitness.ListSport[i].activityPerf[0]=''};
-                      
-                      if (this.theConfig.ListSport[i].activityPerfUnit!==undefined){
-                            if (this.theConfig.ListSport[i].activityPerfUnit.length===0){
-                              this.MyConfigFitness.ListSport[i].activityPerfUnit[0]='';
-                            } else {
-                              this.MyConfigFitness.ListSport[i].activityPerfUnit=this.theConfig.ListSport[i].activityPerfUnit;
-                            }
-                      } else {this.MyConfigFitness.ListSport[i].activityPerfUnit[0]=''};
 
-                      this.MyConfigFitness.ListSport[i].activityUnit=this.theConfig.ListSport[i].activityUnit;
-                      this.MyConfigFitness.ListSport[i].sportName=this.theConfig.ListSport[i].sportName;
+                            this.MyConfigFitness.ListSport[i].activityName=this.theConfig.ListSport[i].activityName;
+                            
+                            if (this.theConfig.ListSport[i].activityExercise!==undefined){
+                              if (this.theConfig.ListSport[i].activityExercise.length===0){
+                                this.MyConfigFitness.ListSport[i].activityExercise[0]='';
+                              } else {
+                                this.MyConfigFitness.ListSport[i].activityExercise=this.theConfig.ListSport[i].activityExercise;
+                              }
+                            } 
+                            if (this.theConfig.ListSport[i].activityPerf!==undefined){
+                                  if (this.theConfig.ListSport[i].activityPerf.length===0){
+                                    this.MyConfigFitness.ListSport[i].activityPerf[0]='';
+                                  } else {
+                                    this.MyConfigFitness.ListSport[i].activityPerf=this.theConfig.ListSport[i].activityPerf;
+                                  }
+                            } else {this.MyConfigFitness.ListSport[i].activityPerf[0]=''};
+                            
+                            if (this.theConfig.ListSport[i].activityPerfUnit!==undefined){
+                                  if (this.theConfig.ListSport[i].activityPerfUnit.length===0){
+                                    this.MyConfigFitness.ListSport[i].activityPerfUnit[0]='';
+                                  } else {
+                                    this.MyConfigFitness.ListSport[i].activityPerfUnit=this.theConfig.ListSport[i].activityPerfUnit;
+                                  }
+                            } else {this.MyConfigFitness.ListSport[i].activityPerfUnit[0]=''};
+
+                            this.MyConfigFitness.ListSport[i].activityUnit=this.theConfig.ListSport[i].activityUnit;
+                            this.MyConfigFitness.ListSport[i].sportName=this.theConfig.ListSport[i].sportName;
                     }
 
                     this.ConfigExist=true;
-                    for (l=6; l<11; l++){ // l=5 not used yet
-                      this.OpenDialogue[l]=false;
-                    }
                     
                     if (this.MyConfigFitness.TabSport[0].name===undefined || this.MyConfigFitness.TabSport.length===0){ 
                         this.InitTabConfig();
@@ -977,10 +978,6 @@ ConfirmSave(){
 
 SaveNewRecord(){
   // create object in Google Storage
-
-  // ==================== TO IMPLEMENT
-  // VALIDATE CONSISTENCY WITH CONFIGFITNESS
-  // IF ELEMENT FROM NEWPERFORMANCEFITNESS DOES NOT EXIST THEN CREATE IT IN CONFIG FITNESS
 
   this.IsSaveConfirmed = false;
   this.message='';

@@ -5,7 +5,7 @@ import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
 import { configServer } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
 
-import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
+import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 import { Observable } from 'rxjs';
 
 @Injectable({

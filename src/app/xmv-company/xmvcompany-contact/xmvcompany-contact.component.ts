@@ -3,8 +3,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 
-import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
+import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 
 import { configServer } from 'src/app/JsonServerClass';
 

@@ -11,8 +11,8 @@ import { configServer } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
 
-import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
+import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 
 @Component({
   selector: 'app-login',
@@ -128,7 +128,15 @@ export class LoginComponent {
       //this.Decrypt='LIM!12monica#Chin';
       //this.onCrypt("Encrypt");
       //this.identification.psw=this.Encrypt;
-    
+      /*
+      this.identification.UserId='Fitness';
+      this.Crypto_Key=this.identification.key;
+      this.Crypto_Method=this.identification.method;
+      this.Decrypt='A';
+      this.onCrypt("Encrypt");
+      this.identification.psw=this.Encrypt;
+      this.ValidateData();
+      */
       // ===================================================
 
 
@@ -143,8 +151,6 @@ export class LoginComponent {
       } else {
           this.myForm.controls['action'].setValue("");
         }
-
-
 
   }
 

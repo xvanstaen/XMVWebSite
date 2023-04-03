@@ -20,7 +20,6 @@
     background-color:cyan;
     color:black;
     font-weight:bold;
-
   }
   
   .dropdown-text{
@@ -28,11 +27,11 @@
     margin-top:0px; 
     font-size:18px;
     color:black;
-    display:block;
-    text-align: center;
+    align-items: center;
+    padding-left: 2px;
+    vertical-align: middle;
     display:inline-flex;
   }
-
 
  .labelbucket{
     font-family: 'Roboto';
@@ -54,11 +53,9 @@
     height:40px;
     color:blue;
     font-size:16px;  
-    
     display:inline-flex;
     padding-left:15px;
     padding-top:10px;
-    
  }
 
  .FieldText{
@@ -75,7 +72,6 @@
   background-color: lightskyblue;
 }
 
-
 .bucketA{
   font-family: 'Roboto';
   width:15%;
@@ -84,12 +80,10 @@
   display:block;
   float:left;
   font-size:16px;  
-  
   padding-top:10px;
-  padding-left:10px;
-
-  
+  padding-left:10px;  
 }
+
 .FieldTextA{
   font-family: 'Roboto';
   width:35%;
@@ -105,16 +99,13 @@
 }
 
 .FieldTextA:hover{
-
   color:blue;
   background-color: cyan;
   
 }
 .FieldText:hover{
-
   color:blue;
   background-color: cyan;
-  
 }
 
 .even{
@@ -132,16 +123,12 @@
 /*** ====================================== ***/
  @media only screen and (max-width: 790px) {
   .dropdown-text{
-    font-size:12px;
-    align-items: center;
-    display:inline-flex;
-    vertical-align: middle;
+    font-size:12px;   
   }
   .dropdown-options{
     height:40px; 
     width:700px;
     margin-left:10px;
-    display:inline-flex;
   }
 
 .labelbucket{

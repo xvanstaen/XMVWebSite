@@ -8,8 +8,8 @@ import { LoginIdentif } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
 
-import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
+import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 
 
 @Component({

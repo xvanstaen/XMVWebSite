@@ -26,6 +26,10 @@ import { ListBucketContentComponent}  from './Special-Services/ListBucketContent
 import { ChangeSaveFileNameComponent}  from './Special-Services/ChangeSaveFileName.component';
 import { OneCalendarComponent } from './one-calendar/one-calendar.component';
 import { FitnessStatComponent } from './fitness-stat/fitness-stat.component';
+import {ManageGoogleService} from 'src/app/CloudServices/ManageGoogle.service';
+import {ManageMangoDBService} from 'src/app/CloudServices/ManageMangoDB.service';
+import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -61,7 +65,7 @@ import { FitnessStatComponent } from './fitness-stat/fitness-stat.component';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
-    DatePipe, 
+    DatePipe, AccessConfigService, ManageGoogleService, ManageMangoDBService,  
   ],
   bootstrap: [AppComponent]
 })

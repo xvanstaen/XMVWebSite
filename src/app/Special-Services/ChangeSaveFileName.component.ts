@@ -6,8 +6,8 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 
-import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
+import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 
 import { OneBucketInfo } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';

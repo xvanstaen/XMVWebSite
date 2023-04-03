@@ -18,8 +18,8 @@ import { LoginIdentif } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 // EventCommentStructure
 
-import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
+import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 
 @Component({
   selector: 'app-Event-27AUG2022',
