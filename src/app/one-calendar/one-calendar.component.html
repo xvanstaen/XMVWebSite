@@ -1,9 +1,9 @@
 
     
 
-<div *ngIf="DisplayCalendarOnly===false">
+<div *ngIf="DisplayCalendarOnly===false"> <!-- the input field must be displayed to allow user to enter manually the date and/or display calendar -->
     <div class='placeh'> Format ({{placeholderOW}}) </div>
-<br>
+    <br>
     <div  >
             <input   class='maininput' *ngIf='initObj.valid_input_OW!=="Y"; else inputOW'
              (input)="OnInputOW($event)" [value]="initObj.input_OW"
@@ -15,32 +15,38 @@
              type='text' >   
     </ng-template>
 
-
-
     <mat-icon  class="material-icons-outlined posCalendar" (click)="ActionCalendar()" >
         calendar_month
     </mat-icon>
 
-
+                <!-- MUST REVIEW THE MANAGEMENT OF TEH ERRORS AS THE OUTCOME OF THE TESTS ARE THE SAME-->
     <div class="errorboxOW" *ngIf ='type_error!==3 && type_error<20; else error2' >
             {{error_msg}}  
-    
     </div>
-    <ng-template #error2 >   <span class="errorboxOW">  
-    </span>  </ng-template>
+    <ng-template #error2 >   
+        <span class="errorboxOW">  </span>  
+    </ng-template>
 
     <div class="errorboxOW" *ngIf ='type_error!==3 && type_error>=20; else error3' >
             {{error_msg}}  
-    
     </div>
     <ng-template  #error3 >   
         <span class="errorboxOW">  </span>    
     </ng-template>
-
+    <div class="errorbox">
+        <span  *ngIf="type_error===3"  >
+                {{error_msg}}
+        </span>
+    </div>
 </div>
-<div *ngIf='DisplayCalendar===true || DisplayCalendarOnly===true'>
+
+
+<div *ngIf='DisplayCalendar===true || DisplayCalendarOnly===true'> <!-- display the calendar only - input field is managedd by the calling component -->
     <div class="bigblock ">  
        
+        <div   class="theError">
+                {{error_msg}}
+        </div>
         <button  class="cancelbutton "(click)="OnCancel()"> 
             X
         </button>
@@ -50,7 +56,7 @@
                 Confirm 
             </button>
         </div>
-    <br> 
+        <br> 
         <div class="posArrows">
             <button class=' leftarrow' (click)="OnArrowLeft('L')" >
                     <mat-icon class="material-icons-outlined">
@@ -118,14 +124,11 @@
                 </ng-template>
             </div>
         </div>
-    </div>
+        <div style="height:20px;">&nbsp;</div>
+    </div> <!-- end of big block -->
  
  
-    <div class="errorbox">
-        <span  *ngIf="type_error===3"  >
-                {{error_msg}}
-        </span>
-    </div>
+   
     
 </div>
 

@@ -247,6 +247,9 @@ export class OneCalendarComponent implements OnInit {
           this.initObj.datePipe_OW.setFullYear(this.initObj.yearnb);
           this.initObj.input_OW = formatDate(this.initObj.datePipe_OW,this.ref_format.MyDateFormat,this.locale).toString();
           this.initObj=generate_calendar("NO", "",this.initObj);   
+          this.DaySelection.day=this.initObj.daynb;
+          this.DaySelection.month=this.initObj.monthnb;
+          this.DaySelection.year=this.initObj.yearnb;
         }
 
     for (this.i=0; this.i<7; this.i++) {
@@ -365,7 +368,7 @@ export class OneCalendarComponent implements OnInit {
         && this.initObj.display_monthnb===this.initObj.maxDate_month
         &&  this.initObj.display_daynb< this.initObj.minDate_day))
       {
-        this.error_msg='cannot go before' + this.datePipeMin;
+        this.error_msg='date cannot be before ' + this.datePipeMin;
       } else {
               this.error_msg='';
               this.initObj.yearnb=this.initObj.display_yearnb;
@@ -378,7 +381,7 @@ export class OneCalendarComponent implements OnInit {
             this.initObj.display_monthnb===this.initObj.maxDate_month
             &&  this.initObj.display_daynb>this.initObj.maxDate_day))
           {
-            this.error_msg='cannot go beyond' + this.datePipeMax;
+            this.error_msg='date cannot be beyond ' + this.datePipeMax;
           } else {
                this.error_msg='';
                this.initObj.yearnb=this.initObj.display_yearnb;
@@ -395,30 +398,34 @@ export class OneCalendarComponent implements OnInit {
 
 
   onSelectCalendOne(array_month:DaysOfMonths){
-    this.type_error=0; 
-    this.error_msg='';
-    this.initObj.valid_input_OW="N";
-    this.SelectedDay=array_month;
-    const noCheck=true;
-    this.IsDateSelected=false;
-    this.initObj=selectDay(1, this.SelectedDay, this.datePipe, this.ref_format.MyDateFormat,this.locale,this.initObj, this.datePipeMax, this.datePipeToday, noCheck);
-    this.DaySelection.day=this.initObj.daynb;
-    this.DaySelection.month=this.initObj.monthnb;
-    this.DaySelection.year=this.initObj.yearnb;
-    this.type_error=this.initObj.type_error;
-    this.error_msg=this.initObj.error_msg;
-    this.initObj.display_daynb=this.initObj.daynb;
-    this.initObj.display_monthnb=this.initObj.monthnb;
-    this.initObj.display_yearnb=this.initObj.yearnb;
-    if (this.error_msg===''){
-      this.MinMaxTest('Min');
-      if (this.error_msg===''){
-        this.MinMaxTest('Max');
-      }
-      if (this.error_msg===''){
-          this.IsDateSelected=true;
-     }
-    }
+    if (array_month.DoMonth===0){
+        this.error_msg='please select a date';
+    } else {
+        this.type_error=0; 
+        this.error_msg='';
+        this.initObj.valid_input_OW="N";
+        this.SelectedDay=array_month;
+        const noCheck=true;
+        this.IsDateSelected=false;
+        this.initObj=selectDay(1, this.SelectedDay, this.datePipe, this.ref_format.MyDateFormat,this.locale,this.initObj, this.datePipeMax, this.datePipeToday, noCheck);
+        this.DaySelection.day=this.initObj.daynb;
+        this.DaySelection.month=this.initObj.monthnb;
+        this.DaySelection.year=this.initObj.yearnb;
+        this.type_error=this.initObj.type_error;
+        this.error_msg=this.initObj.error_msg;
+        this.initObj.display_daynb=this.initObj.daynb;
+        this.initObj.display_monthnb=this.initObj.monthnb;
+        this.initObj.display_yearnb=this.initObj.yearnb;
+        if (this.error_msg===''){
+          this.MinMaxTest('Min');
+          if (this.error_msg===''){
+            this.MinMaxTest('Max');
+          }
+          if (this.error_msg===''){
+              this.IsDateSelected=true;
+        }
+        }
+   }
   } // end on SelectCalendOne()
 
   

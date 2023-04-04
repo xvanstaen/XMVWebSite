@@ -215,9 +215,6 @@ RefFormatWeight=new FormatWeight;
 kg_lbs:number=2.20462;
 lbs_kg:number=0.453592;
 
-List_exercise:Array<string>=[
-'legs', 'shoulders', 'chest', 'biceps', 'triceps (pull)', 'triceps (behind head)','push-up'
-]
 
 prev_Dialogue:number=0;
 max_dialogue:number=20;
@@ -413,10 +410,7 @@ theArrow(event:any){
 
 
 onArrow(event:string){
-    this.OpenDialogue[this.prev_Dialogue]=false;
-
-
-  
+  this.OpenDialogue[this.prev_Dialogue]=false;
   if (  event.substring(0,6)==='lSport'){
     this.prev_Dialogue=6;
     this.OpenDialogue[this.prev_Dialogue]=true;
@@ -553,7 +547,7 @@ onClickList(event:any){
     // ==== management of the tables
     // data coming from dropdown list
   if (event.target.id.substring(0,6)==='lSport'){ 
-    this.MyConfigFitness.ListSport[this.TabOfId[1]].sportName=event.target.textContent;
+    this.MyConfigFitness.ListSport[this.TabOfId[0]].sportName=event.target.textContent;
   } else if (event.target.id.substring(0,9)==='lActivity'){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName[this.TabOfId[1]]=event.target.textContent;
   }  else if (event.target.id.substring(0,9)==='lExercise'){
@@ -957,6 +951,17 @@ GetRecord(event:string){
                       this.error_msg='';
                       this.ConfigExist=false;
                       this.EventHTTPReceived[1]=true;
+                      this.MyConfigFitness=new ConfigFitness;
+                      this.MyConfigFitness.user_id=this.identification.UserId;
+                      this.MyConfigFitness.firstname=this.identification.firstname;
+                      this.MyConfigFitness.lastname=this.identification.surname;
+                      this.MyConfigFitness.ListSport[0].sportName='';
+                      this.MyConfigFitness.ListSport[0].activityName[0]='';
+                      this.MyConfigFitness.ListSport[0].activityExercise[0]='';
+                      this.MyConfigFitness.ListSport[0].activityUnit[0]='';
+                      this.MyConfigFitness.ListSport[0].activityPerf[0]='';
+                      this.MyConfigFitness.ListSport[0].activityPerfUnit[0]='';
+                      this.InitTabConfig();
                   }   
             } 
       )
@@ -1187,53 +1192,51 @@ ActionCalendar(event:any){
 }
 
 InitTabConfig(){
+  const List_Activity:Array<string>=[
+  'Legs', 'Shoulders', 'Chest', 'Biceps', 'Triceps (pull)', 'Triceps (behind head)','Push-up'
+  ];
+  const List_Sport:Array<string>=[
+    'Workouts', 'Running', 'Cycling', 'Insanity', 'Cardio-ABS'
+  ];
+  const List_Exercise:Array<string>=[
+    'Suicide Jumps', 'Jump Squat', 'Squat Lunge', 'Push-up', 'Oblique Rotation', 'High Plank', 
+    'Low Plank Knee to Elbow', 'Low Plank Knee to Elbow'
+  ];
+  const List_Units:Array<string>=[
+    'kg', 'lbs', 
+  ];
+  const List_Perf:Array<string>=[
+    'Avg Pace', 'Avg Speed', 'Avg Moving Speed', 'Total Time', 'Moving Time', 'Distance'
+  ];
+  const List_PerfUnits:Array<string>=[
+    'km/h', 'min/km', 'hh:mn:ss', 'hh:mn', "mn:sec" 
+  ];
+
   var i=0;
-  this.MyConfigFitness.TabSport.push({name:''}); 
-  this.MyConfigFitness.TabSport[i]='Workout'; i++;
-  this.MyConfigFitness.TabSport.push({name:''}); 
-  this.MyConfigFitness.TabSport[i]='Running'; i++;
-  this.MyConfigFitness.TabSport.push({name:''}); 
-  this.MyConfigFitness.TabSport[i]='Cycling'; i++;
-  this.MyConfigFitness.TabSport.push({name:''}); 
-  this.MyConfigFitness.TabSport[i]='Abs'; i++;
-  this.MyConfigFitness.TabSport.push({name:''}); 
-  this.MyConfigFitness.TabSport[i]='Squats'; i++;
-  i=0;
-  this.MyConfigFitness.TabActivity.push({name:''}); 
-  this.MyConfigFitness.TabActivity[i]='Shoulders'; i++;
-  this.MyConfigFitness.TabActivity.push({name:''}); 
-  this.MyConfigFitness.TabActivity[i]='Legs'; i++;
-  this.MyConfigFitness.TabActivity.push({name:''}); 
-  this.MyConfigFitness.TabActivity[i]='Chest'; i++;
-  this.MyConfigFitness.TabActivity.push({name:''}); 
-  this.MyConfigFitness.TabActivity[i]='Intervals'; i++;
-  this.MyConfigFitness.TabActivity.push({name:''}); 
-  this.MyConfigFitness.TabActivity[i]='Distance'; i++;
-  this.MyConfigFitness.TabActivity.push({name:''}); 
-  this.MyConfigFitness.TabActivity[i]='Speed'; i++;
-  i=0;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='kg'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='lbs'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='sec'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='min'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='hr'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='meter'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='km'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='m/sec'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='m/min'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='min/km'; i++;
-  this.MyConfigFitness.TabUnits.push({name:''}); 
-  this.MyConfigFitness.TabUnits[i]='km/h'; i++;
+  for (i=0; i<List_Sport.length-1; i++){
+    this.MyConfigFitness.TabSport.push({name:''}); 
+    this.MyConfigFitness.TabSport[i].name=List_Sport[i];
+  }
+  for (i=0; i<List_Activity.length-1; i++){
+    this.MyConfigFitness.TabActivity.push({name:''}); 
+    this.MyConfigFitness.TabActivity[i].name=List_Activity[i];
+  }
+  for (i=0; i<List_Exercise.length-1; i++){
+    this.MyConfigFitness.TabExercise.push({name:''}); 
+    this.MyConfigFitness.TabExercise[i].name=List_Exercise[i];
+  }
+  for (i=0; i<List_Units.length-1; i++){
+    this.MyConfigFitness.TabUnits.push({name:''}); 
+    this.MyConfigFitness.TabUnits[i].name=List_Units[i];
+  }
+  for (i=0; i<List_Perf.length-1; i++){
+    this.MyConfigFitness.TabPerfType.push({name:''}); 
+    this.MyConfigFitness.TabPerfType[i].name=List_Perf[i];
+  }
+  for (i=0; i<List_PerfUnits.length-1; i++){
+    this.MyConfigFitness.TabPerfUnit.push({name:''}); 
+    this.MyConfigFitness.TabPerfUnit[i].name=List_PerfUnits[i];
+  }
 }
 
 FillTabWeight(){ // **** NOT USED *****
