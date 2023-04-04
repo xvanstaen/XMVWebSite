@@ -362,6 +362,7 @@ export class OneCalendarComponent implements OnInit {
     if (test==='Min') {
       if(this.initObj.display_yearnb< this.initObj.minDate_year || ( this.initObj.display_yearnb=== this.initObj.minDate_year &&  this.initObj.display_monthnb< this.initObj.minDate_month)
       || ( this.initObj.display_yearnb=== this.initObj.minDate_year 
+        && this.initObj.display_monthnb===this.initObj.maxDate_month
         &&  this.initObj.display_daynb< this.initObj.minDate_day))
       {
         this.error_msg='cannot go before' + this.datePipeMin;
@@ -373,7 +374,8 @@ export class OneCalendarComponent implements OnInit {
               }
     } else if (test==='Max') {
           if(this.initObj.display_yearnb>this.initObj.maxDate_year || ( this.initObj.display_yearnb=== this.initObj.maxDate_year &&  this.initObj.display_monthnb>this.initObj.maxDate_month)
-          || ( this.initObj.display_yearnb=== this.initObj.maxDate_year 
+          || ( this.initObj.display_yearnb=== this.initObj.maxDate_year  && 
+            this.initObj.display_monthnb===this.initObj.maxDate_month
             &&  this.initObj.display_daynb>this.initObj.maxDate_day))
           {
             this.error_msg='cannot go beyond' + this.datePipeMax;

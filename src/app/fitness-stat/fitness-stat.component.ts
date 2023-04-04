@@ -1142,6 +1142,7 @@ SelectedDate(event:any){
       this.TabIsDateWrong[theID]=false;
       this.isSelectedDate=true;
   } else {
+    // this was a cancel so no process on the date
       for (i=0; i<this.ErrorinputDate.length; i++){
         if (this.Error_OpenCalendar===this.ErrorinputDate[i]){
           this.ErrorinputDate[i]='';
@@ -1162,6 +1163,15 @@ ActionCalendar(event:any){
       this.TabDisplayCalendar[this.TabOfId[0]]=true;
       this.TabDisplayId[this.TabOfId[0]]=this.TabOfId[0];
       this.DisplayCalendar=true;
+      
+      const selYear=parseInt(this.NewPerformanceFitness.Sport[this.TabOfId[0]].Sport_date.substring(6,10));
+      const selMonth=parseInt(this.NewPerformanceFitness.Sport[this.TabOfId[0]].Sport_date.substring(3,6));
+      const selDay=parseInt(this.NewPerformanceFitness.Sport[this.TabOfId[0]].Sport_date.substring(0,3));
+      this.selected_date.setDate(selDay);
+      this.selected_date.setMonth(selMonth-1);
+      this.selected_date.setFullYear(selYear);
+
+
   } else {
       SaveTabOfId[0]=this.TabOfId[0];
       for (i=1; i<this.TabOfId.length; i++){
