@@ -260,12 +260,22 @@ calcPos:number=0;
 
 Error_OpenCalendar:string='close the calendar which is already open for another sport';
 
-@HostListener('window:resize', ['$event'])
 @HostBinding("style.--posList")
 
+refMedia:number=1010;
+
+nbToDisplay:number=0;
+nbSeanceDisplay:number=0;
+@HostListener('window:resize', ['$event'])
 onWindowResize() {
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
+
+    if (this.getScreenWidth<this.refMedia+1){ this.nbToDisplay=2; this.nbSeanceDisplay=3;} 
+    else { this.nbToDisplay=4; this.nbSeanceDisplay=5;}
+
+
+
     /*
     this.calcPos=Math.round(0.40 * this.getScreenWidth);
     if (this.getScreenWidth>1010){
@@ -279,13 +289,9 @@ onWindowResize() {
 ngOnInit(){
   this.getScreenWidth = window.innerWidth;
   this.getScreenHeight = window.innerHeight;
-  /*
-  if (this.getScreenWidth>1010){
-    this.calcPos=546;
-  } else {
-    this.calcPos=280;
-  }
-  */
+  if (this.getScreenWidth<620){ this.nbToDisplay=2; this.nbSeanceDisplay=3;} 
+  else { this.nbToDisplay=4; this.nbSeanceDisplay=5;}
+
   this.DisplayCalendarOnly=true;
   this.DisplayCalendar=false;
   this.ref_format.length_day=2;
@@ -844,6 +850,7 @@ GetRecord(event:string){
                   var theFitness = new PerformanceFitness;
                   this.NewPerformanceFitness=data;
                   for (i=0; i<this.NewPerformanceFitness.Sport.length; i++){
+                    this.TabinputDate[i]=this.NewPerformanceFitness.Sport[i].Sport_date;
                     for (j=0; j<this.NewPerformanceFitness.Sport[i].exercise.length; j++){
                         for (k=0; k<this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise.length; k++){
                           if (this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result===undefined){

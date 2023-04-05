@@ -5,8 +5,8 @@ body{
 
 div{
   --iconWidth: 22px;
-  --margLeft: 10px;
-  --LabWidth: 360px;
+  --margLeft: 20px;
+  --LabWidth: 200px;
   --textWidth: 160px;
   --textMarLeft:16px;
   --labWidthSean:80px;
@@ -134,7 +134,7 @@ div{
 /* Links inside the dropdown */
 .dropdown-content span {
   color: black;
-  text-align:left;
+  text-align:center;
   text-decoration: none;
   display: contents;
 }
@@ -142,9 +142,9 @@ div{
 .dropdown-options{
   padding-top:7px;
   height:40px; 
-  width:220px;
+  width:150px;
   font-size:14px;
-  padding-left:10px;
+  
 }
 
 .dropdown-options-even{
@@ -175,7 +175,6 @@ div{
   font-size:12px;
   font-weight: bold;
   margin-top:-20px;
-  margin-left:25px;
 
   cursor: pointer;
   background-color: cyan;
@@ -209,6 +208,7 @@ div{
   width:35px;
   height:var(--fieldHeight);
   font-size:14px;
+  text-align: center;
 }
 
 .inputSean:hover{
@@ -221,7 +221,7 @@ div{
   height:var(--fieldHeight);
   font-size:14px;
   background-color: lightgrey;
-  
+  text-align: center;
   float:right;
 }
 
@@ -256,6 +256,7 @@ div{
   height:var(--fieldHeight);
   /*vertical-align: middle;*/
   float:right;
+  text-align: center;
 }
 
 .theDateBuffer{
@@ -268,6 +269,7 @@ div{
   background-color: lightgrey;
   color:red;
 }
+
 .posCalendar{
   /*
   
@@ -521,6 +523,22 @@ font-size:18px;
         --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
         --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
       }
+      .DropOneL{
+        margin-left: 100px;
+        margin-top:-30px;
+        }
+     .DropTwoL{
+      margin-left: 150px;
+      margin-top:-30px;
+      }
+      .DropThreeL{
+        margin-left: 200px;
+        margin-top:-30px;
+      }
+      .DropFourL{
+        margin-left: calc(var(--DropLeft) * 4);
+        margin-top:-30px;
+      } 
 
       .topDivwidth{
         width:  calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 70px ) ;
@@ -590,11 +608,10 @@ font-size:18px;
       
       .topDivExeTwo{
         width:  calc( (calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 50px )) - 10px);
-       
       }
 
       .dropdown-options{
-        width:160px;
+        width:120px;
         font-size:12px;
       }
       
