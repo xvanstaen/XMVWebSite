@@ -62,18 +62,25 @@
             <tr>
                 <th class="tableCol"> Conversion </th>
                 <th class="tableCol" style="width:35%"   > From &nbsp;
-                    <select  style="margin-left:15px;" (click)="onFilter($event)">
-                        <option style="width:40px; height:15px;" [value]='' id="xFilter-{{0}}"> Filter</option>
-                        <option *ngFor="let unit of TabOfUnits;" [value]='unit' id="Filter-{{0}}" style="width:40px; height:15px;">
+                    <input type="text"  list='f1' class="inputText" style="width:40px; height:15px; margin-left:15px;" placeholder='Filter' id="Filter-{{0}}" (input)="onFilter($event)" name="valueFromTo" >
+                    <datalist id='f1' style="margin-left:15px;" >
+                        <!--
+                            <option style="width:40px; height:15px;" [value]=''  id="xFilter-{{0}}"> Filter</option>
+                        -->
+                        <option *ngFor="let unit of TabOfUnits;" [value]='unit'  >
                             {{unit}}</option>
-                        </select>
+                    </datalist>
                 </th>
                 <th class="tableCol" style="width:35%"  > to &nbsp;
-                    <select style="margin-left:15px;"  >
+                    <input type="text"  list='f2' class="inputText" style="width:40px; height:15px; margin-left:15px;" placeholder='Filter' id="Filter-{{1}}" (input)="onFilter($event)" name="valueFromTo" >
+             
+                    <datalist id='f2' style="margin-left:15px;"  >
+                         <!--
                         <option style="width:40px; height:15px;" [value]='' id="xFilter-{{1}}" (click)="onFilter($event)">Filter</option>
-                        <option *ngFor="let unit of TabOfUnits;" [value]='unit' id="Filter-{{1}}" style="width:40px; height:15px;" (click)="onFilter($event)">
+                        -->
+                        <option *ngFor="let unit of TabOfUnits;" [value]='unit'>
                             {{unit}}</option>
-                        </select>
+                        </datalist>
                 </th>    
                 <th class="tableCol" style="width:40px;"> Action </th> 
 
