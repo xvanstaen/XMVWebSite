@@ -142,6 +142,7 @@ ngOnInit(){
             else if (this.identification.apps[i]==='Console'){this.TabAppsAutho[5]='Y';}
             else if (this.identification.apps[i]==='Config'){this.TabAppsAutho[6]='Y';}
             else if (this.identification.apps[i]==='Fitness'){this.TabAppsAutho[7]='Y';}
+            else if (this.identification.apps[i]==='Health'){this.TabAppsAutho[8]='Y';}
         }
       }
 
@@ -179,6 +180,8 @@ Process(event:string){
     this.scroller.scrollToAnchor('targetConfig');
   }   else if (event==='Fitness'){
     this.GoToComponent=7;
+  } else if (event==='Health'){
+      this.GoToComponent=8;
   }  else if (event==='Refresh_Login'){
     this.NbRefresh_Bucket++; 
   }

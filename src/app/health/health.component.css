@@ -1,0 +1,175 @@
+@import "../FitnessHealthGeneral.css";
+
+::placeholder{
+  font-size:12px;
+  color:red;
+  font-weight: bold;
+
+
+}
+
+table {
+    /*
+    border-collapse: collapse;
+    table-layout: fixed; 
+    */
+    margin-left:10px;
+    width:var(--tableW);
+    max-width:var(--tableMaxW); 
+    overflow: scroll;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+    
+  th {
+    text-align: center;
+    background-color: #96D4D4;
+    border-spacing: 5px;
+    border: 1px solid blue;
+    font-size:12px;
+    height:30px;
+  }
+    
+  td {
+    /*
+    vertical-align: middle;
+    */
+    text-align: left;
+    border-spacing: 0px;
+    height:30px;
+    color:blue;
+    font-size:12px;
+    padding-left:3px;
+    overflow:scroll;
+    word-wrap: break-word;
+  }
+  
+
+.tableCol {
+    border:solid 1px blue;
+  }
+
+.rowEven{
+    background-color: #9edb9c;
+}
+    
+.rowOdd {
+    background-color: #8a97e8;
+  }
+
+.inputText{
+  color:blue;
+  background-color: rgb(232, 229, 229);
+  width:55%;
+  }
+
+.inputText:hover{
+    color:blue;
+    background-color: rgb(198, 157, 157);
+}
+
+.overrideInput{
+  width:150px; 
+  height:40px; 
+  margin-left:10px; 
+  font-size:14px;
+  }
+
+
+.page{
+  width:80px; 
+  height:25px;
+  font-size:10px; 
+  border-radius: 5px;
+  background-image: linear-gradient(rgb(246, 219, 205), rgb(247, 199, 174));
+  box-shadow: 2px 2px rgb(203, 108, 56);
+  border: solid 1px blue;
+}
+
+.page:hover{
+  color:red;
+
+}
+
+.prevPage{
+  margin-left:5px; 
+
+}
+.nextPage{
+  margin-right:10px;
+  float:right;
+}
+
+.divPage{
+  width:var(--tableW); 
+  max-width:var(--tableMaxW); 
+  margin-left:10px; 
+  border:0px blue solid; 
+  height:40px;
+  margin-top:8px;
+}
+
+
+/*** ====================================== ***/
+/*** ============== @media 1010 ================ ***/
+/*** ====================================== ***/
+  
+@media only screen and (max-width: 1010px) {
+  body{
+    max-width: 620px;
+    font-size:10px;
+  }
+
+  div{
+      --margLeft: 10px;
+      --LabWidth: 80px;
+      --textWidth:80px;
+      --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+      --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+      --CriteriaOneDropLeft:100px;
+      --CriteriaTwoDropLeft:200px;
+      --CriteriaThreeDropLeft:300px;
+    }
+  
+.sizeButtons{
+      width:65px;
+      height:32px;
+      font-size:10px;
+      margin-left:10px;
+  }
+
+.arrow_down_size{
+    font-size:18px;
+  } 
+td {
+    font-size:10px;
+  }
+th {
+    font-size:10px;
+  }
+
+.overrideInput{
+  width:80px; 
+  font-size:11px;
+  height:25px;
+  
+  }
+
+.StraightDropDown{
+
+    font-size:10px;
+
+    width:250px;
+
+  }
+
+.Straight-options{
+
+    min-width:80px; 
+    width:80px;
+    font-size:12px;
+
+  }
+}
+
+    

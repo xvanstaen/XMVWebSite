@@ -29,98 +29,23 @@ import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.servic
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 
+import {ConfigFitness} from '../ClassFitness';
+import {ConfigSport} from '../ClassFitness';
+import {PerformanceFitness} from '../ClassFitness';
+import {ClassSport} from '../ClassFitness';
+import {ClassResult} from '../ClassFitness';
+import {ClassActivity} from '../ClassFitness';
+import {ClassExercise} from '../ClassFitness';
+import {BigData} from '../ClassFitness';
+import {CreturnedData} from '../ClassFitness';
+import {CmyEvent} from '../ClassFitness';
+import {Ctarget} from '../ClassFitness';
 
-export class ConfigFitness{
-  user_id: string='';
-  firstname:string='';
-  lastname:string='';
-  TabSport:Array<any>=[{name:''}];
-  TabActivity:Array<any>=[{name:''}];
-  TabExercise:Array<any>=[{name:''}];
-  TabUnits:Array<any>=[{name:''}];
-  TabPerfType:Array<any>=[{name:''}];
-  TabPerfUnit:Array<any>=[{name:''}];
-  ListSport:Array<any>=[
-  {
-      sportName:'',         // workout, running,cycling etc.
-      activityName:[],  // shoulder, leg, intervals, abs, cardio, insanity
-      activityExercise:[], //push up
-      activityUnit:[],  // Weigtht (kg, lbs),  Time (sec, min, hr)
-                        // Speed/Pace (km/h, min/km), Quantity 
-      activityPerf:[],  // Avg Pace; Avg Moving Pace; Avg Speed; Avg Moving Speed; Total time; Total Moving time
-      activityPerfUnit:[],// Time (sec, min, hr), Distance (m, km)
-  }];  
-}
-
-export class ConfigSport{
-  sportName:string='';         // workout, running,cycling etc.
-  activityName:Array<string>=[];  // shoulder, leg, intervals, abs
-  activityExercise:Array<string>=[]; //push up
-  activityUnit:Array<string>=[];  // Weigtht (kg, lbs),  Time (sec, min, hr)
-  activityPerf:Array<string>=[];  // avg space
-  activityPerfUnit:Array<string>=[];  // Distance (m, km), Speed (km/h), Quantity                 
-}
-
-export class PerformanceFitness{
-  user_id: number=0;
-  firstname:string='';
-  lastname:string='';
-  Sport:Array<any>=[
-      {
-      Sport_name:'', // workout, running, etc.
-      Sport_date: new Date(),
-      exercise:[{
-        Activity_name:'', // part of the body: shoulder, leg, type of running exercise such as intervals, tour
-        ActivityExercise: //                                    Running
-              [{
-                Exercise_name:'', // 20, 50                     50
-                Exercise_unit:'', // kg, sec, min, km           km
-                seance:[{nb:0}], 
-                Result:[{perf_type:'',perf:'',unit:''}],
-              // perf_type = Avg Pace; Avg Moving Pace; Avg Speed; Avg Moving Speed; Total time; Total Moving time
-              // {perf_type:'Total time',perf:'51:46',unit:''}
-            }]
-            }]
-          }]
-      }
-    
-export class ClassResult{
-  perf_type:string='';
-  perf:string='';
-  unit:string='';
-}
-
-export class ClassSport{
-  Sport_name:string=''; // workout, running, etc.
-  Sport_date= new Date();
-  exercise:Array<any>=[{
-    Activity_name:'', // part of the body: shoulder, leg, type of running exercise such as fraction
-    ActivityExercise:
-          [{
-            Exercise_name:'', // 20kg, 20s
-            Exercise_unit:'', // kg, sec, m
-            seance:[{nb:0}],
-            Result:[{perf_type:'',perf:'',unit:''}],
-          }]
-        }]
-      }
-
-export class ClassActivity{
-  Activity_name:string=''; // part of the body: shoulder, leg, type of running exercise such as fraction
-  ActivityExercise:Array<any>=
-        [{
-          Exercise_name:'', // 20kg, 20s
-          Exercise_unit:'', // kg, sec, m
-          seance:[{nb:0}],
-          Result:[{perf_type:'',perf:'',unit:''}],
-        }]
-}
-
-export class ClassExercise{
-        Exercise_name:string=''; // 20kg, 20s
-        Exercise_unit:string=''; // kg, sec, m
-        seance:Array<any>=[{nb:0}];
-        Result:Array<any>=[{perf_type:'',perf:'',unit:''}];
+export class ClassFilesAlreadyMerged{
+  name:string='A';
+  refFileMerge:number=1;
+  startTabBigData:number=1;
+  endTabBigData:number=1;
 }
 
 @Component({
@@ -130,7 +55,7 @@ export class ClassExercise{
 })
 
 export class FitnessStatComponent implements OnInit {
-
+  ChartFileForm:FormGroup; 
   constructor(   
     private http: HttpClient,
     private fb: FormBuilder,
@@ -140,7 +65,31 @@ export class FitnessStatComponent implements OnInit {
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
     //private TheConfig: AccessConfigService,
-   ) { }
+   ) { this.ChartFileForm = this.fb.group({ 
+    //title: new FormControl(''),
+    select_file: this.fb.array([]),
+        })}
+
+get ChartFileList(){
+  return this.ChartFileForm.controls["select_file"] as FormArray; 
+}
+
+FormChart():FormGroup {
+
+  return this.fb.group ({
+          selected: new FormControl('O')
+  })
+}
+
+/*
+FormChart= this.fb.group ({
+          selected: new FormControl(''),
+  });
+*/
+
+
+FillFSelected= {'selected':''};
+
 
 @Input() XMVConfig=new XMVConfig;
 @Input() configServer = new configServer;
@@ -148,16 +97,24 @@ export class FitnessStatComponent implements OnInit {
 
 IsTestBoolean:boolean=true;
 
+DisplayConfig:boolean=true;
+DisplayPerfFigures:boolean=true;
+DisplayPerfChart:boolean=true;
+
+
 IsSaveConfirmed:boolean=false;
 SpecificForm=new FormGroup({
   FileName: new FormControl(''),
 })
+
+
 
 NewconfigServer=new configServer;
 isConfigServerRetrieved:boolean=false;
 NewXMVConfig=new XMVConfig;
 
 NewPerformanceFitness=new PerformanceFitness;
+MergeFilesFitness:Array<PerformanceFitness>=[];
 
 MyConfigFitness=new ConfigFitness;
 
@@ -183,7 +140,7 @@ Error_Access_Server:string='';
 message:string='';
 error_msg: string='';
 
-EventHTTPReceived:Array<boolean>=[false,false,false,false,false,false];
+EventHTTPReceived:Array<boolean>=[];
 id_Animation:Array<number>=[0,0,0,0,0];
 TabLoop:Array<number>=[0,0,0,0,0];
   
@@ -217,7 +174,7 @@ lbs_kg:number=0.453592;
 
 
 prev_Dialogue:number=0;
-max_dialogue:number=20;
+max_dialogue:number=30;
 TabPerfConfig:Array<number>=[];
 
 selectedIndex:number=0;
@@ -258,11 +215,15 @@ selected_day:number=0;
 posList:string='';
 calcPos:number=0;
 
+TriggerChartChange:number=0;
+
 Error_OpenCalendar:string='close the calendar which is already open for another sport';
 
 @HostBinding("style.--posList")
 
 refMedia:number=1010;
+
+callingComponent:string='FitnessStat';
 
 nbToDisplay:number=0;
 nbSeanceDisplay:number=0;
@@ -273,16 +234,10 @@ onWindowResize() {
 
     if (this.getScreenWidth<this.refMedia+1){ this.nbToDisplay=2; this.nbSeanceDisplay=3;} 
     else { this.nbToDisplay=4; this.nbSeanceDisplay=5;}
-
-
-
     /*
     this.calcPos=Math.round(0.40 * this.getScreenWidth);
-    if (this.getScreenWidth>1010){
-      this.calcPos=446;
-    } else {
-      this.calcPos=180;
-    }
+    if (this.getScreenWidth>1010){this.calcPos=446;
+    } else { this.calcPos=180; }
     */
   }
 
@@ -291,6 +246,10 @@ ngOnInit(){
   this.getScreenHeight = window.innerHeight;
   if (this.getScreenWidth<620){ this.nbToDisplay=2; this.nbSeanceDisplay=3;} 
   else { this.nbToDisplay=4; this.nbSeanceDisplay=5;}
+
+  for (var i=0; i<this.maxBuffer; i++){
+      this.BufferDisplay[i]='';
+  }
 
   this.DisplayCalendarOnly=true;
   this.DisplayCalendar=false;
@@ -355,13 +314,257 @@ ngOnInit(){
     this.isConfigServerRetrieved=true;
   
     this.Google_Object_Fitness="Config"+this.identification.id+'-'+this.identification.UserId;
-    this.GetRecord('config');
+    this.GetRecord('config',0,1);
   }
   
   // weights to be selected by user when exercising
   this.FillTabWeight();
   this.scroller.scrollToAnchor('targetTop');
   }
+
+  TheSelectDisplays: FormGroup = new FormGroup({ 
+    PerfFigures: new FormControl('Y'),
+    PerfChart: new FormControl('Y'),
+    Config: new FormControl('Y')
+  })
+
+SelectDisplay(){
+    if (this.TheSelectDisplays.controls['PerfFigures'].value==='Y'){
+          this.DisplayPerfFigures=true;
+      } else {
+        this.DisplayPerfFigures=false;
+      }
+      if (this.TheSelectDisplays.controls['PerfChart'].value==='Y'){
+        this.DisplayPerfChart=true;
+      } else {
+        this.DisplayPerfChart=false;
+      }
+      
+      if (this.TheSelectDisplays.controls['Config'].value==='Y'){
+        this.DisplayConfig=true;
+      } else {
+        this.DisplayConfig=false;
+      }
+}
+
+
+
+SelRadio(event:any){
+  const i = event.substring(2);
+  const NoYes=event.substring(0,1);
+  if (i==='1'){
+    if (NoYes==='Y'){
+        this.DisplayPerfFigures=true;
+    } else {
+        this.DisplayPerfFigures=false;
+    }
+  } else if (i==='2'){
+      if (NoYes==='Y'){
+        this.DisplayPerfChart=true;
+      } else {
+        this.DisplayPerfChart=false;
+      }
+  } else {
+      if (NoYes==='Y'){
+        this.DisplayConfig=true;
+      } else {
+        this.DisplayConfig=false;
+      }
+    }
+}
+
+SelectAll(){
+  var i=0;
+  for (i=0; i<this.ChartFileList.length; i++){
+    this.FillFSelected.selected='Y';
+    this.ChartFileList.controls[i].setValue(this.FillFSelected);
+  }
+  this.ChartFileSelection();
+}
+
+CancelAll(){
+  var i=0;
+  for (i=0; i<this.ChartFileList.length; i++){
+    this.FillFSelected.selected='N';
+    this.ChartFileList.controls[i].setValue(this.FillFSelected);
+  }
+  this.TabBigData.splice(0,this.TabBigData.length);
+  this.DisplayMerge=false;
+  this.TriggerChartChange++;
+}
+
+RadioSelection(event:any){
+    const i=parseInt(event.target.id.substring(2));
+    const val=event.target.id.substring(0,1);
+    this.FillFSelected.selected=val;
+    this.ChartFileList.controls[i].setValue(this.FillFSelected);
+}
+
+
+TabBigData:Array<BigData>=[];
+DisplayMerge:boolean=false;
+NbFilesMerged:number=0;
+MergeFiles:boolean=false;
+TotalMergeFiles:number=0;
+NbWaitHTTP:number=0;
+BufferDisplay:Array<string>=[]; // initialised in onInit
+maxBuffer:number=5;
+
+FilesAlreadyMerged:Array<any>=[];
+ClassFilesAlreadyMerged={
+  name:'A',
+  refFileMerge:1,
+  startTabBigData:1,
+  endTabBigData:1
+}
+
+
+ChartFileSelection(){
+  // Files have been selected by the end user
+  // time to consolidate all of them
+  var i=0;
+  var j=1;
+  var k=0;
+  var fileFound=false;
+  this.DisplayMerge=false;
+  this.NbFilesMerged=0;
+  //this.MergeFilesFitness.splice(0,this.MergeFilesFitness.length);
+  this.TabBigData.splice(0,this.TabBigData.length);
+  this.TotalMergeFiles=0;
+  this.TriggerChartChange++;
+  this.MergeFiles=true;
+ 
+  for (i=0; i<this.ChartFileList.length; i++){
+         // if field is set to true then file is to be retrieved
+      if (this.ChartFileList.controls[i].value.selected==='Y'){
+          this.TotalMergeFiles++;
+          this.Google_Object_Name=this.myListOfObjects.items[i].name;
+          fileFound=false;
+          for (k=0; k<this.FilesAlreadyMerged.length && fileFound===false; k++){
+              if (this.FilesAlreadyMerged[k].name===this.myListOfObjects.items[i].name){
+                fileFound=true;
+              }
+          }
+          if (fileFound===false){
+            const myClass=new ClassFilesAlreadyMerged;
+            this.FilesAlreadyMerged.push(myClass);
+            this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].name=this.myListOfObjects.items[i].name;
+            this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].refFileMerge=-1;
+            this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].startTabBigData=0;
+            this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].endTabBigData=0;
+            j++
+            this.GetRecord('data',j,this.FilesAlreadyMerged.length-1);
+          } else {
+            this.NewPerformanceFitness=this.MergeFilesFitness[this.FilesAlreadyMerged[k-1].refFileMerge];
+            console.log('ChartFileSelection() ===> File ' + this.myListOfObjects.items[i].name + " was already retrieved");
+            this.MergeAllFiles(k-1);
+          }
+        }
+    }
+   
+}
+
+
+
+
+UpdateMergeFiles(fileName:string){
+  // find the file
+  var i=0;
+  var j=0;
+
+  for (i=0; i<this.FilesAlreadyMerged.length && this.FilesAlreadyMerged[i].name!==fileName; i++){
+  }
+  if (i===this.FilesAlreadyMerged.length){
+    console.log('File ' + fileName + 'not found in this.FilesAlreadyMerged')
+  } else {
+    // update MergeFilesFitness  
+    this.MergeFilesFitness[ this.FilesAlreadyMerged[i].refFileMerge]=this.NewPerformanceFitness;
+    this.TabBigData.splice(this.FilesAlreadyMerged[i].startTabBigData,this.FilesAlreadyMerged[i].endTabBigData-this.FilesAlreadyMerged[i].startTabBigData+1);
+    this.TriggerChartChange++
+    this.MergeAllFiles(i);
+  }
+
+
+}
+
+theDatePipe:any;
+MergeAllFiles(fileNb:number){
+  var i=0;
+  var j=0;
+  var k=0;
+  var l=0;
+  var m=0;
+  var dateYear:number=0;
+  var dateMonth:number=0;
+  var dateDay:number=0;
+  var theDate=new Date();
+
+  this.NbFilesMerged++;
+  const PerfFit=new PerformanceFitness;
+  if (this.FilesAlreadyMerged[fileNb].refFileMerge===-1){
+    this.MergeFilesFitness.push(PerfFit);
+    this.MergeFilesFitness[this.MergeFilesFitness.length-1]=this.NewPerformanceFitness;
+    this.FilesAlreadyMerged[fileNb].refFileMerge=this.MergeFilesFitness.length-1;
+  }
+  this.FilesAlreadyMerged[fileNb].startTabBigData=this.TabBigData.length;
+
+  for (i=0; i<this.NewPerformanceFitness.Sport.length; i++){
+    for (j=0; j<this.NewPerformanceFitness.Sport[i].exercise.length; j++){
+      for (k=0; k<this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise.length; k++){
+        for (m=0; m<this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result.length; m++){
+            var formatData=new BigData;
+            this.TabBigData.push(formatData);
+            this.TabBigData[this.TabBigData.length-1].id=this.TabBigData.length-1;
+
+            var timestamp = Date.parse(this.NewPerformanceFitness.Sport[i].Sport_date);
+            if (isNaN(timestamp)) {
+                console.log("Invalid date format of "+this.NewPerformanceFitness.Sport[i].Sport_date);
+                dateYear=this.NewPerformanceFitness.Sport[i].Sport_date.substring(6);
+                dateMonth=this.NewPerformanceFitness.Sport[i].Sport_date.substring(3,5);
+                dateDay=this.NewPerformanceFitness.Sport[i].Sport_date.substring(0,2);
+            } else {
+                dateYear=parseInt(formatDate(this.NewPerformanceFitness.Sport[i].Sport_date,'yyyy',this.locale));
+                dateMonth=parseInt(formatDate(this.NewPerformanceFitness.Sport[i].Sport_date,'MM',this.locale));
+                dateDay=parseInt(formatDate(this.NewPerformanceFitness.Sport[i].Sport_date,'dd',this.locale));
+            }
+              theDate.setDate(dateDay);
+              theDate.setMonth(dateMonth);
+              theDate.setFullYear(dateYear);
+              this.theDatePipe = formatDate(theDate,"yyyy-MM-dd",this.locale);
+              this.TabBigData[this.TabBigData.length-1].thedate=this.theDatePipe;
+
+            this.TabBigData[this.TabBigData.length-1].sport=this.NewPerformanceFitness.Sport[i].Sport_name;
+            this.TabBigData[this.TabBigData.length-1].activity=this.NewPerformanceFitness.Sport[i].exercise[j].Activity_name;
+            if (m===0){
+              this.TabBigData[this.TabBigData.length-1].exercise=this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name;
+              this.TabBigData[this.TabBigData.length-1].unit=this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit;
+              this.TabBigData[this.TabBigData.length-1].seance=this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance;
+            }
+          
+            if (this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result.length>0 && 
+                  this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result[m].perf_type!==undefined ){
+                      this.TabBigData[this.TabBigData.length-1].result.perf_type=this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result[m].perf_type;
+                      this.TabBigData[this.TabBigData.length-1].result.perf=this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result[m].perf;
+                      this.TabBigData[this.TabBigData.length-1].result.unit=this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result[m].unit;
+            }
+        }
+      }
+
+    }
+    
+  }
+
+    this.FilesAlreadyMerged[fileNb].endTabBigData=this.TabBigData.length-1;
+
+  if (this.NbFilesMerged===this.TotalMergeFiles){
+    // process to merge is over
+    // display the chart
+    this.DisplayMerge=true;
+
+  }
+
+}
+
 
 LinkPerfConfig(){
   var i=0;
@@ -387,55 +590,76 @@ initOpenDialogue(){
 }
 
 
+myEvent=new CmyEvent;
 
+returnedData=new CreturnedData;
+
+DropDownData(event:any){
+  this.OpenDialogue[this.prev_Dialogue]=false;
+  this.returnedData=event;
+  if (this.returnedData.valueString!=='Cancel'){
+      this.myEvent.target.id=this.returnedData.idString;
+      this.myEvent.target.value=this.returnedData.valueString;
+      this.myEvent.target.textContent=this.returnedData.valueString;
+      if (this.returnedData.fieldNb===3 || this.returnedData.fieldNb===4){
+          this.onInputPerf(this.myEvent);
+      } else{
+          this.onInput(this.myEvent);
+      }
+  } // otherwise don't do anything as no data was selected
+}
 theArrow(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
 
+
   this.findIds(event.target.id);
 
+
   if (  event.target.id.substring(0,5)==='Sport'){
+    this.myEvent.idString='lSpo-'+this.TabOfId[0];
     this.prev_Dialogue=0;
-    this.OpenDialogue[this.prev_Dialogue]=true;
   } else if (  event.target.id.substring(0,8)==='Activity'){
+    this.myEvent.idString='lAct-'+this.TabOfId[0]+'-'+this.TabOfId[1];
     this.prev_Dialogue=1;
-    this.OpenDialogue[this.prev_Dialogue]=true;
   } else if (  event.target.id.substring(0,12)==='ExerciseUnit'){
+    this.myEvent.idString='lExeUnit-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
     this.prev_Dialogue=2;
-    this.OpenDialogue[this.prev_Dialogue]=true;
   } else if (  event.target.id.substring(0,8)==='PerfType'){
+    this.myEvent.idString='ltPerf-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2]+'-'+this.TabOfId[3];
     this.prev_Dialogue=3;
-    this.OpenDialogue[this.prev_Dialogue]=true;
   } else if (  event.target.id.substring(0,8)==='PerfUnit'){
+    this.myEvent.idString='luPerf-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2]+'-'+this.TabOfId[3];
     this.prev_Dialogue=4;
-    this.OpenDialogue[this.prev_Dialogue]=true;
   } else if (  event.target.id.substring(0,12)==='ExerciseName'){
+    this.myEvent.idString='lExeName-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
     this.prev_Dialogue=5;
-    this.OpenDialogue[this.prev_Dialogue]=true;
   } 
+  this.OpenDialogue[this.prev_Dialogue]=true;
+  this.myEvent.dialogueNb=this.prev_Dialogue;
 }
 
 
-onArrow(event:string){
+onArrow(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
-  if (  event.substring(0,6)==='lSport'){
+  this.findIds(event.target.id);
+  if (  event.target.id.substring(0,6)==='lSport'){
     this.prev_Dialogue=6;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,9)==='lActivity'){
+  } else if (  event.target.id.substring(0,9)==='lActivity'){
     this.prev_Dialogue=7;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,5)==='lUnit'){
+  } else if (  event.target.id.substring(0,5)==='lUnit'){
     this.prev_Dialogue=8;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,9)==='lPerfType'){
+  } else if (  event.target.id.substring(0,9)==='lPerfType'){
     this.prev_Dialogue=9;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,9)==='lPerfUnit'){
+  } else if (  event.target.id.substring(0,9)==='lPerfUnit'){
     this.prev_Dialogue=10;
-    this.OpenDialogue[this.prev_Dialogue]=true;
-  } else if (  event.substring(0,9)==='lExercise'){
+  } else if (  event.target.id.substring(0,9)==='lExercise'){
     this.prev_Dialogue=11;
-    this.OpenDialogue[this.prev_Dialogue]=true;
   } 
+  this.OpenDialogue[this.prev_Dialogue]=true;
+}
+
+cancelDropDown(){
+  this.OpenDialogue[this.prev_Dialogue]=false;
 }
 
 onInput(event:any){
@@ -645,8 +869,7 @@ addItem(event:any){
         this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance[l-1].nb=0;
    } else  if (event.target.id.substring(0,4)==='Resu'){
         const cResult = new ClassResult;
-        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.push({cResult});
-       
+        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result=cResult;
       }
 }
 
@@ -697,7 +920,6 @@ addConfig(event:any){
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit.push('');
     this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit.length-1]='';
   }
-
 }
 
 delConfig(event:any){
@@ -787,8 +1009,6 @@ findIds(theId:string){
   }
 }
 
-
-
 GetAllObjects(){
   // bucket name is ListOfObject.config
   // this.scroller.scrollToAnchor('targetTopObjects');
@@ -801,9 +1021,19 @@ GetAllObjects(){
           .subscribe((data ) => {
                 console.log('RetrieveAllObjects() - data received');
                 this.myListOfObjects=data;
+                if (this.ChartFileList.length!==0){
+                  this.ChartFileList.clear();
+                }
+              
                 for (i=this.myListOfObjects.items.length-1; i>-1; i--){
-                      if (this.myListOfObjects.items[i].name.substring(0,6)==='Config'){
+                      if (this.myListOfObjects.items[i].name.substring(0,6)==='Config' ||
+                      this.myListOfObjects.items[i].name.substring(0,6)==='Health'){
                         this.myListOfObjects.items.splice(i,1);
+                      } else {
+                        this.FillFSelected.selected='N';
+                        this.ChartFileList.push(this.FormChart()); 
+                        // this.ChartFileList.push(this.FormChart);              
+                        this.ChartFileList.controls[this.ChartFileList.length-1].setValue(this.FillFSelected);
                       }
                 }
                 this.DisplayListOfObjects=true;
@@ -818,7 +1048,7 @@ GetAllObjects(){
 }
 
 theConfig=new ConfigFitness;
-GetRecord(event:string){
+GetRecord(event:string, iWait:number, ref:number){
   // get object in Google Storage
   this.scroller.scrollToAnchor('theTop');
   this.OpenDialogue[this.prev_Dialogue]=false;
@@ -828,17 +1058,18 @@ GetRecord(event:string){
   var l=0;
  var ObjectName='';
   if (event==='data'){  
-      i=0;  
+  
       ObjectName=this.Google_Object_Name;
       this.error_msg='Access to file "' + this.Google_Object_Name +'" is on-going';
+      console.log('message ' + this.error_msg);
       this.ObjectIsRetrieved=false;
     } 
   else {
     ObjectName=this.Google_Object_Fitness;
-        i=1;
       }
-  this.EventHTTPReceived[i]=false;
-  this.waitHTTP(this.TabLoop[i],30000,i);
+  this.EventHTTPReceived[iWait]=false;
+  this.NbWaitHTTP++;
+  this.waitHTTP(this.TabLoop[iWait],30000,iWait);
 
   //this.Google_Object_Name='AFeb%2028%202023';
 
@@ -846,8 +1077,9 @@ GetRecord(event:string){
             .subscribe((data ) => {
                 
                if (event==='data'){   
-                  this.EventHTTPReceived[0]=true;            
-                  var theFitness = new PerformanceFitness;
+                  this.EventHTTPReceived[iWait]=true;  
+                  if (this.NbWaitHTTP>0){this.NbWaitHTTP--;}   
+                  console.log('data received - NbWaitHTTP=' + this.NbWaitHTTP + ' EventHTTPReceived = ' + this.EventHTTPReceived[iWait] + ' iWait = ' + iWait);                   
                   this.NewPerformanceFitness=data;
                   for (i=0; i<this.NewPerformanceFitness.Sport.length; i++){
                     this.TabinputDate[i]=this.NewPerformanceFitness.Sport[i].Sport_date;
@@ -859,21 +1091,28 @@ GetRecord(event:string){
                               this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name=data.Sport[i].exercise[j].ActivityExercise[k].Exercise_name;
                               this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit=data.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit;
                               this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance=data.Sport[i].exercise[j].ActivityExercise[k].seance;
-
                           }
                         }
                     }
 
                   }
-                  // this.NewPerformanceFitness=data;
-                  this.LinkPerfConfig();
-                  this.Input_Travel_O_R='O';
-                  this.isSelectedDate=true;
-                  this.ObjectIsRetrieved=true;
-                  this.scroller.scrollToAnchor('theTop');
+
+                  if (this.MergeFiles===false){
+                    this.LinkPerfConfig();
+                    this.Input_Travel_O_R='O';
+                    this.isSelectedDate=true;
+                    this.ObjectIsRetrieved=true;
+                    this.scroller.scrollToAnchor('theTop');
+                  } else {
+                    this.Google_Object_Name=this.FilesAlreadyMerged[ref].name;
+                    this.MergeAllFiles(ref);
+                  }
+
+                  
                   
                 } else if (event==='config'){ 
-                    this.EventHTTPReceived[1]=true;
+                    if (this.NbWaitHTTP>0){this.NbWaitHTTP--;} 
+                    this.EventHTTPReceived[iWait]=true;
                     this.theConfig=new ConfigFitness;
                     this.theConfig=data;
                     this.MyConfigFitness=new ConfigFitness;
@@ -951,13 +1190,15 @@ GetRecord(event:string){
               },
               error_handler => {
                 if (event==='data'){
-                      this.EventHTTPReceived[0]=true;
+                      this.EventHTTPReceived[iWait]=true;
+                      if (this.NbWaitHTTP>0){this.NbWaitHTTP--;} 
                       console.log('GetRecord() - error handler');
                       this.error_msg='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
                   } else if (event==='config'){
                       this.error_msg='';
                       this.ConfigExist=false;
-                      this.EventHTTPReceived[1]=true;
+                      this.EventHTTPReceived[iWait]=true;
+                      if (this.NbWaitHTTP>0){this.NbWaitHTTP--;} 
                       this.MyConfigFitness=new ConfigFitness;
                       this.MyConfigFitness.user_id=this.identification.UserId;
                       this.MyConfigFitness.firstname=this.identification.firstname;
@@ -989,7 +1230,7 @@ ConfirmSave(){
 
 
 SaveNewRecord(){
-  // create object in Google Storage
+  var i=0;
 
   this.IsSaveConfirmed = false;
   this.message='';
@@ -997,6 +1238,9 @@ SaveNewRecord(){
   if (this.Google_Object_Name===''){
     this.Google_Object_Name = 'NoNameFile';
   }
+  this.NewPerformanceFitness.firstname=this.identification.firstname;
+  this.NewPerformanceFitness.lastname=this.identification.surname;
+  this.NewPerformanceFitness.user_id=this.identification.id;
   var file=new File ([JSON.stringify(this.NewPerformanceFitness)],this.Google_Object_Name, {type: 'application/json'});
 
   this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
@@ -1004,7 +1248,21 @@ SaveNewRecord(){
   .subscribe(res => {
     //**this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
             this.message='File "'+ this.Google_Object_Name +'" is successfully stored in the cloud';
-            this.GetAllObjects();
+          
+            // check if this is a new file and if yes create at the end of the list of objects
+            // only name is needed
+            for (i=0; i<this.myListOfObjects.items.length && this.myListOfObjects.items[i].name !== this.Google_Object_Name; i++ ){
+            }
+            if (i===this.myListOfObjects.items.length){
+                  const KindAllObj=new Bucket_List_Info;
+                  this.myListOfObjects.items.push(KindAllObj);
+                  this.myListOfObjects.items[this.myListOfObjects.items.length-1].name=this.Google_Object_Name;
+                  this.FillFSelected.selected='N';
+                  this.ChartFileList.push(this.FormChart()); 
+                  // this.ChartFileList.push(this.FormChart);              
+                  this.ChartFileList.controls[this.ChartFileList.length-1].setValue(this.FillFSelected);
+            }
+            this.UpdateMergeFiles(this.Google_Object_Name);
         },
         error_handler => {
           //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
@@ -1068,13 +1326,13 @@ this.IsSaveConfirmed=false;
 waitHTTP(loop:number, max_loop:number, eventNb:number){
   const pas=500;
   if (loop%pas === 0){
-    console.log('waitHTTP ==> loop=', loop, ' max_loop=', max_loop);
+    console.log('waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop);
   }
  loop++
   
   this.id_Animation[eventNb]=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
   if (loop>max_loop || this.EventHTTPReceived[eventNb]===true ){
-            console.log('exit waitHTTP ==> loop=', loop + ' max_loop=', max_loop + ' this.EventHTTPReceived=' + 
+            console.log('exit waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop + ' this.EventHTTPReceived=' + 
                     this.EventHTTPReceived[eventNb] );
             if (this.EventHTTPReceived[eventNb]===true ){
                     window.cancelAnimationFrame(this.id_Animation[eventNb]);
@@ -1122,7 +1380,7 @@ RetrieveSelectedFile(event:any){
           console.log('RetrieveSelectedFile='+event.mediaLink);
           this.Google_Object_Name=event.name;
           this.SpecificForm.controls['FileName'].setValue(event.name);
-          this.GetRecord('data');
+          this.GetRecord('data',1,0);
         },
     error_handler => {
           this.error_msg='HTTP_Address='+event.mediaLink;

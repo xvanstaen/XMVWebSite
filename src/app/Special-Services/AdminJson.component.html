@@ -25,6 +25,7 @@
     <span  *ngIf="TabAppsAutho[6]==='Y'"(click)="Process('Config')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Config</span>
     <span  *ngIf="TabAppsAutho[5]==='Y'"(click)="Process('Console')" class="dropdown-options dropdown-text">Log console</span>
     <span  *ngIf="TabAppsAutho[7]==='Y'"(click)="Process('Fitness')" class="dropdown-options dropdown-text">Fitness</span>
+    <span  *ngIf="TabAppsAutho[8]==='Y'"(click)="Process('Health')" class="dropdown-options dropdown-text">Health</span>
     <span  *ngIf="TabAppsAutho[4]==='Y'"(click)="Process('Login')" class="dropdown-options dropdown-text">&nbsp;&nbsp;&nbsp;&nbsp;Login</span>
     <!--
     <span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
@@ -228,11 +229,20 @@
   </ng-template>
 
   <ng-template #CompoSeven>
-    <div *ngIf="GoToComponent===7">
+    <div *ngIf="GoToComponent===7; else CompoEight">
 
-        <app-fitness-stat  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" 
+    <app-fitness-stat  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" 
          >
     </app-fitness-stat>
+   
+    </div>
+  </ng-template>
+  <ng-template #CompoEight>
+    <div *ngIf="GoToComponent===8">
+
+    <app-health  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" 
+         >
+    </app-health>
    
     </div>
   </ng-template>

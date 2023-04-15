@@ -15,7 +15,7 @@ export function msginLogConsole(msg:string, myConsole:Array<msgConsole>, myLogCo
             myConsole[myConsole.length-1].timestamp=myDate;
   
     }
-    if (myConsole.length>500 && SaveConsoleFinished===true){
+    if (myConsole.length>500 || SaveConsoleFinished===true){
             saveLogConsole(myConsole, type, HTTP_Address);
     }
        

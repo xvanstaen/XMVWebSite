@@ -29,6 +29,9 @@ import { FitnessStatComponent } from './fitness-stat/fitness-stat.component';
 import {ManageGoogleService} from 'src/app/CloudServices/ManageGoogle.service';
 import {ManageMangoDBService} from 'src/app/CloudServices/ManageMangoDB.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
+import { FitnessChartComponent } from './fitness-chart/fitness-chart.component';
+import { MyDropDownComponent } from './my-drop-down/my-drop-down.component';
+import { HealthComponent } from './health/health.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +53,9 @@ import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
     ChangeSaveFileNameComponent,
     FitnessStatComponent,
     OneCalendarComponent,
+    FitnessChartComponent,
+    MyDropDownComponent,
+    HealthComponent,
 
 
   ],
