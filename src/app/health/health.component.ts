@@ -1352,6 +1352,7 @@ CancelSave(){
   this.tabInputFood.splice(0,this.tabInputFood.length)
   this.HealthAllData.tabDailyReport.splice(0,this.HealthAllData.tabDailyReport.length)
   this.FillHealthAllInOut(this.HealthAllData,this.InHealthAllData);
+  this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
   this.initTrackRecord();
   this.IsSaveConfirmedCre = false;
   this.IsSaveConfirmedSel = false;
@@ -1365,11 +1366,9 @@ SaveHealth(event:any){
     this.IsSaveConfirmedCre = false;
     this.IsSaveConfirmedSel = false;
     if (event.target.id.substring(0,3)==='Sel') {
-
       if (this.SelectedRecord.date===this.TheSelectDisplays.controls['SelectedDate'].value){
         this.HealthAllData.tabDailyReport.splice(this.SelectedRecordNb,1);
-    }
-
+          }
       this.errorFn='Sel';
       const theDaily=new DailyReport;
       this.HealthAllData.tabDailyReport.splice(this.SelectedRecordNb,0,theDaily);
@@ -1386,7 +1385,6 @@ SaveHealth(event:any){
         const theDaily=new DailyReport;
         this.HealthAllData.tabDailyReport.push(theDaily);
         this.fillAllData(this.HealthData.tabDailyReport[i],this.HealthAllData.tabDailyReport[this.HealthAllData.tabDailyReport.length-1]);
- 
       }
     } else if (event.target.id.substring(0,3)==='All') {
         this.IsSaveConfirmedAll=false;
@@ -1395,10 +1393,10 @@ SaveHealth(event:any){
     if (this.HealthAllData.fileType!==''){
       this.HealthAllData.fileType=this.identification.fitness.fileType.Health;
     }
-    if (event.target.id.substring(0,3)==='All'){
-      this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
-      this.initTrackRecord();
-    }
+   // if (event.target.id.substring(0,3)==='All'){
+    this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
+    this.initTrackRecord();
+    //}
     this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData);
   }
 
