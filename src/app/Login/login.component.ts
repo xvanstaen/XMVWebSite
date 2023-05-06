@@ -1,4 +1,6 @@
-import { Component, Input, Output, EventEmitter, HostListener, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  
 import { HttpClient,  HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
@@ -10,7 +12,12 @@ import { XMVTestProd } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
+import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
 
+import {classConfHTMLFitHealth} from '../classConfHTMLTableAll';
+
+import {mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories';
+import {ConfigFitness} from '../ClassFitness';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 
@@ -33,9 +40,20 @@ export class LoginComponent {
     @Input() XMVConfig=new XMVConfig;
 
     @Input() identification=new LoginIdentif; 
-    // from xmv-company.cmoponent.ts which got it through an @output action
-    // putpose is to keep the identification if user goes to other part of the website so that he/she does not need to reenter the information
 
+
+    
+    @Input() ConfigCaloriesFat=new mainClassCaloriesFat;
+
+    @Input() ConvertUnit=new mainClassConv;
+    @Input() ConvToDisplay=new mainConvItem;
+    @Input() theTabOfUnits=new mainClassUnit;
+    @Input() WeightRefTable=new mainRecordConvert;
+    @Input() ConfigHTMLFitHealth=new classConfHTMLFitHealth;
+  
+    @Input() MyConfigFitness=new ConfigFitness;
+  
+    @Input() HealthAllData=new mainDailyReport; 
 
     ConfigXMV=new XMVConfig;
     ConfigTestProd=new XMVTestProd;
@@ -47,6 +65,7 @@ export class LoginComponent {
 
     @Output() my_output1= new EventEmitter<any>();
     @Output() my_output2= new EventEmitter<string>();
+    @Output() returnFile= new EventEmitter<any>();
     
     
     myHeader= new  HttpHeaders();
@@ -379,6 +398,46 @@ onCrypt(type_crypto:string){
           } 
   }
 
+
+
+ReceiveFiles(event:any){
+
+  if (event.fileType!=='' && 
+          event.fileType===this.identification.configFitness.fileType.convertUnit){ 
+      this.ConvertUnit=event;
+
+  } else if (event.fileType!=='' && 
+          event.fileType===this.identification.configFitness.fileType.convToDisplay){ 
+       this.ConvToDisplay=event;
+
+  } else if (event.fileType!=='' && 
+          event.fileType===this.identification.configFitness.fileType.tabOfUnits){ 
+      this.theTabOfUnits=event;
+
+  } else if (event.fileType!=='' && 
+        event.fileType===this.identification.configFitness.fileType.weightReference){ 
+      this.WeightRefTable=event;
+
+  } else if (event.fileType!=='' && 
+        event.fileType===this.identification.fitness.fileType.FitnessMyConfig){ 
+      this.MyConfigFitness=event;
+  }
+
+  else if (event.fileType!=='' && 
+        event.fileType===this.identification.fitness.fileType.Health){
+      this.HealthAllData=event;
+  }
+
+  else if (event.fileType!=='' && 
+        event.fileType===this.identification.configFitness.fileType.calories){ 
+      this.ConfigCaloriesFat=event;
+  }   
+  else if (event.fileType!=='' && 
+        event.fileType===this.identification.configFitness.fileType.confHTML){ 
+      this.ConfigHTMLFitHealth=event;
+}
+  this.returnFile.emit(event);
+}
 //ngOnChanges(changes: SimpleChanges) {   
       //console.log('onChanges login.ts');
 //  }

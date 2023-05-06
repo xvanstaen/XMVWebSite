@@ -20,13 +20,6 @@ body{
     --CriteriaThreeDropLeft:700px;
   }
 
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  position: relative;
-  display: contents; 
-}
-
-
 .arrow_down{
     cursor: pointer;
     color:blue;
@@ -50,10 +43,7 @@ body{
     margin-top:0px;
   }
 
-
-
-
-  .iconBuffer{
+.iconBuffer{
     width:22px; 
     height:22px; 
     font-size:16px;
@@ -62,7 +52,7 @@ body{
     float:none;
   }
   
-  .iconAdd{
+.iconAdd{
     width:22px; 
     height:22px; 
     font-size:16px;
@@ -74,8 +64,7 @@ body{
     margin-left:10px;
     margin-top:4px;
   }
-  
-  .iconBin{
+.iconBin{
     width:22px; 
     height:22px; 
     font-size:16px;
@@ -107,7 +96,7 @@ body{
     color:black;
     background-color: lightcyan;
   }
-
+/***
 .sizeButtons{
     width:100px;
     height:40px;
@@ -119,21 +108,78 @@ body{
     background-image: linear-gradient(cyan, lightcyan);
     box-shadow: 2px 2px blue;
   }
-  
+  ***/
+
+  .sizeButtons{
+    width:40px;
+    height:22px;
+    font-size:10px;
+    margin-left:10px;
+    background-color:cyan;
+    border-radius: 5px;
+    background-image: linear-gradient(cyan, lightcyan);
+    box-shadow: 2px 2px blue;
+    border: solid 1px blue;
+}
+
 .sizeButtons:hover{
     background-color:rgb(48, 89, 159);
     background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
   }
 
-
-
-.Straight-content{
-    margin-top:0px;
-    position: absolute;
-    z-index: 1;
+.dropdown {
+    position: relative;
+    display: contents; 
   }
   
-  .StraightDropDown{
+
+.Straight-content{
+
+    position: absolute;
+    z-index: 1;
+    width:210px;
+    height: 270px;
+  }
+
+.StraightDropDown{
+    width:205px;
+    border: 0px solid green;
+    height: 260px;
+    overflow-y: scroll;
+  }
+    
+.Straight-options{
+    width:200px;
+    font-size:11px;
+    height:26px;
+    color:black;
+    text-align: left;
+    padding-left:7px;
+    padding-top:4px;
+    border:0px; 
+    display:inline-block;
+  }
+
+.Straight-options:hover{
+    background-color:lightyellow;
+  }
+
+.error{
+    color:red;
+    font-size:12px;
+    background-color:cyan;
+    display:contents;
+  }
+  
+.msg{
+    font-size:13px; 
+    color:blue; 
+    width:90%;
+    margin-left:20px
+  }
+
+/***
+.StraightDropDown{
       display: inline-block;
       font-size:12px;
       font-weight: bold;
@@ -144,14 +190,16 @@ body{
       border: 2px solid red;
       text-align: left;
       z-index: 1;
+      margin-left:40px;
     }
   
   .Straight-options{
       margin-top:0px;
+      margin-left:5px;
       padding:5px;
       height:50px;
-      min-width:80px; 
-      width:90px;
+      min-width:100px; 
+      width:100px;
       font-size:14px;
       border:1px solid blue;
       display:inline-block;
@@ -160,25 +208,23 @@ body{
       overflow-wrap: break-word;
       overflow-block:hidden;
     }
-  
-    .colorOdd{
+
+  **/
+  .colorOdd{
       background-color:rgb(185, 212, 221);
     }
   
-    .colorEven{
+  .colorEven{
       background-color:rgb(219, 224, 226);
     }
   
-    .Straight-options:hover{
-      background-color:lightyellow;
-      border:2px solid black;
-    }
+
   
-    .Buffer{
+  .Buffer{
       margin-top:0px;
-      padding-left:5px;
-      height:40px;
-      width:80px; 
+      padding-left:0px;
+      height:10px;
+      width:90%; 
       display:inline-block;
     }
 

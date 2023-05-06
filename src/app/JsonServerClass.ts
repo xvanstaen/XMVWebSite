@@ -30,6 +30,49 @@ export class BioData{
       surname:string='';
       apps:Array<string>=[];
       ownBuckets:Array<any>=[{name:""}];
+      fitness={
+        bucket:"xav_fitness",
+        files:{
+          fileHealth:"HealthTracking",
+          fileFitnessMyConfig:"FitnessMyConfig",
+          fileStartName:"FitStat-",
+          fileStartLength:8,
+        },
+        fileType:{
+          Health:"HealthTracking",
+          FitnessMyConfig:"FitnessMyConfig",
+        }
+      };
+      configFitness={
+        bucket:"config-xmvit",
+        files:{
+          convToDisplay:"ConvToDisplay.json",
+          tabOfUnits:"ConvertTabOfUnits.json",
+          weightReference:"ConvertWeightRefTable.json",
+          convertUnit:"ConvertUnit.json",
+          calories:"ConfigCaloriesFat",
+          confHTML:"confTabHTML"
+        },
+        fileType:{
+          convToDisplay:"ConvToDisplay",
+          tabOfUnits:"ConvertTabOfUnits",
+          weightReference:"ConvertWeightRefTable",
+          convertUnit:"ConvertUnit",
+          calories:"ConfigCaloriesFat",
+          confHTML:"confTabHTML",
+        }
+      };
+      health={
+        weight:0,
+        weightObjective:0,
+        GI:0,
+        SaturatedFat:0,
+        Cholesterol:{
+          myLimit:0,
+          maxLimit:0,
+        },
+        Calories:0,
+      };
     };
 
   export class EventAug {
@@ -148,6 +191,7 @@ export class XMVConfig{
   BucketConsole:string="";
   BucketContact:string="";
   BucketConfig:string="";
+  BucketFitness:string='';
   Max_Nb_Bucket_Wedding:number=6;
   TabBucketPhoto:Array<string>=[];
   GetOneBucketOnly:boolean=false;
@@ -181,6 +225,7 @@ export class BucketList{
   Login:   string= "manage-login";
   Console: string= "logconsole";
   Config:  string= "config-xmvit";
+  Fitness:  string= "xav_fitness";
 }
 
 export class msgConsole{
@@ -204,40 +249,8 @@ export class configServer{
   baseUrl:string= '';
 }
 
-export class FormatWeight{
-  kgnb:number=0; kg:string='kg';lbsnb:number=0;lbs:string='lbs'
-};
 
 
-export class Fitness{
-  date_exercise:Date= new Date();
-  body:Array<any>=[
-    {
-      name:'',
-      exercise:[
-        {
-          weight:0,
-          seances:[]
-        }
-             ]
-    }
-  ];
-  
-}
 
-export class ArrayNewWeight {
-  weight:number=0;
-  seances:Array<number>=[]
-}
-
-export class ArrayNewBody {
-  name:string='';
-  exercise:Array<any>=[
-    {
-      weight:0,
-      seances:[]
-    }
-         ]
-}
 
 

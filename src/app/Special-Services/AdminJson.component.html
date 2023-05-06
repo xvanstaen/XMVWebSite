@@ -26,6 +26,8 @@
     <span  *ngIf="TabAppsAutho[5]==='Y'"(click)="Process('Console')" class="dropdown-options dropdown-text">Log console</span>
     <span  *ngIf="TabAppsAutho[7]==='Y'"(click)="Process('Fitness')" class="dropdown-options dropdown-text">Fitness</span>
     <span  *ngIf="TabAppsAutho[8]==='Y'"(click)="Process('Health')" class="dropdown-options dropdown-text">Health</span>
+    <span  *ngIf="TabAppsAutho[9]==='Y'"(click)="Process('ConvMgt')" class="dropdown-options dropdown-text">Conv Mgt</span>
+    <span  *ngIf="TabAppsAutho[10]==='Y'"(click)="Process('ConvFn')" class="dropdown-options dropdown-text">Conv Fn</span>
     <span  *ngIf="TabAppsAutho[4]==='Y'"(click)="Process('Login')" class="dropdown-options dropdown-text">&nbsp;&nbsp;&nbsp;&nbsp;Login</span>
     <!--
     <span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
@@ -34,6 +36,7 @@
     <div style="display:inline-flex; width:90%; height:60px; margin-left:20px;"></div>
     
 </div>
+
 <div *ngIf="  this.ActionMessage!==''" style="margin-top:10px;">
   <h2>{{ActionMessage}} </h2>
 </div> 
@@ -232,17 +235,37 @@
     <div *ngIf="GoToComponent===7; else CompoEight">
 
     <app-fitness-stat  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" 
-         >
+         [InMyConfigFitness]="MyConfigFitness" (returnFile)="ReceiveFiles($event)">
     </app-fitness-stat>
+   
+    </div> 
+  </ng-template>
+  <ng-template #CompoEight>
+    <div *ngIf="GoToComponent===8; else CompoNine">
+
+    <app-health  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" 
+    [InHealthAllData]="HealthAllData" [InConfigHTMLFitHealth]='ConfigHTMLFitHealth' [InConfigCaloriesFat]="ConfigCaloriesFat" [InConvertUnit]="ConvertUnit" (returnFile)="ReceiveFiles($event)" >
+    </app-health>
    
     </div>
   </ng-template>
-  <ng-template #CompoEight>
-    <div *ngIf="GoToComponent===8">
+  <ng-template #CompoNine>
+    <div *ngIf="GoToComponent===9; else CompoTen">
 
-    <app-health  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" 
+    <app-converter  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" [convertOnly]="convertOnly" 
+    [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [IntheTabOfUnits]="theTabOfUnits"  [InWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"     
+    >
+    </app-converter>
+   
+    </div>
+  </ng-template>
+  <ng-template #CompoTen>
+    <div *ngIf="GoToComponent===10">
+
+    <app-converter  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" [convertOnly]="convertOnly" 
+     [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [intheTabOfUnits]="theTabOfUnits"  [inWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"
          >
-    </app-health>
+    </app-converter>
    
     </div>
   </ng-template>

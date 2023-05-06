@@ -1,5 +1,4 @@
 @import "../FitnessHealthGeneral.css";
-@import "../FitnessHealthGeneralMedia.css";
 
 .inputCriteria{
   width:var(--textWidth,160px);
@@ -103,8 +102,37 @@ td {
 /*** ============== @media 1010 ================ ***/
 /*** ====================================== ***/
 @media only screen and (max-width: 1010px) {
+  body{
+    max-width: 620px;
 
+  }
 
+  div{
+      --margLeft: 10px;
+      --LabWidth: 80px;
+      --textWidth:80px;
+      --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+      --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+      --CriteriaOneDropLeft:100px;
+      --CriteriaTwoDropLeft:200px;
+      --CriteriaThreeDropLeft:300px;
+    }
+  
+
+.StraightDropDownOverride{
+      font-size:10px;
+      width:85px;
+      text-align: center;
+      border: 2px solid green;
+    }
+  
+.Straight-optionsOverride{
+      min-width:65px; 
+      width:65px;
+      font-size:10px;
+      height:30px;
+      text-align: center;
+    }
 
 table {
   width:95%;

@@ -1,5 +1,6 @@
 
 export class ConfigFitness{
+    fileType:string='';
     user_id: string='';
     firstname:string='';
     lastname:string='';

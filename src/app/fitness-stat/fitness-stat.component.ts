@@ -9,10 +9,6 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { Fitness } from '../JsonServerClass';
-import { FormatWeight } from '../JsonServerClass';
-import { ArrayNewWeight } from '../JsonServerClass';
-import { ArrayNewBody } from '../JsonServerClass';
 import { BucketList } from '../JsonServerClass';
 import { Bucket_List_Info } from '../JsonServerClass';
 
@@ -95,11 +91,43 @@ FillFSelected= {'selected':''};
 @Input() configServer = new configServer;
 @Input() identification= new LoginIdentif;
 
+//@Input() InNewPerformanceFitness=new PerformanceFitness;
+//@Input() InMergeFilesFitness:Array<PerformanceFitness>=[];
+@Input() InMyConfigFitness=new ConfigFitness;
+
+@Output() returnFile= new EventEmitter<any>();
+
+NewPerformanceFitness=new PerformanceFitness;
+MergeFilesFitness:Array<PerformanceFitness>=[];
+
+MyConfigFitness=new ConfigFitness;
+
+TabBigData:Array<BigData>=[];
+
+myListOfObjects=new Bucket_List_Info;
+
 IsTestBoolean:boolean=true;
 
 DisplayConfig:boolean=true;
 DisplayPerfFigures:boolean=true;
 DisplayPerfChart:boolean=true;
+
+
+DisplayMerge:boolean=false;
+NbFilesMerged:number=0;
+MergeFiles:boolean=false;
+TotalMergeFiles:number=0;
+NbWaitHTTP:number=0;
+BufferDisplay:Array<string>=[]; // initialised in onInit
+maxBuffer:number=5;
+
+FilesAlreadyMerged:Array<any>=[];
+ClassFilesAlreadyMerged={
+  name:'A',
+  refFileMerge:1,
+  startTabBigData:1,
+  endTabBigData:1
+}
 
 
 IsSaveConfirmed:boolean=false;
@@ -113,11 +141,6 @@ NewconfigServer=new configServer;
 isConfigServerRetrieved:boolean=false;
 NewXMVConfig=new XMVConfig;
 
-NewPerformanceFitness=new PerformanceFitness;
-MergeFilesFitness:Array<PerformanceFitness>=[];
-
-MyConfigFitness=new ConfigFitness;
-
 HTTP_Address:string='';
 HTTP_AddressPOST:string='';
 Google_Bucket_Access_Root:string='https://storage.googleapis.com/storage/v1/b/';
@@ -128,7 +151,7 @@ Google_Object_Name:string='';
 Google_Object_Fitness:string='';
 
 bucket_data:string='';
-myListOfObjects=new Bucket_List_Info;
+
 DisplayListOfObjects:boolean=false;
 
 // used to create object name in Google Storage
@@ -166,8 +189,6 @@ ref_format=new thedateformat;
 myObj=new eventoutput;
 Input_Travel_O_R:string='';
 
-TheWeights:Array<FormatWeight>=[]; // can come from Google Storage
-RefFormatWeight=new FormatWeight;
 
 kg_lbs:number=2.20462;
 lbs_kg:number=0.453592;
@@ -242,6 +263,7 @@ onWindowResize() {
   }
 
 ngOnInit(){
+
   this.getScreenWidth = window.innerWidth;
   this.getScreenHeight = window.innerHeight;
   if (this.getScreenWidth<620){ this.nbToDisplay=2; this.nbSeanceDisplay=3;} 
@@ -304,28 +326,33 @@ ngOnInit(){
   this.TabIsDateWrong[0]=true;
   this.initOpenDialogue();
 
-  if (this.configServer.GoogleProjectId===''){
+  if (this.configServer.GoogleProjectId===undefined || this.configServer.GoogleProjectId===''){
     this.RetrieveConfig();
-  } else{ // not in place yet *************
-    if (this.identification.ownBuckets!== undefined && this.identification.ownBuckets.length>0){
-      this.Google_Bucket_Name=this.identification.ownBuckets[0].name;
-    }
-    this.GetAllObjects();
-    this.isConfigServerRetrieved=true;
-  
-    this.Google_Object_Fitness="Config"+this.identification.id+'-'+this.identification.UserId;
-    this.GetRecord('config',0,1);
+  } else{ 
+    if (this.identification.fitness.bucket!== undefined && this.identification.fitness.bucket!==''){
+      this.Google_Bucket_Name=this.identification.fitness.bucket;
+    
+      this.GetAllObjects();
+      this.isConfigServerRetrieved=true;
+    
+      this.Google_Object_Fitness=this.identification.fitness.files.fileFitnessMyConfig;
+      if (this.InMyConfigFitness.fileType!==''){
+        this.MyConfigFitness=this.InMyConfigFitness;
+        this.EventHTTPReceived[0]=true;
+      } else {
+        this.GetRecord('config',0,1);
+      }
+      
+    } else {this.error_msg='identification record is missing fitness bucket reference ';}
   }
   
-  // weights to be selected by user when exercising
-  this.FillTabWeight();
   this.scroller.scrollToAnchor('targetTop');
   }
 
   TheSelectDisplays: FormGroup = new FormGroup({ 
-    PerfFigures: new FormControl('Y'),
-    PerfChart: new FormControl('Y'),
-    Config: new FormControl('Y')
+      PerfFigures: new FormControl('Y'),
+      PerfChart: new FormControl('Y'),
+      Config: new FormControl('Y')
   })
 
 SelectDisplay(){
@@ -400,23 +427,6 @@ RadioSelection(event:any){
     this.ChartFileList.controls[i].setValue(this.FillFSelected);
 }
 
-
-TabBigData:Array<BigData>=[];
-DisplayMerge:boolean=false;
-NbFilesMerged:number=0;
-MergeFiles:boolean=false;
-TotalMergeFiles:number=0;
-NbWaitHTTP:number=0;
-BufferDisplay:Array<string>=[]; // initialised in onInit
-maxBuffer:number=5;
-
-FilesAlreadyMerged:Array<any>=[];
-ClassFilesAlreadyMerged={
-  name:'A',
-  refFileMerge:1,
-  startTabBigData:1,
-  endTabBigData:1
-}
 
 
 ChartFileSelection(){
@@ -1026,8 +1036,7 @@ GetAllObjects(){
                 }
               
                 for (i=this.myListOfObjects.items.length-1; i>-1; i--){
-                      if (this.myListOfObjects.items[i].name.substring(0,6)==='Config' ||
-                      this.myListOfObjects.items[i].name.substring(0,6)==='Health'){
+                      if (this.myListOfObjects.items[i].name.substring(0,this.identification.fitness.files.fileStartLength)!==this.identification.fitness.files.fileStartName){
                         this.myListOfObjects.items.splice(i,1);
                       } else {
                         this.FillFSelected.selected='N';
@@ -1116,6 +1125,7 @@ GetRecord(event:string, iWait:number, ref:number){
                     this.theConfig=new ConfigFitness;
                     this.theConfig=data;
                     this.MyConfigFitness=new ConfigFitness;
+                    this.MyConfigFitness.fileType=this.identification.fitness.fileType.FitnessMyConfig;
                     this.MyConfigFitness.user_id=this.theConfig.user_id;
                     this.MyConfigFitness.firstname=this.theConfig.firstname;
                     this.MyConfigFitness.lastname=this.theConfig.lastname;
@@ -1184,6 +1194,7 @@ GetRecord(event:string, iWait:number, ref:number){
                     if (this.MyConfigFitness.TabSport[0].name===undefined || this.MyConfigFitness.TabSport.length===0){ 
                         this.InitTabConfig();
                       }
+                    this.returnFile.emit(this.MyConfigFitness);
                   }
                 this.error_msg='';
                 this.scroller.scrollToAnchor('AccessToListFiles');
@@ -1200,6 +1211,7 @@ GetRecord(event:string, iWait:number, ref:number){
                       this.EventHTTPReceived[iWait]=true;
                       if (this.NbWaitHTTP>0){this.NbWaitHTTP--;} 
                       this.MyConfigFitness=new ConfigFitness;
+                      this.MyConfigFitness.fileType=this.identification.fitness.files.fileFitnessMyConfig;
                       this.MyConfigFitness.user_id=this.identification.UserId;
                       this.MyConfigFitness.firstname=this.identification.firstname;
                       this.MyConfigFitness.lastname=this.identification.surname;
@@ -1235,6 +1247,9 @@ SaveNewRecord(){
   this.IsSaveConfirmed = false;
   this.message='';
   this.Google_Object_Name = this.SpecificForm.controls['FileName'].value ;
+  if (this.Google_Object_Name.substring(0,this.identification.fitness.files.fileStartLength)!==this.identification.fitness.files.fileStartName){
+    this.Google_Object_Name=this.identification.fitness.files.fileStartName+this.SpecificForm.controls['FileName'].value;
+  }
   if (this.Google_Object_Name===''){
     this.Google_Object_Name = 'NoNameFile';
   }
@@ -1247,6 +1262,7 @@ SaveNewRecord(){
   //this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
   .subscribe(res => {
     //**this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
+      if (res.type===4){
             this.message='File "'+ this.Google_Object_Name +'" is successfully stored in the cloud';
           
             // check if this is a new file and if yes create at the end of the list of objects
@@ -1263,6 +1279,7 @@ SaveNewRecord(){
                   this.ChartFileList.controls[this.ChartFileList.length-1].setValue(this.FillFSelected);
             }
             this.UpdateMergeFiles(this.Google_Object_Name);
+          }
         },
         error_handler => {
           //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
@@ -1280,17 +1297,23 @@ CancelConfig(){
   this.isConfigConfirmed=false;
 }
 
+EventHTTPSave:boolean=false;
 SaveConfigFtiness(){
   this.isConfigConfirmed=false;
-
+  this.EventHTTPSave=false;
   var file=new File ([JSON.stringify(this.MyConfigFitness)],this.SpecificForm.controls['FileName'].value, {type: 'application/json'});
                     
   this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
   //this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
   .subscribe(res => {
     //**this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
-            this.message='File "'+ this.SpecificForm.controls['FileName'].value +'" is successfully stored in the cloud';
-        },
+          this.message='File "'+ this.SpecificForm.controls['FileName'].value +'" is successfully stored in the cloud';
+            
+          if (this.EventHTTPSave===false){
+            this.returnFile.emit(this.MyConfigFitness);
+          } 
+          this.EventHTTPSave=true;
+          },
         error_handler => {
           //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
           this.message='File' + this.SpecificForm.controls['FileName'].value +' *** Save action failed - status is '+error_handler.status;
@@ -1504,21 +1527,5 @@ InitTabConfig(){
   }
 }
 
-FillTabWeight(){ // **** NOT USED *****
-  const max_lbs=140;
-  var j=0;
-  var i=0;
-  this.RefFormatWeight.lbsnb=8;
-  this.RefFormatWeight.kgnb=this.RefFormatWeight.lbsnb*this.lbs_kg;
-  this.TheWeights[0]=this.RefFormatWeight;
-  for (i=10 ; i<max_lbs; i=i+10){
-      j=j+1;
-      this.RefFormatWeight=new FormatWeight;
-      this.TheWeights.push(this.RefFormatWeight);
-      this.RefFormatWeight.lbsnb=i;
-      this.RefFormatWeight.kgnb=this.RefFormatWeight.lbsnb*this.lbs_kg;
-      this.TheWeights[j]=this.RefFormatWeight;
-    }
-  }
 }
 

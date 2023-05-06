@@ -31,7 +31,9 @@ export class MyDropDownComponent implements OnInit {
 
   isFilterNeeded:boolean=false;
   isSortNeeded:boolean=false;
-
+  iDialogue:number=0;
+  //margLeft:Array<number>=[];
+  margTop:Array<number>=[0,-90,-120,-150,-150,-120];
   ngOnInit(): void {
     var i=0;
     var j=0;
@@ -40,7 +42,7 @@ export class MyDropDownComponent implements OnInit {
       //this.myEvent.dialogueNb
       this.returnedData.idString=this.myEvent.idString;
       this.returnedData.fieldNb=this.myEvent.dialogueNb;
-   
+      
     } else if (this.callingComponent='FitnessChart'){
       for (i=3; i<6 && this.OpenDialogue[i]===false; i++){
       }
@@ -58,7 +60,7 @@ export class MyDropDownComponent implements OnInit {
           this.returnedData.fieldType='Sort';
         }
     }
-    
+      this.iDialogue=this.returnedData.fieldNb;
   }
 
 

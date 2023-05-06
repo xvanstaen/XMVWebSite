@@ -1,5 +1,4 @@
 @import "../FitnessHealthGeneral.css";
-@import "../FitnessHealthGeneralMedia.css";
 
 .theDiv{
   /*
@@ -95,8 +94,6 @@
   background: white;
   font-size: 30px;
 }
-
-
 
 .force-scroll {
   overflow-y: scroll;
@@ -291,12 +288,84 @@ font-size:18px;
     /*** ============== @media 1010 ================ ***/
     /*** ====================================== ***/
     @media only screen and (max-width: 1010px) {
+      body{
+        max-width: 620px;
+        margin-left:var(--margLeft);
+      }
+        
+      div{
+          --margLeft: 10px;
+          --LabWidth: 80px;
+          --textWidth:80px;
+          --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+          --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+          --CriteriaOneDropLeft:100px;
+          --CriteriaTwoDropLeft:200px;
+          --CriteriaThreeDropLeft:300px;
+      }
+          
+      .StraightDropDown{
+          font-size:10px;
+    
+          width:170px;
+          text-align: left;
+          border: 2px solid green;
+      }
+          
+      .Straight-options{
+  
+          width:150px;
+          font-size:11px;
+          height:17px;
+          color:black;
+          text-align: left;
+          padding:0px;
+      }
+  
+      /***
+  
+      .StraightDropDown{
+          font-size:10px;
+          width:230px;
+          text-align: left;
+          border: 2px solid green;
+      }
+          
+      .Straight-options{
+          min-width:72px; 
+          width:72px;
+          font-size:10px;
+          margin-left:2px;
+          margin-top:2px;
+          height:35px;
+          color:red;
+          text-align: center;
+          padding:1px;
+      }
+  
+      ***/
+  
+      .Buffer{
+          margin-top:0px;
+          padding-left:5px;
+          height:5px;
+          width:90%; 
+          display:inline-block;
+          border:solid 0px blue;
+      }
+  
+      .sizeButtons{
+          width:60px;
+          height:32px;
+          font-size:10px;
+          margin-left:10px;
+      }
 
-      .topDivwidth{
+    .topDivwidth{
         width:  calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 70px ) ;
       }
 
-      .inputText{
+    .inputText{
         width:var(--textWidth,80px);
         font-size:10px;
       }
@@ -327,7 +396,6 @@ font-size:18px;
         font-size:10px;
       }
 
-
       .labelActiv{
         margin-left: calc(var(--margLeft) * 2);
         width:calc(var(--LabWidth) - var(--margLeft));
@@ -342,27 +410,21 @@ font-size:18px;
         margin-left: calc(var(--margLeft) * 3);
         width:calc(var(--LabWidth) - calc( 3 * var(--margLeft)) - 1px);
       }
-      
-
-
 
       .topDivwidth{
         width:  calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 40px ) ;
         
       }
       
-      
       .topDivExeOne{
         width:  40px;
         margin-left:5px;
       }
       
-      
       .topDivExeTwo{
         width:  calc( (calc( var(--margLeft) + var(--LabWidth)  + var(--textWidth) + var(--iconWidth) + 50px )) - 10px);
       }
 
-      
       .objectHeader{
         font-size:16px;  
         }

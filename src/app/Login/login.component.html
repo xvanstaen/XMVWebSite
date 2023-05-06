@@ -71,7 +71,10 @@
 <ng-template #AdminJson> 
   <div  *ngIf="routing_code===1; else firstevent">
     <app-AdminJson [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
-          [LoginTable_DecryptPSW]="Table_DecryptPSW" >
+          [LoginTable_DecryptPSW]="Table_DecryptPSW" 
+          [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat" [MyConfigFitness]="MyConfigFitness"
+          [ConvertUnit]="ConvertUnit"  [ConfigHTMLFitHealth]='ConfigHTMLFitHealth' [ConvToDisplay]="ConvToDisplay" [theTabOfUnits]="theTabOfUnits"  [WeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"  
+          >
     </app-AdminJson>
   </div> 
 </ng-template>

@@ -329,7 +329,7 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
 </div> <!--  end ngFor Sport -->
 <div class="skipLine">&nbsp;</div>
 
-<div style="margin-top:20px; width:80%">
+<div style="margin-left:180px; width:80%">
         <span *ngIf="IsSaveConfirmed===false">
             <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button>
             <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
@@ -354,22 +354,6 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
 </div>  
 
 
-    <!-- 
-    <div id="AccessToListFiles"></div>
-   
-            <div style="margin-top:20px;"  *ngIf="DisplayListOfObjects===true">
-                    <div class="objectHeader">LIST OF OBJECTS STORED IN THE CLOUD</div>
-                    <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
-                        (click)="RetrieveSelectedFile(ListObject)">  
-                        <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
-                        <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
-                    </li>
-            </div>
-            <div *ngIf="DisplayListOfObjects===false" class="specialDiv">
-                    <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>
-                    {{HTTP_Address}}
-            </div>
-  -->
 </div>
 
 <br><br>
@@ -394,7 +378,7 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
                         </div>    
                 </div>
                 <div class="skipLine">&nbsp;</div>
-                <input class="sizeButtons" style='margin-left:40px;' type='Submit' id="S2" (click)='ChartFileSelection()' value="Submit">
+                <input class="sizeButtons" style='margin-left:40px;' type='Submit' id="S2" (click)='ChartFileSelection()' value="Select">
                 <button class="sizeButtons" style='margin-left:20px;' (click)='SelectAll()'>Select All</button>
                 <button class="sizeButtons" style='margin-left:20px;' (click)='CancelAll()'>Cancel All</button>
             </form>
@@ -435,13 +419,13 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
             </mat-icon>
             
             <div class="Straight-content" *ngIf="OpenDialogue[6]===true  && TabOfId[0]===i">
-                <div  class=" StraightDropDown" style="margin-top:0px; margin-left:10px;" >
+                <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                     <ul class="Buffer">&nbsp; </ul>
                             <li *ngFor="let selSport of MyConfigFitness.TabSport; let m=index;" 
                                 class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                 (click)="onClickList($event)" id="lSport-{{i}}" [value]="selSport.name" >{{selSport.name}}</li>
-                        <button class="sizeButtons" style="margin-left:100px;" (click)="cancelDropDown()">Cancel</button>
-                        <div class="Buffer" class="margin-top:15px;">&nbsp; </div>    
+                        <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
+                        <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
                 </div>
             </div>
       
@@ -478,13 +462,13 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
             
 
                 <div class="Straight-content" *ngIf="OpenDialogue[7]===true  && TabOfId[0]===i && TabOfId[1]===k">
-                    <div  class=" StraightDropDown" style="margin-top:0px; margin-left:10px;" >
+                    <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                         <ul class="Buffer">&nbsp; </ul>
                             <li *ngFor="let activity of MyConfigFitness.TabActivity; let m=index;" 
                                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="onClickList($event)" id="lActivity-{{i}}-{{k}}" [value]="activity.name" >{{activity.name}}</li>
-                            <button class="sizeButtons" style="margin-left:100px;" (click)="cancelDropDown()">Cancel</button>
-                            <div class="Buffer" class="margin-top:15px;">&nbsp; </div>     
+                            <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
+                            <div class="Buffer" style="margin-top:15px;">&nbsp; </div>     
                     </div>
                 </div>
    
@@ -521,14 +505,14 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
                   arrow_drop_down
                 </mat-icon>
                 
-                <div class="Straight-content" *ngIf="OpenDialogue[11]===true  && TabOfId[0]===i && TabOfId[1]===k">
-                    <div  class=" StraightDropDown" style="margin-top:0px; margin-left:10px;" >
+                <div class="Straight-content" *ngIf="OpenDialogue[11]===true  && TabOfId[0]===i && TabOfId[1]===k" >
+                    <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                         <ul class="Buffer">&nbsp; </ul>
                             <li *ngFor="let Exercise of MyConfigFitness.TabExercise; let m=index;" 
                                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="onClickList($event)" id="lExercise-{{i}}-{{k}}" [value]="Exercise.name" >{{Exercise.name}}</li>
-                            <button class="sizeButtons" style="margin-left:100px;" (click)="cancelDropDown()">Cancel</button>
-                            <div class="Buffer" class="margin-top:15px;">&nbsp; </div>                            
+                            <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
+                            <div class="Buffer" style="margin-top:15px;">&nbsp; </div>                            
                     </div>
                 </div>
             </div>
@@ -565,14 +549,14 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
                   arrow_drop_down
                 </mat-icon>
                 
-                <div class="Straight-content" *ngIf="OpenDialogue[12]===true  && TabOfId[0]===i && TabOfId[1]===k">
-                    <div  class=" StraightDropDown" style="margin-top:0px; margin-left:10px;" >
+                <div class="Straight-content" *ngIf="OpenDialogue[8]===true  && TabOfId[0]===i && TabOfId[1]===k">
+                    <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                         <ul class="Buffer">&nbsp; </ul>
                             <li *ngFor="let selUnit of MyConfigFitness.TabUnits; let m=index;" 
                                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="onClickList($event)" id="lUnit-{{i}}-{{k}}" [value]="selUnit.name" >{{selUnit.name}}</li>
-                            <button class="sizeButtons" style="margin-left:100px;" (click)="cancelDropDown()">Cancel</button>
-                            <div class="Buffer" class="margin-top:15px;">&nbsp; </div>        
+                            <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
+                            <div class="Buffer" style="margin-top:15px;">&nbsp; </div>        
                     </div>
                 </div>
 
@@ -609,13 +593,13 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
                 </mat-icon>
                                
                 <div class="Straight-content" *ngIf="OpenDialogue[9]===true  && TabOfId[0]===i && TabOfId[1]===k">
-                    <div  class=" StraightDropDown" style="margin-top:0px; margin-left:10px;" >
+                    <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                         <ul class="Buffer">&nbsp; </ul>
                             <li *ngFor="let selPerfType of MyConfigFitness.TabPerfType;  let m=index;" 
                                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="onClickList($event)" id="lPerfType-{{i}}-{{k}}" [value]="selPerfType.name" >{{selPerfType.name}}</li>
-                            <button class="sizeButtons" style="margin-left:100px;" (click)="cancelDropDown()">Cancel</button>
-                            <div class="Buffer" class="margin-top:15px;">&nbsp; </div>    
+                            <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
+                            <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
                     </div>
                 </div>
 
@@ -652,13 +636,13 @@ Performance figures  <input type="radio" id="PerfFigures"  value="Y">Yes
                   arrow_drop_down
                 </mat-icon>
                 <div class="Straight-content" *ngIf="OpenDialogue[10]===true  && TabOfId[0]===i && TabOfId[1]===k">
-                    <div  class=" StraightDropDown" style="margin-top:0px; margin-left:10px;" >
+                    <div  class=" StraightDropDown" style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                         <ul class="Buffer">&nbsp; </ul>
                             <li *ngFor="let selPerfUnit of MyConfigFitness.TabPerfUnit; let m=index;" 
                                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="onClickList($event)" id="lUnitPerf-{{i}}-{{k}}" [value]="selPerfUnit.name" >{{selPerfUnit.name}}</li>
-                            <button class="sizeButtons" style="margin-left:100px;" (click)="cancelDropDown()">Cancel</button>
-                            <div class="Buffer" class="margin-top:15px;">&nbsp; </div> 
+                            <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
+                            <div class="Buffer" style="margin-top:15px;">&nbsp; </div> 
                     </div>
                 </div>
    

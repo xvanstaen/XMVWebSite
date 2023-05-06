@@ -32,6 +32,9 @@ import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 import { FitnessChartComponent } from './fitness-chart/fitness-chart.component';
 import { MyDropDownComponent } from './my-drop-down/my-drop-down.component';
 import { HealthComponent } from './health/health.component';
+import { ConverterComponent } from './converter/converter.component';
+import { CaloriesFatComponent } from './calories-fat/calories-fat.component';
+import { ReportHealthComponent } from './report-health/report-health.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +59,9 @@ import { HealthComponent } from './health/health.component';
     FitnessChartComponent,
     MyDropDownComponent,
     HealthComponent,
+    ConverterComponent,
+    CaloriesFatComponent,
+    ReportHealthComponent,
 
 
   ],

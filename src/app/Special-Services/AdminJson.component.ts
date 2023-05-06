@@ -1,4 +1,7 @@
-import { Component, OnInit , Input, HostListener} from '@angular/core';
+import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  
+import { Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
@@ -18,8 +21,15 @@ import { UserParam } from '../JsonServerClass';
 import { OneBucketInfo } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 
+
+import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
+import {mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories';
+import {ConfigFitness} from '../ClassFitness';
+import {classConfHTMLFitHealth} from '../classConfHTMLTableAll';
+
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+
 
 @Component({
   selector: 'app-AdminJson',
@@ -28,6 +38,18 @@ import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.servic
 })
 
 export class AdminJsonComponent {
+  @Output() returnFile= new EventEmitter<any>();
+  @Input() ConfigCaloriesFat=new mainClassCaloriesFat;
+
+  @Input() ConvertUnit=new mainClassConv;
+  @Input() ConvToDisplay=new mainConvItem;
+  @Input() theTabOfUnits=new mainClassUnit;
+  @Input() WeightRefTable=new mainRecordConvert;
+  @Input() ConfigHTMLFitHealth=new classConfHTMLFitHealth;
+
+  @Input() MyConfigFitness=new ConfigFitness;
+
+  @Input() HealthAllData=new mainDailyReport; 
 
   constructor(
     private router:Router,
@@ -36,7 +58,7 @@ export class AdminJsonComponent {
     private ManageGoogleService: ManageGoogleService,
     private ManageMangoDBService: ManageMangoDBService,
     ) {}
-     
+
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
@@ -99,7 +121,9 @@ export class AdminJsonComponent {
     NbRefresh_Bucket:number=0;
 
     TabAppsAutho:Array<any>=[];
-    Max_Apps:number=8;
+    Max_Apps:number=10;
+
+    convertOnly:boolean=false;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -143,6 +167,8 @@ ngOnInit(){
             else if (this.identification.apps[i]==='Config'){this.TabAppsAutho[6]='Y';}
             else if (this.identification.apps[i]==='Fitness'){this.TabAppsAutho[7]='Y';}
             else if (this.identification.apps[i]==='Health'){this.TabAppsAutho[8]='Y';}
+            else if (this.identification.apps[i]==='ConvMgt'){this.TabAppsAutho[9]='Y';}
+            else if (this.identification.apps[i]==='ConvFn'){this.TabAppsAutho[10]='Y';}
         }
       }
 
@@ -182,6 +208,12 @@ Process(event:string){
     this.GoToComponent=7;
   } else if (event==='Health'){
       this.GoToComponent=8;
+  } else if (event==='ConvMgt'){
+      this.GoToComponent=9;
+      this.convertOnly=false;
+    } else if (event==='ConvFn'){
+      this.GoToComponent=10;
+      this.convertOnly=true;
   }  else if (event==='Refresh_Login'){
     this.NbRefresh_Bucket++; 
   }
@@ -201,6 +233,46 @@ getBucket(){
         console.log(this.Error_Access_Server);
        
       });
+}
+
+ReceiveFiles(event:any){
+
+  if (event.fileType!=='' && 
+          event.fileType===this.identification.configFitness.fileType.convertUnit){ 
+      this.ConvertUnit=event;
+      
+
+  } else if (event.fileType!=='' && 
+          event.fileType===this.identification.configFitness.fileType.convToDisplay){ 
+       this.ConvToDisplay=event;
+
+  } else if (event.fileType!=='' && 
+          event.fileType===this.identification.configFitness.fileType.tabOfUnits){ 
+      this.theTabOfUnits=event;
+
+  } else if (event.fileType!=='' && 
+        event.fileType===this.identification.configFitness.fileType.weightReference){ 
+      this.WeightRefTable=event;
+
+    } else if (event.fileType!=='' && 
+    event.fileType===this.identification.fitness.fileType.FitnessMyConfig){ 
+  this.MyConfigFitness=event;
+  }
+
+  else if (event.fileType!=='' && 
+      event.fileType===this.identification.fitness.fileType.Health){
+    this.HealthAllData=event;
+  }
+
+  else if (event.fileType!=='' && 
+      event.fileType===this.identification.configFitness.fileType.calories){ 
+    this.ConfigCaloriesFat=event;
+  } 
+  else if (event.fileType!=='' && 
+      event.fileType===this.identification.configFitness.fileType.confHTML){ 
+    this.ConfigHTMLFitHealth=event;
+  }
+  this.returnFile.emit(event);
 }
 
 
@@ -344,5 +416,6 @@ LogMsgConsole(msg:string){
   msginLogConsole(msg, this.myConsole,this.myLogConsole, this.SaveConsoleFinished,this.HTTP_AddressLog, this.type);
   
   }
+
 
 }

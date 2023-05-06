@@ -4,8 +4,23 @@
   font-size:12px;
   color:red;
   font-weight: bold;
+}
 
+.theRadio{
+  margin-left:10px; 
+  width:60%; display:block; 
+  background-color:lightgrey; 
+  float:left; 
+  height:25px;
+}
 
+.theRadioButt{
+  height:18px;
+  width:18px
+}
+
+.YesNo{
+  font-size:14px;
 }
 
 table {
@@ -13,67 +28,220 @@ table {
     border-collapse: collapse;
     table-layout: fixed; 
     */
+    border-collapse: separate;
     margin-left:10px;
     width:var(--tableW);
     max-width:var(--tableMaxW); 
-    overflow: scroll;
-    border-collapse: collapse;
+    overflow-y: scroll;
     table-layout: fixed;
+    background-color: black;
+    color:white;
   }
     
   th {
+    /*
+       background-color: #96D4D4;
+       border: 0px solid blue;
+       border-bottom: 0.3px solid white;
+    */
     text-align: center;
-    background-color: #96D4D4;
-    border-spacing: 5px;
-    border: 1px solid blue;
+    background-color: black;
+    border-spacing: 0px;
     font-size:12px;
-    height:30px;
+    height:25px;
+    word-wrap: break-word;
   }
     
   td {
     /*
-    vertical-align: middle;
-    */
     text-align: left;
-    border-spacing: 0px;
-    height:30px;
-    color:blue;
-    font-size:12px;
-    padding-left:3px;
-    overflow:scroll;
+     color:blue;
+      padding-left:3px;
+          overflow:scroll;
     word-wrap: break-word;
+    */
+    
+    border-spacing: 0px;
+    height:25px; 
+    color:white;
+    font-size:12px;
   }
   
-
-.tableCol {
-    border:solid 1px blue;
+.subTotal {
+  /*
+    color:red;
+    font-weight:bold;
+    font-size:13px;*/
+    height:var(--sTheight);
+    display:inline-block;
+    color:var(--sTcol);
+    font-weight:bold;
+    font-size:var(--sTfontW);
+    margin-top:10px;
   }
 
+.Total {
+  /*
+    color:green;
+    font-weight:bold;
+    font-size:13px;
+   */
+  height:var(--Theight);
+  display:inline-block;
+  color:var(--Tcol);
+  font-weight:bold;
+  font-size:var(--TfontW);
+  border: solid 0px white;
+  margin-top:10px;
+
+  }
+
+
+.trow {
+  display:inline-block;
+  height:var(--rowHeight); 
+  color:var(--rowColor);
+  background-color:var(--rowBackG);
+  border: solid 0px blue;
+  /*
+  pointer-events: none; ==> field is read only and data cannot be copied
+  background-color:var(--rEven);
+  */
+  }
+
+.trow:hover{
+    color:blue;
+    background-color: white;
+  }
+
+.tReadOnly{
+  display:inline-block;
+  height:var(--rowHeight); 
+  color:var(--rowColor);
+  background-color:var(--rowBackG);
+  border: solid 0px blue;
+}
+
+.trow:read-only{
+  border:0px solid blue;
+}
+
+
 .rowEven{
+    /*
     background-color: #9edb9c;
+     background-color: black;
+    */
+    background-color: var(--rEven);
 }
     
 .rowOdd {
+    /*
     background-color: #8a97e8;
+    background-color: rgb(51, 46, 46);
+   */
+    background-color: var(--rOdd);
   }
+
+.rowNew {
+    /*
+    background-color: #8a97e8;
+      background-color: rgb(75, 159, 103);
+    color:blue;
+   */
+    background-color: var(--rNewbackG);
+    color:var(--rNewcol);
+  }
+
+.Colth {
+  display:inline-block;
+  text-align: center; 
+  height:var(--thHeight);
+  color:var(--thColor);
+  background-color:var(--thBackGround);
+    /*pointer-events: none;*/
+  }
+
+.Colth:read-only{ 
+    border:0px solid blue;
+  }
+
+.widthDate{
+  width:var(--wDate);
+  text-align: left; 
+  padding-left:10px;
+}
+.widthAction{
+  width:var(--wAction); 
+  text-align: center; 
+}
+.widthCalBurnt{
+  width:var(--wCalBurnt);
+  text-align: center; 
+}
+.widthMeal{
+  width:var(--wMeal);
+  text-align: left;
+  padding-left:10px;
+}
+.widthIngr{
+  width:var(--wIngr); 
+  text-align: left;
+  padding-left:10px;
+  
+}
+.widthOther{
+  width:var(--wOther); 
+  text-align: center; 
+}
+
+.tableCol {
+    /*
+    border:solid 0px blue;
+    */
+    border-bottom:solid 0.3px white;
+  }
+
+.circle{
+  border-radius: 50% 50%;
+  color:blue;
+  width:18px;
+  height:18px;
+  border: solid 1px rgb(4, 4, 124);
+  margin-left:8px;
+  font-size:10px;
+  font-weight:bold;
+  background-color: #8e8c8b;
+  text-align: center;
+  padding-top:2px;
+  display:inline-block;
+}
+
+.circle:hover{
+  color:red;
+  background-color:cyan;
+  width:22px;
+  height:22px;
+  border: solid 2px rgb(4, 4, 124);
+}
+
+.theLabel{
+  width:140px;
+  display:inline-block;
+  color:blue;
+}
 
 .inputText{
   color:blue;
   background-color: rgb(232, 229, 229);
-  width:55%;
+  width:var(--textWidth);
+  height:25px;
   }
 
 .inputText:hover{
     color:blue;
     background-color: rgb(198, 157, 157);
 }
-
-.overrideInput{
-  width:150px; 
-  height:40px; 
-  margin-left:10px; 
-  font-size:14px;
-  }
 
 
 .page{
@@ -86,90 +254,128 @@ table {
   border: solid 1px blue;
 }
 
-.page:hover{
-  color:red;
-
+.theScroll{
+  overflow:scroll;
 }
 
-.prevPage{
-  margin-left:5px; 
-
-}
-.nextPage{
-  margin-right:10px;
-  float:right;
+.mealBlock{
+  width:80%;
+  margin-left:20px; 
+  border:solid blue 2px;
 }
 
-.divPage{
-  width:var(--tableW); 
-  max-width:var(--tableMaxW); 
+.lMeal{
+  width:110px;
+}
+
+.lDish{
+  width:90px;
+}
+
+.lUnit{
+  width:90px;
+}
+
+.spanUnit{
+  margin-left:40px; 
+  width:90%
+}
+
+.oneRowUnit{
+  margin-left:30px;
+}
+
+.posConfirm{
   margin-left:10px; 
-  border:0px blue solid; 
-  height:40px;
-  margin-top:8px;
+  width:80%;
+}
+
+
+.StraightDropDown{
+  width:260px;
+  border: 0px solid green;
+  height: 260px;
+  overflow-y: hidden;
+}
+  
+.Straight-options{
+  width:250px;
+  font-size:11px;
+  height:25px;
+  color:black;
+  text-align: left;
+  margin-left:-2px;
+  border:0px; 
+}
+
+.RadioDropDown{
+  font-size:10px;
+  width:230px;
+  text-align: center;
+  border: 2px solid green;
+  height: 100px;
+  background: cyan;
+  color: blue;
 }
 
 
 /*** ====================================== ***/
 /*** ============== @media 1010 ================ ***/
 /*** ====================================== ***/
-  
-@media only screen and (max-width: 1010px) {
+@media only screen and (max-width:830px) {
   body{
     max-width: 620px;
-    font-size:10px;
+
   }
 
   div{
-      --margLeft: 10px;
-      --LabWidth: 80px;
-      --textWidth:80px;
-      --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
-      --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
-      --CriteriaOneDropLeft:100px;
-      --CriteriaTwoDropLeft:200px;
-      --CriteriaThreeDropLeft:300px;
-    }
+    --margLeft: 10px;
+    --LabWidth: 80px;
+    --textWidth:130px;
+  }
   
-.sizeButtons{
-      width:65px;
-      height:32px;
-      font-size:10px;
-      margin-left:10px;
-  }
-
-.arrow_down_size{
-    font-size:18px;
-  } 
-td {
+  td {
     font-size:10px;
   }
-th {
+  th {
     font-size:10px;
   }
+        
 
-.overrideInput{
-  width:80px; 
-  font-size:11px;
-  height:25px;
-  
-  }
+.Buffer{
+    margin-top:0px;
+    padding-left:5px;
+    height:5px;
+    width:90%; 
+    display:inline-block;
+    border:solid 0px blue;
+}
 
-.StraightDropDown{
 
+  .StraightDropDownOverride{
     font-size:10px;
-
-    width:250px;
-
+    width:85px;
+    text-align: center;
+    border: 2px solid green;
+    margin-top:-30px;
   }
 
-.Straight-options{
-
-    min-width:80px; 
-    width:80px;
-    font-size:12px;
-
+  .Straight-optionsOverride{
+    min-width:65px; 
+    width:75px;
+    font-size:10px;
+    height:25px;
+    text-align: center;
   }
+
+  .mealBlock{
+    max-width:420px; 
+  }
+
+  .posConfirm{
+    margin-left:90px; 
+  }
+
 }
 
     

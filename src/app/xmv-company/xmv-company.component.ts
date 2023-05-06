@@ -1,5 +1,8 @@
 
-import { Component, HostListener, OnInit, OnChanges, Input, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
+import {  ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  
 import { Router, RouterModule } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -7,10 +10,12 @@ import { HttpClient } from '@angular/common/http';
 import { LoginIdentif } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
-
+import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
+import {mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories';
+import {ConfigFitness} from '../ClassFitness';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
-
+import {classConfHTMLFitHealth} from '../classConfHTMLTableAll';
 
 @Component({
   selector: 'app-xmv-company',
@@ -31,7 +36,22 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   @Input() configServer=new configServer;
   @Input() XMVConfig=new XMVConfig;
   @Input() isConfigServerRetrieved:boolean=false;
+
+  @Output() returnFile= new EventEmitter<any>();
+
   redisplay_profile:number=0;
+
+  ConfigCaloriesFat=new mainClassCaloriesFat;
+
+  ConvertUnit=new mainClassConv;
+  ConvToDisplay=new mainConvItem;
+  theTabOfUnits=new mainClassUnit;
+  WeightRefTable=new mainRecordConvert;
+
+  MyConfigFitness=new ConfigFitness;
+
+  HealthAllData=new mainDailyReport; 
+  ConfigHTMLFitHealth=new classConfHTMLFitHealth;
 
   display_GoToContact:number=0;
   display_GoToOffer:number=0;
@@ -46,7 +66,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
    is passed by login.component.ts through [identification]="identif" 
   */
  
-  identif=new LoginIdentif;
+  identification=new LoginIdentif;
 
   Events_nb:string='';
 
@@ -89,12 +109,12 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     this.device_type = navigator.userAgent;
     this.device_type = this.device_type.substring(10, 48);
 
-    this.identif.id=0;
-    this.identif.key=2;
-    this.identif.method="AES";
-    this.identif.UserId="";
-    this.identif.psw="";
-    this.identif.phone="";
+    this.identification.id=0;
+    this.identification.key=2;
+    this.identification.method="AES";
+    this.identification.UserId="";
+    this.identification.psw="";
+    this.identification.phone="";
   }
 
   @HostListener('window:resize', ['$event'])
@@ -156,7 +176,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   }
 
   TheIdentifObject(event:any){
-    this.identif=event;
+    this.identification=event;
     // console.log(this.identif);
   }
 
@@ -180,5 +200,44 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     // console.log('cdref',this.cdref.detectChanges());
   }
 
+  ReceiveFiles(event:any){
+
+    if (event.fileType!=='' && 
+            event.fileType===this.identification.configFitness.fileType.convertUnit){ 
+        this.ConvertUnit=event;
+  
+    } else if (event.fileType!=='' && 
+            event.fileType===this.identification.configFitness.fileType.convToDisplay){ 
+         this.ConvToDisplay=event;
+  
+    } else if (event.fileType!=='' && 
+            event.fileType===this.identification.configFitness.fileType.tabOfUnits){ 
+        this.theTabOfUnits=event;
+  
+    } else if (event.fileType!=='' && 
+          event.fileType===this.identification.configFitness.fileType.weightReference){ 
+        this.WeightRefTable=event;
+  
+      } else if (event.fileType!=='' && 
+      event.fileType===this.identification.fitness.fileType.FitnessMyConfig){ 
+    this.MyConfigFitness=event;
+      }
+
+      else if (event.fileType!=='' && 
+            event.fileType===this.identification.fitness.fileType.Health){
+          this.HealthAllData=event;
+      }
+
+      else if (event.fileType!=='' && 
+            event.fileType===this.identification.configFitness.fileType.calories){ 
+          this.ConfigCaloriesFat=event;
+      }
+      else if (event.fileType!=='' && 
+            event.fileType===this.identification.configFitness.fileType.confHTML){ 
+          this.ConfigHTMLFitHealth=event;
+      }
+
+  
+  }
 }
 

@@ -1,0 +1,227 @@
+@import "../FitnessHealthGeneral.css";
+div{
+    --bufferW:60%;
+}
+
+.circle{
+    border-radius: 50% 50%;
+    color:white;
+    width:18px;
+    height:18px;
+    border: solid 0px rgb(182, 42, 42);
+    font-weight:bold;
+    background-color: #b87451;
+    display:inline-block;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+.circle:hover{
+    color:black;
+    background-color:cyan;
+  }
+  /***
+  .sizeButtons{
+    width:40px;
+    height:22px;
+    font-size:10px;
+    margin-left:10px;
+}
+***/
+.tHeader{
+  text-align: center; 
+  height:var(--thHeight,44px); 
+  display:block;
+  float:left;
+  font-size:13px;
+  color:var(--thColor,white);
+  background-color: var(--thBackground, black);
+  word-wrap:normal;
+  word-break: keep-all;
+  border-top:2px grey solid; 
+  border-left:2px grey solid; 
+  border-right:2px rgb(251, 249, 249) solid; 
+  border-bottom:2px rgb(251, 249, 249) solid; 
+  padding-top:10px;
+  text-align: center; 
+}
+
+.widthType{
+  width:var(--wType);
+  text-align: left; 
+  padding-left:10px;
+}
+
+.widthAction{
+  width:var(--wAction); 
+  text-align: center; 
+}
+
+
+.widthIngr{
+  width:var(--wIngr); 
+  text-align: left;
+  padding-left:10px;
+  
+}
+.widthOther{
+  width:var(--wOther); 
+  text-align: center; 
+}
+
+.theArrow{
+  font-size:12px; 
+  color:blue;
+  width:50px;
+  height:15px;
+  background:cyan;
+  margin-left:8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theArrow:hover{
+  color:red;
+
+}
+
+.text{
+   
+    
+    font-size:11px;
+    display:inline-block;
+    height:var(--rowHeight,28px);
+    }
+
+
+.text:hover{
+  color:red;
+  font-weight: bold;
+  background-color:white;
+}
+
+.rowEven{
+    background-color: var(--rEven,#9edb9c);
+}
+    
+.rowOdd {
+    background-color: var(--rOdd,#8a97e8);
+}
+
+/*****
+.StraightDropDown{
+  width:260px;
+  border: 0px solid green;
+  height: 200px;
+  overflow-y: scroll;
+}
+  
+.Straight-options{
+  width:250px;
+  font-size:11px;
+  height:30px;
+  color:black;
+  text-align: left;
+  margin-left:-2px;
+  border:0px; 
+}
+*****/
+
+.theRadio{
+    margin-left:10px; margin-top:10px; color:blue; font-size:12px; 
+    width:80%; display:block; height:30px; background-color:lightgrey; 
+    border:solid 2px black;
+  }
+
+.theRadio:hover{
+    color:red;
+}
+
+.RadioDropDown{
+    font-size:10px;
+    width:200px;
+    text-align: center;
+    border: 2px solid green;
+    height: 100px;
+    background: cyan;
+    color: blue;
+  }
+
+  
+
+/**
+.theAction{
+    border-radius: 20% 20%;
+    color:blue;
+    width:100%;
+    height:25px;
+    border: solid 1px rgb(4, 4, 124);
+
+    font-size:10px;
+    font-weight:bold;
+    background-color: #8e8c8b;
+    text-align: center;
+    padding:0px;
+    display:inline-block;
+    margin-left:0px;
+    margin-top:13px;
+  }
+  .theAction:hover{
+    color:red;
+    background-color:cyan;
+  }
+
+
+.inputTextA{
+    color:blue;
+    background-color: rgb(232, 229, 229);
+    width:97%;
+    height:25px;
+    padding-left: 3px;
+    display:content;
+    margin-top:0px;
+    }
+
+
+
+table {
+    margin-left:10px;
+    width:var(--tableW);
+    max-width:var(--tableMaxW); 
+    overflow: scroll;
+    border-collapse: collapse;
+    table-layout: fixed; 
+  }
+    
+  th {
+    text-align: center;
+    background-color: #96D4D4;
+    border-spacing: 5px;
+    border: 1px solid blue;
+    font-size:12px;
+    height:40px;
+    word-wrap: break-word;
+  }
+    
+  td {
+    text-align: left;
+    border-spacing: 0px;
+    color:blue;
+    padding-left:0px;
+    height:30px;
+    font-size:12px;
+  }
+
+
+  
+.tableCol {
+    border:solid 1px blue;
+
+  }
+
+
+  **/
+    
