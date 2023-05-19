@@ -242,7 +242,7 @@ theActions:Array<any>=['Delete','Add']
 
 Error_OpenCalendar:string='close the calendar which is already open for another sport';
 
-@HostBinding("style.--posList")
+@HostBinding("style.--posLeftDropdown")
 
 refMedia:number=1010;
 
@@ -264,8 +264,29 @@ onWindowResize() {
     */
   }
 
+fieldHeight:number=26;
+newTextWidth:number=130;
+newSeanWidth:number=35;
+boxActionWidth:number=36;
+dateWidth:number=100;
+calendarWidth:number=30;
+
+posLeftActivity:number=0;
+posLeftExercise:number=0;
+posLeftSeanRes:number=0;
+
+
+posLeftDropDown:number=0;
+
+/*
+
+*/
+
 ngOnInit(){
   
+  this.posLeftActivity=this.boxActionWidth+this.dateWidth+this.calendarWidth+this.newTextWidth;
+  this.posLeftExercise=this.posLeftActivity+this.newTextWidth+this.boxActionWidth;
+  this.posLeftSeanRes=this.posLeftExercise+this.newTextWidth+this.boxActionWidth + 15;
 
 
   this.DisplayConfig=false;
@@ -388,6 +409,9 @@ onAction(event:any){
     this.TabAction.push({name:'',type:''});
     this.TabAction[this.TabAction.length-1].name='Add before';
     this.TabAction[this.TabAction.length-1].type='sport';
+    this.TabAction.push({name:'',type:''});
+    this.TabAction[this.TabAction.length-1].name='Copy';
+    this.TabAction[this.TabAction.length-1].type='sport (atfer)';
     this.newPrevDialog=0;
   } else if (this.idText==='Activity'){
     this.TabAction.push({name:'',type:''});
@@ -400,6 +424,7 @@ onAction(event:any){
     this.TabAction[this.TabAction.length-1].name='Add after';
     this.TabAction[this.TabAction.length-1].type='activity';
     this.newPrevDialog=1;
+    this.posLeftDropDown=this.posLeftActivity;
   } else if (this.idText==='Exercise'){
     this.TabAction.push({name:'',type:''});
     this.TabAction[this.TabAction.length-1].name='Delete';
@@ -411,6 +436,7 @@ onAction(event:any){
     this.TabAction[this.TabAction.length-1].name='Add after';
     this.TabAction[this.TabAction.length-1].type='exercise';
     this.newPrevDialog=2;
+    this.posLeftDropDown=this.posLeftExercise;
   } else if (this.idText==='Seance'){
     this.TabAction.push({name:'',type:''});
     this.TabAction[this.TabAction.length-1].name='Delete';
@@ -419,7 +445,7 @@ onAction(event:any){
     this.TabAction[this.TabAction.length-1].name='Add ';
     this.TabAction[this.TabAction.length-1].type='seance';
     this.newPrevDialog=3;
-
+    this.posLeftDropDown=this.posLeftSeanRes;
   } else if (this.idText==='Result'){
     this.TabAction.push({name:'',type:''});
     this.TabAction[this.TabAction.length-1].name='Delete';
@@ -431,6 +457,7 @@ onAction(event:any){
     this.TabAction[this.TabAction.length-1].name='Add after';
     this.TabAction[this.TabAction.length-1].type='result';
     this.newPrevDialog=4;
+    this.posLeftDropDown=this.posLeftSeanRes;
   }
   this.newTabDialog[this.newPrevDialog]=true;
   this.theHeight=this.TabAction.length*26;
@@ -467,7 +494,59 @@ if (event.target.value===0){ //cancel
     this.NewPerformanceFitness.Sport[myConst].exercise[0].Activity_name='';
     this.NewPerformanceFitness.Sport[myConst].exercise[0].ActivityExercise[0].Exercise_name='';
     this.NewPerformanceFitness.Sport[myConst].exercise[0].ActivityExercise[0].seance[0].nb=0;
-  } 
+  } else if (event.target.value===4 ) {
+    // create a copy
+    const theNewSport= new ClassSport;
+    myConst=this.TabOfId[0];
+    this.NewPerformanceFitness.Sport.splice(myConst+1,0,theNewSport);
+    this.NewPerformanceFitness.Sport[myConst+1].Sport_name=this.NewPerformanceFitness.Sport[myConst].Sport_name;
+    this.datePipeSelected = this.datePipe.transform(this.todayDate,"dd-MM-yyyy");
+    this.NewPerformanceFitness.Sport[myConst+1].Sport_date=this.datePipeSelected;
+    this.TabinputDate[myConst+1]=this.datePipeSelected;
+    this.TabIsDateWrong[myConst+1]=false;
+    for (var i=0; i<this.NewPerformanceFitness.Sport[myConst].exercise.length; i++){
+      
+      if (i>0){
+        const theClassActivity = new ClassActivity;
+        this.NewPerformanceFitness.Sport[myConst+1].exercise.push(theClassActivity); 
+      }
+      this.NewPerformanceFitness.Sport[myConst+1].exercise[i].Activity_name=this.NewPerformanceFitness.Sport[myConst].exercise[i].Activity_name;
+      for (var j=0; j<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise.length; j++){
+            if (j>0){
+              const theClassExec = new ClassExercise;
+              this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise.push(theClassExec);
+            }
+            this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Exercise_name = 
+                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Exercise_name;
+              this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Exercise_unit = 
+                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Exercise_unit;
+              for (var k=0; k<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].seance.length; k++){
+                if (k>0){
+                  this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].seance.push({nb:0});
+                }
+                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].seance[k].nb=
+                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].seance[k].nb;
+
+              }
+              for (var k=0; k<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result.length; k++){
+                if (k>0){
+                  const cResult = new ClassResult;
+                  this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result.push(cResult);
+                }
+                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].perf_type=
+                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].perf_type;
+                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].perf=
+                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].perf;
+                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].unit =
+                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].unit;
+
+              }
+      }
+
+    }
+    this.LinkPerfConfig();
+
+  }
 
 } else if (this.newPrevDialog===1 && this.newTabDialog[this.newPrevDialog]===true){
   const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise.length - 1;
@@ -536,10 +615,15 @@ if (event.target.value===0){ //cancel
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[theLength].perf=0;
     }
   } 
-  else if (event.target.value===2){
+  else if (event.target.value===2 || event.target.value===3){
     // create Result at the end of the tab
+    if (event.target.value===2){
+      myConst=this.TabOfId[3];
+    } else {
+      myConst=this.TabOfId[3]+1;
+    }
     const cResult = new ClassResult;
-    this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(theLength+1,0,cResult);
+    this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(myConst,0,cResult);
   }
 
 }

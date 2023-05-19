@@ -30,7 +30,8 @@ div{
 .boxAction{
   width:var(--boxActionWidth,36px);
   height:26px;
-  display:inline-block;
+  float:left;
+  
 }
 
 .theTitle{
@@ -60,21 +61,12 @@ div{
   width:calc( var(--newSeanWidth) * 2 + var(--boxActionTitleWidth) + 8px);
 }
 
-.beforeResult{
-  width:calc(var(--boxActionTitleWidth) + var(--newSeanWidth) * 2 + var(--boxActionTitleWidth) + 8px + 
-      var(--newTextWidth) + var(--boxActionWidth) + var(--dateWidth) + var(--calendarWidth) + var(--newTextWidth)); 
-  display:inline-block; 
-
-  border:solid 2px red;
-  height:calc (var(--fieldHeight) +10px);
-  height:30px;
-}
-
 .resultField{
-  width:calc( (var(--newTextWidth) + var(--newSeanWidth) + 5px) * 3 + 44px);
-  max-width: calc( (var(--newTextWidth) + var(--newSeanWidth) + 5px) * 3 + 44px);
+  width:calc( (var(--newTextWidth) + calc(var(--newSeanWidth) * 4))  +40px);
+  max-width: calc( (var(--newTextWidth) + calc(var(--newSeanWidth) * 4))  +40px);
   border:solid 0px blue;
-  height:var(--fieldHeight) ;
+  height:calc(var(--fieldHeight) + 8px);
+  float:left;
 }
 
 .boxActionTitle{
@@ -115,28 +107,34 @@ div{
   font-size:14px;
   background-color: lightgrey;
   text-align: center;
-  display:inline-block;
+  float:left;
+  border:solid 0px green;
 }
 
 .emptyInput{
   width:var(--newTextWidth,130px);
   height:var(--fieldHeight);
-  display:inline-block;
-  border:solid 2px green;
+  float:left;
+  border:solid 0px black;
   height:30px;
+}
+
+.fieldNewDate{
+
+  width:var(--dateWidth,100px); 
+  height:var(--fieldHeight);
+  float:left;
+  border:solid 0px red;
 }
 
 .inputNewDate{
   font-size:14px;
   font-weight: bold;
-
   color:blue;
-  width:var(--dateWidth,100px); 
-  height:var(--fieldHeight);
   text-align: center;
-  display:inline-block;
-  border:solid 0px red;
+  background-color: lightcyan;
 }
+
 
 .posCalendarNew{
   float:none; 
@@ -505,6 +503,13 @@ font-size:18px;
   float:left;
 } 
 
+.oddColor{
+  background-color: cyan;
+}
+
+.evenColor{
+  background-color:lightgreen;
+}
     /*** ====================================== ***/
     /*** ============== @media 1010 ================ ***/
     /*** ====================================== ***/
