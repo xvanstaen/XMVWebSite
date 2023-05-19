@@ -1,0 +1,15 @@
+
+@import "../FitnessHealthGeneral.css";
+@import "../healthfood/health.component.css";
+
+div{
+    --textWidth:80px;
+}
+
+.myColor{
+    color:blue;
+}
+
+.myColor:hover{
+    background-color: cyan;
+}

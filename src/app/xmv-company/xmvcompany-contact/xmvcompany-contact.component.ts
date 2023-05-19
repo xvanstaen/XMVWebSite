@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
+import { FormGroup, FormControl, UntypedFormControl, Validators} from '@angular/forms';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
@@ -74,11 +74,11 @@ separateDialCode = true;
 phoneNumber:number=0;
 
 myContactForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    email: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
-    phone: new FormControl(undefined, [Validators.required]),
-    subject: new FormControl('', Validators.required),
-    text: new FormControl('', [Validators.required, Validators.minLength(10)])
+    name: new UntypedFormControl('', [Validators.required, Validators.minLength(3)]),
+    email: new UntypedFormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
+    phone: new UntypedFormControl(undefined, [Validators.required]),
+    subject: new UntypedFormControl('', Validators.required),
+    text: new UntypedFormControl('', [Validators.required, Validators.minLength(10)])
   });
 
 ngOnInit(): void {

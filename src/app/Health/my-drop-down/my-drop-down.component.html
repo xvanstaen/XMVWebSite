@@ -1,0 +1,98 @@
+
+
+<div *ngIf="isFilterNeeded===true || isSortNeeded===true" class="dropdown">
+    <div class="Straight-content" [ngStyle]="{'height.px': this.sizeBoxContent}">
+        <div  class=" StraightDropDown" style="margin-top:0px; margin-left:20px;"[ngStyle]="{'height.px': this.sizeBox}" >
+            <span  >
+                <span class="Straight-options colorOdd" (click)="Cancel($event)">Cancel</span>
+                <span *ngIf="isSortNeeded===true">
+                    <li *ngFor="let list of ListSortFields; let i=index;" 
+                        class='Straight-options' [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                        (click)="theCollection($event)" id="S-{{i}}" [value]="list">{{list}}</li>
+                </span >
+                <span  *ngIf="isFilterNeeded===true" stlyle="floatleft">
+                    <li *ngFor="let list of ListFilter; let i=index;" 
+                        class="Straight-options" [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                        (click)="theCollection($event)" id="F-{{i}}" [value]="i">{{list}}</li>
+                </span  >
+            </span>  
+            
+            <div class="Buffer" class="margin-top:15px;">&nbsp; </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="callingComponent==='FitnessStat'" class="dropdown">
+    <div class="Straight-content" [ngStyle]="{'height.px': this.sizeBoxContent}">
+        <div  class=" StraightDropDown" style="margin-left:var(--posArrow); margin-top:20px;" [ngStyle]="{'height.px': this.sizeBox}" >
+           
+            <span class="Straight-options colorOdd" (click)="Cancel($event)">Cancel</span>
+           
+            <span *ngIf="OpenDialogue[0]===true">
+                <li *ngFor="let sport of MyConfigFitness.TabSport; let i=index;"  
+                    class='Straight-options'   [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="lSpo-{{TabOfId[0]}}" [value]="sport.name" >{{sport.name}}</li>
+            </span>
+
+            <span *ngIf="OpenDialogue[1]===true && TabPerfConfig[TabOfId[0]]!== undefined"> 
+                <li *ngFor="let activ of MyConfigFitness.ListSport[TabPerfConfig[TabOfId[0]]].activityName; let i=index;" 
+                    class="Straight-options"  [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="lAct-{{TabOfId[0]}}-{{TabOfId[1]}}" [value]="activ" >{{activ}}</li>
+            </span>
+            <span *ngIf="OpenDialogue[1]===true && TabPerfConfig[TabOfId[0]]=== undefined">
+                <li *ngFor="let activ of MyConfigFitness.TabActivity; let i=index;" 
+                    class='Straight-options'   [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="lAct-{{TabOfId[0]}}-{{TabOfId[1]}}" [value]="activ.name" >{{activ.name}}</li>     
+            </span>  
+
+            <span *ngIf="OpenDialogue[5]===true && TabPerfConfig[TabOfId[0]]!== undefined"> 
+                <li *ngFor="let actExe of MyConfigFitness.ListSport[TabPerfConfig[TabOfId[0]]].activityExercise; let i=index;" 
+                    class="Straight-options"  [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="lExeName-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}" [value]="actExe" >{{actExe}}</li>
+            </span>
+            <span *ngIf="OpenDialogue[5]===true && TabPerfConfig[TabOfId[0]]=== undefined">
+                <li *ngFor="let actExe of MyConfigFitness.TabExercise; let i=index;" 
+                    class='Straight-options'   [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="lExeName-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}" [value]="actExe.name" >{{actExe.name}}</li>     
+            </span>   
+
+
+            <span *ngIf="OpenDialogue[2]===true && TabPerfConfig[TabOfId[0]]!== undefined"> 
+                <li *ngFor="let units of MyConfigFitness.ListSport[TabPerfConfig[TabOfId[0]]].activityUnit; let i=index;" 
+                    class="Straight-options"  [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="lExeUnit-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}" [value]="units" >{{units}}</li>
+            </span>
+            <span *ngIf="OpenDialogue[2]===true && TabPerfConfig[TabOfId[0]]=== undefined">
+                <li *ngFor="let units of MyConfigFitness.TabUnits; let i=index;" 
+                    class='Straight-options'   [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="lExeUnit-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}" [value]="units.name" >{{units.name}}</li>        
+            </span>   
+
+
+            <span *ngIf="OpenDialogue[3]===true && TabPerfConfig[TabOfId[0]]!== undefined"> 
+                <li *ngFor="let perfType of MyConfigFitness.ListSport[TabPerfConfig[TabOfId[0]]].activityPerfType; let i=index;" 
+                    class="Straight-options"  [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="ltPerf-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{TabOfId[3]}}-{{TabOfId[4]}}" [value]="perfType" >{{perfType}}</li>
+            </span> 
+            <span *ngIf="OpenDialogue[3]===true && TabPerfConfig[TabOfId[0]]=== undefined">
+                <li *ngFor="let perfType of MyConfigFitness.TabPerfType; let i=index;" 
+                    class='Straight-options'   [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="ltPerf-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{TabOfId[3]}}-{{TabOfId[4]}}" [value]="perfType.name" >{{perfType.name}}</li>
+            </span>   
+
+            <span *ngIf="OpenDialogue[4]===true && TabPerfConfig[TabOfId[0]]!== undefined"> 
+                <li *ngFor="let perfUnit of MyConfigFitness.ListSport[TabPerfConfig[TabOfId[0]]].activityPerfUnit; let i=index;" 
+                    class="Straight-options"  [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="luPerf-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{TabOfId[3]}}-{{TabOfId[4]}}" [value]="perfUnit" >{{perfUnit}}</li>
+            </span> 
+            <span *ngIf="OpenDialogue[4]===true && TabPerfConfig[TabOfId[0]]=== undefined">
+                <li *ngFor="let perfUnit of MyConfigFitness.TabPerfUnit; let i=index;" 
+                    class='Straight-options'   [ngClass]=" {'colorEven': i % 2 ===0, 'colorOdd': i % 2 !==0}" 
+                    (click)="theCollection($event)" id="luPerf-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{TabOfId[3]}}-{{TabOfId[4]}}" [value]="perfUnit.name" >{{perfUnit.name}}</li>      
+            </span>   
+
+            <div class="Buffer" class="margin-top:15px;">&nbsp; </div>
+        </div>
+    </div>
+
+</div>
+

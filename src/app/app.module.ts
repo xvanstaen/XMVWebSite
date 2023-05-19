@@ -6,6 +6,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule} from '@angular/material/dialog';
 
+import  { NgChartsModule } from 'ng2-charts';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -25,16 +27,19 @@ import { AdminConsoleComponent}  from './Special-Services/AdminConsole.component
 import { ListBucketContentComponent}  from './Special-Services/ListBucketContent.component';
 import { ChangeSaveFileNameComponent}  from './Special-Services/ChangeSaveFileName.component';
 import { OneCalendarComponent } from './one-calendar/one-calendar.component';
-import { FitnessStatComponent } from './fitness-stat/fitness-stat.component';
-import {ManageGoogleService} from 'src/app/CloudServices/ManageGoogle.service';
-import {ManageMangoDBService} from 'src/app/CloudServices/ManageMangoDB.service';
-import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
-import { FitnessChartComponent } from './fitness-chart/fitness-chart.component';
-import { MyDropDownComponent } from './my-drop-down/my-drop-down.component';
-import { HealthComponent } from './health/health.component';
+import { FitnessStatComponent } from './Health/fitness-stat/fitness-stat.component';
+import { ManageGoogleService} from 'src/app/CloudServices/ManageGoogle.service';
+import { ManageMangoDBService} from 'src/app/CloudServices/ManageMangoDB.service';
+import { AccessConfigService} from 'src/app/CloudServices/access-config.service';
+import { FitnessChartComponent } from './Health/fitness-chart/fitness-chart.component';
+import { MyDropDownComponent } from './Health/my-drop-down/my-drop-down.component';
+import { HealthComponent } from './Health/healthfood/health.component';
 import { ConverterComponent } from './converter/converter.component';
-import { CaloriesFatComponent } from './calories-fat/calories-fat.component';
-import { ReportHealthComponent } from './report-health/report-health.component';
+import { CaloriesFatComponent } from './Health/calories-fat/calories-fat.component';
+import { ReportHealthComponent } from './Health/report-health/report-health.component';
+import { ColorPickerComponent } from 'src/app/color-picker/color-picker.component';
+import { ColorPaletteComponent } from 'src/app/color-picker/color-palette/color-palette.component';
+import { ColorSliderComponent } from 'src/app/color-picker/color-slider/color-slider.component';
 
 @NgModule({
   declarations: [
@@ -62,8 +67,9 @@ import { ReportHealthComponent } from './report-health/report-health.component';
     ConverterComponent,
     CaloriesFatComponent,
     ReportHealthComponent,
-
-
+    ColorPickerComponent,
+    ColorPaletteComponent,
+    ColorSliderComponent
   ],
   imports: [
     AppRoutingModule,
@@ -73,7 +79,8 @@ import { ReportHealthComponent } from './report-health/report-health.component';
     MatIconModule,
     MatDialogModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgChartsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

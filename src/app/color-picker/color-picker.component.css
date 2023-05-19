@@ -1,0 +1,65 @@
+/*
+  :host {
+        display: block;
+        width: 316px;
+        padding: 16px;
+        
+      }
+      */
+
+section {
+    box-sizing: border-box;
+    background-color: white;
+    border: 5px solid blue;  
+    position:absolute;
+    top:0px;
+    left:5px;
+    width: 90%;
+    float: left;
+    height:90px;
+    }
+
+
+.logo {
+  margin-top: 1px;
+  margin-left:20px;
+  float:left;
+}
+
+  .color-wrapper {
+    display: flex;
+    height: 300px;
+    max-width: 400px;
+    border: solid 0px pink;
+    margin-left:20px;
+    margin-top:120px;
+  }
+  
+  .input-wrapper {
+    margin-top: 20px;
+    margin-left:40px;
+    display: flex;
+    border-radius: 1px;
+    border: 5px solid rgb(85, 29, 173);
+    padding: 8px;
+    height: 42px;
+    justify-content: center;
+    max-width:330px;
+    width:350px;
+  }
+  
+  .color-div {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgb(128, 11, 11);
+    margin-top:-8px;
+  }
+  
+  .text {
+    flex: 1;
+    font-family: 'Helvetica';
+    line-height: 32px;
+    margin-left:30px;
+    margin-top:-7px;
+  }

@@ -1,0 +1,326 @@
+<div style="width:95%; max-width:410px; margin-left:10px; border:solid 2px blue; display:inline-block;">
+    <div class="skipLine">&nbsp;</div>
+ 
+    <div style="text-align: center; width:100%; display:inline-block; font-size:16px; color:blue;">CREATE/CHANGE PARAMETERS FOR </div>
+    <span style="margin-left:25px;"> Chart 1</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart1"   >  
+    <span style="margin-left:20px;"> Chart 2</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart2"   >  
+    <span style="margin-left:20px;"> Chart 3</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart3"   >  
+    <span style="margin-left:20px;"> Chart 4</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart4"   >  
+    <div class="skipLine">&nbsp;</div>
+    <!--   **************************** SELECTION PARAMETERS **************************** -->
+    <div *ngIf="selectedChart!==0">
+    <form  [formGroup]="selectChart" style="margin-left:10px;">
+        <div style="width:100%; display:inline-block;">
+            <div class="skipLine">&nbsp;</div>
+            
+            <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:5px;"> CHART </span>
+
+            <span class="trow" style="width:25%;"> Type</span><input  class='inputText' type="text"  style="width:30%;"  formControlName="chartType"  > 
+            <span id="selType" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
+            <div *ngIf="isTypeSelected===true">
+                <div class="dropdown " >
+                    <div class="Straight-content" style="margin-left:50px;">
+                        <div  class="StraightDropDown "  >
+                            <li *ngFor="let action of lineChartType; let m=index;" 
+                                    class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                        (click)="selectType($event)" id="selectedType" [value]="action" >{{action}}
+                            </li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Title</span><input  class='inputText' type="text" style="width:50%;"  formControlName="chartTitle"  > 
+        </div> 
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldColorChartTitle')" formControlName="colorChartTitle"  > 
+            <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_chartTitleColor}" class="trow myColor" (click)="selectColor('colorChartTitle')" >&nbsp;</span>
+            <div *ngIf="isSelectLChartTitleColor===true " style="margin-left:30px;height:480px;width:75%; z-index: 1; background-color: white; border: solid 2px blue;">
+              <div>  
+                <div class="skipline">&nbsp;</div>
+                <span style='margin-left:30px; width:90%; display:inline-block;' > Slider {{my_input_child2}} </span>
+                <span style='margin-left:30px; width:90%; display:inline-block;' > Palette: {{temporaryColor}} </span>
+                <div class="skipline">&nbsp;</div>
+                <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+                </app-color-palette>
+                <app-color-slider [my_input2]="my_input_child2"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                </app-color-slider>
+                <div style="margin-top:70px;">
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:25px;" [ngStyle]="{'background-color':my_input_child2}"></span>
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [ngStyle]="{'background-color':temporaryColor}"></span>
+                    <div style="margin-left:150px; margin-top:-40px;">
+                        <button (click)="fnExitPalette('Save')" > Save</button>
+                        <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
+                    </div>
+                    <div class="skipline">&nbsp;</div>
+                </div>  
+              </div>
+            </div>
+        </div> 
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> bar thickness</span><input  class='inputText' type="text" style="width:22%;"  formControlName="barThickness"  > 
+        </div> 
+
+        <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> CANVAS </span>
+
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Width </span><input  class='inputText' type="text" style="width:22%;"   formControlName="canvasWidth"  > 
+            <span class="trow" style="width:18%; margin-left:10px;"> Height</span><input  class='inputText' type="text" style="width:25%;"   formControlName="canvasHeight"  > 
+        </div> 
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+        <span class="trow" style="width:25%;"> Margin left</span><input  class='inputText' type="text" style="width:22%;"  formControlName="canvasMarginLeft"  > 
+        </div>
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Background</span>
+            <input  class='inputText' type="text"  style="width:40%;" formControlName="canvasBackground" (click)="selectColor('fieldCanvasColor')" > 
+            <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_canvasColor}" class="trow myColor" (click)="selectColor('canvasColor')" >&nbsp;</span>
+            <div *ngIf="isSelectCanvasColor===true " style="margin-left:30px;height:480px;width:75%; z-index: 1; background-color: white; border: solid 2px blue;">
+                <div>  
+                    <div class="skipline">&nbsp;</div>
+                    <span style='margin-left:30px; width:90%; display:inline-block;' > Slider {{my_input_child2}} </span>
+                    <span style='margin-left:30px; width:90%; display:inline-block;' > Palette: {{temporaryColor}} </span>
+                    <div class="skipline">&nbsp;</div>
+                    <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+                    </app-color-palette>
+                    <app-color-slider [my_input2]="my_input_child2"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                    </app-color-slider>
+                    <div style="margin-top:70px;">
+                        <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:25px;" [ngStyle]="{'background-color':my_input_child2}"></span>
+                        <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [ngStyle]="{'background-color':temporaryColor}"></span>
+                        <div style="margin-left:150px; margin-top:-40px;">
+                            <button (click)="fnExitPalette('Save')" > Save</button>
+                            <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
+                        </div>
+                        <div class="skipline">&nbsp;</div>
+                    </div>  
+                </div>
+            </div>
+        </div> 
+
+        <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> LEGEND </span>
+
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Title </span><input  class='inputText' type="text" style="width:50%;"   formControlName="legendTitle"  > 
+        </div>
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:40%;"   (input)="selectColor('fieldLegendColor')" formControlName="colorLegendTitle"  > 
+            <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_legendColor}" class="trow myColor" (click)="selectColor('legendColor')" >&nbsp;</span>
+            <div *ngIf="isSelectLegendColor===true " style="margin-left:30px;height:480px;width:75%; z-index: 1; background-color: white; border: solid 2px blue;">
+                <div>  
+                    <div class="skipline">&nbsp;</div>
+                    <span style='margin-left:30px; width:90%; display:inline-block;' > Slider {{my_input_child2}} </span>                        
+                    <span style='margin-left:30px; width:90%; display:inline-block;' > Palette: {{temporaryColor}} </span>
+                    <div class="skipline">&nbsp;</div>
+                    <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+                    </app-color-palette>
+                    <app-color-slider [my_input2]="my_input_child2"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                    </app-color-slider>
+                    <div style="margin-top:70px;">
+                        <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:25px;" [ngStyle]="{'background-color':my_input_child2}"></span>
+                        <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [ngStyle]="{'background-color':temporaryColor}"></span>
+                        <div style="margin-left:150px; margin-top:-40px;">
+                            <button (click)="fnExitPalette('Save')" > Save</button>
+                            <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
+                        </div>
+                        <div class="skipline">&nbsp;</div>
+                    </div>  
+                </div>
+            </div>
+        </div> 
+
+        <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> BOX FOR LABELS </span>
+    
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Width</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxwidth"  > 
+            <span class="trow" style="width:25%; margin-left:10px;"> Height</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxheight"  > 
+        </div>
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Shape</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxpointStyle"  > 
+            <span class="trow" style="width:25%; margin-left:10px;"> Color</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxcolor"  > 
+        </div>
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> Font size</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxfontSize"  > 
+            <span class="trow" style="width:25%; margin-left:10px;"> Radius</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxradius"  > 
+        </div>
+
+        <div style="width:100%; display:inline-block;  margin-top:15px;">
+            <span class="trow" style="width:25%;" > stackedX</span><input  class='inputText' type="text" style="width:22%;"   formControlName="stackedX" placeholder="true/false" > 
+            <span class="trow" style="width:25%; margin-left:10px;"> stackedY</span><input  class='inputText' type="text" style="width:22%;"   formControlName="stackedY" placeholder="true/false" > 
+
+        </div> 
+        <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <span class="trow" style="width:25%;"> ratio</span><input  type="text"     class='inputText' style="width:22%;" formControlName="ratio"  > 
+        </div>
+        <div style="width:100%; display:inline-block;  margin-top:5px;">    
+            <span class="trow" style="width:25%; "> period</span><input  type="text"   class='inputText' style="width:30%;" formControlName="period" placeholder="daily/weekly/monthly" > 
+            <span id="selPeriod" class="circle" style='margin-left:5px;' (click)="selectPeriod($event)">A</span>
+            <div *ngIf="isPeriodSelected===true">
+                <div class="dropdown" >
+                    <div class="Straight-content" style="margin-left:90px;">
+                        <div  class="StraightDropDown "  >
+                            <li *ngFor="let action of tabPeriod; let m=index;" 
+                                    class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                        (click)="selectPeriod($event)" id="selectedPeriod" [value]="action" >{{action}}
+                            </li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div> 
+        <div style="width:100%; display:inline-block; margin-top:5px;" *ngIf="selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'">
+            <span class="trow" style="width:25%; "> start date</span><input  type="date"  class='inputText' style="width:36%;" formControlName="startRange"  > 
+        </div>
+        <div style="width:100%; display:inline-block; margin-top:5px;"  *ngIf="selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'">
+            <span class="trow" style="width:25%; "> end date</span><input  type="date"   class='inputText' style="width:36%;" formControlName="endRange"  > 
+        </div>
+       
+    </form>
+
+    <!-- ************* SELECTION OF LABELS FOR THIS CHART ************* -->
+    <div class="skipLine">&nbsp;</div>
+    <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the items to consider for this chart</div>
+    <span *ngFor="let tab of tabofLabels; let i=index;">
+        <span style="width:47%; display:inline-block; margin-left:10px;">
+            <span *ngIf="selectedFields[i]==='N'" style="width:5%;">
+                <input style="width:20px;" (click)='SelRadio($event)'   class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y"  >  
+            </span>
+            <span *ngIf="selectedFields[i]==='Y'" style="width:5%;">
+                <input style="width:20px;"  (click)='SelRadio($event)'  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y" checked="checked" >
+            </span>
+           
+            <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tabofLabels[i]}}</div>
+            <span *ngIf="selectedFields[i]==='Y'" style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelColor-{{i}}" [ngStyle]="{'background-color':this.tabOfLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
+
+
+
+
+        </span>
+        <div *ngIf="isSelectLabColor===true && this.dialogLabColor[i]===true" style="margin-left:30px;height:480px;width:75%; z-index: 1; background-color: white; border: solid 2px blue;">
+            <div>  
+                <div class="skipline">&nbsp;</div>
+                <span style='margin-left:30px; width:90%; display:inline-block;' > Slider {{my_input_child2}} </span>
+                <span style='margin-left:30px; width:90%; display:inline-block;' > Palette: {{temporaryColor}} </span>
+                <div class="skipline">&nbsp;</div>
+                <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+                </app-color-palette>
+                <app-color-slider [my_input2]="my_input_child2"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                </app-color-slider>
+                <div style="margin-top:70px;">
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:25px;" [ngStyle]="{'background-color':my_input_child2}"></span>
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [ngStyle]="{'background-color':temporaryColor}"></span>
+                    <div style="margin-left:150px; margin-top:-40px;">
+                        <button (click)="fnExitPalette('Save')" > Save</button>
+                        <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
+                    </div>
+                    <div class="skipline">&nbsp;</div>
+                </div>  
+            </div>
+        </div>
+    </span>
+    
+    <div class="skipLine">&nbsp;</div>
+    <span *ngIf="error_msg!==''" style="color:red; font-size:14px; width:90%; margin-left:30px;">{{error_msg}}</span>
+
+    <!-- ************* PROCESS or CANCEL PARAMETERS FOR THIS CHART# ************* -->
+    <div class="skipLine">&nbsp;</div>
+    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit'  (click)="SaveCancel('save')" > Save this chart & process it
+    </button>
+    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="submit" (click)="fnSelectChart()"> Process this chart
+    </button>
+    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="submit" (click)="SaveCancel('cancelOne')"> Cancel updates for this chart
+    </button>
+    <div class="skipLine">&nbsp;</div>
+    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="submit" (click)="SaveCancel('cancelAll')"> Cancel updates for all charts
+    </button>
+    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="submit" (click)="SaveCancel('saveAll')"> Save all charts
+    </button>
+    <div class="skipLine">&nbsp;</div>
+
+</div>
+</div>
+
+
+<div class="skipLine">&nbsp;</div>
+
+<!-- 
+<form  [formGroup]="SelChartForm" >
+    <div formArrayName="selectedItems" *ngFor="let tab of ListChart.controls; let i=index;">
+        <div [formGroupName]="i" >
+            <span *ngIf="selectedFields[i]==='N'">
+                <span style="width:130px; margin-left:20px; color:blue; display:inline-block;" >{{tabofLabels[i]}}</span>
+                <input  (click)='SelRadio($event)'   class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y"  > 
+            </span>
+            <span *ngIf="selectedFields[i]==='Y'">
+                <span style="width:130px; margin-left:20px; color:blue; display:inline-block;" >{{tabofLabels[i]}}</span>
+                <input  (click)='SelRadio($event)'  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y" checked="checked" > 
+            </span>
+            
+        </div>
+    </div>
+    <button class="sizeButtons" style='margin-left:40px;' type='Submit' id="submit" (click)='SelRadio($event)' value="Select">
+    </button>
+</form>
+
+<input class="sizeButtons" style='margin-left:40px;' type='Submit' id="submit" (click)='SelRadio($event)' value="Select">
+-->
+
+<!--   **************************** CANVAS **************************** -->
+
+<div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style=" border:1px blue solid; padding-top:50px;" 
+            [ngStyle]="{'background-color': canvas[0].background, 'margin-left.px':canvas[0].marginLeft,
+            'width.px': canvas[0].width, 'height.px ': canvas[0].height}">
+        <canvas #baseChart id="{{tabCanvasId[0]}}"
+    
+        >
+        </canvas>
+    </div>
+</div>
+
+<div class="skipLine">&nbsp;</div>
+<div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style=" border:1px blue solid; padding-top:50px;" 
+            [ngStyle]="{'background-color': canvas[1].background, 'margin-left.px':canvas[1].marginLeft,
+            'width.px': canvas[1].width, 'height.px ': canvas[1].height}">
+        <canvas #baseChart id="{{tabCanvasId[1]}}"
+    
+        >
+        </canvas>
+    </div>
+</div>
+
+<div class="skipLine">&nbsp;</div>
+<div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style=" border:1px blue solid; padding-top:50px;" 
+            [ngStyle]="{'background-color': canvas[2].background, 'margin-left.px':canvas[2].marginLeft,
+            'width.px': canvas[2].width, 'height.px ': canvas[2].height}">
+        <canvas #baseChart id="{{tabCanvasId[2]}}"
+    
+        >
+        </canvas>
+    </div>
+</div>
+<div class="skipLine">&nbsp;</div>
+<div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style=" border:1px blue solid; padding-top:50px;" 
+            [ngStyle]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
+            'width.px': canvas[3].width, 'height.px ': canvas[3].height}">
+        <canvas #baseChart id="{{tabCanvasId[3]}}"
+    
+        >
+        </canvas>
+    </div>
+</div>
+<div class="skipLine">&nbsp;</div>
+<div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style=" border:1px blue solid; padding-top:50px;" 
+            [ngStyle]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
+            'width.px': canvas[3].width, 'height.px ': canvas[3].height}">
+        <canvas #baseChart id="myLineCanvas"
+    
+        >
+        </canvas>
+    </div>
+</div>

@@ -46,40 +46,40 @@ export class Event27AugComponent {
     @Output() returnDATA= new EventEmitter<any>();
     
     PhotoNbForm: FormGroup = new FormGroup({ 
-      SelectNb: new FormControl(),
-      Width: new FormControl(),
-      Height: new FormControl(),
+      SelectNb: new FormControl(0, { nonNullable: true }),
+      Width: new FormControl(0, { nonNullable: true }),
+      Height: new FormControl(0, { nonNullable: true }),
     });
 
     LoginDataForm= new FormGroup({
-      userId: new FormControl(''),
-      psw: new FormControl(''),
-      firstname: new  FormControl(''),
-      surname: new  FormControl(''),
+      userId: new FormControl('', { nonNullable: true }),
+      psw: new FormControl('', { nonNullable: true }),
+      firstname: new  FormControl('', { nonNullable: true }),
+      surname: new  FormControl('', { nonNullable: true }),
       apps:this.fb.array([]),
     });
 
     myForm = new FormGroup({
-      userId: new FormControl(''),
-      psw: new FormControl(''),
-      firstname: new  FormControl(''),
-      surname: new  FormControl(''),
-      nbInvitees: new  FormControl(0),
-      night: new  FormControl(''),
-      brunch: new  FormControl(''),
-      day: new  FormControl(''),
-      golf: new  FormControl(0),
-      golfHoles: new  FormControl(0),
-      dishMr: new  FormControl(''),
-      dishMrs: new  FormControl(''),
-      practiceSaturday: new  FormControl(''),
-      bouleSaturday: new  FormControl(''),
-      bouleSunday: new  FormControl(''),
-      readRecord: new  FormControl(0),
-      myComment: new  FormControl(''),
-      yourComment: new  FormControl(''),
-      readAccess: new  FormControl(0),
-      writeAccess: new  FormControl(0),
+      userId: new FormControl('', { nonNullable: true }),
+      psw: new FormControl('', { nonNullable: true }),
+      firstname: new  FormControl('', { nonNullable: true }),
+      surname: new  FormControl('', { nonNullable: true }),
+      nbInvitees: new  FormControl(0, { nonNullable: true }),
+      night: new  FormControl('', { nonNullable: true }),
+      brunch: new  FormControl('', { nonNullable: true }),
+      day: new  FormControl('', { nonNullable: true }),
+      golf: new  FormControl(0, { nonNullable: true }),
+      golfHoles: new  FormControl(0, { nonNullable: true }),
+      dishMr: new  FormControl('', { nonNullable: true }),
+      dishMrs: new  FormControl('', { nonNullable: true }),
+      practiceSaturday: new  FormControl('', { nonNullable: true }),
+      bouleSaturday: new  FormControl('', { nonNullable: true }),
+      bouleSunday: new  FormControl('', { nonNullable: true }),
+      readRecord: new  FormControl(0, { nonNullable: true }),
+      myComment: new  FormControl('', { nonNullable: true }),
+      yourComment: new  FormControl('', { nonNullable: true }),
+      readAccess: new  FormControl(0, { nonNullable: true }),
+      writeAccess: new  FormControl(0, { nonNullable: true }),
       
     });
 

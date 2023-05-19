@@ -11,11 +11,12 @@ import { LoginIdentif } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
 import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
-import {mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories';
-import {ConfigFitness} from '../ClassFitness';
+import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
+import {ConfigFitness} from '../Health/ClassFitness';
+import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
-import {classConfHTMLFitHealth} from '../classConfHTMLTableAll';
+import {classConfHTMLFitHealth} from '../Health/classConfHTMLTableAll';
 
 @Component({
   selector: 'app-xmv-company',
@@ -36,13 +37,12 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   @Input() configServer=new configServer;
   @Input() XMVConfig=new XMVConfig;
   @Input() isConfigServerRetrieved:boolean=false;
-
   @Output() returnFile= new EventEmitter<any>();
 
   redisplay_profile:number=0;
 
   ConfigCaloriesFat=new mainClassCaloriesFat;
-
+  ConfigChart=new classConfigChart;
   ConvertUnit=new mainClassConv;
   ConvToDisplay=new mainConvItem;
   theTabOfUnits=new mainClassUnit;
@@ -235,6 +235,9 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
       else if (event.fileType!=='' && 
             event.fileType===this.identification.configFitness.fileType.confHTML){ 
           this.ConfigHTMLFitHealth=event;
+      } else if (event.fileType!=='' && 
+            event.fileType===this.identification.configFitness.fileType.confChart){ 
+          this.ConfigChart=event;
       }
 
   

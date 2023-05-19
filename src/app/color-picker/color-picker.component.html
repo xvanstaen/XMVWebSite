@@ -1,0 +1,33 @@
+<!--
+<div class='color-wrapper'>
+<app-first-child  [my_input1]="my_input_child1" (my_output1)='Testdata1($event)'>
+</app-first-child>
+<app-second-child >[my_input2]="my_input_child2" (my_output2)='Testdata2($event)' (my_output1)='Testdata1($event)'>
+</app-second-child>
+</div>
+
+-->
+<section>
+  <div class='logo'>
+    <img src="./assets/XMVLogo.png" width=78px height=78px>
+</div>
+<div class='color-wrapper'>
+<app-color-palette  [my_input1]="my_input_child1" (my_output1)='Testdata1($event)'>
+</app-color-palette>
+<app-color-slider [my_input2]="my_input_child2" (my_output2)='Testdata2($event)' (my_output1)='Testdata1($event)'>
+</app-color-slider>
+</div>
+
+
+    <div class='input-wrapper'>
+        <span class="text"> slider: {{my_input_child2}} </span>
+        <div class="color-div" [ngStyle]="{'background-color': my_input_child2 || 'white'}"></div>
+      </div>
+      <div class='input-wrapper'>
+        <span class="text" > palette {{selected_color}} </span>
+        <div class="color-div" [ngStyle]="{'background-color': selected_color || 'white'}"><br><br></div>
+        
+      </div>
+    </section> 
+
+ 

@@ -23,10 +23,10 @@ import { configServer } from '../JsonServerClass';
 
 
 import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
-import {mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories';
-import {ConfigFitness} from '../ClassFitness';
-import {classConfHTMLFitHealth} from '../classConfHTMLTableAll';
-
+import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
+import {ConfigFitness} from '../Health/ClassFitness';
+import {classConfHTMLFitHealth} from '../Health/classConfHTMLTableAll';
+import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 
@@ -46,7 +46,7 @@ export class AdminJsonComponent {
   @Input() theTabOfUnits=new mainClassUnit;
   @Input() WeightRefTable=new mainRecordConvert;
   @Input() ConfigHTMLFitHealth=new classConfHTMLFitHealth;
-
+  @Input() ConfigChart=new classConfigChart;
   @Input() MyConfigFitness=new ConfigFitness;
 
   @Input() HealthAllData=new mainDailyReport; 
@@ -271,7 +271,10 @@ ReceiveFiles(event:any){
   else if (event.fileType!=='' && 
       event.fileType===this.identification.configFitness.fileType.confHTML){ 
     this.ConfigHTMLFitHealth=event;
-  }
+  } else if (event.fileType!=='' && 
+      event.fileType===this.identification.configFitness.fileType.confChart){ 
+      this.ConfigChart=event;
+      }
   this.returnFile.emit(event);
 }
 

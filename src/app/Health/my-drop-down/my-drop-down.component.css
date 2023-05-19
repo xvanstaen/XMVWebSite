@@ -1,0 +1,43 @@
+@import "../FitnessHealthGeneral.css";
+    div{
+        --posArrow:calc( var(--margLeft) + var(--LabWidth) + var(--textWidth) - 20px);
+    }
+
+    /*** ====================================== ***/
+    /*** ============== @media 1010 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 1010px) {
+    body{
+      max-width: 620px;
+      margin-left:var(--margLeft);
+    }
+      
+    div{
+        --margLeft: 10px;
+        --LabWidth: 80px;
+        --textWidth:80px;
+        --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+        --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+        --CriteriaOneDropLeft:100px;
+        --CriteriaTwoDropLeft:200px;
+        --CriteriaThreeDropLeft:300px;
+        --posArrow:calc( var(--margLeft) + var(--LabWidth) + var(--textWidth) - 20px);
+    }
+     
+
+    .Buffer{
+        margin-top:0px;
+        padding-left:5px;
+        height:5px;
+        width:90%; 
+        display:inline-block;
+        border:solid 0px blue;
+    }
+
+    .sizeButtons{
+        width:60px;
+        height:32px;
+        font-size:10px;
+        margin-left:10px;
+    }
+}

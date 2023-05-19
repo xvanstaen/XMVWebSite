@@ -37,10 +37,12 @@ export class BioData{
           fileFitnessMyConfig:"FitnessMyConfig",
           fileStartName:"FitStat-",
           fileStartLength:8,
+          myChartConfig:"fitness1configChart"
         },
         fileType:{
           Health:"HealthTracking",
           FitnessMyConfig:"FitnessMyConfig",
+          myChart:"myConfigChart",
         }
       };
       configFitness={
@@ -51,7 +53,8 @@ export class BioData{
           weightReference:"ConvertWeightRefTable.json",
           convertUnit:"ConvertUnit.json",
           calories:"ConfigCaloriesFat",
-          confHTML:"confTabHTML"
+          confHTML:"confTabHTML",
+          confChart:"configChart",
         },
         fileType:{
           convToDisplay:"ConvToDisplay",
@@ -60,6 +63,8 @@ export class BioData{
           convertUnit:"ConvertUnit",
           calories:"ConfigCaloriesFat",
           confHTML:"confTabHTML",
+          confChart:"configChart",
+
         }
       };
       health={
@@ -68,10 +73,12 @@ export class BioData{
         GI:0,
         SaturatedFat:0,
         Cholesterol:{
-          myLimit:0,
+          minLimit:0,
           maxLimit:0,
         },
         Calories:0,
+        Carbs:0,
+        Protein:0
       };
     };
 

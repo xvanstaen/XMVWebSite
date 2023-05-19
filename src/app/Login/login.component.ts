@@ -14,10 +14,11 @@ import { LoginIdentif } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
 import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
 
-import {classConfHTMLFitHealth} from '../classConfHTMLTableAll';
+import {classConfHTMLFitHealth} from '../Health/classConfHTMLTableAll';
 
-import {mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories';
-import {ConfigFitness} from '../ClassFitness';
+import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
+import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
+import {ConfigFitness} from '../Health/ClassFitness';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 
@@ -41,7 +42,7 @@ export class LoginComponent {
 
     @Input() identification=new LoginIdentif; 
 
-
+    @Input() ConfigChart=new classConfigChart;
     
     @Input() ConfigCaloriesFat=new mainClassCaloriesFat;
 
@@ -77,9 +78,9 @@ export class LoginComponent {
     i:number=0;
 
     myForm = new FormGroup({
-      userId: new FormControl(''),
-      password: new FormControl(''),
-      action: new  FormControl(''),
+      userId: new FormControl('', { nonNullable: true }),
+      password: new FormControl('', { nonNullable: true }),
+      action: new  FormControl('', { nonNullable: true }),
     });
 
     Encrypt:string='';
@@ -435,7 +436,10 @@ ReceiveFiles(event:any){
   else if (event.fileType!=='' && 
         event.fileType===this.identification.configFitness.fileType.confHTML){ 
       this.ConfigHTMLFitHealth=event;
-}
+    } else if (event.fileType!=='' && 
+        event.fileType===this.identification.configFitness.fileType.confChart){ 
+      this.ConfigChart=event;
+    }
   this.returnFile.emit(event);
 }
 //ngOnChanges(changes: SimpleChanges) {   

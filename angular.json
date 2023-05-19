@@ -108,5 +108,8 @@
       }
     }
   },
-  "defaultProject": "XMVWebSite"
+  "defaultProject": "XMVWebSite",
+  "cli": {
+    "analytics": false
+  }
 }

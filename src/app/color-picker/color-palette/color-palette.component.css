@@ -1,0 +1,36 @@
+
+
+.color-palette {
+    width: 255px;
+    height: 255px;
+    display: block;
+    border: 1px solid rgb(173, 106, 29);
+    margin-left:20px;
+}
+
+.color-palette:hover {
+    cursor: pointer;
+  }
+  
+/*
+  :host {
+    width: 250px;
+    height: 250px;
+    display: block;
+    border: 3px solid rgb(173, 106, 29);
+  }
+  */
+  .position{
+    color:black;
+    /*
+    margin-top: -500px;
+    margin-left: 150px;
+    position:absolute;
+   */
+  }
+
+  .selectcolor{
+    width:50px; 
+    height:30px;
+    margin-left: 80px;
+  }
