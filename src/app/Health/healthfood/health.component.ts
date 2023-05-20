@@ -273,8 +273,8 @@ sizeBoxContentMeal:number=0;
 sizeBoxMeal:number=0;
 sizeBoxContentFood:number=0;
 sizeBoxFood:number=0;
-maxSizeBoxContent:number=270;
-maxSizeBox:number=260;
+maxSizeBoxContent:number=275;
+maxSizeBox:number=275;
 
 docAppCalFat:any;
 getPosAfterTitle(){
@@ -337,7 +337,7 @@ ngOnInit(): void {
       }
   }
 
-  this.sizeBox=this.itemHeight  * (this.TabAction.length + 1 );
+  this.sizeBox=this.itemHeight  * this.TabAction.length ;
   this.sizeBoxContent=this.sizeBox+10;
 
 
@@ -774,6 +774,8 @@ onAction(event:any){
   if (event.target.id.substring(0,10)==='openAction'){
     this.prevDialogue=6;
     this.dialogue[this.prevDialogue]=true;
+    this.sizeBox=this.itemHeight  * this.NewTabAction.length ;
+    this.sizeBoxContent=this.sizeBox;
   } else  if (event.target.id.substring(0,9)==='selAction'){
       if (event.target.textContent.indexOf('cancel')!==-1){
       } else {

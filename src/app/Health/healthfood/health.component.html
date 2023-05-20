@@ -3,8 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
-
-    <div [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; height:230px; margin-left:20px; border:solid 2px blue; ">
+    <div class="skipLine">&nbsp;</div>
+    <div [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:230px; margin-left:20px; border:solid 2px blue; ">
         <div class="skipLine">&nbsp;</div>  
         <div  >
             <div class="theRadio">Create a new day </div>  
@@ -52,7 +52,7 @@
         </div>
 
 </div>
-<div class="skipLine">&nbsp;</div>
+
 <div *ngIf="error_msg!=='' && errorFn==='Copy'" class="error">{{error_msg}}</div>
 
 <div id='posAppCalFat'></div>
@@ -73,7 +73,7 @@
 
 <!--    Create COPY OF HealthAllData file -->
 <div *ngIf="EventHTTPReceived[0]===true && isCopyFile===true" style="margin-left:20px; border: blue 2px double; background-color: silver; width:90%">
-    
+    <div class="skipLine">&nbsp;</div>
     <form  [formGroup]="SpecificForm" >
         <div class="msg"  >
             Please enter the name of the file  :
@@ -88,8 +88,6 @@
 </div>
 
 
-
-<div class="skipLine">&nbsp;</div>
 <div *ngIf="EventHTTPReceived[0]===true && isDisplaySpecific===true" style="margin-left:20px; width:90%; border: blue 2px double; background-color: silver;">
     <span class="error" *ngIf="errorFn==='Sel'">{{error_msg}}</span>
     <div class="skipLine">&nbsp;</div>
@@ -185,7 +183,6 @@
 </div>
 
 <!--   CREATION OF A DAY  -->
-<div class="skipLine">&nbsp;</div>
 <div *ngIf="isCreateNew===true" style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px green; width:90%">
     <div class="skipLine">&nbsp;</div>
     <div  style="display:block; color:white; background:blue; width:80%; height:40px; margin-left:20px; border:solid 0px blue; text-align: center; font-size:16px; padding-top:8px;">
@@ -300,8 +297,7 @@
     
 </div>
 
-
-<div class="skipLine">&nbsp;</div>
+<!--------------- DISPLAY ALL -->
 <div *ngIf="EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true" style="margin-left:20px;">
     <!--
     <div style="font-size:12px; color:red; width:100%;">{{error_msg}}</div>

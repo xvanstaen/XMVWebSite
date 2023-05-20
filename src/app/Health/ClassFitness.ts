@@ -96,11 +96,11 @@ export class ConfigFitness{
   }
   
   export class BigData{
-    sport:string='A';
+    sport:string='';
     thedate=new Date();
-    activity:string='A';
-    exercise:string='A';
-    unit:string='A';
+    activity:string='';
+    exercise:string='';
+    unit:string='';
     seance:Array<any>=[{nb:0}];
     result=new ClassResult;
     id:number=0;

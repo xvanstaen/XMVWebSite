@@ -250,6 +250,49 @@ callingComponent:string='FitnessStat';
 
 nbToDisplay:number=0;
 nbSeanceDisplay:number=0;
+
+mainTableHeight:number=130;
+subTableHeight:number=100;
+
+largeMainTableHeight:number=480;
+largeSubTableHeight:number=450;
+
+
+/************* START Select position of the table ***************/
+selectedPosition ={ 
+  x: 0,
+  y: 0} ;
+
+  
+@HostListener('window:mouseup', ['$event'])
+onMouseUp(event: MouseEvent) {
+  this.selectedPosition = { x: event.pageX, y: event.pageY };
+  this.getPosAfterTitle();
+  //console.log('evt.pageX='+evt.pageX+' evt.pageY=' + evt.pageY );
+}
+
+onMouseDown(evt: MouseEvent) {
+  this.selectedPosition = { x: evt.pageX, y: evt.pageY };
+}
+
+onMouseMove(evt: MouseEvent) {
+  this.selectedPosition = { x: evt.pageX, y: evt.pageY };
+}
+
+tablePosTop:number=0;
+tablePosLeft:number=0;
+docTable:any;
+
+getPosAfterTitle(){
+  if (document.getElementById("posTitle")!==null){
+      this.docTable = document.getElementById("posTitle");
+      this.tablePosLeft = this.docTable.offsetLeft;
+      this.tablePosTop = this.docTable.offsetTop;
+  }
+
+}
+/************* END Select position of the table ***************/
+
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
     this.getScreenWidth = window.innerWidth;
@@ -271,9 +314,11 @@ boxActionWidth:number=36;
 dateWidth:number=100;
 calendarWidth:number=30;
 
+posLeftSport:number=34;
 posLeftActivity:number=0;
 posLeftExercise:number=0;
-posLeftSeanRes:number=0;
+posLeftSeance:number=0;
+posLeftResult:number=0;
 
 
 posLeftDropDown:number=0;
@@ -284,9 +329,10 @@ posLeftDropDown:number=0;
 
 ngOnInit(){
   
-  this.posLeftActivity=this.boxActionWidth+this.dateWidth+this.calendarWidth+this.newTextWidth;
-  this.posLeftExercise=this.posLeftActivity+this.newTextWidth+this.boxActionWidth;
-  this.posLeftSeanRes=this.posLeftExercise+this.newTextWidth+this.boxActionWidth + 15;
+  this.posLeftActivity=this.boxActionWidth+this.dateWidth+this.calendarWidth+this.newTextWidth + 34;
+  this.posLeftExercise=this.posLeftActivity+this.newTextWidth+this.boxActionWidth + 8;
+  this.posLeftSeance=this.posLeftExercise+this.newTextWidth - 18;
+  this.posLeftResult=this.posLeftExercise+this.newTextWidth+this.boxActionWidth + 200;
 
 
   this.DisplayConfig=false;
@@ -413,6 +459,7 @@ onAction(event:any){
     this.TabAction[this.TabAction.length-1].name='Copy';
     this.TabAction[this.TabAction.length-1].type='sport (atfer)';
     this.newPrevDialog=0;
+    this.posLeftDropDown=this.posLeftSport;
   } else if (this.idText==='Activity'){
     this.TabAction.push({name:'',type:''});
     this.TabAction[this.TabAction.length-1].name='Delete';
@@ -445,7 +492,7 @@ onAction(event:any){
     this.TabAction[this.TabAction.length-1].name='Add ';
     this.TabAction[this.TabAction.length-1].type='seance';
     this.newPrevDialog=3;
-    this.posLeftDropDown=this.posLeftSeanRes;
+    this.posLeftDropDown=this.posLeftSeance;
   } else if (this.idText==='Result'){
     this.TabAction.push({name:'',type:''});
     this.TabAction[this.TabAction.length-1].name='Delete';
@@ -457,7 +504,12 @@ onAction(event:any){
     this.TabAction[this.TabAction.length-1].name='Add after';
     this.TabAction[this.TabAction.length-1].type='result';
     this.newPrevDialog=4;
-    this.posLeftDropDown=this.posLeftSeanRes;
+    if (this.TabOfId[3] % 2 ===0 ){
+      this.posLeftDropDown=this.posLeftSeance;
+    } else {
+      this.posLeftDropDown=this.posLeftResult;
+    }
+    
   }
   this.newTabDialog[this.newPrevDialog]=true;
   this.theHeight=this.TabAction.length*26;
@@ -565,6 +617,8 @@ if (event.target.value===0){ //cancel
       }
       const theClassActivity = new ClassActivity;
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise.splice(myConst,0,theClassActivity); 
+      this.mainTableHeight=this.largeMainTableHeight;
+      this.subTableHeight=this.largeSubTableHeight;
     }
 
 } else if (this.newPrevDialog===2 && this.newTabDialog[this.newPrevDialog]===true){
@@ -585,7 +639,8 @@ if (event.target.value===0){ //cancel
           }
           const theClassExec = new ClassExercise;
           this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise.splice(myConst,0,theClassExec); 
-
+          this.mainTableHeight=this.largeMainTableHeight;
+          this.subTableHeight=this.largeSubTableHeight;
       } 
 
 } else if (this.newPrevDialog===3 && this.newTabDialog[this.newPrevDialog]===true){
@@ -622,6 +677,7 @@ if (event.target.value===0){ //cancel
     } else {
       myConst=this.TabOfId[3]+1;
     }
+
     const cResult = new ClassResult;
     this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(myConst,0,cResult);
   }
@@ -744,6 +800,9 @@ CancelAll(){
   this.TabBigData.splice(0,this.TabBigData.length);
   this.DisplayMerge=false;
   this.TriggerChartChange++;
+
+  this.newTabDialog[this.newPrevDialog]=false;
+  this.OpenDialogue[this.prev_Dialogue]=false;
 }
 
 RadioSelection(event:any){
@@ -795,6 +854,8 @@ ChartFileSelection(){
             // this.NewPerformanceFitness=this.MergeFilesFitness[this.FilesAlreadyMerged[k-1].refFileMerge];
             console.log('ChartFileSelection() ===> File ' + this.myListOfObjects.items[i].name + " was already retrieved");
             this.MergeAllFiles(k-1);
+            this.mainTableHeight=this.largeMainTableHeight;
+            this.subTableHeight=this.largeSubTableHeight;
           }
         }
     }
@@ -1363,7 +1424,6 @@ GetAllObjects(){
                 if (this.ChartFileList.length!==0){
                   this.ChartFileList.clear();
                 }
-              
                 for (i=this.myListOfObjects.items.length-1; i>-1; i--){
                       if (this.myListOfObjects.items[i].name.substring(0,this.identification.fitness.files.fileStartLength)!==this.identification.fitness.files.fileStartName){
                         this.myListOfObjects.items.splice(i,1);
@@ -1374,8 +1434,7 @@ GetAllObjects(){
                         this.ChartFileList.controls[this.ChartFileList.length-1].setValue(this.FillFSelected);
                       }
                 }
-                this.DisplayListOfObjects=true;
-               
+                this.DisplayListOfObjects=true; 
           },
           error_handler => {
                 console.log('RetrieveAllObjects() - error handler; HTTP='+this.HTTP_Address);
@@ -1434,7 +1493,8 @@ GetRecord(event:string, iWait:number, ref:number){
                     }
 
                   }
-
+                  this.mainTableHeight=this.largeMainTableHeight;
+                  this.subTableHeight=this.largeSubTableHeight;
                   if (this.MergeFiles===false){
                     this.LinkPerfConfig();
                     this.Input_Travel_O_R='O';
@@ -1669,6 +1729,10 @@ CancelRecord(){
     this.NewPerformanceFitness.Sport[0].exercise[0].ActivityExercise[0].Result[0].perf='';
     this.NewPerformanceFitness.Sport[0].exercise[0].ActivityExercise[0].Result[0].unit='';
     this.TabinputDate.splice(1, this.TabinputDate.length);
+    this.CancelAll();
+    this.TabPerfConfig.splice(0,this.TabPerfConfig.length);
+    this.mainTableHeight=130;
+    this.subTableHeight=100;
   }
 
 // this.scroller.scrollToAnchor('AccessToListFiles');

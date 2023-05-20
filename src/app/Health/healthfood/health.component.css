@@ -14,22 +14,7 @@
   background-color: cyan;
 }
 
-.theRadio{
-  margin-left:10px; 
-  width:60%; display:block; 
-  background-color:lightgrey; 
-  float:left; 
-  height:25px;
-}
 
-.theRadioButt{
-  height:18px;
-  width:18px
-}
-
-.YesNo{
-  font-size:14px;
-}
 
 table {
     /*

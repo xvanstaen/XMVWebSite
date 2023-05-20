@@ -210,7 +210,6 @@ newtabCtx:any;
         this.tabChart[i]=document.getElementById(this.tabCanvasId[i]);
      
         this.tabCtx[i]=this.tabChart[i].getContext('2d');
-    
         this.overallTab.push({datasetBar:[], labelBar:[]});
         this.collectSpecialData(i, this.overallTab[i].datasetBar, this.overallTab[i].labelBar);        
     }
@@ -238,9 +237,9 @@ ngOnInit() {
 
   // log which chart types are supported
   
-  for (var i=0; i<this.ConfigChartHealth.barChart.length; i++){
+  for (var i=0; i<this.ConfigChartHealth.chartTypes.length; i++){
     //this.lineChartType.push('');
-    this.lineChartType[i]=this.ConfigChartHealth.barChart[i].type;
+    this.lineChartType[i]=this.ConfigChartHealth.chartTypes[i].type;
   }
 
   this.tabParamChart.splice(0,this.tabParamChart.length);
@@ -759,11 +758,13 @@ collectSpecialData(nb:number,datasetsSpecialBar:Array<any>,  dateLabelSpecial:Ar
   var cal=0;
   var addWeekly:number=0;
 
+
+/*
 var configRecord=0;
-for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this.ConfigChartHealth.barChart[configRecord].type!==this.tabParamChart[nb].chartType; configRecord++){
+for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this.ConfigChartHealth.barChart.type!==this.tabParamChart[nb].chartType; configRecord++){
 
 }
-
+*/
  // if (this.tabParamChart[nb].chartType==='bar'){
       datasetsSpecialBar.splice(0,datasetsSpecialBar.length);
       dateLabelSpecial.splice(0,dateLabelSpecial.length);
@@ -778,7 +779,7 @@ for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this
       };
      
       if (iLabel!==0){nbLabel=iLabel;}
-      else {nbLabel=this.ConfigChartHealth.barChart[configRecord].labels.length;}
+      else {nbLabel=this.ConfigChartHealth.barChart.labels.length;}
       for (i=0; i< nbLabel; i++){
         var order=i+1;
         if (this.tabParamChart[nb].chartType==='bar'){
@@ -799,41 +800,85 @@ for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this
             datasetsSpecialBar.push({
               label:"",
               backgroundColor:'green',
-              borderDash:[],
-              borderColor: 'red', //The line color.
+              borderColor: [], //The line color.
               data: [],
               borderWidth: 7, //The line width (in pixels).
-              showLine:true,
-              fill: true,
-              lineTension: 0,
-              radius: 0,
-
-
+              showLine:true, 
+              fill: true, 
+              order:1,
+              pointRadius:2, 
+              pointBorderColor:'', 
+              pointBackgroundColor:'', 
+              pointBorderWidth:2, 
+              tension:0.2,
+              hoverBackgroundColor:"", 
+              pointHoverBackgroundColor:''
             });
-            
           }
+
         if (this.tabParamChart[nb].chartType==='bar'){
           if (this.tabParamChart[nb].barThickness!==0){
             datasetsSpecialBar[i].barThickness=this.tabParamChart[nb].barThickness;
           } else {
-            datasetsSpecialBar[i].barThickness=this.ConfigChartHealth.barChart[configRecord].datasets.barThickness;
+            datasetsSpecialBar[i].barThickness=this.ConfigChartHealth.barChart.datasets.barThickness;
+            
           }
-        }
+        } 
         
+        if(this.tabParamChart[nb].chartType==='line'){
+          if (this.tabParamChart[nb].labelsColor.length>0){
+            for (var iBorder=0; iBorder<this.tabParamChart[nb].labelsColor.length; iBorder++){
+              datasetsSpecialBar[i].borderColor[iBorder]=this.tabParamChart[nb].labelsColor[iBorder];
+            }
+          } else {
+            if (i<this.ConfigChartHealth.lineChart.datasets.length){
+              for (var iBorder=0; iBorder<this.ConfigChartHealth.lineChart.datasets[i].borderColor.length; iBorder++){
+                datasetsSpecialBar[i].borderColor[iBorder]=this.ConfigChartHealth.lineChart.datasets[i].borderColor[iBorder];
+              }
+              datasetsSpecialBar[i].borderWidth=this.ConfigChartHealth.lineChart.datasets[i].borderWidth;
+              datasetsSpecialBar[i].pointRadius =this.ConfigChartHealth.lineChart.datasets[i].pointRadius ;
+              datasetsSpecialBar[i].pointBorderColor =this.ConfigChartHealth.lineChart.datasets[i].pointBorderColor ;
+              datasetsSpecialBar[i].pointBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].pointBackgroundColor ;
+              datasetsSpecialBar[i].pointBorderWidth =this.ConfigChartHealth.lineChart.datasets[i].pointBorderWidth ;
+              datasetsSpecialBar[i].tension =this.ConfigChartHealth.lineChart.datasets[i].tension ;
+              datasetsSpecialBar[i].pointStyle =this.ConfigChartHealth.lineChart.datasets[i].pointStyle ;
+              datasetsSpecialBar[i].hoverBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].hoverBackgroundColor ;
+              datasetsSpecialBar[i].pointHoverBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].pointHoverBackgroundColor ;
+            } else {
+              for (var iBorder=0; iBorder<this.ConfigChartHealth.lineChart.datasetsDefault.borderColor.length; iBorder++){
+                datasetsSpecialBar[i].borderColor[iBorder]=this.ConfigChartHealth.lineChart.datasetsDefault.borderColor[iBorder];
+              }
+              datasetsSpecialBar[i].borderWidth=this.ConfigChartHealth.lineChart.datasetsDefault.borderWidth;
+              datasetsSpecialBar[i].pointRadius =this.ConfigChartHealth.lineChart.datasetsDefault.pointRadius ;
+              datasetsSpecialBar[i].pointBorderColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointBorderColor ;
+              datasetsSpecialBar[i].pointBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointBackgroundColor ;
+              datasetsSpecialBar[i].pointBorderWidth =this.ConfigChartHealth.lineChart.datasetsDefault.pointBorderWidth ;
+              datasetsSpecialBar[i].tension =this.ConfigChartHealth.lineChart.datasetsDefault.tension ;
+              datasetsSpecialBar[i].pointStyle =this.ConfigChartHealth.lineChart.datasetsDefault.pointStyle ;
+              datasetsSpecialBar[i].hoverBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.hoverBackgroundColor ;
+              datasetsSpecialBar[i].pointHoverBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointHoverBackgroundColor ;
+            }
+            datasetsSpecialBar[i].order=i;
+          }
+
+        }
+
+
+
         if (iLabel!==0) {
             datasetsSpecialBar[i].label=constLab[i];
         } else {
-            datasetsSpecialBar[i].label=this.ConfigChartHealth.barChart[configRecord].labels[i];
+            datasetsSpecialBar[i].label=this.ConfigChartHealth.barChart.labels[i];
         }
         if (iLabel!==0 && colorLab[i]!==''){
           datasetsSpecialBar[i].backgroundColor=colorLab[i];
           
         }
-        else if (this.ConfigChartHealth.barChart[configRecord].datasets.backgroundcolor===undefined ){
+        else if (this.ConfigChartHealth.barChart.datasets.backgroundColor===undefined ){
             datasetsSpecialBar[i].backgroundColor=this.ConfigChartHealth.barDefault.datasets.backgroundColor[i];
             
         } else {
-            datasetsSpecialBar[i].backgroundColor=this.ConfigChartHealth.barChart[configRecord].datasets.backgroundcolor[i];
+            datasetsSpecialBar[i].backgroundColor=this.ConfigChartHealth.barChart.datasets.backgroundColor[i];
         }
         
         datasetsSpecialBar[i].borderWidth=this.ConfigChartHealth.barDefault.datasets.borderWidth[i];
@@ -917,25 +962,25 @@ for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this
             }
       }
        else {
-        for (var j=0; j<this.ConfigChartHealth.barChart[configRecord].fieldsToSelect.length; j++){
+        for (var j=0; j<this.ConfigChartHealth.barChart.fieldsToSelect.length; j++){
             if (myDaily===0){ addWeekly=0 }
             else if (myWeekly!==-1) { addWeekly=datasetsSpecialBar[j].data[iDataset] }
 
-            if (this.ConfigChartHealth.barChart[configRecord].fieldsToSelect[j]==="Proteins"){
+            if (this.ConfigChartHealth.barChart.fieldsToSelect[j]==="Proteins"){
               datasetsSpecialBar[j].data[iDataset]==addWeekly + this.HealthAllData.tabDailyReport[i].total.Protein;
-            } else if (this.ConfigChartHealth.barChart[configRecord].fieldsToSelect[j]==="Carbs"){
+            } else if (this.ConfigChartHealth.barChart.fieldsToSelect[j]==="Carbs"){
               datasetsSpecialBar[j].data[iDataset]==addWeekly + this.HealthAllData.tabDailyReport[i].total.Carbs;
-            } else if (this.ConfigChartHealth.barChart[configRecord].fieldsToSelect[j]==="Sugar"){
+            } else if (this.ConfigChartHealth.barChart.fieldsToSelect[j]==="Sugar"){
               datasetsSpecialBar[j].data[iDataset]==addWeekly + this.HealthAllData.tabDailyReport[i].total.Sugar;
-            } else if (this.ConfigChartHealth.barChart[configRecord].fieldsToSelect[j]==="TotFat"){
+            } else if (this.ConfigChartHealth.barChart.fieldsToSelect[j]==="TotFat"){
               datasetsSpecialBar[j].data[iDataset]==addWeekly + this.HealthAllData.tabDailyReport[i].total.Fat.Total;
-            } else if (this.ConfigChartHealth.barChart[configRecord].fieldsToSelect[j]==="Chol"){
+            } else if (this.ConfigChartHealth.barChart.fieldsToSelect[j]==="Chol"){
               datasetsSpecialBar[j].data[iDataset]==addWeekly + this.HealthAllData.tabDailyReport[i].total.Cholesterol;
-            } else if (this.ConfigChartHealth.barChart[configRecord].fieldsToSelect[j]==="SatFat"){
+            } else if (this.ConfigChartHealth.barChart.fieldsToSelect[j]==="SatFat"){
               datasetsSpecialBar[j].data[iDataset]==addWeekly + this.HealthAllData.tabDailyReport[i].total.Fat.Saturated;
-            } else if (this.ConfigChartHealth.barChart[configRecord].fieldsToSelect[j]==="CalBurnt"){
+            } else if (this.ConfigChartHealth.barChart.fieldsToSelect[j]==="CalBurnt"){
               datasetsSpecialBar[j].data[iDataset]==addWeekly + Number(this.HealthAllData.tabDailyReport[i].total.Calories) + this.identification.health.Calories;
-            } else if (this.ConfigChartHealth.barChart[configRecord].fieldsToSelect[j]==="CalEaten"){
+            } else if (this.ConfigChartHealth.barChart.fieldsToSelect[j]==="CalEaten"){
               datasetsSpecialBar[j].data[iDataset]==addWeekly + this.HealthAllData.tabDailyReport[i].burntCalories;
             }
           }
@@ -949,64 +994,62 @@ for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this
 specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
 
   Chart.defaults.font.size = 14;
-
+/*
   var configRecord=0;
-  for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this.ConfigChartHealth.barChart[configRecord].type!==this.tabParamChart[nb].chartType; configRecord++){
+  for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this.ConfigChartHealth.barChart.type!==this.tabParamChart[nb].chartType; configRecord++){
   
   }
+  */
+ var yStacked=false;
+ var xStacked=false;
   if (this.tabParamChart[nb].stackedY==='true' ){
     yStacked=true;
   } else if (this.tabParamChart[nb].stackedY==='false' ){
     yStacked=false;
-  } else 
-  if (this.ConfigChartHealth.barChart[configRecord].options.scales.axisY.stacked===undefined){
-    var yStacked=this.ConfigChartHealth.barDefault.options.scales.axisY.stacked;
-  } else { 
-    yStacked=this.ConfigChartHealth.barChart[configRecord].options.scales.axisY.stacked;
-  }
+  } else if (this.ConfigChartHealth.barDefault.options.scales.axisY.stacked!==undefined){
+    yStacked=this.ConfigChartHealth.barDefault.options.scales.axisY.stacked;
+  } 
 
   if (this.tabParamChart[nb].stackedX==='true' ){
     xStacked=true;
   } else if (this.tabParamChart[nb].stackedX==='false' ){
     xStacked=false;
   } else 
-  if (this.ConfigChartHealth.barChart[configRecord].options.scales.axisX.stacked===undefined){
+  if (this.ConfigChartHealth.barDefault.options.scales.axisX.stacked!==undefined){
     var xStacked=this.ConfigChartHealth.barDefault.options.scales.axisX.stacked;
-  } else { 
-    xStacked=this.ConfigChartHealth.barChart[configRecord].options.scales.axisX.stacked;
-  }
+  } 
   var charTitle='';
   if (this.tabParamChart[nb].chartTitle !==''){
     charTitle=this.tabParamChart[nb].chartTitle;
-  } else charTitle=this.ConfigChartHealth.barChart[configRecord].options.plugins.title.text;
+  } else {charTitle=this.ConfigChartHealth.barChart.options.plugins.title.text};
 
   var TitleColor='';
   if (this.tabParamChart[nb].colorChartTitle !==''){
     TitleColor=this.tabParamChart[nb].colorChartTitle;
-  } else TitleColor='darkblue';
+  } else {TitleColor='darkblue'};
 
   var mylegendTitle='';
   if (this.tabParamChart[nb].legendTitle !==''){
     mylegendTitle=this.tabParamChart[nb].legendTitle;
-  } else mylegendTitle=this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.title.text;
+  } else {mylegendTitle=this.ConfigChartHealth.barChart.options.plugins.legend.title.text};
 
   var legendColor='';
   if (this.tabParamChart[nb].colorLegendTitle !==''){
     legendColor=this.tabParamChart[nb].colorLegendTitle;
-  } else legendColor='blue';
+  } else {legendColor='blue'};
 
   var theRatio=0;
   if (this.tabParamChart[nb].ratio!==0){
     theRatio=Number(this.tabParamChart[nb].ratio);
   } else {
-    theRatio=Number(this.ConfigChartHealth.barChart[configRecord].options.aspectRatio);
+    theRatio=Number(this.ConfigChartHealth.barChart.options.aspectRatio);
   }
   
   var theboxWidth=0;
   if (this.tabParamChart[nb].legendBox.width!==0){
     theboxWidth=Number(this.tabParamChart[nb].legendBox.width);
-  } else  if (this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.boxWidth!==undefined){
-    theboxWidth=Number(this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.boxWidth);
+  } else  if (this.ConfigChartHealth.barChart.options.plugins.legend.labels.boxWidth!==undefined){
+    theboxWidth=Number(this.ConfigChartHealth.barChart.options.plugins.legend.labels.boxWidth);
   } else  if (this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxWidth!==undefined){
     theboxWidth=Number(this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxWidth);
   }
@@ -1015,8 +1058,8 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
   var theboxHeight=0;
   if (this.tabParamChart[nb].legendBox.height!==0){
     theboxHeight=Number(this.tabParamChart[nb].legendBox.height);
-  } else  if (this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.boxHeight!==undefined){
-    theboxHeight=Number(this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.boxWHeight);
+  } else  if (this.ConfigChartHealth.barChart.options.plugins.legend.labels.boxHeight!==undefined){
+    theboxHeight=Number(this.ConfigChartHealth.barChart.options.plugins.legend.labels.boxHeight);
   } else  if (this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxHeight!==undefined){
     theboxHeight=Number(this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxHeight);
   }
@@ -1024,8 +1067,8 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
   var theboxradius=0;
   if (this.tabParamChart[nb].legendBox.radius!==0){
     theboxradius=Number(this.tabParamChart[nb].legendBox.radius);
-  } else  if (this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.borderRadius!==undefined){
-    theboxradius=Number(this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.borderRadius);
+  } else  if (this.ConfigChartHealth.barChart.options.plugins.legend.labels.borderRadius!==undefined){
+    theboxradius=Number(this.ConfigChartHealth.barChart.options.plugins.legend.labels.borderRadius);
   } else  if (this.ConfigChartHealth.barDefault.options.plugins.legend.labels.borderRadius!==undefined){
     theboxradius=Number(this.ConfigChartHealth.barDefault.options.plugins.legend.labels.borderRadius);
   }
@@ -1034,8 +1077,8 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
 
   if (this.tabParamChart[nb].legendBox.fontSize!==0){
     theboxfontSize=Number(this.tabParamChart[nb].legendBox.fontSize);
-  } else  if (this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.font.size!==undefined){
-    theboxfontSize=Number(this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.font.size);
+  } else  if (this.ConfigChartHealth.barChart.options.plugins.legend.labels.font.size!==undefined){
+    theboxfontSize=Number(this.ConfigChartHealth.barChart.options.plugins.legend.labels.font.size);
   } else  if (this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.size!==undefined){
     theboxfontSize=Number(this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.size);
   }
@@ -1044,8 +1087,8 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
   var thepointStyle='';
   if (this.tabParamChart[nb].legendBox.pointStyle!==''){
     thepointStyle=this.tabParamChart[nb].legendBox.pointStyle;
-  } else  if (this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.pointStyle!==undefined){
-    thepointStyle=this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.pointStyle;
+  } else  if (this.ConfigChartHealth.barChart.options.plugins.legend.labels.pointStyle!==undefined){
+    thepointStyle=this.ConfigChartHealth.barChart.options.plugins.legend.labels.pointStyle;
   } else  if (this.ConfigChartHealth.barDefault.options.plugins.legend.labels.pointStyle!==undefined){
     thepointStyle=this.ConfigChartHealth.barDefault.options.plugins.legend.labels.pointStyle;
   }
@@ -1053,8 +1096,8 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
   var theColorBox='';
   if (this.tabParamChart[nb].legendBox.color!==''){
     theColorBox=this.tabParamChart[nb].legendBox.color;
-  } else  if (this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.color!==undefined){
-    theColorBox=this.ConfigChartHealth.barChart[configRecord].options.plugins.legend.labels.color;
+  } else  if (this.ConfigChartHealth.barChart.options.plugins.legend.labels.color!==undefined){
+    theColorBox=this.ConfigChartHealth.barChart.options.plugins.legend.labels.color;
   } else  if (this.ConfigChartHealth.barDefault.options.plugins.legend.labels.color!==undefined){
     theColorBox=this.ConfigChartHealth.barDefault.options.plugins.legend.labels.color;
   }
@@ -1164,6 +1207,7 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
         data: {
           labels:dateLabel,
           datasets: theDatasets,
+          
         },
         options: { 
           responsive: true,
@@ -1204,7 +1248,7 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
                 }
                 
               },
-            maxHeight:60,
+            maxHeight:80,
             maxWidth:300,
             reverse:false,
             title:{
@@ -1314,7 +1358,7 @@ testLineChart(){
               }
               
             },
-          maxHeight:60,
+          maxHeight:80,
           maxWidth:300,
           reverse:false,
 

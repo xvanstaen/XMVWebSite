@@ -14,28 +14,28 @@
     </span>
 </div>
 
-<div [formGroup]="TheSelectDisplays" style="display:block; background-color:cyan; width:450px; height:140px; margin-left:20px; border:solid 2px blue; ">
+<div [formGroup]="TheSelectDisplays" style="display:block; background-color:cyan; width:90%; height:140px; margin-left:20px; border:solid 2px blue; ">
     <div  >
         <div class="radioConfig">Performance figures </div>  
-        <input  (click)='SelRadio("Y-1")' type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="Y" > &nbsp;&nbsp;Yes 
-        <input  (click)='SelRadio("N-1")' style="margin-left:10px;" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="N">  &nbsp;&nbsp; No 
+        <input  (click)='SelRadio("Y-1")' class="theRadioButt" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
+        <input  (click)='SelRadio("N-1")' class="theRadioButt" style="margin-left:10px;" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
     </div>
     <div  >
         <div class="radioConfig">Short display of performance </div>  
-        <input  (click)='SelRadio("Y-4")' type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="Y" > &nbsp;&nbsp;Yes 
-        <input  (click)='SelRadio("N-4")' style="margin-left:10px;" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="N">  &nbsp;&nbsp; No 
+        <input  (click)='SelRadio("Y-4")' class="theRadioButt" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-4")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
     </div>
 
     <div  >
         <div class="radioConfig">Performance chart </div> 
-        <input  (click)='SelRadio("Y-2")' type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="Y" > &nbsp;&nbsp;Yes 
-        <input  (click)='SelRadio("N-2")' style="margin-left:10px;" type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="N"> &nbsp;&nbsp;No 
+        <input  (click)='SelRadio("Y-2")' class="theRadioButt" type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-2")' class="theRadioButt" style="margin-left:10px;" type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
     </div>
 
     <div  >
         <div class="radioConfig">Configuration </div> 
-        <input  (click)='SelRadio("Y-3")'type="radio" name="Config" formControlName="Config" id="Config" value="Y" > &nbsp;&nbsp;Yes 
-        <input  (click)='SelRadio("N-3")' style="margin-left:10px;" type="radio" name="Config" formControlName="Config" id="Config" value="N" > &nbsp;&nbsp;No 
+        <input  (click)='SelRadio("Y-3")' class="theRadioButt" type="radio" name="Config" formControlName="Config" id="Config" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-3")' class="theRadioButt" style="margin-left:10px;" type="radio" name="Config" formControlName="Config" id="Config" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
     </div>
 
     <br><br>
@@ -53,8 +53,9 @@
 <div class="skipLine">&nbsp;</div>
 
 
-<div *ngIf="DisplayShortScreen===true" style=" width:1124px; height:480px; margin-left:15px; display:inline-block; border:blue solid 2px;">
-    <div>
+<div *ngIf="DisplayShortScreen===true" style=" width:1124px;  margin-left:20px; display:inline-block; border:blue solid 2px;" 
+                        [ngStyle]="{'height.px': mainTableHeight}">
+    <div id="posTitle">
         <span class="theTitle boxAction" > &nbsp; </span>
         <span class="theTitle sportTitle" > Sport </span>
         <span class="theTitle dateTitle" > Date </span>
@@ -65,9 +66,8 @@
     </div>
     
     <div *ngIf="newTabDialog[newPrevDialog]===true;">
-        {{prev_Dialogue}} - {{newTabDialog[newPrevDialog]}}
         <div class="dropdown ">
-            <div class="newStraight-content"  [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': posLeftDropDown}">
+            <div class="newStraight-content"  [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':selectedPosition.y - tablePosTop - 249 }">
                 <div  class="newStraightDropDown " [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': 1}"  >
                     <li *ngFor="let tab of TabAction; let m=index;" 
                             class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
@@ -77,47 +77,46 @@
             </div>
         </div>
     </div>
+
+    <div *ngIf='TabDisplayCalendar[TabOfId[0]]===true' class="dropdown" >
+        <div class="Straight-content" [ngStyle]="{'margin-top.px': selectedPosition.y - tablePosTop - 249 }" >
+            <div class="StraightDropDown" >
+                <div class="skipLine">&nbsp;</div>
+                <app-one-calendar [Input_MinDate]="minDate" [Input_MaxDate]="maxDate" [DisplayCalendarOnly]="DisplayCalendarOnly"
+                        [Input_SelectedDate]="selected_date" [Input_IsSelectedDate]="isSelectedDate" 
+                        [Input_Travel_O_R]="Input_Travel_O_R" 
+                        (my_SelectedDate)='SelectedDate($event)'>  
+                </app-one-calendar>        
+            </div>
+        </div>
+    </div>
     
-    <div style="overflow-y:scroll; width:1120px; height:450px; border-bottom:2px solid blue; border-top:2px solid blue; background-color:cyan;">
+    <div style="overflow-y:scroll; width:1120px; border-bottom:2px solid blue; border-top:2px solid blue; background-color:cyan;"
+                                [ngStyle]="{'height.px': subTableHeight }">
         <div *ngFor="let theSport of NewPerformanceFitness.Sport; let i=index" > 
-            <div class="skipLine">&nbsp;</div>
-            <div *ngIf="TabPerfConfig[i]=== undefined || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityName[0]!=='N/A' )" >
+            <div class="skipLine" style="height:2px;">&nbsp;</div>
+            <div *ngIf="TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityName[0]!=='N/A' )" >
                 <div *ngFor="let theActivity of NewPerformanceFitness.Sport[i].exercise; let j=index" >
-                    <div *ngIf="TabPerfConfig[i]=== undefined || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityExercise[0]!=='N/A' )" > 
-                       
-      
-                        <div *ngFor="let TabExec of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise; let k=index" style="width:100%; display:block; border:blue solid 0px; height:28px; " >
-          
-                            <div *ngIf="j===0 && k===0">
+                    <div *ngIf="TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityExercise[0]!=='N/A' )" > 
+                        <div *ngFor="let TabExec of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise; let k=index" style="width:100%; display:block; border:blue solid 0px; height:27px; " >
+                            <div *ngIf="k===0">
                                 <div  class="boxAction" style=" padding-left:-10px;" >
                                     <span class="circle" id="Sport-{{i}}" (click)="onAction($event)" style="margin-top:3px; margin-left:10px;">A</span>
-                                    
                                 </div>
-                                <div >
-                                <input id="Spor-{{i}}" (input)="onInput($event)" class="inputNewText"  style="background-color: lightskyblue; font-weight: bold; color:red" type="text" value="{{theSport.Sport_name}}" >
-                                <input class="inputNewDate fieldNewDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (input)="CheckDate($event)">
+                                <div>
+                                    <input id="Spor-{{i}}" (input)="onInput($event)" class="inputNewText"  style="background-color: lightskyblue; font-weight: bold; color:red" type="text" value="{{theSport.Sport_name}}" >
+                                    <input *ngIf="j===0" class="inputNewDate fieldNewDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (input)="CheckDate($event)">
+                                    <div *ngIf="j!==0" class="inputNewDate fieldNewDate" style="padding-top: 5px;;"  >{{TabinputDate[i]}}</div>
                                 </div>
-                                <div style="float:left;">
-                                <mat-icon  id="Date-{{i}}"  class="material-icons-outlined posCalendarNew"  (click)="ActionCalendar($event)" >
-                                
-                                    calendar_month
-                                </mat-icon>
+                                <div *ngIf="j!==0" class="posCalendarNew" style="float:left;"> &nbsp; </div>
+                                <div *ngIf="j===0" style="float:left;">
+                                    <mat-icon  id="Date-{{i}}"  class="material-icons-outlined posCalendarNew"  (click)="ActionCalendar($event)" >
+                                        calendar_month
+                                    </mat-icon>
                                 </div>
-                                <div *ngIf='TabDisplayCalendar[i]===true' class="dropdown" >
-                                    <div class="Straight-content" >
-                                        
-                                        <div class="StraightDropDown" >
-                                            <div class="skipLine">&nbsp;</div>
-                                            <app-one-calendar [Input_MinDate]="minDate" [Input_MaxDate]="maxDate" [DisplayCalendarOnly]="DisplayCalendarOnly"
-                                                    [Input_SelectedDate]="selected_date" [Input_IsSelectedDate]="isSelectedDate" 
-                                                    [Input_Travel_O_R]="Input_Travel_O_R" 
-                                                    (my_SelectedDate)='SelectedDate($event)'>  
-                                            </app-one-calendar>        
-                                        </div>
-                                    </div>
-                                </div>
+
                             </div>
-                            <div *ngIf="j>0 || k>0" style="float:left; height:calc(var(--fieldHeight) + 4px);" >
+                            <div *ngIf="k>0" style="float:left; height:calc(var(--fieldHeight) + 2px);" >
                                 <div class="boxAction" > &nbsp; </div>
                                 <div class="emptyInput" >&nbsp; </div>
                                 <div class="fieldNewDate" >&nbsp; </div>
@@ -134,93 +133,72 @@
                                 <div class="boxAction" >&nbsp;</div>
                                 <div class="emptyInput" >&nbsp; </div>
                             </div>
-                
-                          
-                                    <div class="boxAction" >
-                                        <span class="circle"  id="Exercise-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" style="margin-left:13px;" >A</span>
-                                    </div>
-                                
-                                    <input id="nExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"  style="float:left;" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
-                                    <input id="uExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"  style="float:left;" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">
-                                 
-                               
-
-
-                    <div style="border:black 0px solid;  width: 540px; float:left;" >   
                             <div class="boxAction" >
-                                <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" style="margin-left:12px; ">A</span>
-                            </div>
-                            <div *ngFor="let SecSeance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let t=index"  >
-                                <div *ngIf="t % 10 === 0" >
-                                    <div *ngIf="t > 0" >
-
-                                        <div  class="boxAction" >
-                                            &nbsp;
+                                <span class="circle"  id="Exercise-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" style="margin-left:13px;" >A</span>
+                            </div>                        
+                            <input id="nExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"  style="float:left;" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
+                            <input id="uExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"  style="float:left;" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">
+                            <div style="border:black 0px solid;  width: 540px; float:left;" >   
+                                <div class="boxAction" >
+                                    <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" style="margin-left:12px; ">A</span>
+                                </div>
+                                <div *ngFor="let SecSeance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let t=index"  >
+                                    <div *ngIf="t % 10 === 0" >
+                                        <div *ngIf="t > 0" >
+                                            <div  class="boxAction" >
+                                                &nbsp;
+                                            </div>
+                                        </div>
+                                        <div style="width: 500px; display:inline-block;">
+                                            <div *ngFor="let Seance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let l=index"  >
+                                                <span *ngIf="l>=t && l<t+10"  >
+                                                    <input id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)" class="inputNewSean" style="float:left;" type="text" value="{{Seance.nb}}">
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div style="width: 500px; display:inline-block;">
-                                    <div *ngFor="let Seance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let l=index"  >
-                                        <span *ngIf="l>=t && l<t+10"  >
-                                            <input id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)" class="inputNewSean" style="float:left;" type="text" value="{{Seance.nb}}">
-                                        </span>
-                                    </div>
-                                    </div>
                                 </div>
-                            </div>
-                            <div class="resultField" style="height:1px;"></div>
-                            <div *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result!==undefined  && 
-                                        (TabPerfConfig[i]=== undefined || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf[0]!=='N/A' ))"  >
                                 
-                                <div *ngFor="let theResult of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result; let p=index" style="float:left;">
-        
-                                    <div class="resultField" >
-                                        
-                                        <div  class="boxAction" style="float:left;">
-                                            <div class="circle"  id="Result-{{i}}-{{j}}-{{k}}-{{p}}" (click)="onAction($event)"  style="margin-left:10px; ">A</div>  
-                                        </div>
-                                        <span style="display:inline-block; width:6px;" >&nbsp;</span>
-                                        <input id="tPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewText"  type="text" value="{{theResult.perf_type}}">             
-                                        <input id="vPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewSean"  type="text" value="{{theResult.perf}}">               
-                                        <input id="uPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewSean"  type="text" value="{{theResult.unit}}">               
-                                        <span style="display:inline-block; width:6px;" >&nbsp;</span>
-                                    </div>       
+                                <div *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result!==undefined  && 
+                                            (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf[0]!=='N/A' ))"  >
+                                    <div *ngFor="let theResult of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result; let p=index" style="float:left;">
+                                        <div class="resultField" >
+                                            <div  class="boxAction" style="float:left; padding-left:2px;">
+                                                <div class="circle"  id="Result-{{i}}-{{j}}-{{k}}-{{p}}" (click)="onAction($event)"  style="margin-left:10px; ">A</div>  
+                                            </div>
+                                            <div style="display:block; width:4px; border:red solid 0px; float:left;" >&nbsp;</div>
+                                            <input id="tPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewText"  type="text" value="{{theResult.perf_type}}">             
+                                            <input id="vPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewSean"  type="text" value="{{theResult.perf}}">               
+                                            <input id="uPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewSean"  type="text" value="{{theResult.unit}}">               
+                                            <span style="display:inline-block; width:6px;" >&nbsp;</span>
+                                        </div>       
+                                    </div>
                                 </div>
                             </div>
-                        
-                   
                         </div>
-
                     </div>
-                    </div>
-           
                 </div>
             </div>
         </div> 
     </div>
     <div class="skipLine">&nbsp;</div>
     
-    <div style="margin-left:180px; width:80%">
-            <span *ngIf="IsSaveConfirmed===false">
-                <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button>
-                <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
-                <span style="font-size:16px; color:red; margin-left:30px;"  >
-                   <br>{{message}}  
-                </span>
-            </span>
-    
-            <span *ngIf="IsSaveConfirmed===true">
-                <form  [formGroup]="SpecificForm" >
-                    <span style="font-size:16px; color:blue; margin-left:30px;"  >
-                    Please enter the name of the file you want to save your data in :
-                </span>
-                    <input type='text' formControlName="FileName" >
-                    <br><br>
-                    <button id='but_3' class="sizeButtons" (click)="SaveNewRecord()">Confirm</button>
-                    <button id='but_4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
-                </form>
-                
-            </span>
+    <div *ngIf="IsSaveConfirmed===false" style="margin-left:180px; width:80%">
+        <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button>
+        <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
+        <div class="msg"  ><br>{{message}} </div>
+    </div>
+    <div *ngIf="IsSaveConfirmed===true" style="margin-left:20px; width:80%">
+        <div class="msg"  >
+            Please enter the name of the file you want to save your data in :
+        </div>
+        <form  [formGroup]="SpecificForm" >
+            <input type='text' style='margin-left:20px; background-color:lightgrey;' formControlName="FileName" >
             <br><br>
+            <button id='but_3' class="sizeButtons" (click)="SaveNewRecord()">Confirm</button>
+            <button id='but_4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
+        </form>
+        <br><br>
     </div>  
 
 
@@ -233,30 +211,29 @@
  
    <div style="margin-top:20px;"  *ngIf="(DisplayListOfObjects===true && DisplayPerfChart===true) || 
     DisplayShortScreen===true || DisplayPerfFigures===true">
-         <div class="objectHeader">Select the files for your chart performance</div>
-            <form  [formGroup]="ChartFileForm" >
-                 <div formArrayName="select_file"  *ngFor="let FormChart of ChartFileList.controls; let i=index">
-                        <div [formGroupName]="i" >
-                             <li style="list-style-type: none;">
-                                <span *ngIf="FormChart.value.selected==='Y'" >
-                                    <input  style="margin-left:45px; margin-top:15px; float:left;" (click)='RadioSelection($event)' type="radio"  id="N-{{i}}" value="Y" checked >
-                                    <span  [ngClass]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}"  class=" object" style=" padding-left:40px; padding-top:10px; " >{{i+1}} - {{myListOfObjects.items[i].name}}</span>
-                                      </span>
-                                <span *ngIf="FormChart.value.selected==='N'">
-                                    <input  style="margin-left:45px;margin-top:15px; float:left;" (click)='RadioSelection($event)'  type="radio" id="Y-{{i}}" value="Y" > 
-                                    <span  [ngClass]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}" class="object" style=" padding-left:40px; padding-top:10px;">{{i+1}} - {{myListOfObjects.items[i].name}}</span>
-                                </span>
-                                
-                            </li>
-                        </div>    
-                </div>
-                <div class="skipLine">&nbsp;</div>
-                <input class="sizeButtons" style='margin-left:40px;' type='Submit' id="S2" (click)='ChartFileSelection()' value="Select">
-                <button class="sizeButtons" style='margin-left:20px;' (click)='SelectAll()'>Select All</button>
-                <button class="sizeButtons" style='margin-left:20px;' (click)='CancelAll()'>Cancel All</button>
-            </form>
-        </div>
-         <br><br>
+        <div class="objectHeader">Select the files for your chart performance</div>
+        <form  [formGroup]="ChartFileForm" >
+            <div formArrayName="select_file"  *ngFor="let FormChart of ChartFileList.controls; let i=index">
+                <div [formGroupName]="i" >
+                    <li style="list-style-type: none;">
+                        <span *ngIf="FormChart.value.selected==='Y'" >
+                            <input   class="radioButton" (click)='RadioSelection($event)' type="radio"  id="N-{{i}}" value="Y" checked >
+                            <span  [ngClass]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}"  class=" object"  >{{i+1}} - {{myListOfObjects.items[i].name}}</span>
+                        </span>
+                        <span *ngIf="FormChart.value.selected==='N'">
+                                <input    class="radioButton" (click)='RadioSelection($event)'  type="radio" id="Y-{{i}}" value="Y" > 
+                            <span  [ngClass]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}" class="object" >{{i+1}} - {{myListOfObjects.items[i].name}}</span>
+                        </span>                              
+                    </li>
+                </div>    
+            </div>    
+        </form>
+        <div class="skipLine">&nbsp;</div>
+            <input class="sizeButtons" style='margin-left:40px; margin-top:10px;' type='Submit' id="S2" (click)='ChartFileSelection()' value="Select">
+            <button class="sizeButtons" style='margin-left:20px;' (click)='SelectAll()'>Select All</button>
+            <button class="sizeButtons" style='margin-left:20px;' (click)='CancelAll()'>Cancel All</button>
+    </div>
+    <div class="skipLine">&nbsp;</div>
  
 
 <!-- ========= DISPLAY THE TABLE WITH ALL FIGURES AS WELL AS THE CHART(S) ============= -->
@@ -344,7 +321,7 @@
             <!-- ***************** MANAGE ACTIVITY ********************** -->
         <!--  =====  Test on N/A =======  -->  
     
-        <div *ngIf="TabPerfConfig[i]=== undefined || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityName[0]!=='N/A' )">
+        <div *ngIf="TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityName[0]!=='N/A' )">
             <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
                 <div class="divItem">
                     <div class="masterLabel labelActiv" >Activity</div>
@@ -388,7 +365,7 @@
               <!-- ***************** MANAGE EXERCISE AND PERF ********************** -->
         <span *ngFor="let TabExec of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise; let k=index">
                 <!--  =====  Test on N/A =======  -->           
-            <span *ngIf="TabPerfConfig[i]=== undefined || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityExercise[0]!=='N/A' )">
+            <span *ngIf="TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0  || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityExercise[0]!=='N/A' )">
                 <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
                     <div class="divItem">
                         <div class="masterLabel labelExec" >Exercise</div>
@@ -482,7 +459,7 @@
             <span *ngIf="NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result!==undefined" >
                     
             <!--  =====  Test on N/A =======  -->           
-                    <span *ngIf="TabPerfConfig[i]=== undefined || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf[0]!=='N/A' )">
+                    <span *ngIf="TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf[0]!=='N/A' )">
     
                         <span *ngFor="let theResult of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result; let p=index">
                         <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">

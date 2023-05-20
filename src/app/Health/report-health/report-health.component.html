@@ -1,5 +1,6 @@
-<div style="width:95%; max-width:410px; margin-left:10px; border:solid 2px blue; display:inline-block;">
-    <div class="skipLine">&nbsp;</div>
+<div class="skipLine">&nbsp;</div>
+<div style="width:95%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block;">
+  
  
     <div style="text-align: center; width:100%; display:inline-block; font-size:16px; color:blue;">CREATE/CHANGE PARAMETERS FOR </div>
     <span style="margin-left:25px;"> Chart 1</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart1"   >  
@@ -9,7 +10,7 @@
     <div class="skipLine">&nbsp;</div>
     <!--   **************************** SELECTION PARAMETERS **************************** -->
     <div *ngIf="selectedChart!==0">
-    <form  [formGroup]="selectChart" style="margin-left:10px;">
+    <form  [formGroup]="selectChart" style="margin-left:20px;">
         <div style="width:100%; display:inline-block;">
             <div class="skipLine">&nbsp;</div>
             
