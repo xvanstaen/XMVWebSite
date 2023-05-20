@@ -811,6 +811,7 @@ for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this
               pointBackgroundColor:'', 
               pointBorderWidth:2, 
               tension:0.2,
+              pointStyle:"",
               hoverBackgroundColor:"", 
               pointHoverBackgroundColor:''
             });
@@ -826,42 +827,46 @@ for (configRecord=0; configRecord<this.ConfigChartHealth.barChart.length && this
         } 
         
         if(this.tabParamChart[nb].chartType==='line'){
-          if (this.tabParamChart[nb].labelsColor.length>0){
-            for (var iBorder=0; iBorder<this.tabParamChart[nb].labelsColor.length; iBorder++){
-              datasetsSpecialBar[i].borderColor[iBorder]=this.tabParamChart[nb].labelsColor[iBorder];
-            }
-          } else {
-            if (i<this.ConfigChartHealth.lineChart.datasets.length){
-              for (var iBorder=0; iBorder<this.ConfigChartHealth.lineChart.datasets[i].borderColor.length; iBorder++){
-                datasetsSpecialBar[i].borderColor[iBorder]=this.ConfigChartHealth.lineChart.datasets[i].borderColor[iBorder];
+            if (this.tabParamChart[nb].labelsColor.length>0){
+              for (var iBorder=0; iBorder<this.tabParamChart[nb].labelsColor.length; iBorder++){
+                datasetsSpecialBar[i].borderColor[iBorder]=this.tabParamChart[nb].labelsColor[iBorder];
               }
-              datasetsSpecialBar[i].borderWidth=this.ConfigChartHealth.lineChart.datasets[i].borderWidth;
-              datasetsSpecialBar[i].pointRadius =this.ConfigChartHealth.lineChart.datasets[i].pointRadius ;
-              datasetsSpecialBar[i].pointBorderColor =this.ConfigChartHealth.lineChart.datasets[i].pointBorderColor ;
-              datasetsSpecialBar[i].pointBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].pointBackgroundColor ;
-              datasetsSpecialBar[i].pointBorderWidth =this.ConfigChartHealth.lineChart.datasets[i].pointBorderWidth ;
-              datasetsSpecialBar[i].tension =this.ConfigChartHealth.lineChart.datasets[i].tension ;
-              datasetsSpecialBar[i].pointStyle =this.ConfigChartHealth.lineChart.datasets[i].pointStyle ;
-              datasetsSpecialBar[i].hoverBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].hoverBackgroundColor ;
-              datasetsSpecialBar[i].pointHoverBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].pointHoverBackgroundColor ;
             } else {
-              for (var iBorder=0; iBorder<this.ConfigChartHealth.lineChart.datasetsDefault.borderColor.length; iBorder++){
-                datasetsSpecialBar[i].borderColor[iBorder]=this.ConfigChartHealth.lineChart.datasetsDefault.borderColor[iBorder];
+              if (i<this.ConfigChartHealth.lineChart.datasets.length){
+                for (var iBorder=0; iBorder<this.ConfigChartHealth.lineChart.datasets[i].borderColor.length; iBorder++){
+                  datasetsSpecialBar[i].borderColor[iBorder]=this.ConfigChartHealth.lineChart.datasets[i].borderColor[iBorder];
+                }
               }
-              datasetsSpecialBar[i].borderWidth=this.ConfigChartHealth.lineChart.datasetsDefault.borderWidth;
-              datasetsSpecialBar[i].pointRadius =this.ConfigChartHealth.lineChart.datasetsDefault.pointRadius ;
-              datasetsSpecialBar[i].pointBorderColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointBorderColor ;
-              datasetsSpecialBar[i].pointBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointBackgroundColor ;
-              datasetsSpecialBar[i].pointBorderWidth =this.ConfigChartHealth.lineChart.datasetsDefault.pointBorderWidth ;
-              datasetsSpecialBar[i].tension =this.ConfigChartHealth.lineChart.datasetsDefault.tension ;
-              datasetsSpecialBar[i].pointStyle =this.ConfigChartHealth.lineChart.datasetsDefault.pointStyle ;
-              datasetsSpecialBar[i].hoverBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.hoverBackgroundColor ;
-              datasetsSpecialBar[i].pointHoverBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointHoverBackgroundColor ;
             }
-            datasetsSpecialBar[i].order=i;
-          }
-
-        }
+            if (i<this.ConfigChartHealth.lineChart.datasets.length){
+                datasetsSpecialBar[i].borderWidth=this.ConfigChartHealth.lineChart.datasets[i].borderWidth;
+                datasetsSpecialBar[i].pointRadius =this.ConfigChartHealth.lineChart.datasets[i].pointRadius ;
+                datasetsSpecialBar[i].pointBorderColor =this.ConfigChartHealth.lineChart.datasets[i].pointBorderColor ;
+                datasetsSpecialBar[i].pointBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].pointBackgroundColor ;
+                datasetsSpecialBar[i].pointBorderWidth =this.ConfigChartHealth.lineChart.datasets[i].pointBorderWidth ;
+                datasetsSpecialBar[i].tension =this.ConfigChartHealth.lineChart.datasets[i].tension ;
+                datasetsSpecialBar[i].pointStyle =this.ConfigChartHealth.lineChart.datasets[i].pointStyle ;
+                datasetsSpecialBar[i].hoverBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].hoverBackgroundColor ;
+                datasetsSpecialBar[i].pointHoverBackgroundColor =this.ConfigChartHealth.lineChart.datasets[i].pointHoverBackgroundColor ;
+                datasetsSpecialBar[i].fill =this.ConfigChartHealth.lineChart.datasets[i].fill ;
+              } else {
+                for (var iBorder=0; iBorder<this.ConfigChartHealth.lineChart.datasetsDefault.borderColor.length; iBorder++){
+                  datasetsSpecialBar[i].borderColor[iBorder]=this.ConfigChartHealth.lineChart.datasetsDefault.borderColor[iBorder];
+                }
+                datasetsSpecialBar[i].borderWidth=this.ConfigChartHealth.lineChart.datasetsDefault.borderWidth;
+                datasetsSpecialBar[i].pointRadius =this.ConfigChartHealth.lineChart.datasetsDefault.pointRadius ;
+                datasetsSpecialBar[i].pointBorderColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointBorderColor ;
+                datasetsSpecialBar[i].pointBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointBackgroundColor ;
+                datasetsSpecialBar[i].pointBorderWidth =this.ConfigChartHealth.lineChart.datasetsDefault.pointBorderWidth ;
+                datasetsSpecialBar[i].tension =this.ConfigChartHealth.lineChart.datasetsDefault.tension ;
+                datasetsSpecialBar[i].pointStyle =this.ConfigChartHealth.lineChart.datasetsDefault.pointStyle ;
+                datasetsSpecialBar[i].hoverBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.hoverBackgroundColor ;
+                datasetsSpecialBar[i].pointHoverBackgroundColor =this.ConfigChartHealth.lineChart.datasetsDefault.pointHoverBackgroundColor ;
+                datasetsSpecialBar[i].fill =this.ConfigChartHealth.lineChart.datasetsDefault.fill;
+              }
+              datasetsSpecialBar[i].order=i;
+            }
+        
 
 
 

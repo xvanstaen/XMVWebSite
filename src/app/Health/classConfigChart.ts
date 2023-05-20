@@ -81,7 +81,8 @@ export class  classchartHealth{
             pointRadius:7, "pointBorderColor":"green", pointBackgroundColor:"blue", 
             pointBorderWidth:2, tension:0.5, pointStyle:"rect",
             hoverBackgroundColor:"cyan", pointHoverBackgroundColor:"grey"
-        }],
+        },
+    ],
     };
     
   
