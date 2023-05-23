@@ -1,3 +1,5 @@
+@import '../app.component.css';
+
 /*
   :host {
         display: block;
@@ -6,24 +8,31 @@
         
       }
       */
-
+.skipLine{
+    margin-left:5px;
+    width:95%;
+    height:4px;
+    display:inline-block;
+    border:solid red 0px;
+       
+  }
 section {
     box-sizing: border-box;
     background-color: white;
     border: 5px solid blue;  
-    position:absolute;
-    top:0px;
-    left:5px;
-    width: 90%;
-    float: left;
+    position:relative;
+    margin-top:20px;
+    margin-left:10px;
+    width: 400px;
     height:90px;
+    display:inline-block;
     }
 
 
 .logo {
   margin-top: 1px;
   margin-left:20px;
-  float:left;
+
 }
 
   .color-wrapper {
@@ -32,7 +41,7 @@ section {
     max-width: 400px;
     border: solid 0px pink;
     margin-left:20px;
-    margin-top:120px;
+
   }
   
   .input-wrapper {
@@ -63,3 +72,15 @@ section {
     margin-left:30px;
     margin-top:-7px;
   }
+
+  .theInput{
+    width:80px; display:inline-block;
+  }
+
+  .theInput:hover{
+    color:blue;
+    font-weight:bold;
+    background-color:cyan;
+  }
+
+

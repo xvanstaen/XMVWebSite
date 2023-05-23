@@ -256,7 +256,11 @@ export class configServer{
   baseUrl:string= '';
 }
 
-
+export class classPosSlider{
+  top:number=0;
+  left:number=0;
+  VerHor:string='';
+}
 
 
 

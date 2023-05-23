@@ -384,18 +384,9 @@ export class ConverterComponent implements OnInit {
 
                       } else {
                         
-                          //console.log('same values ' + this.ConvertUnit.tabConv[j].fromUnit+' - '+this.ConvertUnit.tabConv[j].convert[k].toUnit +
-                          //' with ReferenceWeight : iFrom=' + iFrom + ' and iTo=' + iTo + " value =" + newValue)
-                      
                       }
-
-                      //console.log('***** WeightRefTable[iFrom] From=' + this.WeightRefTable.tabRecordConvert[iFrom].From
-                      //+ ' To='  + this.WeightRefTable.tabRecordConvert[iFrom].To + ' Value=' +  + this.WeightRefTable.tabRecordConvert[iFrom].valueFromTo);
-
-                      //console.log('$$$$$ WeightRefTable[iTo] From=' + this.WeightRefTable.tabRecordConvert[iTo].From
-                    // + ' To='  + this.WeightRefTable.tabRecordConvert[iTo].To + ' Value=' +  + this.WeightRefTable.tabRecordConvert[iTo].valueFromTo)
                     } else {
-                      console.log("Didn't find in reference combination " +  this.ConvertUnit.tabConv[j].fromUnit + ' - ' + this.ConvertUnit.tabConv[j].convert[k].toUnit );
+                      console.log("WeightReference: didn't find in reference combination " +  this.ConvertUnit.tabConv[j].fromUnit + ' - ' + this.ConvertUnit.tabConv[j].convert[k].toUnit );
                     }
             }
             }
@@ -697,8 +688,8 @@ export class ConverterComponent implements OnInit {
       var j=-1;
       for (var i=1; i<idString.length && idString.substring(i,i+1)!=='-'; i++){
       }
-      this.myUnit=idString.substring(0,i);
-      this.myType=idString.substring(i+1);
+      this.myUnit=idString.substring(0,i).trim();
+      this.myType=idString.substring(i+1).trim();
 
     }
 myUnit:string='';
@@ -713,26 +704,41 @@ myType:string='';
       this.findIds(event.target.value);
       this.ValuesToConvert.From=this.myUnit;
       if (this.ValuesToConvert.From!=='' && this.ValuesToConvert.To===''){
-        for (i=0; i<this.theTabOfUnits.tabClassUnit.length && ((this.myType==='' && this.theTabOfUnits.tabClassUnit[i].name!==this.ValuesToConvert.From ) ||
-               (this.myType!=='' && this.theTabOfUnits.tabClassUnit[i].type!==this.myType && this.theTabOfUnits.tabClassUnit[i].name!==this.ValuesToConvert.From)); i++){}
+        /*
+        for (i=0; i<this.theTabOfUnits.tabClassUnit.length && ((this.myType==='' && this.theTabOfUnits.tabClassUnit[i].name.trim()!==this.ValuesToConvert.From.trim() ) ||
+               (this.myType!=='' && this.theTabOfUnits.tabClassUnit[i].type.trim()!==this.myType && this.theTabOfUnits.tabClassUnit[i].name.trim()!==this.ValuesToConvert.From.trim())); i++){}
         if (i<this.theTabOfUnits.tabClassUnit.length){
           this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsFrom);
           this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsTo);
         }
+        */
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom);
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo);
+      } else if (this.ValuesToConvert.From==='' && this.ValuesToConvert.To===''){
+        this.myType='';
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom);
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo);
       }
 
     } else if (event.target.id.substring(0,2)==='To'){
       this.findIds(event.target.value);
       this.ValuesToConvert.To=this.myUnit;
       if (this.ValuesToConvert.To!=='' && this.ValuesToConvert.From===''){
+        /*
         for (i=0; i<this.theTabOfUnits.tabClassUnit.length && ((this.myType==='' && this.theTabOfUnits.tabClassUnit[i].name!==this.ValuesToConvert.To ) ||
         (this.myType!=='' && this.theTabOfUnits.tabClassUnit[i].type!==this.myType && this.theTabOfUnits.tabClassUnit[i].name!==this.ValuesToConvert.To)); i++){}
-        //for (i=0; i<this.theTabOfUnits.tabClassUnit.length && (this.theTabOfUnits.tabClassUnit[i].name!==this.ValuesToConvert.To
-        //  || this.theTabOfUnits.tabClassUnit[i].type!==Type); i++){}
+
         if (i<this.theTabOfUnits.tabClassUnit.length){
           this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsFrom);
           this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsTo);
         }
+        */
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom);
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo);
+      } else if (this.ValuesToConvert.From==='' && this.ValuesToConvert.To===''){
+        this.myType='';
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom);
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo);
       }
     } else if (event.target.id.substring(0,9)==='ValueFrom'){
       if (isNaN(event.target.value)===false){

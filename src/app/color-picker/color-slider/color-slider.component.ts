@@ -1,6 +1,6 @@
 import { Component, OnInit , Input, Output, EventEmitter, ViewChild, SimpleChanges, OnChanges, 
   AfterContentInit, HostListener, AfterViewInit} from '@angular/core';
-
+  import {classPosSlider} from '../../JsonServerClass';
 @Component({
   selector: 'app-color-slider',
   templateUrl: './color-slider.component.html',
@@ -13,6 +13,8 @@ export class ColorSliderComponent implements OnInit, OnChanges, AfterViewInit {
 
  
   @Input() my_input2: string='';
+  @Input() paramChange:number=0;
+  @Input() posSlider=new classPosSlider; 
   @Input() INreturnField={
     rgba:'',
     xPos:0,
@@ -48,7 +50,22 @@ export class ColorSliderComponent implements OnInit, OnChanges, AfterViewInit {
     yPos:0
   }
 
+  canvas={
+    width:0,
+    height:0
+  }
+
+
 ngOnInit(): void {
+  if (this.posSlider.VerHor==='H'){
+      this.canvas.width=250;
+      this.canvas.height=50;
+  } else {
+    this.canvas.width=50;
+    this.canvas.height=250;
+  }
+
+
   }
 
 ngAfterViewInit() { 
@@ -77,11 +94,16 @@ draw() {
     // from origin
     //const width = this.myCanvas.nativeElement.width;
     //const height = this.myCanvas.nativeElement.height;
+      var gradient:any;
       const width = this.theCanvas.width;
       const height = this.theCanvas.height;
       this.ctx.clearRect(0, 0, width, height);
-      const gradient = this.ctx.createLinearGradient(0, 0, width, 0);
-      //const gradient = this.ctx.createLinearGradient(0, 0, 0, height);
+      if (this.posSlider.VerHor==='H'){
+        gradient = this.ctx.createLinearGradient(0, 0, width, 0);
+      } else {
+        gradient = this.ctx.createLinearGradient(0, 0, 0, height);
+      }
+      
       gradient.addColorStop(0, 'rgba(255, 0, 0, 1)');
       gradient.addColorStop(0.17, 'rgba(255, 255, 0, 1)');
       gradient.addColorStop(0.34, 'rgba(0, 255, 0, 1)');
@@ -100,8 +122,11 @@ draw() {
         this.ctx.beginPath()
         this.ctx.strokeStyle = 'white'
         this.ctx.lineWidth = 3
-        //this.ctx.rect(0, this.selectedHeight - 5, width, 10)
-        this.ctx.rect( this.selectedWidth - 5, 0, 10, 50)
+        if (this.posSlider.VerHor==='H'){
+          this.ctx.rect( this.selectedWidth - 5, 0, 10, height);
+        } else {
+          this.ctx.rect(0, this.selectedHeight - 5, width, 10);
+        }
         this.ctx.stroke()
         this.ctx.closePath()
       }
@@ -148,12 +173,17 @@ getColorAtPosition(x: number, y: number) {
      }
      
 ngOnChanges(changes: SimpleChanges) { 
-    //nothing to process   
-    //console.log('mgOnCHanges Slider');
+  var i=0;
+  for (const propName in changes){
+      const j=changes[propName];
+      if (propName==='paramChange' && changes['paramChange'].firstChange===false){
+        this.ngOnInit();
+        this.draw();
+      }
     
      }
 
-
+    }
 
 
 

@@ -45,7 +45,7 @@
                 <div class="skipline">&nbsp;</div>
                 <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
                 </app-color-palette>
-                <app-color-slider [my_input2]="my_input_child2"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
                 </app-color-slider>
                 <div style="margin-top:70px;">
                     <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:25px;" [ngStyle]="{'background-color':my_input_child2}"></span>

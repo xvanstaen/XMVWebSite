@@ -4,7 +4,7 @@
 </head> 
 <body>
 
-<div style="margin-left:10px; " *ngIf="(EventHTTPReceived[1]===true || (EventHTTPReceived[2]===true && EventHTTPReceived[3]===true))">
+<div style="margin-left:10px; margin-top:15px;" *ngIf="(EventHTTPReceived[1]===true || (EventHTTPReceived[2]===true && EventHTTPReceived[3]===true))">
    
     <!-- CONVERSION OF TWO UNITS -->
      <div style="border: blue solid 2px; width: var(--tableW); max-width: var(--tableMaxW); margin-left:10px; font-size:18px; float:none; ">
@@ -43,6 +43,7 @@
          <thead>
              <tr>
                  <th class="tableCol" style="width:40px;"> Action </th> 
+                 <th class="tableCol" style="width:40px;"> Type </th> 
                  <th class="tableCol"> Conversion </th>
                  <th class="tableCol" style="width:35%"   > From &nbsp;
                      <input type="text"  list='ff1' class="inputText" style="width:60px; height:15px; margin-left:10px;" placeholder='Filter' id="Filter-{{0}}"  (input)="onFilter($event)" value="{{TabFilter[0]}}" >
@@ -80,7 +81,8 @@
                          </div>
                      </div>
                  </div>  
-                 </td>         
+                 </td>   
+                 <td class="tableCol" > <span style="width:45px; display:inline-block; font-size:16px;"  >{{ display.type.trim() }}</span></td>      
                  <td class="tableCol" > <input type="text"  class="inputText" style="width:95%" id="valueFromTo-{{i}}" name="valueFromTo" (input)="inputValue($event)" [value]="display.valueFromToDisplay"></td>
                  <td class="tableCol" > <input type="text"  class="inputText" id="valueFrom-{{i}}" name="valueFrom" (input)="inputValue($event)" [value]="display.firstValueDisplay ">&nbsp;{{display.from }}</td>
                  <td class="tableCol" > <input type="text" class="inputText" id="valueTo-{{i}}" name="valueTo" (input)="inputValue($event)" [value]="display.secondValueDisplay ">&nbsp;{{display.to }}</td>

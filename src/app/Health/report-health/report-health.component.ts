@@ -31,7 +31,7 @@ import {msginLogConsole} from '../../consoleLog'
 import { mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories'
 import {mainConvItem, mainRecordConvert, mainClassUnit, mainClassConv} from '../../ClassConverter'
 import { classConfigChart, classchartHealth } from '../classConfigChart';
-
+import {classPosSlider} from '../../JsonServerClass';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
@@ -76,7 +76,8 @@ export class ReportHealthComponent implements OnInit {
   @Input() HealthAllData=new mainDailyReport;
   @Input() ConfigChartHealth=new classchartHealth;
   @Input() INFileParamChart=new classFileParamChart;
-
+  posSlider=new classPosSlider;
+  paramChange:number=0; // used to trigger the change on slider position
   @Output() returnFile= new EventEmitter<any>();
 
   @ViewChild('baseChart', { static: true })
@@ -221,7 +222,9 @@ newtabCtx:any;
 
 
 ngOnInit() {
-
+  this.posSlider.VerHor='H';
+  this.posSlider.top=5;
+  this.posSlider.left=20;
   for (var i=0; i<this.tabofLabels.length; i++){
       //const pos=this.ConfigChartHealth.barChart[i].canvas.id.indexOf('ChartId');
       //this.tabSelect[i]=this.ConfigChartHealth.barChart[i].canvas.id.substring(0, pos);

@@ -3,13 +3,13 @@
   #THECanvas
   id='canvasIDSlider'
   class="color-slider position"
+  [ngStyle]="{'width.px':canvas.width, 'height.px':canvas.height, 'margin-top.px':posSlider.top , 'margin-left.px':posSlider.left}"
 
-  width="250"
-  height="50"
   (mousedown)="onMouseDown($event)"
   (mousemove)="onMouseMove($event)"
 >
 </canvas>
+
 <!--
   width="50"
   height="270"

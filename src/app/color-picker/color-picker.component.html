@@ -1,33 +1,40 @@
-<!--
-<div class='color-wrapper'>
-<app-first-child  [my_input1]="my_input_child1" (my_output1)='Testdata1($event)'>
-</app-first-child>
-<app-second-child >[my_input2]="my_input_child2" (my_output2)='Testdata2($event)' (my_output1)='Testdata1($event)'>
-</app-second-child>
-</div>
 
--->
-<section>
-  <div class='logo'>
-    <img src="./assets/XMVLogo.png" width=78px height=78px>
-</div>
-<div class='color-wrapper'>
-<app-color-palette  [my_input1]="my_input_child1" (my_output1)='Testdata1($event)'>
-</app-color-palette>
-<app-color-slider [my_input2]="my_input_child2" (my_output2)='Testdata2($event)' (my_output1)='Testdata1($event)'>
-</app-color-slider>
-</div>
+<div class="skipLine">&nbsp;</div>
+<div style="width:430px; margin-left:10px; display:inline-block; background-color:lightgrey; border:solid 2px grey">
+    <span style="width:100%; color:blue; height: 40px; padding-top:10px; font-size:16px; background-color:cyan; display:inline-block; text-align: center;">
+      Format & Position of Slider
+    </span>
+    <form [formGroup]="myForm" >
+      <div class="skipLine" style="height:2px;">&nbsp;</div>
+      <span style="width:80px; color:blue; display:inline-block; margin-left:30px">Hori-Vert</span> <input type="'text" formControlName="VerHor" value="VerHor"  class="theInput">
+      
+      <div class="skipLine" style="height:2px;">&nbsp;</div>
+      <span style="width:80px; color:blue; display:inline-block; margin-left:30px">Margin-top</span> <input type="'text" formControlName="top" value="top"  class="theInput">
+      <span style="width:80px; color:blue; display:inline-block; margin-left:10px">Margin-left</span> <input type="'text" formControlName="left" value="left"  class="theInput">
+      <div class="skipLine">&nbsp;</div>
+      <button class="sizeButtons"  style="margin-left:180px; width:80px; height:30px; font-size:14px;" (click)="onSubmit()">submit</button>
+      <div class="skipLine">&nbsp;</div>
+    </form>
+  </div>
+  <div class="skipLine">&nbsp;</div>
 
+  <div *ngIf="isDisplaySlider===true">
+      <div class='color-wrapper' >
+        <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+        </app-color-palette>
+        <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+        </app-color-slider>
+      </div>
 
-    <div class='input-wrapper'>
-        <span class="text"> slider: {{my_input_child2}} </span>
-        <div class="color-div" [ngStyle]="{'background-color': my_input_child2 || 'white'}"></div>
+      <div class='input-wrapper'>
+          <span class="text"> slider: {{my_input_child2}} </span>
+          <div class="color-div" [ngStyle]="{'background-color': my_input_child2 || 'white'}"></div>
       </div>
       <div class='input-wrapper'>
-        <span class="text" > palette {{selected_color}} </span>
-        <div class="color-div" [ngStyle]="{'background-color': selected_color || 'white'}"><br><br></div>
-        
+          <span class="text" > palette: {{temporaryColor}} </span>
+          <div class="color-div" [ngStyle]="{'background-color': temporaryColor || 'white'}"><br><br></div>
       </div>
-    </section> 
+</div>
+
 
  
