@@ -138,7 +138,7 @@
                             </div>                        
                             <input id="nExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"  style="float:left;" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
                             <input id="uExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"  style="float:left;" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">
-                            <div style="border:black 0px solid;  width: 540px; float:left;" >   
+                            <div style="border:black 0px solid;  display:block; width: 520px; float:left;" >   
                                 <div class="boxAction" >
                                     <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" style="margin-left:12px; ">A</span>
                                 </div>
@@ -149,7 +149,7 @@
                                                 &nbsp;
                                             </div>
                                         </div>
-                                        <div style="width: 500px; display:inline-block;">
+                                        <div style="width: 450px; display:inline-block; border:black 2px solid;">
                                             <div *ngFor="let Seance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let l=index"  >
                                                 <span *ngIf="l>=t && l<t+10"  >
                                                     <input id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)" class="inputNewSean" style="float:left;" type="text" value="{{Seance.nb}}">

@@ -242,7 +242,7 @@ ngOnInit() {
   
   for (var i=0; i<this.ConfigChartHealth.chartTypes.length; i++){
     //this.lineChartType.push('');
-    this.lineChartType[i]=this.ConfigChartHealth.chartTypes[i].type;
+    this.lineChartType[i]=this.ConfigChartHealth.chartTypes[i];
   }
 
   this.tabParamChart.splice(0,this.tabParamChart.length);

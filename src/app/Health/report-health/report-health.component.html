@@ -21,7 +21,7 @@
             <div *ngIf="isTypeSelected===true">
                 <div class="dropdown " >
                     <div class="Straight-content" style="margin-left:50px;">
-                        <div  class="StraightDropDown "  >
+                        <div  class="StraightDropDown "  [ngStyle]="{'height.px':lineChartType.length * 30}">
                             <li *ngFor="let action of lineChartType; let m=index;" 
                                     class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="selectType($event)" id="selectedType" [value]="action" >{{action}}
@@ -84,7 +84,7 @@
                     <div class="skipline">&nbsp;</div>
                     <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
                     </app-color-palette>
-                    <app-color-slider [my_input2]="my_input_child2"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                    <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
                     </app-color-slider>
                     <div style="margin-top:70px;">
                         <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:25px;" [ngStyle]="{'background-color':my_input_child2}"></span>
@@ -115,7 +115,7 @@
                     <div class="skipline">&nbsp;</div>
                     <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
                     </app-color-palette>
-                    <app-color-slider [my_input2]="my_input_child2"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                    <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
                     </app-color-slider>
                     <div style="margin-top:70px;">
                         <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:25px;" [ngStyle]="{'background-color':my_input_child2}"></span>
@@ -159,7 +159,7 @@
             <div *ngIf="isPeriodSelected===true">
                 <div class="dropdown" >
                     <div class="Straight-content" style="margin-left:90px;">
-                        <div  class="StraightDropDown "  >
+                        <div  class="StraightDropDown " [ngStyle]="{'height.px':tabPeriod.length * 30}" >
                             <li *ngFor="let action of tabPeriod; let m=index;" 
                                     class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="selectPeriod($event)" id="selectedPeriod" [value]="action" >{{action}}
@@ -206,7 +206,7 @@
                 <div class="skipline">&nbsp;</div>
                 <app-color-palette  [my_input1]="my_input_child1" [INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
                 </app-color-palette>
-                <app-color-slider [my_input2]="my_input_child2"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange"  [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
                 </app-color-slider>
                 <div style="margin-top:70px;">
                     <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:25px;" [ngStyle]="{'background-color':my_input_child2}"></span>

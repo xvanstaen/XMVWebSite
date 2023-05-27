@@ -15,14 +15,16 @@ import { Bucket_List_Info } from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer } from '../../JsonServerClass';
-import { XMVConfig } from '../../JsonServerClass';
+
+import {msginLogConsole} from '../../consoleLog'
+import { configServer, XMVConfig, LoginIdentif, msgConsole } from '../../JsonServerClass';
+
 import { environment } from 'src/environments/environment';
-import { LoginIdentif } from '../../JsonServerClass';
 import {manage_input} from '../../manageinput';
 import {eventoutput, thedateformat} from '../../apt_code_name';
-import { msgConsole } from '../../JsonServerClass';
-import {msginLogConsole} from '../../consoleLog'
+
+import {  getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
+
 import {ClassSubConv} from '../../ClassConverter'
 import {ClassConv, mainClassConv} from '../../ClassConverter'
 import {ClassUnit} from '../../ClassConverter'
@@ -38,6 +40,7 @@ import {classConfHTMLFitHealth, classConfTableAll} from '../classConfHTMLTableAl
 import {CalcFatCalories} from '../CalcFatCalories';
 import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classAxisX, classAxisY, classLegendChart, classPluginTitle , classTabFormChart, classFileParamChart} from '../classChart';
+
 
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
@@ -228,6 +231,35 @@ tabInputFood:Array<any>=[];
 //selType:string='';
 //selFood:string='';
 
+
+tablePosTop:number=0;
+tablePosLeft:number=0;
+docHeaderAll:any;
+posAppCalFat={
+  Top:0,
+  Left:0,
+}
+
+// Dropdown box dimension
+
+sizeBox = new classDropDown;
+
+styleBox:any;
+styleBoxMeal:any;
+styleBoxFood:any;
+styleBoxOption:any;
+styleBoxOptionMeal:any;
+styleBoxOptionFood:any;
+
+//
+
+sizeBoxContentMeal:number=0;
+sizeBoxMeal:number=0;
+sizeBoxContentFood:number=0;
+sizeBoxFood:number=0;
+
+docAppCalFat:any;
+
 mousedown:boolean=false;
 selectedPosition ={ 
   x: 0,
@@ -249,48 +281,18 @@ onMouseMove(evt: MouseEvent) {
   this.selectedPosition = { x: evt.pageX, y: evt.pageY };
 }
 
-/**
-@HostListener('window:scroll', ['$event'])
-onWindowScroll(){
-  const a=window.scrollX;
-  const b=window.scrollY;
-}
- */
 
-tablePosTop:number=0;
-tablePosLeft:number=0;
-docHeaderAll:any;
-posAppCalFat={
-  Top:0,
-  Left:0,
-}
-
-itemHeight:number=25;
-sizeBoxContent:number=0;
-sizeBox:number=0;
-
-sizeBoxContentMeal:number=0;
-sizeBoxMeal:number=0;
-sizeBoxContentFood:number=0;
-sizeBoxFood:number=0;
-maxSizeBoxContent:number=275;
-maxSizeBox:number=275;
-
-docAppCalFat:any;
 getPosAfterTitle(){
   if (document.getElementById("posAfterTitle")!==null){
       this.docHeaderAll = document.getElementById("posAfterTitle");
       this.tablePosLeft = this.docHeaderAll.offsetLeft;
       this.tablePosTop = this.docHeaderAll.offsetTop;
   }
-
   // to be passed to calories-fat component
   this.docAppCalFat = document.getElementById("posAppCalFat"); 
   this.posAppCalFat.Left = this.docAppCalFat.offsetLeft;
   this.posAppCalFat.Top = this.docAppCalFat.offsetTop;
   //console.log(' posAppCalFat   Top=' + this.posAppCalFat.Top + '  Left='+this.posAppCalFat.Left);
- 
-
 }
 
 @HostListener('window:resize', ['$event'])
@@ -300,6 +302,14 @@ onWindowResize() {
   }
 
 ngOnInit(): void {
+
+  this.sizeBox.widthContent=160;
+  this.sizeBox.widthOptions=160;
+  this.sizeBox.heightItem=25;
+  this.sizeBox.maxHeightContent=275;
+  this.sizeBox.maxHeightOptions=275;
+  this.sizeBox.scrollY='hidden';
+
   this.SpecificForm.controls['FileName'].setValue('');
   this.tabMeal[0].name='Breakfast';
   this.tabMeal.push({name:''});
@@ -336,10 +346,6 @@ ngOnInit(): void {
         this.NewTabAction[k].name=this.TabAction[j+1].name;
       }
   }
-
-  this.sizeBox=this.itemHeight  * this.TabAction.length ;
-  this.sizeBoxContent=this.sizeBox+10;
-
 
   for (var i=0; i<this.dialogue.length; i++){
     this.dialogue[i]=false;
@@ -590,13 +596,16 @@ CreateTabFood(item:any, value:any){
         this.tabInputFood[iTab]=this.tabFood[i].name.toLowerCase().trim();
       }
     }
-    this.sizeBoxContentFood=this.itemHeight  * this.tabInputFood.length;
-    if (this.sizeBoxContentFood>this.maxSizeBoxContent){
-      this.sizeBoxContentFood=this.maxSizeBoxContent;
-      this.sizeBoxFood=this.maxSizeBox;
+    this.sizeBoxContentFood=this.sizeBox.heightItem  * this.tabInputFood.length;
+    if (this.sizeBoxContentFood>this.sizeBox.maxHeightContent){
+      this.sizeBoxContentFood=this.sizeBox.maxHeightContent;
+      this.sizeBoxFood=this.sizeBox.maxHeightOptions;
     } else {
       this.sizeBoxFood=this.sizeBoxContentFood;
     }
+    this.styleBoxFood=getStyleDropDownContent(this.sizeBoxContentFood, this.sizeBox.widthContent );
+    this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 24, this.selectedPosition.y - this.tablePosTop - 255, this.sizeBox.scrollY);
+
   }
   else if (item==='Meal'){
       iTab=-1;
@@ -606,13 +615,15 @@ CreateTabFood(item:any, value:any){
           this.tabInputMeal[iTab]=this.tabMeal[i].name.toLowerCase().trim();
         }
       }
-      this.sizeBoxContentMeal=this.itemHeight  * this.tabInputMeal.length;
-      if (this.sizeBoxContentMeal>this.maxSizeBoxContent){
-        this.sizeBoxContentMeal=this.maxSizeBoxContent;
-        this.sizeBoxMeal=this.maxSizeBox;
+      this.sizeBoxContentMeal=this.sizeBox.heightItem  * this.tabInputMeal.length;
+      if (this.sizeBoxContentMeal>this.sizeBox.maxHeightContent){
+        this.sizeBoxContentMeal=this.sizeBox.maxHeightContent;
+        this.sizeBoxMeal=this.sizeBox.maxHeightOptions;
       } else {
         this.sizeBoxMeal=this.sizeBoxContentMeal;
       }
+      this.styleBoxMeal=getStyleDropDownContent(this.sizeBoxContentMeal, this.sizeBox.widthContent - 50);
+      this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 20,  this.selectedPosition.y - this.tablePosTop  - 255, this.sizeBox.scrollY);
     }
 
 }
@@ -768,14 +779,20 @@ DelAfterConfirm(event:any){
     } 
 }
 
+
+
 onAction(event:any){
   this.findIds(event.target.id);
   this.dialogue[this.prevDialogue]=false;
   if (event.target.id.substring(0,10)==='openAction'){
     this.prevDialogue=6;
     this.dialogue[this.prevDialogue]=true;
-    this.sizeBox=this.itemHeight  * this.NewTabAction.length ;
-    this.sizeBoxContent=this.sizeBox;
+    this.sizeBox.heightOptions=this.sizeBox.heightItem  * (this.NewTabAction.length) + 10;
+    this.sizeBox.heightContent=this.sizeBox.heightOptions;
+
+    this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
+    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.selectedPosition.y - this.tablePosTop - 279, this.sizeBox.scrollY);
+
   } else  if (event.target.id.substring(0,9)==='selAction'){
       if (event.target.textContent.indexOf('cancel')!==-1){
       } else {
@@ -921,6 +938,24 @@ onAction(event:any){
       this.DeleteDay(this.theEvent);
       
     }
+  }
+
+
+  if (this.prevDialogue < 6){
+    this.sizeBox.heightOptions=this.sizeBox.heightItem  * (this.TabAction.length + 1) ;
+    this.sizeBox.heightContent=this.sizeBox.heightOptions;
+
+    this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
+    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  30, 0,this.sizeBox.scrollY);
+
+
+  } else if (this.isDeleteItem===true){
+    this.sizeBox.heightOptions=90 ;
+    this.sizeBox.heightContent=90;
+
+    this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, 240);
+    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.selectedPosition.y - this.tablePosTop - this.posDelConfirm, this.sizeBox.scrollY);
+
   }
 }
 

@@ -17,10 +17,7 @@
 
 
 table {
-    /*
-    border-collapse: collapse;
-    table-layout: fixed; 
-    */
+
     border-collapse: separate;
     margin-left:10px;
     width:var(--tableW);
@@ -31,12 +28,7 @@ table {
     color:white;
   }
     
-  th {
-    /*
-       background-color: #96D4D4;
-       border: 0px solid blue;
-       border-bottom: 0.3px solid white;
-    */
+th {
     text-align: center;
     background-color: black;
     border-spacing: 0px;
@@ -45,15 +37,8 @@ table {
     word-wrap: break-word;
   }
     
-  td {
-    /*
-    text-align: left;
-     color:blue;
-      padding-left:3px;
-          overflow:scroll;
-    word-wrap: break-word;
-    */
-    
+td {
+
     border-spacing: 0px;
     height:25px; 
     color:white;
@@ -61,10 +46,6 @@ table {
   }
   
 .subTotal {
-  /*
-    color:red;
-    font-weight:bold;
-    font-size:13px;*/
     height:var(--sTheight);
     display:inline-block;
     color:var(--sTcol);
@@ -74,11 +55,6 @@ table {
   }
 
 .Total {
-  /*
-    color:green;
-    font-weight:bold;
-    font-size:13px;
-   */
   height:var(--Theight);
   display:inline-block;
   color:var(--Tcol);
@@ -121,28 +97,15 @@ table {
 
 
 .rowEven{
-    /*
-    background-color: #9edb9c;
-     background-color: black;
-    */
-    background-color: var(--rEven);
+  background-color: var(--rEven);
 }
     
 .rowOdd {
-    /*
-    background-color: #8a97e8;
-    background-color: rgb(51, 46, 46);
-   */
-    background-color: var(--rOdd);
+  background-color: var(--rOdd);
   }
 
 .rowNew {
-    /*
-    background-color: #8a97e8;
-      background-color: rgb(75, 159, 103);
-    color:blue;
-   */
-    background-color: var(--rNewbackG);
+  background-color: var(--rNewbackG);
     color:var(--rNewcol);
   }
 
@@ -189,9 +152,6 @@ table {
 }
 
 .tableCol {
-    /*
-    border:solid 0px blue;
-    */
     border-bottom:solid 0.3px white;
   }
 
@@ -283,39 +243,7 @@ table {
   width:80%;
 }
 
-.Straight-content{
-  position: absolute;
-  z-index: 1;
-  width:210px;
-  height: 270px;
-}
 
-.StraightDropDown{
-  width:210px;
-  border: 2px solid green;
-  height: 260px;
-  overflow: scroll;
-}
-  
-.Straight-options{
-  width:205px;
-  font-size:11px;
-  height:25px;
-  color:black;
-  text-align: left;
-  margin-left:-2px;
-  border:0px; 
-}
-
-.RadioDropDown{
-  font-size:10px;
-  width:230px;
-  text-align: center;
-  border: 2px solid green;
-  height: 100px;
-  background: cyan;
-  color: blue;
-}
 
 
 /*** ====================================== ***/
@@ -338,33 +266,6 @@ table {
   }
   th {
     font-size:10px;
-  }
-        
-
-.Buffer{
-    margin-top:0px;
-    padding-left:5px;
-    height:5px;
-    width:90%; 
-    display:inline-block;
-    border:solid 0px blue;
-}
-
-
-  .StraightDropDownOverride{
-    font-size:10px;
-    width:85px;
-    text-align: center;
-    border: 2px solid green;
-    margin-top:-30px;
-  }
-
-  .Straight-optionsOverride{
-    min-width:65px; 
-    width:75px;
-    font-size:10px;
-    height:25px;
-    text-align: center;
   }
 
   .mealBlock{

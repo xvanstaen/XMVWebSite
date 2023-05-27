@@ -31,6 +31,7 @@ import {ClassUnit} from '../ClassConverter'
 import {ConvItem} from '../ClassConverter'
 import {recordConvert} from '../ClassConverter'
 
+import {  getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../DropDownStyle'
 
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
@@ -128,18 +129,15 @@ export class ConverterComponent implements OnInit {
     TabFilterType:Array<any>=[];
     maxFilter:number=3;
   
-    currentOption:number=0;
-    SelectedOption:Array<any>=[];
-    TabOptions:Array<any>=['Calories & Fat', 'Converter','Meals','Weight'];
+    //currentOption:number=0;
+    //SelectedOption:Array<any>=[];
+    //TabOptions:Array<any>=['Calories & Fat', 'Converter','Meals','Weight'];
     trouve:boolean=true;
     TabDialogue:Array<any>=[];
-    TabAction:Array<any>=['Modify','Delete','Cancel'];
-    TabUnitType:Array<any>=['W-Weight','D-Distance','L-Liquid','Cancel'];
+    TabAction:Array<any>=['Cancel','Modify','Delete'];
+    TabUnitType:Array<any>=['Cancel','W-Weight','D-Distance','L-Liquid'];
     PreviousDialogue:number=0;
 
-  
-
-  
   displayNewRow:boolean=false;
   newRecord=new recordConvert;
   
@@ -166,54 +164,62 @@ export class ConverterComponent implements OnInit {
   getScreenWidth: any;
   getScreenHeight: any;
   device_type:string='';
-  
+
+  sizeBox = new classDropDown;
+  dataList = new classDropDown;
+
+
+  styleDataListFromContent:any;
+  styleDataListToContent:any;
+  styleDataListFromOptions:any;
+  styleDataListToOptions:any;
+
+  styleBoxOptions:any;
+  styleBoxContent:any;
+
+  myUnit:string='';
+  myType:string='';
+
+  dialogueFromTo:Array<boolean>=[false,false,false,false,false,false,false,false,false,false];
+
+  theEvent={
+    target:{
+      id:"",
+      value:"",
+      textContent:""
+    }
+  }
+
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
     }
-  fillWeightRefTable(){
-    var i=0;
-    for (i=0; i<14; i++){
-      const refUnit=new recordConvert;
-      this.WeightRefTable.tabRecordConvert.push(refUnit);
-    }
-    i=0;
-    this.WeightRefTable.tabRecordConvert[i].From='kg';
-    this.WeightRefTable.tabRecordConvert[i].To='gram';
-    this.WeightRefTable.tabRecordConvert[i].valueFromTo=1000;
-    i++;
-    this.WeightRefTable.tabRecordConvert[i].From='cup';
-    this.WeightRefTable.tabRecordConvert[i].To='gram';
-    this.WeightRefTable.tabRecordConvert[i].valueFromTo=240;
-    i++;
-    this.WeightRefTable.tabRecordConvert[i].From='oz';
-    this.WeightRefTable.tabRecordConvert[i].To='gram';
-    this.WeightRefTable.tabRecordConvert[i].valueFromTo=28.349523;
-    i++;
-    this.WeightRefTable.tabRecordConvert[i].From='tsp';
-    this.WeightRefTable.tabRecordConvert[i].To='gram';
-    this.WeightRefTable.tabRecordConvert[i].valueFromTo=4.928921594019;
-    i++;
-    this.WeightRefTable.tabRecordConvert[i].From='tbs';
-    this.WeightRefTable.tabRecordConvert[i].To='gram';
-    this.WeightRefTable.tabRecordConvert[i].valueFromTo=14.786764782056;
-    i++;
-    this.WeightRefTable.tabRecordConvert[i].From='liter';
-    this.WeightRefTable.tabRecordConvert[i].To='gram';
-    this.WeightRefTable.tabRecordConvert[i].valueFromTo=1000;
-    i++;
-    this.WeightRefTable.tabRecordConvert[i].From='lbs';
-    this.WeightRefTable.tabRecordConvert[i].To='gram';
-    this.WeightRefTable.tabRecordConvert[i].valueFromTo=453.59291;
-    for (i=i+1; i<14; i++){
-      this.WeightRefTable.tabRecordConvert[i].From=this.WeightRefTable.tabRecordConvert[i-7].To;
-      this.WeightRefTable.tabRecordConvert[i].To=this.WeightRefTable.tabRecordConvert[i-7].From;
-      this.WeightRefTable.tabRecordConvert[i].valueFromTo=1/this.WeightRefTable.tabRecordConvert[i-7].valueFromTo;
-    }
-  }
+
+
+
 
   ngOnInit(): void {
+
+    this.sizeBox.widthContent=100;
+    this.sizeBox.widthOptions=100;
+    this.sizeBox.heightItem=25;
+    this.sizeBox.heightContent=110;
+    this.sizeBox.heightOptions=110;
+    this.sizeBox.maxHeightContent=150;
+    this.sizeBox.maxHeightOptions=150;
+    this.sizeBox.scrollY='hidden';
+
+    this.dataList.heightItem=25;
+    this.dataList.widthContent=100;
+    this.dataList.widthOptions=100;
+    this.dataList.maxHeightContent=150;
+    this.dataList.maxHeightOptions=150;
+
+    this.styleBoxContent=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent );
+    this.styleBoxOptions=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 0, 0, this.sizeBox.scrollY);
+
+
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
     this.device_type = navigator.userAgent;
@@ -225,9 +231,9 @@ export class ConverterComponent implements OnInit {
       this.TabFilterType[i]='';
 
     }
-    for (i=0; i<this.TabOptions.length; i++){
-      this.SelectedOption[i]=false;
-    }
+    //for (i=0; i<this.TabOptions.length; i++){
+    //  this.SelectedOption[i]=false;
+    //}
     for (i=0; i<this.itemPerPage; i++){
       this.TabDialogue[i]=false;
     }
@@ -260,7 +266,6 @@ export class ConverterComponent implements OnInit {
           this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convertUnit,1);
           }
 
-          //this.fillWeightRefTable();
       } else {
 
         if (this.InConvToDisplay.fileType!==''){
@@ -279,12 +284,9 @@ export class ConverterComponent implements OnInit {
         }
 
       }
-
-
-
   }
 
-  fillDisplayTabUnit(type:string, exclude:string, DisplayTab:any){
+  fillDisplayTabUnit(type:string, exclude:string, DisplayTab:any, FromTo:any){
     var i=0;
     DisplayTab.splice(0,DisplayTab.length);
     for (i=0; i<this.theTabOfUnits.tabClassUnit.length; i++){
@@ -294,14 +296,34 @@ export class ConverterComponent implements OnInit {
         DisplayTab[DisplayTab.length-1]=this.theTabOfUnits.tabClassUnit[i];
         }
     }
-  }
+    this.dataList.heightContent=this.dataList.heightItem * DisplayTab.length;
+    this.dataList.heightOptions=this.dataList.heightItem * DisplayTab.length;
+    this.dataList.scrollY='hidden';
+    if (this.dataList.heightContent > this.dataList.maxHeightContent) {
+      this.dataList.heightContent=this.dataList.maxHeightContent;
+    }
+   
+    if (this.dataList.heightOptions > this.dataList.maxHeightOptions) {
+      this.dataList.heightOptions=this.dataList.maxHeightOptions;
+      this.dataList.scrollY='scroll';
+    }
+    if (FromTo==='From'){
+      this.styleDataListFromContent=getStyleDropDownContent(this.dataList.heightContent, this.dataList.widthContent);
+      this.styleDataListFromOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 10, 5, this.dataList.scrollY);
+    } else if (FromTo==='To'){
+      
+      this.styleDataListToContent=getStyleDropDownContent(this.dataList.heightContent, this.dataList.widthContent);
+      this.styleDataListToOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 200, 5, this.dataList.scrollY);
 
+    }
+  }
+/*
   ManageOptions(event:any){
     this.SelectedOption[this.currentOption]=false;
     this.currentOption=event.target.id.substring(7);
     this.SelectedOption[this.currentOption]=true;
     }
-  
+*/  
   WeightQualityCheck(){
     // check that ConvertUnit contains the right reference values
     var i=0;
@@ -477,7 +499,6 @@ export class ConverterComponent implements OnInit {
     this.ConvToDisplay.tabConvItem.sort((a, b) => (a.from > b.from) ? 1 : -1);
     //
   
-  
     j=-1;
     for (i=0; i<this.ConvToDisplay.tabConvItem.length; i++){
       // check if unit and type already exist
@@ -512,10 +533,10 @@ export class ConverterComponent implements OnInit {
     if (this.theTabOfUnits.fileType===''){
       this.theTabOfUnits.fileType=this.identification.configFitness.fileType.tabOfUnits;
     }
-    this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom);
-    this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo);
+    this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom,'From');
+    this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo,'To');
+
   }
-  
 
   createUnits(){
       var i=0;
@@ -692,13 +713,42 @@ export class ConverterComponent implements OnInit {
       this.myType=idString.substring(i+1).trim();
 
     }
-myUnit:string='';
-myType:string='';
+
+
+  onAction(event:any){ //Filter-{{0}}
+    this.findIds(event.target.textContent);
+    if (event.target.id.substring(0,10)==='FromNewRow'){
+        this.theEvent.target.id='From'; 
+        this.theEvent.target.value=this.myUnit;
+        this.newRecord.type=this.myType;
+        this.inputNewRow(this.theEvent);
+
+    } else if (event.target.id.substring(0,8)==='ToNewRow'){
+        this.theEvent.target.id='To'; 
+        this.theEvent.target.value=this.myUnit;
+        this.newRecord.type=this.myType;
+        this.inputNewRow(this.theEvent);
+    }  if (event.target.id.substring(0,10)==='FilterFrom'){
+        this.theEvent.target.id="FilterFrom";
+        this.theEvent.target.value=event.target.textContent;
+        this.onFilter(this.theEvent);
+    } else if (event.target.id.substring(0,8)==='FilterTo'){
+        this.theEvent.target.id="FilterTo";
+        this.theEvent.target.value=event.target.textContent;
+        this.onFilter(this.theEvent);
+    } else {
+        this.theEvent.target.value=event.target.textContent.trim();
+        this.theEvent.target.id=event.target.id;
+        this.ConvertValues(this.theEvent);
+    }
+    this.closeDialogues();
+  }
+
   ConvertValues(event:any){
     this.messageConvert='';
     var i=0;
     var j=0;
-
+    this.closeDialogues();
     //this.message='ConvertValues() - id = ' + event.target.id + 'target.value = ' + event.target.value;
     if (event.target.id.substring(0,4)==='From'){
       this.findIds(event.target.value);
@@ -712,15 +762,18 @@ myType:string='';
           this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsTo);
         }
         */
-        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom);
-        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo);
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom,'From');
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo,'To');
+
       } else if (this.ValuesToConvert.From==='' && this.ValuesToConvert.To===''){
         this.myType='';
-        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom);
-        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo);
-      }
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom,'From');
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo,'To');
 
+      }
+      this.dialogueFromTo[0]=true;
     } else if (event.target.id.substring(0,2)==='To'){
+     
       this.findIds(event.target.value);
       this.ValuesToConvert.To=this.myUnit;
       if (this.ValuesToConvert.To!=='' && this.ValuesToConvert.From===''){
@@ -733,13 +786,14 @@ myType:string='';
           this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsTo);
         }
         */
-        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom);
-        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo);
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom,'From');
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo,'To'); 
       } else if (this.ValuesToConvert.From==='' && this.ValuesToConvert.To===''){
         this.myType='';
-        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom);
-        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo);
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom,'From');
+        this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo,'To');
       }
+      this.dialogueFromTo[1]=true;
     } else if (event.target.id.substring(0,9)==='ValueFrom'){
       if (isNaN(event.target.value)===false){
         this.ValuesToConvert.valueFrom=Number(event.target.value);
@@ -777,6 +831,9 @@ myType:string='';
     if (this.message==='' && this.ValuesToConvert.From!='' && this.ValuesToConvert.From===this.ValuesToConvert.To){
       this.message='No conversion - units are the same '
     } 
+
+
+
   }
   
   CancelConvertValues(){
@@ -787,12 +844,14 @@ myType:string='';
     this.ValuesToConvert.valueTo=0;
     this.LastFieldInput='';
     this.messageConvert='';
+    this.closeDialogues();
+
     var i=0;
     for (i=0; i<this.maxFilter; i++){
       this.TabFilter[i]='';
     }
-    this.fillDisplayTabUnit('','',this.DisplayTabOfUnitsFrom);
-    this.fillDisplayTabUnit('','',this.DisplayTabOfUnitsTo);
+    this.fillDisplayTabUnit('','',this.DisplayTabOfUnitsFrom,'From');
+    this.fillDisplayTabUnit('','',this.DisplayTabOfUnitsTo,'To');
   }
 
    arrowAction(event:any){
@@ -833,8 +892,8 @@ myType:string='';
         this.newRecord.To=this.PageToDisplay[this.PreviousDialogue].to;
         this.newRecord.type=this.PageToDisplay[this.PreviousDialogue].type;
   
-        this.fillDisplayTabUnit(this.newRecord.type,'',this.NewRowTabOfUnitsFrom);
-        this.fillDisplayTabUnit(this.newRecord.type,'',this.NewRowTabOfUnitsTo);
+        this.fillDisplayTabUnit(this.newRecord.type,'',this.NewRowTabOfUnitsFrom,'From');
+        this.fillDisplayTabUnit(this.newRecord.type,'',this.NewRowTabOfUnitsTo,'To');
   
         if (event.target.textContent===' Modify '){this.displayToModify=true; this.tableTitle='Item to modify';}
         else {this.displayToDelete=true;    this.tableTitle='Item to delete';}
@@ -935,6 +994,7 @@ myType:string='';
     
   CancelAction(){
       this.TabDialogue[this.PreviousDialogue]=false;
+      this.closeDialogues();
       this.message='';
       this.CancelNewRow();
     }
@@ -978,12 +1038,17 @@ myType:string='';
     onFilter(event:any){
        var i= 0;
        var field='';
+       this.closeDialogues();
       //this.LogMsgConsole('onFilter HEALTH.TS Converter ===== Device ' + navigator.userAgent + '======');
       this.message='';
       if (event.target.id!==""){
         this.findIds(event.target.value);
-        if (event.target.id.substring(0,6)==='Filter' && event.target.value!==""){
-          this.TabFilter[event.target.id.substring(7)]=this.myUnit;
+        if (event.target.id.substring(0,10)==='FilterFrom' ){
+          this.dialogueFromTo[4]=true;
+          if (event.target.value!==""){ // data has been input
+
+         
+          this.TabFilter[0]=this.myUnit;
           this.doFilter=true;
           //for (i=0; i<this.theTabOfUnits.tabClassUnit.length && event.target.value.toLowerCase()!==this.theTabOfUnits.tabClassUnit[i].name; i++){}
           for (i=0; i<this.theTabOfUnits.tabClassUnit.length && ((this.myType==='' && this.theTabOfUnits.tabClassUnit[i].name!==this.myUnit ) ||
@@ -992,8 +1057,8 @@ myType:string='';
           if (i<this.theTabOfUnits.tabClassUnit.length){
             if ((this.TabFilter[0]!=='' && this.TabFilter[1]==='') || (this.TabFilter[0]==='' && this.TabFilter[1]!=='')){
 
-              this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.FilterTabOfUnitsFrom);
-              this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.FilterTabOfUnitsTo);
+              this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.FilterTabOfUnitsFrom,'From');
+              this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.FilterTabOfUnitsTo,'To');
     
             }
             this.TabFilterType[0]=this.theTabOfUnits.tabClassUnit[i].type;
@@ -1002,15 +1067,16 @@ myType:string='';
             this.Page.direction=1;
             this.managePage();
           }
-/*
 
+        }
+        this.styleDataListFromOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 100, 6, this.dataList.scrollY);
+  
+        } else if (event.target.id.substring(0,8)==='FilterTo'){
+          this.dialogueFromTo[5]=true;
+          if (event.target.value!==""){
 
-
-*/
-
-
-        } else if (event.target.id.substring(0,6)==='Filter'  && event.target.value===""){
-            this.TabFilter[event.target.id.substring(7)]="";
+          
+            this.TabFilter[1]=this.myUnit;;
             if (this.TabFilter[0]!=='' || this.TabFilter[1]!==''){
               this.doFilter=true;
               if (this.TabFilter[0]!==''){field=this.TabFilter[0]}
@@ -1022,33 +1088,37 @@ myType:string='';
                 this.Page.fromRow=0; // process from the beginning of the file
                 if ((this.TabFilter[0]!=='' && this.TabFilter[1]==='') || (this.TabFilter[0]==='' && this.TabFilter[1]!=='')){
 
-                  this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.FilterTabOfUnitsFrom);
-                  this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.FilterTabOfUnitsTo);
-        
+                  this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.FilterTabOfUnitsFrom,'From');
+                  this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.FilterTabOfUnitsTo,'To');
+                  
                 }
                 this.Page.direction=1;
                 this.managePage();
               }
-            } else { 
-              this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom);
-              this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo);
+              }
+            else { 
+              this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom,'From');
+              this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo,'To');
               this.doFilter=false;
               this.Page.fromRow=0; // process from the beginning of the file
               this.Page.direction=1;
               this.managePage();
+             
             }
-            
+          } 
+          this.styleDataListToOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 90, 5, this.dataList.scrollY);
         }
       }
     }
   
   cancelFilter(){
       var i=0;
+      this.closeDialogues();
       for (i=0; i<this.TabFilter.length; i++){
           this.TabFilter[i]='';
         }
-        this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom);
-        this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo);
+        this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom,'From');
+        this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo,'To');
         this.doFilter=false;
         this.Page.fromRow=0; // process from the beginning of the file
         this.Page.direction=1;
@@ -1064,53 +1134,73 @@ myType:string='';
     this.message='';
     this.error_msg='';
     this.tableTitle='New Row';
-    this.fillDisplayTabUnit('','',this.NewRowTabOfUnitsFrom);
-    this.fillDisplayTabUnit('','',this.NewRowTabOfUnitsTo);
+    this.fillDisplayTabUnit('','',this.NewRowTabOfUnitsFrom,'From');
+    this.fillDisplayTabUnit('','',this.NewRowTabOfUnitsTo,'To');
     this.scroller.scrollToAnchor('ChangeNewRow');
   }
   
+  closeDialogues(){
+    for (var i=0; i< this.dialogueFromTo.length; i++){
+      this.dialogueFromTo[i]=false;
+    }
+  }
+
   inputNewRow(event:any){
     var i=0; 
     var j=0;
     this.message='';
     this.error_msg='';
+    this.closeDialogues();
     if (event.target.id==='FromTo'){
       if (isNaN(event.target.value)===false){
           this.newRecord.valueFromTo=Number(event.target.value);
         } else {this.error_msg='Enter a numeric value';}
     } else   if (event.target.id==='From'){
       this.newRecord.From=event.target.value.toLowerCase();
+      this.dialogueFromTo[2]=true;
       if (this.newRecord.From!=='' && this.newRecord.From===this.newRecord.To){
         this.message=' Cannot be created as units are the same';
       } else 
-      if (this.newRecord.From!=='' && this.newRecord.To==='' && this.newRecord.type===''){
-        for (i=0; i<this.theTabOfUnits.tabClassUnit.length && this.theTabOfUnits.tabClassUnit[i].name!==this.newRecord.From; i++){}
-        if (i<this.theTabOfUnits.tabClassUnit.length){
-          this.newRecord.type=this.theTabOfUnits.tabClassUnit[i].type;
-          this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.NewRowTabOfUnitsFrom);
-          this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.NewRowTabOfUnitsTo);
-        }
+      if (this.newRecord.From!=='' && this.newRecord.To==='' ){
+          if (this.newRecord.type===''){
+            for (i=0; i<this.theTabOfUnits.tabClassUnit.length && this.theTabOfUnits.tabClassUnit[i].name!==this.newRecord.From; i++){}
+            if (i<this.theTabOfUnits.tabClassUnit.length){
+              this.newRecord.type=this.theTabOfUnits.tabClassUnit[i].type;
+            }
+          }
+          this.fillDisplayTabUnit(this.newRecord.type, '', this.NewRowTabOfUnitsFrom,'From');
+          this.fillDisplayTabUnit(this.newRecord.type, '', this.NewRowTabOfUnitsTo,'To');
+        
       } 
+      this.styleDataListFromOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 0, 0, this.dataList.scrollY);
+
 
     } else   if (event.target.id==='To'){
+      this.dialogueFromTo[3]=true;
       this.newRecord.To=event.target.value.toLowerCase();
       if (this.newRecord.From!=='' && this.newRecord.From===this.newRecord.To){
         this.message=' Cannot be created as units are the same';
       } else 
-      if (this.newRecord.From==='' && this.newRecord.To!==''  && this.newRecord.type===''){
-        for (i=0; i<this.theTabOfUnits.tabClassUnit.length && this.theTabOfUnits.tabClassUnit[i].name!==this.newRecord.To; i++){}
-        if (i<this.theTabOfUnits.tabClassUnit.length){
-          this.newRecord.type=this.theTabOfUnits.tabClassUnit[i].type;
-          this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.NewRowTabOfUnitsFrom);
-          this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.NewRowTabOfUnitsTo);
+      if (this.newRecord.From==='' && this.newRecord.To!==''  ){
+        if (this.newRecord.type===''){
+          for (i=0; i<this.theTabOfUnits.tabClassUnit.length && this.theTabOfUnits.tabClassUnit[i].name!==this.newRecord.To; i++){}
+          if (i<this.theTabOfUnits.tabClassUnit.length){
+            this.newRecord.type=this.theTabOfUnits.tabClassUnit[i].type;
+          }
         }
-      }
+        
+          this.fillDisplayTabUnit(this.newRecord.type, '', this.NewRowTabOfUnitsFrom,'From');
+          this.fillDisplayTabUnit(this.newRecord.type, '', this.NewRowTabOfUnitsTo,'To');
+        
+      } 
+      this.styleDataListToOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 0, 0, this.dataList.scrollY);
+
     } else   if (event.target.id.substring(0,8)==='UnitType'){
           if (event.target.textContent!==' Cancel '){
             this.newRecord.type=event.target.textContent.substring(1,2); 
             if (this.newRecord.To==='' && this.newRecord.From===''){
-              this.fillDisplayTabUnit(this.newRecord.type, '', this.NewRowTabOfUnitsFrom);
-              this.fillDisplayTabUnit(this.newRecord.type, '', this.NewRowTabOfUnitsTo);
+              this.fillDisplayTabUnit(this.newRecord.type, '', this.NewRowTabOfUnitsFrom,'From');
+              this.fillDisplayTabUnit(this.newRecord.type, '', this.NewRowTabOfUnitsTo,'To');
             }
           }
       this.displayUnitType=false;
@@ -1166,6 +1256,7 @@ myType:string='';
   }
   
   CancelNewRow(){
+    this.closeDialogues();
     this.newRecord.valueFromTo=0;
     this.newRecord.From='';
     this.newRecord.To='';
@@ -1174,8 +1265,8 @@ myType:string='';
     this.displayUnitType=false;
     this.displayToModify=false;
     this.displayToDelete=false;
-    this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom);
-    this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo);
+    this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom,'From');
+    this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo,'To');
   }
   
   
@@ -1237,8 +1328,8 @@ myType:string='';
       this.Page.direction=1;
 
       this.ManageConvert();
-      this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom);
-      this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo);
+      this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsFrom,'From');
+      this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo,'To');
     }
   
     GetRecord(Bucket:string,GoogleObject:string, iWait:number){

@@ -35,10 +35,10 @@
             <input   (mousedown)="onMouseUp($event)" (mousemove)="onMouseUp($event)" (click)='SelRadio("Y-5")' class="theRadioButt" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
             <input  (mousedown)="onMouseUp($event)" (mousemove)="onMouseUp($event)" (click)='SelRadio("N-5")' class="theRadioButt" style="margin-left:10px;" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
         </div>
-        <div  *ngIf="EventHTTPReceived[2]===true">
+        <div >
             <div class="theRadio">Calculate Calories & Fat </div> 
-            <input  (click)='SelRadio("Y-6")' class="theRadioButt" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="Y" >  <span class="YesNo">&nbsp;&nbsp;Yes</span>
-            <input  (click)='SelRadio("N-6")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="N" >  <span sclass="YesNo">&nbsp;&nbsp;No</span>
+            <input  *ngIf="EventHTTPReceived[2]===true" (click)='SelRadio("Y-6")' class="theRadioButt" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="Y" >  <span *ngIf="EventHTTPReceived[2]===true" class="YesNo">&nbsp;&nbsp;Yes</span>
+            <input  *ngIf="EventHTTPReceived[2]===true" (click)='SelRadio("N-6")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="N" >  <span  *ngIf="EventHTTPReceived[2]===true"sclass="YesNo">&nbsp;&nbsp;No</span>
         </div>
         <div >
             <div class="theRadio">Display the charts </div> 
@@ -108,14 +108,14 @@
             <div *ngFor="let meal of SelectedRecord.meal; let k=index" [ngClass]="{'even': k % 2 ===0, 'odd': k % 2 !==0}" class="mealBlock">
                 <div class="dropdown " >
                     <span id="SelDialogueMeal-{{k}}" class="circle" style='margin-left:20px;' (click)="onAction($event)">A</span>
-                    <span style="margin-left:8px;">&nbsp;</span>
-                    <div class="Straight-content"  *ngIf="dialogue[4]===true && TabOfId[0]===k" [ngStyle]="{'height.px': this.sizeBoxContent}">
-                        <div  class="StraightDropDown " [ngStyle]="{'height.px': this.sizeBox}" >
-                            <ul class="Buffer">&nbsp; </ul>
+
+                    <div  *ngIf="dialogue[4]===true && TabOfId[0]===k" [ngStyle]="styleBox">
+                        <div   [ngStyle]="styleBoxOption" >
+
                             <li *ngFor="let action of TabAction; let m=index;" 
                                     class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onAction($event)" id="SelMeal-{{k}}" [value]="action.name" >{{action.name}}</li>
-                            <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
+
                         </div>
                     </div>
                 </div>
@@ -125,14 +125,14 @@
                 <div *ngFor="let theIngred of SelectedRecord.meal[k].dish; let j=index" style="margin-left:30px;">
                     <div class="dropdown " >
                         <span id="SelDialogueIngr-{{k}}-{{j}}" class="circle" (click)="onAction($event)">A</span>
-                        <span style="margin-left:8px;">&nbsp;</span>
-                        <div class="Straight-content" *ngIf="dialogue[5]===true && TabOfId[0]===k && TabOfId[1]===j" [ngStyle]="{'height.px': this.sizeBoxContent}">
-                            <div  class="StraightDropDown " [ngStyle]="{'height.px': this.sizeBox}">
-                                <ul class="Buffer">&nbsp; </ul>
+
+                        <div  *ngIf="dialogue[5]===true && TabOfId[0]===k && TabOfId[1]===j" [ngStyle]="styleBox">
+                            <div  [ngStyle]="styleBoxOption">
+
                                     <li *ngFor="let action of TabAction; let m=index;" 
                                         class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                             (click)="onAction($event)" id="SelIngr-{{k}}-{{j}}" [value]="action.name" >{{action.name}}</li>
-                                    <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
+
                             </div>
                         </div>
                     </div>
@@ -196,14 +196,14 @@
     <div *ngFor="let myDaily of HealthData.tabDailyReport; let i=index" >
         <div class="dropdown " >
             <span id="CreDialogueDate-{{i}}" class="circle" style='margin-left:20px;' (click)="onAction($event)">A</span>
-            <span style="margin-left:8px;">&nbsp;</span>
-            <div class="Straight-content"  *ngIf="dialogue[0]===true && TabOfId[0]===i" [ngStyle]="{'height.px': this.sizeBoxContent}">
-                <div  class="StraightDropDown "  [ngStyle]="{'height.px': this.sizeBox}">
-                    <ul class="Buffer">&nbsp; </ul>
+
+            <div  *ngIf="dialogue[0]===true && TabOfId[0]===i" [ngStyle]="styleBox">
+                <div   [ngStyle]="styleBoxOption">
+
                     <li *ngFor="let action of TabAction; let m=index;" 
                             class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                 (click)="onAction($event)" id="ActionDate-{{i}}" [value]="action.name" >{{action.name}}</li>
-                    <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
+
                 </div>
             </div>
         </div>
@@ -219,14 +219,11 @@
         <div *ngFor="let meal of HealthData.tabDailyReport[i].meal; let k=index" [ngClass]="{'even': k % 2 ===0, 'odd': k % 2 !==0}" class="mealBlock">
             <div class="dropdown " >
                 <span id="CreDialogueMeal-{{i}}-{{k}}" class="circle" style='margin-left:20px;' (click)="onAction($event)">A</span>
-                <span style="margin-left:8px;">&nbsp;</span>
-                <div class="Straight-content"  *ngIf="dialogue[1]===true && TabOfId[0]===i && TabOfId[1]===k" [ngStyle]="{'height.px': this.sizeBoxContent}">
-                    <div  class="StraightDropDown "  [ngStyle]="{'height.px': this.sizeBox}">
-                        <ul class="Buffer">&nbsp; </ul>
+                <div   *ngIf="dialogue[1]===true && TabOfId[0]===i && TabOfId[1]===k" [ngStyle]="styleBox">
+                    <div   [ngStyle]="styleBoxOption">
                         <li *ngFor="let action of TabAction; let m=index;" 
                                 class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                    (click)="onAction($event)" id="CreMeal-{{i}}-{{k}}" [value]="action.name" >{{action.name}}</li>
-                        <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
+                                    (click)="onAction($event)" id="CreMeal-{{i}}-{{k}}" [value]="action.name" >{{action.name}}</li> 
                     </div>
                 </div>
             </div>
@@ -238,14 +235,14 @@
             <div *ngFor="let theIngred of HealthData.tabDailyReport[i].meal[k].dish; let j=index" style="margin-left:30px;">
                 <div class="dropdown " >
                     <span id="CreDialogueIngr-{{i}}-{{k}}-{{j}}" class="circle" (click)="onAction($event)">A</span>
-                    <span style="margin-left:8px;">&nbsp;</span>
-                    <div class="Straight-content" *ngIf="dialogue[2]===true && TabOfId[0]===i && TabOfId[1]===k && TabOfId[2]===j" [ngStyle]="{'height.px': this.sizeBoxContent}">
-                        <div  class="StraightDropDown " [ngStyle]="{'height.px': this.sizeBox}">
-                            <ul class="Buffer">&nbsp; </ul>
+
+                    <div  *ngIf="dialogue[2]===true && TabOfId[0]===i && TabOfId[1]===k && TabOfId[2]===j" [ngStyle]="styleBox">
+                        <div   [ngStyle]="styleBoxOption">
+
                                 <li *ngFor="let action of TabAction; let m=index;" 
                                     class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onAction($event)" id="CreIngr-{{i}}-{{k}}-{{j}}" [value]="action.name" >{{action.name}}</li>
-                                <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
+  
                         </div>
                     </div>
                 </div>
@@ -371,8 +368,8 @@
 <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
 <div class="dropdown " *ngIf=" dialogue[6]===true">
 
-    <div class="Straight-content" [ngStyle]="{'height.px': this.sizeBoxContent}" >
-        <div  class="StraightDropDown"  [ngStyle]="{ 'margin-top.px':selectedPosition.y - tablePosTop -279 ,'margin-left.px': 60, 'height.px': this.sizeBox}">
+    <div  [ngStyle]="styleBox" >
+        <div  [ngStyle]="styleBoxOption">
     
             <li *ngFor="let action of NewTabAction; let m=index;" 
                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
@@ -384,12 +381,12 @@
      
     </div>
 </div>
-<div class="Straight-content"  *ngIf="isDeleteItem===true">
-    <div  class="StraightDropDown RadioDropDown"   [ngStyle]="{ 'margin-top.px':selectedPosition.y - tablePosTop - posDelConfirm ,'margin-left.px': 60}">
+<div [ngStyle]="styleBox"  *ngIf="isDeleteItem===true">
+    <div  [ngStyle]="styleBoxOption" style="  background: cyan; ">
 
-        <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion of {{delMsg}}</div> 
-            <div  class="theRadio">
-                <input   (click)='DelAfterConfirm($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="Y" > &nbsp;&nbsp;Yes 
+        <div style="width:100%; color:blue; font-size:14px; text-align: center; ">Confirm the deletion of {{delMsg}}</div> 
+            <div  class="theRadio" style='margin-left:40px; margin-top:8px;'>
+                <input   style='margin-left:18px;'(click)='DelAfterConfirm($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="Y" > &nbsp;&nbsp;Yes 
                 <input  style='margin-left:10px;' (click)='DelAfterConfirm($event)' type="radio"   id="NoDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="N">  &nbsp;&nbsp; No 
                 <div class="skipLine">&nbsp; </div>  
             </div>
@@ -400,8 +397,8 @@
 
 
 <div class="dropdown " *ngIf="tabInputMeal.length>0 ">
-    <div class="Straight-content"  [ngStyle]="{'height.px': this.sizeBoxContentMeal}">
-        <div  class="StraightDropDown"  [ngStyle]="{ 'margin-top.px':selectedPosition.y - tablePosTop -255 ,'margin-left.px': offsetLeft - 24, 'height.px': this.sizeBoxMeal}" 
+    <div  [ngStyle]="styleBoxMeal" >
+        <div   [ngStyle]="styleBoxOptionMeal" 
                             >  
             <li *ngFor="let tabMeal of tabInputMeal; let m=index;" 
                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
@@ -415,8 +412,8 @@
 <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH EXISTING FOOD STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputFood-->
 <div class="dropdown " *ngIf="tabInputFood.length>0">
 
-    <div class="Straight-content" [ngStyle]="{'height.px': this.sizeBoxContentFood}" >
-        <div  class="StraightDropDown"  [ngStyle]="{ 'margin-top.px':selectedPosition.y - tablePosTop -255 ,'margin-left.px': offsetLeft - 24, 'height.px': this.sizeBoxContentFood}">
+    <div [ngStyle]="styleBoxFood" >
+        <div   [ngStyle]="styleBoxOptionFood">
     
             <li *ngFor="let tabFood of tabInputFood; let m=index;" 
                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
