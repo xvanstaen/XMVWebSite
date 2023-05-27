@@ -129,8 +129,8 @@
                      </span>
                  </mat-icon>
                  <div  *ngIf="TabDialogue[i]===true && displayToModify===false && displayToDelete===false" class="dropdown" >
-                     <div [ngStyle]="styleBoxContent">
-                         <div  [ngStyle]="styleBoxOptions"  >
+                     <div [ngStyle]="styleActionBoxContent" >
+                         <div  [ngStyle]="styleActionBoxOptions"  >
           
                              <li *ngFor="let action of TabAction; let m=index;" [value]='action' (click)="DelModAction($event)" id="Item-{{i}}" 
                                      class='Straight-options'   [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >

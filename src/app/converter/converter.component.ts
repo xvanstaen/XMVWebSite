@@ -176,6 +176,8 @@ export class ConverterComponent implements OnInit {
 
   styleBoxOptions:any;
   styleBoxContent:any;
+  styleActionBoxOptions:any;
+  styleActionBoxContent:any;
 
   myUnit:string='';
   myType:string='';
@@ -204,8 +206,8 @@ export class ConverterComponent implements OnInit {
     this.sizeBox.widthContent=100;
     this.sizeBox.widthOptions=100;
     this.sizeBox.heightItem=25;
-    this.sizeBox.heightContent=110;
-    this.sizeBox.heightOptions=110;
+    this.sizeBox.heightContent=105;
+    this.sizeBox.heightOptions=105;
     this.sizeBox.maxHeightContent=150;
     this.sizeBox.maxHeightOptions=150;
     this.sizeBox.scrollY='hidden';
@@ -218,7 +220,9 @@ export class ConverterComponent implements OnInit {
 
     this.styleBoxContent=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent );
     this.styleBoxOptions=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 0, 0, this.sizeBox.scrollY);
-
+    
+    this.styleActionBoxContent=getStyleDropDownContent(80, this.sizeBox.widthContent );
+    this.styleActionBoxOptions=getStyleDropDownBox(80, this.sizeBox.widthOptions, 0, 0, this.sizeBox.scrollY);
 
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
@@ -855,6 +859,7 @@ export class ConverterComponent implements OnInit {
   }
 
    arrowAction(event:any){
+      this.closeDialogues();
       if (event.target.id==='UnitType'){
           this.displayUnitType=true;
       } else {
@@ -878,6 +883,7 @@ export class ConverterComponent implements OnInit {
       this.displayUnitType=false;
       var i=0;
       var j=0;
+      this.closeDialogues();
       if (event.target.value==='M'){
         this.displayToModify=false;
         this.TabDialogue[this.PreviousDialogue]=false;
@@ -1069,8 +1075,12 @@ export class ConverterComponent implements OnInit {
           }
 
         }
-        this.styleDataListFromOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 100, 6, this.dataList.scrollY);
-  
+        if (this.FilterTabOfUnitsFrom.length>6){
+          this.styleDataListFromOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 100, 6, 'scroll');
+
+        } else {this.styleDataListFromOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 100, 6, 'hidden');
+        }
+          
         } else if (event.target.id.substring(0,8)==='FilterTo'){
           this.dialogueFromTo[5]=true;
           if (event.target.value!==""){
@@ -1106,8 +1116,12 @@ export class ConverterComponent implements OnInit {
              
             }
           } 
-          this.styleDataListToOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 90, 5, this.dataList.scrollY);
-        }
+          if (this.FilterTabOfUnitsFrom.length>6){
+            this.styleDataListToOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 90, 5, 'scroll');
+          } else {
+            this.styleDataListToOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 90, 5, 'hidden');
+          }
+                  }
       }
     }
   
@@ -1127,6 +1141,7 @@ export class ConverterComponent implements OnInit {
   tableTitle:string='';
 
   addRow(){
+    this.closeDialogues();
     this.error_msg='';
     this.displayNewRow=true;
     this.displayToModify=false;
@@ -1142,6 +1157,9 @@ export class ConverterComponent implements OnInit {
   closeDialogues(){
     for (var i=0; i< this.dialogueFromTo.length; i++){
       this.dialogueFromTo[i]=false;
+    }
+    for (i=0; i<this.TabDialogue.length; i++){
+      this.TabDialogue[i]=false;
     }
   }
 
