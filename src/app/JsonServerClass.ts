@@ -37,12 +37,14 @@ export class BioData{
           fileFitnessMyConfig:"FitnessMyConfig",
           fileStartName:"FitStat-",
           fileStartLength:8,
-          myChartConfig:"fitness1configChart"
+          myChartConfig:"fitness1configChart",
+          recipe:"fitnessRecipe",
         },
         fileType:{
           Health:"HealthTracking",
           FitnessMyConfig:"FitnessMyConfig",
           myChart:"myConfigChart",
+          recipe:"fitnessRecipe",
         }
       };
       configFitness={
@@ -73,7 +75,7 @@ export class BioData{
         GI:0,
         SaturatedFat:0,
         Cholesterol:{
-          minLimit:0,
+          myLimit:0,
           maxLimit:0,
         },
         Calories:0,
@@ -260,9 +262,24 @@ export class classPosSlider{
   top:number=0;
   left:number=0;
   VerHor:string='';
+  div={
+    top:0,
+    left:0,
+  }
 }
 
-
+export class classPosDiv{
+  Top:number=-1;
+  Left:number=0;
+  Client={
+    Top:0,
+    Left:0,
+    Height:0,
+    Bottom:0,
+    X:0,
+    Y:0,
+  }
+}
 
 
 

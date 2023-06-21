@@ -67,7 +67,7 @@
     
     <div *ngIf="newTabDialog[newPrevDialog]===true;">
         <div class="dropdown ">
-            <div class="newStraight-content"  [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':selectedPosition.y - tablePosTop - 249 }">
+            <div class="newStraight-content"  [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':selectedPosition.y - this.posDivTable.Top - 249 }">
                 <div  class="newStraightDropDown " [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': 1}"  >
                     <li *ngFor="let tab of TabAction; let m=index;" 
                             class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
@@ -79,7 +79,7 @@
     </div>
 
     <div *ngIf='TabDisplayCalendar[TabOfId[0]]===true' class="dropdown" >
-        <div class="Straight-content" [ngStyle]="{'margin-top.px': selectedPosition.y - tablePosTop - 249 }" >
+        <div class="Straight-content" [ngStyle]="{'margin-top.px': selectedPosition.y - this.posDivTable.Top - 249 }" >
             <div class="StraightDropDown" >
                 <div class="skipLine">&nbsp;</div>
                 <app-one-calendar [Input_MinDate]="minDate" [Input_MaxDate]="maxDate" [DisplayCalendarOnly]="DisplayCalendarOnly"

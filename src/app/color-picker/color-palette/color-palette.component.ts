@@ -1,5 +1,6 @@
-import { Component,  SimpleChanges, ViewChild, AfterViewInit, OnInit,  OnChanges,
+import { Component,  SimpleChanges, ViewChild, AfterViewInit, OnInit, OnChanges,
   Output, Input, HostListener, EventEmitter } from '@angular/core';
+import {classPosSlider} from '../../JsonServerClass';
 
 @Component({
   selector: 'app-color-palette',
@@ -11,6 +12,8 @@ export class ColorPaletteComponent implements OnInit, OnChanges, AfterViewInit {
   constructor() { }
 
   @Input() my_input1: string='';
+  @Input() posPalette = new classPosSlider;
+  @Input() paramChange:number=0;
   @Input() INreturnField={
     rgba:'',
     xPos:0,
@@ -20,6 +23,9 @@ export class ColorPaletteComponent implements OnInit, OnChanges, AfterViewInit {
   @Output() my_output2= new EventEmitter<any>();
 
   @ViewChild('myCanvas', { static: true })
+
+  margLeft:number=0;
+  margTop:number=0;
 
   i=0;
   mytext:string='';
@@ -43,8 +49,16 @@ export class ColorPaletteComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnInit(): void {
     //console.log('first child init - no emit');
-    
-  }
+    this.getPosDiv();
+    if (this.posPalette.left===undefined || this.posPalette.left===0){
+      this.margLeft=20;
+      this.margTop=0;
+    } else {
+      this.margLeft=this.posPalette.left;
+      this.margTop=this.posPalette.top;
+    }
+
+    }
    
   
 
@@ -98,9 +112,83 @@ export class ColorPaletteComponent implements OnInit, OnChanges, AfterViewInit {
       }
     }
   
-    ngOnChanges(changes: SimpleChanges) {   
-      
+    @HostListener('window:mouseup', ['$event'])
+    onMouseUp(evt: MouseEvent) {
+      this.mousedown = false;
+    }
+  
+    onMouseDown(evt: MouseEvent) {
+      //console.log("mouse down in Palette");
+      this.mousedown = true;
+      this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
+      this.draw();
+      this.emitColor(evt.offsetX, evt.offsetY); 
+    }
+  
+    onMouseMove(evt: MouseEvent) {
+      if (this.mousedown) {
+        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
+        this.draw();
+        this.emitColor(evt.offsetX, evt.offsetY);
+      }
+    }
+    docDiv:any;
+    posDiv={
+      Top:0,
+      Left:0,
+    }
+    //myPosPalette:number=0;
+    myPosRectTop:any;
+    getPosDiv(){
+      if (document.getElementById("posDivCanvasP")!==null){
+          this.docDiv = document.getElementById("posDivCanvasP");
+          this.posDiv.Left = this.docDiv.offsetLeft;
+          this.posDiv.Top = this.docDiv.offsetTop;
+          //this.myPosPalette=this.docDiv.offsetParent.offsetTop;
+       
+          this.myPosRectTop=Math.round(this.docDiv.getBoundingClientRect().top); // can use trunc() as well
+      }
+    }
+   // msg:string="";
+    onTouchStart(event:any){
+      event.preventDefault(); // this si to stop scrolling when touch screen on the palette is performed
+      this.getPosDiv();
+      var touch = event.touches[0] || event.changedTouches[0];
 
+      this.selectedPosition.x=touch.pageX-this.posDiv.Left-this.margLeft-this.posPalette.div.left;
+      if (this.selectedPosition.x<1){this.selectedPosition.x=1} else if (this.selectedPosition.x>255){this.selectedPosition.x=255};
+      this.selectedPosition.y=touch.clientY - this.myPosRectTop;
+      /*
+      if (this.posPalette.div.top===0){
+        this.selectedPosition.y=touch.pageY-this.posDiv.Top-this.myPosPalette; // 244
+      } else {
+        this.selectedPosition.y=touch.pageY-this.posDiv.Top-this.myPosPalette;
+      }
+      */
+      if (this.selectedPosition.y<1){this.selectedPosition.y=1} else if (this.selectedPosition.y>255){this.selectedPosition.y=255};
+      //this.msg='x=' + this.selectedPosition.x+ 'y=' + this.selectedPosition.y + 'pageY=' + touch.pageY  + 'screenY=' + touch.screenY  + 'clientY=' + touch.clientY  + 'posDiv.Top' + this.posDiv.Top + 
+      //'posPalette.top=' + this.posPalette.top + 'posPalette.div.top' + this.posPalette.div.top;
+      this.draw();
+      this.emitColor(this.selectedPosition.x, this.selectedPosition.y);
+    }
+    
+    emitColor(x: number, y: number) {
+      this.rgbaColor = this.getColorAtPosition(x, y);
+      this.my_output1.emit(this.rgbaColor);
+      this.returnField.rgba=this.rgbaColor;
+      this.returnField.xPos=x;
+      this.returnField.yPos=y;
+      this.my_output2.emit(this.returnField);
+    }
+  
+    getColorAtPosition(x: number, y: number) {
+      const imageData = this.ctx.getImageData(x, y, 1, 1).data;
+      //console.log('getColor', this.ctx.getImageData(x, y, 1, 1).data);
+      return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
+    }
+  
+   
+    ngOnChanges(changes: SimpleChanges) {   
       var i=0;
       for (const propName in changes){
           const j=changes[propName];
@@ -114,69 +202,13 @@ export class ColorPaletteComponent implements OnInit, OnChanges, AfterViewInit {
                   if (pos) {
                     this.rgbaColor=this.getColorAtPosition(pos.x, pos.y);
                   
-                  }
-                  
+                  } 
                 }
-              
+          } else if (propName==='paramChange' && changes['paramChange'].firstChange===false){
+            this.ngOnInit();
+            this.draw();
           }
-      }
-
-
-  
-        
-          
+      }    
     }
-
-
-    @HostListener('window:mouseup', ['$event'])
-    onMouseUp(evt: MouseEvent) {
-      this.mousedown = false;
-    }
-  
-    onMouseDown(evt: MouseEvent) {
-      //console.log("mouse down in Palette");
-      this.mousedown = true;
-      
-      this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
-      this.draw();
-      this.emitColor(evt.offsetX, evt.offsetY);
-      /*
-      this.rgbaColor=this.getColorAtPosition(evt.offsetX, evt.offsetY);
-      this.my_output1.emit(this.rgbaColor);
-      this.returnField.rgba=this.rgbaColor;
-      this.returnField.xPos=evt.offsetX;
-      this.returnField.yPos=evt.offsetY;
-      this.my_output2.emit(this.returnField);
-      */
- 
-    }
-  
-    onMouseMove(evt: MouseEvent) {
-      if (this.mousedown) {
-        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
-        this.draw();
-        this.emitColor(evt.offsetX, evt.offsetY);
-      }
-    }
-  
-    emitColor(x: number, y: number) {
-      this.rgbaColor = this.getColorAtPosition(x, y);
-      this.my_output1.emit(this.rgbaColor);
-      this.returnField.rgba=this.rgbaColor;
-      this.returnField.xPos=x;
-      this.returnField.yPos=y;
-      this.my_output2.emit(this.returnField);
-    }
-  
-  
-  
-    getColorAtPosition(x: number, y: number) {
-      const imageData = this.ctx.getImageData(x, y, 1, 1).data;
-      //console.log('getColor', this.ctx.getImageData(x, y, 1, 1).data);
-      return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
-    }
-  
-
-
 
 }

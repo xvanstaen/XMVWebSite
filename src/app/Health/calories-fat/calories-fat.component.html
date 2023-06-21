@@ -3,6 +3,252 @@
 </head> 
 <body>
 
+
+    <!--
+        =========================================================================
+        ================  Display and Manage special dishes/recipes  ============
+        =========================================================================
+     -->
+
+<div class="skipLine">&nbsp;</div>  
+<div class="posConfirm">
+    <span *ngIf="IsSaveRecipeConfirmed===false">
+        <span class="msg"  >
+                 Update your recipe file
+        </span>
+        <button id='RecipeSave' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
+        <button id='RecipeCancel' class="sizeButtons" (click)="CancelUpdates($event)"> Cancel</button>
+        </span>
+    <div *ngIf="error_msg!==''">
+        <div class="skipLine">&nbsp;</div>  
+        <span class="error" >error:&nbsp;{{error_msg}}</span>
+        <div class="skipLine">&nbsp;</div> 
+    </div> 
+</div>
+<div *ngIf="IsSaveRecipeConfirmed===true">
+    <form  [formGroup]="SpecificForm" >
+        <div class="msg"  >
+             Please enter the name of the recipe file to save  :
+            <input type='text' formControlName="FileNameRecipe" >
+        </div>                        <div class="skipLine">&nbsp;</div>
+        <div class="posConfirm">
+            <button id='RecipeSave' class="sizeButtons" (click)="SaveFile($event)">Confirm</button>
+            <button id='RecipeCanel' class="sizeButtons" (click)="CancelSave($event)"> Cancel</button>
+        </div>
+    </form>
+             
+</div>
+
+
+<div style="font-size:16px; color:blue; background-color:cyan; border:2px solid darkcyan; display:inline-block; 
+     height:46px; text-align:center; padding-top:10px; margin-top:15px;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+64}">
+     RECIPE
+</div>
+<div 
+       [ngStyle]="{'height.px':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth+80, 'width.px': HTMLCaloriesFat.width+80, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background }" 
+       style=" padding:0.3px; --thHeight:{{HTMLCaloriesFat.title.height}}; --thColor:{{HTMLCaloriesFat.title.color}}; --thBackground:{{HTMLCaloriesFat.title.background}}; 
+       --wType:{{HTMLCaloriesFat.colWidth.type}}; --wAction:{{HTMLCaloriesFat.colWidth.action}}; 
+       --wIngr:{{HTMLCaloriesFat.colWidth.ingr}}; 
+       --wOther:{{HTMLCaloriesFat.colWidth.other}};">
+  
+    <div class="widthAction tHeader" >Action</div>
+    <div class="widthRecipe tHeader" style='padding-top:3px;' >Recipe
+          <button class="theArrow"   id='Recipe'    (click)="onFilter($event)">
+              <mat-icon class="material-symbols-outlined"  id='Recipe' (click)="onFilter($event)">
+                  arrow_drop_down
+              </mat-icon>
+          </button>  
+    </div>
+    <div class="widthIngr tHeader " style="padding-top:3px;">Food (Filter)
+          <button class="theArrow"  style="margin-left:35px;"  id='RecipeFood' (click)="onFilter($event)">
+              <mat-icon class="material-symbols-outlined"  id='RecipeFood' (click)="onFilter($event)">
+                  arrow_drop_down
+              </mat-icon>
+          </button>  
+    </div>
+    <div class="widthOther tHeader" >Serving</div>
+    <div class="widthOther tHeader" style="padding-top:3px;">Serving Unit</div>
+    <div class="widthOther tHeader"  >Calories</div>
+    <div class="widthOther tHeader" >Protein</div>
+    <div class="widthOther tHeader" >Carbs</div>
+    <div class="widthOther tHeader" style="padding-top:3px;">Glycemic Index</div>
+    <div class="widthOther tHeader" style="padding-top:3px;">Sugar</div>
+    <div class="widthOther tHeader" style="padding-top:3px;">Choles terol</div>
+    <div class="widthOther tHeader" style="padding-top:3px;">Saturated fat</div>
+    <div class="widthOther tHeader" style="padding-top:3px;">Total fat</div>
+    <div class="widthOther tHeader" style="padding-top:3px;">Lock </div>
+
+     
+  
+</div>
+   <!-- ================== DROPDOWN LIST : action =============== -->
+<div class="dropdown" *ngIf="dialogueCalFat[1]===true && isDeleteRecipe===false && isDeleteRecipeFood===false">
+    <div class="Straight-content"  >
+        <div  class="StraightDropDown "  style="height:240px; width:140px; overflow-y:hidden;" [ngStyle]="{ 'margin-top.px': selectedPosition.y - 560 ,'margin-left.px': 50}"  >
+            <li *ngFor="let theTab of TabActionRecipe; let m=index;" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                    class="Straight-options "   style=" width:140px; "
+                        (click)="onAction($event)" id="RecipeSelAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{m}}">
+                        <span *ngIf="m>0">&nbsp;&nbsp;{{theTab.name}}-{{theTab.action}}</span>
+                        <span *ngIf="m===0">&nbsp;&nbsp;{{theTab.name}}</span>
+            </li>
+        </div>
+    </div>
+</div>
+
+    <!-- ================== DROPDOWN LIST : recipe =============== -->
+<div class="dropdown "  *ngIf="filterRecipe===true">
+        <div class="Straight-content"  >
+            <div  class="StraightDropDown StraightDropDownOverflow" [ngStyle]="{  'margin-top.px': RecipetheHeight  ,'margin-left.px':130, 'width.px':130}" >
+                <li *ngFor="let food of tabRecipe; let m=index;" 
+                        class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                            (click)="onFilter($event)" id="RecipeSel" [value]="food.name"> {{food.name}} 
+                </li>
+            </div>
+        </div>
+</div>
+
+    <!-- ================== DROPDOWN LIST : food =============== -->
+<div class="dropdown "  *ngIf="filterRecipeFood===true">
+    <div class="Straight-content"  >
+        <div  class="StraightDropDown StraightDropDownOverflow" [ngStyle]="{  'margin-top.px': RecipetheHeight  ,'margin-left.px':260, 'width.px':130}" >
+            <li *ngFor="let food of tabInputRecipeFood; let m=index;" 
+                    class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                        (click)="onFilter($event)" id="RecipeSelFood" [value]="food.name"> {{food.name}} 
+            </li>
+        </div>
+    </div>
+</div>
+
+<!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH EXISTING FOOD STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputFood-->
+<div class="dropdown " *ngIf="isRecipeFoodInput===true && tabInputRecipeFood.length>0">
+
+    <div class="Straight-content"  >
+        <div  class="StraightDropDown StraightDropDownOverflow" [ngStyle]="{  'margin-top.px': selectedPosition.y - 560  ,'margin-left.px':260, 'width.px':130, 'height.px':sizeBoxRecipeFood}" >
+    
+            <li *ngFor="let tabFood of tabInputRecipeFood; let m=index;" 
+                    class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                        (click)="onSelRecipeFood($event)" id="selRecipeFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{tabFood.name}}">
+                       {{tabFood.name}}
+            </li>
+        </div>            
+    </div>
+</div>
+
+
+
+
+     <!-- ================== Confirm/Cancel delete of meal/food =============== -->
+<div class="Straight-content"  *ngIf="(isDeleteRecipe===true || isDeleteRecipeFood===true)">
+    <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': selectedPosition.y - posDeletedItem - 90,'margin-left.px': 50}" >
+        <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion of {{ nameDeletedItem }}</div> 
+        <div  class="theRadio">
+            <input   (click)='onAction($event)' type="radio"   id="RecipeYesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}"  value="Y" > &nbsp;&nbsp;Yes 
+            <input  style='margin-left:10px;' (click)='onAction($event)' type="radio"   id="RecipeNoDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}"  value="N">  &nbsp;&nbsp; No 
+            <div class="skipLine">&nbsp; </div>  
+        </div>
+    </div>
+</div>
+
+<div id="posRecipeTable" [ngStyle]="{'height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth+80 , 'width.px': HTMLCaloriesFat.width+80, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background }" 
+  style="overflow:scroll;">
+   <!-- ================== display of the table =============== -->
+    <div *ngFor="let tab of outFileRecipe.tabCaloriesFat; let i=index ">
+        <div *ngIf="(RecipeSel==='' || (RecipeSel.toLowerCase().trim()!=='' && RecipeSel.toLowerCase().trim()===tab.Type.toLowerCase().trim()))">
+            <div *ngFor="let content of outFileRecipe.tabCaloriesFat[i].Content; let j=index">
+                <div *ngIf="RecipeSelFood==='' ||  (RecipeSelFood.toLowerCase().trim()!=='' && RecipeSelFood.toLowerCase().trim()===content.Name.toLowerCase().trim())">
+                  
+                    <div style="--rowHeight:{{HTMLCaloriesFat.row.height}}; --rowColor:{{HTMLCaloriesFat.row.color}}; --rowBackG:{{HTMLCaloriesFat.row.background}}; 
+                          --rEven:{{HTMLCaloriesFat.row.even}}; --rOdd:{{HTMLCaloriesFat.row.odd}}; --rNewbackG:{{HTMLCaloriesFat.rowNew.background}};  --rNewcol:{{HTMLCaloriesFat.rowNew.color}};
+                          --wType:{{HTMLCaloriesFat.colWidth.type}}; --wAction:{{HTMLCaloriesFat.colWidth.action}}; 
+                          --wIngr:{{HTMLCaloriesFat.colWidth.ingr}}; 
+                          --wOther:{{HTMLCaloriesFat.colWidth.other}}; 
+                          " 
+                          [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}"
+                          *ngIf="checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)" >
+                          
+                        <div  class="widthAction" style="display:inline-block;">
+                            <span id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
+                              A
+                            </span>
+                        </div>
+
+                        <input *ngIf='j===0' type="text" (input)="onInputRecipe($event)" id="Recipe-{{i}}" placeholder="name recipe" class="text widthRecipe"  value="{{tab.Type}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                        <span *ngIf='j!==0'  class="text widthRecipe"  style="pointer-events: none; display:inline-block;"    [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}" >&nbsp;</span>
+                  
+                        <input type="text" (input)="onInputRecipe($event)" id="name-{{i}}-{{j}}" class="text widthIngr" value="{{content.Name}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                  
+                        <input type="text" (input)="onInputRecipe($event)" id="serv-{{i}}-{{j}}" class="text widthOther" value="{{content.Serving }}" [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}" >
+
+                        <input type="text" (input)="onInputRecipe($event)" id="unit-{{i}}-{{j}}" class="text widthOther" value="{{content.ServingUnit}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+
+                        <input type="text" (input)="onInputRecipe($event)" id="calo-{{i}}-{{j}}" class="text widthOther" value="{{content.Calories | number:'1.1-1'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                  
+                        <input type="text" (input)="onInputRecipe($event)" id="prot-{{i}}-{{j}}" class="text widthOther" value="{{content.Protein | number:'1.1-1'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+              
+                        <input type="text" (input)="onInputRecipe($event)" id="carb-{{i}}-{{j}}" class="text widthOther" value="{{content.Carbs | number:'1.1-1'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                      
+                        <input type="text" (input)="onInputRecipe($event)" id="glyi-{{i}}-{{j}}" class="text widthOther" value="{{content.GlyIndex | number:'1.1-1'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+
+                        <input type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" class="text widthOther" value="{{content.Sugar | number:'1.1-1'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">                     
+                      
+                        <input type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" class="text widthOther" value="{{content.Cholesterol | number:'1.1-1'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                  
+                        <input type="text" (input)="onInputRecipe($event)" id="satu-{{i}}-{{j}}" class="text widthOther" value="{{content.Fat.Saturated | number:'1.1-1'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+
+                        <input type="text" (input)="onInputRecipe($event)" id="tota-{{i}}-{{j}}" class="text widthOther" value="{{content.Fat.Total | number:'1.1-1'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+
+                        <input type="text" (input)="onInputRecipe($event)" id="lock-{{i}}-{{j}}" class="text widthOther" value="{{content.lockData}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+          
+                    </div>
+                <!-- ============== TOTAL OF THE RECIPE ================== -->
+  
+                    <div *ngIf="outFileRecipe.tabCaloriesFat[i].Content.length-1===j"
+                        style="--rowHeight:{{HTMLCaloriesFat.row.height}}; --rowColor:{{HTMLCaloriesFat.row.color}}; --rowBackG:{{HTMLCaloriesFat.row.background}}; 
+                        --rEven:{{HTMLCaloriesFat.row.even}}; --rOdd:{{HTMLCaloriesFat.row.odd}}; --rNewbackG:{{HTMLCaloriesFat.rowNew.background}};  --rNewcol:{{HTMLCaloriesFat.rowNew.color}};
+                        --wType:{{HTMLCaloriesFat.colWidth.type}}; --wAction:{{HTMLCaloriesFat.colWidth.action}}; 
+                        --wIngr:{{HTMLCaloriesFat.colWidth.ingr}}; 
+                        --wOther:{{HTMLCaloriesFat.colWidth.other}}; 
+                        " 
+                        [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}"
+                         >
+                  
+                        <div  class="widthAction" style="display:inline-block;">
+                            &nbsp;
+                        </div>
+
+                        <span   class="text widthRecipe"  style="pointer-events: none; display:inline-block;  "   [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}" >&nbsp;</span>
+                    
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthIngr"  value="TOTAL"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                    
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther"  value="{{tab.Total.Serving  | number:'1.0-0'}}" [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}" >
+
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther"  value="{{tab.Total.ServingUnit}}" [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther" value="{{tab.Total.Calories  | number:'1.0-0'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                    
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther" value="{{tab.Total.Protein  | number:'1.0-0'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther" value="{{tab.Total.Carbs  | number:'1.0-0'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                        
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther" value="{{tab.Total.GlyIndex  | number:'1.0-0'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther" value="{{tab.Total.Sugar  | number:'1.0-0'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">                     
+                        
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther" value="{{tab.Total.Cholesterol  | number:'1.0-0'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+                    
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther" value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+
+                        <input type="text" (input)="onInputRecipe($event)"  class="totalRecipe widthOther" value="{{tab.Total.Fat.Total  | number:'1.0-0'}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}">
+            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+
+
+
 <div class="skipLine">&nbsp;</div>  
 <div class="posConfirm">
     <span *ngIf="IsSaveConfirmed===false">
@@ -33,7 +279,10 @@
 </span>
 
 <div class="skipLine">&nbsp;</div> 
-
+      <!-- =======================================================
+          ================     Search function    ================ 
+          ========================================================
+     -->
 <div>
     <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Search ingredient </span>
     <input type="text" [value]="checkText" id='search' (input)="SearchText($event)"
@@ -42,12 +291,18 @@
     <div class="skipLine">&nbsp;</div>
 </div>
 
-    <div id="posTable"
+    <!--
+        =========================================================================
+        ================ Display and Manage Calories & Fat table ================ 
+        =========================================================================
+     -->
+<div 
     [ngStyle]="{'height.px':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background }" 
     style=" padding:0.3px; --thHeight:{{HTMLCaloriesFat.title.height}}; --thColor:{{HTMLCaloriesFat.title.color}}; --thBackground:{{HTMLCaloriesFat.title.background}}; 
     --wType:{{HTMLCaloriesFat.colWidth.type}}; --wAction:{{HTMLCaloriesFat.colWidth.action}}; 
     --wIngr:{{HTMLCaloriesFat.colWidth.ingr}}; 
     --wOther:{{HTMLCaloriesFat.colWidth.other}};">
+    <!-- ================== TITLE =============== -->
         <div class="widthAction tHeader" >Action</div>
         <div class="widthType tHeader" style='padding-top:3px;' >Type
             <button class="theArrow"   id='Type' (click)="onFilter($event)">
@@ -57,7 +312,7 @@
             </button>  
          </div>
         <div class="widthIngr tHeader " style="padding-top:3px;">Food (Filter)
-            <button class="theArrow"  style="margin-left:35px;"  id='Type' (click)="onFilter($event)">
+            <button class="theArrow"  style="margin-left:35px;"  id='Food' (click)="onFilter($event)">
                 <mat-icon class="material-symbols-outlined"  id='Food' (click)="onFilter($event)">
                     arrow_drop_down
                 </mat-icon>
@@ -73,8 +328,9 @@
         <div class="widthOther tHeader" style="padding-top:3px;">Choles terol</div>
         <div class="widthOther tHeader" style="padding-top:3px;">Saturated fat</div>
         <div class="widthOther tHeader" style="padding-top:3px;">Total fat</div>
-    </div>
-    <div class="dropdown " *ngIf="filterType===true">
+</div>
+        <!-- ================== DROPDOWN LIST : type =============== -->
+<div class="dropdown " *ngIf="filterType===true">
         <div class="Straight-content"  >
             <div  class="StraightDropDown StraightDropDownOverflow" [ngStyle]="{ 'margin-top.px': theHeight  ,'margin-left.px': 60, 'width.px':130}"  >
                 <li *ngFor="let type of tabType; let m=index;" 
@@ -83,8 +339,9 @@
                 </li>
             </div>
         </div>
-    </div>
-    <div class="dropdown "  *ngIf="filterFood===true">
+</div>
+     <!-- ================== DROPDOWN LIST : food =============== -->
+<div class="dropdown "  *ngIf="filterFood===true">
         <div class="Straight-content"  >
             <div  class="StraightDropDown StraightDropDownOverflow" [ngStyle]="{  'margin-top.px': theHeight  ,'margin-left.px':130, 'width.px':130}" >
                 <li *ngFor="let food of tabFood; let m=index;" 
@@ -93,11 +350,12 @@
                 </li>
             </div>
         </div>
-    </div>
-
-    <div class="dropdown" *ngIf="dialogueCalFat[0]===true && isDeleteType===false && isDeleteFood===false">
+</div>
+ <!-- ================== DROPDOWN LIST : action =============== -->
+<div class="dropdown" *ngIf="dialogueCalFat[0]===true && isDeleteType===false && isDeleteFood===false">
         <div class="Straight-content"  >
-            <div  class="StraightDropDown "  style="height:180px; width:140px; overflow-y:hidden;" [ngStyle]="{ 'margin-top.px': selectedPosition.y - 590 ,'margin-left.px': 50}"  >
+                                                <!-- selectedPosition.y - tablePosTop - 450 -->
+            <div  class="StraightDropDown "  style="height:180px; width:140px; overflow-y:hidden;" [ngStyle]="{ 'margin-top.px': posItemAction  ,'margin-left.px': 50}"  >
                 <li *ngFor="let theTab of TabAction; let m=index;" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                         class="Straight-options "   style=" width:140px; "
                             (click)="onAction($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{m}}">
@@ -106,9 +364,10 @@
                 </li>
             </div>
         </div>
-    </div>
-    <div class="Straight-content"  *ngIf="(isDeleteType===true || isDeleteFood===true)">
-        <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': selectedPosition.y - posDeletedItem - 90,'margin-left.px': 50}" >
+</div>
+     <!-- ================== Confirm/Cancel delete of meal/food =============== -->
+<div class="Straight-content"  *ngIf="(isDeleteType===true || isDeleteFood===true)">
+        <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': selectedPosition.y - tablePosTop  - posDeletedItem + 50,'margin-left.px': 50}" >
             <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion of {{ nameDeletedItem }}</div> 
             <div  class="theRadio">
                 <input   (click)='onAction($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}"  value="Y" > &nbsp;&nbsp;Yes 
@@ -116,19 +375,19 @@
                 <div class="skipLine">&nbsp; </div>  
             </div>
         </div>
-    </div>
+</div>
     
  
 
-<div [ngStyle]="{'height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background }" 
+<div id="posStartTable" [ngStyle]="{'height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background }" 
     style="overflow:scroll;">
-    
-    <div *ngFor="let tab of OutConfigCaloriesFat.tabCaloriesFat; let i=index ">
+     <!-- ================== display of the table =============== -->
+    <div *ngFor="let tab of outConfigCaloriesFat.tabCaloriesFat; let i=index ">
         <div *ngIf="(selType==='' || (selType.toLowerCase().trim()!=='' && selType.toLowerCase().trim()===tab.Type.toLowerCase().trim()))">
-            <div *ngFor="let content of OutConfigCaloriesFat.tabCaloriesFat[i].Content; let j=index">
+            <div *ngFor="let content of outConfigCaloriesFat.tabCaloriesFat[i].Content; let j=index">
                 <div *ngIf="selFood==='' ||  (selFood.toLowerCase().trim()!=='' && selFood.toLowerCase().trim()===content.Name.toLowerCase().trim())">
                     
-                <div style="--rowHeight:{{HTMLCaloriesFat.row.height}}; --rowColor:{{HTMLCaloriesFat.row.color}}; --rowBackG:{{HTMLCaloriesFat.row.background}}; 
+                    <div style="--rowHeight:{{HTMLCaloriesFat.row.height}}; --rowColor:{{HTMLCaloriesFat.row.color}}; --rowBackG:{{HTMLCaloriesFat.row.background}}; 
                             --rEven:{{HTMLCaloriesFat.row.even}}; --rOdd:{{HTMLCaloriesFat.row.odd}}; --rNewbackG:{{HTMLCaloriesFat.rowNew.background}};  --rNewcol:{{HTMLCaloriesFat.rowNew.color}};
                             --wType:{{HTMLCaloriesFat.colWidth.type}}; --wAction:{{HTMLCaloriesFat.colWidth.action}}; 
                             --wIngr:{{HTMLCaloriesFat.colWidth.ingr}}; 
@@ -137,17 +396,18 @@
                             [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}"
                             *ngIf="checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)" >
                             
-                        <div  class="widthAction" style="display:inline-block;">
+                        <div  id ="posAction" class="widthAction" style="display:inline-block;">
                             <span id='openAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
                                 A
                             </span>
                         </div>
-
-                        <input *ngIf='j===0' type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil" class="text widthType"  value="{{tab.Type}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}">
-                        <span *ngIf='j!==0'  class="text widthType"  style="pointer-events: none; display:inline-block;"    [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}" >&nbsp;</span>
-                    
-                        <input type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}" class="text widthIngr" value="{{content.Name}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}">
-                    
+                        <div id ="posType" style="display:inline-block;">
+                            <input *ngIf='j===0' type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil" class="text widthType"  value="{{tab.Type}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}">
+                            <span *ngIf='j!==0'  class="text widthType"  style="pointer-events: none; display:inline-block;"    [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}" >&nbsp;</span>
+                        </div>
+                        <div id ="posFood" style="display:inline-block;">
+                            <input type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}" class="text widthIngr" value="{{content.Name}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}">
+                        </div>
                         <input type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}" class="text widthOther" value="{{content.Serving}}" [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}" >
 
                         <input type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}" class="text widthOther" value="{{content.ServingUnit}}"  [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': (tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1)}">
@@ -173,122 +433,9 @@
             </div>
         </div>
     </div> 
+    <div id="posEndTable"></div>
 </div>
 
-<!--
-<div *ngFor="let tab of OutConfigCaloriesFat.tabCaloriesFat; let i=index ">
-
-    <div *ngFor="let content of OutConfigCaloriesFat.tabCaloriesFat[i].Content; let j=index">
-
-        <table >
-            <thead *ngIf="i==0 && j===0">
-                <tr >
-                    <th class="tableCol" style="width:15px;"></th>
-                    <th class="tableCol">Type</th>
-                    <th class="tableCol">Food</th>
-                    <th class="tableCol" style="width:40px;" >Serving</th>
-                    <th class="tableCol" style="width:40px;">Serv. unit</th>
-                    <th class="tableCol"  style="width:40px;">Calories</th>
-                    <th class="tableCol"  style="width:40px;">Glyc. Index</th>
-                    <th class="tableCol"  style="width:40px;">Sugar</th>
-                    <th class="tableCol"  style="width:40px;">Cholesterol</th>
-                    <th class="tableCol" style="width:40px;"> Sat. Fat</th>
-                    <th class="tableCol" style="width:40px;"> Total fat</th>
-                    
-                </tr>
-            </thead>
-            <tbody>
-                <tr [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0}" >
-                    <td class="tableCol" style="width:15px;">
-                        <button id='openAction-{{i}}-{{j}}' class="theAction" (click)="onAction($event)">A</button>
-                        <div class="dropdown ">
-                            <span style="margin-left:8px;">&nbsp;</span>
-                            <div class="Straight-content"  *ngIf="dialogueCalFat[TabOfId[0]]===true && TabOfId[0]===i && TabOfId[1]===j">
-                                <div  class="StraightDropDown StraightDropDownOverride"  >
-                                    <ul class="Buffer">&nbsp; </ul>
-                                    <li *ngFor="let action of TabAction; let m=index;" 
-                                            class="Straight-options Straight-optionsOverride"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                (click)="onAction($event)" id="selAction-{{i}}-{{j}}-{{m}}" [value]="m">
-                                                {{action.name}}:&nbsp;{{action.action}}
-                                            </li>
-                                    
-                                    <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
-                                </div>
-                            </div>
-                            <div class="Straight-content"  *ngIf="(isDeleteType===true || isDeleteFood===true) && TabOfId[0]===i && TabOfId[1]===j">
-                                <div  class="StraightDropDown RadioDropDown"  >
-                                    <ul class="Buffer">&nbsp; </ul>
-                                    <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion  </div> 
-                                    <div  class="theRadio">
-                                        <input   (click)='onAction($event)' type="radio"   id="YesDelConfirm-{{i}}-{{j}}"  value="Y" > &nbsp;&nbsp;Yes 
-                                        <input  style='margin-left:10px;' (click)='onAction($event)' type="radio"   id="NoDelConfirm-{{i}}-{{j}}"  value="N">  &nbsp;&nbsp; No 
-                                        <div class="skipLine">&nbsp; </div>  
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </td>
-                    <td class="tableCol">
-                        <span *ngIf="j===0">
-                            <textarea type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil" class="inputTextA" value="{{tab.Type}}" >
-                            </textarea>
-                        </span>
-                    </td>
-                    <td class="tableCol" >
-                        <textarea type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}" class="inputTextA" value="{{content.Name}}" >
-                        </textarea>
-                    </td>
-                    <td class="tableCol" style="width:40px;">
-                        <textarea type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}" class="inputTextA " value="{{content.Serving}}" >
-                        </textarea>
-                    </td>
-                    <td class="tableCol" style="width:40px;">
-                        <textarea type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}" class="inputTextA " value="{{content.ServingUnit}}" >
-                        </textarea>
-                    </td>
-                    <td class="tableCol" style="width:40px;">
-                        <textarea type="text" (input)="onInput($event)" id="calo-{{i}}-{{j}}"  class="inputTextA "value="{{content.Calories}}" >
-                        </textarea>
-                    </td>
-                    <td class="tableCol" style="width:40px;">
-                        <textarea type="text" (input)="onInput($event)" id="glyi-{{i}}-{{j}}" class="inputTextA " value="{{content.GlyIndex}}" >
-                        </textarea>
-                    </td>
-                    <td class="tableCol" style="width:40px;">
-                        <textarea type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}" class="inputTextA " value="{{content.Sugar}}" >
-                        </textarea>
-                    </td>
-                    <td class="tableCol" style="width:40px;">
-                        <textarea type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}" class="inputTextA " value="{{content.Cholesterol}}" >
-                        </textarea>
-                    </td>
-                    <td class="tableCol" style="width:40px;">
-                        <textarea type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}" class="inputTextA " value="{{content.Fat.Saturated}}" >
-                        </textarea>
-                    </td>
-                    <td class="tableCol" style="width:40px;">
-                        <textarea type="text" (input)="onInput($event)" id="tota-{{i}}-{{j}}" class="inputTextA " value="{{content.Fat.Total}}" >
-                        </textarea>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-
-    </div>
-
-
-</div>
--->
 
 </body>
-        <!--
-        <span  *ngIf="getScreenWidth<832">
-            <span style="display:inline-block; border:solid 1px red; " 
-            [ngStyle]="{'min-width.px': checkWidth , 'width.px': checkWidth }" >
-                        &nbsp;
-            </span>
-        </span>
-        -->
+

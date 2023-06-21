@@ -49,10 +49,14 @@ export class classLegendChart{
 
 export class classTitleLegend{
     display:boolean=true;
+    align:string='';
+    position:string='';
     text:string='Title legend';       
     color:string='blue';
     padding={
         left:0,
+        top:0,
+        bottom:0,
     };  
     font={
         size:14,
@@ -61,19 +65,9 @@ export class classTitleLegend{
     }
 }
 
-export class classAxisX{
-    border={
-        color:'blue',
-        width:2,
-      };
-    position:string='bottom';
-    stacked:boolean=false;
-    ticks={
-        color:'blue',
-      }
-}
 
-export class classAxisY{    
+
+export class classAxis{    
     position='left';   
     border={
         color:'red',
@@ -92,42 +86,93 @@ export class classFileParamChart{
 
 export class classTabFormChart{
         chartType: string='';
-        chartTitle: string='';
-        colorChartTitle:string='';
-        rgbaTitle={
+        chartTitle={
+            display:true,
+            text:"",
+            position:"",
+            padding:{
+                top:0,
+                bottom:0,
+            },
+            align:"",
+            color:'',
+            font:{
+                size:0,
+                weight:"",
+                family:""
+            }
+        };
+        chartTitleRgba={
             slider: new classReturnColor,
             palette: new classReturnColor,
         };
-        barThickness:number=0;
+        bar={
+            barThickness:0,
+            borderWidth:[],
+        };
+        line={
+            borderWidth:0,
+            showLine:true,
+            fill:false,
+            order:0,
+            pointRadius:0,
+            pointBorderWidth:0,
+            pointStyle:"",
+            pointBorderColor:"",
+            pointBackgroundColor:"",
+            pointHoverBackgroundColor:"",
+            tension:0,
+        };
         ratio:number=0;
         canvasWidth:number=0;
         canvasHeight:number=0;
         canvasBackground:string='';
+        canvasMarginLeft:number=0;
         rgbaCanvas={
             slider: new classReturnColor,
             palette: new classReturnColor,
         }
-        canvasMarginLeft:number=0;
-        stackedX:string='';
-        stackedY:string='';
-        legendTitle:string='';
-        colorLegendTitle:string='';
-        rgbaLegend={
+        
+        legendTitle={
+            display:true,
+            text:"",
+            position:"",
+            padding:{
+                left:0,
+                top:0,
+                bottom:0,
+            },
+            align:"",
+            color:'',
+
+            font:{
+                size:0,
+                weight:"",
+                family:""
+            }
+        };
+        legendTitleRgba={
             slider: new classReturnColor,
             palette: new classReturnColor,
-        }
+        };
         legendBox={
-            width:0,
-            height:0,
+            boxWidth:0,
+            boxHeight:0,
+            usePointStyle:true,
             pointStyle:'',
             color:'',
-            fontSize:0,
-            radius:0,
-        }
-        rgbaLegendBox={
+            borderRadius:0,
+            font:{
+                size:0,
+                weight:"",
+                family:""
+            }
+        };
+        legendBoxRgba={
             slider: new classReturnColor,
             palette: new classReturnColor,
-        }
+        };
+
         period:string='';
         startRange:string='';
         endRange:string='';
@@ -137,7 +182,14 @@ export class classTabFormChart{
             slider: new classReturnColor,
             palette: new classReturnColor,
         }];
-
+        limitLabels:Array<any>=[];
+        limitLabelsColor:Array<any>=[];
+        limitRgbaLabels:Array<any>=[{
+            slider: new classReturnColor,
+            palette: new classReturnColor,
+        }];
+        axisX=new classAxis;
+        axisY=new classAxis;
       }
 
       export class classReturnColor{

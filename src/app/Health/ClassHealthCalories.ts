@@ -8,6 +8,7 @@ export class mainClassCaloriesFat{
 export class ClassCaloriesFat{
     Type:string="";
     Content:Array<ClassItem>=[];
+    Total=new ClassItem;
   }
   
   export class ClassItem{
@@ -24,6 +25,7 @@ export class ClassCaloriesFat{
     };
     Protein:number=0;
     Carbs:number=0;
+    lockData:string="N";
   }
 
   //

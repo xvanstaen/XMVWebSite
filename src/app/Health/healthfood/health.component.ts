@@ -10,14 +10,13 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { BucketList } from '../../JsonServerClass';
-import { Bucket_List_Info } from '../../JsonServerClass';
+import { BucketList, Bucket_List_Info  } from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
 
 import {msginLogConsole} from '../../consoleLog'
-import { configServer, XMVConfig, LoginIdentif, msgConsole } from '../../JsonServerClass';
+import { configServer, XMVConfig, LoginIdentif, msgConsole, classPosDiv } from '../../JsonServerClass';
 
 import { environment } from 'src/environments/environment';
 import {manage_input} from '../../manageinput';
@@ -25,21 +24,17 @@ import {eventoutput, thedateformat} from '../../apt_code_name';
 
 import {  getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
 
-import {ClassSubConv} from '../../ClassConverter'
-import {ClassConv, mainClassConv} from '../../ClassConverter'
-import {ClassUnit} from '../../ClassConverter'
-import {ConvItem} from '../../ClassConverter'
+
+import {ClassSubConv, ClassConv, mainClassConv, ClassUnit, ConvItem} from '../../ClassConverter'
+
 import {ClassCaloriesFat, mainClassCaloriesFat} from '../ClassHealthCalories'
-import {ClassItem} from '../ClassHealthCalories'
-import {DailyReport, mainDailyReport} from '../ClassHealthCalories'
-import {ClassMeal} from '../ClassHealthCalories'
-import {ClassDish} from '../ClassHealthCalories'
+import {ClassItem, DailyReport, mainDailyReport, ClassMeal, ClassDish} from '../ClassHealthCalories'
 
 import {classConfHTMLFitHealth, classConfTableAll} from '../classConfHTMLTableAll';
 
 import {CalcFatCalories} from '../CalcFatCalories';
 import { classConfigChart, classchartHealth } from '../classConfigChart';
-import { classAxisX, classAxisY, classLegendChart, classPluginTitle , classTabFormChart, classFileParamChart} from '../classChart';
+import { classAxis,  classLegendChart, classPluginTitle , classTabFormChart, classFileParamChart} from '../classChart';
 
 
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
@@ -75,6 +70,7 @@ export class HealthComponent implements OnInit {
   @Input() InConfigHTMLFitHealth=new classConfHTMLFitHealth;
   @Input() InConfigChart=new classConfigChart;
   @Input() InFileParamChart=new classFileParamChart;
+  @Input() triggerFunction:number=0;
   
   fileParamChart=new classFileParamChart;
   ConfigChart=new classConfigChart;
@@ -83,6 +79,7 @@ export class HealthComponent implements OnInit {
   HealthAllData=new mainDailyReport; // contain the full object
   SelectedRecord = new DailyReport; 
   ConfigCaloriesFat=new mainClassCaloriesFat;
+  fileRecipe=new mainClassCaloriesFat;
 
   myLogConsole:boolean=false;
   myConsole:Array< msgConsole>=[];
@@ -144,6 +141,7 @@ export class HealthComponent implements OnInit {
     theAction: new FormControl('Action', { nonNullable: true }),
     DisplayChart: new FormControl('N', { nonNullable: true }),
     ReloadHTML: new FormControl('N', { nonNullable: true }),
+    ReloadChart: new FormControl('N', { nonNullable: true }),
     startRange: new FormControl('',[
           Validators.required,
           // validates date format yyyy-mm-dd with regular expression
@@ -232,13 +230,6 @@ tabInputFood:Array<any>=[];
 //selFood:string='';
 
 
-tablePosTop:number=0;
-tablePosLeft:number=0;
-docHeaderAll:any;
-posAppCalFat={
-  Top:0,
-  Left:0,
-}
 
 // Dropdown box dimension
 
@@ -258,21 +249,69 @@ sizeBoxMeal:number=0;
 sizeBoxContentFood:number=0;
 sizeBoxFood:number=0;
 
-docAppCalFat:any;
-
 mousedown:boolean=false;
 selectedPosition ={ 
   x: 0,
   y: 0} ;
 
+
+
+  docDivCalFat:any;
+  posDivCalFat= new classPosDiv;
+
+  docDivReportHealth:any;
+  posDivReportHealth= new classPosDiv;
   
+  docDivAfterTitle:any;
+  posDivAfterTitle= new classPosDiv;
+  getPosDivAfterTitle(){
+    if (document.getElementById("posAfterTitle")!==null){
+        this.docDivAfterTitle = document.getElementById("posAfterTitle");
+        this.posDivAfterTitle.Left = this.docDivAfterTitle.offsetLeft;
+        this.posDivAfterTitle.Top = this.docDivAfterTitle.offsetTop;
+        this.posDivAfterTitle.Client.Top=Math.round(this.docDivAfterTitle.getBoundingClientRect().top);
+        this.posDivAfterTitle.Client.Left=Math.round(this.docDivAfterTitle.getBoundingClientRect().left);
+    }
+  }
+
+  getPosDivOthers(){
+    if (document.getElementById("posTopAppCalFat")!==null){
+        this.docDivCalFat = document.getElementById("posTopAppCalFat");
+        this.posDivCalFat.Left = this.docDivCalFat.offsetLeft;
+        this.posDivCalFat.Top = this.docDivCalFat.offsetTop;
+        this.posDivCalFat.Client.Top=Math.round(this.docDivCalFat.getBoundingClientRect().top);
+        this.posDivCalFat.Client.Left=Math.round(this.docDivCalFat.getBoundingClientRect().left);
+    }
+    if (document.getElementById("posTopAppReportHealth")!==null){
+      this.docDivReportHealth = document.getElementById("posTopAppReportHealth");
+      this.posDivReportHealth.Left = this.docDivReportHealth.offsetLeft;
+      this.posDivReportHealth.Top = this.docDivReportHealth.offsetTop;
+      this.posDivReportHealth.Client.Top=Math.round(this.docDivReportHealth.getBoundingClientRect().top);
+      this.posDivReportHealth.Client.Left=Math.round(this.docDivReportHealth.getBoundingClientRect().left);
+    }
+  }
+
+
+titleHeight:number=0;
+posItem:number=0;
+eventClientY:number=0;
 @HostListener('window:mouseup', ['$event'])
 onMouseUp(event: MouseEvent) {
-  this.selectedPosition = { x: event.pageX, y: event.pageY };
-  this.getPosAfterTitle();
-  //console.log('evt.pageX='+evt.pageX+' evt.pageY=' + evt.pageY );
-}
+  //this.selectedPosition = { x: event.pageX, y: event.pageY };
+  this.getPosDivAfterTitle();
+  this.eventClientY=event.clientY;
 
+}
+findPosItem(sizeBox:any){
+  //this.posItem=this.confTableAll.height - this.posDivAfterTitle.Client.Top - this.titleHeight;
+  const thePos=Number(this.eventClientY)-Number(this.posDivAfterTitle.Client.Top)-Number(this.titleHeight);
+  this.posItem= Math.trunc(thePos / 20) * 20;
+  if (this.posItem===0) { this.posItem=1;}
+  if (Number(sizeBox)+this.posItem > this.confTableAll.height){
+    this.posItem=this.confTableAll.height - Number(sizeBox);
+  }
+}
+/****
 onMouseDown(evt: MouseEvent) {
   this.selectedPosition = { x: evt.pageX, y: evt.pageY };
 }
@@ -280,20 +319,10 @@ onMouseDown(evt: MouseEvent) {
 onMouseMove(evt: MouseEvent) {
   this.selectedPosition = { x: evt.pageX, y: evt.pageY };
 }
+ */
 
+  
 
-getPosAfterTitle(){
-  if (document.getElementById("posAfterTitle")!==null){
-      this.docHeaderAll = document.getElementById("posAfterTitle");
-      this.tablePosLeft = this.docHeaderAll.offsetLeft;
-      this.tablePosTop = this.docHeaderAll.offsetTop;
-  }
-  // to be passed to calories-fat component
-  this.docAppCalFat = document.getElementById("posAppCalFat"); 
-  this.posAppCalFat.Left = this.docAppCalFat.offsetLeft;
-  this.posAppCalFat.Top = this.docAppCalFat.offsetTop;
-  //console.log(' posAppCalFat   Top=' + this.posAppCalFat.Top + '  Left='+this.posAppCalFat.Left);
-}
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -302,7 +331,9 @@ onWindowResize() {
   }
 
 ngOnInit(): void {
-
+  
+  this.getPosDivOthers();
+  this.getPosDivAfterTitle();
   this.sizeBox.widthContent=160;
   this.sizeBox.widthOptions=160;
   this.sizeBox.heightItem=25;
@@ -383,6 +414,7 @@ ngOnInit(): void {
     this.ConfigHTMLFitHealth=this.InConfigHTMLFitHealth;
     this.confTableAll=this.InConfigHTMLFitHealth.ConfigHealth.confTableAll;
     this.EventHTTPReceived[3]=true;
+    this.calculateHeight();
   }
   // TO BE REVIEWED IN ORDER TO READ, MODIFY ONLINE AND SAVE
   //this.ConfigHTMLFitness.tabConfig[0].confTableAll=this.confTableAll;
@@ -394,13 +426,16 @@ ngOnInit(): void {
     this.ConfigChart=this.InConfigChart;
     this.EventHTTPReceived[4]=true;
   }
+
   if (this.fileParamChart.fileType===''){
     this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.myChartConfig,5);
   } else {
     this.fileParamChart=this.InFileParamChart;
     this.EventHTTPReceived[5]=true;
   }
-
+  if (this.fileRecipe.fileType===''){
+    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.recipe,6);
+  } 
  
  
   this.getScreenWidth = window.innerWidth;
@@ -412,11 +447,26 @@ ngOnInit(): void {
   const theDate=new Date;
   this.TheSelectDisplays.controls['startRange'].setValue('');
   this.TheSelectDisplays.controls['endRange'].setValue('');
+
+  if (this.triggerFunction!==0){
+    if (this.triggerFunction===3){
+      this.TheSelectDisplays.controls['DisplayAll'].setValue('Y');
+    } else if (this.triggerFunction===5){
+      this.TheSelectDisplays.controls['MgtCalories'].setValue('Y');
+    } else if (this.triggerFunction===7){
+      this.TheSelectDisplays.controls['DisplayChart'].setValue('Y');
+    } 
+
+    const theSelection='Y-'+this.triggerFunction;
+    this.SelRadio(theSelection.trim());
+  }
 }
 
-RetrieveConfHTML(){
 
-
+calculateHeight(){
+  var i=0;
+  i=this.confTableAll.title.height.indexOf('px');
+  this.titleHeight=Number(this.confTableAll.title.height.substring(0,i));
 }
 
 checkText:string='';
@@ -425,42 +475,6 @@ SearchText(event:any){
     this.checkText=event.currentTarget.value.toLowerCase().trim();
   } else { 
     this.checkText=''; 
-  }
-}
-
-saveParamChart(event:any){
-  this.fileParamChart.fileType=this.identification.fitness.fileType.myChart;
-  this.fileParamChart.data=event;
-  this.SaveNewRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, this.fileParamChart);
-}
-
-SaveCaloriesFat(event:any){
-  // save this file
- // if (Array.isArray(event)===false){
-  if (event.fileType===undefined){
-    this.SpecificForm.controls['FileName'].setValue(event);
-  } else if (event.tabCaloriesFat.length!==0) {
-      this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length);
-      for (var i=0; i<event.tabCaloriesFat.length; i++){
-        const CalFatClass = new ClassCaloriesFat;
-        this.ConfigCaloriesFat.tabCaloriesFat.push(CalFatClass);
-        this.ConfigCaloriesFat.tabCaloriesFat[i].Type=event.tabCaloriesFat[i].Type;
-                for (var j=0; j<event.tabCaloriesFat[i].Content.length; j++){
-          const itemClass= new ClassItem;
-          this.ConfigCaloriesFat.tabCaloriesFat[this.ConfigCaloriesFat.tabCaloriesFat.length-1].Content.push(itemClass);
-          this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j]=event.tabCaloriesFat[i].Content[j];
-      }
-      }
-  
-
-
-   // this.ConfigCaloriesFat=event;
-    if (this.ConfigCaloriesFat.fileType===''){
-      this.ConfigCaloriesFat.fileType=this.identification.configFitness.fileType.calories;
-    }
-    this.SaveNewRecord(this.identification.configFitness.bucket, this.SpecificForm.controls['FileName'].value, this.ConfigCaloriesFat);
-    this.CreateDropDownCalFat();
-
   }
 }
 
@@ -600,11 +614,16 @@ CreateTabFood(item:any, value:any){
     if (this.sizeBoxContentFood>this.sizeBox.maxHeightContent){
       this.sizeBoxContentFood=this.sizeBox.maxHeightContent;
       this.sizeBoxFood=this.sizeBox.maxHeightOptions;
+      this.sizeBox.scrollY="scroll";
     } else {
       this.sizeBoxFood=this.sizeBoxContentFood;
+      this.sizeBox.scrollY="hidden";
     }
+    this.findPosItem(this.sizeBoxFood);
+
     this.styleBoxFood=getStyleDropDownContent(this.sizeBoxContentFood, this.sizeBox.widthContent );
-    this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 24, this.selectedPosition.y - this.tablePosTop - 255, this.sizeBox.scrollY);
+    //this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 24, this.selectedPosition.y -this.posDivAfterTitle.Client.Top - 255, this.sizeBox.scrollY);
+    this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft +100, this.posItem, this.sizeBox.scrollY);
 
   }
   else if (item==='Meal'){
@@ -621,9 +640,14 @@ CreateTabFood(item:any, value:any){
         this.sizeBoxMeal=this.sizeBox.maxHeightOptions;
       } else {
         this.sizeBoxMeal=this.sizeBoxContentMeal;
+        this.sizeBox.scrollY="scroll";
       }
+      this.findPosItem(this.sizeBoxMeal);
+      this.sizeBox.scrollY="hidden";
+
       this.styleBoxMeal=getStyleDropDownContent(this.sizeBoxContentMeal, this.sizeBox.widthContent - 50);
-      this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 20,  this.selectedPosition.y - this.tablePosTop  - 255, this.sizeBox.scrollY);
+      //this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 20,  this.selectedPosition.y - this.posDivAfterTitle.Client.Top  - 255, this.sizeBox.scrollY);
+      this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft +70,  this.posItem, this.sizeBox.scrollY);
     }
 
 }
@@ -692,7 +716,6 @@ scrollHeight:number=0;
 scrollTop:number=0;
 
 onInputDailyAll(event:any){
-this.getPosAfterTitle();
 //this.offsetHeight= event.currentTarget.offsetHeight;
 this.offsetLeft = event.currentTarget.offsetLeft;
 //this.offsetTop = event.currentTarget.offsetTop;
@@ -789,9 +812,11 @@ onAction(event:any){
     this.dialogue[this.prevDialogue]=true;
     this.sizeBox.heightOptions=this.sizeBox.heightItem  * (this.NewTabAction.length) + 10;
     this.sizeBox.heightContent=this.sizeBox.heightOptions;
+    this.findPosItem(this.sizeBox.heightOptions);
 
     this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
-    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.selectedPosition.y - this.tablePosTop - 279, this.sizeBox.scrollY);
+    // this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - 279, this.sizeBox.scrollY);
+    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.posItem, this.sizeBox.scrollY);
 
   } else  if (event.target.id.substring(0,9)==='selAction'){
       if (event.target.textContent.indexOf('cancel')!==-1){
@@ -954,7 +979,8 @@ onAction(event:any){
     this.sizeBox.heightContent=90;
 
     this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, 240);
-    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.selectedPosition.y - this.tablePosTop - this.posDelConfirm, this.sizeBox.scrollY);
+    //this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - this.posDelConfirm, this.sizeBox.scrollY);
+    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.posItem, this.sizeBox.scrollY);
 
   }
 }
@@ -1278,6 +1304,9 @@ GetRecord(Bucket:string,GoogleObject:string, iWait:number){
                 if (this.HealthAllData.fileType===''){
                   this.HealthAllData.fileType=this.identification.fitness.fileType.Health;
                 }
+                if (this.InHealthAllData.fileType===''){
+                  this.FillHealthAllInOut(this.InHealthAllData, this.HealthAllData);
+                }
                 this.initTrackRecord();
                 this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
               } else if (iWait===1){
@@ -1296,13 +1325,16 @@ GetRecord(Bucket:string,GoogleObject:string, iWait:number){
               else if (iWait===3){
                   this.ConfigHTMLFitHealth=data;
                   this.confTableAll=this.ConfigHTMLFitHealth.ConfigHealth.confTableAll;
+                  this.calculateHeight();
               }
               else if (iWait===4){
                 this.ConfigChart=data;
               } 
               else if (iWait===5){
                 this.fileParamChart=data;
-              }
+              } else if (iWait===6){
+                this.fileRecipe=data;
+              } 
 
               this.returnFile.emit(data);
               this.EventHTTPReceived[iWait]=true;
@@ -1328,73 +1360,6 @@ calculateHealth(selRecord:DailyReport){
   }
 }
 
-ConfirmSave(event:any){
-      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-      this.error_msg='';
-      if (event.target.id.substring(0,3)==='Cre'){
-        // CHECK THAT THERE IS NO DUPE FOR THE DATE 
-        var i=0;
-        for (i=0; i<this.HealthData.tabDailyReport.length && this.error_msg===''; i++){
-          this.CheckDupeDate(this.HealthData.tabDailyReport[i].date);
-        }
-        if (this.error_msg===''){
-          this.IsSaveConfirmedCre = true;
-          this.IsSaveConfirmedSel = false;
-        } else {
-          this.errorFn='Cre';
-          this.IsSaveConfirmedCre = false;
-          this.IsSaveConfirmedSel = false;
-        }
-      } else if (event.target.id.substring(0,3)==='Sel'){
-        // CHECK THAT THERE IS NO DUPE FOR THE DATE 
-        if (this.SelectedRecord.date!==this.TheSelectDisplays.controls['SelectedDate'].value){
-            this.CheckDupeDate(this.SelectedRecord.date);
-        }
-        if (this.error_msg===''){
-          this.IsSaveConfirmedCre = false;
-          this.IsSaveConfirmedSel = true;
-        } else {
-          this.errorFn='Sel';
-          this.IsSaveConfirmedCre = false;
-          this.IsSaveConfirmedSel = false;
-        }
-      }  else if (event.target.id.substring(0,3)==='All'){
-          this.IsSaveConfirmedAll = true;
-          this.errorFn='All';
-      }
-    } 
-
-SaveCopy(){
-    this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
-    if (this.HealthAllData.fileType!==''){
-      this.HealthAllData.fileType=this.identification.fitness.fileType.Health;
-    }
-    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData);
-    this.returnFile.emit(this.HealthAllData);
-    this.isCopyFile=false;
-    this.TheSelectDisplays.controls['CopyFile'].setValue('N');
-    this.errorFn='Copy';
-  }
-
-CancelCopy(){
-    this.isCopyFile=false;
-    this.TheSelectDisplays.controls['CopyFile'].setValue('N');
-    this.errorFn='';
-  }
-
-CancelRecord(event:any){
-    this.findIds(event.target.id);
-    if (event.target.id.substring(0,3)==='Cre'){
-      this.HealthData.tabDailyReport.splice(0,this.HealthData.tabDailyReport.length);
-      this.theEvent.target.id='New';
-      this.CreateDay(this.theEvent);
-    } else if (event.target.id.substring(0,3)==='Sel'){
-        this.SelectedRecord = new DailyReport; 
-        this.isSelectedDateFound=false;
-        this.TheSelectDisplays.controls['SelectedDate'].setValue('');
-        // this.fillAllData(this.HealthAllData.tabDailyReport[this.SelectedRecordNb], this.SelectedRecord);
-    }
-  }
 
 fillAllData(inRecord:any, outRecord:any){
     var i=0;
@@ -1445,6 +1410,138 @@ cancelDelDate(){
 CancelUpdateAll(event:any){
   this.CancelSave()
 
+}
+
+
+saveParamChart(event:any){
+  this.fileParamChart.fileType=this.identification.fitness.fileType.myChart;
+  this.fileParamChart.data=event;
+  this.SaveNewRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, this.fileParamChart);
+}
+
+SaveCaloriesFat(event:any){
+  // save this file
+ // if (Array.isArray(event)===false){
+  if (event.fileType===undefined){
+    this.SpecificForm.controls['FileName'].setValue(event);
+  } else if (event.tabCaloriesFat.length!==0) {
+      this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length);
+      for (var i=0; i<event.tabCaloriesFat.length; i++){
+        const CalFatClass = new ClassCaloriesFat;
+        this.ConfigCaloriesFat.tabCaloriesFat.push(CalFatClass);
+        this.ConfigCaloriesFat.tabCaloriesFat[i].Type=event.tabCaloriesFat[i].Type;
+                for (var j=0; j<event.tabCaloriesFat[i].Content.length; j++){
+          const itemClass= new ClassItem;
+          this.ConfigCaloriesFat.tabCaloriesFat[this.ConfigCaloriesFat.tabCaloriesFat.length-1].Content.push(itemClass);
+          this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j]=event.tabCaloriesFat[i].Content[j];
+      }
+      }
+  
+
+
+   // this.ConfigCaloriesFat=event;
+    if (this.ConfigCaloriesFat.fileType===''){
+      this.ConfigCaloriesFat.fileType=this.identification.configFitness.fileType.calories;
+    }
+    this.SaveNewRecord(this.identification.configFitness.bucket, this.SpecificForm.controls['FileName'].value, this.ConfigCaloriesFat);
+    this.CreateDropDownCalFat();
+
+  }
+}
+
+SaveRecipeFile(event:any){
+  // save this file
+ // if (Array.isArray(event)===false){
+  if (event.fileType===undefined){
+    this.SpecificForm.controls['FileName'].setValue(event);
+  } else if (event.tabCaloriesFat.length!==0) {
+      this.fileRecipe.tabCaloriesFat.splice(0, this.fileRecipe.tabCaloriesFat.length);
+      for (var i=0; i<event.tabCaloriesFat.length; i++){
+        const CalFatClass = new ClassCaloriesFat;
+        this.fileRecipe.tabCaloriesFat.push(CalFatClass);
+        this.fileRecipe.tabCaloriesFat[i].Type=event.tabCaloriesFat[i].Type;
+        this.fileRecipe.tabCaloriesFat[i].Total=event.tabCaloriesFat[i].Total;
+        for (var j=0; j<event.tabCaloriesFat[i].Content.length; j++){
+              const itemClass= new ClassItem;
+              this.fileRecipe.tabCaloriesFat[this.fileRecipe.tabCaloriesFat.length-1].Content.push(itemClass);
+              this.fileRecipe.tabCaloriesFat[i].Content[j]=event.tabCaloriesFat[i].Content[j];
+          }
+      }
+  
+    if (this.fileRecipe.fileType===''){
+      this.fileRecipe.fileType=this.identification.fitness.fileType.recipe;
+    }
+    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.fileRecipe);
+
+
+  }
+}
+ConfirmSave(event:any){
+  this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+  this.error_msg='';
+  if (event.target.id.substring(0,3)==='Cre'){
+    // CHECK THAT THERE IS NO DUPE FOR THE DATE 
+    var i=0;
+    for (i=0; i<this.HealthData.tabDailyReport.length && this.error_msg===''; i++){
+      this.CheckDupeDate(this.HealthData.tabDailyReport[i].date);
+    }
+    if (this.error_msg===''){
+      this.IsSaveConfirmedCre = true;
+      this.IsSaveConfirmedSel = false;
+    } else {
+      this.errorFn='Cre';
+      this.IsSaveConfirmedCre = false;
+      this.IsSaveConfirmedSel = false;
+    }
+  } else if (event.target.id.substring(0,3)==='Sel'){
+    // CHECK THAT THERE IS NO DUPE FOR THE DATE 
+    if (this.SelectedRecord.date!==this.TheSelectDisplays.controls['SelectedDate'].value){
+        this.CheckDupeDate(this.SelectedRecord.date);
+    }
+    if (this.error_msg===''){
+      this.IsSaveConfirmedCre = false;
+      this.IsSaveConfirmedSel = true;
+    } else {
+      this.errorFn='Sel';
+      this.IsSaveConfirmedCre = false;
+      this.IsSaveConfirmedSel = false;
+    }
+  }  else if (event.target.id.substring(0,3)==='All'){
+      this.IsSaveConfirmedAll = true;
+      this.errorFn='All';
+  }
+} 
+
+SaveCopy(){
+this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
+if (this.HealthAllData.fileType!==''){
+  this.HealthAllData.fileType=this.identification.fitness.fileType.Health;
+}
+this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData);
+this.returnFile.emit(this.HealthAllData);
+this.isCopyFile=false;
+this.TheSelectDisplays.controls['CopyFile'].setValue('N');
+this.errorFn='Copy';
+}
+
+CancelCopy(){
+this.isCopyFile=false;
+this.TheSelectDisplays.controls['CopyFile'].setValue('N');
+this.errorFn='';
+}
+
+CancelRecord(event:any){
+this.findIds(event.target.id);
+if (event.target.id.substring(0,3)==='Cre'){
+  this.HealthData.tabDailyReport.splice(0,this.HealthData.tabDailyReport.length);
+  this.theEvent.target.id='New';
+  this.CreateDay(this.theEvent);
+} else if (event.target.id.substring(0,3)==='Sel'){
+    this.SelectedRecord = new DailyReport; 
+    this.isSelectedDateFound=false;
+    this.TheSelectDisplays.controls['SelectedDate'].setValue('');
+    // this.fillAllData(this.HealthAllData.tabDailyReport[this.SelectedRecordNb], this.SelectedRecord);
+}
 }
   
 CancelSave(){
@@ -1568,6 +1665,8 @@ SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any){
           )
       }
 
+
+
 waitHTTP(loop:number, max_loop:number, eventNb:number){
   const pas=500;
   if (loop%pas === 0){
@@ -1652,23 +1751,24 @@ LogMsgConsole(msg:string){
           this.isAllDataModified=true;
           //this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
           //this.initTrackRecord();
-    
-        } else if (i==='7'){
+        }
+        } else if (i==='8'){
           if (NoYes==='Y'){
             this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confHTML,3);
           } 
-        } else {
-          this.IsCalculateCalories=false;
+        }  else if (i==='7'){
+          if (NoYes==='Y'){
+            this.isDisplayChart=true;
+          } 
+          else {
+            this.isDisplayChart=false; //
+            }
+        }  else if (i==='9'){
+          if (NoYes==='Y'){
+              this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confChart,4);
+          }
         }
-      } else if (i==='8'){
-        if (NoYes==='Y'){
-          this.isDisplayChart=true;
-        } 
-       else {
-        this.isDisplayChart=false;
-      }
-      }
-  }
+    }
   
 
 

@@ -13,3 +13,15 @@ div{
 .myColor:hover{
     background-color: cyan;
 }
+
+.cancelCross{
+    float:right; margin-right:5px; text-align:center; 
+    display:block; width:20px; height:20px; 
+    border-radius:50% 50%; background-color: cyan;
+    margin-top:-5px;
+ 
+}
+
+.cancelCross:hover{
+    background-color: blue;
+}

@@ -37,6 +37,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   @Input() configServer=new configServer;
   @Input() XMVConfig=new XMVConfig;
   @Input() isConfigServerRetrieved:boolean=false;
+  @Input() INidentification=new LoginIdentif;
   @Output() returnFile= new EventEmitter<any>();
 
   redisplay_profile:number=0;
@@ -108,13 +109,16 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     this.getScreenHeight = window.innerHeight;
     this.device_type = navigator.userAgent;
     this.device_type = this.device_type.substring(10, 48);
-
-    this.identification.id=0;
-    this.identification.key=2;
-    this.identification.method="AES";
-    this.identification.UserId="";
-    this.identification.psw="";
-    this.identification.phone="";
+    if (this.INidentification.UserId!==''){
+        this.identification=this.INidentification;
+    } else {
+        this.identification.id=0;
+        this.identification.key=2;
+        this.identification.method="AES";
+        this.identification.UserId="";
+        this.identification.psw="";
+        this.identification.phone="";
+    }
   }
 
   @HostListener('window:resize', ['$event'])

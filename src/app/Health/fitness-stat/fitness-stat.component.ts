@@ -25,17 +25,10 @@ import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.servic
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 
-import {ConfigFitness} from '../ClassFitness';
-import {ConfigSport} from '../ClassFitness';
-import {PerformanceFitness} from '../ClassFitness';
-import {ClassSport} from '../ClassFitness';
-import {ClassResult} from '../ClassFitness';
-import {ClassActivity} from '../ClassFitness';
-import {ClassExercise} from '../ClassFitness';
-import {BigData} from '../ClassFitness';
-import {CreturnedData} from '../ClassFitness';
-import {CmyEvent} from '../ClassFitness';
-import {Ctarget} from '../ClassFitness';
+import {classPosDiv} from '../../JsonServerClass';
+import {ConfigFitness, ConfigSport, PerformanceFitness, ClassSport, ClassResult, ClassActivity, ClassExercise} from '../ClassFitness';
+import {BigData, CreturnedData, CmyEvent, Ctarget} from '../ClassFitness';
+
 
 export class ClassFilesAlreadyMerged{
   name:string='A';
@@ -267,7 +260,7 @@ selectedPosition ={
 @HostListener('window:mouseup', ['$event'])
 onMouseUp(event: MouseEvent) {
   this.selectedPosition = { x: event.pageX, y: event.pageY };
-  this.getPosAfterTitle();
+  this.getPosTitle();
   //console.log('evt.pageX='+evt.pageX+' evt.pageY=' + evt.pageY );
 }
 
@@ -279,15 +272,18 @@ onMouseMove(evt: MouseEvent) {
   this.selectedPosition = { x: evt.pageX, y: evt.pageY };
 }
 
-tablePosTop:number=0;
-tablePosLeft:number=0;
-docTable:any;
+docDivTable:any;
+posDivTable= new classPosDiv;
 
-getPosAfterTitle(){
+getPosTitle(){
   if (document.getElementById("posTitle")!==null){
-      this.docTable = document.getElementById("posTitle");
-      this.tablePosLeft = this.docTable.offsetLeft;
-      this.tablePosTop = this.docTable.offsetTop;
+      this.docDivTable = document.getElementById("posTitle");
+      this.posDivTable.Left = this.docDivTable.offsetLeft;
+      this.posDivTable.Top = this.docDivTable.offsetTop;
+      this.posDivTable.Client.Top=Math.round(this.docDivTable.getBoundingClientRect().top);
+      this.posDivTable.Client.Left=Math.round(this.docDivTable.getBoundingClientRect().left);
+      this.posDivTable.Client.Bottom=Math.round(this.docDivTable.getBoundingClientRect().bottom);
+      this.posDivTable.Client.Height=Math.round(this.docDivTable.getBoundingClientRect().height);
   }
 
 }
@@ -1621,7 +1617,7 @@ ConfirmSave(){
   this.OpenDialogue[this.prev_Dialogue]=false;
   var i=0;
   
-  for (i=0; i<this.ErrorinputDate.length && this.ErrorinputDate[i]===''; i++){
+  for (i=0; i<this.ErrorinputDate.length && ( this.ErrorinputDate[i]==='' || this.ErrorinputDate[i]===undefined ); i++){
   }
   if (i===this.ErrorinputDate.length) {
     this.SpecificForm.controls['FileName'].setValue(this.Google_Object_Name);

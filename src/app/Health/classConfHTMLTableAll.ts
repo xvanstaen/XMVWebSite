@@ -1,6 +1,7 @@
 export class classConfHTMLFitHealth{
 
   fileType:string="";
+  debugPhone:boolean=false;
   ConfigHealth={
       fileType:"HTMLHealthAllData",
       confTableAll: new classConfTableAll,
