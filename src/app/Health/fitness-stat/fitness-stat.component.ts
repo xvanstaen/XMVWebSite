@@ -9,15 +9,14 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { BucketList } from '../../JsonServerClass';
-import { Bucket_List_Info } from '../../JsonServerClass';
+import { BucketList , Bucket_List_Info} from '../../JsonServerClass';
+
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer } from '../../JsonServerClass';
-import { XMVConfig } from '../../JsonServerClass';
+import { configServer, XMVConfig, LoginIdentif } from '../../JsonServerClass';
+
 import { environment } from 'src/environments/environment';
-import { LoginIdentif } from '../../JsonServerClass';
 import {manage_input} from '../../manageinput';
 import {eventoutput, thedateformat} from '../../apt_code_name';
 
@@ -25,7 +24,8 @@ import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.servic
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 
-import {classPosDiv} from '../../JsonServerClass';
+import {classPosDiv, getPosDiv} from '../../getPosDiv';
+
 import {ConfigFitness, ConfigSport, PerformanceFitness, ClassSport, ClassResult, ClassActivity, ClassExercise} from '../ClassFitness';
 import {BigData, CreturnedData, CmyEvent, Ctarget} from '../ClassFitness';
 
@@ -260,7 +260,8 @@ selectedPosition ={
 @HostListener('window:mouseup', ['$event'])
 onMouseUp(event: MouseEvent) {
   this.selectedPosition = { x: event.pageX, y: event.pageY };
-  this.getPosTitle();
+  //this.getPosTitle();
+  this.posDivTable=getPosDiv("posTitle");
   //console.log('evt.pageX='+evt.pageX+' evt.pageY=' + evt.pageY );
 }
 
@@ -272,9 +273,9 @@ onMouseMove(evt: MouseEvent) {
   this.selectedPosition = { x: evt.pageX, y: evt.pageY };
 }
 
-docDivTable:any;
-posDivTable= new classPosDiv;
 
+posDivTable= new classPosDiv;
+/**
 getPosTitle(){
   if (document.getElementById("posTitle")!==null){
       this.docDivTable = document.getElementById("posTitle");
@@ -287,7 +288,8 @@ getPosTitle(){
   }
 
 }
-/************* END Select position of the table ***************/
+ */
+
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {

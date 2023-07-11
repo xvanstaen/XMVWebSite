@@ -14,8 +14,8 @@ import { BucketList, Bucket_List_Info} from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer, XMVConfig, LoginIdentif, classPosDiv } from '../../JsonServerClass';
-
+import { configServer, XMVConfig, LoginIdentif} from '../../JsonServerClass';
+import {classPosDiv, getPosDiv} from '../../getPosDiv';
 import { environment } from 'src/environments/environment';
 import {manage_input} from '../../manageinput';
 import {eventoutput, thedateformat} from '../../apt_code_name';
@@ -142,16 +142,10 @@ export class CaloriesFatComponent implements OnInit {
   posType=585;
   posFood=660;
   nameDeletedItem:string='';
-      
-  tablePosTop:number=-1;
-  tablePosLeft:number=0;
-  theHeight:number=0;
-  docHeaderAll:any;
 
-  RecipetablePosTop:number=-1;
-  RecipetablePosLeft:number=0;
+  theHeight:number=0;
+ 
   RecipetheHeight:number=0;
-  RecipedocHeaderAll:any;
     
   // get position of pointer/cursor
   mousedown:boolean=false;
@@ -165,9 +159,11 @@ onMouseUp(event: MouseEvent) {
     this.selectedPosition = { x: event.pageX, y: event.pageY };
     const i=this.HTMLCaloriesFat.title.height.indexOf('px');
     const titleHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,i));
-    this.getPosDivTable();
+    //this.getPosDivTable();
+    this.posDivTable=getPosDiv("posStartTable");
+
     // this allows to position the dropdown list where the click occured
-    this.posItemAction=Number(event.clientY)-Number(this.posDivTable.Client.Top)+Number(titleHeight);
+    this.posItemAction=Number(event.clientY)-Number(this.posDivTable.ClientRect.Top)+Number(titleHeight);
     if (this.posItemAction>this.HTMLCaloriesFat.height/2 ){
       // this allows to position the dropdownlist at the middle of the window and then dropdownlist remains within the scrolling window
       this.posItemAction=this.HTMLCaloriesFat.height/2;
@@ -175,73 +171,19 @@ onMouseUp(event: MouseEvent) {
  
   }
 
-  docDivTable:any;
   posDivTable= new classPosDiv;
-
-  docDivEndTable:any;
-  posDivEndTable= new classPosDiv;
-
-  docDivRecipeTable:any;
-  posDivRecipeTable= new classPosDiv;
-
-  docDivItem:any;
   posDivItem= new classPosDiv;
 
 
   getPosItem(item:string){
-    var trouve=false;
-    if (item==='Action'){
-      if (document.getElementById("posAction")!==null){
-        this.docDivItem = document.getElementById("posAction");
-        trouve=true;
-      }
-    } else if (item==='Type'){
-      if (document.getElementById("posType")!==null){
-        this.docDivItem = document.getElementById("posType");
-        trouve=true;
-      }
-    } else if (item==='Food'){
-      if (document.getElementById("posFood")!==null){
-        this.docDivItem = document.getElementById("posFood");
-        trouve=true;
-      }
-    }
-    if (trouve===true){
-      this.posDivItem.Left = this.docDivItem.offsetLeft;
-      this.posDivItem.Top = this.docDivItem.offsetTop;
-      this.posDivItem.Client.Top=Math.round(this.docDivItem.getBoundingClientRect().top);
-      this.posDivItem.Client.Left=Math.round(this.docDivItem.getBoundingClientRect().left);
-    }
+    var type:string='';
+    if (item==='Action'){ type="posAction"} 
+    else if (item==='Type'){type="posType" } 
+    else if (item==='Food'){type="posFood"}
+    this.posDivItem=getPosDiv(type);
+
   } 
 posItemAction:number=0;
-// position of the table referenced by the <div id="posTable"> 
-getPosDivTable(){
-    if (document.getElementById("posStartTable")!==null){
-      this.docDivTable = document.getElementById("posStartTable");
-      this.posDivTable.Left = this.docDivTable.offsetLeft;
-      this.posDivTable.Top = this.docDivTable.offsetTop;
-      this.theHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,this.HTMLCaloriesFat.title.height.indexOf('px')));
-      this.posDivTable.Client.Top=Math.round(this.docDivTable.getBoundingClientRect().top);
-      this.posDivTable.Client.Left=Math.round(this.docDivTable.getBoundingClientRect().left);
-    }
-}
-getPosDivOthers(){
-    if (document.getElementById("posEndTable")!==null){
-      this.docDivEndTable = document.getElementById("posEndTable");
-      this.posDivEndTable.Left = this.docDivEndTable.offsetLeft;
-      this.posDivEndTable.Top = this.docDivEndTable.offsetTop;
-      this.posDivEndTable.Client.Top=Math.round(this.docDivEndTable.getBoundingClientRect().top);
-      this.posDivEndTable.Client.Left=Math.round(this.docDivEndTable.getBoundingClientRect().left);
-    }
-    if (document.getElementById("posRecipeTable")!==null){
-      this.docDivRecipeTable = document.getElementById("posRecipeTable");
-      this.posDivRecipeTable.Left = this.docDivRecipeTable.offsetLeft;
-      this.posDivRecipeTable.Top = this.docDivRecipeTable.offsetTop;
-      this.RecipetheHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,this.HTMLCaloriesFat.title.height.indexOf('px')));
-      this.posDivRecipeTable.Client.Top=Math.round(this.docDivRecipeTable.getBoundingClientRect().top);
-      this.posDivRecipeTable.Client.Left=Math.round(this.docDivRecipeTable.getBoundingClientRect().left);
-    }
-  } 
 
 
 @HostListener('window:resize', ['$event'])
@@ -251,8 +193,12 @@ onWindowResize() {
   }
 
 ngOnInit(): void {
-  this.getPosDivTable();
-  this.getPosDivOthers();
+
+  this.posDivTable=getPosDiv("posStartTable");
+
+  this.RecipetheHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,this.HTMLCaloriesFat.title.height.indexOf('px')));
+  this.theHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,this.HTMLCaloriesFat.title.height.indexOf('px')));
+
   this.onWindowResize();
   this.device_type = navigator.userAgent;
   this.device_type = this.device_type.substring(10, 48);
@@ -291,12 +237,9 @@ ngOnInit(): void {
   
   const myActionRec={name:'Calculate',action:'Total'};
   this.TabActionRecipe.push(myActionRec);
-  //this.TabActionRecipe[this.TabActionRecipe.length-1].name='Calculate';
-  //this.TabActionRecipe[this.TabActionRecipe.length-1].action='Total';
+
   const myActionRec1={name:'Recipe',action:'Transfer'};
   this.TabActionRecipe.push(myActionRec1);
-  //this.TabActionRecipe[this.TabActionRecipe.length-1].name='Recipe';
-  //this.TabActionRecipe[this.TabActionRecipe.length-1].action='Transfer';
 
   if (this.ConfigCaloriesFat.tabCaloriesFat.length===0){
     this.initOutTab(this.ConfigCaloriesFat,'calories');
@@ -1027,7 +970,7 @@ CancelUpdates(event:any){
     if (this.ConfigCaloriesFat.tabCaloriesFat.length===0){
       this.initOutTab(this.ConfigCaloriesFat,'calories');
     } else {
-      this.fillConfig(this.outConfigCaloriesFat, this.ConfigCaloriesFat.fileType,'Calories');
+      this.fillConfig(this.outConfigCaloriesFat, this.ConfigCaloriesFat,'Calories');
       this.initTrackRecord();
     }
   }

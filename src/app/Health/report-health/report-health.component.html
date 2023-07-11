@@ -485,8 +485,8 @@
     <div *ngIf="isPosDivSlider===true " style="width:90%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
         <ul   style="list-style-type: none" >
             <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
-                    <span style="width:25%; display:inline-block;">{{docDivPosSlider.offsetHeight}}</span>
-                    <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{docDivPosSliderTrue.offsetHeight}}</span>
+                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.Height}}</span>
+                    <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Height}}</span>
             <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
                     <span style="width:25%; display:inline-block;">{{posDivPosSlider.Top}}</span>
                     <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Top}}</span>
@@ -496,20 +496,20 @@
             <span style="width:100%; display:inline-block; margin-top:5px; ">parentElement </span>    
                 <ul>
                     <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
-                        <span style="width:25%; display:inline-block;">{{docDivPosSlider.parentElement.offsetHeight}} </span>
-                        <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{docDivPosSliderTrue.parentElement.offsetHeight}} </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.parentElement.offsetHeight}} </span>
+                        <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetHeight}} </span>
                     <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
-                        <span style="width:25%; display:inline-block;">{{docDivPosSlider.parentElement.offsetTop}}</span>
-                        <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{docDivPosSliderTrue.parentElement.offsetTop}}</span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.parentElement.offsetTop}}</span>
+                        <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetTop}}</span>
                 </ul>
             <span style="width:100%; display:inline-block; margin-top:5px; ">offsetParent</span>
                 <ul>
                     <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
-                        <span style="width:25%; display:inline-block;">{{docDivPosSlider.offsetParent.offsetHeight}}</span>
-                        <span  *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{docDivPosSliderTrue.offsetParent.offsetHeight}}</span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
+                        <span  *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
                     <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
-                        <span style="width:25%; display:inline-block;">{{docDivPosSlider.offsetParent.offsetHeight}}</span>
-                        <span  *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{docDivPosSliderTrue.offsetParent.offsetHeight}}</span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
+                        <span  *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
                 </ul>
 <!--
             <span style="width:55%; display:inline-block; margin-top:5px; ">scrollTop: </span>
@@ -519,14 +519,14 @@
             <span style="width:100%; display:inline-block; margin-top:5px; ">docDivRecipeTable.getBoundingClientRect()</span>
                 <ul>
                     <span style="width:55%; display:inline-block; margin-top:5px;">Height: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.Client.Height}}</span>
-                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Client.Height}} </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Height}}</span>
+                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Height}} </span>
                     <span style="width:55%; display:inline-block; margin-top:5px; ">Top: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSliderTrue.Client.Top}}</span>
-                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Client.Top}}</span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
+                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
                     <span style="width:55%; display:inline-block; margin-top:5px; ">Bottom: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.Client.Bottom}}</span>
-                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Client.Bottom}}</span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Bottom}}</span>
+                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Bottom}}</span>
                     
                 </ul>
             <span style="width:55%; display:inline-block; margin-top:5px; ">clientY: </span><span style="width:45%; display:inline-block;">{{eventClientY}}</span>

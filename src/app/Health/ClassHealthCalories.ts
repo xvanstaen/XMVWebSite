@@ -14,7 +14,7 @@ export class ClassCaloriesFat{
   export class ClassItem{
     Name:string="";
     Serving:number=0;
-    ServingUnit: string="";
+    ServingUnit: string="gram";
     Calories:number=0;
     GlyIndex:number=0;
     Sugar:number=0;
@@ -52,7 +52,7 @@ export class ClassCaloriesFat{
   export class ClassDish{
     name:string='';
     quantity:number=0;
-    unit:string='';
+    unit:string='gram';
     calFat=new ClassItem;
   
   }

@@ -1,0 +1,57 @@
+
+
+
+
+<div style="margin-top:10px; background-color: white; margin-left:10px; width:450px; border:solid 2px blue; display:block;">
+    
+    <span style="margin-left:20px; color:blue; font-size:14px;">{{msg}}</span>
+
+    <div style="margin-top:5px; width:100%; display:inline-block;" ></div>
+    <div [ngStyle]="{'width.px':circleWidth,'margin-left.px':circleMarginLeft}" style="display:inline-block;"></div>
+    <div class="input" style=" color:blue; background-color:lightgreen; display:inline-block; text-align: center; height:40px; padding-top:10px;">Français</div> 
+    <div class="input" style=" color:blue; background-color:lightblue; display:inline-block;  text-align: center; height:40px; padding-top:10px;">English </div>
+    <div *ngIf="EventHTTPReceived[0]===true" [ngStyle]="{'max-height.px':tabMaxHeight, 'height.px':tabFreEngHeight}" style="overflow-y:auto">
+        <div *ngFor="let tab of tabFreEng; let i=index;">
+            <div class="circle" [ngStyle]="{'width.px':circleWidth,'height.px':circleHeight, 'margin-left.px':circleMarginLeft,'margin-top.px': 4 + (tab.inputHeight - inputMinHeight) / 2}" (click)="onAction($event)"  id="{{i}}">A</div>
+            
+            <textarea class="input"  (input)="onInput($event)" id="French-{{i}}" [ngClass]="{'FrEven': i % 2 === 0, 'FrOdd':i % 2 !== 0}" [ngStyle]="{'height.px':tab.inputHeight}" value="{{tab.French}}"> 
+            </textarea>
+            <textarea class="input"  (input)="onInput($event)" id="English-{{i}}"  [ngClass]="{'EnEven': i % 2 === 0, 'EnOdd':i % 2 !== 0}"  [ngStyle]="{'height.px':tab.inputHeight}" value="{{tab.English}}">
+            </textarea>
+            <div *ngIf="isAction===true && iRecord===i">
+                <div class="dropdown">
+                <div [ngStyle]="styleBoxAction">
+                    <div   [ngStyle]="styleBoxOptionAction"  >
+                        <li *ngFor="let tab of tabAction; let m=index;" 
+                                class="Straight-options "  [ngClass]=" {'even': m % 2 ===0, 'odd': m % 2 !==0}" 
+                                    (click)="afterDropDown($event)" id="Action" [value]="m">{{tab}}   
+                        </li>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <br>
+
+        </div>
+
+    </div>
+   
+</div>
+<br>
+<div *ngIf="isConfirmedSave===false && EventHTTPReceived[0]===true">
+    <button id='but_1' class="sizeButtons"  [ngStyle]="{'width.px':90, 'height.px':40,'margin-left.px':80,'margin-top:px':20}"  (click)="onSave()"> Save</button> &nbsp;&nbsp;
+    <button id='but_2' class="sizeButtons"  [ngStyle]="{'width.px':140, 'height.px':40}" (click)="onCancel()"> Cancel all updates</button>
+</div>
+<div *ngIf="isConfirmedSave===true && EventHTTPReceived[0]===true">
+    <div class="msg" style="margin-left:20px; color:blue;" >
+        Please enter the name of the file you want to save your data in :
+    </div>
+    <form  [formGroup]="SpecificForm" >
+        <input type='text' style='margin-left:100px; margin-top:20px; background-color:lightgrey;' formControlName="FileName" >
+        <br><br>
+        <button id='but_3' class="sizeButtons" [ngStyle]="{'width.px':100, 'height.px':40,'margin-left.px':80}" (click)="SaveRecord()">Confirm</button>
+        <button id='but_4' class="sizeButtons"  [ngStyle]="{'width.px':100, 'height.px':40}" (click)="CancelSave()"> Cancel</button>
+    </form>
+    <br><br>
+</div>
+<br>

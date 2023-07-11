@@ -121,9 +121,11 @@ export class AdminJsonComponent {
     NbRefresh_Bucket:number=0;
 
     TabAppsAutho:Array<any>=[];
-    Max_Apps:number=10;
+    Max_Apps:number=13;
 
     convertOnly:boolean=false;
+
+    dictionaryOnly:boolean=false;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -169,6 +171,8 @@ ngOnInit(){
             else if (this.identification.apps[i]==='Health'){this.TabAppsAutho[8]='Y';}
             else if (this.identification.apps[i]==='ConvMgt'){this.TabAppsAutho[9]='Y';}
             else if (this.identification.apps[i]==='ConvFn'){this.TabAppsAutho[10]='Y';}
+            else if (this.identification.apps[i]==='Recipe'){this.TabAppsAutho[11]='Y';}
+            else if (this.identification.apps[i]==='Dictionary'){this.TabAppsAutho[12]='Y';}
         }
       }
 
@@ -208,6 +212,12 @@ Process(event:string){
     this.GoToComponent=7;
   } else if (event==='Health'){
       this.GoToComponent=8;
+  } else if (event==='Recipe'){
+    this.GoToComponent=11;
+    this.dictionaryOnly=false;
+  } else if (event==='Dictionary'){
+    this.GoToComponent=11;
+    this.dictionaryOnly=true;
   } else if (event==='ConvMgt'){
       this.GoToComponent=9;
       this.convertOnly=false;

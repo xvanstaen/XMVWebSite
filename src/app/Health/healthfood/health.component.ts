@@ -16,14 +16,14 @@ import { BucketList, Bucket_List_Info  } from '../../JsonServerClass';
 // it is stored in MangoDB and accessed via ManageMangoDBService
 
 import {msginLogConsole} from '../../consoleLog'
-import { configServer, XMVConfig, LoginIdentif, msgConsole, classPosDiv } from '../../JsonServerClass';
+import { configServer, XMVConfig, LoginIdentif, msgConsole } from '../../JsonServerClass';
+import {classPosDiv, getPosDiv} from '../../getPosDiv';
 
 import { environment } from 'src/environments/environment';
 import {manage_input} from '../../manageinput';
 import {eventoutput, thedateformat} from '../../apt_code_name';
 
 import {  getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
-
 
 import {ClassSubConv, ClassConv, mainClassConv, ClassUnit, ConvItem} from '../../ClassConverter'
 
@@ -112,25 +112,25 @@ export class HealthComponent implements OnInit {
     FileName: new FormControl('', { nonNullable: true }),
   })
 
-  IsSaveConfirmedCre:boolean=false;
-  IsSaveConfirmedSel:boolean=false;
-  isCreateNew:boolean=false;
-  isDisplaySpecific:boolean=false;
-  isDisplayAll:boolean=false;
-  isCopyFile:boolean=false;
-  isMgtCaloriesFat:boolean=false;
-  isSelectedDateFound:boolean=false;
-  isDeleteConfirmed:boolean=false;
-  isAllDataModified:boolean=false;
-  IsSaveConfirmedAll:boolean=false;
-  IsCalculateCalories:boolean=false;
-  isDisplayChart:boolean=false;
+IsSaveConfirmedCre:boolean=false;
+IsSaveConfirmedSel:boolean=false;
+isCreateNew:boolean=false;
+isDisplaySpecific:boolean=false;
+isDisplayAll:boolean=false;
+isCopyFile:boolean=false;
+isMgtCaloriesFat:boolean=false;
+isSelectedDateFound:boolean=false;
+isDeleteConfirmed:boolean=false;
+isAllDataModified:boolean=false;
+IsSaveConfirmedAll:boolean=false;
+IsCalculateCalories:boolean=false;
+isDisplayChart:boolean=false;
 
-  errorFn:string='';
-  SelectedRecordNb:number=-1;
-  recordToDelete:number=0;
+errorFn:string='';
+SelectedRecordNb:number=-1;
+recordToDelete:number=0;
 
-  TheSelectDisplays: FormGroup = new FormGroup({ 
+TheSelectDisplays: FormGroup = new FormGroup({ 
     CreateNew: new FormControl('N', { nonNullable: true }),
     DisplaySpecific: new FormControl('N', { nonNullable: true }),
     DisplayAll: new FormControl('N', { nonNullable: true }),
@@ -156,15 +156,15 @@ export class HealthComponent implements OnInit {
   })
 
 
-  TabAction:Array<any>=[{name:''}];
-  NewTabAction:Array<any>=[{type:'', name:''}];
+TabAction:Array<any>=[{name:''}];
+NewTabAction:Array<any>=[{type:'', name:''}];
 
   // CONVERSION OF UNITS IF NEEDED
   
-  ConvToDisplay:Array<ConvItem>=[]
-  theTabOfUnits:Array<ClassUnit>=[];
+ConvToDisplay:Array<ConvItem>=[]
+theTabOfUnits:Array<ClassUnit>=[];
 
-  ValuesToConvert={
+ValuesToConvert={
     valueFromTo:0,
     From:'',
     To:'',
@@ -173,30 +173,29 @@ export class HealthComponent implements OnInit {
     type:'',
   }
 
-  theEvent={
+theEvent={
     target:{
       id:'',
       textContent:''
     }
   }
 
-  TabOfId:Array<any>=[];
+TabOfId:Array<any>=[];
 
-  dateRangeStart=new Date();
-  dateRangeEnd=new Date();
-  dateRangeStartHealth=new Date();
-  dateRangeEndHealth=new Date();
+dateRangeStart=new Date();
+dateRangeEnd=new Date();
+dateRangeStartHealth=new Date();
+dateRangeEndHealth=new Date();
 
-  getScreenWidth: any;
-  getScreenHeight: any;
-  device_type:string='';
+getScreenWidth: any;
+getScreenHeight: any;
+device_type:string='';
 
   /****  CONFIGURATION PARAMETERS FOR HTML *****/
- confTableAll= new classConfTableAll;
+confTableAll= new classConfTableAll;
 
- ConfigHTMLFitHealth= new classConfHTMLFitHealth;
+ConfigHTMLFitHealth= new classConfHTMLFitHealth;
  
-
 filterCalc:boolean=false;
 filterHealth:boolean=false;
 searchOneDate:number=0;
@@ -229,20 +228,16 @@ tabInputFood:Array<any>=[];
 //selType:string='';
 //selFood:string='';
 
-
-
 // Dropdown box dimension
 
 sizeBox = new classDropDown;
 
 styleBox:any;
-styleBoxMeal:any;
-styleBoxFood:any;
 styleBoxOption:any;
+styleBoxMeal:any;
 styleBoxOptionMeal:any;
+styleBoxFood:any;
 styleBoxOptionFood:any;
-
-//
 
 sizeBoxContentMeal:number=0;
 sizeBoxMeal:number=0;
@@ -254,75 +249,30 @@ selectedPosition ={
   x: 0,
   y: 0} ;
 
-
-
-  docDivCalFat:any;
-  posDivCalFat= new classPosDiv;
-
-  docDivReportHealth:any;
-  posDivReportHealth= new classPosDiv;
+posDivCalFat= new classPosDiv;
+posDivReportHealth= new classPosDiv;
+posDivAfterTitle= new classPosDiv;
   
-  docDivAfterTitle:any;
-  posDivAfterTitle= new classPosDiv;
-  getPosDivAfterTitle(){
-    if (document.getElementById("posAfterTitle")!==null){
-        this.docDivAfterTitle = document.getElementById("posAfterTitle");
-        this.posDivAfterTitle.Left = this.docDivAfterTitle.offsetLeft;
-        this.posDivAfterTitle.Top = this.docDivAfterTitle.offsetTop;
-        this.posDivAfterTitle.Client.Top=Math.round(this.docDivAfterTitle.getBoundingClientRect().top);
-        this.posDivAfterTitle.Client.Left=Math.round(this.docDivAfterTitle.getBoundingClientRect().left);
-    }
-  }
-
-  getPosDivOthers(){
-    if (document.getElementById("posTopAppCalFat")!==null){
-        this.docDivCalFat = document.getElementById("posTopAppCalFat");
-        this.posDivCalFat.Left = this.docDivCalFat.offsetLeft;
-        this.posDivCalFat.Top = this.docDivCalFat.offsetTop;
-        this.posDivCalFat.Client.Top=Math.round(this.docDivCalFat.getBoundingClientRect().top);
-        this.posDivCalFat.Client.Left=Math.round(this.docDivCalFat.getBoundingClientRect().left);
-    }
-    if (document.getElementById("posTopAppReportHealth")!==null){
-      this.docDivReportHealth = document.getElementById("posTopAppReportHealth");
-      this.posDivReportHealth.Left = this.docDivReportHealth.offsetLeft;
-      this.posDivReportHealth.Top = this.docDivReportHealth.offsetTop;
-      this.posDivReportHealth.Client.Top=Math.round(this.docDivReportHealth.getBoundingClientRect().top);
-      this.posDivReportHealth.Client.Left=Math.round(this.docDivReportHealth.getBoundingClientRect().left);
-    }
-  }
-
-
 titleHeight:number=0;
 posItem:number=0;
 eventClientY:number=0;
 @HostListener('window:mouseup', ['$event'])
 onMouseUp(event: MouseEvent) {
   //this.selectedPosition = { x: event.pageX, y: event.pageY };
-  this.getPosDivAfterTitle();
+  //this.getPosDivAfterTitle();
+  this.posDivAfterTitle=getPosDiv("posAfterTitle");
   this.eventClientY=event.clientY;
-
 }
+
 findPosItem(sizeBox:any){
-  //this.posItem=this.confTableAll.height - this.posDivAfterTitle.Client.Top - this.titleHeight;
-  const thePos=Number(this.eventClientY)-Number(this.posDivAfterTitle.Client.Top)-Number(this.titleHeight);
+  //this.posItem=this.confTableAll.height - this.posDivAfterTitle.ClientRect.Top - this.titleHeight;
+  const thePos=Number(this.eventClientY)-Number(this.posDivAfterTitle.ClientRect.Top)-Number(this.titleHeight);
   this.posItem= Math.trunc(thePos / 20) * 20;
   if (this.posItem===0) { this.posItem=1;}
   if (Number(sizeBox)+this.posItem > this.confTableAll.height){
     this.posItem=this.confTableAll.height - Number(sizeBox);
   }
 }
-/****
-onMouseDown(evt: MouseEvent) {
-  this.selectedPosition = { x: evt.pageX, y: evt.pageY };
-}
-
-onMouseMove(evt: MouseEvent) {
-  this.selectedPosition = { x: evt.pageX, y: evt.pageY };
-}
- */
-
-  
-
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -331,11 +281,13 @@ onWindowResize() {
   }
 
 ngOnInit(): void {
-  
-  this.getPosDivOthers();
-  this.getPosDivAfterTitle();
-  this.sizeBox.widthContent=160;
-  this.sizeBox.widthOptions=160;
+  //this.getPosDivOthers();
+  //this.getPosDivAfterTitle();
+  this.posDivCalFat=getPosDiv("posTopAppCalFat");
+  this.posDivAfterTitle=getPosDiv("posTopAppReportHealth");
+  this.posDivAfterTitle=getPosDiv("posAfterTitle");
+  this.sizeBox.widthContent=0;
+  this.sizeBox.widthOptions=220;
   this.sizeBox.heightItem=25;
   this.sizeBox.maxHeightContent=275;
   this.sizeBox.maxHeightOptions=275;
@@ -532,8 +484,10 @@ CreateDropDownCalFat(){
       //this.tabType.push({name:''});
       //this.tabType[this.tabType.length-1].name=this.ConfigCaloriesFat.tabCaloriesFat[i].Type.toLowerCase().trim();
       for (j=0; j<this.ConfigCaloriesFat.tabCaloriesFat[i].Content.length; j++){
-        this.tabFood.push({name:''});
-        this.tabFood[this.tabFood.length-1].name=this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Name.toLowerCase().trim();;
+        this.tabFood.push({name:'',serving:"",unit:""});
+        this.tabFood[this.tabFood.length-1].name=this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Name.toLowerCase().trim();
+        this.tabFood[this.tabFood.length-1].serving=this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Serving;
+        this.tabFood[this.tabFood.length-1].unit=this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].ServingUnit.toLowerCase().trim();
       }
    }
    //this.tabType.sort((a, b) => (a.name < b.name) ? -1 : 1);
@@ -605,9 +559,12 @@ CreateTabFood(item:any, value:any){
   if (item==='Food'){
     iTab=-1;
     for (var i=0; i<this.tabFood.length; i++){
-      if (this.tabFood[i].name.substr(0,value.trim().length).toLowerCase().trim()===value.toLowerCase().trim()){
+      if (this.tabFood[i].name.toLowerCase().trim().indexOf(value.toLowerCase().trim()) !== -1){
         iTab++;
-        this.tabInputFood[iTab]=this.tabFood[i].name.toLowerCase().trim();
+        this.tabInputFood.push({name:"",serving:"",unit:""});
+        this.tabInputFood[iTab].name=this.tabFood[i].name.toLowerCase().trim();
+        this.tabInputFood[iTab].serving=this.tabFood[i].serving;
+        this.tabInputFood[iTab].unit=this.tabFood[i].unit;
       }
     }
     this.sizeBoxContentFood=this.sizeBox.heightItem  * this.tabInputFood.length;
@@ -656,7 +613,8 @@ onSelMealFood(event:any){
   this.error_msg='';
   this.findIds(event.target.id);
   if (event.currentTarget.id.substring(0,7)==='selFood'){
-    this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name =event.target.textContent.toLowerCase().trim();
+    //this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name =event.target.textContent.toLowerCase().trim();
+    this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name =this.tabInputFood[this.TabOfId[3]].name;
     this.tabInputFood.splice(0,this.tabInputFood.length);
   } else if (event.currentTarget.id.substring(0,7)==='selMeal'){
     this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name=event.target.textContent.toLowerCase().trim();

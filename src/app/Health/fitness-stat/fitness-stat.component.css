@@ -420,41 +420,6 @@ div{
 }
 
 
-
-.objectHeader{
-  font-family: 'Roboto';
-  height:60px;
-  margin-left:30px;
-  font-size:20px;  
-  width:85%;
-  font-weight: bold;
-  display:block;
-  border:solid 2px blue;
-  padding-top:15px;
-  background-color: cyan;
-  text-align: center;
-  color:red;
-  }
-
-.object{
-  font-family: 'Roboto';
-  margin-left:30px;
-  font-size:16px;  
-  width:85%;
-  font-weight: bold;
-  display:block;
-  border-left:solid 2px blue;
-  border-right:solid 2px blue;
-  border-bottom:solid 2px blue;
-  padding-top:10px;
-  padding-left:40px;
-}
-
-.object:hover{
-background-color: cyan;
-font-size:18px;  
-}
-
 .inputSession{
   font-size:14px;
   margin-left:5px; 

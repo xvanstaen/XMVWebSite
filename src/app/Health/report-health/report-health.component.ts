@@ -19,7 +19,9 @@ import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 import { configServer, XMVConfig } from '../../JsonServerClass';
 
 import { environment } from 'src/environments/environment';
-import { LoginIdentif, classPosDiv, msgConsole } from '../../JsonServerClass';
+import { LoginIdentif, msgConsole } from '../../JsonServerClass';
+import {classPosDiv, getPosDiv} from '../../getPosDiv';
+
 import {manage_input} from '../../manageinput';
 import {eventoutput, thedateformat} from '../../apt_code_name';
 import {msginLogConsole} from '../../consoleLog'
@@ -326,23 +328,21 @@ export class ReportHealthComponent implements OnInit {
 
   isPosDivSlider:boolean=false;
   isPosDivSliderTrue:boolean=false;
-  docDivPosSlider:any;
-  posDivPosSlider= new classPosDiv;
-  docDivPosSliderTrue:any;
-  posDivPosSliderTrue= new classPosDiv;
   
+  posDivPosSlider= new classPosDiv;
+  posDivPosSliderTrue= new classPosDiv;
+/*******
   getPosDivPosSlider(){
     if (document.getElementById("posDivSlider")!==null){
         this.docDivPosSlider = document.getElementById("posDivSlider");
         this.isPosDivSlider=true;
         this.posDivPosSlider.Left = this.docDivPosSlider.offsetLeft;
         this.posDivPosSlider.Top = this.docDivPosSlider.offsetTop;
-        this.posDivPosSlider.Client.Top=Math.round(this.docDivPosSlider.getBoundingClientRect().top);
-        this.posDivPosSlider.Client.Left=Math.round(this.docDivPosSlider.getBoundingClientRect().left);
-        this.posDivPosSlider.Client.Bottom=Math.round(this.docDivPosSlider.getBoundingClientRect().bottom);
-        this.posDivPosSlider.Client.Height=Math.round(this.docDivPosSlider.getBoundingClientRect().height);
-        //const AA = this.docDivPosSlider.parentElement.offsetHeight;
-        //const BB = this.docDivPosSlider.parentElement.offsetTop;
+        this.posDivPosSlider.ClientRect.Top=Math.round(this.docDivPosSlider.getBoundingClientRect().top);
+        this.posDivPosSlider.ClientRect.Left=Math.round(this.docDivPosSlider.getBoundingClientRect().left);
+        this.posDivPosSlider.ClientRect.Bottom=Math.round(this.docDivPosSlider.getBoundingClientRect().bottom);
+        this.posDivPosSlider.ClientRect.Height=Math.round(this.docDivPosSlider.getBoundingClientRect().height);
+
     }
   }
   getPosDivPosSliderTrue(){
@@ -351,19 +351,22 @@ export class ReportHealthComponent implements OnInit {
       this.isPosDivSliderTrue=true;
       this.posDivPosSliderTrue.Left = this.docDivPosSliderTrue.offsetLeft;
       this.posDivPosSliderTrue.Top = this.docDivPosSliderTrue.offsetTop;
-      this.posDivPosSliderTrue.Client.Top=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().top);
-      this.posDivPosSliderTrue.Client.Left=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().left);
-      this.posDivPosSliderTrue.Client.Bottom=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().bottom);
-      this.posDivPosSliderTrue.Client.Height=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().height);
+      this.posDivPosSliderTrue.ClientRect.Top=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().top);
+      this.posDivPosSliderTrue.ClientRect.Left=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().left);
+      this.posDivPosSliderTrue.ClientRect.Bottom=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().bottom);
+      this.posDivPosSliderTrue.ClientRect.Height=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().height);
+      }
     }
-  }
+
+   */
   eventClientY:number=0;
   eventPageY:number=0;
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
     //this.selectedPosition = { x: event.pageX, y: event.pageY };
     if (this.debugPhone===true){
-        this.getPosDivPosSliderTrue();
+        //this.getPosDivPosSliderTrue();
+        this.posDivPosSliderTrue=getPosDiv("posDivSliderTrue");
         this.eventClientY=event.clientY;
         this.eventPageY=event.pageY;
     }
@@ -394,7 +397,8 @@ tabTitlePosition:Array<string>=["cancel","top","bottom"];
 tabDisplay:Array<boolean>=[false,true];
 ngOnInit() {
   if (this.debugPhone===true){
-      this.getPosDivPosSlider();
+      this.posDivPosSlider=getPosDiv("posDivSlider");
+      //this.getPosDivPosSlider();
   }
   var i=0;
   this.posSlider.VerHor='H';
@@ -640,7 +644,8 @@ SelChart(event:any){
   }
   this.fillInFormFromTab(this.selectedChart-1);
   if (this.debugPhone === true){
-    this.getPosDivPosSlider();
+    this.posDivPosSlider=getPosDiv("posDivSlider");
+    //this.getPosDivPosSlider();
   }
   
   
@@ -1241,7 +1246,8 @@ fnPaletteBis(event:any){
 temporaryColor:string='';
 fnPalette(event:any){ 
   if (this.debugPhone===true){
-      this.getPosDivPosSliderTrue();
+      //this.getPosDivPosSliderTrue();
+      this.posDivPosSliderTrue=getPosDiv("posDivSliderTrue");
   }
   this.temporaryColor=event;
   }

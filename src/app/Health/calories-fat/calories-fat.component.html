@@ -365,9 +365,9 @@
             </div>
         </div>
 </div>
-     <!-- ================== Confirm/Cancel delete of meal/food =============== -->
+     <!-- ================== Confirm/Cancel delete of meal/food =============== selectedPosition.y - posDeletedItem + 50 -->
 <div class="Straight-content"  *ngIf="(isDeleteType===true || isDeleteFood===true)">
-        <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': selectedPosition.y - tablePosTop  - posDeletedItem + 50,'margin-left.px': 50}" >
+        <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': posItemAction,'margin-left.px': 50}" >
             <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion of {{ nameDeletedItem }}</div> 
             <div  class="theRadio">
                 <input   (click)='onAction($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}"  value="Y" > &nbsp;&nbsp;Yes 
@@ -433,7 +433,7 @@
             </div>
         </div>
     </div> 
-    <div id="posEndTable"></div>
+
 </div>
 
 

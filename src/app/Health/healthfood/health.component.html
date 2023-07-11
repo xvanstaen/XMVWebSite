@@ -423,9 +423,9 @@
             <div   [ngStyle]="styleBoxOptionFood">
         
                 <li *ngFor="let tabFood of tabInputFood; let m=index;" 
-                        class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                            (click)="onSelMealFood($event)" id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{tabFood}}">
-                        {{tabFood}}
+                        class="Straight-options" [ngStyle]="{'width.px':sizeBox.widthOptions}" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                            (click)="onSelMealFood($event)" id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="m">
+                            {{tabFood.name}} - serving: {{tabFood.serving | number:'1.0-0'}}  {{tabFood.unit}}   
                 </li>
             </div>            
         </div>

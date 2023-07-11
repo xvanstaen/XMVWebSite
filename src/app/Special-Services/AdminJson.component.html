@@ -26,6 +26,8 @@
     <span  *ngIf="TabAppsAutho[5]==='Y'"(click)="Process('Console')" class="dropdown-options dropdown-text">Log console</span>
     <span  *ngIf="TabAppsAutho[7]==='Y'"(click)="Process('Fitness')" class="dropdown-options dropdown-text">Fitness</span>
     <span  *ngIf="TabAppsAutho[8]==='Y'"(click)="Process('Health')" class="dropdown-options dropdown-text">Health food</span>
+    <span  *ngIf="TabAppsAutho[11]==='Y'"(click)="Process('Recipe')" class="dropdown-options dropdown-text">Recipe</span>
+    <span  *ngIf="TabAppsAutho[12]==='Y'"(click)="Process('Dictionary')" class="dropdown-options dropdown-text">Dictionary</span>
     <span  *ngIf="TabAppsAutho[9]==='Y'"(click)="Process('ConvMgt')" class="dropdown-options dropdown-text">Conv Mgt</span>
     <span  *ngIf="TabAppsAutho[10]==='Y'"(click)="Process('ConvFn')" class="dropdown-options dropdown-text">Conv Fn</span>
     <span  *ngIf="TabAppsAutho[4]==='Y'"(click)="Process('Login')" class="dropdown-options dropdown-text">&nbsp;&nbsp;&nbsp;&nbsp;Login</span>
@@ -260,12 +262,22 @@
     </div>
   </ng-template>
   <ng-template #CompoTen>
-    <div *ngIf="GoToComponent===10">
+    <div *ngIf="GoToComponent===10; else CompoEleven">
 
     <app-converter  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" [convertOnly]="convertOnly" 
      [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [intheTabOfUnits]="theTabOfUnits"  [inWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"
          >
     </app-converter>
+   
+    </div>
+  </ng-template>
+  <ng-template #CompoEleven>
+    <div *ngIf="GoToComponent===11">
+
+      <app-recipe  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer"  
+      [InConvToDisplay]="ConvToDisplay"     [dictionaryOnly]="dictionaryOnly"
+     >
+     </app-recipe>
    
     </div>
   </ng-template>
