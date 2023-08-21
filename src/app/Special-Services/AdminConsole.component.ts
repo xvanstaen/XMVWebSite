@@ -6,7 +6,6 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 
-import { XMVConfig } from '../JsonServerClass';
 import { msginLogConsole } from '../consoleLog';
 import { LoginIdentif } from '../JsonServerClass';
 
@@ -36,7 +35,6 @@ export class AdminConsoleComponent {
     ) {}
 
     
-    @Input() ConfigXMV=new XMVConfig;
     @Input() ListOfBucket=new BucketList;
     @Input() theReceivedData=new Array<msgConsole>();
 

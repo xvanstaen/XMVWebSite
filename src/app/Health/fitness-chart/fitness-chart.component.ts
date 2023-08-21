@@ -11,7 +11,6 @@ import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angu
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
 import { configServer } from '../../JsonServerClass';
-import { XMVConfig } from '../../JsonServerClass';
 import { environment } from 'src/environments/environment';
 import { LoginIdentif } from '../../JsonServerClass';
 

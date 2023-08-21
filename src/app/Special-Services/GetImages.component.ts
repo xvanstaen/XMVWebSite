@@ -5,11 +5,11 @@ import { Router} from '@angular/router';
 import { ViewportScroller } from "@angular/common";
 import { EventAug } from '../JsonServerClass';
 import {Bucket_List_Info} from '../JsonServerClass';
-import { StructurePhotos } from '../JsonServerClass';
+import { StructurePhotos, configPhoto } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+
 import { msginLogConsole } from '../consoleLog';
-import { LoginIdentif } from '../JsonServerClass';
+import { LoginIdentif, configServer } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
 @Component({
   selector: 'app-GetImages',
@@ -38,8 +38,9 @@ export class GetImagesComponent {
     //@Input() LoginTable_DecryptPSW:Array<string>=[];
 
     @Input() WeddingPhotos:Array<StructurePhotos>=[];
-    @Input() ConfigXMV=new XMVConfig;
+    @Input() configPhoto=new configPhoto;
     @Input() identification=new LoginIdentif;
+    @Input() configServer=new configServer;
     EventHTTPReceived1:boolean=false;
     EventHTTPReceived2:boolean=false;
     EventHTTPReceived3:boolean=false;
@@ -109,7 +110,7 @@ ngOnInit(){
       this.getScreenHeight = window.innerHeight;
       this.EventHTTPReceived1=false;
       this.bucketMgt.Nb_Buckets_processed=0;
-      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  ;
+      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
@@ -117,13 +118,13 @@ ngOnInit(){
 
       // INITIALISATION
       this.bucketMgt.bucket_is_processed=false;
-      this.bucketMgt.GetOneBucketOnly=this.ConfigXMV.GetOneBucketOnly;
-      this.bucketMgt.Max_Nb_Bucket_Wedding=this.ConfigXMV.Max_Nb_Bucket_Wedding;
+      this.bucketMgt.GetOneBucketOnly=this.configPhoto.GetOneBucketOnly;
+      this.bucketMgt.Max_Nb_Bucket_Wedding=this.configPhoto.Max_Nb_Bucket_Wedding;
     
-      for (this.i=0; this.i<this.ConfigXMV.UserSpecific.length && this.identification.UserId!==this.ConfigXMV.UserSpecific[this.i].id; this.i++){}
+      for (this.i=0; this.i<this.configServer.UserSpecific.length && this.identification.UserId!==this.configServer.UserSpecific[this.i].id; this.i++){}
 
-      if (this.i<this.ConfigXMV.UserSpecific.length && this.identification.UserId===this.ConfigXMV.UserSpecific[this.i].id){
-            this.myLogConsole=this.ConfigXMV.UserSpecific[this.i].log;
+      if (this.i<this.configServer.UserSpecific.length && this.identification.UserId===this.configServer.UserSpecific[this.i].id){
+            this.myLogConsole=this.configServer.UserSpecific[this.i].log;
           }  else{ 
               this.myLogConsole=false;
             }
@@ -140,11 +141,11 @@ ngOnInit(){
         this.bucketMgt.bucket_wedding_name.push('');
         
         if (this.bucketMgt.i_Bucket<10){
-            this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1]=this.ConfigXMV.BucketWeddingRoot+'0'+bucket_str_nb.toString();
+            this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1]=this.configPhoto.BucketWeddingRoot+'0'+bucket_str_nb.toString();
         } else { 
-            this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1]=this.ConfigXMV.BucketWeddingRoot+bucket_str_nb.toString()
+            this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1]=this.configPhoto.BucketWeddingRoot+bucket_str_nb.toString()
           };
-        this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1]=this.ConfigXMV.TabBucketPhoto[this.bucketMgt.i_Bucket-1];
+        this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1]=this.configPhoto.TabBucketPhoto[this.bucketMgt.i_Bucket-1];
         ***/
         this.bucketMgt.bucket_list_returned.push('0');
         this.bucketMgt.bucket_list_returned[this.bucketMgt.i_Bucket-1]='0';
@@ -154,12 +155,12 @@ ngOnInit(){
         if (this.bucketMgt.GetOneBucketOnly===true){
           if (this.bucketMgt.i_Bucket===1){
                 // this.getListPhotos(this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket);
-                this.getListPhotos(this.ConfigXMV.TabBucketPhoto[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket);
+                this.getListPhotos(this.configPhoto.TabBucketPhoto[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket);
             }
         } else {
         // retrieve all buckets
                 // this.getListPhotos(this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket); 
-                this.getListPhotos(this.ConfigXMV.TabBucketPhoto[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket);
+                this.getListPhotos(this.configPhoto.TabBucketPhoto[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket);
           }
         
       }
@@ -179,7 +180,7 @@ ngOnInit(){
 access_all_buckets(){
 // HOW TO FORCE TO THE STORAGE OF THE RIGHT BUCKET AT THE END OF THE TABLE
     if (this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]%20===0){
-        //this.LogMsgConsole('access bucket '+this.ConfigXMV.TabBucketPhoto[this.bucketMgt.i_Bucket-1] + ' bucketMgt.i_Bucket='+ this.bucketMgt.i_Bucket+ ' + i_loop=' + this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]+ '  bucketMgt.bucket_list_returned'+ this.bucketMgt.bucket_list_returned[this.bucketMgt.i_Bucket-1]);
+        //this.LogMsgConsole('access bucket '+this.configPhoto.TabBucketPhoto[this.bucketMgt.i_Bucket-1] + ' bucketMgt.i_Bucket='+ this.bucketMgt.i_Bucket+ ' + i_loop=' + this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]+ '  bucketMgt.bucket_list_returned'+ this.bucketMgt.bucket_list_returned[this.bucketMgt.i_Bucket-1]);
     }
     this.id_Animation=window.requestAnimationFrame(() => this. access_all_buckets());
     this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]++;
@@ -255,7 +256,7 @@ process_next_bucket(bucket_nb:number){
     this.bucketMgt.i_Bucket=bucket_nb+1;
     if (this.bucketMgt.i_Bucket<=this.bucketMgt.Max_Nb_Bucket_Wedding){
           //this.getListPhotos(this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket); 
-          this.getListPhotos(this.ConfigXMV.TabBucketPhoto[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket);
+          this.getListPhotos(this.configPhoto.TabBucketPhoto[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket);
     }
     this.access_all_buckets();
     

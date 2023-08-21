@@ -3,6 +3,15 @@ div{
     --bufferW:60%;
 }
 
+.yesScroll{
+  overflow-y:scroll;
+  overflow-x:hidden;
+}
+
+.noScroll{
+  overflow:hidden;
+}
+
 .circle{
     border-radius: 50% 50%;
     color:white;
@@ -153,7 +162,13 @@ div{
     color: blue;
   }
 
-  
+.disableRow{
+  border:0px solid blue;
+}
+
+.disableRow:read-only{
+  border:0px solid blue;
+}
 
 /**
 .theAction{

@@ -51,18 +51,13 @@
         <span class='bucket even'>{{i}} - {{bucketList.name}}</span>
       
       </div> 
-      <!--
-      <span class='labelbucket even'>Contact messages</span> <span class='bucket even'> {{ConfigXMV.BucketContact}}</span>
-        <span class='labelbucket odd'>Login </span><span class='bucket odd'>{{ConfigXMV.BucketLogin}}</span>
-        <span class='labelbucket even'>Configuration files: </span><span class='bucket even'>{{ConfigXMV.BucketConfig}}</span>
-        <span class='labelbucket odd'>Log console</span><span class='bucket odd'>{{ConfigXMV.BucketConsole}}</span>
-      -->
+     
       </div>
   </div>
 </div>
  
 <div *ngIf="EventHTTPReceived[0]===true && Google_Bucket_Name!=='' && GoToComponent===6">
-      <app-ListBucketContent [configServer]="configServer" [ConfigXMV]="ConfigXMV"  [Bucket_Name]="Google_Bucket_Name"  
+      <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="Google_Bucket_Name"  
             (Return_Data)="ReceivedDataConfig($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
    
 
@@ -77,53 +72,53 @@
           <h2> Current configuration parameters of file  </h2>
           <h2>{{SelectedBucketInfo.name}}</h2>
           <div style="margin-left:20px;">
-                <span class='labelbucket odd'>BucketLogin</span> <span class='bucket odd'>  {{SelectedConfigFile.BucketLogin}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.BucketLogin}}</textarea>
+                <span class='labelbucket odd'>BucketLogin</span> <span class='bucket odd'>  {{configServer.BucketLogin}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.BucketLogin}}</textarea>
 
-                <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  {{SelectedConfigFile.BucketConsole}}</span>
-                <span class='labelbucket even'>&nbsp;&nbsp;e</span> <textarea id='field02' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.BucketConsole}}</textarea>
+                <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  {{configServer.BucketConsole}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field02' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.BucketConsole}}</textarea>
                 
-                <span class='labelbucket odd'>BucketContact</span> <span class='bucket odd'> {{SelectedConfigFile.BucketContact}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field03' (input)='TextInput($event)' class='FieldText '> {{ModifConfigFile.BucketContact}}</textarea>
+                <span class='labelbucket odd'>BucketContact</span> <span class='bucket odd'> {{configServer.BucketContact}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field03' (input)='TextInput($event)' class='FieldText '> {{ModifconfigServer.BucketContact}}</textarea>
 
-                <span class='labelbucket odd'>SourceJson_Google_Mongo</span> <span class='bucket odd'>  {{SelectedConfigFile.SourceJson_Google_Mongo}}</span>
-                <span class='labelbucket odd'>B&nbsp;&nbsp;</span> <textarea id='field04' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.SourceJson_Google_Mongo}}</textarea>
+                <span class='labelbucket odd'>SourceJson_Google_Mongo</span> <span class='bucket odd'>  {{configServer.SourceJson_Google_Mongo}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field04' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.SourceJson_Google_Mongo}}</textarea>
 
-                <span class='labelbucket even'>Max_Nb_Bucket_Wedding</span> <span class='bucket even'>  {{SelectedConfigFile.Max_Nb_Bucket_Wedding}}</span>
-                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field05' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.Max_Nb_Bucket_Wedding}}</textarea>
+                <span class='labelbucket even'>Max_Nb_Bucket_Wedding</span> <span class='bucket even'>  {{SelectedconfigPhoto.Max_Nb_Bucket_Wedding}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field05' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.Max_Nb_Bucket_Wedding}}</textarea>
 
-                <span class='labelbucket odd'>GetOneBucketOnly</span> <span class='bucket odd'>  {{SelectedConfigFile.GetOneBucketOnly}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field06' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.GetOneBucketOnly}}</textarea>
+                <span class='labelbucket odd'>GetOneBucketOnly</span> <span class='bucket odd'>  {{SelectedconfigPhoto.GetOneBucketOnly}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field06' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.GetOneBucketOnly}}</textarea>
 
-                <span class='labelbucket even'>nb_photo_per_page</span> <span class='bucket even'>  {{SelectedConfigFile.nb_photo_per_page}}</span>
-                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field07' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.nb_photo_per_page}}</textarea>
+                <span class='labelbucket even'>nb_photo_per_page</span> <span class='bucket even'>  {{SelectedconfigPhoto.nb_photo_per_page}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field07' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.nb_photo_per_page}}</textarea>
 
-                <span class='labelbucket odd'>process_display_canvas</span> <span class='bucket odd'> {{SelectedConfigFile.process_display_canvas}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field08' (input)='TextInput($event)' class='FieldText '> {{ModifConfigFile.process_display_canvas}}</textarea>
+                <span class='labelbucket odd'>process_display_canvas</span> <span class='bucket odd'> {{SelectedconfigPhoto.process_display_canvas}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field08' (input)='TextInput($event)' class='FieldText '> {{ModifconfigPhoto.process_display_canvas}}</textarea>
 
-                <span class='labelbucket even'>padding</span> <span class='bucket even'>  {{SelectedConfigFile.padding}}</span>
-                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field09' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.padding}}</textarea>
+                <span class='labelbucket even'>padding</span> <span class='bucket even'>  {{SelectedconfigPhoto.padding}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field09' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.padding}}</textarea>
 
-                <span class='labelbucket odd'>width500</span> <span class='bucket odd'>  {{SelectedConfigFile.width500}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field10' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.width500}}</textarea>
+                <span class='labelbucket odd'>width500</span> <span class='bucket odd'>  {{SelectedconfigPhoto.width500}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field10' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.width500}}</textarea>
 
-                <span class='labelbucket even'>maxPhotosWidth500</span> <span class='bucket even'>  {{SelectedConfigFile.maxPhotosWidth500}}</span>
-                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field11' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxPhotosWidth500}}</textarea>
+                <span class='labelbucket even'>maxPhotosWidth500</span> <span class='bucket even'>  {{SelectedconfigPhoto.maxPhotosWidth500}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field11' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.maxPhotosWidth500}}</textarea>
 
-                <span class='labelbucket odd'>width900</span> <span class='bucket odd'>  {{SelectedConfigFile.width900}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field012' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.width900}}</textarea>
+                <span class='labelbucket odd'>width900</span> <span class='bucket odd'>  {{SelectedconfigPhoto.width900}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field012' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.width900}}</textarea>
 
-                <span class='labelbucket even'>maxPhotosWidth900</span> <span class='bucket even'>  {{SelectedConfigFile.maxPhotosWidth900}}</span>
-                <span class='labelbucket even'>m&nbsp;&nbsp;</span> <textarea id='field013' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxPhotosWidth900}}</textarea>
+                <span class='labelbucket even'>maxPhotosWidth900</span> <span class='bucket even'>  {{SelectedconfigPhoto.maxPhotosWidth900}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field013' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.maxPhotosWidth900}}</textarea>
 
-                <span class='labelbucket odd'>maxWidth</span> <span class='bucket odd'>  {{SelectedConfigFile.maxWidth}}</span>
-                <span class='labelbucket odd'>m&nbsp;&nbsp;</span> <textarea id='field014' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxWidth}}</textarea>
+                <span class='labelbucket odd'>maxWidth</span> <span class='bucket odd'>  {{SelectedconfigPhoto.maxWidth}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field014' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.maxWidth}}</textarea>
 
-                <span class='labelbucket even'>maxPhotosmaxWidth</span> <span class='bucket even'>  {{SelectedConfigFile.maxPhotosmaxWidth}}</span>
-                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field015' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxPhotosmaxWidth}}</textarea>
+                <span class='labelbucket even'>maxPhotosmaxWidth</span> <span class='bucket even'>  {{SelectedconfigPhoto.maxPhotosmaxWidth}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field015' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.maxPhotosmaxWidth}}</textarea>
 
                
-                <div *ngFor='let TabBucket of SelectedConfigFile.TabBucketPhoto let i=index' >
+                <div *ngFor='let TabBucket of SelectedconfigPhoto.TabBucketPhoto let i=index' >
                       <span *ngIf='i===0'>
                           <span class='labelbucket even'>TabBucketPhoto</span> 
                       </span>
@@ -133,12 +128,12 @@
 
                       <span class='bucket even'> {{TabBucket}} </span>  
                       <span class='labelbucket even'> &nbsp; </span>      
-                      <textarea id='field{{16+i}}' (input)='TextInput($event)'  value=[ModifConfigFile.TabBucketPhoto[i]] class='FieldText '> {{ModifConfigFile.TabBucketPhoto[i]}} </textarea>  
+                      <textarea id='field{{16+i}}' (input)='TextInput($event)'  value=[ModifconfigPhoto.TabBucketPhoto[i]] class='FieldText '> {{ModifconfigPhoto.TabBucketPhoto[i]}} </textarea>  
                 </div>
            
 
 
-                <div *ngFor='let UsrSpec of SelectedConfigFile.UserSpecific let i=index' >
+                <div *ngFor='let UsrSpec of configServer.UserSpecific let i=index' >
                     <span *ngIf="i%2===0">
                         <span class='labelbucket odd'>UserSpecific  </span>
                     </span>   
@@ -147,30 +142,30 @@
                         <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     </span> 
                     
-                    <span class='bucketA  odd'>id</span> <span class='FieldTextA  odd'> {{SelectedConfigFile.UserSpecific[i].id}}  </span>
+                    <span class='bucketA  odd'>id</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].id}}  </span>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     <span class='bucketA  even'> &nbsp;</span>
-                    <textarea id='field{{i+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
-                                (input)='TextInput($event)' class='FieldTextA '>  {{SelectedConfigFile.UserSpecific[i].id}}  </textarea>
+                    <textarea id='field{{i+(2*i)+ModifconfigPhoto.TabBucketPhoto.length+16}}' 
+                                (input)='TextInput($event)' class='FieldTextA '>  {{configServer.UserSpecific[i].id}}  </textarea>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
-                    <span class='bucketA  odd'>type</span> <span class='FieldTextA  odd'> {{SelectedConfigFile.UserSpecific[i].type}}  </span>
+                    <span class='bucketA  odd'>type</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].type}}  </span>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     <span class='bucketA  even'> &nbsp;</span>
-                    <textarea id='field{{i+1+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
-                                  (input)='TextInput($event)' class='FieldTextA '>  {{SelectedConfigFile.UserSpecific[i].type}}</textarea>
+                    <textarea id='field{{i+1+(2*i)+ModifconfigPhoto.TabBucketPhoto.length+16}}' 
+                                  (input)='TextInput($event)' class='FieldTextA '>  {{configServer.UserSpecific[i].type}}</textarea>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     
-                    <span class='bucketA  odd'>log</span> <span class='FieldTextA  odd'> {{SelectedConfigFile.UserSpecific[i].log}}  </span>
+                    <span class='bucketA  odd'>log</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].log}}  </span>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     <span class='bucketA  even'> &nbsp;</span>
-                    <textarea id='field{{i+2+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
-                              (input)='TextInput($event)' class='FieldTextA '> {{SelectedConfigFile.UserSpecific[i].log}} </textarea>
+                    <textarea id='field{{i+2+(2*i)+ModifconfigPhoto.TabBucketPhoto.length+16}}' 
+                              (input)='TextInput($event)' class='FieldTextA '> {{configServer.UserSpecific[i].log}} </textarea>
                     
                 </div>
   
           </div>
           <div *ngIf="ModifyText===true">
-            <app-ChangeSaveFileName [configServer]="configServer" [SelectedBucketInfo]="SelectedBucketInfo" [DataToHttpPost]="ModifConfigFile" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
+            <app-ChangeSaveFileName [configServer]="configServer" [SelectedBucketInfo]="SelectedBucketInfo" [DataToHttpPost]="ModifconfigPhoto" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
  
 <!--
             <h3>
@@ -187,13 +182,13 @@
 
 
 <div *ngIf="(GoToComponent===4 || GoToComponent===5 || NbRefresh_Bucket>0) && EventHTTPReceived[0]===true && Google_Bucket_Name!=='' ">
-      <app-ListBucketContent [configServer]="configServer" [ConfigXMV]="ConfigXMV"  [Bucket_Name]="Google_Bucket_Name"  [NbRefresh_Bucket]="NbRefresh_Bucket"
+      <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="Google_Bucket_Name"  [NbRefresh_Bucket]="NbRefresh_Bucket"
             (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
 </div>
 
 
     <div *ngIf="GoToComponent===1; else CompoTwo ">
-        <app-GetImages [identification]="identification" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="LoginTable_User_Data" 
+        <app-GetImages [identification]="identification" [LoginTable_User_Data]="LoginTable_User_Data" [configServer]="configServer"
             [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
         </app-GetImages>
     </div>
@@ -201,7 +196,7 @@
   
   <ng-template #CompoTwo>
     <div *ngIf="GoToComponent===2 else CompoThree ">
-      <app-Event-27AUG2022 [identification]="identification" [ConfigXMV]="ConfigXMV" [configServer]="configServer" [LoginTable_User_Data]="LoginTable_User_Data" 
+      <app-Event-27AUG2022 [identification]="identification"  [configServer]="configServer" [LoginTable_User_Data]="LoginTable_User_Data" 
           [LoginTable_DecryptPSW]="LoginTable_DecryptPSW"> <!--  (returnDATA)="GetUpdatedTable($event)" -->
       </app-Event-27AUG2022>
   </div>
@@ -217,7 +212,7 @@
   <ng-template #CompoFour>
     <div *ngIf="GoToComponent===4; else CompoFive ">
       <div *ngIf="isDataReceived===true">
-        <app-AdminLogin [ConfigXMV]="ConfigXMV" [configServer]="configServer" [ListOfBucket]="ListOfBucket" 
+        <app-AdminLogin  [configServer]="configServer" [ListOfBucket]="ListOfBucket" 
             [theReceivedData]="theReceivedData" (process_login)="Process('Refresh_Login')" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminLogin>
       </div>
     </div>
@@ -227,7 +222,7 @@
   <ng-template #CompoFive>
     <div *ngIf="GoToComponent===5 ; else CompoSeven">
       <div *ngIf="isDataReceived===true">
-        <app-AdminConsole [ConfigXMV]="ConfigXMV" [ListOfBucket]="ListOfBucket"
+        <app-AdminConsole  [ListOfBucket]="ListOfBucket"
         [theReceivedData]="theReceivedData" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminConsole>
       </div>
     </div>
@@ -236,7 +231,7 @@
   <ng-template #CompoSeven>
     <div *ngIf="GoToComponent===7; else CompoEight">
 
-    <app-fitness-stat  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" 
+    <app-fitness-stat  [identification]="identification"  [configServer]="configServer" 
          [InMyConfigFitness]="MyConfigFitness" (returnFile)="ReceiveFiles($event)">
     </app-fitness-stat>
    
@@ -245,7 +240,7 @@
   <ng-template #CompoEight>
     <div *ngIf="GoToComponent===8; else CompoNine">
 
-    <app-health  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" [ConfigChart]="ConfigChart"
+    <app-health  [identification]="identification"  [configServer]="configServer" [ConfigChart]="ConfigChart"
     [InHealthAllData]="HealthAllData" [InConfigHTMLFitHealth]='ConfigHTMLFitHealth' [InConfigCaloriesFat]="ConfigCaloriesFat" [InConvertUnit]="ConvertUnit" (returnFile)="ReceiveFiles($event)" >
     </app-health>
    
@@ -254,7 +249,7 @@
   <ng-template #CompoNine>
     <div *ngIf="GoToComponent===9; else CompoTen">
 
-    <app-converter  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" [convertOnly]="convertOnly" 
+    <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly" 
     [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [IntheTabOfUnits]="theTabOfUnits"  [InWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"     
     >
     </app-converter>
@@ -264,7 +259,7 @@
   <ng-template #CompoTen>
     <div *ngIf="GoToComponent===10; else CompoEleven">
 
-    <app-converter  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer" [convertOnly]="convertOnly" 
+    <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly" 
      [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [intheTabOfUnits]="theTabOfUnits"  [inWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"
          >
     </app-converter>
@@ -274,7 +269,7 @@
   <ng-template #CompoEleven>
     <div *ngIf="GoToComponent===11">
 
-      <app-recipe  [identification]="identification" [XMVConfig]="ConfigXMV" [configServer]="configServer"  
+      <app-recipe  [identification]="identification"  [configServer]="configServer"  
       [InConvToDisplay]="ConvToDisplay"     [dictionaryOnly]="dictionaryOnly"
      >
      </app-recipe>

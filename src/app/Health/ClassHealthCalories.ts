@@ -2,6 +2,7 @@
 
 export class mainClassCaloriesFat{
   fileType:string='';
+  updatedAt:string='';
   tabCaloriesFat:Array<ClassCaloriesFat>=[];
 }
 
@@ -34,6 +35,7 @@ export class ClassCaloriesFat{
 
   export class mainDailyReport{
     fileType:string='';
+    updatedAt:string='';
     tabDailyReport:Array<DailyReport>=[];
   } 
   export class DailyReport{

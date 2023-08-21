@@ -4,13 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
-import { StructurePhotos } from '../JsonServerClass';
+import { StructurePhotos, configPhoto } from '../JsonServerClass';
 
-import { BucketExchange } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+import { BucketExchange, configServer } from '../JsonServerClass';
 
-import { msginLogConsole } from '../consoleLog';
-import { saveLogConsole } from '../consoleLog';
+import { msginLogConsole,  saveLogConsole } from '../consoleLog';
 import { msgConsole } from '../JsonServerClass';
 
 export class push_new_bucket{
@@ -61,8 +59,8 @@ export class WeddingPhotosComponent {
     maxHPhoto=0;
     nbPhotoPerRow=0;
 
-
-    @Input() ConfigXMV=new XMVConfig;
+    @Input() configServer = new configServer;
+    @Input() configPhoto=new configPhoto;
     @Input() bucketMgt=new BucketExchange;
     @Input() WeddingPhotos:Array<StructurePhotos>=[];
 
@@ -148,7 +146,7 @@ onWindowResize() {
       this.getScreenHeight = window.innerHeight;
       this.SizeImage();
       if (this.first_canvas_displayed=true){
-        if (this.ConfigXMV.process_display_canvas===true){
+        if (this.configPhoto.process_display_canvas===true){
           this.change_canvas_size(this.initialCanvasPhoto);
         }
         
@@ -181,7 +179,7 @@ SizeImage(){
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
     this.device_type = navigator.userAgent;
-    this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  ;
+    this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
     if (this.EventLogConsole.length!==0){
       for (this.i=0; this.i<this.EventLogConsole.length-1; this.i++){
         let theMSG=new msgConsole;
@@ -212,7 +210,7 @@ SizeImage(){
     this.nb_current_page = 1;
     this.scroller.scrollToAnchor('targetTop');
     this.WentonNgInit=true;
-    for (let i=0; i<this.ConfigXMV.nb_photo_per_page; i++){
+    for (let i=0; i<this.configPhoto.nb_photo_per_page; i++){
       this.pages_to_display.push(0);
       this.pages_to_display[i]=i+1;
     }
@@ -220,9 +218,9 @@ SizeImage(){
   }    
 
   ngAfterViewInit() { 
-    //this.LogMsgConsole('ngAfterViewInit() - WeddingPhotos.length'+this.WeddingPhotos.length+' isWeddingPhotoEmpty'+this.isWeddingPhotoEmpty+'  ConfigXMV.process_display_canvas is '+this.ConfigXMV.process_display_canvas);
+    //this.LogMsgConsole('ngAfterViewInit() - WeddingPhotos.length'+this.WeddingPhotos.length+' isWeddingPhotoEmpty'+this.isWeddingPhotoEmpty+'  ConfigXMV.process_display_canvas is '+this.configPhoto.process_display_canvas);
       
-    if (this.ConfigXMV.process_display_canvas===true){
+    if (this.configPhoto.process_display_canvas===true){
       this.theCanvas=document.getElementById('canvasElem');
       if (!this.ctx) { //true
           this.ctx=this.theCanvas.getContext('2d');
@@ -247,18 +245,18 @@ SizeImage(){
 
 displayPhotos(){
   //this.LogMsgConsole('DisplayPhotos buckets processed '+ this.bucketMgt.bucket_is_processed+ ' size file '+ this.WeddingPhotos.length);
-  this.j=(this.nb_current_page-1)*this.ConfigXMV.nb_photo_per_page;
+  this.j=(this.nb_current_page-1)*this.configPhoto.nb_photo_per_page;
   if (this.bucketMgt.bucket_is_processed===true && this.WeddingPhotos.length!==0 && this.slow_table.length===0){
         this.isWeddingPhotoEmpty=false;
         // initialise the tables to display the images and the number of pages 
         this.initialiseTables(0);
-        if (this.ConfigXMV.process_display_canvas===true){
+        if (this.configPhoto.process_display_canvas===true){
               this.drawPhotoCanvas();
         }
   }
 }
 initialiseTables(i:number){
-  for (this.i=i; this.i<this.ConfigXMV.nb_photo_per_page && this.j<this.WeddingPhotos.length; this.i++){
+  for (this.i=i; this.i<this.configPhoto.nb_photo_per_page && this.j<this.WeddingPhotos.length; this.i++){
 
     this.slow_table.push('');
     this.slow_table[this.i]=this.WeddingPhotos[this.j].mediaLink;
@@ -299,7 +297,7 @@ display_page(page_nb:number){
 
 DefinePageRange(){
 
-  this.nb_current_photo=(this.nb_current_page-1)*this.ConfigXMV.nb_photo_per_page; // first photo for the next page -1
+  this.nb_current_photo=(this.nb_current_page-1)*this.configPhoto.nb_photo_per_page; // first photo for the next page -1
   
   // looking for the middle of the page
    // if number of pages to display is < 10 then nothing to change 
@@ -345,7 +343,7 @@ manage_page(event:any){
     this.PhotoNumber.splice(0,this.PhotoNumber.length);
     this.PhotoToDisplay.splice(0,this.PhotoToDisplay.length);
     
-    this.j=(this.nb_current_page-1)*this.ConfigXMV.nb_photo_per_page;
+    this.j=(this.nb_current_page-1)*this.configPhoto.nb_photo_per_page;
     this.initialiseTables(0);
     
     this.DisplayPageRange=false;
@@ -362,7 +360,7 @@ manage_page(event:any){
                   
           //  }
           if (this.bucketMgt.Nb_Buckets_processed<this.bucketMgt.Max_Nb_Bucket_Wedding){
-              if (this.nb_current_photo>this.WeddingPhotos.length-2*this.ConfigXMV.nb_photo_per_page){
+              if (this.nb_current_photo>this.WeddingPhotos.length-2*this.configPhoto.nb_photo_per_page){
                   this.emitBucketProcessed=true;
                   this.AddBucket.emit(this.bucketMgt.Nb_Buckets_processed); 
               }
@@ -374,7 +372,7 @@ manage_page(event:any){
       this.WeddingPhotos[this.nb_current_photo].isdiplayed=true;
       this.imagesToDisplay=this.PhotoToDisplay.length;
 
-      if (this.ConfigXMV.process_display_canvas===true){
+      if (this.configPhoto.process_display_canvas===true){
         this.ManageCanvas();
       }
   }
@@ -451,8 +449,8 @@ LoadImage(){
 
 
 calculate_pages(){
-  this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.ConfigXMV.nb_photo_per_page);
-  if (this.WeddingPhotos.length%this.ConfigXMV.nb_photo_per_page!==0){
+  this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.configPhoto.nb_photo_per_page);
+  if (this.WeddingPhotos.length%this.configPhoto.nb_photo_per_page!==0){
     this.nb_total_page++
   }
   this.j=1;
@@ -514,15 +512,15 @@ ngOnChanges(changes: SimpleChanges) {
     this.DefinePageRange();
     let flag=this.callFromCanvas;
 
-    if (this.PhotoToDisplay.length<this.ConfigXMV.nb_photo_per_page
-      // && this.nb_current_page*this.ConfigXMV.nb_photo_per_page+this.PhotoToDisplay.length-1<this.nb_total_page*this.ConfigXMV.nb_photo_per_page
+    if (this.PhotoToDisplay.length<this.configPhoto.nb_photo_per_page
+      // && this.nb_current_page*this.configPhoto.nb_photo_per_page+this.PhotoToDisplay.length-1<this.nb_total_page*this.configPhoto.nb_photo_per_page
       ){    
         this.i=this.PhotoToDisplay.length;
         this.j=this.PhotoNumber[this.i-1];
         this.initialiseTables(this.i);
     }
     this.LoadImage();
-    const i=(this.nb_current_page+2)*this.ConfigXMV.nb_photo_per_page+1;
+    const i=(this.nb_current_page+2)*this.configPhoto.nb_photo_per_page+1;
     if (this.emitBucketProcessed===true && i>this.nb_total_page){
       this.emitBucketProcessed=false;
     }
@@ -555,7 +553,7 @@ drawDiapoCanvas(){
   this.emitBucketProcessed=false;
   this.error_Diapo='';
   this.message_Diapo='';
-  this.ConfigXMV.padding=10;
+  this.configPhoto.padding=10;
   this.ctxTwo.canvas.width=Math.floor(this.getScreenWidth*0.90);
   // this.ctxTwo.canvas.height=Math.floor(this.getScreenWidth*0.50)*21;
   
@@ -575,25 +573,25 @@ drawDiapoCanvas(){
   this.maxHPhoto=0;
   this.nbPhotoPerRow=0;
   // calculate size of the canvas considering 3 photos is width < 500; 6 photos if width<901 & 9 photos if >900
-  if (this.getScreenWidth<this.ConfigXMV.width500){
-    this.nbPhotoPerRow=this.ConfigXMV.maxPhotosWidth500;
+  if (this.getScreenWidth<this.configPhoto.width500){
+    this.nbPhotoPerRow=this.configPhoto.maxPhotosWidth500;
 
-  } else if (this.getScreenWidth<this.ConfigXMV.width900){
-    this.nbPhotoPerRow=this.ConfigXMV.maxPhotosWidth900;
+  } else if (this.getScreenWidth<this.configPhoto.width900){
+    this.nbPhotoPerRow=this.configPhoto.maxPhotosWidth900;
   } else {
-        if(this.ConfigXMV.maxWidth<this.getScreenWidth){
-          this.ctxTwo.canvas.width=Math.floor(this.ConfigXMV.maxWidth*0.90);
+        if(this.configPhoto.maxWidth<this.getScreenWidth){
+          this.ctxTwo.canvas.width=Math.floor(this.configPhoto.maxWidth*0.90);
             }
-            this.nbPhotoPerRow=this.ConfigXMV.maxPhotosmaxWidth;
+            this.nbPhotoPerRow=this.configPhoto.maxPhotosmaxWidth;
   }
-  this.maxHPhoto= Math.floor(this.ctxTwo.canvas.width*0.6/this.nbPhotoPerRow)-this.ConfigXMV.padding;
+  this.maxHPhoto= Math.floor(this.ctxTwo.canvas.width*0.6/this.nbPhotoPerRow)-this.configPhoto.padding;
  
-  this.maxWPhotoH=Math.floor(this.ctxTwo.canvas.width/this.nbPhotoPerRow)-this.ConfigXMV.padding;
-  this.maxWPhotoV=Math.floor(Math.floor(this.getScreenWidth*0.50)/this.nbPhotoPerRow)-this.ConfigXMV.padding;
+  this.maxWPhotoH=Math.floor(this.ctxTwo.canvas.width/this.nbPhotoPerRow)-this.configPhoto.padding;
+  this.maxWPhotoV=Math.floor(Math.floor(this.getScreenWidth*0.50)/this.nbPhotoPerRow)-this.configPhoto.padding;
   
  
 
-  this.ctxTwo.canvas.height=(this.maxHPhoto+this.ConfigXMV.padding)*(nbPhotos/this.nbPhotoPerRow+1);
+  this.ctxTwo.canvas.height=(this.maxHPhoto+this.configPhoto.padding)*(nbPhotos/this.nbPhotoPerRow+1);
   
   let nbRow=0;
 
@@ -602,13 +600,13 @@ drawDiapoCanvas(){
       for (j=0; j<this.nbPhotoPerRow && i-1+j<this.WeddingPhotos.length && i-1+j<this.DiapoForm.controls['EndDiapoNb'].value; j++){
         this.myImage=new Image();
         this.myImage.src=this.WeddingPhotos[i-1+j].mediaLink;
-        const y = nbRow*(this.maxHPhoto+this.ConfigXMV.padding)+this.ConfigXMV.padding;
+        const y = nbRow*(this.maxHPhoto+this.configPhoto.padding)+this.configPhoto.padding;
         //this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
         //this.ctxTwo.beginPath();
         if (this.WeddingPhotos[i-1+j].vertical===true){
-          this.ctxTwo.drawImage(this.myImage, j*this.maxWPhotoH+j*this.ConfigXMV.padding, y, this.maxWPhotoV,this.maxHPhoto);
+          this.ctxTwo.drawImage(this.myImage, j*this.maxWPhotoH+j*this.configPhoto.padding, y, this.maxWPhotoV,this.maxHPhoto);
         } else {
-              this.ctxTwo.drawImage(this.myImage,j*this.maxWPhotoH+j*this.ConfigXMV.padding,y,this.maxWPhotoH,this.maxHPhoto);
+              this.ctxTwo.drawImage(this.myImage,j*this.maxWPhotoH+j*this.configPhoto.padding,y,this.maxWPhotoH,this.maxHPhoto);
           }
         //console.log('i= '+i+' nbRow='+nbRow+'  position of the photo is: x= '+j*this.maxWPhotoH+' y= '+y+ ' and size photo is w= '+this.maxWPhotoH+'  height= '+this.maxHPhoto)
     
@@ -652,15 +650,15 @@ OnClickCanvas(evt: MouseEvent){
     //console.log('OnClickCanvas'+ evt+'  x='+evt.offsetX+'  y='+ evt.offsetY+'  photo w='+this.maxWPhotoH+'  photo H='+this.maxHPhoto);
     let x=0;
     let y=0;
-    if (evt.offsetY%(this.maxHPhoto+this.ConfigXMV.padding)===0){
-      x=Math.floor(evt.offsetY/(this.maxHPhoto+this.ConfigXMV.padding));
+    if (evt.offsetY%(this.maxHPhoto+this.configPhoto.padding)===0){
+      x=Math.floor(evt.offsetY/(this.maxHPhoto+this.configPhoto.padding));
     } else {
-      x=Math.floor(evt.offsetY/(this.maxHPhoto+this.ConfigXMV.padding))+1;
+      x=Math.floor(evt.offsetY/(this.maxHPhoto+this.configPhoto.padding))+1;
     }
-    if (evt.offsetX/(this.maxWPhotoH+this.ConfigXMV.padding)===0){
-      y=Math.floor(evt.offsetX/(this.maxWPhotoH+this.ConfigXMV.padding));
+    if (evt.offsetX/(this.maxWPhotoH+this.configPhoto.padding)===0){
+      y=Math.floor(evt.offsetX/(this.maxWPhotoH+this.configPhoto.padding));
     } else {
-      y=Math.floor(evt.offsetX/(this.maxWPhotoH+this.ConfigXMV.padding))+1;
+      y=Math.floor(evt.offsetX/(this.maxWPhotoH+this.configPhoto.padding))+1;
     }
 
     //console.log('photo is on row '+ x + ' and on column '+ y);
@@ -782,7 +780,7 @@ wait_WeddingPhotos(){
     this.calculate_pages();    
     //this.LogMsgConsole('end wait_WeddingPhotos; call ManageCanvas() and then  window.cancelAnimationFrame(this.id_Animation)');
 
-    if (this.ConfigXMV.process_display_canvas===true){
+    if (this.configPhoto.process_display_canvas===true){
         this.ManageCanvas();
       }
     window.cancelAnimationFrame(this.id_Animation);

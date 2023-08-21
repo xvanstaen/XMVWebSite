@@ -10,7 +10,7 @@ import { encrypt, decrypt} from '../EncryptDecryptServices';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+
 import { UserParam } from '../JsonServerClass';
 import { EventAug } from '../JsonServerClass';
 import { EventCommentStructure } from '../JsonServerClass';
@@ -40,7 +40,7 @@ export class Event27AugComponent {
   
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
-    @Input() ConfigXMV=new XMVConfig;
+
     @Input() identification= new LoginIdentif;
     @Input() configServer = new configServer;
     @Output() returnDATA= new EventEmitter<any>();
@@ -781,10 +781,10 @@ saveLogConsole(LogConsole:any, type:string){
     const consoleLength=LogConsole.length;
     this.SaveConsoleFinished=false;
     // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
-    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name=" + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
+    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name=" + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
         
     var file=new File ([JSON.stringify(LogConsole)], this.thetime.substr(0,20)+ type  ,{type: 'application/json'});
-    this.ManageGoogleService.uploadObject(this.configServer, this.ConfigXMV.BucketConsole, file )
+    this.ManageGoogleService.uploadObject(this.configServer, this.configServer.BucketConsole, file )
     //this.http.post(this.HTTP_Address, LogConsole)
       .subscribe(res => {
               this.SaveConsoleFinished=true;

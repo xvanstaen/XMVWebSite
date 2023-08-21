@@ -223,7 +223,7 @@
       <ng-template #TheEvents>   
         <div *ngIf='isConfigServerRetrieved===true'>
             <span class='mainbody'>  
-              <app-login  [identification]="identification" [configServer]="configServer" [XMVConfig]="XMVConfig"
+              <app-login  [identification]="identification" [configServer]="configServer"
                 (my_output1)='TheIdentifObject($event)' (my_output2)='TheLoginRoute($event)' [ConfigChart]="ConfigChart"
                 [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat" [MyConfigFitness]="MyConfigFitness"
                 [ConvertUnit]="ConvertUnit" [ConvToDisplay]="ConvToDisplay" [theTabOfUnits]="theTabOfUnits"  [WeightRefTable]="WeightRefTable" 

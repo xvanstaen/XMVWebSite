@@ -1,0 +1,286 @@
+
+.image-section {
+    position: absolute; 
+    top: 50px;
+    left:-25px;
+    box-sizing: border-box;
+    border: 0.5px solid lightblue ; 
+    margin: 29px;
+    width: 98%;
+    height: 475px;
+    float: left;
+}
+
+.bluebox{
+    position: absolute; 
+    background: rgb(38, 38, 139);
+    top: 0px;
+    right: 0px;
+    width: 36%;
+    height: 477px;
+    float: right;
+}
+
+.textinbluebox {
+    font-size:18px;
+    color: white;
+    font-weight: bold;
+    float: left;
+    margin-left: 25px;
+    margin-top: 5px;
+}
+.book-box{
+    box-sizing: border-box;
+    border-bottom: 8px solid rgb(202, 19, 19) ; 
+    width: 100px;
+    height: 45px;
+    float: left;
+    margin-left:20px;
+    margin-top: 5px;
+ 
+}
+
+.award-box{
+    box-sizing: border-box;
+    border: 0px; 
+    margin-top: 1px;
+    max-width: 100px;
+    height: 40px;
+    float: left;
+    margin-left:60px;
+    margin-top: 5px;
+  
+}
+
+.dotsinbluebox {
+    font-size:30px;
+    color: white;
+    font-weight: bold;
+    float: left;
+    width: 30px;
+    margin-top: 0px;
+    vertical-align: middle;
+    margin-left:50px;
+}
+
+.select-booking-box {
+    box-sizing: border-box;
+    background: rgb(252, 251, 251);
+    float: left;
+    width: 412px;
+    height: 427px;
+    margin-left: -1px;
+    margin-top: -5px;
+}
+
+.from-to-apt-box {
+    position: absolute;
+    margin-top: 70px;
+}
+
+.apt-box  {
+    margin-left: 20px; 
+}
+
+.to-apt-box {
+    margin-left: 250px;
+}
+
+.code-name {
+    color: rgb(10, 9, 9);
+    font-weight: bold;
+    margin-left: 5px;
+    min-width: 90px;
+    min-height: 30px;  
+}
+
+.apt-code {
+    font-size:22px;
+    margin-top: 5px;
+}
+
+.apt-name {
+    font-size:15px;
+    margin-top: 10px;  
+}
+
+.middle-icons {
+    max-width: 100px;
+    margin-top: 10px;
+    position: absolute;
+    margin-top: 95px;
+    margin-left: 175px;
+    float: left;
+}
+
+.left-float {
+    float: left;
+}
+
+.right-float {
+    float: right;
+}
+
+.thefourboxes{
+    position:absolute;
+    background: white;
+    float:left;
+    margin-top: 160px;
+    margin-left: 20px;
+    max-width: 360px;
+    /* transition: all 5s;   reaction time for mouse action*/ 
+}
+
+.buttonsize {
+    min-width: 360px;
+    min-height:70px;
+    box-sizing: boarder-box;
+    margin-top:5px;
+    background-color: white;
+    border: 0px;
+    border-bottom: solid 1px black;
+    text-align:left;
+}
+
+.icons{
+    float: right;
+    font-size:20px;
+}
+
+.mouseh :hover {
+    display: line;
+    border: solid 3px blue ;
+    background-color: white;
+}
+
+ /*** ====================================== ***/
+    /*** ============== @media 1500 ================ ***/
+    /*** ====================================== ***/
+@media only screen and (max-width: 1500px) {
+  
+    .image-section {
+        position: relative; 
+        top: 0px;
+        left:-10px;
+        box-sizing: border-box;
+        border: 5px solid lightblue ; 
+
+        width: 94%;
+        height: 510px;
+
+    }
+.bluebox{
+    margin-left:0px;
+    width: 100%;
+    height: 510px;
+    float:left;
+
+}
+
+.textinbluebox {
+    font-size:14px;
+    margin-left: 5%;
+}
+
+.book-box{
+    width: 25%;
+    height: 45px;
+    margin-left:30px;
+    border: solid 0px red;
+}
+
+.award-box{
+    width: 35%;
+    height: 45px;
+    margin-left:5%;
+    border: solid 0px red;
+}
+
+.dotsinbluebox {
+    font-size:20px;
+    height: 45px;
+    width: 20%;
+    border: solid 0px red;
+    margin-left:5%;
+}
+
+.select-booking-box {
+    border: solid 0px blue;
+    width: 100%;
+    height: 427px;
+    margin-left: 0px;
+    margin-top: 0px;
+}
+
+
+
+.apt-box  {
+    margin-left: 2%; 
+}
+
+
+.from-to-apt-box {
+    position: absolute;
+    margin-top: 15px;
+    border: solid 0px red;
+    margin-left: 10%;
+}
+.middle-icons {
+    width: 5%;
+    margin-left: 43%;
+    margin-top: 35px;
+ 
+}
+.to-apt-box {
+    margin-left: 57%;
+    border: solid 0px red;
+}
+
+
+
+.code-name {
+    border: solid 0px rgb(0, 255, 13);
+    margin-left: 5px;
+    width: 30%;
+    height: 30px;  
+}
+
+.apt-code {
+    font-size:14px;
+}
+
+.apt-name {
+    font-size:14px;
+}
+
+
+
+.left-float {
+    float: left;
+}
+
+.right-float {
+    float: right;
+}
+
+.thefourboxes{
+
+    margin-top: 100px;
+
+    max-width: 100%;
+    /* transition: all 5s;   reaction time for mouse action*/ 
+}
+
+.buttonsize {
+    width: 90%;
+    height:70px;
+}
+
+.icons{
+    float: right;
+    font-size:25px;
+}
+
+
+
+    }

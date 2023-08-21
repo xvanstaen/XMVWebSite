@@ -7,7 +7,7 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 import { EventAug } from '../JsonServerClass';
 import {Bucket_List_Info} from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+
 import { XMVTestProd } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
@@ -38,7 +38,6 @@ export class LoginComponent {
     ) {}
 
     @Input() configServer=new configServer;
-    @Input() XMVConfig=new XMVConfig;
 
     @Input() identification=new LoginIdentif; 
 
@@ -56,7 +55,6 @@ export class LoginComponent {
   
     @Input() HealthAllData=new mainDailyReport; 
 
-    ConfigXMV=new XMVConfig;
     ConfigTestProd=new XMVTestProd;
 
     id_Animation:Array<number>=[];
@@ -121,8 +119,6 @@ export class LoginComponent {
       this.device_type = navigator.userAgent;
       this.device_type = this.device_type.substring(10, 48);
 
-      this.ConfigXMV=this.XMVConfig;
-
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
@@ -139,26 +135,6 @@ export class LoginComponent {
       // id_animation=0; EventHTTPReceived=0
       this.j_loop[0]=0;
       this.waitHTTP(30000,0,0);
-
-      // ========== TO BE DELETED AFTER THE TESTS ==========
-      
-      //this.identification.UserId='XMVIT-Admin';
-      //this.Crypto_Key=this.identification.key;
-      //this.Crypto_Method=this.identification.method;
-      //this.Decrypt='LIM!12monica#Chin';
-      //this.onCrypt("Encrypt");
-      //this.identification.psw=this.Encrypt;
-      /*
-      this.identification.UserId='Fitness';
-      this.Crypto_Key=this.identification.key;
-      this.Crypto_Method=this.identification.method;
-      this.Decrypt='A';
-      this.onCrypt("Encrypt");
-      this.identification.psw=this.Encrypt;
-      this.ValidateData();
-      */
-      // ===================================================
-
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
        // go through login panel again to allow the change of user id if needed 
@@ -215,8 +191,8 @@ GetObject(event:number){
               // send information to XMV Company so that user does not need to re-enter when back on Login page
                 this.my_output1.emit(this.Encrypt_Data);
                 
-               for (this.i=0; this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId!==this.ConfigXMV.UserSpecific[this.i].id; this.i++){}
-                if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
+               for (this.i=0; this.i<this.configServer.UserSpecific.length && this.Encrypt_Data.UserId!==this.configServer.UserSpecific[this.i].id; this.i++){}
+                if (this.i<this.configServer.UserSpecific.length && this.Encrypt_Data.UserId===this.configServer.UserSpecific[this.i].id && this.configServer.UserSpecific[this.i].type==='ADMIN') {
                   this.routing_code=1;
 
                 } 
@@ -233,14 +209,14 @@ GetObject(event:number){
                     this.routing_code=3;
                   }
         // don't use routing_code===4
-                else if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
+                else if (this.i<this.configServer.UserSpecific.length && this.Encrypt_Data.UserId===this.configServer.UserSpecific[this.i].id && this.configServer.UserSpecific[this.i].type==='ADMIN') {
                     this.routing_code=1;
 
                   } 
                   else {
                     this.ValidateEventAug();
                     if (this.text_error!==''){
-                      this.text_error= this.text_error+" within getObject() after ValidateEventAug() id's are "+ this.Encrypt_Data.UserId + ' ' + this.ConfigXMV.UserSpecific[this.i].id + 'i='+i;
+                      this.text_error= this.text_error+" within getObject() after ValidateEventAug() id's are "+ this.Encrypt_Data.UserId + ' ' + this.configServer.UserSpecific[this.i].id + 'i='+i;
                     }
                   }
                   this.my_output2.emit(this.routing_code.toString());

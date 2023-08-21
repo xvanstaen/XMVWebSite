@@ -10,6 +10,7 @@ import { classFileSystem, classAccessFile }  from 'src/app/classFileSystem';
 // const baseUrl = 'http://localhost:8080/api/tutorials';
 // const baseUrl = 'http://localhost:8080';
 // const baseUrl ='https://test-server-359505.uc.r.appspot.com'; OKOK
+// const baseUrl ='https://xmv-server.uc.r.appspot.com'; OKOK
 // baseUrl:string ='https://xmv-it-consulting.uc.r.appspot.com'; OKOK
 
 
@@ -118,6 +119,8 @@ export class ManageGoogleService {
         const http_get=config.baseUrl+'/updateFileSystem/'+config.GoogleProjectId+'/'+object+'/'+JSON.stringify(inData)+'/'+JSON.stringify(tabLock)+'?bucket='+bucket;
         return this.http.get<any>(http_get);                       
     }
+
+
         
 
 }

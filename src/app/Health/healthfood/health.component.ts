@@ -1,10 +1,9 @@
-import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
+import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
   
 import { DatePipe, formatDate } from '@angular/common'; 
 
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
@@ -16,7 +15,7 @@ import { BucketList, Bucket_List_Info  } from '../../JsonServerClass';
 // it is stored in MangoDB and accessed via ManageMangoDBService
 
 import {msginLogConsole} from '../../consoleLog'
-import { configServer, XMVConfig, LoginIdentif, msgConsole } from '../../JsonServerClass';
+import { configServer, LoginIdentif, msgConsole } from '../../JsonServerClass';
 import {classPosDiv, getPosDiv} from '../../getPosDiv';
 
 import { environment } from 'src/environments/environment';
@@ -35,12 +34,13 @@ import {classConfHTMLFitHealth, classConfTableAll} from '../classConfHTMLTableAl
 import {CalcFatCalories} from '../CalcFatCalories';
 import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classAxis,  classLegendChart, classPluginTitle , classTabFormChart, classFileParamChart} from '../classChart';
-
+import { classFileSystem, classAccessFile}  from '../../classFileSystem';
 
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 
+import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit } from '../../MyStdFunctions';
 
 @Component({
   selector: 'app-health',
@@ -61,7 +61,6 @@ export class HealthComponent implements OnInit {
 
   @Output() returnFile= new EventEmitter<any>();
 
-  @Input() XMVConfig=new XMVConfig;
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;
   @Input() InHealthAllData=new mainDailyReport;
@@ -91,7 +90,7 @@ export class HealthComponent implements OnInit {
   HTTP_AddressPOST:string='';
   Google_Bucket_Access_Root:string='https://storage.googleapis.com/storage/v1/b/';
   Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
- 
+
   Google_Object_Health:string='HealthTracking';
   Google_Object_Console:string='LogConsole';
   Google_Object_Calories:string='ConfigCaloriesFat';
@@ -103,6 +102,7 @@ export class HealthComponent implements OnInit {
   error_msg: string='';
 
   EventHTTPReceived:Array<boolean>=[];
+  maxEventHTTPrequest:number=20;
   id_Animation:Array<number>=[];
   TabLoop:Array<number>=[];
   NbWaitHTTP:number=0;
@@ -252,6 +252,9 @@ selectedPosition ={
 posDivCalFat= new classPosDiv;
 posDivReportHealth= new classPosDiv;
 posDivAfterTitle= new classPosDiv;
+
+inData=new classAccessFile;
+tabLock:Array<classAccessFile>=[]; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
   
 titleHeight:number=0;
 posItem:number=0;
@@ -283,6 +286,29 @@ onWindowResize() {
 ngOnInit(): void {
   //this.getPosDivOthers();
   //this.getPosDivAfterTitle();
+
+
+
+  for (var i=0; i<7; i++){
+    const thePush=new classAccessFile;
+    this.tabLock.push(thePush);
+    this.tabLock[i].lock=3;
+    this.tabLock[i].user=this.identification.UserId;
+    this.tabLock[i].iWait=i;
+    this.tabLock[i].timeoutFileSystem.hh=this.configServer.timeoutFileSystem.hh;
+    this.tabLock[i].timeoutFileSystem.mn=this.configServer.timeoutFileSystem.mn;
+    this.tabLock[i].IpAddress=this.configServer.IpAddress;
+  }
+
+  this.tabLock[0].objectName=this.identification.fitness.files.fileHealth+this.identification.UserId;
+  this.tabLock[1].objectName=this.identification.configFitness.files.calories;
+  this.tabLock[5].objectName=this.identification.fitness.files.myChartConfig+this.identification.UserId;;
+  
+
+  for (var i=0; i<this.maxEventHTTPrequest; i++){
+    this.EventHTTPReceived[i]=false;
+  }
+
   this.posDivCalFat=getPosDiv("posTopAppCalFat");
   this.posDivAfterTitle=getPosDiv("posTopAppReportHealth");
   this.posDivAfterTitle=getPosDiv("posAfterTitle");
@@ -336,8 +362,10 @@ ngOnInit(): void {
   this.searchOneDateHealth=0;
   this.theEvent.target.id='New';
   this.CreateDay(this.theEvent);
-  //this.GetRecord(this.XMVConfig.BucketFitness,this.Google_Object_Health,0);
-  //this.GetRecord(this.XMVConfig.BucketFitness,this.Google_Object_Calories,1);
+ 
+  this.tabLock[0].bucket=this.identification.fitness.bucket;
+  this.tabLock[0].object=this.identification.fitness.files.fileHealth;
+
   if (this.InHealthAllData.fileType!==''){
     this.FillHealthAllInOut(this.HealthAllData,this.InHealthAllData);
     this.initTrackRecord();
@@ -346,19 +374,25 @@ ngOnInit(): void {
   } else {
     this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.fileHealth,0);
   }
-  if (this.InConfigCaloriesFat.fileType!==''){
-    this.ConfigCaloriesFat=this.InConfigCaloriesFat;
-    this.EventHTTPReceived[1]=true;
-    this.CreateDropDownCalFat();
-  } else {
-    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,1);
-  }
-  if (this.InConvertUnit.fileType===''){
-    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convertUnit,2);
-  } else {
-    this.ConvertUnit=this.InConvertUnit;
-    this.EventHTTPReceived[2]=true;
-  }
+  this.tabLock[1].bucket=this.identification.configFitness.bucket;
+  this.tabLock[1].object=this.identification.configFitness.files.calories;
+
+  this.tabLock[2].bucket=this.identification.configFitness.bucket;
+  this.tabLock[2].object=this.identification.configFitness.files.convertUnit;
+
+  this.tabLock[4].bucket=this.identification.configFitness.bucket;
+  this.tabLock[4].object=this.identification.configFitness.files.confChart;
+
+  this.tabLock[5].bucket=this.identification.configFitness.bucket;
+  this.tabLock[5].object=this.identification.fitness.files.myChartConfig;
+
+
+  this.tabLock[6].bucket=this.identification.configFitness.bucket;
+  this.tabLock[6].object=this.identification.fitness.files.recipe;
+
+  this.tabLock[3].bucket=this.identification.configFitness.bucket;
+  this.tabLock[3].object=this.identification.configFitness.files.confHTML;
+
   if (this.InConfigHTMLFitHealth.fileType===''){
     this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confHTML,3);
 
@@ -368,26 +402,35 @@ ngOnInit(): void {
     this.EventHTTPReceived[3]=true;
     this.calculateHeight();
   }
+
+  if (this.InConfigCaloriesFat.fileType!==''){
+    this.ConfigCaloriesFat=this.InConfigCaloriesFat;
+    this.EventHTTPReceived[1]=true;
+    this.CreateDropDownCalFat();
+  } else {
+    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,1);
+  }
+
+
+  if (this.fileRecipe.fileType===''){
+    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.recipe,6);
+  } 
+
+
+
+  if (this.InConvertUnit.fileType===''){
+    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convertUnit,2);
+  } else {
+    this.ConvertUnit=this.InConvertUnit;
+    this.EventHTTPReceived[2]=true;
+  }
+
+
   // TO BE REVIEWED IN ORDER TO READ, MODIFY ONLINE AND SAVE
   //this.ConfigHTMLFitness.tabConfig[0].confTableAll=this.confTableAll;
   //this.SaveNewRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confHTML, this.ConfigHTMLFitness);
 
-  if (this.InConfigChart.fileType===''){
-    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confChart,4);
-  } else {
-    this.ConfigChart=this.InConfigChart;
-    this.EventHTTPReceived[4]=true;
-  }
 
-  if (this.fileParamChart.fileType===''){
-    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.myChartConfig,5);
-  } else {
-    this.fileParamChart=this.InFileParamChart;
-    this.EventHTTPReceived[5]=true;
-  }
-  if (this.fileRecipe.fileType===''){
-    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.recipe,6);
-  } 
  
  
   this.getScreenWidth = window.innerWidth;
@@ -415,6 +458,32 @@ ngOnInit(): void {
 }
 
 
+resetBooleans(){
+  //this.isCopyFile=false;
+  //this.isSelectedDateFound=false;
+  this.isDeleteItem=false;
+  this.dialogue[this.prevDialogue]=false;
+  this.tabInputMeal.splice(0,this.tabInputMeal.length);
+  this.tabInputFood.splice(0,this.tabInputFood.length);
+  
+ 
+  if (this.tabLock[0].lock!==1){
+    this.isDeleteConfirmed=false;
+    this.isDisplaySpecific=false;
+    this.IsSaveConfirmedCre=false;
+    this.IsSaveConfirmedSel=false;
+    this.isCreateNew=false;
+    this.IsSaveConfirmedAll=false;
+    this.isAllDataModified=false;
+    this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
+    this.initTrackRecord();
+    this.isAllDataModified = false;
+    this.isMustSaveFile=false;
+    this.isSaveHealth=false;
+  }
+
+}
+
 calculateHeight(){
   var i=0;
   i=this.confTableAll.title.height.indexOf('px');
@@ -423,6 +492,7 @@ calculateHeight(){
 
 checkText:string='';
 SearchText(event:any){
+  this.resetBooleans();
   if (event.currentTarget.id==='search' && event.currentTarget.value!==''){
     this.checkText=event.currentTarget.value.toLowerCase().trim();
   } else { 
@@ -430,7 +500,55 @@ SearchText(event:any){
   }
 }
 
+lastInputAt:string='';
+isMustSaveFile:boolean=false;
+
+fileSystem={
+  createdAt:'',
+  modifiedAt:''
+}
+
+reportCheckLockLimit(event:any){
+  this.checkLockLimit(event.iWait, event.isDataModified, event.isSaveFile);
+}
+
+checkLockLimit(iWait:number, isDataModified:boolean, isSaveFile:boolean){ 
+    var valueCheck={action:'',lockValue:0, lockAction:'' };
+    valueCheck=fnCheckLockLimit(this.configServer, this.tabLock, iWait, this.lastInputAt, isDataModified, isSaveFile);
+
+    if (iWait===0 && this.tabLock[iWait].lock===2){
+      this.isAllDataModified = false;
+    }
+    if (valueCheck.action!=='noAction'){
+        if (valueCheck.action==='updateSystemFile'){
+            this.tabLock[iWait].action=valueCheck.lockAction;
+            this.updateSystemFile(iWait);
+        } else if (valueCheck.action==='checkFile'){
+            if ((iWait===0 && this.isSaveHealth===false) || (iWait===1 && this.isSaveCaloriesFat===false) || (iWait===5 && this.isSaveParamChart===false)){
+              this.checkUpdateFile(iWait); 
+            } else {
+              this.checkFile(iWait); 
+            }
+        } else if (valueCheck.action==='changeTabLock'){
+            this.tabLock[iWait].lock=valueCheck.lockValue;
+        } else if (iWait===0 && valueCheck.action==='ProcessSave'){
+            this.ProcessSaveHealth(this.theEvent);
+        } else if (iWait===5 && valueCheck.action==='ProcessSave'){
+          this.processSaveParamChart();
+        } else if (iWait===1 && valueCheck.action==='ProcessSave'){
+          this.processSaveCaloriesFat(this.saveEvent);
+        } else if (iWait===0 && valueCheck.action==='ConfirmSave'){
+            this.isMustSaveFile=true;
+            this.theEvent.target.id='All'; // ===== change value of target.id if created record or if selRecord  
+            this.ConfirmSave(this.theEvent);
+        } 
+    } else if (this.isConfirmSaveA===true){
+      this.ConfirmSave(this.theEvent);
+    }
+}
+
 dateRangeSelection(event:any){
+  this.resetBooleans();
   this.error_msg='';
   this.isRangeDateError=false;
   var startD=new Date();
@@ -505,6 +623,7 @@ cancelRange(event:any){
 }
 
 SelectDisplay(){
+
   if (this.TheSelectDisplays.controls['CreateNew'].value==='Y'){
         this.isCreateNew=true;
     } else {
@@ -610,6 +729,7 @@ CreateTabFood(item:any, value:any){
 }
 
 onSelMealFood(event:any){
+  //this.resetBooleans();
   this.error_msg='';
   this.findIds(event.target.id);
   if (event.currentTarget.id.substring(0,7)==='selFood'){
@@ -623,47 +743,59 @@ onSelMealFood(event:any){
 }
 
 onInputDaily(event:any){
-  this.error_msg='';
-  var i=0;
-  const fieldName=event.target.id.substring(0,4);
-  this.findIds(event.target.id);
-  if (event.target.id.substring(0,3)!=='Sel'){
-    this.errorFn='Cre';
-    if (fieldName==='date'){
-      this.CheckDupeDate(event.target.value);
-      this.HealthData.tabDailyReport[this.TabOfId[0]].date=event.target.value;
-    } else   if (fieldName==='meal'){
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name=event.target.value;
-      this.CreateTabFood('Meal',event.target.value);
+  //const aDate=new Date();
+  //const theDate=aDate.toUTCString();
+  //const myTime=theDate.substring(17,19)+theDate.substring(20,22)+theDate.substring(23,25);
+  //this.lastInputAt=convertDate(aDate,"YYYYMMDD") + myTime;
+  
+  this.lastInputAt=strDateTime();
 
-    } else   if (fieldName==='ingr'){
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=event.target.value;
-      this.CreateTabFood('Food',event.target.value);
+  this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
 
-    }  else   if (fieldName==='quan'){
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].quantity=event.target.value;
-    } else   if (fieldName==='unit'){
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].unit=event.target.value;
-    } else   if (fieldName==='burn'){
-      this.HealthData.tabDailyReport[this.TabOfId[0]].burntCalories=event.target.value;
-    }
-  } else  if (event.target.id.substring(0,7)==='Selmeal'){
-    this.errorFn='Sel';
-      this.SelectedRecord.meal[this.TabOfId[0]].name=event.target.value;
-    } else   if (event.target.id.substring(0,7)==='Selingr'){
-      this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].name=event.target.value;
-    }  else   if (event.target.id.substring(0,7)==='Selquan'){
-      this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].quantity=event.target.value;
-    } else   if (event.target.id.substring(0,7)==='Selunit'){
-      this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].unit=event.target.value;
-    } else   if (event.target.id.substring(0,7)==='Selburn'){
-      this.SelectedRecord.burntCalories=event.target.value;
-    } else   if (event.target.id.substring(0,7)==='Seldate'){
-      if (event.target.value!==this.TheSelectDisplays.controls['SelectedDate'].value){
+  if (this.tabLock[0].lock !== 2){
+    this.resetBooleans();
+    this.error_msg='';
+    var i=0;
+    const fieldName=event.target.id.substring(0,4);
+    this.findIds(event.target.id);
+    if (event.target.id.substring(0,3)!=='Sel'){
+      this.errorFn='Cre';
+      if (fieldName==='date'){
         this.CheckDupeDate(event.target.value);
+        this.HealthData.tabDailyReport[this.TabOfId[0]].date=event.target.value;
+      } else   if (fieldName==='meal'){
+        this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name=event.target.value;
+        this.CreateTabFood('Meal',event.target.value);
+
+      } else   if (fieldName==='ingr'){
+        this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=event.target.value;
+        this.CreateTabFood('Food',event.target.value);
+
+      }  else   if (fieldName==='quan'){
+        this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].quantity=event.target.value;
+      } else   if (fieldName==='unit'){
+        this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].unit=event.target.value;
+      } else   if (fieldName==='burn'){
+        this.HealthData.tabDailyReport[this.TabOfId[0]].burntCalories=event.target.value;
       }
-      this.SelectedRecord.date=event.target.value;
-    }  
+    } else  if (event.target.id.substring(0,7)==='Selmeal'){
+      this.errorFn='Sel';
+        this.SelectedRecord.meal[this.TabOfId[0]].name=event.target.value;
+      } else   if (event.target.id.substring(0,7)==='Selingr'){
+        this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].name=event.target.value;
+      }  else   if (event.target.id.substring(0,7)==='Selquan'){
+        this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].quantity=event.target.value;
+      } else   if (event.target.id.substring(0,7)==='Selunit'){
+        this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].unit=event.target.value;
+      } else   if (event.target.id.substring(0,7)==='Selburn'){
+        this.SelectedRecord.burntCalories=event.target.value;
+      } else   if (event.target.id.substring(0,7)==='Seldate'){
+        if (event.target.value!==this.TheSelectDisplays.controls['SelectedDate'].value){
+          this.CheckDupeDate(event.target.value);
+        }
+        this.SelectedRecord.date=event.target.value;
+      }  
+  }
 }
 
 offsetHeight:number=0;
@@ -674,42 +806,53 @@ scrollHeight:number=0;
 scrollTop:number=0;
 
 onInputDailyAll(event:any){
-//this.offsetHeight= event.currentTarget.offsetHeight;
-this.offsetLeft = event.currentTarget.offsetLeft;
-//this.offsetTop = event.currentTarget.offsetTop;
-this.offsetWidth = event.currentTarget.offsetWidth;
-//this.scrollHeight = event.currentTarget.scrollHeight;
-//this.scrollTop = event.currentTarget.scrollTop;
-//console.log('offsetHeight='+this.offsetHeight +'  offsetLeft= '+this.offsetLeft + ' offsetTop=' + this.offsetTop 
-//+ ' scrollHeight='+this.scrollHeight+ '  scrollTop=' +this.scrollTop);
-
+  //const aDate=new Date();
+  //const theDate=aDate.toUTCString();
+  //const myTime=theDate.substring(17,19)+theDate.substring(20,22)+theDate.substring(23,25);
+  //this.lastInputAt=convertDate(aDate,"YYYYMMDD") + myTime;
+  this.lastInputAt=strDateTime();
   this.isAllDataModified=true;
-  this.error_msg='';
-  var i=0;
-  const fieldName=event.target.id.substring(0,7);
-  this.findIds(event.target.id);
-    if (fieldName==='dateAll'){
-      this.CheckDupeDate(event.target.value);
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].date=event.target.value;
-      this.tabNewRecordAll[this.TabOfId[0]].nb=1;
-    } else   if (fieldName==='mealAll'){
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name=event.target.value;
-      this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].nb=1;
-      this.CreateTabFood('Meal',event.target.value);
-    } else   if (fieldName==='ingrAll'){
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=event.target.value;
-      this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
-      this.CreateTabFood('Food',event.target.value);
-    }  else   if (fieldName==='quanAll'){
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].quantity=event.target.value;
-      this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
-    } else   if (fieldName==='unitAll'){
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].unit=event.target.value;
-      this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
-    } else   if (fieldName==='burnAll'){
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].burntCalories=event.target.value;
-      this.tabNewRecordAll[this.TabOfId[0]].nb=1;
-    } 
+  this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
+
+  if (this.tabLock[0].lock !== 2){
+    this.resetBooleans();
+    //this.offsetHeight= event.currentTarget.offsetHeight;
+    this.offsetLeft = event.currentTarget.offsetLeft;
+    //this.offsetTop = event.currentTarget.offsetTop;
+    this.offsetWidth = event.currentTarget.offsetWidth;
+    //this.scrollHeight = event.currentTarget.scrollHeight;
+    //this.scrollTop = event.currentTarget.scrollTop;
+    //console.log('offsetHeight='+this.offsetHeight +'  offsetLeft= '+this.offsetLeft + ' offsetTop=' + this.offsetTop 
+    //+ ' scrollHeight='+this.scrollHeight+ '  scrollTop=' +this.scrollTop);
+
+      this.isAllDataModified=true;
+      this.error_msg='';
+      var i=0;
+      const fieldName=event.target.id.substring(0,7);
+      this.findIds(event.target.id);
+        if (fieldName==='dateAll'){
+          this.CheckDupeDate(event.target.value);
+          this.HealthAllData.tabDailyReport[this.TabOfId[0]].date=event.target.value;
+          this.tabNewRecordAll[this.TabOfId[0]].nb=1;
+        } else   if (fieldName==='mealAll'){
+          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name=event.target.value;
+          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].nb=1;
+          this.CreateTabFood('Meal',event.target.value);
+        } else   if (fieldName==='ingrAll'){
+          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=event.target.value;
+          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
+          this.CreateTabFood('Food',event.target.value);
+        }  else   if (fieldName==='quanAll'){
+          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].quantity=event.target.value;
+          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
+        } else   if (fieldName==='unitAll'){
+          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].unit=event.target.value;
+          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
+        } else   if (fieldName==='burnAll'){
+          this.HealthAllData.tabDailyReport[this.TabOfId[0]].burntCalories=event.target.value;
+          this.tabNewRecordAll[this.TabOfId[0]].nb=1;
+        } 
+    }
 }
 
 findAction(idString:string){
@@ -735,6 +878,7 @@ posDelIngr=480;
 delMsg:string='';
 
 DelAfterConfirm(event:any){
+  this.resetBooleans();
   this.isDeleteItem=false;
   if (  event.currentTarget.id.substring(0,13)==='YesDelConfirm'){
     if (this.theEvent.target.id.substring(0,10)==='DelAllDate'){
@@ -760,186 +904,202 @@ DelAfterConfirm(event:any){
     } 
 }
 
-
+onNoAction(event:any){
+ console.log('no action ') ;
+}
 
 onAction(event:any){
-  this.findIds(event.target.id);
-  this.dialogue[this.prevDialogue]=false;
-  if (event.target.id.substring(0,10)==='openAction'){
-    this.prevDialogue=6;
-    this.dialogue[this.prevDialogue]=true;
-    this.sizeBox.heightOptions=this.sizeBox.heightItem  * (this.NewTabAction.length) + 10;
-    this.sizeBox.heightContent=this.sizeBox.heightOptions;
-    this.findPosItem(this.sizeBox.heightOptions);
 
-    this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
-    // this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - 279, this.sizeBox.scrollY);
-    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.posItem, this.sizeBox.scrollY);
+  this.lastInputAt=strDateTime();
+  this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
+  this.resetBooleans();
+  if (this.tabLock[0].lock !== 2){
 
-  } else  if (event.target.id.substring(0,9)==='selAction'){
-      if (event.target.textContent.indexOf('cancel')!==-1){
-      } else {
-        this.isAllDataModified=true;
-        this.findAction(event.target.textContent);
-        if (this.myType.trim()==="date" ){
-          if (this.myAction==="insert after"){
-            this.theEvent.target.id='AllDateA-'+this.TabOfId[0];
-            this.CreateDay(this.theEvent);
-          } else if (this.myAction==="insert before"){
-            this.theEvent.target.id='AllDateB-'+this.TabOfId[0];
-            this.CreateDay(this.theEvent);
-          } else if (this.myAction==="delete"){
-            this.theEvent.target.id='DelAllDate-'+this.TabOfId[0];
-            this.delMsg=' date=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].date;
-            this.posDelConfirm=this.posDelDate;
-            this.isDeleteItem=true;
+    this.findIds(event.target.id);
+    this.dialogue[this.prevDialogue]=false;
+    if (this.tabLock[0].lock === 0 && event.target.id.substring(0,10)!=='openAction'){
+      this.isAllDataModified=true;
+      this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
+    }
+    else {  
+        if (event.target.id.substring(0,10)==='openAction'){
+          this.prevDialogue=6;
+          this.dialogue[this.prevDialogue]=true;
+          this.sizeBox.heightOptions=this.sizeBox.heightItem  * (this.NewTabAction.length) + 10;
+          this.sizeBox.heightContent=this.sizeBox.heightOptions;
+          this.findPosItem(this.sizeBox.heightOptions);
+
+          this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
+          // this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - 279, this.sizeBox.scrollY);
+          this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.posItem, this.sizeBox.scrollY);
+
+        } else  if (event.target.id.substring(0,9)==='selAction'){
+            if (event.target.textContent.indexOf('cancel')!==-1){
+            } else {
+              this.isAllDataModified=true;
             
-          } 
+              this.findAction(event.target.textContent);
+              if (this.myType.trim()==="date" ){
+                if (this.myAction==="insert after"){
+                  this.theEvent.target.id='AllDateA-'+this.TabOfId[0];
+                  this.CreateDay(this.theEvent);
+                } else if (this.myAction==="insert before"){
+                  this.theEvent.target.id='AllDateB-'+this.TabOfId[0];
+                  this.CreateDay(this.theEvent);
+                } else if (this.myAction==="delete"){
+                  this.theEvent.target.id='DelAllDate-'+this.TabOfId[0];
+                  this.delMsg=' date=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].date;
+                  this.posDelConfirm=this.posDelDate;
+                  this.isDeleteItem=true;
+                  
+                } 
 
-        } else if (this.myType.trim()==="meal" ){
-          if (this.myAction==="insert after"){
-            this.theEvent.target.id='AllMealA-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+              } else if (this.myType.trim()==="meal" ){
+                if (this.myAction==="insert after"){
+                  this.theEvent.target.id='AllMealA-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+                  this.CreateMeal(this.theEvent);
+
+                } else if (this.myAction==="insert before"){
+                  this.theEvent.target.id='AllMealB-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+                  this.CreateMeal(this.theEvent);
+
+                } else if (this.myAction==="delete"){
+                  this.theEvent.target.id='DelAllMeal-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+                  this.delMsg=' meal=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;
+                  this.posDelConfirm=this.posDelMeal;
+                  this.isDeleteItem=true;
+                  
+                } 
+
+              } else if (this.myType.trim()==="food" ){
+                if (this.myAction==="insert before"){
+                  this.theEvent.target.id='AllIngrB-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
+                  this.CreateIngredient(this.theEvent);
+
+                } else if (this.myAction==="insert after"){
+                  this.theEvent.target.id='AllIngrA-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
+                  this.CreateIngredient(this.theEvent);
+
+                } else if (this.myAction==="delete"){
+                  this.theEvent.target.id='DelAll-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
+                  this.isDeleteItem=true;
+                  this.delMsg=
+                  ' ingredient ' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name
+                  + ' of meal ' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;;
+                  this.posDelConfirm=this.posDelIngr;
+                } 
+              }
+            }
+        }
+        else if (event.target.id.substring(0,15)==='CreDialogueDate'){
+          this.prevDialogue=0;
+          this.dialogue[this.prevDialogue]=true;
+        } else if (event.target.id.substring(0,15)==='CreDialogueMeal'){
+          this.prevDialogue=1;
+          this.dialogue[this.prevDialogue]=true;
+        } else if (event.target.id.substring(0,15)==='CreDialogueIngr'){
+          this.prevDialogue=2;
+          this.dialogue[this.prevDialogue]=true;
+        } else if (event.target.id.substring(0,15)==='SelDialogueDate'){
+          this.prevDialogue=3;
+          this.dialogue[this.prevDialogue]=true;
+        } else if (event.target.id.substring(0,15)==='SelDialogueMeal'){
+          this.prevDialogue=4;
+          this.dialogue[this.prevDialogue]=true;
+        } else if (event.target.id.substring(0,15)==='SelDialogueIngr'){
+          this.prevDialogue=5;
+          this.dialogue[this.prevDialogue]=true;
+        } else if (event.target.id.substring(0,7)==='SelMeal'){
+          if (event.target.textContent==='insert after'){
+            this.theEvent.target.id='SelMealA-'+this.TabOfId[0];
             this.CreateMeal(this.theEvent);
 
-          } else if (this.myAction==="insert before"){
-            this.theEvent.target.id='AllMealB-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+          } else if (event.target.textContent==='insert before'){
+            this.theEvent.target.id='SelMealB-'+this.TabOfId[0];
+            this.CreateMeal(this.theEvent);
+            
+          } else if (event.target.textContent==='delete'){
+            this.theEvent.target.id='DelSelMeal-'+this.TabOfId[0];
+            this.DeleteMeal(this.theEvent);
+            
+          }
+        } else if (event.target.id.substring(0,7)==='SelIngr'){
+          if (event.target.textContent==='insert after'){
+            this.theEvent.target.id='SelIngrA-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+            this.CreateIngredient(this.theEvent);
+
+          } else if (event.target.textContent==='insert before'){
+            this.theEvent.target.id='SelIngrB-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+            this.CreateIngredient(this.theEvent);
+            
+          } else if (event.target.textContent==='delete'){
+            this.theEvent.target.id='DelSelIngr-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+            this.DeleteIngredient(this.theEvent);
+            
+          }
+        }   else if (event.target.id.substring(0,7)==='CreMeal'){
+          if (event.target.textContent==='insert after'){
+            this.theEvent.target.id='CreMealA-'+this.TabOfId[0]+'-'+this.TabOfId[1];
             this.CreateMeal(this.theEvent);
 
-          } else if (this.myAction==="delete"){
-            this.theEvent.target.id='DelAllMeal-'+this.TabOfId[0]+'-'+this.TabOfId[1];
-            this.delMsg=' meal=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;
-            this.posDelConfirm=this.posDelMeal;
-            this.isDeleteItem=true;
+          } else if (event.target.textContent==='insert before'){
+            this.theEvent.target.id='CreMealB-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+            this.CreateMeal(this.theEvent);
             
-          } 
-
-        } else if (this.myType.trim()==="food" ){
-          if (this.myAction==="insert before"){
-            this.theEvent.target.id='AllIngrB-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
+          } else if (event.target.textContent==='delete'){
+            this.theEvent.target.id='DelCreMeal-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+            this.DeleteMeal(this.theEvent);
+            
+          }
+        } else if (event.target.id.substring(0,7)==='CreIngr'){
+          if (event.target.textContent==='insert after'){
+            this.theEvent.target.id='CreIngrA-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
             this.CreateIngredient(this.theEvent);
 
-          } else if (this.myAction==="insert after"){
-            this.theEvent.target.id='AllIngrA-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
+          } else if (event.target.textContent==='insert before'){
+            this.theEvent.target.id='CreIngrB-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
             this.CreateIngredient(this.theEvent);
+            
+          } else if (event.target.textContent==='delete'){
+            this.theEvent.target.id='DelCreIngr-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
+            this.DeleteIngredient(this.theEvent);
+            
+          }
+        } else if (event.target.id.substring(0,10)==='ActionDate'){
+          if (event.target.textContent==='insert after'){
+            this.theEvent.target.id='DateA-'+this.TabOfId[0];
+            this.CreateDay(this.theEvent);
 
-          } else if (this.myAction==="delete"){
-            this.theEvent.target.id='DelAll-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
-            this.isDeleteItem=true;
-            this.delMsg=
-            ' ingredient ' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name
-            + ' of meal ' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;;
-            this.posDelConfirm=this.posDelIngr;
-          } 
+          } else if (event.target.textContent==='insert before'){
+            this.theEvent.target.id='DateB-'+this.TabOfId[0];
+            this.CreateDay(this.theEvent);
+            
+          } else if (event.target.textContent==='delete'){
+            this.theEvent.target.id='DelDate-'+this.TabOfId[0];
+            this.DeleteDay(this.theEvent);
+            
+          }
+        }
+
+
+        if (this.prevDialogue < 6){
+          this.sizeBox.heightOptions=this.sizeBox.heightItem  * (this.TabAction.length + 1) ;
+          this.sizeBox.heightContent=this.sizeBox.heightOptions;
+
+          this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
+          this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  30, 0,this.sizeBox.scrollY);
+
+
+        } else if (this.isDeleteItem===true){
+          this.sizeBox.heightOptions=90 ;
+          this.sizeBox.heightContent=90;
+
+          this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, 240);
+          //this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - this.posDelConfirm, this.sizeBox.scrollY);
+          this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.posItem, this.sizeBox.scrollY);
+
         }
       }
-  }
-  else if (event.target.id.substring(0,15)==='CreDialogueDate'){
-    this.prevDialogue=0;
-    this.dialogue[this.prevDialogue]=true;
-  } else if (event.target.id.substring(0,15)==='CreDialogueMeal'){
-    this.prevDialogue=1;
-    this.dialogue[this.prevDialogue]=true;
-  } else if (event.target.id.substring(0,15)==='CreDialogueIngr'){
-    this.prevDialogue=2;
-    this.dialogue[this.prevDialogue]=true;
-  } else if (event.target.id.substring(0,15)==='SelDialogueDate'){
-    this.prevDialogue=3;
-    this.dialogue[this.prevDialogue]=true;
-  } else if (event.target.id.substring(0,15)==='SelDialogueMeal'){
-    this.prevDialogue=4;
-    this.dialogue[this.prevDialogue]=true;
-  } else if (event.target.id.substring(0,15)==='SelDialogueIngr'){
-    this.prevDialogue=5;
-    this.dialogue[this.prevDialogue]=true;
-  } else if (event.target.id.substring(0,7)==='SelMeal'){
-    if (event.target.textContent==='insert after'){
-      this.theEvent.target.id='SelMealA-'+this.TabOfId[0];
-      this.CreateMeal(this.theEvent);
-
-    } else if (event.target.textContent==='insert before'){
-      this.theEvent.target.id='SelMealB-'+this.TabOfId[0];
-      this.CreateMeal(this.theEvent);
-      
-    } else if (event.target.textContent==='delete'){
-      this.theEvent.target.id='DelSelMeal-'+this.TabOfId[0];
-      this.DeleteMeal(this.theEvent);
-      
-    }
-  } else if (event.target.id.substring(0,7)==='SelIngr'){
-    if (event.target.textContent==='insert after'){
-      this.theEvent.target.id='SelIngrA-'+this.TabOfId[0]+'-'+this.TabOfId[1];
-      this.CreateIngredient(this.theEvent);
-
-    } else if (event.target.textContent==='insert before'){
-      this.theEvent.target.id='SelIngrB-'+this.TabOfId[0]+'-'+this.TabOfId[1];
-      this.CreateIngredient(this.theEvent);
-      
-    } else if (event.target.textContent==='delete'){
-      this.theEvent.target.id='DelSelIngr-'+this.TabOfId[0]+'-'+this.TabOfId[1];
-      this.DeleteIngredient(this.theEvent);
-      
-    }
-  }   else if (event.target.id.substring(0,7)==='CreMeal'){
-    if (event.target.textContent==='insert after'){
-      this.theEvent.target.id='CreMealA-'+this.TabOfId[0]+'-'+this.TabOfId[1];
-      this.CreateMeal(this.theEvent);
-
-    } else if (event.target.textContent==='insert before'){
-      this.theEvent.target.id='CreMealB-'+this.TabOfId[0]+'-'+this.TabOfId[1];
-      this.CreateMeal(this.theEvent);
-      
-    } else if (event.target.textContent==='delete'){
-      this.theEvent.target.id='DelCreMeal-'+this.TabOfId[0]+'-'+this.TabOfId[1];
-      this.DeleteMeal(this.theEvent);
-      
-    }
-  } else if (event.target.id.substring(0,7)==='CreIngr'){
-    if (event.target.textContent==='insert after'){
-      this.theEvent.target.id='CreIngrA-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
-      this.CreateIngredient(this.theEvent);
-
-    } else if (event.target.textContent==='insert before'){
-      this.theEvent.target.id='CreIngrB-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
-      this.CreateIngredient(this.theEvent);
-      
-    } else if (event.target.textContent==='delete'){
-      this.theEvent.target.id='DelCreIngr-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
-      this.DeleteIngredient(this.theEvent);
-      
-    }
-  } else if (event.target.id.substring(0,10)==='ActionDate'){
-    if (event.target.textContent==='insert after'){
-      this.theEvent.target.id='DateA-'+this.TabOfId[0];
-      this.CreateDay(this.theEvent);
-
-    } else if (event.target.textContent==='insert before'){
-      this.theEvent.target.id='DateB-'+this.TabOfId[0];
-      this.CreateDay(this.theEvent);
-      
-    } else if (event.target.textContent==='delete'){
-      this.theEvent.target.id='DelDate-'+this.TabOfId[0];
-      this.DeleteDay(this.theEvent);
-      
-    }
-  }
-
-
-  if (this.prevDialogue < 6){
-    this.sizeBox.heightOptions=this.sizeBox.heightItem  * (this.TabAction.length + 1) ;
-    this.sizeBox.heightContent=this.sizeBox.heightOptions;
-
-    this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
-    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  30, 0,this.sizeBox.scrollY);
-
-
-  } else if (this.isDeleteItem===true){
-    this.sizeBox.heightOptions=90 ;
-    this.sizeBox.heightContent=90;
-
-    this.styleBox=getStyleDropDownContent(this.sizeBox.heightContent, 240);
-    //this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - this.posDelConfirm, this.sizeBox.scrollY);
-    this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.posItem, this.sizeBox.scrollY);
-
   }
 }
 
@@ -1102,32 +1262,43 @@ CreateDay(event:any){
 }
 
 FillHealthAllInOut(outFile:any, inFile:any){
+  var iOut=-1;
+  if (inFile.updatedAt!==undefined){
+    outFile.updatedAt=inFile.updatedAt;
+  } else {outFile.updatedAt='';}
   for (var i=0; i<inFile.tabDailyReport.length; i++){
-    const theDaily=new DailyReport;
-    outFile.tabDailyReport.push(theDaily);
-    outFile.tabDailyReport[i].burntCalories=inFile.tabDailyReport[i].burntCalories;
-    outFile.tabDailyReport[i].date =inFile.tabDailyReport[i].date;
-    outFile.tabDailyReport[i].total =inFile.tabDailyReport[i].total;
-    for (var j=0; j<inFile.tabDailyReport[i].meal.length; j++){
-      
-        const theMeal=new ClassMeal;
-        outFile.tabDailyReport[i].meal.push(theMeal);
+    if (inFile.tabDailyReport[i].meal.length!==0){
+        iOut++
     
-      outFile.tabDailyReport[i].meal[j].name=inFile.tabDailyReport[i].meal[j].name;
-      outFile.tabDailyReport[i].meal[j].total=inFile.tabDailyReport[i].meal[j].total;
-      for (var k=0; k<inFile.tabDailyReport[i].meal[j].dish.length; k++){
-          
-            const theIngr=new ClassDish;
-            outFile.tabDailyReport[i].meal[j].dish.push(theIngr);
-            outFile.tabDailyReport[i].meal[j].dish[k].name=inFile.tabDailyReport[i].meal[j].dish[k].name;
-            outFile.tabDailyReport[i].meal[j].dish[k].quantity=inFile.tabDailyReport[i].meal[j].dish[k].quantity;
-            outFile.tabDailyReport[i].meal[j].dish[k].unit=inFile.tabDailyReport[i].meal[j].dish[k].unit;
-            outFile.tabDailyReport[i].meal[j].dish[k].calFat=inFile.tabDailyReport[i].meal[j].dish[k].calFat;
-        
+        const theDaily=new DailyReport;
+        outFile.tabDailyReport.push(theDaily);
+        outFile.tabDailyReport[iOut].burntCalories=inFile.tabDailyReport[i].burntCalories;
+        outFile.tabDailyReport[iOut].date =inFile.tabDailyReport[i].date;
+        outFile.tabDailyReport[iOut].total =inFile.tabDailyReport[i].total;
+        var jOut=-1;
+        for (var j=0; j<inFile.tabDailyReport[i].meal.length; j++){
+            if (inFile.tabDailyReport[i].meal[j].dish.length>0) {
+                const theMeal=new ClassMeal;
+                outFile.tabDailyReport[iOut].meal.push(theMeal);
+                jOut++
+                outFile.tabDailyReport[iOut].meal[jOut].name=inFile.tabDailyReport[i].meal[j].name;
+                outFile.tabDailyReport[iOut].meal[jOut].total=inFile.tabDailyReport[i].meal[j].total;
+                var lOut=-1; 
+                for (var k=0; k<inFile.tabDailyReport[i].meal[j].dish.length; k++){
+                    if (inFile.tabDailyReport[i].meal[j].dish[k].name!=='' && inFile.tabDailyReport[i].meal[j].dish[k].quantity!==0){
+                      const theIngr=new ClassDish;
+                      outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
+                      lOut++
+                      outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].name=inFile.tabDailyReport[i].meal[j].dish[k].name;
+                      outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].quantity=inFile.tabDailyReport[i].meal[j].dish[k].quantity;
+                      outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].unit=inFile.tabDailyReport[i].meal[j].dish[k].unit;
+                      outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat=inFile.tabDailyReport[i].meal[j].dish[k].calFat;
+                    }    
+                }
+            }
+          }
       }
     }
-    
-  }
 
 }
 
@@ -1248,6 +1419,7 @@ alignRecord(){
 
 GetRecord(Bucket:string,GoogleObject:string, iWait:number){
 
+
     this.EventHTTPReceived[iWait]=false;
     this.NbWaitHTTP++;
     this.waitHTTP(this.TabLoop[iWait],30000,iWait);
@@ -1265,39 +1437,147 @@ GetRecord(Bucket:string,GoogleObject:string, iWait:number){
                 if (this.InHealthAllData.fileType===''){
                   this.FillHealthAllInOut(this.InHealthAllData, this.HealthAllData);
                 }
-                this.initTrackRecord();
+                this.resetBooleans();
+                if (this.tabLock[0].lock===1){
+                  this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
+                  this.initTrackRecord();
+                }
+
                 this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+                
               } else if (iWait===1){
-                this.ConfigCaloriesFat=data;
-                if (this.ConfigCaloriesFat.fileType===''){
+               
+                if (data.fileType!==''){
+                  this.ConfigCaloriesFat.fileType=data.fileType;
+                } else {
                   this.ConfigCaloriesFat.fileType=this.identification.fitness.fileType.FitnessMyConfig;
                 } 
+                if (data.updatedAt!==undefined){
+                  this.ConfigCaloriesFat.updatedAt=data.updatedAt;
+                }  else {
+                  this.ConfigCaloriesFat.updatedAt='';
+                }
+                this.ConfigCaloriesFat.tabCaloriesFat=data.tabCaloriesFat;
                 this.CreateDropDownCalFat();
               } else if (iWait===2){
 
                 this.ConvertUnit=data;
-                if (this.ConvertUnit.fileType===''){
+                if (data.fileType!==''){
+                  this.ConvertUnit.fileType=data.fileType
+                } else {
                   this.ConvertUnit.fileType=this.identification.configFitness.fileType.convertUnit;
                 } 
+                if (data.updatedAt!==undefined){
+                  this.ConvertUnit.updatedAt=data.updatedAt;
+                }  else {
+                  this.ConvertUnit.updatedAt='';
+                }
+                this.ConvertUnit.tabConv=data.tabConv;
               } 
               else if (iWait===3){
-                  this.ConfigHTMLFitHealth=data;
+                  //this.ConfigHTMLFitHealth=data;
+                  this.ConfigHTMLFitHealth.fileType==data.fileType;
+                  this.ConfigHTMLFitHealth.debugPhone==data.debugPhone;
+                  this.ConfigHTMLFitHealth.ConfigHealth.fileType==data.ConfigHealth.fileType;
+                  if (data.ConfigHealth.updatedAt!==undefined){
+                  this.ConfigHTMLFitHealth.ConfigHealth.updatedAt==data.ConfigHealth.updatedAt;
+                  } else {
+                    this.ConfigHTMLFitHealth.ConfigHealth.updatedAt='';
+                  }
+                  this.ConfigHTMLFitHealth.ConfigHealth.confTableAll=data.ConfigHealth.confTableAll;
+
+                  this.ConfigHTMLFitHealth.ConfigCalFat.fileType==data.ConfigCalFat.fileType;
+                  if (data.ConfigCalFat.updatedAt!==undefined){
+                    this.ConfigHTMLFitHealth.ConfigCalFat.updatedAt==data.ConfigCalFat.updatedAt;
+                    } else {
+                      this.ConfigHTMLFitHealth.ConfigCalFat.updatedAt='';
+                    }
+                    this.ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat=data.ConfigCalFat.confCaloriesFat;
+
                   this.confTableAll=this.ConfigHTMLFitHealth.ConfigHealth.confTableAll;
                   this.calculateHeight();
               }
               else if (iWait===4){
-                this.ConfigChart=data;
+                this.ConfigChart.fileType=data.fileType;
+                if (data.updatedAt!==undefined){
+                  this.ConfigChart.updatedAt=data.updatedAt;
+                } else {
+                  this.ConfigChart.updatedAt='';
+                }
+                this.ConfigChart.chartHealth=data.chartHealth;
               } 
               else if (iWait===5){
-                this.fileParamChart=data;
-              } else if (iWait===6){
-                this.fileRecipe=data;
-              } 
+                this.fileParamChart.fileType=data.fileType;
+                if (data.updatedAt!==undefined){
+                  this.fileParamChart.updatedAt=data.updatedAt;
+                } else {
+                  this.fileParamChart.updatedAt='';
+                }
+                this.fileParamChart.data=data.data;
 
-              this.returnFile.emit(data);
-              this.EventHTTPReceived[iWait]=true;
-            },
-            error_handler => {
+
+              } else if (iWait===6){
+                this.fileRecipe.fileType=data.fileType;
+                if (data.updatedAt!==undefined){
+                  this.fileRecipe.updatedAt=data.updatedAt;
+                } else {
+                  this.fileRecipe.updatedAt='';
+                }
+                this.fileRecipe.tabCaloriesFat=data.tabCaloriesFat;
+              } else if (iWait===7){
+                  if (this.tabLock[0].updatedAt >= data.updatedAt ){
+                    // file has not been updated by another user
+                    if (this.isMustSaveFile===true){
+                      this.theEvent.target.id='All'; // ===== change value of target.id if created record or if selRecord
+                      this.ConfirmSave(this.theEvent);
+                    } else  if (this.isSaveHealth===true){
+                        this.ProcessSaveHealth(this.theEvent);
+                    } else if (this.tabLock[0].lock===1 && this.isAllDataModified===true){
+                        this.updateLockFile(0); // extend the timeout as no modification has been made by any other user after timeout
+                    }
+                  } else { // updates made by another user after timeout
+                      this.HealthAllData.tabDailyReport.splice(0,this.HealthAllData.tabDailyReport.length);
+                      this.FillHealthAllInOut(this.HealthAllData, data);
+                      this.tabLock[0].lock=0;
+                      this.error_msg = 'TIMEOUT - Your updates are lost as in the meantime the file was updated by another user ';
+                      this.resetBooleans();
+                  }
+              }  else if (iWait===8){
+                if (this.tabLock[5].updatedAt >= data.updatedAt ){
+                  // file has not been updated by another user
+                 if (this.isSaveParamChart===true){
+                      this.ProcessSaveHealth(this.theEvent);
+                  } else if (this.tabLock[5].lock===1 ){
+                      this.updateLockFile(5); // extend the timeout as no modification has been made by any other user after timeout
+                  }
+                } else { // updates made by another user after timeout
+                    this.fileParamChart.data.splice(0,this.fileParamChart.data.length);
+                    this.fileParamChart.data=data.data;
+                    this.tabLock[5].lock=0;
+
+                }
+            } else if (iWait===9){
+                if (this.tabLock[1].updatedAt >= data.updatedAt ){
+                    // file has not been updated by another user
+                  if (this.isSaveCaloriesFat===true){
+                        this.processSaveCaloriesFat(this.saveEvent);
+                    } else if (this.tabLock[1].lock===1 ){
+                        this.updateLockFile(1); // extend the timeout as no modification has been made by any other user after timeout
+                    }
+                } else { // updates made by another user after timeout
+                    this.ConfigCaloriesFat.tabCaloriesFat.splice(0,this.ConfigCaloriesFat.tabCaloriesFat.length);
+                    this.ConfigCaloriesFat.tabCaloriesFat=data.tabCaloriesFat;
+                    this.tabLock[1].lock=0;
+
+                }
+              } 
+            if (iWait!==7 && iWait!==8 && iWait!==9 ){
+                this.returnFile.emit(data);
+              }
+            this.EventHTTPReceived[iWait]=true;
+  
+        },
+          error_handler => {
                 this.EventHTTPReceived[iWait]=true;
                 if (iWait===0){
                     this.error_msg='File ' + this.identification.fitness.files.fileHealth + ' does not exist. Create it'; 
@@ -1370,14 +1650,31 @@ CancelUpdateAll(event:any){
 
 }
 
-
+isSaveParamChart:boolean=false;
 saveParamChart(event:any){
-  this.fileParamChart.fileType=this.identification.fitness.fileType.myChart;
+  this.isSaveParamChart=true;
   this.fileParamChart.data=event;
-  this.SaveNewRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, this.fileParamChart);
+  this.checkLockLimit(5,true,true);
 }
 
+
+processSaveParamChart(){
+  this.fileParamChart.fileType=this.identification.fitness.fileType.myChart;
+  this.fileParamChart.updatedAt=strDateTime();
+  // this.fileParamChart.data=event;
+  this.SaveNewRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, this.fileParamChart, 5);
+}
+
+isSaveCaloriesFat:boolean=false;
+saveEvent:any;
 SaveCaloriesFat(event:any){
+  this.isSaveCaloriesFat=true;
+  this.saveEvent=event;
+  this.checkLockLimit(1,true,true);
+
+}
+
+processSaveCaloriesFat(event:any){
   // save this file
  // if (Array.isArray(event)===false){
   if (event.fileType===undefined){
@@ -1387,8 +1684,8 @@ SaveCaloriesFat(event:any){
       for (var i=0; i<event.tabCaloriesFat.length; i++){
         const CalFatClass = new ClassCaloriesFat;
         this.ConfigCaloriesFat.tabCaloriesFat.push(CalFatClass);
-        this.ConfigCaloriesFat.tabCaloriesFat[i].Type=event.tabCaloriesFat[i].Type;
-                for (var j=0; j<event.tabCaloriesFat[i].Content.length; j++){
+        this.ConfigCaloriesFat.tabCaloriesFat[i].Type=this.saveEvent.tabCaloriesFat[i].Type;
+                for (var j=0; j<this.saveEvent.tabCaloriesFat[i].Content.length; j++){
           const itemClass= new ClassItem;
           this.ConfigCaloriesFat.tabCaloriesFat[this.ConfigCaloriesFat.tabCaloriesFat.length-1].Content.push(itemClass);
           this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j]=event.tabCaloriesFat[i].Content[j];
@@ -1401,12 +1698,14 @@ SaveCaloriesFat(event:any){
     if (this.ConfigCaloriesFat.fileType===''){
       this.ConfigCaloriesFat.fileType=this.identification.configFitness.fileType.calories;
     }
-    this.SaveNewRecord(this.identification.configFitness.bucket, this.SpecificForm.controls['FileName'].value, this.ConfigCaloriesFat);
+    this.ConfigCaloriesFat.updatedAt=strDateTime();
+    this.SaveNewRecord(this.identification.configFitness.bucket, this.SpecificForm.controls['FileName'].value, this.ConfigCaloriesFat, 1);
     this.CreateDropDownCalFat();
 
   }
 }
 
+isSaveRecipeFile:boolean=false;
 SaveRecipeFile(event:any){
   // save this file
  // if (Array.isArray(event)===false){
@@ -1429,54 +1728,80 @@ SaveRecipeFile(event:any){
     if (this.fileRecipe.fileType===''){
       this.fileRecipe.fileType=this.identification.fitness.fileType.recipe;
     }
-    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.fileRecipe);
+    this.fileRecipe.updatedAt=strDateTime();
+    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.fileRecipe, 6);
 
 
   }
 }
-ConfirmSave(event:any){
-  this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-  this.error_msg='';
-  if (event.target.id.substring(0,3)==='Cre'){
-    // CHECK THAT THERE IS NO DUPE FOR THE DATE 
-    var i=0;
-    for (i=0; i<this.HealthData.tabDailyReport.length && this.error_msg===''; i++){
-      this.CheckDupeDate(this.HealthData.tabDailyReport[i].date);
-    }
-    if (this.error_msg===''){
-      this.IsSaveConfirmedCre = true;
-      this.IsSaveConfirmedSel = false;
-    } else {
-      this.errorFn='Cre';
-      this.IsSaveConfirmedCre = false;
-      this.IsSaveConfirmedSel = false;
-    }
-  } else if (event.target.id.substring(0,3)==='Sel'){
-    // CHECK THAT THERE IS NO DUPE FOR THE DATE 
-    if (this.SelectedRecord.date!==this.TheSelectDisplays.controls['SelectedDate'].value){
-        this.CheckDupeDate(this.SelectedRecord.date);
-    }
-    if (this.error_msg===''){
-      this.IsSaveConfirmedCre = false;
-      this.IsSaveConfirmedSel = true;
-    } else {
-      this.errorFn='Sel';
-      this.IsSaveConfirmedCre = false;
-      this.IsSaveConfirmedSel = false;
-    }
-  }  else if (event.target.id.substring(0,3)==='All'){
-      this.IsSaveConfirmedAll = true;
-      this.errorFn='All';
+isConfirmSaveA:boolean=false;
+ConfirmSaveA(event:any){
+  this.theEvent.target.id=event.target.id;
+  if (this.isMustSaveFile===false){
+    this.isConfirmSaveA=true;
+      this.checkLockLimit(0,true,false);
+  } else if (this.tabLock[0].lock === 1){
+    this. ConfirmSave(event);
   }
+}
+
+ConfirmSave(event:any){
+  
+  if (this.tabLock[0].lock === 1){
+    this.isConfirmSaveA=false;
+    this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+    this.error_msg='';
+    if (event.target.id.substring(0,3)==='Cre'){
+      // CHECK THAT THERE IS NO DUPE FOR THE DATE 
+      var i=0;
+      for (i=0; i<this.HealthData.tabDailyReport.length && this.error_msg===''; i++){
+        this.CheckDupeDate(this.HealthData.tabDailyReport[i].date);
+      }
+      if (this.error_msg===''){
+        this.IsSaveConfirmedCre = true;
+        this.IsSaveConfirmedSel = false;
+      } else {
+        this.errorFn='Cre';
+        this.IsSaveConfirmedCre = false;
+        this.IsSaveConfirmedSel = false;
+      }
+    } else if (event.target.id.substring(0,3)==='Sel'){
+      // CHECK THAT THERE IS NO DUPE FOR THE DATE 
+      if (this.SelectedRecord.date!==this.TheSelectDisplays.controls['SelectedDate'].value){
+          this.CheckDupeDate(this.SelectedRecord.date);
+      }
+      if (this.error_msg===''){
+        this.IsSaveConfirmedCre = false;
+        this.IsSaveConfirmedSel = true;
+      } else {
+        this.errorFn='Sel';
+        this.IsSaveConfirmedCre = false;
+        this.IsSaveConfirmedSel = false;
+      }
+    }  else if (event.target.id.substring(0,3)==='All'){
+        this.IsSaveConfirmedAll = true;
+        this.errorFn='All';
+    }
+    this.theEvent.target.id='All';
+  }
+  
 } 
 
 SaveCopy(){
+
 this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
 if (this.HealthAllData.fileType!==''){
   this.HealthAllData.fileType=this.identification.fitness.fileType.Health;
 }
-this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData);
-this.returnFile.emit(this.HealthAllData);
+
+//const aDate=new Date();
+//const theDate=aDate.toUTCString();
+//const stringDate=convertDate(aDate,'YYYYMMDD');
+//this.HealthAllData.updatedAt=stringDate + theDate.substring(17,19)+theDate.substring(20,22)+theDate.substring(23,25);
+
+this.HealthAllData.updatedAt=strDateTime();
+
+this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData,-1);
 this.isCopyFile=false;
 this.TheSelectDisplays.controls['CopyFile'].setValue('N');
 this.errorFn='Copy';
@@ -1490,6 +1815,7 @@ this.errorFn='';
 
 CancelRecord(event:any){
 this.findIds(event.target.id);
+this.isMustSaveFile = false;
 if (event.target.id.substring(0,3)==='Cre'){
   this.HealthData.tabDailyReport.splice(0,this.HealthData.tabDailyReport.length);
   this.theEvent.target.id='New';
@@ -1502,7 +1828,18 @@ if (event.target.id.substring(0,3)==='Cre'){
 }
 }
   
+CancelSaveOthers(iWait:number){
+  if (iWait===1){
+    this.isSaveCaloriesFat=false;
+  } else if (iWait===5){
+    this.isSaveParamChart=false;
+  } else if (iWait===6){
+    this.isSaveRecipeFile=false;
+  }
+}
+
 CancelSave(){
+  this.isMustSaveFile = false;
   this.tabInputMeal.splice(0,this.tabInputMeal.length);
   this.tabInputFood.splice(0,this.tabInputFood.length)
   this.HealthAllData.tabDailyReport.splice(0,this.HealthAllData.tabDailyReport.length)
@@ -1518,7 +1855,17 @@ CancelSave(){
   }
 
 errCalcCalFat:string='';
+
+isSaveHealth:boolean=false;
 SaveHealth(event:any){
+  this.isSaveHealth=true;
+  this.theEvent.target.id=event.target.id;
+  this.checkLockLimit(0,true,true);
+}
+
+ProcessSaveHealth(event:any){
+    this.isSaveHealth=false;
+    this.isMustSaveFile=false;
     this.errCalcCalFat='';
     var trouve=false;
     var i=0
@@ -1596,11 +1943,18 @@ SaveHealth(event:any){
     this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
     this.initTrackRecord();
     //}
-    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData);
+
+    //const aDate=new Date();
+    //const theDate=aDate.toUTCString();
+    //const stringDate=convertDate(aDate,'YYYYMMDD');
+    //this.HealthAllData.updatedAt=stringDate + theDate.substring(17,19)+theDate.substring(20,22)+theDate.substring(23,25);
+    
+    this.HealthAllData.updatedAt=strDateTime();
+    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData, 0);
   }
 
 
-SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any){
+SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any, iWait:number){
     //var file=new File ([JSON.stringify(this.HealthAllData)],GoogleObject, {type: 'application/json'});
     var file=new File ([JSON.stringify(record)],GoogleObject, {type: 'application/json'});
     if (GoogleObject==='ConsoleLog.json'){
@@ -1612,7 +1966,21 @@ SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any){
       .subscribe(res => {
               if (res.type===4){
                 this.error_msg='File "'+ GoogleObject +'" is successfully stored in the cloud';
+                if (iWait===0 ){
+                  this.isAllDataModified=false;
+                } else if (iWait===1 ){
+                  this.isSaveCaloriesFat=false;
+                } else if (iWait===5 ){
+                  this.isSaveParamChart=false;
+                } else if (iWait===6 ){
+                  this.isSaveRecipeFile=false;
+                } 
                 this.isAllDataModified=false;
+                if (iWait===0 || iWait===1 || iWait===5 || iWait===6){
+                  // update field 'updatedAt' in file system 
+                  this.updateLockFile(iWait);
+
+                }
                 this.returnFile.emit(record);
               }
             },
@@ -1644,7 +2012,7 @@ waitHTTP(loop:number, max_loop:number, eventNb:number){
 
 LogMsgConsole(msg:string){
   if (this.myConsole.length>40){
-    this.SaveNewRecord('logconsole','ConsoleLog.json',this.myLogConsole);
+    this.SaveNewRecord('logconsole','ConsoleLog.json',this.myLogConsole, -1);
     this.message='Saving of LogConsole';
   }
   this.SaveConsoleFinished=false;
@@ -1656,46 +2024,74 @@ LogMsgConsole(msg:string){
 
 
   SelRadio(event:any){
-
+    // this.checkLockLimit(0);
     const i = event.substring(2);
     this.error_msg='';
     const NoYes=event.substring(0,1);
     if (i==='1'){
       if (NoYes==='Y'){
           this.isCreateNew=true;
+
+          if (this.tabLock[0].lock!==1){
+            this.lockFile(0);
+          }
       } else {
           this.isCreateNew=false;
+          if (this.tabLock[0].lock===1 && this.isDisplaySpecific===false && this.isDisplayAll===false){
+            this.unlockFile(0);
+          }
       }
     } else if (i==='2'){
         if (NoYes==='Y'){
           this.isDisplaySpecific=true;
+          if (this.tabLock[0].lock!==1){
+            this.lockFile(0);
+          }
         } else {
           this.isDisplaySpecific=false;
+          if (this.tabLock[0].lock===1  && this.isCreateNew===false && this.isDisplayAll===false){
+            this.unlockFile(0);
+          }
         }
     } else if (i==='3'){
         if (NoYes==='Y'){
           this.dialogue[this.prevDialogue]=false;
           this.isDisplayAll=true;
+          if (this.tabLock[0].lock!==1){
+            this.lockFile(0);
+          }
         } else {
+          if (this.tabLock[0].lock===1 && this.isCreateNew===false && this.isDisplaySpecific===false){
+            this.unlockFile(0);
+          }
           this.isDisplayAll=false;
         }
       } else if (i==='4'){
         if (NoYes==='Y'){
           this.isCopyFile=true;
-          const fileName = 'COPY'+this.SpecificForm.controls['FileName'].value ;
+          const fileName = 'COPY '+this.SpecificForm.controls['FileName'].value ;
           this.SpecificForm.controls['FileName'].setValue(fileName);
-        } else {
           this.isCopyFile=false;
         }
       } else if (i==='5'){
         if (NoYes==='Y'){
+
           this.isMgtCaloriesFat=true;
+          if (this.tabLock[1].lock!==1){
+            this.lockFile(1);
+          }
         } else {
           this.isMgtCaloriesFat=false;
+          if (this.tabLock[1].lock===1){
+            this.unlockFile(1);
+          }
   
         }
       } else if (i==='6'){
         if (NoYes==='Y'){
+          if (this.tabLock[0].lock!==1){
+            this.lockFile(0);
+          }
           this.errCalcCalFat='';
           for (var j=0; j<this.HealthAllData.tabDailyReport.length; j++){
             this.calculateHealth(this.HealthAllData.tabDailyReport[j]);
@@ -1709,25 +2105,377 @@ LogMsgConsole(msg:string){
           this.isAllDataModified=true;
           //this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
           //this.initTrackRecord();
-        }
+        } 
         } else if (i==='8'){
-          if (NoYes==='Y'){
+          if (NoYes==='Y'){ // HTML file reload file
             this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confHTML,3);
           } 
         }  else if (i==='7'){
-          if (NoYes==='Y'){
-            this.isDisplayChart=true;
-          } 
-          else {
-            this.isDisplayChart=false; //
+            if (NoYes==='Y'){
+                if (this.EventHTTPReceived[4]===false){
+                  this.getChartFiles();
+                }
+                this.isDisplayChart=true;
+                if (this.tabLock[5].lock!==1){
+                  this.lockFile(5);
+                }
+            } 
+            else {
+                this.isDisplayChart=false; 
+                if (this.tabLock[5].lock===1){
+                  this.unlockFile(5);
+                }
             }
         }  else if (i==='9'){
-          if (NoYes==='Y'){
+          if (NoYes==='Y'){ // reload confirguration chart
               this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confChart,4);
+              if (this.tabLock[4].lock!==1){
+                this.lockFile(4);
+              }
+          }
+          else {
+            if (this.tabLock[4].lock===1){
+              this.unlockFile(4);
+            }
           }
         }
     }
   
+@HostListener('window:unload', ['$event'])
+unloadHandler(event:any) {
+  this.ngOnDestroy();
+}
 
+@HostListener('window:beforeunload', ['$event'])
+beforeUnloadHandler(event:any) {
+  this.ngOnDestroy();
+}
+processDestroy:boolean=false;
+passDestroy:number=0;
+ngOnDestroy(){
+  
+  this.passDestroy++
+  console.log('trigger ngOnDestroy  === pass=' + this.passDestroy);
+  if (this.processDestroy===false){
+    this.processDestroy=true;
+    var trouve=false;
+    for (var i=0; i<this.tabLock.length && trouve===false; i++){
+      if (this.tabLock[i].lock===1) { 
+        trouve=true;
+        this.tabLock[0].action='onDestroy';
+        this.updateSystemFileOld(0);
+      }
+    }
+  } 
+  
+}
+
+unlockFile(iWait:number){
+  this.tabLock[iWait].action='unlock';
+  this.updateSystemFile(iWait);
+  }
+
+lockFile(iWait:number){
+  console.log('=== lockFile ' + this.tabLock[iWait].objectName )
+  this.tabLock[iWait].action='lock';
+  this.updateSystemFile(iWait);
+}
+checkFile(iWait:number){
+  this.tabLock[iWait].action='check';
+  this.updateSystemFile(iWait);
+}
+
+checkUpdateFile(iWait:number){
+  this.tabLock[iWait].action='check&update';
+  this.updateSystemFile(iWait);
+}
+
+updateLockFile(iWait:number){
+  this.tabLock[iWait].action='updatedAt';
+  this.updateSystemFile(iWait);
+}
+
+
+
+updateSystemFileOld(iWait:number){
+  var inData=new classAccessFile;
+  inData.action=this.tabLock[iWait].action;
+  inData.bucket=this.tabLock[iWait].bucket;
+  inData.object=this.tabLock[iWait].object;
+  inData.user=this.tabLock[iWait].user;
+  inData.IpAddress=this.tabLock[iWait].IpAddress;
+  inData.createdAt=this.tabLock[iWait].createdAt;
+  inData.updatedAt=this.tabLock[iWait].updatedAt;
+  inData.iWait=iWait; 
+  inData.timeoutFileSystem.hh=this.configServer.timeoutFileSystem.hh;
+  inData.timeoutFileSystem.mn=this.configServer.timeoutFileSystem.mn;
+
+  //this.message= this.message + ' updateSystemFile ';
+  //this.GetRecord(this.configServer.objectFileSystem, this.configServer.objectFileSystem,10);
+  /*
+  const theError=JSON.stringify(inData);
+  const theconfigServer=JSON.stringify(this.configServer);
+  this.error_msg='inData==> ' + theError + 
+  "  configServer ==> " + theconfigServer +
+  "  ---- BucketSystemFile=" + this.configServer.objectFileSystem + "  ObjectSystemFile=" + this.configServer.objectFileSystem;
+  */
+  this.ManageGoogleService.updateFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileName', inData, this.tabLock )
+  .subscribe(
+    data  => {  
+      console.log('Google updateFileSystem status returned');
+        if (Array.isArray(data)=== true && data[inData.iWait].createdAt !== undefined){ // tabLock is returned
+          console.log('server response: ' + data[inData.iWait].object + ' createdAt=' + data[inData.iWait].createdAt + '  & updatedAt=' + data[inData.iWait].updatedAt + '  & lock value =' + data[inData.iWait].lock);
+          // record is locked by another user; no actions can take place for this user so reset
+          //this.error_msg = this.error_msg + " data returned: lock=" + data[inData.iWait].lock +  "  & status=" + data[inData.iWait].status ;
+          if (data[inData.iWait].lock ===2 && this.tabLock[inData.iWait].lock === 1) {
+            if (inData.iWait===0){
+              this.tabLock[inData.iWait].lock=2;
+              this.resetBooleans();
+              this.reAccessHealthFile();
+            } else {
+              this.tabLock[inData.iWait].status=300;
+              if (inData.iWait===5){
+                this.reAccessChartFile();
+              } else if (inData.iWait===1){
+                this.reAccessConfigCal();
+              }
+            }
+
+          } 
+          this.tabLock[inData.iWait]=data[inData.iWait];
+          
+        } else if (inData.action==='check' && data.createdAt !== undefined){ // inData is returned
+            /* if (data.status===800 ){ // no record/fileSystem is empty 
+              this.tabLock[inData.iWait].status=data.status;
+              if (inData.iWait===0){
+
+                  if (this.isMustSaveFile === true || this.isSaveHealth === true || (this.tabLock[0].lock === 1 && this.isAllDataModified === true)){
+                      // must check if file has been updated
+                        this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.fileHealth,7);
+                    }       
+              } else if (inData.iWait===5 && this.tabLock[5].lock === 1){
+                  this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.myChartConfig,8);
+              } else if (inData.iWait===1 && this.tabLock[1].lock === 1){
+                this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,9);
+            }
+            } else */
+            if (data.status===810 || data.status===800){ // record found and belongs to same user || record not found/file empty
+              if (data.status === 800){
+                this.lockFile(inData.iWait);
+              }  
+              this.tabLock[inData.iWait].status=data.status;
+              if (inData.iWait===0){
+                  if (this.isSaveHealth === true){
+                    this.ProcessSaveHealth(this.theEvent);
+                  } else if (this.isMustSaveFile === true){
+                      this.ConfirmSave(this.theEvent);
+                  } else if (data.status === 810){
+                    this.updateLockFile(inData.iWait);
+                  }  
+              } else if (inData.iWait===1 ){
+                    if( this.isSaveCaloriesFat === true){
+                      this.processSaveCaloriesFat(this.saveEvent);
+                    } else if (data.status === 810){
+                      this.updateLockFile(inData.iWait);
+                    }
+                } else if (inData.iWait===5){
+                    if( this.isSaveParamChart === true){
+                      this.processSaveParamChart();
+                    } else if (data.status === 810){
+                      this.updateLockFile(inData.iWait);
+                    }
+                }
+  
+              } else if (data.status===820){ // record found and belongs to other user
+                  if (inData.iWait===0){
+                    this.reAccessHealthFile();
+                    this.resetBooleans();
+                  } else if (inData.iWait===1){
+                    this.reAccessConfigCal();
+                  } else if (inData.iWait===5){
+                    this.tabLock[inData.iWait].status=data.status;
+                    this.reAccessChartFile();
+                  }
+                  this.tabLock[inData.iWait].lock=2;
+              }
+
+        } else {
+          console.log('which type of data is it????');
+          const a = data;
+          this.tabLock[inData.iWait].status=999;
+        } 
+    },
+    err => {
+      console.log('Google updateFileSystem general error='+err.status + '  specific error= ' +err.error.error + ' & message= ' + err.error.message);
+      //this.error_msg = this.error_msg + '   update FileSystem ='+err.status + '  specific error= ' +err.error.error + ' & message= ' + err.error.message;
+      if (err.status===300 || err.error.error === 720){ // 300 record already locked; 720 updatedAt on record locked by another user
+        this.tabLock[inData.iWait].lock=2;
+        
+        if (err.error.error === 720){
+          this.tabLock[inData.iWait].status=720;
+          if (inData.iWait===0){
+            this.resetBooleans();
+            this.reAccessHealthFile();
+          } else if (inData.iWait===1){
+            this.reAccessConfigCal();
+          } else if (inData.iWait===5){
+            this.reAccessChartFile();
+          } 
+        } else {
+          this.tabLock[inData.iWait].status=300;
+        }
+      } else if (err.error.error===700 || err.error.error===710){ // requested to unlock record which does not exist or is locked by another user
+        this.tabLock[inData.iWait].lock=0;
+        this.tabLock[inData.iWait].status=err.error.error;
+      }
+
+    } )
+}
+
+callUpdateSystemFile:number=0;
+saveIWait:number=0;
+isTriggerFileSystem:boolean=false;
+updateSystemFile(iWait:number){
+  this.saveIWait=iWait;
+  this.isTriggerFileSystem=true;
+  this.callUpdateSystemFile++
+}
+
+returnFromFileSystem(data:any){
+//this.isTriggerFileSystem=false;
+//const iWait=this.saveIWait;
+const iWait=data.iWait;
+  if (data.status!== undefined && Array.isArray(data.status)=== true)  { // tabLock is returned
+    console.log('server response: ' + data.status[iWait].object + ' createdAt=' + data.status[iWait].createdAt + '  & updatedAt=' + data.status[iWait].updatedAt + '  & lock value =' + data.status[iWait].lock);
+    // record is locked by another user; no actions can take place for this user so reset
+    if (data.status[iWait].createdAt !== undefined){
+        //this.error_msg = this.error_msg + " data returned: lock=" + data.status[iWait].lock +  "  & status=" + data.status[iWait].status ;
+        if (data.status[iWait].lock ===2 && this.tabLock[iWait].lock === 1) {
+          if (iWait===0){
+            this.tabLock[iWait].lock=2;
+            
+            this.reAccessHealthFile();
+          } else {
+            this.tabLock[iWait].status=300;
+            if (iWait===5){
+              this.reAccessChartFile();
+            } else if (iWait===1){
+              this.reAccessConfigCal();
+            }
+          }
+
+        } else if (this.tabLock[iWait].action==='check&update' && data.status[iWait].status===0 && this.isMustSaveFile===true){
+          this.ConfirmSave(this.theEvent);
+
+        }
+        this.tabLock[iWait]=data.status[iWait];
+      } else { console.log(' something wrong happened with process on file system');}
+    
+  } else if (data.status!== undefined && Array.isArray(data.status)=== false && (this.tabLock[iWait].action==='check' || this.tabLock[iWait].action==='check&update') && data.createdAt !== undefined){ // tabLock[iWait] is returned
+
+      if (data.status===810 || data.status===800){ // record found and belongs to same user or record not found or file empty
+        if (data.status === 800){ // no file system or no record then lock this user
+          this.lockFile(iWait); // ====> the process below has to be reviewed 
+        }  
+        this.tabLock[iWait].status=data.status;
+        if (iWait===0){
+            if (this.isSaveHealth === true){
+              this.ProcessSaveHealth(this.theEvent);
+            } else if (this.isMustSaveFile === true){
+                this.ConfirmSave(this.theEvent);
+            } else if (data.status === 810){
+              this.updateLockFile(iWait);
+            }  
+        } else if (iWait===1 ){
+              if( this.isSaveCaloriesFat === true){
+                this.processSaveCaloriesFat(this.saveEvent);
+              } else if (data.status === 810){
+                this.updateLockFile(iWait);
+              }
+          } else if (iWait===5){
+              if( this.isSaveParamChart === true){
+                this.processSaveParamChart();
+              } else if (data.status === 810){
+                this.updateLockFile(iWait);
+              }
+          }
+
+        } else if (data.status===820){ // record found and belongs to other user
+            this.tabLock[iWait].lock=2;
+            if (iWait===0){
+              this.reAccessHealthFile();
+            } else if (iWait===1){
+              this.reAccessConfigCal();
+            } else if (iWait===5){
+              this.tabLock[iWait].status=data.status;
+              this.reAccessChartFile();
+            }
+           
+        }
+
+  } else if (data.error!== undefined){
+        console.log(data.message);
+        if (data.error===300 || data.error === 720){ // 300 record already locked; 720 updatedAt on record locked by another user
+          this.tabLock[iWait].lock=2;
+          
+          if (data.error === 720){
+            this.tabLock[iWait].status=720;
+            if (iWait===0){
+              this.reAccessHealthFile();
+            } else if (iWait===1){
+              this.reAccessConfigCal();
+            } else if (iWait===5){
+              this.reAccessChartFile();
+            } 
+          } else {
+            this.tabLock[iWait].status=300;
+          }
+      } else if (data.error===700 || data.error===710){ // requested to unlock record which does not exist or is locked by another user
+          this.tabLock[iWait].lock=0;
+          this.tabLock[iWait].status=data.error;
+
+      } else {
+          console.log('which type of data is it????');
+          const a = data;
+          this.tabLock[iWait].status=999;
+      } 
+  } else {
+    console.log('which type of data is it???? : ' + data);
+    this.tabLock[iWait].status=999;
+  } 
+}
+
+
+getChartFiles(){
+  if (this.InConfigChart.fileType===''){
+    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confChart,4);
+  } else {
+    this.ConfigChart=this.InConfigChart;
+    this.EventHTTPReceived[4]=true;
+  }
+
+  if (this.fileParamChart.fileType===''){
+    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.myChartConfig,5);
+  } else {
+    this.fileParamChart=this.InFileParamChart;
+    this.EventHTTPReceived[5]=true;
+  }
+
+}
+
+reAccessHealthFile(){
+  this.HealthAllData.tabDailyReport.splice(0,this.HealthAllData.tabDailyReport.length);
+  this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.fileHealth,0);
+}
+
+reAccessChartFile(){
+  this.fileParamChart.data.splice(this.fileParamChart.data.length);
+  this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.myChartConfig,5);
+}
+
+reAccessConfigCal(){
+  this.ConfigCaloriesFat.tabCaloriesFat.splice(this.ConfigCaloriesFat.tabCaloriesFat.length);
+  this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,1);
+}
 
 }

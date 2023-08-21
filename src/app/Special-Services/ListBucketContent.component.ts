@@ -9,7 +9,7 @@ import { EventAug } from '../JsonServerClass';
 import { Bucket_List_Info } from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+
 import { msginLogConsole } from '../consoleLog';
 import { LoginIdentif } from '../JsonServerClass';
 import { BucketList } from '../JsonServerClass';
@@ -39,7 +39,7 @@ export class ListBucketContentComponent {
   
     @Input() configServer=new configServer;
     @Input() NbRefresh_Bucket=0;
-    @Input() ConfigXMV=new XMVConfig;
+
     @Input() Bucket_Name:string='';
     @Output() Return_SelectedBucketInfo=new EventEmitter<OneBucketInfo>();
     
@@ -104,7 +104,7 @@ ngOnInit(){
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
-      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  ;
+      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'

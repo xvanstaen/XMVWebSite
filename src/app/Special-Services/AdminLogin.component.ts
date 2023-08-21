@@ -6,7 +6,6 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 
-import { XMVConfig } from '../JsonServerClass';
 import { msginLogConsole } from '../consoleLog';
 import { LoginIdentif } from '../JsonServerClass';
 
@@ -32,7 +31,7 @@ export class AdminLoginComponent {
 
   @Input() configServer=new configServer;
   @Output() process_login=new EventEmitter<any>();
-  @Input() ConfigXMV=new XMVConfig;
+
   @Input() ListOfBucket=new BucketList;
   @Input() SelectedBucketInfo=new OneBucketInfo;
   @Input() theReceivedData:any;
@@ -128,7 +127,7 @@ ngOnInit(){
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
-      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  ;
+      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'

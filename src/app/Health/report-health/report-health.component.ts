@@ -16,25 +16,28 @@ import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer, XMVConfig } from '../../JsonServerClass';
+
 
 import { environment } from 'src/environments/environment';
-import { LoginIdentif, msgConsole } from '../../JsonServerClass';
+
 import {classPosDiv, getPosDiv} from '../../getPosDiv';
+import { strDateTime } from '../../MyStdFunctions';
 
 import {manage_input} from '../../manageinput';
 import {eventoutput, thedateformat} from '../../apt_code_name';
-import {msginLogConsole} from '../../consoleLog'
+import {msginLogConsole} from '../../consoleLog';
 
-import { mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories'
-import {mainConvItem, mainRecordConvert, mainClassUnit, mainClassConv} from '../../ClassConverter'
+import { mainClassCaloriesFat, mainDailyReport} from '../ClassHealthCalories';
+import {mainConvItem, mainRecordConvert, mainClassUnit, mainClassConv} from '../../ClassConverter';
 import { classConfigChart, classchartHealth } from '../classConfigChart';
 import {classPosSlider} from '../../JsonServerClass';
+
+import { configServer,  LoginIdentif, msgConsole } from '../../JsonServerClass';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 import { classAxis, classLegendChart, classPluginTitle , classTabFormChart, classFileParamChart, classReturnColor} from '../classChart';
-
+import { classFileSystem, classAccessFile}  from '../../classFileSystem';
 
 
 @Component({
@@ -74,17 +77,23 @@ export class ReportHealthComponent implements OnInit {
   @Input() HealthAllData=new mainDailyReport;
   @Input() ConfigChartHealth=new classchartHealth;
   @Input() INFileParamChart=new classFileParamChart;
+  @Input() configServer=new configServer;
+
+  //inData=new classAccessFile;
+  @Input()  tabLock= new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
+  
   posSlider=new classPosSlider;
   posPalette=new classPosSlider;
   paramChange:number=0; // used to trigger the change on slider position
   @Output() returnFile= new EventEmitter<any>();
+  @Output() reportCheckLockLimit= new EventEmitter<any>();
+  @Output() cancelSaveOther= new EventEmitter<any>();
 
   @ViewChild('baseChart', { static: true })
 
   // DEBUG
   debugPhone:boolean=false;
 
-  FileParamChart=new classFileParamChart;
   current_Chart:number=0;
   tabParamChart:Array<classTabFormChart>=[];
   initTabParamChart:Array<classTabFormChart>=[];
@@ -141,35 +150,35 @@ export class ReportHealthComponent implements OnInit {
   tabPeriod=['daily','weekly','monthly'];
 
   selectChart: FormGroup = new FormGroup({ 
-    chartType: new FormControl('line', { nonNullable: true }),
-    barThickness: new FormControl('line', { nonNullable: true }),
-    chartTitle: new FormControl('', { nonNullable: true }),
-    colorChartTitle:new FormControl('', { nonNullable: true }),
-    ratio:new FormControl(0, { nonNullable: true }),
-    canvasWidth: new FormControl(0, { nonNullable: true }),
-    canvasHeight:new FormControl(0, { nonNullable: true }),
-    canvasMarginLeft:new FormControl(0, { nonNullable: true }),
-    stackedX:new FormControl('', { nonNullable: true }),
-    stackedY:new FormControl('', { nonNullable: true }),
-    canvasBackground: new FormControl('', { nonNullable: true }),
-    legendTitle:new FormControl('', { nonNullable: true }),
-    colorLegendTitle:new FormControl('', { nonNullable: true }),
-    boxwidth:new FormControl(0, { nonNullable: true }),
-    boxheight:new FormControl(0, { nonNullable: true }),
-    boxpointStyle:new FormControl('', { nonNullable: true }),
+    chartType: new FormControl({value:'line', disabled:true}, { nonNullable: true }),
+    barThickness: new FormControl({value:'line', disabled:true}, { nonNullable: true }),
+    chartTitle: new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    colorChartTitle:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    ratio:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    canvasWidth: new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    canvasHeight:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    canvasMarginLeft:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    stackedX:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    stackedY:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    canvasBackground: new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    legendTitle:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    colorLegendTitle:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    boxwidth:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    boxheight:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    boxpointStyle:new FormControl({value:'', disabled:true}, { nonNullable: true }),
     boxusePointStyle:new FormControl(false, { nonNullable: true }),
-    boxcolor:new FormControl('', { nonNullable: true }),
-    boxfontSize:new FormControl(0, { nonNullable: true }),
-    boxradius:new FormControl(0, { nonNullable: true }),
-    boxfontWeight:new FormControl('', { nonNullable: true }),
-    boxfontFamily:new FormControl('', { nonNullable: true }),
-    period:new FormControl('', { nonNullable: true }), //daily, weekly, monthly
-    startRange: new FormControl('',[
+    boxcolor:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    boxfontSize:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    boxradius:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    boxfontWeight:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    boxfontFamily:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    period:new FormControl({value:'', disabled:true}, { nonNullable: true }), //daily, weekly, monthly
+    startRange: new FormControl({value:'', disabled:true},[
       Validators.required,
       // validates date format yyyy-mm-dd with regular expression
       Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
       ]),
-    endRange: new FormControl('',[
+    endRange: new FormControl({value:'', disabled:true},[
       Validators.required,
       // validates date format yyyy-mm-dd with regular expression
       Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
@@ -179,41 +188,41 @@ export class ReportHealthComponent implements OnInit {
 
 
   selectTitle: FormGroup =new FormGroup({ 
-    paddingTop:new FormControl(0, { nonNullable: true }),
-    paddingBottom:new FormControl(0, { nonNullable: true }),
-    paddingLeft:new FormControl(0, { nonNullable: true }),
-    position:new FormControl('', { nonNullable: true }),
+    paddingTop:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    paddingBottom:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    paddingLeft:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    position:new FormControl({value:'', disabled:true}, { nonNullable: true }),
     display:new FormControl(false, { nonNullable: true }),
-    text:new FormControl('', { nonNullable: true }),
-    align:new FormControl('', { nonNullable: true }),
-    color:new FormControl('', { nonNullable: true }),
-    paletteRgba:new FormControl(0, { nonNullable: true }),
-    paletteXpos:new FormControl(0, { nonNullable: true }),
-    paletteYpos:new FormControl(0, { nonNullable: true }),
-    sliderRgba:new FormControl(0, { nonNullable: true }),
-    sliderXpos:new FormControl(0, { nonNullable: true }),
-    sliderYpos:new FormControl(0, { nonNullable: true }),
-    fontSize:new FormControl(0, { nonNullable: true }),
-    fontWeight:new FormControl('', { nonNullable: true }),
-    family:new FormControl('', { nonNullable: true })
+    text:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    align:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    color:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    paletteRgba:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    paletteXpos:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    paletteYpos:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    sliderRgba:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    sliderXpos:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    sliderYpos:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    fontSize:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    fontWeight:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    family:new FormControl({value:'', disabled:true}, { nonNullable: true })
   });
 
 
 
   selectAxisX: FormGroup =new FormGroup({ 
-    borderColor:new FormControl('', { nonNullable: true }),
-    borderWidth:new FormControl(0, { nonNullable: true }),
-    position:new FormControl('', { nonNullable: true }),
-    stacked:new FormControl('', { nonNullable: true }),
-    ticksColor:new FormControl('', { nonNullable: true }),
+    borderColor:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    borderWidth:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    position:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    stacked:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    ticksColor:new FormControl({value:'', disabled:true}, { nonNullable: true }),
   });
 
   selectAxisY: FormGroup =new FormGroup({ 
-    borderColor:new FormControl('', { nonNullable: true }),
-    borderWidth:new FormControl(0, { nonNullable: true }),
-    position:new FormControl('', { nonNullable: true }),
-    stacked:new FormControl('', { nonNullable: true }),
-    ticksColor:new FormControl('', { nonNullable: true }),
+    borderColor:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    borderWidth:new FormControl({value:0, disabled:true}, { nonNullable: true }),
+    position:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    stacked:new FormControl({value:'', disabled:true}, { nonNullable: true }),
+    ticksColor:new FormControl({value:'', disabled:true}, { nonNullable: true }),
   });
 
 
@@ -331,34 +340,12 @@ export class ReportHealthComponent implements OnInit {
   
   posDivPosSlider= new classPosDiv;
   posDivPosSliderTrue= new classPosDiv;
-/*******
-  getPosDivPosSlider(){
-    if (document.getElementById("posDivSlider")!==null){
-        this.docDivPosSlider = document.getElementById("posDivSlider");
-        this.isPosDivSlider=true;
-        this.posDivPosSlider.Left = this.docDivPosSlider.offsetLeft;
-        this.posDivPosSlider.Top = this.docDivPosSlider.offsetTop;
-        this.posDivPosSlider.ClientRect.Top=Math.round(this.docDivPosSlider.getBoundingClientRect().top);
-        this.posDivPosSlider.ClientRect.Left=Math.round(this.docDivPosSlider.getBoundingClientRect().left);
-        this.posDivPosSlider.ClientRect.Bottom=Math.round(this.docDivPosSlider.getBoundingClientRect().bottom);
-        this.posDivPosSlider.ClientRect.Height=Math.round(this.docDivPosSlider.getBoundingClientRect().height);
 
-    }
-  }
-  getPosDivPosSliderTrue(){
-    if (document.getElementById("posDivSliderTrue")!==null){
-      this.docDivPosSliderTrue = document.getElementById("posDivSliderTrue");
-      this.isPosDivSliderTrue=true;
-      this.posDivPosSliderTrue.Left = this.docDivPosSliderTrue.offsetLeft;
-      this.posDivPosSliderTrue.Top = this.docDivPosSliderTrue.offsetTop;
-      this.posDivPosSliderTrue.ClientRect.Top=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().top);
-      this.posDivPosSliderTrue.ClientRect.Left=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().left);
-      this.posDivPosSliderTrue.ClientRect.Bottom=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().bottom);
-      this.posDivPosSliderTrue.ClientRect.Height=Math.round(this.docDivPosSliderTrue.getBoundingClientRect().height);
-      }
-    }
+  tabFontWeight:Array<string>=["cancel","100","200","300","400","500","600","700","800","900","bold","bolder","lighter","normal"];
+  tabTextAlign:Array<string>=["cancel","center","left","right","end","start","inherit","initial"];
+  tabTitlePosition:Array<string>=["cancel","top","bottom"];
+  tabDisplay:Array<boolean>=[false,true];
 
-   */
   eventClientY:number=0;
   eventPageY:number=0;
   @HostListener('window:mouseup', ['$event'])
@@ -391,11 +378,9 @@ export class ReportHealthComponent implements OnInit {
     // this.testLineChart();
   }
 
-tabFontWeight:Array<string>=["cancel","100","200","300","400","500","600","700","800","900","bold","bolder","lighter","normal"];
-tabTextAlign:Array<string>=["cancel","center","left","right","end","start","inherit","initial"];
-tabTitlePosition:Array<string>=["cancel","top","bottom"];
-tabDisplay:Array<boolean>=[false,true];
+
 ngOnInit() {
+  console.log('===> ngOnInit report-health --- this.firstLoop=' + this.firstLoop);
   if (this.debugPhone===true){
       this.posDivPosSlider=getPosDiv("posDivSlider");
       //this.getPosDivPosSlider();
@@ -596,6 +581,123 @@ ngOnInit() {
       }
     }
   }
+  
+enableForm(){
+  this.selectChart.get('chartType')?.enable();
+  this.selectChart.get('barThickness')?.enable();
+  this.selectChart.get('chartTitle')?.enable();
+  this.selectChart.get('colorChartTitle')?.enable();
+  this.selectChart.get('ratio')?.enable();
+  this.selectChart.get('canvasWidth')?.enable();
+  this.selectChart.get('canvasHeight')?.enable();
+  this.selectChart.get('canvasMarginLeft')?.enable();
+  this.selectChart.get('stackedX')?.enable();
+  this.selectChart.get('stackedY')?.enable();
+  this.selectChart.get('canvasBackground')?.enable();
+  this.selectChart.get('legendTitle')?.enable();
+  this.selectChart.get('colorLegendTitle')?.enable();
+  this.selectChart.get('boxwidth')?.enable();
+  this.selectChart.get('boxheight')?.enable();
+  this.selectChart.get('boxpointStyle')?.enable();
+  this.selectChart.get('boxusePointStyle')?.enable();
+  this.selectChart.get('boxcolor')?.enable();
+  this.selectChart.get('boxfontSize')?.enable();
+  this.selectChart.get('boxradius')?.enable();
+  this.selectChart.get('boxfontWeight')?.enable();
+  this.selectChart.get('boxfontFamily')?.enable();
+  this.selectChart.get('period')?.enable();
+  this.selectChart.get('startRange')?.enable();
+  this.selectChart.get('endRange')?.enable();
+
+  this.selectTitle.get('paddingTop')?.enable();
+  this.selectTitle.get('paddingBottom')?.enable();
+  this.selectTitle.get('paddingLeft')?.enable();
+  this.selectTitle.get('position')?.enable();
+  this.selectTitle.get('display')?.enable();
+  this.selectTitle.get('text')?.enable();
+  this.selectTitle.get('align')?.enable();
+  this.selectTitle.get('color')?.enable();
+  this.selectTitle.get('paletteRgba')?.enable();
+  this.selectTitle.get('paletteXpos')?.enable();
+  this.selectTitle.get('paletteYpos')?.enable();
+  this.selectTitle.get('sliderRgba')?.enable();
+  this.selectTitle.get('sliderXpos')?.enable();
+  this.selectTitle.get('sliderYpos')?.enable();
+  this.selectTitle.get('fontSize')?.enable();
+  this.selectTitle.get('fontWeight')?.enable();
+  this.selectTitle.get('family')?.enable();
+  
+  this.selectAxisX.get('borderColor')?.enable();
+  this.selectAxisX.get('borderWidth')?.enable();
+  this.selectAxisX.get('position')?.enable();
+  this.selectAxisX.get('stacked')?.enable();
+  this.selectAxisX.get('ticksColor')?.enable();
+    
+  this.selectAxisY.get('borderColor')?.enable();
+  this.selectAxisY.get('borderWidth')?.enable();
+  this.selectAxisY.get('position')?.enable();
+  this.selectAxisY.get('stacked')?.enable();
+  this.selectAxisY.get('ticksColor')?.enable();
+} 
+
+
+disableForm(){
+  this.selectChart.get('chartType')?.disable();
+  this.selectChart.get('barThickness')?.disable();
+  this.selectChart.get('chartTitle')?.disable();
+  this.selectChart.get('colorChartTitle')?.disable();
+  this.selectChart.get('ratio')?.disable();
+  this.selectChart.get('canvasWidth')?.disable();
+  this.selectChart.get('canvasHeight')?.disable();
+  this.selectChart.get('canvasMarginLeft')?.disable();
+  this.selectChart.get('stackedX')?.disable();
+  this.selectChart.get('stackedY')?.disable();
+  this.selectChart.get('canvasBackground')?.disable();
+  this.selectChart.get('legendTitle')?.disable();
+  this.selectChart.get('colorLegendTitle')?.disable();
+  this.selectChart.get('boxwidth')?.disable();
+  this.selectChart.get('boxheight')?.disable();
+  this.selectChart.get('boxpointStyle')?.disable();
+  this.selectChart.get('boxusePointStyle')?.disable();
+  this.selectChart.get('boxcolor')?.disable();
+  this.selectChart.get('boxfontSize')?.disable();
+  this.selectChart.get('boxradius')?.disable();
+  this.selectChart.get('boxfontWeight')?.disable();
+  this.selectChart.get('boxfontFamily')?.disable();
+  this.selectChart.get('period')?.disable();
+  this.selectChart.get('startRange')?.disable();
+  this.selectChart.get('endRange')?.disable();
+
+  this.selectTitle.get('paddingTop')?.disable();
+  this.selectTitle.get('paddingBottom')?.disable();
+  this.selectTitle.get('paddingLeft')?.disable();
+  this.selectTitle.get('position')?.disable();
+  this.selectTitle.get('display')?.disable();
+  this.selectTitle.get('text')?.disable();
+  this.selectTitle.get('align')?.disable();
+  this.selectTitle.get('color')?.disable();
+  this.selectTitle.get('paletteRgba')?.disable();
+  this.selectTitle.get('paletteXpos')?.disable();
+  this.selectTitle.get('paletteYpos')?.disable();
+  this.selectTitle.get('sliderRgba')?.disable();
+  this.selectTitle.get('sliderXpos')?.disable();
+  this.selectTitle.get('sliderYpos')?.disable();
+  this.selectTitle.get('fontSize')?.disable();
+  this.selectTitle.get('fontWeight')?.disable();
+  this.selectTitle.get('family')?.disable();
+    
+  this.selectAxisX.get('borderColor')?.disable();
+  this.selectAxisX.get('borderWidth')?.disable();
+  this.selectAxisX.get('position')?.disable();
+  this.selectAxisX.get('stacked')?.disable();
+  this.selectAxisX.get('ticksColor')?.disable();
+    
+  this.selectAxisY.get('borderColor')?.disable();
+  this.selectAxisY.get('borderWidth')?.disable();
+  this.selectAxisY.get('position')?.disable();
+  this.selectAxisY.get('stacked')?.disable();
+  this.selectAxisY.get('ticksColor')?.disable();
+} 
 
 changeCanvas(i:number){
   if (this.tabParamChart[i].canvasHeight!==0){
@@ -623,31 +725,32 @@ changeCanvas(i:number){
 
 selectedChart:number=0;
 SelChart(event:any){
-  if (this.selectedChart!==0){
-   
-    this.selected_canvasColor='';
-    this.selected_legendColor='';
-    this.selected_boxColor='';
-    this.selected_chartTitleColor='';
-    this.selected_colorTitle="";
-    this.fillInTabOfCharts(this.selectedChart-1);
+  this.reportCheckLockLimit.emit({iWait:5,isDataModified:true,isSaveFile:false});
 
-  }
-  if (event.target.id==='Chart1'){
-      this.selectedChart=1;
-  } else if (event.target.id==='Chart2'){
-      this.selectedChart=2;
-  } else if (event.target.id==='Chart3'){
-    this.selectedChart=3;
-  } else if (event.target.id==='Chart4'){
-    this.selectedChart=4;
-  }
-  this.fillInFormFromTab(this.selectedChart-1);
-  if (this.debugPhone === true){
-    this.posDivPosSlider=getPosDiv("posDivSlider");
-    //this.getPosDivPosSlider();
-  }
-  
+    if (this.selectedChart!==0){
+    
+      this.selected_canvasColor='';
+      this.selected_legendColor='';
+      this.selected_boxColor='';
+      this.selected_chartTitleColor='';
+      this.selected_colorTitle="";
+      this.fillInTabOfCharts(this.selectedChart-1);
+
+    }
+    if (event.target.id==='Chart1'){
+        this.selectedChart=1;
+    } else if (event.target.id==='Chart2'){
+        this.selectedChart=2;
+    } else if (event.target.id==='Chart3'){
+      this.selectedChart=3;
+    } else if (event.target.id==='Chart4'){
+      this.selectedChart=4;
+    }
+    this.fillInFormFromTab(this.selectedChart-1);
+    if (this.debugPhone === true){
+      this.posDivPosSlider=getPosDiv("posDivSlider");
+      //this.getPosDivPosSlider();
+    }
   
 }
 
@@ -716,17 +819,19 @@ fillInTabOfCharts(nb:number){
   this.tabParamChart[nb].legendBox.color=this.selectChart.controls['boxcolor'].value;
   this.fillRgba(this.returnBoxRgba,this.tabParamChart[nb].legendBoxRgba);
 
-  if (this.selectChart.controls['stackedX'].value==='false'){
+  if ( (typeof this.selectChart.controls['stackedX'].value==='string' && this.selectChart.controls['stackedX'].value==='false')
+        || (typeof this.selectChart.controls['stackedX'].value==='boolean' && this.selectChart.controls['stackedX'].value===false)){
     this.tabParamChart[nb].axisX.stacked=false;
   } else {
     this.tabParamChart[nb].axisX.stacked=true;
   }
-  if (this.selectChart.controls['stackedY'].value==='false'){
+  if ( (typeof this.selectChart.controls['stackedY'].value==='string' && this.selectChart.controls['stackedY'].value==='false')
+  || (typeof this.selectChart.controls['stackedY'].value==='boolean' && this.selectChart.controls['stackedY'].value===false)){
     this.tabParamChart[nb].axisY.stacked=false;
   } else {
     this.tabParamChart[nb].axisY.stacked=true;
   }
-
+  
   this.tabParamChart[nb].axisX.border.color=this.selectAxisX.controls['borderColor'].value;
   this.tabParamChart[nb].axisX.border.width=this.selectAxisX.controls['borderWidth'].value;
   this.tabParamChart[nb].axisX.position=this.selectAxisX.controls['position'].value;
@@ -882,7 +987,7 @@ fillInFormFromTab(nb:number){
   this.selectAxisY.controls['borderColor'].setValue(this.tabParamChart[nb].axisY.border.color);
   this.selectAxisY.controls['position'].setValue(this.tabParamChart[nb].axisY.position);
   this.selectAxisY.controls['ticksColor'].setValue(this.tabParamChart[nb].axisY.ticks.color);
-  this.selectAxisX.controls['stacked'].setValue(this.tabParamChart[nb].axisY.stacked);
+  this.selectAxisY.controls['stacked'].setValue(this.tabParamChart[nb].axisY.stacked);
   this.selected_XTicksColor=this.tabParamChart[nb].axisX.ticks.color;
   this.selected_XBorderColor=this.tabParamChart[nb].axisX.border.color;
   this.selected_YTicksColor=this.tabParamChart[nb].axisY.ticks.color;
@@ -1098,126 +1203,127 @@ resetBooleans(){
 
 
 selectColorAxis(event:any){
-  this.resetBooleans();
-  this.mainWindow.top=120;
-  this.posSlider.div.top=this.mainWindow.top + this.subWindow.top;
-  if (event==="xBorderColor"){
-    this.isSelectXBorderColor=true;
-    this.my_input_child1=this.selected_XBorderColor;
-    this.my_input_child2=this.selected_XBorderColor;
-    this.returnSlider=this.returnXBorderColorRgba.slider;
-    this.returnPalette=this.returnXBorderColorRgba.palette;
-    
-  } else if (event==="xTicksColor"){
-    this.isSelectXTicksColor=true;
-    this.my_input_child1=this.selected_XTicksColor;
-    this.my_input_child2=this.selected_XTicksColor;
-    this.returnSlider=this.returnXTicksRgba.slider;
-    this.returnPalette=this.returnXTicksRgba.palette;
+  if (this.tabLock.lock!==2){
+    this.resetBooleans();
+    this.mainWindow.top=120;
+    this.posSlider.div.top=this.mainWindow.top + this.subWindow.top;
+    if (event==="xBorderColor"){
+      this.isSelectXBorderColor=true;
+      this.my_input_child1=this.selected_XBorderColor;
+      this.my_input_child2=this.selected_XBorderColor;
+      this.returnSlider=this.returnXBorderColorRgba.slider;
+      this.returnPalette=this.returnXBorderColorRgba.palette;
+      
+    } else if (event==="xTicksColor"){
+      this.isSelectXTicksColor=true;
+      this.my_input_child1=this.selected_XTicksColor;
+      this.my_input_child2=this.selected_XTicksColor;
+      this.returnSlider=this.returnXTicksRgba.slider;
+      this.returnPalette=this.returnXTicksRgba.palette;
 
-  } else if (event==="yBorderColor"){
-    this.isSelectYBorderColor=true;
-    this.my_input_child1=this.selected_YBorderColor;
-    this.my_input_child2=this.selected_YBorderColor;
-    this.returnSlider=this.returnYBorderColorRgba.slider;
-    this.returnPalette=this.returnYBorderColorRgba.palette;
+    } else if (event==="yBorderColor"){
+      this.isSelectYBorderColor=true;
+      this.my_input_child1=this.selected_YBorderColor;
+      this.my_input_child2=this.selected_YBorderColor;
+      this.returnSlider=this.returnYBorderColorRgba.slider;
+      this.returnPalette=this.returnYBorderColorRgba.palette;
 
-  } else if (event==="yTicksColor"){
-    this.isSelectYTicksColor=true;
-    this.my_input_child1=this.selected_YTicksColor;
-    this.my_input_child2=this.selected_YTicksColor;
-    this.returnSlider=this.returnYTicksRgba.slider;
-    this.returnPalette=this.returnYTicksRgba.palette;
+    } else if (event==="yTicksColor"){
+      this.isSelectYTicksColor=true;
+      this.my_input_child1=this.selected_YTicksColor;
+      this.my_input_child2=this.selected_YTicksColor;
+      this.returnSlider=this.returnYTicksRgba.slider;
+      this.returnPalette=this.returnYTicksRgba.palette;
 
+    }
+    this.isSliderSelected=true;
   }
-  this.isSliderSelected=true;
-
 }
 
 
 
 selectColor(event:any){
-  this.resetBooleans();
-  
-  this.mainWindow.top=120;
-  this.posSlider.div.top=this.mainWindow.top + this.subWindow.top;
-  if (event==='canvasColor'){
-    this.isSelectCanvasColor=true;
-    this.my_input_child1=this.selected_canvasColor;
-    this.my_input_child2=this.selected_canvasColor;
-    this.returnSlider=this.returnCanvasRgba.slider;
-    this.returnPalette=this.returnCanvasRgba.palette;
-    this.isSliderSelected=true;
-  } else if (event==='legendColor'  || (event==='colorTitle' && this.isParamLegend===true)){
-    this.my_input_child1=this.selected_legendColor;
-    this.my_input_child2=this.selected_legendColor;
-    this.returnSlider=this.returnLegendRgba.slider;
-    this.returnPalette=this.returnLegendRgba.palette;
-    if (this.isParamLegend===true){
-      this.isSelectLChartTitleColor=true;
-    } else {
-      this.isSelectLegendColor=true;
-    }
-    this.isSliderSelected=true;
-  } else if (event==='colorChartTitle'  || (event==='colorTitle' && this.isParamTitle===true)){
-    this.my_input_child1=this.selected_chartTitleColor;
-    this.my_input_child2=this.selected_chartTitleColor;
-    this.returnSlider=this.returnTitleRgba.slider;
-    this.returnPalette=this.returnTitleRgba.palette;
-    if (this.isParamTitle===true){
-      this.isSelectLChartTitleColor=true;
-    } else {
-      this.isSelectChartTitleColor=true;
-    }
-    this.isSliderSelected=true;
-  } else if (event==="boxColor"){
-    this.isSelectBoxColor=true;
-    this.my_input_child1=this.selected_boxColor;
-    this.my_input_child2=this.selected_boxColor;
-    this.returnSlider=this.returnBoxRgba.slider;
-    this.returnPalette=this.returnBoxRgba.palette;
-    this.isSliderSelected=true;
-  }
-  
-  else if (event==='fieldCanvasColor'){ //  
-    this.selected_canvasColor=this.selectChart.controls["canvasBackground"].value;
-    this.initRgba(this.returnCanvasRgba);
-  } else if (event==='fieldLegendColor' || (event==='fieldColorTitle' && this.isParamLegend===true) ){
-    this.selected_legendColor=this.selectChart.controls["colorLegendTitle"].value;
-    this.initRgba(this.returnLegendRgba);
-  } else if (event==='fieldColorChartTitle'  || (event==='fieldColorTitle' && this.isParamTitle===true)){ 
-    this.selected_chartTitleColor=this.selectChart.controls["colorChartTitle"].value;
-    this.initRgba(this.returnTitleRgba);
-  }  else if (event==='fieldBoxColor'){ 
-    this.selected_boxColor=this.selectChart.controls["boxcolor"].value;
-    this.initRgba(this.returnBoxRgba);
-  } else if (event==='fieldBoxColor'){ 
-    this.selected_boxColor=this.selectChart.controls["boxcolor"].value;
-    this.initRgba(this.returnBoxRgba);
-  } else if (event==='fieldXColorBorder'){ 
-    this.selected_XBorderColor=this.selectAxisX.controls["borderColor"].value;
-    this.initRgba(this.returnBoxRgba);
-  } else if (event==='fieldXTicksColor'){ 
-    this.selected_XTicksColor=this.selectAxisX.controls["ticksColor"].value;
-    this.initRgba(this.returnBoxRgba);
-  } else if (event==='fieldYColorBorder'){ 
-    this.selected_YBorderColor=this.selectAxisY.controls["borderColor"].value;
-    this.initRgba(this.returnBoxRgba);
-  } else if (event==='fieldYTicksColor'){ 
-    this.selected_YTicksColor=this.selectAxisY.controls["ticksColor"].value;
-    this.initRgba(this.returnBoxRgba);
-  }
+  if (this.tabLock.lock!==2){
+      this.resetBooleans();
+      
+      this.mainWindow.top=120;
+      this.posSlider.div.top=this.mainWindow.top + this.subWindow.top;
+      if (event==='canvasColor'){
+        this.isSelectCanvasColor=true;
+        this.my_input_child1=this.selected_canvasColor;
+        this.my_input_child2=this.selected_canvasColor;
+        this.returnSlider=this.returnCanvasRgba.slider;
+        this.returnPalette=this.returnCanvasRgba.palette;
+        this.isSliderSelected=true;
+      } else if (event==='legendColor'  || (event==='colorTitle' && this.isParamLegend===true)){
+        this.my_input_child1=this.selected_legendColor;
+        this.my_input_child2=this.selected_legendColor;
+        this.returnSlider=this.returnLegendRgba.slider;
+        this.returnPalette=this.returnLegendRgba.palette;
+        if (this.isParamLegend===true){
+          this.isSelectLChartTitleColor=true;
+        } else {
+          this.isSelectLegendColor=true;
+        }
+        this.isSliderSelected=true;
+      } else if (event==='colorChartTitle'  || (event==='colorTitle' && this.isParamTitle===true)){
+        this.my_input_child1=this.selected_chartTitleColor;
+        this.my_input_child2=this.selected_chartTitleColor;
+        this.returnSlider=this.returnTitleRgba.slider;
+        this.returnPalette=this.returnTitleRgba.palette;
+        if (this.isParamTitle===true){
+          this.isSelectLChartTitleColor=true;
+        } else {
+          this.isSelectChartTitleColor=true;
+        }
+        this.isSliderSelected=true;
+      } else if (event==="boxColor"){
+        this.isSelectBoxColor=true;
+        this.my_input_child1=this.selected_boxColor;
+        this.my_input_child2=this.selected_boxColor;
+        this.returnSlider=this.returnBoxRgba.slider;
+        this.returnPalette=this.returnBoxRgba.palette;
+        this.isSliderSelected=true;
+      }
+      
+      else if (event==='fieldCanvasColor'){ //  
+        this.selected_canvasColor=this.selectChart.controls["canvasBackground"].value;
+        this.initRgba(this.returnCanvasRgba);
+      } else if (event==='fieldLegendColor' || (event==='fieldColorTitle' && this.isParamLegend===true) ){
+        this.selected_legendColor=this.selectChart.controls["colorLegendTitle"].value;
+        this.initRgba(this.returnLegendRgba);
+      } else if (event==='fieldColorChartTitle'  || (event==='fieldColorTitle' && this.isParamTitle===true)){ 
+        this.selected_chartTitleColor=this.selectChart.controls["colorChartTitle"].value;
+        this.initRgba(this.returnTitleRgba);
+      }  else if (event==='fieldBoxColor'){ 
+        this.selected_boxColor=this.selectChart.controls["boxcolor"].value;
+        this.initRgba(this.returnBoxRgba);
+      } else if (event==='fieldBoxColor'){ 
+        this.selected_boxColor=this.selectChart.controls["boxcolor"].value;
+        this.initRgba(this.returnBoxRgba);
+      } else if (event==='fieldXColorBorder'){ 
+        this.selected_XBorderColor=this.selectAxisX.controls["borderColor"].value;
+        this.initRgba(this.returnBoxRgba);
+      } else if (event==='fieldXTicksColor'){ 
+        this.selected_XTicksColor=this.selectAxisX.controls["ticksColor"].value;
+        this.initRgba(this.returnBoxRgba);
+      } else if (event==='fieldYColorBorder'){ 
+        this.selected_YBorderColor=this.selectAxisY.controls["borderColor"].value;
+        this.initRgba(this.returnBoxRgba);
+      } else if (event==='fieldYTicksColor'){ 
+        this.selected_YTicksColor=this.selectAxisY.controls["ticksColor"].value;
+        this.initRgba(this.returnBoxRgba);
+      }
 
 
-  if (this.returnSlider.rgba!==''){
-    this.my_input_child2=this.returnSlider.rgba;
+      if (this.returnSlider.rgba!==''){
+        this.my_input_child2=this.returnSlider.rgba;
+      }
+      if (this.returnPalette.rgba!==''){
+        this.my_input_child1=this.returnPalette.rgba;
+        this.temporaryColor=this.returnPalette.rgba;
+      }
   }
-  if (this.returnPalette.rgba!==''){
-    this.my_input_child1=this.returnPalette.rgba;
-    this.temporaryColor=this.returnPalette.rgba;
-  }
-
-
 }
 
 initRgba(event:any){
@@ -1254,91 +1360,93 @@ fnPalette(event:any){
 
 
 fnExitPalette(event:any){
-if (event==='Cancel'){
-  this.resetBooleans();
-} else if (event==='Save'){
-  if (this.isSelectCanvasColor===true){
-    this.selected_canvasColor = this.temporaryColor;
-    this.returnCanvasRgba.palette=this.returnPalette; 
-    this.returnCanvasRgba.slider=this.returnSlider;
-    this.isSelectCanvasColor=false;
-    this.selectChart.controls['canvasBackground'].setValue(this.temporaryColor);
-  } else if (this.isSelectLegendColor===true || (this.isParamLegend===true && this.isSelectLChartTitleColor===true)){
-    this.selected_legendColor = this.temporaryColor;
-    this.isSelectLegendColor=false;
-    this.returnLegendRgba.palette=this.returnPalette;
-    this.returnLegendRgba.slider=this.returnSlider;
-    this.selectChart.controls['colorLegendTitle'].setValue(this.temporaryColor);
-    
-  } else if (this.isSelectChartTitleColor===true || (this.isParamTitle===true && this.isSelectLChartTitleColor===true)){
-    this.selected_chartTitleColor = this.temporaryColor;
-    this.isSelectChartTitleColor=false;
-    this.returnTitleRgba.palette=this.returnPalette;
-    this.returnTitleRgba.slider=this.returnSlider;
-    
-    this.selectChart.controls['colorChartTitle'].setValue(this.temporaryColor);
+  if (this.tabLock.lock!==2){
+      if (event==='Cancel'){
+        this.resetBooleans();
+      } else if (event==='Save'){
+        if (this.isSelectCanvasColor===true){
+          this.selected_canvasColor = this.temporaryColor;
+          this.returnCanvasRgba.palette=this.returnPalette; 
+          this.returnCanvasRgba.slider=this.returnSlider;
+          this.isSelectCanvasColor=false;
+          this.selectChart.controls['canvasBackground'].setValue(this.temporaryColor);
+        } else if (this.isSelectLegendColor===true || (this.isParamLegend===true && this.isSelectLChartTitleColor===true)){
+          this.selected_legendColor = this.temporaryColor;
+          this.isSelectLegendColor=false;
+          this.returnLegendRgba.palette=this.returnPalette;
+          this.returnLegendRgba.slider=this.returnSlider;
+          this.selectChart.controls['colorLegendTitle'].setValue(this.temporaryColor);
+          
+        } else if (this.isSelectChartTitleColor===true || (this.isParamTitle===true && this.isSelectLChartTitleColor===true)){
+          this.selected_chartTitleColor = this.temporaryColor;
+          this.isSelectChartTitleColor=false;
+          this.returnTitleRgba.palette=this.returnPalette;
+          this.returnTitleRgba.slider=this.returnSlider;
+          
+          this.selectChart.controls['colorChartTitle'].setValue(this.temporaryColor);
 
-  } else if (this.isSelectLabColor===true) {
-    if (this.dialogLabColor[this.currentLabColor]===true){
-      this.tabOfLabelsColor[this.currentLabColor]= this.temporaryColor;
-      this.tabLabelRgba[this.currentLabColor].palette=this.returnPalette;
-      this.tabLabelRgba[this.currentLabColor].slider=this.returnSlider;
-      this.isSelectLabColor=false;
-      this.dialogLabColor[this.currentLabColor]=false;
-    } else if (this.dialogLimitLabColor[this.currentLabColor]===true){
-      this.tabOfLimitLabelsColor[this.currentLabColor]= this.temporaryColor;
-      this.tabLimitLabelRgba[this.currentLabColor].palette=this.returnPalette;
-      this.tabLimitLabelRgba[this.currentLabColor].slider=this.returnSlider;
-      this.isSelectLabColor=false;
-      this.dialogLimitLabColor[this.currentLabColor]=false;
-    } 
-    
-  } else if (this.isSelectBoxColor===true){
-    this.selected_boxColor = this.temporaryColor;
-    this.selectChart.controls['boxcolor'].setValue(this.temporaryColor);
-    this.returnBoxRgba.palette=this.returnPalette;
-    this.returnBoxRgba.slider=this.returnSlider;
-    this.isSelectBoxColor=false;
-  } else if (this.isSelectXBorderColor===true){
-    this.selected_XBorderColor = this.temporaryColor;
-    this.selectAxisX.controls['borderColor'].setValue(this.temporaryColor);
-    this.returnXBorderColorRgba.palette=this.returnPalette;
-    this.returnXBorderColorRgba.slider=this.returnSlider;
-    this.isSelectXBorderColor=false;
-  } else if (this.isSelectXTicksColor===true){
-    this.selected_XTicksColor = this.temporaryColor;
-    this.selectAxisX.controls['ticksColor'].setValue(this.temporaryColor);
-    this.returnXTicksRgba.palette=this.returnPalette;
-    this.returnXTicksRgba.slider=this.returnSlider;
-    this.isSelectXTicksColor=false;
-  } else if (this.isSelectYBorderColor===true){
-    this.selected_YBorderColor = this.temporaryColor;
-    this.selectAxisY.controls['borderColor'].setValue(this.temporaryColor);
-    this.returnYBorderColorRgba.palette=this.returnPalette;
-    this.returnYBorderColorRgba.slider=this.returnSlider;
-    this.isSelectYBorderColor=false;
-  } else if (this.isSelectYTicksColor===true){
-    this.selected_YTicksColor = this.temporaryColor;
-    this.selectAxisY.controls['ticksColor'].setValue(this.temporaryColor);
-    this.returnYTicksRgba.palette=this.returnPalette;
-    this.returnYTicksRgba.slider=this.returnSlider;
-    this.isSelectYTicksColor=false;
-  }
+        } else if (this.isSelectLabColor===true) {
+          if (this.dialogLabColor[this.currentLabColor]===true){
+            this.tabOfLabelsColor[this.currentLabColor]= this.temporaryColor;
+            this.tabLabelRgba[this.currentLabColor].palette=this.returnPalette;
+            this.tabLabelRgba[this.currentLabColor].slider=this.returnSlider;
+            this.isSelectLabColor=false;
+            this.dialogLabColor[this.currentLabColor]=false;
+          } else if (this.dialogLimitLabColor[this.currentLabColor]===true){
+            this.tabOfLimitLabelsColor[this.currentLabColor]= this.temporaryColor;
+            this.tabLimitLabelRgba[this.currentLabColor].palette=this.returnPalette;
+            this.tabLimitLabelRgba[this.currentLabColor].slider=this.returnSlider;
+            this.isSelectLabColor=false;
+            this.dialogLimitLabColor[this.currentLabColor]=false;
+          } 
+          
+        } else if (this.isSelectBoxColor===true){
+          this.selected_boxColor = this.temporaryColor;
+          this.selectChart.controls['boxcolor'].setValue(this.temporaryColor);
+          this.returnBoxRgba.palette=this.returnPalette;
+          this.returnBoxRgba.slider=this.returnSlider;
+          this.isSelectBoxColor=false;
+        } else if (this.isSelectXBorderColor===true){
+          this.selected_XBorderColor = this.temporaryColor;
+          this.selectAxisX.controls['borderColor'].setValue(this.temporaryColor);
+          this.returnXBorderColorRgba.palette=this.returnPalette;
+          this.returnXBorderColorRgba.slider=this.returnSlider;
+          this.isSelectXBorderColor=false;
+        } else if (this.isSelectXTicksColor===true){
+          this.selected_XTicksColor = this.temporaryColor;
+          this.selectAxisX.controls['ticksColor'].setValue(this.temporaryColor);
+          this.returnXTicksRgba.palette=this.returnPalette;
+          this.returnXTicksRgba.slider=this.returnSlider;
+          this.isSelectXTicksColor=false;
+        } else if (this.isSelectYBorderColor===true){
+          this.selected_YBorderColor = this.temporaryColor;
+          this.selectAxisY.controls['borderColor'].setValue(this.temporaryColor);
+          this.returnYBorderColorRgba.palette=this.returnPalette;
+          this.returnYBorderColorRgba.slider=this.returnSlider;
+          this.isSelectYBorderColor=false;
+        } else if (this.isSelectYTicksColor===true){
+          this.selected_YTicksColor = this.temporaryColor;
+          this.selectAxisY.controls['ticksColor'].setValue(this.temporaryColor);
+          this.returnYTicksRgba.palette=this.returnPalette;
+          this.returnYTicksRgba.slider=this.returnSlider;
+          this.isSelectYTicksColor=false;
+        }
 
-  if (this.isSelectLChartTitleColor===true){
-    this.selected_colorTitle=this.temporaryColor;
-    this.isSelectLChartTitleColor=false;
-    this.selectTitle.controls['color'].setValue(this.temporaryColor);
-    this.selectTitle.controls['paletteRgba'].setValue(this.returnPalette.rgba);
-    this.selectTitle.controls['paletteXpos'].setValue(this.returnPalette.xPos);
-    this.selectTitle.controls['paletteYpos'].setValue(this.returnPalette.yPos);
-    this.selectTitle.controls['sliderRgba'].setValue(this.returnSlider.rgba);
-    this.selectTitle.controls['sliderXpos'].setValue(this.returnSlider.xPos);
-    this.selectTitle.controls['sliderYpos'].setValue(this.returnSlider.yPos);
-  }
+        if (this.isSelectLChartTitleColor===true){
+          this.selected_colorTitle=this.temporaryColor;
+          this.isSelectLChartTitleColor=false;
+          this.selectTitle.controls['color'].setValue(this.temporaryColor);
+          this.selectTitle.controls['paletteRgba'].setValue(this.returnPalette.rgba);
+          this.selectTitle.controls['paletteXpos'].setValue(this.returnPalette.xPos);
+          this.selectTitle.controls['paletteYpos'].setValue(this.returnPalette.yPos);
+          this.selectTitle.controls['sliderRgba'].setValue(this.returnSlider.rgba);
+          this.selectTitle.controls['sliderXpos'].setValue(this.returnSlider.xPos);
+          this.selectTitle.controls['sliderYpos'].setValue(this.returnSlider.yPos);
+        }
 
-  } 
-  this.isSliderSelected=false;
+        } 
+        this.isSliderSelected=false;
+    }
 }
 
 
@@ -1346,51 +1454,57 @@ if (event==='Cancel'){
 error_msg:string='';
 fnSelectChart(){
   this.error_msg='';
-  // check that all parameters are correct
-  if (this.selectChart.controls['chartType'].value!==''){
-    for ( var i=0; i< this.lineChartType.length && this.selectChart.controls['chartType'].value.toLowerCase().trim()!==this.lineChartType[i].toLowerCase().trim(); i++){
-    }
-    if (i === this.lineChartType.length){
-      this.error_msg='Field TYPE is unknown; please update it';
-    }
-  } 
-  if (this.error_msg==='' && this.selectChart.controls['period'].value!==''){
-      for ( var i=0; i< this.tabPeriod.length && this.selectChart.controls['period'].value.toLowerCase().trim()!==this.tabPeriod[i].toLowerCase().trim(); i++){
+
+      // check that all parameters are correct
+      if (this.selectChart.controls['chartType'].value!==''){
+        for ( var i=0; i< this.lineChartType.length && this.selectChart.controls['chartType'].value.toLowerCase().trim()!==this.lineChartType[i].toLowerCase().trim(); i++){
+        }
+        if (i === this.lineChartType.length){
+          this.error_msg='Field TYPE is unknown; please update it';
+        }
+      } 
+      if (this.error_msg==='' && this.selectChart.controls['period'].value!==''){
+          for ( var i=0; i< this.tabPeriod.length && this.selectChart.controls['period'].value.toLowerCase().trim()!==this.tabPeriod[i].toLowerCase().trim(); i++){
+          }
+          if (i === this.tabPeriod.length){
+            this.error_msg='Field PERIOD is unknown; please update it';
+          }
+      } 
+      if (this.error_msg==='' && this.selectChart.controls['startRange'].value !=='' && this.selectChart.controls['endRange'].value !=='' && this.selectChart.controls['endRange'].value<this.selectChart.controls['startRange'].value){
+            this.error_msg='end date cannot be before start date; please update';
+      } 
+      
+      if (this.error_msg==='' && isNaN(this.selectChart.controls['canvasWidth'].value)){
+        this.error_msg='Field CANVAS WIDTH is not a numeric';
+      }  
+      if (this.error_msg==='' && isNaN(this.selectChart.controls['canvasHeight'].value)){
+        this.error_msg='Field CANVAS HEIGHT is not a numeric';
+      } 
+      if (this.error_msg==='' && isNaN(this.selectChart.controls['ratio'].value)){
+        this.error_msg='Field RATIO is not a numeric';
       }
-      if (i === this.tabPeriod.length){
-        this.error_msg='Field PERIOD is unknown; please update it';
+      if (this.error_msg ===''){
+        this.fillInTabOfCharts(this.selectedChart-1);
+        this.buildChart(this.selectedChart-1);
       }
-  } 
-  if (this.error_msg==='' && this.selectChart.controls['startRange'].value !=='' && this.selectChart.controls['endRange'].value !=='' && this.selectChart.controls['endRange'].value<this.selectChart.controls['startRange'].value){
-        this.error_msg='end date cannot be before start date; please update';
-  } 
-  
-  if (this.error_msg==='' && isNaN(this.selectChart.controls['canvasWidth'].value)){
-    this.error_msg='Field CANVAS WIDTH is not a numeric';
-  }  
-  if (this.error_msg==='' && isNaN(this.selectChart.controls['canvasHeight'].value)){
-    this.error_msg='Field CANVAS HEIGHT is not a numeric';
-  } 
-  if (this.error_msg==='' && isNaN(this.selectChart.controls['ratio'].value)){
-    this.error_msg='Field RATIO is not a numeric';
-  }
-  if (this.error_msg ===''){
-    this.fillInTabOfCharts(this.selectedChart-1);
-    this.buildChart(this.selectedChart-1);
-  }
+
 }
 
+returnEmit={
+  saveAction:'',
+  saveCode:''
+}
+
+
 SaveCancel(event:string){
-    var error=0;
-    var saveError='';
     this.error_msg='';
     if (event==='save'){
       this.fillInTabOfCharts(this.selectedChart-1);
       if (this.error_msg===''){
         this.fillInCharts(this.tabParamChart[this.selectedChart-1],this.initTabParamChart[this.selectedChart-1]);
+        this.returnEmit.saveAction='save';
         this.returnFile.emit(this.initTabParamChart);
-        this.error_msg='parameters for chart#'+this.selectedChart+' have been saved';
-        this.buildChart(this.selectedChart-1);
+
       }
 
     } else if (event==='saveAll'){
@@ -1399,19 +1513,21 @@ SaveCancel(event:string){
           for (var i=0; i<this.tabParamChart.length; i++){
             this.fillInCharts(this.tabParamChart[i],this.initTabParamChart[i]);
           }
+          this.returnEmit.saveAction='saveAll';
           this.returnFile.emit(this.tabParamChart);
-          this.error_msg='for all charts, parameters have been saved';
-          for (var i=0; i<this.tabParamChart.length; i++){
-            this.buildChart(i);
-          } 
+          
       } 
     } else if (event==='cancelAll'){
+      this.cancelSaveOther.emit(5);
+      this.resetBooleans();
       for (var i=0; i<this.tabParamChart.length; i++){
         this.fillInCharts(this.initTabParamChart[i],this.tabParamChart[i]);
         this.fillInFormFromTab(i);
         this.buildChart(i);
       }
     } else if (event==='cancelOne'){
+      this.cancelSaveOther.emit(5);
+      this.resetBooleans();
       this.fillInCharts(this.initTabParamChart[this.selectedChart-1],this.tabParamChart[this.selectedChart-1]);
       this.fillInFormFromTab(this.selectedChart-1);
       this.buildChart(this.selectedChart-1);
@@ -1429,32 +1545,34 @@ buildChart(nb:number){
 
 
 selectLabelColor(event:any){
-  const i=event.target.id.indexOf('-');
-  this.dialogLabColor[this.currentLabColor]=false;
-  this.dialogLimitLabColor[this.currentLabColor]=false;
-  this.currentLabColor= Number(event.target.id.substring(i+1));
-  if (event.target.id.substring(0,i)==="labelLimitColor"){
-    this.dialogLimitLabColor[this.currentLabColor]=true;
-  } else {
-    this.dialogLabColor[this.currentLabColor]=true;
+  if (this.tabLock.lock!==2){
+      const i=event.target.id.indexOf('-');
+      this.dialogLabColor[this.currentLabColor]=false;
+      this.dialogLimitLabColor[this.currentLabColor]=false;
+      this.currentLabColor= Number(event.target.id.substring(i+1));
+      if (event.target.id.substring(0,i)==="labelLimitColor"){
+        this.dialogLimitLabColor[this.currentLabColor]=true;
+      } else {
+        this.dialogLabColor[this.currentLabColor]=true;
+      }
+
+      this.isSelectLabColor=true;
+
+
+      this.returnPalette=this.tabLabelRgba[this.currentLabColor].palette;
+      this.returnSlider=this.tabLabelRgba[this.currentLabColor].slider;
+
+      if (this.returnSlider.rgba!==''){
+        this.my_input_child2=this.returnSlider.rgba;
+      }
+      if (this.returnPalette.rgba!==''){
+        this.my_input_child1=this.returnPalette.rgba;
+        this.temporaryColor=this.returnPalette.rgba;
+      }
+      this.isSliderSelected=true;
+      this.mainWindow.top=370;
+      this.posSlider.div.top=this.mainWindow.top + this.subWindow.top;
   }
-
-  this.isSelectLabColor=true;
-
-
-  this.returnPalette=this.tabLabelRgba[this.currentLabColor].palette;
-  this.returnSlider=this.tabLabelRgba[this.currentLabColor].slider;
-
-  if (this.returnSlider.rgba!==''){
-    this.my_input_child2=this.returnSlider.rgba;
-  }
-  if (this.returnPalette.rgba!==''){
-    this.my_input_child1=this.returnPalette.rgba;
-    this.temporaryColor=this.returnPalette.rgba;
-  }
-  this.isSliderSelected=true;
-  this.mainWindow.top=370;
-  this.posSlider.div.top=this.mainWindow.top + this.subWindow.top;
 }
 
 
@@ -1462,33 +1580,33 @@ SelRadio(event:any){
     //console.log('event.target.id='+event.target.id+ "  event.currentTarget.id=" + event.currentTarget.id );
     const i=event.target.id.indexOf('-');
     const item= Number(event.target.id.substring(i+1));
+    if (this.tabLock.lock!==2){
 
-    if (event.target.id==='submit'){
 
-    } else if (event.target.id.substring(0,1)==='A') {
-      if (this.selectedFields[item]==='Y'){
-        this.FillSelected.selected='N';
-        this.ListChart.controls[item].setValue(this.FillSelected);
-        this.selectedFields[item]='N';
-      } else if (this.selectedFields[item]==='N'){
-        this.FillSelected.selected='Y';
-        this.ListChart.controls[item].setValue(this.FillSelected);
-        this.selectedFields[item]='Y';
-      } 
-    } else if (event.target.id.substring(0,1)==='L') {
-      if (this.selectedLimitFields[item]==='Y'){
-        this.FillSelected.selected='N';
-        this.ListChart.controls[item+this.ConfigChartHealth.barDefault.datasets.labels.length-1].setValue(this.FillSelected);
-        this.selectedLimitFields[item]='N';
-      } else if (this.selectedLimitFields[item]==='N'){
-        this.FillSelected.selected='Y';
-        this.ListChart.controls[item+this.ConfigChartHealth.barDefault.datasets.labels.length-1].setValue(this.FillSelected);
-        this.selectedLimitFields[item]='Y';
-      } 
-    }
-    
-      
-    
+        if (event.target.id==='submit'){
+
+        } else if (event.target.id.substring(0,1)==='A') {
+          if (this.selectedFields[item]==='Y'){
+            this.FillSelected.selected='N';
+            this.ListChart.controls[item].setValue(this.FillSelected);
+            this.selectedFields[item]='N';
+          } else if (this.selectedFields[item]==='N'){
+            this.FillSelected.selected='Y';
+            this.ListChart.controls[item].setValue(this.FillSelected);
+            this.selectedFields[item]='Y';
+          } 
+        } else if (event.target.id.substring(0,1)==='L') {
+          if (this.selectedLimitFields[item]==='Y'){
+            this.FillSelected.selected='N';
+            this.ListChart.controls[item+this.ConfigChartHealth.barDefault.datasets.labels.length-1].setValue(this.FillSelected);
+            this.selectedLimitFields[item]='N';
+          } else if (this.selectedLimitFields[item]==='N'){
+            this.FillSelected.selected='Y';
+            this.ListChart.controls[item+this.ConfigChartHealth.barDefault.datasets.labels.length-1].setValue(this.FillSelected);
+            this.selectedLimitFields[item]='Y';
+          } 
+        }
+    }    
   }
 
 //********************** */
@@ -1524,7 +1642,7 @@ collectSpecialData(nb:number,datasetsSpecialBar:Array<any>,  dateLabelSpecial:Ar
      
     if (iLabel!==0){nbLabel=iLabel;}
     else {nbLabel=this.ConfigChartHealth.barDefault.datasets.labels.length;}
-      for (i=0; i< nbLabel; i++){
+    for (i=0; i< nbLabel; i++){
         var order=i+1;
         if (this.tabParamChart[nb].chartType==='bar'){
             datasetsSpecialBar.push({
@@ -1689,23 +1807,23 @@ collectSpecialData(nb:number,datasetsSpecialBar:Array<any>,  dateLabelSpecial:Ar
         }
         
         
-      }
+    }
   
 
   
     var myDaily=-1;
     var myWeekly=-1;
-    if (this.selectChart.controls['period'].value==='' || this.selectChart.controls['period'].value==='daily'){
+    if (this.tabParamChart[nb].period==='' || this.tabParamChart[nb].period==='daily'){
       strStart=this.tabParamChart[nb].startRange;
       strEnd=this.tabParamChart[nb].endRange;
       myDaily=0;
     }
 
-    if (this.selectChart.controls['period'].value==='weekly'){
+    if (this.tabParamChart[nb].period==='weekly'){
       myWeekly=0;
     }
     var myMonthly=-1;
-    if (this.selectChart.controls['period'].value==='monthly'){
+    if (this.tabParamChart[nb].period==='monthly'){
 
     } 
 
@@ -1723,17 +1841,18 @@ collectSpecialData(nb:number,datasetsSpecialBar:Array<any>,  dateLabelSpecial:Ar
         iDataset++;
         dateLabelSpecial[iDataset]=this.HealthAllData.tabDailyReport[i].date;
       } else if (myWeekly ===0 || myWeekly===7 ){
-        myWeekly=0;
-        iDataset++;
-        iWeekly=0;
-        nbWeeks++;
-        dateLabelSpecial[iDataset]='#'+nbWeeks;
-        cal=0;
+          myWeekly=0;
+          iDataset++;
+          iWeekly=0;
+          nbWeeks++;
+          dateLabelSpecial[iDataset]='#'+nbWeeks;
+          addWeekly=0;
+          cal=0;
         
       } else if ( myMonthly===0){
         // TO BE ANALYSED
-        iDataset++;
-        myMonthly=0;
+          iDataset++;
+          myMonthly=0;
       }
      
       myWeekly++
@@ -1741,12 +1860,15 @@ collectSpecialData(nb:number,datasetsSpecialBar:Array<any>,  dateLabelSpecial:Ar
       if (iLabel!==0){
         // tackle the information from selection of params
             for (var j=0; j<constLab.length; j++){
-              if (myDaily===0){ addWeekly=0 }
-              else if (myWeekly!==-1) { 
+              if (myDaily===0){ 
+                  addWeekly=0 
+              }
+            
+              else if (myWeekly>0) { 
                 if (datasetsSpecialBar[j].data[iDataset]!==undefined){
                 addWeekly=datasetsSpecialBar[j].data[iDataset] }
               }
-
+            
               if (constLab[j]==="Proteins"){
                   datasetsSpecialBar[j].data[iDataset]=addWeekly + this.HealthAllData.tabDailyReport[i].total.Protein;
               } else if (constLab[j]==="Carbs"){
@@ -1846,9 +1968,16 @@ collectSpecialData(nb:number,datasetsSpecialBar:Array<any>,  dateLabelSpecial:Ar
               datasetsSpecialBar[datasetsSpecialBar.length-1].data[j]=this.refDailySaturated[j];
             } 
           } else {
-            for (var j=0; j<datasetsSpecialBar[i].data.length; j++){
-              datasetsSpecialBar[datasetsSpecialBar.length-1].data[j]=dataValue;
-            }  
+            if (this.tabParamChart[nb].period==='daily'){
+              for (var j=0; j<datasetsSpecialBar[i].data.length; j++){
+                datasetsSpecialBar[datasetsSpecialBar.length-1].data[j]=dataValue;
+              }  
+            } else if (this.tabParamChart[nb].period==='weekly'){
+              for (var j=0; j<datasetsSpecialBar[i].data.length; j++){
+                datasetsSpecialBar[datasetsSpecialBar.length-1].data[j]=dataValue*7;
+              }  
+            }
+            
           }
 
           datasetsSpecialBar[datasetsSpecialBar.length-1].borderColor[datasetsSpecialBar.length-1]=this.tabParamChart[nb].limitLabelsColor[labLimit];
@@ -2334,6 +2463,8 @@ testLineChart(){
 
 }
 
+initTabLock5:number=0;
+firstLoop:boolean=true;
 ngOnChanges(changes: SimpleChanges) { 
  
   var i=0;
@@ -2341,6 +2472,41 @@ ngOnChanges(changes: SimpleChanges) {
         const j=changes[propName];
         if (propName==='INFileParamChart'){
             const b=this.INFileParamChart.data;
+        } else if (propName==='tabLock'){
+            if (this.firstLoop===true){
+                console.log('report chart ==> ngOnChange this.firstLoop===true   current value of tabLock[5]=' + changes[propName].currentValue.lock +  
+                '  & previous value initTabLock5 was=' + this.initTabLock5 + '  & input() TabLock[5]=' + this.tabLock.lock);
+                this.firstLoop=false;
+            } else {
+                  console.log('report chart ==> ngOnChange this.firstLoop===false   current tabLock[5]=' + changes[propName].currentValue.lock + 
+                      '  & previous value initTabLock5 was=' + this.initTabLock5 + '  & input() TabLock[5]=' + this.tabLock.lock);
+
+                  if (this.returnEmit.saveAction.substring(0,4)==='save'){
+                      if ( this.tabLock.lock===1 && (this.tabLock.status===0 || this.tabLock.status===300) ){
+                          if (this.returnEmit.saveAction==='save'){
+                            this.error_msg='parameters for chart#'+ this.selectedChart +' have been saved';
+                          } else if (this.returnEmit.saveAction==='saveAll'){
+                              this.error_msg='for all charts, parameters have been saved';
+                              for (var i=0; i<this.tabParamChart.length; i++){
+                                this.buildChart(i);
+                              } 
+                          }
+                      } else {
+                        this.error_msg='Parameters cannot be saved - error=' + this.tabLock.status;
+
+                      }
+                      this.returnEmit.saveAction='';
+                  } else if (this.initTabLock5 !== changes[propName].currentValue.lock){
+                    this.buildChart(this.selectedChart-1);
+                  }
+                }
+            this.initTabLock5=changes[propName].currentValue.lock;
+            if (this.initTabLock5===1){
+              this.enableForm();
+            } else {
+              this.disableForm();
+            }
+            
           } 
         }
     // //this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j)); 

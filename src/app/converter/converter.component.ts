@@ -1,12 +1,11 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
   
-import { DatePipe, formatDate } from '@angular/common'; 
+import { DatePipe, formatDate, ViewportScroller } from '@angular/common'; 
 
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient , HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
+
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { Observable } from 'rxjs';
 
@@ -16,20 +15,17 @@ import { Bucket_List_Info } from '../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
-import { environment } from 'src/environments/environment';
-import { LoginIdentif } from '../JsonServerClass';
-import {manage_input} from '../manageinput';
-import {eventoutput, thedateformat} from '../apt_code_name';
+import { configServer, LoginIdentif  } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
 import {msginLogConsole} from '../consoleLog'
+import { environment } from 'src/environments/environment';
+
+import {manage_input} from '../manageinput';
+import {eventoutput, thedateformat} from '../apt_code_name';
+
 import {ClassSubConv, mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter'
-import {mainClassConv} from '../ClassConverter'
-import {ClassConv} from '../ClassConverter'
-import {ClassUnit} from '../ClassConverter'
-import {ConvItem} from '../ClassConverter'
-import {recordConvert} from '../ClassConverter'
+import {mainClassConv, ClassConv, ClassUnit, ConvItem, recordConvert} from '../ClassConverter'
+
 
 import {  getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../DropDownStyle'
 
@@ -37,7 +33,7 @@ import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.servic
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 
-
+import { strDateTime } from '../MyStdFunctions';
 
 @Component({
   selector: 'app-converter',
@@ -57,7 +53,6 @@ export class ConverterComponent implements OnInit {
       ) { }
   
   
-    @Input() XMVConfig=new XMVConfig;
     @Input() configServer = new configServer;
     @Input() identification= new LoginIdentif;
     @Input() convertOnly:boolean=false;
@@ -117,8 +112,6 @@ export class ConverterComponent implements OnInit {
       FileName: new FormControl(''),
     })
   
-
-    
     itemPerPage:number=10;
     currentPage:number=0;
     valueFrom:number=0;
@@ -129,9 +122,6 @@ export class ConverterComponent implements OnInit {
     TabFilterType:Array<any>=[];
     maxFilter:number=3;
   
-    //currentOption:number=0;
-    //SelectedOption:Array<any>=[];
-    //TabOptions:Array<any>=['Calories & Fat', 'Converter','Meals','Weight'];
     trouve:boolean=true;
     TabDialogue:Array<any>=[];
     TabAction:Array<any>=['Cancel','Modify','Delete'];
@@ -200,7 +190,6 @@ export class ConverterComponent implements OnInit {
 
 
 
-
   ngOnInit(): void {
 
     this.sizeBox.widthContent=100;
@@ -235,9 +224,7 @@ export class ConverterComponent implements OnInit {
       this.TabFilterType[i]='';
 
     }
-    //for (i=0; i<this.TabOptions.length; i++){
-    //  this.SelectedOption[i]=false;
-    //}
+
     for (i=0; i<this.itemPerPage; i++){
       this.TabDialogue[i]=false;
     }
@@ -321,13 +308,7 @@ export class ConverterComponent implements OnInit {
 
     }
   }
-/*
-  ManageOptions(event:any){
-    this.SelectedOption[this.currentOption]=false;
-    this.currentOption=event.target.id.substring(7);
-    this.SelectedOption[this.currentOption]=true;
-    }
-*/  
+ 
   WeightQualityCheck(){
     // check that ConvertUnit contains the right reference values
     var i=0;
@@ -638,7 +619,7 @@ export class ConverterComponent implements OnInit {
     this.ConvToDisplay.tabConvItem.sort((a, b) => (a.from > b.from) ? 1 : -1);
   }
   
-  nextPage(){
+nextPage(){
     this.message='';
     if (this.PageToDisplay[this.PageToDisplay.length-1].refMainTable+this.itemPerPage<=this.ConvToDisplay.tabConvItem.length-1){
       this.Page.fromRow=this.PageToDisplay[this.PageToDisplay.length-1].refMainTable+1; // process to the end of the file
@@ -650,7 +631,7 @@ export class ConverterComponent implements OnInit {
     this.managePage();
   }
   
-  prevPage(){
+prevPage(){
     this.message='';
     if (this.PageToDisplay[0].refMainTable-this.itemPerPage>0){
       this.Page.fromRow=this.PageToDisplay[0].refMainTable-1; // process to the beginning of the file
@@ -662,7 +643,7 @@ export class ConverterComponent implements OnInit {
     this.managePage();
   }
   
-  managePage(){
+managePage(){
       this.message='';
       this.PageToDisplay.splice(0,this.PageToDisplay.length);
       var i=this.Page.fromRow;
@@ -708,7 +689,7 @@ export class ConverterComponent implements OnInit {
       }
     }
   
-  findIds(idString:string){
+findIds(idString:string){
       this.error_msg='';
       var j=-1;
       for (var i=1; i<idString.length && idString.substring(i,i+1)!=='-'; i++){
@@ -719,7 +700,7 @@ export class ConverterComponent implements OnInit {
     }
 
 
-  onAction(event:any){ //Filter-{{0}}
+onAction(event:any){ //Filter-{{0}}
     this.findIds(event.target.textContent);
     if (event.target.id.substring(0,10)==='FromNewRow'){
         this.theEvent.target.id='From'; 
@@ -748,7 +729,7 @@ export class ConverterComponent implements OnInit {
     this.closeDialogues();
   }
 
-  ConvertValues(event:any){
+ConvertValues(event:any){
     this.messageConvert='';
     var i=0;
     var j=0;
@@ -758,38 +739,19 @@ export class ConverterComponent implements OnInit {
       this.findIds(event.target.value);
       this.ValuesToConvert.From=this.myUnit;
       if (this.ValuesToConvert.From!=='' && this.ValuesToConvert.To===''){
-        /*
-        for (i=0; i<this.theTabOfUnits.tabClassUnit.length && ((this.myType==='' && this.theTabOfUnits.tabClassUnit[i].name.trim()!==this.ValuesToConvert.From.trim() ) ||
-               (this.myType!=='' && this.theTabOfUnits.tabClassUnit[i].type.trim()!==this.myType && this.theTabOfUnits.tabClassUnit[i].name.trim()!==this.ValuesToConvert.From.trim())); i++){}
-        if (i<this.theTabOfUnits.tabClassUnit.length){
-          this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsFrom);
-          this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsTo);
-        }
-        */
         this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom,'From');
         this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo,'To');
-
       } else if (this.ValuesToConvert.From==='' && this.ValuesToConvert.To===''){
         this.myType='';
         this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom,'From');
         this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo,'To');
-
       }
       this.dialogueFromTo[0]=true;
-    } else if (event.target.id.substring(0,2)==='To'){
-     
+    } else if (event.target.id.substring(0,2)==='To'){     
       this.findIds(event.target.value);
       this.ValuesToConvert.To=this.myUnit;
       if (this.ValuesToConvert.To!=='' && this.ValuesToConvert.From===''){
-        /*
-        for (i=0; i<this.theTabOfUnits.tabClassUnit.length && ((this.myType==='' && this.theTabOfUnits.tabClassUnit[i].name!==this.ValuesToConvert.To ) ||
-        (this.myType!=='' && this.theTabOfUnits.tabClassUnit[i].type!==this.myType && this.theTabOfUnits.tabClassUnit[i].name!==this.ValuesToConvert.To)); i++){}
 
-        if (i<this.theTabOfUnits.tabClassUnit.length){
-          this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsFrom);
-          this.fillDisplayTabUnit(this.theTabOfUnits.tabClassUnit[i].type, '', this.DisplayTabOfUnitsTo);
-        }
-        */
         this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsFrom,'From');
         this.fillDisplayTabUnit(this.myType, '', this.DisplayTabOfUnitsTo,'To'); 
       } else if (this.ValuesToConvert.From==='' && this.ValuesToConvert.To===''){
@@ -812,8 +774,6 @@ export class ConverterComponent implements OnInit {
       if (this.ValuesToConvert.From==='' && this.ValuesToConvert.From===this.ValuesToConvert.To){
         this.messageConvert='No conversion - units are the same '
       } else {
-      //this.message=this.message + ' From ' + this.ValuesToConvert.From + 'valueFrom = ' + this.ValuesToConvert.valueFrom + 
-      //  ' To ' + this.ValuesToConvert.To + 'valueTo = ' + this.ValuesToConvert.valueTo + " last field = " +  this.LastFieldInput;
           this.trouve=false;
           for (i=0; i<this.ConvToDisplay.tabConvItem.length && this.trouve===false; i++){
             if (this.ConvToDisplay.tabConvItem[i].from===this.ValuesToConvert.From && this.ConvToDisplay.tabConvItem[i].to===this.ValuesToConvert.To){
@@ -828,19 +788,14 @@ export class ConverterComponent implements OnInit {
           if (this.trouve===false){
             this.messageConvert='No conversion found for this combination of units';
           } 
-           //this.message=this.message+ ' boolean trouve = ' + this.trouve + ' ## i = ' + i;
-           
       }
     }
     if (this.message==='' && this.ValuesToConvert.From!='' && this.ValuesToConvert.From===this.ValuesToConvert.To){
       this.message='No conversion - units are the same '
     } 
-
-
-
   }
   
-  CancelConvertValues(){
+CancelConvertValues(){
     this.ValuesToConvert.valueFromTo=0;
     this.ValuesToConvert.From='';
     this.ValuesToConvert.To='';
@@ -858,7 +813,7 @@ export class ConverterComponent implements OnInit {
     this.fillDisplayTabUnit('','',this.DisplayTabOfUnitsTo,'To');
   }
 
-   arrowAction(event:any){
+arrowAction(event:any){
       this.closeDialogues();
       if (event.target.id==='UnitType'){
           this.displayUnitType=true;
@@ -870,13 +825,10 @@ export class ConverterComponent implements OnInit {
         this.displayToModify=false;
         this.displayToDelete=false;
         this.displayNewRow=false;
-  
       }
-      
-    
     }
    
-    DelModAction(event:any){
+DelModAction(event:any){
       this.LogMsgConsole('onDelModAction - event id='+event.target.id+' event value='+event.target.value);
       this.message='';
       this.displayNewRow=false;
@@ -998,13 +950,13 @@ export class ConverterComponent implements OnInit {
       }
     }
     
-  CancelAction(){
+CancelAction(){
       this.TabDialogue[this.PreviousDialogue]=false;
       this.closeDialogues();
       this.message='';
       this.CancelNewRow();
     }
-  inputValue(event:any){
+inputValue(event:any){
       this.message='';
       var i=0;
       var idRecord=0;
@@ -1041,7 +993,7 @@ export class ConverterComponent implements OnInit {
         this.ConvToDisplay.tabConvItem[this.PageToDisplay[idRecord].refMainTable].valueFromTo=this.PageToDisplay[idRecord].valueFromTo;
       }
   
-    onFilter(event:any){
+onFilter(event:any){
        var i= 0;
        var field='';
        this.closeDialogues();
@@ -1125,7 +1077,7 @@ export class ConverterComponent implements OnInit {
       }
     }
   
-  cancelFilter(){
+cancelFilter(){
       var i=0;
       this.closeDialogues();
       for (i=0; i<this.TabFilter.length; i++){
@@ -1140,7 +1092,7 @@ export class ConverterComponent implements OnInit {
     }
   tableTitle:string='';
 
-  addRow(){
+addRow(){
     this.closeDialogues();
     this.error_msg='';
     this.displayNewRow=true;
@@ -1154,7 +1106,7 @@ export class ConverterComponent implements OnInit {
     this.scroller.scrollToAnchor('ChangeNewRow');
   }
   
-  closeDialogues(){
+closeDialogues(){
     for (var i=0; i< this.dialogueFromTo.length; i++){
       this.dialogueFromTo[i]=false;
     }
@@ -1163,7 +1115,7 @@ export class ConverterComponent implements OnInit {
     }
   }
 
-  inputNewRow(event:any){
+inputNewRow(event:any){
     var i=0; 
     var j=0;
     this.message='';
@@ -1273,7 +1225,7 @@ export class ConverterComponent implements OnInit {
     }
   }
   
-  CancelNewRow(){
+CancelNewRow(){
     this.closeDialogues();
     this.newRecord.valueFromTo=0;
     this.newRecord.From='';
@@ -1288,7 +1240,7 @@ export class ConverterComponent implements OnInit {
   }
   
   
-  SaveConvert(){
+SaveConvert(){
     // update the confirguration file with all the data
     var i=0;
     var j=0;
@@ -1328,14 +1280,18 @@ export class ConverterComponent implements OnInit {
     if (this.theTabOfUnits.fileType===''){
         this.theTabOfUnits.fileType=this.identification.configFitness.fileType.tabOfUnits;
       }
+    this.ConvertUnit.updatedAt=strDateTime();
     this.SaveNewRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convertUnit, this.ConvertUnit,0);
+    this.ConvToDisplay.updatedAt=strDateTime();
     this.SaveNewRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convToDisplay, this.ConvToDisplay,1);
+    this.theTabOfUnits.updatedAt=strDateTime();
     this.SaveNewRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.tabOfUnits, this.theTabOfUnits,2);
+    this.WeightRefTable.updatedAt=strDateTime();
     this.SaveNewRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.weightReference, this.WeightRefTable,3);
    
   }
   
-  CancelConvert(){
+CancelConvert(){
       this.ConvToDisplay.tabConvItem.splice(0,this.ConvToDisplay.tabConvItem.length);
       var i=0;
       for (i=0; i<this.maxFilter; i++){
@@ -1350,7 +1306,7 @@ export class ConverterComponent implements OnInit {
       this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo,'To');
     }
   
-    GetRecord(Bucket:string,GoogleObject:string, iWait:number){
+GetRecord(Bucket:string,GoogleObject:string, iWait:number){
   
       this.EventHTTPReceived[iWait]=false;
       this.NbWaitHTTP++;
@@ -1361,32 +1317,64 @@ export class ConverterComponent implements OnInit {
                     this.EventHTTPReceived[iWait]=true;
                     if (GoogleObject=== this.identification.configFitness.files.tabOfUnits){ // 'ConvertTabOfUnits.json'){
                       this.theTabOfUnits=data;
+                      this.theTabOfUnits.fileType=data.fileType;
+                      this.theTabOfUnits.tabClassUnit=data.tabClassUnit;
+                      if (data.updatedAt!==undefined){
+                        this.theTabOfUnits.updatedAt=data.updatedAt;
+                      } else {
+                        this.theTabOfUnits.updatedAt='';
+                      }
 
                       this.returnFile.emit(this.theTabOfUnits);
                       if (this.ConvToDisplay.tabConvItem.length!==0){this.sortTabUnits()}
 
                     } else if (GoogleObject===this.identification.configFitness.files.convToDisplay) {//'ConvToDisplay.json'){
                       this.ConvToDisplay=data;
-                      if (this.ConvToDisplay.fileType===''){
+                      if (data.fileType!==''){
+                        this.ConvToDisplay.fileType='';
+                      } else {
                         this.ConvToDisplay.fileType=this.identification.configFitness.fileType.convToDisplay;
                       }
+                      if (data.updatedAt!==undefined){
+                        this.ConvToDisplay.updatedAt=data.updatedAt;
+                      } else {
+                        this.ConvToDisplay.updatedAt='';
+                      }
+                      this.ConvToDisplay.tabConvItem =data.tabConvItem;
                       this.returnFile.emit(this.ConvToDisplay);
                       if (this.theTabOfUnits.tabClassUnit.length!==0){this.sortTabUnits(); }
                     } else if (GoogleObject===this.identification.configFitness.files.convertUnit) {//'ConvertUnit.json'){
-                      this.ConvertUnit=data;
-                      if (this.ConvertUnit.fileType===''){
+                      
+                      if (data.fileType!==''){
+                        this.ConvertUnit.fileType==data.ileType;
+                      } else {
                         this.ConvertUnit.fileType=this.identification.configFitness.fileType.convertUnit;
                       }
+                      if (data.updatedAt!==undefined){
+                        this.ConvertUnit.updatedAt=data.updatedAt;
+                      } else {
+                        this.ConvertUnit.updatedAt='';
+                      }
+                      this.ConvertUnit.tabConv =data.tabConv;
                       this.returnFile.emit(this.ConvertUnit);
                       this.ManageConvert();
 
                     } else if (GoogleObject===this.identification.configFitness.files.weightReference ){
-                      this.WeightRefTable=data;
-                      if (this.WeightRefTable.fileType===''){
-                        this.WeightRefTable.fileType=this.identification.configFitness.fileType.weightReference;
-                      }
-                      this.returnFile.emit(this.WeightRefTable);
+                 
+                        if (data.fileType!==''){
+                          this.WeightRefTable.fileType=this.identification.configFitness.fileType.weightReference;
+                        } else {
+                          this.WeightRefTable.fileType='';
+                        }
+                        if (data.updatedAt!==undefined){
+                          this.WeightRefTable.updatedAt=data.updatedAt;
+                        } else {
+                          this.WeightRefTable.updatedAt='';
+                        }
+                        this.WeightRefTable.tabRecordConvert =data.tabRecordConvert;
+                        this.returnFile.emit(this.WeightRefTable);
                     }
+
 
                   },
                   error_handler => {
@@ -1405,8 +1393,8 @@ export class ConverterComponent implements OnInit {
       }
   
 
-    HealthData:string='';
-    SaveNewRecord(GoogleBucket:string, GoogleObject:string, TabToSave:any,iWait:number){
+HealthData:string='';
+SaveNewRecord(GoogleBucket:string, GoogleObject:string, TabToSave:any,iWait:number){
       var file= new File([JSON.stringify(TabToSave)],GoogleObject, {type: 'application/json'});
 
       if (GoogleObject==='ConsoleLog.json'){
@@ -1428,7 +1416,7 @@ export class ConverterComponent implements OnInit {
             )
         }
   
-  waitHTTP(loop:number, max_loop:number, eventNb:number){
+waitHTTP(loop:number, max_loop:number, eventNb:number){
     const pas=500;
     if (loop%pas === 0){
       console.log('waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop);
@@ -1445,7 +1433,7 @@ export class ConverterComponent implements OnInit {
         }  
     }
   
-  LogMsgConsole(msg:string){
+LogMsgConsole(msg:string){
     if (this.myConsole.length>40){
       this.SaveNewRecord('logconsole','ConsoleLog.json', this.myLogConsole,4);
       this.message='Saving of LogConsole';

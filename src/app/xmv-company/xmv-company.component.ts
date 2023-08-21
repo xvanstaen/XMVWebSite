@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { LoginIdentif } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+
 import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
 import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
 import {ConfigFitness} from '../Health/ClassFitness';
@@ -35,7 +35,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     ) {}
   
   @Input() configServer=new configServer;
-  @Input() XMVConfig=new XMVConfig;
+
   @Input() isConfigServerRetrieved:boolean=false;
   @Input() INidentification=new LoginIdentif;
   @Output() returnFile= new EventEmitter<any>();
@@ -188,13 +188,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     this.Events_nb = event;
   }
 
-  BackTo(event:any){
-   
-  }
 
-  TopicURL(){
-
-  }
   ngOnChanges(){
    // console.log('on changes');
   }

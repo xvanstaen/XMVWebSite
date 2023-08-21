@@ -3,6 +3,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
+    <div *ngIf="isTriggerFileSystem===true">
+        <app-file-system-service [identification]="identification" [configServer]="configServer" [callUpdateSystemFile]="callUpdateSystemFile"
+          [tabLock]="tabLock" [iWait]="tabLock[saveIWait].iWait" (returnStatus)="returnFromFileSystem($event)">
+        </app-file-system-service>
+    </div>
 
     <div class="skipLine">&nbsp;</div>
     <div id='posTopHealth' [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:280px; margin-left:20px; border:solid 2px blue; ">
@@ -60,18 +65,20 @@
 </div>
 
 <div *ngIf="error_msg!=='' && errorFn==='Copy'" class="error">{{error_msg}}</div>
+<!--
+<div style="margin-left:25px; font-size:14px; color:blue; display: inline-block; background-color: cyan;">{{message}}</div>
+-->
 
-
-<div id='posTopAppCalFat' *ngIf="isMgtCaloriesFat===true && EventHTTPReceived[1]===true && EventHTTPReceived[6]===true">
-    <app-calories-fat [identification]="identification" [XMVConfig]="XMVConfig" [configServer]="configServer"  [posDivCalFat]="posDivCalFat" [inFileRecipe]="fileRecipe"
-    [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat" (myEmit)="SaveCaloriesFat($event)"
-    (myEmitRecipe)="SaveRecipeFile($event)">
+<div id='posTopAppCalFat' *ngIf="isMgtCaloriesFat===true && EventHTTPReceived[1]===true && EventHTTPReceived[6]===true  && tabLock[1].lock!==3">
+    <app-calories-fat [identification]="identification"  [configServer]="configServer"  [posDivCalFat]="posDivCalFat" [inFileRecipe]="fileRecipe"
+    [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock[1]" (myEmit)="SaveCaloriesFat($event)"
+    (myEmitRecipe)="SaveRecipeFile($event)" (reportCheckLockLimit)="reportCheckLockLimit($event)" (cancelSaveOther)="CancelSaveOthers($event)">
     </app-calories-fat>
     <div class="skipLine">&nbsp;</div>
 </div>
-<div id='posTopAppReportHealth' *ngIf="isDisplayChart===true && EventHTTPReceived[4]===true && EventHTTPReceived[0]===true && EventHTTPReceived[5]===true">
-    <app-report-health [identification]="identification"  [INFileParamChart]="fileParamChart"
-    [ConfigChartHealth]="ConfigChart.chartHealth"  [HealthAllData]="HealthAllData" (returnFile)="saveParamChart($event)">
+<div id='posTopAppReportHealth' *ngIf="isDisplayChart===true && EventHTTPReceived[4]===true && EventHTTPReceived[0]===true && EventHTTPReceived[5]===true && tabLock[5].lock!==3">
+    <app-report-health [identification]="identification"  [configServer]="configServer"  [INFileParamChart]="fileParamChart" [tabLock]="tabLock[5]"
+    [ConfigChartHealth]="ConfigChart.chartHealth"  [HealthAllData]="HealthAllData" (returnFile)="saveParamChart($event)" (reportCheckLockLimit)="reportCheckLockLimit($event)"  (cancelSaveOther)="CancelSaveOthers($event)">
     </app-report-health>
     <div class="skipLine">&nbsp;</div>
 </div>
@@ -94,8 +101,16 @@
     <div class="skipLine">&nbsp;</div>
 </div>
 
+<div *ngIf="EventHTTPReceived[0]===true && tabLock[0].lock === 2">
+    <div style="font-size:16px; color:red; margin-left:20px; display:inline-block; width:100%; margin-top:5px;">
+       <span >
+            Sorry, this file is locked by another user - updates are not possible
+       </span> 
+    </div>
+</div>
 
-<div *ngIf="EventHTTPReceived[0]===true && isDisplaySpecific===true" style="margin-left:20px; width:90%; border: blue 2px double; background-color: silver;">
+<div *ngIf="EventHTTPReceived[0]===true && isDisplaySpecific===true && tabLock[0].lock !== 2" style="margin-left:20px; width:90%; border: blue 2px double; background-color: silver;">
+   
     <span class="error" *ngIf="errorFn==='Sel'">{{error_msg}}</span>
     <div class="skipLine">&nbsp;</div>
     <div [formGroup]="TheSelectDisplays" style="display:inline-block; color:white; background:blue; width:80%; height:40px; margin-left:20px; border:solid 0px blue; ">
@@ -167,7 +182,7 @@
             <div class="skipLine">&nbsp;</div>  
             <div class="posConfirm">
                 <span *ngIf="IsSaveConfirmedSel===false">
-                    <button id='Sel-1' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
+                    <button id='Sel-1' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
                     <button id='Sel-2' class="sizeButtons" (click)="CancelRecord($event)"> Cancel</button>
                 </span>
             </div>
@@ -190,7 +205,9 @@
 </div>
 
 <!--   CREATION OF A DAY  -->
-<div *ngIf="isCreateNew===true" style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px green; width:90%">
+
+<div *ngIf="isCreateNew===true && this.tabLock[0].lock !== 2"
+style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px green; width:90%">
     <div class="skipLine">&nbsp;</div>
     <div  style="display:block; color:white; background:blue; width:80%; height:40px; margin-left:20px; border:solid 0px blue; text-align: center; font-size:16px; padding-top:8px;">
     Create your record
@@ -280,7 +297,7 @@
     <div class="skipLine">&nbsp;</div>
     <div class="posConfirm">
         <div *ngIf="IsSaveConfirmedCre===false">
-            <button id='Cre_12' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
+            <button id='Cre_12' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
             <button id='Cre_22' class="sizeButtons" (click)="CancelRecord($event)"> Cancel</button>
         </div>
     </div>  
@@ -306,6 +323,7 @@
     <!--
     <div style="font-size:12px; color:red; width:100%;">{{error_msg}}</div>
     -->
+  
     <div id="ListAll">&nbsp;</div> 
     <div *ngIf="isDeleteConfirmed===true">
         <div class="msg"  >
@@ -431,7 +449,6 @@
         </div>
     </div>
 
-
     <!-----   MANAGEMENT OF ALL HEALTH DATA  -->
     <div [ngStyle]="{ 'min-width.px': confTableAll.minwidth ,  'width.px': confTableAll.width, 'color':confTableAll.color, 
                 'height.px': confTableAll.height, 'background-color':confTableAll.background}"
@@ -458,7 +475,7 @@
                             
                             <span   class="tReadOnly  widthAction boxAction" [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': tabNewRecordAll[i].nb===1}" 
                                                     id="openAction-{{i}}-{{k}}-{{j}}" (click)="onAction($event)">
-                                <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" (click)="onAction($event)">A</span>
+                                <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" (click)="onNoAction($event)">A</span>
                             </span>
 
                             <input type="date" class="trow widthDate " *ngIf="k===0 && j===0" id="dateAll-{{i}}"  (input)="onInputDailyAll($event)" value="{{ myDaily.date}}" [ngClass]="{'rowEven': i % 2===0, 'rowOdd': i % 2 !==0, 'rowNew': tabNewRecordAll[i].nb===1}">
@@ -532,16 +549,20 @@
     </div>
 
     <div class="skipLine">&nbsp;</div>
-    <div *ngIf="isAllDataModified===true">
+    <div *ngIf="isAllDataModified===true && tabLock[0].lock !==2">
     
         <span *ngIf="IsSaveConfirmedAll===false">
             <div class="msg"  style="margin-left:10px;">
                     File has been modified
-                <button id='All_12' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
+                <button id='All_12' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
                 <button id='All_13' class="sizeButtons" style='width:100px;' (click)="CancelUpdateAll($event)"> Cancel changes</button>
             </div>
         </span>
-        
+        <span *ngIf="this.isMustSaveFile === true">
+            <div class="msg"  style="margin-left:10px;">
+                Save your modifications before timeout
+            </div>
+        </span>
         <span *ngIf="IsSaveConfirmedAll===true">
             <form  [formGroup]="SpecificForm" >
                 <div class="msg"   style="margin-left:10px;">
@@ -562,5 +583,13 @@
 <div class="skipLine">&nbsp;</div>
 <div class="skipLine">&nbsp;</div>
 <div class="skipLine">&nbsp;</div>
+
+<!--
+<div *ngIf="isCheckFile===true">
+    <app-check-file-update [inData]="inData" [configServer]="configServer" 
+    (returnValue)="returnLockFile($event)" >
+    </app-check-file-update>
+</div>
+-->
 </body>
 

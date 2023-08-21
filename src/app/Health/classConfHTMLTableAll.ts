@@ -4,10 +4,12 @@ export class classConfHTMLFitHealth{
   debugPhone:boolean=false;
   ConfigHealth={
       fileType:"HTMLHealthAllData",
+      updatedAt:'',
       confTableAll: new classConfTableAll,
     };
   ConfigCalFat={
       fileType:"HTMLCaloriesFat",
+      updatedAt:'',
       confCaloriesFat: new classConfCaloriesFat,
     }
   }

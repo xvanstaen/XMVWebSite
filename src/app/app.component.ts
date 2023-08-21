@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 import { configServer } from './JsonServerClass';
-import { XMVConfig } from './JsonServerClass';
+
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -19,7 +19,7 @@ export class AppComponent {
       // access MongoDB
 
   configServer=new configServer;
-  XMVConfig=new XMVConfig;
+
   isConfigServerRetrieved:boolean=false;
 
   ngOnInit(){
@@ -29,10 +29,11 @@ export class AppComponent {
   RetrieveConfig(){
       var test_prod='prod';
       const InitconfigServer=new configServer;
-      InitconfigServer.baseUrl='https://localhost:8080';
+      //InitconfigServer.baseUrl='https://localhost:8080';
       InitconfigServer.baseUrl='https://test-server-359505.uc.r.appspot.com';
       
       InitconfigServer.GoogleProjectId='ConfigDB';
+      // this.ManageMangoDB.findConfig(InitconfigServer, 'configServer', '')
       this.ManageMangoDB.findConfigbyURL(InitconfigServer, 'configServer', '')
       .subscribe(
         data => {
@@ -47,9 +48,9 @@ export class AppComponent {
             if (data[i].title==="configServer" && data[i].test_prod===test_prod){
                 this.configServer = data[i];
             
-            } else if (data[i].title==="configPhoto" && data[i].test_prod===test_prod){
-                this.XMVConfig = data[i];
-            }
+            } //else if (data[i].title==="configPhoto" && data[i].test_prod===test_prod){
+              //  this.XMVConfig = data[i];
+            //}
 
         }
         this.isConfigServerRetrieved=true;

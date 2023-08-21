@@ -42,6 +42,9 @@ import { ColorPaletteComponent } from 'src/app/color-picker/color-palette/color-
 import { ColorSliderComponent } from 'src/app/color-picker/color-slider/color-slider.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { DictionaryComponent } from './dictionary/dictionary.component';
+import { FileSystemServiceComponent } from './file-system-service/file-system-service.component';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -72,7 +75,8 @@ import { DictionaryComponent } from './dictionary/dictionary.component';
     ColorPaletteComponent,
     ColorSliderComponent,
     RecipeComponent,
-    DictionaryComponent
+    DictionaryComponent,
+    FileSystemServiceComponent
   ],
   imports: [
     AppRoutingModule,

@@ -3,7 +3,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
-
+     <!-- =========================================================
+          ================ Conversion of two units ================ 
+          =========================================================
+     -->
 <div style="margin-left:10px; margin-top:15px;" *ngIf="(EventHTTPReceived[1]===true || (EventHTTPReceived[2]===true && EventHTTPReceived[3]===true))">
    
     <!-- CONVERSION OF TWO UNITS -->
@@ -65,8 +68,13 @@
             <button class="sizeButtons sizeButtonsOverride"  id='CancelConvert' (click)="CancelConvertValues()">Cancel</button>
         </div>
      </div>
+
+    <!-- =============================================================================
+         ================ DISPLAY & MANAGE TABLE OF ALL CONVERSIONS  ================= 
+         =============================================================================
+     -->
  <div *ngIf="convertOnly===false">
-     <!-- DISPLAY TABLE OF ALL CONVERSIONS -->
+     <!-- -->
      <div class="skipLine">&nbsp;</div>
      <table style="float:none;">
          <thead>
@@ -163,8 +171,9 @@
  
 
     <div class="skipLine">&nbsp;</div>
-     <!-- 
-         Create new record or Modify existing record
+     <!-- =============================================================================
+          ================ Create new record or Modify existing record ================ 
+          =============================================================================
      -->
  <div id='ChangeNewRow'>
      <div  *ngIf="displayNewRow===true || displayToModify===true || displayToDelete===true" >
@@ -274,6 +283,10 @@
  
      </div>
  </div>
+      <!-- =======================================================
+          ================ Save or Cancel updates ================ 
+          ========================================================
+     -->
      <div *ngIf="displayNewRow===false && displayToModify===false && displayToDelete===false" >
          <div class="skipLine">&nbsp;</div>
          <div style='width:100%; height:30px; display:inline-block; color:blue; font-size:14px;' >Reinitialise the table

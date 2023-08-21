@@ -11,7 +11,7 @@ import { EventAug } from '../JsonServerClass';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+import { configPhoto } from '../JsonServerClass';
 import { msginLogConsole } from '../consoleLog';
 import { LoginIdentif } from '../JsonServerClass';
 import { BucketList } from '../JsonServerClass';
@@ -101,11 +101,13 @@ export class AdminJsonComponent {
 
     @Input() identification=new LoginIdentif;
     @Input() WeddingPhotos:Array<StructurePhotos>=[];
-    @Input() ConfigXMV=new XMVConfig;
+
     @Input() configServer=new configServer;
    
-    SelectedConfigFile=new XMVConfig;
-    ModifConfigFile=new XMVConfig;
+    //SelectedconfigServer=new configServer;
+    SelectedconfigPhoto=new configPhoto;
+    ModifconfigPhoto=new configPhoto;
+    ModifconfigServer=new configServer;
     fileRetrieved:boolean=false;
 
     GoToComponent:number=-1;
@@ -140,7 +142,7 @@ ngOnInit(){
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
-      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  ;
+      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
@@ -291,13 +293,13 @@ ReceiveFiles(event:any){
 
 ReceivedDataConfig(event:any){
   this.SpecificConfigFormat='';
-  if (event.BucketConsole!==undefined){
-      this.SelectedConfigFile=event;
-      this.ModifConfigFile=event;
+  if (event.GetOneBucketOnly!==undefined){
+      //this.SelectedconfigPhoto=event;
+      this.ModifconfigPhoto=event;
       this.ContentTodisplay=true;
       this.ModifyText=false;
       this.scroller.scrollToAnchor('targeEndList');
-      this.Max_Fields=20+this.ModifConfigFile.TabBucketPhoto.length+(this.ModifConfigFile.UserSpecific.length*3);
+      this.Max_Fields=20+this.ModifconfigPhoto.TabBucketPhoto.length+(this.ModifconfigServer.UserSpecific.length*3);
       for (let i=0; i<this.Max_Fields; i++){
         this.ModifiedField.push('');
         this.IsFieldModified.push(false);
@@ -330,48 +332,48 @@ TextInput(event:any){
 
 }
 
-UpdateConfigFile(){
-  if (this.IsFieldModified[1]===true){this.ModifConfigFile.BucketLogin=this.ModifiedField[1]};
-  if (this.IsFieldModified[2]===true){this.ModifConfigFile.BucketConsole=this.ModifiedField[2]};
-  if (this.IsFieldModified[3]===true){this.ModifConfigFile.BucketContact=this.ModifiedField[3]};
-  if (this.IsFieldModified[4]===true){this.ModifConfigFile.SourceJson_Google_Mongo=this.ModifiedField[4]};
-  if (this.IsFieldModified[5]===true){this.ModifConfigFile.Max_Nb_Bucket_Wedding=Number(this.ModifiedField[5])};
+UpdateconfigPhoto(){
+  if (this.IsFieldModified[1]===true){this.ModifconfigServer.BucketLogin=this.ModifiedField[1]};
+  if (this.IsFieldModified[2]===true){this.ModifconfigServer.BucketConsole=this.ModifiedField[2]};
+  if (this.IsFieldModified[3]===true){this.ModifconfigServer.BucketContact=this.ModifiedField[3]};
+  if (this.IsFieldModified[4]===true){this.ModifconfigServer.SourceJson_Google_Mongo=this.ModifiedField[4]};
+  if (this.IsFieldModified[5]===true){this.ModifconfigPhoto.Max_Nb_Bucket_Wedding=Number(this.ModifiedField[5])};
   if (this.IsFieldModified[6]===true){
-    if (this.ModifiedField[6]==='false'){this.ModifConfigFile.GetOneBucketOnly=false};
-    if (this.ModifiedField[6]==='true'){this.ModifConfigFile.GetOneBucketOnly=true};
+    if (this.ModifiedField[6]==='false'){this.ModifconfigPhoto.GetOneBucketOnly=false};
+    if (this.ModifiedField[6]==='true'){this.ModifconfigPhoto.GetOneBucketOnly=true};
   }
  
-  if (this.IsFieldModified[7]===true){this.ModifConfigFile.nb_photo_per_page=Number(this.ModifiedField[7])};
+  if (this.IsFieldModified[7]===true){this.ModifconfigPhoto.nb_photo_per_page=Number(this.ModifiedField[7])};
   if (this.IsFieldModified[8]===true){
-    if (this.ModifiedField[8]==='false'){this.ModifConfigFile.process_display_canvas=false};
-    if (this.ModifiedField[8]==='true'){this.ModifConfigFile.process_display_canvas=true};
+    if (this.ModifiedField[8]==='false'){this.ModifconfigPhoto.process_display_canvas=false};
+    if (this.ModifiedField[8]==='true'){this.ModifconfigPhoto.process_display_canvas=true};
   }
    
-  if (this.IsFieldModified[9]===true){this.ModifConfigFile.padding=Number(this.ModifiedField[9])};
+  if (this.IsFieldModified[9]===true){this.ModifconfigPhoto.padding=Number(this.ModifiedField[9])};
 
-  if (this.IsFieldModified[10]===true){this.ModifConfigFile.width500=Number(this.ModifiedField[10])};
-  if (this.IsFieldModified[11]===true){this.ModifConfigFile.maxPhotosWidth500=Number(this.ModifiedField[11])};
-  if (this.IsFieldModified[12]===true){this.ModifConfigFile.width900=Number(this.ModifiedField[12])};
-  if (this.IsFieldModified[13]===true){this.ModifConfigFile.maxPhotosWidth900=Number(this.ModifiedField[13])};
-  if (this.IsFieldModified[14]===true){this.ModifConfigFile.maxWidth=Number(this.ModifiedField[14])};
-  if (this.IsFieldModified[15]===true){this.ModifConfigFile.maxPhotosmaxWidth=Number(this.ModifiedField[15])};
+  if (this.IsFieldModified[10]===true){this.ModifconfigPhoto.width500=Number(this.ModifiedField[10])};
+  if (this.IsFieldModified[11]===true){this.ModifconfigPhoto.maxPhotosWidth500=Number(this.ModifiedField[11])};
+  if (this.IsFieldModified[12]===true){this.ModifconfigPhoto.width900=Number(this.ModifiedField[12])};
+  if (this.IsFieldModified[13]===true){this.ModifconfigPhoto.maxPhotosWidth900=Number(this.ModifiedField[13])};
+  if (this.IsFieldModified[14]===true){this.ModifconfigPhoto.maxWidth=Number(this.ModifiedField[14])};
+  if (this.IsFieldModified[15]===true){this.ModifconfigPhoto.maxPhotosmaxWidth=Number(this.ModifiedField[15])};
 
 
   let j=16;
-  for (let i=0; i<this.ModifConfigFile.TabBucketPhoto.length; i++){
-    if (this.IsFieldModified[i+j]===true){this.ModifConfigFile.TabBucketPhoto[i]=this.ModifiedField[i+j]};
+  for (let i=0; i<this.ModifconfigPhoto.TabBucketPhoto.length; i++){
+    if (this.IsFieldModified[i+j]===true){this.ModifconfigPhoto.TabBucketPhoto[i]=this.ModifiedField[i+j]};
   };
-  //j=j+this.ModifConfigFile.TabBucketPhoto.length-1;
+  //j=j+this.ModifconfigPhoto.TabBucketPhoto.length-1;
   
-  for (let i=0; i<this.ModifConfigFile.UserSpecific.length; i++){
-    let j=this.ModifConfigFile.TabBucketPhoto.length+16+(i*2);
+  for (let i=0; i<this.ModifconfigServer.UserSpecific.length; i++){
+    let j=this.ModifconfigPhoto.TabBucketPhoto.length+16+(i*2);
     if (this.IsFieldModified[j+i]===true)
-             {this.ModifConfigFile.UserSpecific[i].id=this.ModifiedField[j+i]};
+             {this.ModifconfigServer.UserSpecific[i].id=this.ModifiedField[j+i]};
     if (this.IsFieldModified[j+i+1]===true)
-             {this.ModifConfigFile.UserSpecific[i].type=this.ModifiedField[i+j+1]};
+             {this.ModifconfigServer.UserSpecific[i].type=this.ModifiedField[i+j+1]};
     if (this.IsFieldModified[j+i+2]===true){
-              if (this.ModifiedField[i+j+2]==='true'){ this.ModifConfigFile.UserSpecific[i].log=true};
-              if (this.ModifiedField[i+j+2]==='false'){ this.ModifConfigFile.UserSpecific[i].log=false};
+              if (this.ModifiedField[i+j+2]==='true'){ this.ModifconfigServer.UserSpecific[i].log=true};
+              if (this.ModifiedField[i+j+2]==='false'){ this.ModifconfigServer.UserSpecific[i].log=false};
           };
   };
 
@@ -379,7 +381,7 @@ UpdateConfigFile(){
 
 BackToSaveFile(event:any){
   if (event.SaveIsCancelled ===false){
-      this.UpdateConfigFile();
+      this.UpdateconfigPhoto();
   } else { 
   this.ContentTodisplay=false;
   this.scroller.scrollToAnchor('targetTop');

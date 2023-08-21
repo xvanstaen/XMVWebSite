@@ -14,7 +14,7 @@ import { BucketList, Bucket_List_Info} from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer, XMVConfig, LoginIdentif} from '../../JsonServerClass';
+import { configServer, LoginIdentif} from '../../JsonServerClass';
 import {classPosDiv, getPosDiv} from '../../getPosDiv';
 import { environment } from 'src/environments/environment';
 import {manage_input} from '../../manageinput';
@@ -30,10 +30,11 @@ import {mainClassConv, ClassConv, ClassUnit, ConvItem, recordConvert} from '../.
 
 import {classConfCaloriesFat} from '../classConfHTMLTableAll';
 
-
+import { strDateTime } from '../../MyStdFunctions';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
+import { classFileSystem, classAccessFile}  from '../../classFileSystem';
 
 @Component({
   selector: 'app-calories-fat',
@@ -52,12 +53,13 @@ export class CaloriesFatComponent implements OnInit {
     @Inject(LOCALE_ID) private locale: string,
     ) { }
 
-  @Input() XMVConfig=new XMVConfig;
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;
   @Input() ConfigCaloriesFat=new mainClassCaloriesFat;
   @Input() inFileRecipe=new mainClassCaloriesFat;
   @Input() HTMLCaloriesFat=new classConfCaloriesFat;
+  @Input()  tabLock= new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
+  
 
   ConvToDisplay=new mainConvItem;
 
@@ -65,6 +67,8 @@ export class CaloriesFatComponent implements OnInit {
           
   @Output() myEmit= new EventEmitter<any>();
   @Output() myEmitRecipe= new EventEmitter<any>();
+  @Output() reportCheckLockLimit= new EventEmitter<any>();
+  @Output() cancelSaveOther = new EventEmitter<any>();
 
   outConfigCaloriesFat=new mainClassCaloriesFat;
   outFileRecipe=new mainClassCaloriesFat;
@@ -153,17 +157,16 @@ export class CaloriesFatComponent implements OnInit {
     x: 0,
     y: 0} ;
     
-
+titleHeight:number=0;
 @HostListener('window:mouseup', ['$event'])
 onMouseUp(event: MouseEvent) {
     this.selectedPosition = { x: event.pageX, y: event.pageY };
-    const i=this.HTMLCaloriesFat.title.height.indexOf('px');
-    const titleHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,i));
+    
     //this.getPosDivTable();
     this.posDivTable=getPosDiv("posStartTable");
 
     // this allows to position the dropdown list where the click occured
-    this.posItemAction=Number(event.clientY)-Number(this.posDivTable.ClientRect.Top)+Number(titleHeight);
+    this.posItemAction=Number(event.clientY)-Number(this.posDivTable.ClientRect.Top)+Number(this.titleHeight);
     if (this.posItemAction>this.HTMLCaloriesFat.height/2 ){
       // this allows to position the dropdownlist at the middle of the window and then dropdownlist remains within the scrolling window
       this.posItemAction=this.HTMLCaloriesFat.height/2;
@@ -196,8 +199,8 @@ ngOnInit(): void {
 
   this.posDivTable=getPosDiv("posStartTable");
 
-  this.RecipetheHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,this.HTMLCaloriesFat.title.height.indexOf('px')));
-  this.theHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,this.HTMLCaloriesFat.title.height.indexOf('px')));
+   this.titleHeight=Number(this.HTMLCaloriesFat.title.height.substring(0,this.HTMLCaloriesFat.title.height.indexOf('px')));
+
 
   this.onWindowResize();
   this.device_type = navigator.userAgent;
@@ -365,7 +368,7 @@ onAction(event:any){
   this.dialogueCalFat[1]=false;
   var trouve=false;
   this.error_msg='';
-  
+  this.reportCheckLockLimit.emit({iWait:1,isDataModified:true,isSaveFile:false});
   if (event.currentTarget.id !==''){
       this.theEvent.target.id=event.currentTarget.id;
       this.findIds(event.currentTarget.id); 
@@ -542,7 +545,7 @@ scrollTop:number=0;
 
 
 onInput(event:any){
-
+  this.reportCheckLockLimit.emit({iWait:1,isDataModified:true,isSaveFile:false});
   //this.getPosAfterTitle();
   //this.offsetHeight= event.currentTarget.offsetHeight;
   this.offsetLeft = event.currentTarget.offsetLeft;
@@ -756,17 +759,30 @@ onInputRecipe(event:any){
       this.isRecipeFoodInput=true;
       iTab=-1;
       for (var i=0; i<this.tabFood.length; i++){
+        if (this.tabFood[i].name.indexOf(event.target.value.toLowerCase().trim())!==-1){
+          iTab++;
+          this.tabInputRecipeFood.push({name:''});
+          this.tabInputRecipeFood[iTab].name=this.tabFood[i].name.toLowerCase().trim();
+        }
+
+/*
         if (this.tabFood[i].name.substring(0,event.target.value.trim().length)===event.target.value.toLowerCase().trim()){
           iTab++;
           this.tabInputRecipeFood.push({name:''});
           this.tabInputRecipeFood[iTab].name=this.tabFood[i].name.toLowerCase().trim();
         }
+*/
       }
       if (this.tabInputRecipeFood.length===1 && this.tabInputRecipeFood[0]=== event.target.value.toLowerCase().trim() && this.outFileRecipe.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].lockData!=='Y'){
           this.searchFoodCalories(event.target.value.toLowerCase().trim(), this.TabOfId[0], this.TabOfId[1]);
           this.isRecipeFoodInput=false;
       }
-      this.sizeBoxRecipeFood=this.tabInputRecipeFood.length * this.heightItemOptionBox;      
+      if (this.tabInputRecipeFood.length>9){
+        this.sizeBoxRecipeFood= 9 * this.heightItemOptionBox; 
+      } else {
+        this.sizeBoxRecipeFood=(this.tabInputRecipeFood.length + 1) * this.heightItemOptionBox; 
+      }
+           
 
   } else if (event.target.id.substring(0,4)==='serv'){
     this.outFileRecipe.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Serving=Number(event.target.value);
@@ -954,8 +970,10 @@ CancelSave(event:any){
   
   if (event.target.id==='RecipeCancel'){
     this.IsSaveRecipeConfirmed=false;
+    this.cancelSaveOther.emit(6);
   } else {
     this.IsSaveConfirmed=false;
+    this.cancelSaveOther.emit(1);
   }
   
 }
@@ -976,8 +994,13 @@ CancelUpdates(event:any){
   }
 }
 
+returnEmit={
+  saveAction:'',
+  saveCode:''
+}
 
 SaveFile(event:any){
+  this.returnEmit.saveAction=event.target.id;
   if (event.target.id==='RecipeSave'){
     this.IsSaveRecipeConfirmed=false;
     this.myEmitRecipe.emit(this.SpecificForm.controls['FileNameRecipe'].value);
@@ -1006,6 +1029,7 @@ SaveFile(event:any){
     //this.tabFood[0].name='cancel';
     this.tabNewRecord.splice(0, this.tabNewRecord.length);
     this.initTrackRecord();
+    this.outConfigCaloriesFat.updatedAt=strDateTime();
     this.myEmit.emit(this.SpecificForm.controls['FileName'].value);
     this.myEmit.emit(this.outConfigCaloriesFat);
   }
@@ -1023,18 +1047,42 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
     })
 }
 
-/**
+initTabLock1:number=0;
+firstLoop:boolean=true;
+inputReadOnly:boolean=true;
 ngOnChanges(changes: SimpleChanges) { 
-
+ 
   var i=0;
     for (const propName in changes){
         const j=changes[propName];
-        if (propName==='ConfigCaloriesFat'){
+        if (propName==='tabLock'){
+            if (this.firstLoop===true){
+                console.log('report chart ==> ngOnChange this.firstLoop===true   current value of tabLock[1]=' + changes[propName].currentValue.lock +  
+                '  & previous value initTabLock1 was=' + this.initTabLock1 + '  & input() TabLock[1]=' + this.tabLock.lock);
+                this.firstLoop=false;
+              } else {
+                  console.log('report chart ==> ngOnChange this.firstLoop===false   current tabLock[1]=' + changes[propName].currentValue.lock + 
+                        '  & previous value initTabLock1 was=' + this.initTabLock1 + '  & input() TabLock[1]=' + this.tabLock.lock);
+                  if (this.returnEmit.saveAction==='RecipeSave' || this.returnEmit.saveAction==='ConfigCalSave') {
+                    if ( this.tabLock.lock===1 && (this.tabLock.status===0 || this.tabLock.status===300) ){
+                      this.error_msg = 'File ' + this.SpecificForm.controls['FileNameRecipe'].value + 'has been successfully saved';
+                    } else {
+                      this.error_msg = 'File ' + this.SpecificForm.controls['FileNameRecipe'].value + 'has not been saved - error=' + this.tabLock.status;
+                    }
+                    this.returnEmit.saveAction='';
+                  }
+  
+                }
 
+            this.initTabLock1=changes[propName].currentValue.lock;
+            if (this.initTabLock1===1){
+                this.inputReadOnly=false;
+            } else {
+                this.inputReadOnly=true;
+            }
             
+          } 
         }
-    }
-
+    // //this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j)); 
 }
- */
 }

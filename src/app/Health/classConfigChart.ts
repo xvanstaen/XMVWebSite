@@ -3,6 +3,7 @@ import { classPlugin, classAxis, classLegendChart, classPluginTitle } from '../H
 
 export class classConfigChart{
     fileType:string='';
+    updatedAt:string='';
     chartHealth=new classchartHealth;
 }
 

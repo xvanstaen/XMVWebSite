@@ -1,0 +1,37 @@
+<!--
+
+
+          <input (keyup)="onKey($event)"  autocomplete="off" class="form-control inputsize"  matInput 
+        formControlName="aptcode" [(ngModel)]="aptcode"
+        type="text"  placeholder = "Enter airport/city code" [matAutocomplete]="myAutoComplete" >
+-->
+<div [formGroup]="searchcitycodeform" >
+  
+      <h3 > Search {{origin_arrival}}</h3>
+      <button class='closeicons' (click) = OnCancel()> 
+        X
+      </button> 
+  
+      <div > 
+            <input (keyup)="onKey($event)"   class="form-control inputsize" 
+                formControlName="aptcode" 
+                type="text"  placeholder = "Enter airport/city code" > 
+                
+            <button class="clearbutton" value="aptcode" matSuffix mat-icon-button  (click)="onClear()">
+                  X
+            </button>
+            <div style='overflow:scroll; height:180px; max-width:80%'>
+                  <div *ngIf="aptcode !== ''"  >
+                        <span class="autocomplete-active " (mousedown)="selectedcity(listcity.citycode)"  *ngFor = "let listcity of arraycity; let i=index"  >
+                        <span class="citycode">{{listcity.citycode}} /  {{listcity.cityname}} </span> 
+                        </span>
+                  </div>
+            </div>
+      </div>
+
+      <button mat-button  class="viewregions"  (click)="OpenViewRegionsDialog()" >View all regions                
+      </button>
+ 
+</div>
+
+

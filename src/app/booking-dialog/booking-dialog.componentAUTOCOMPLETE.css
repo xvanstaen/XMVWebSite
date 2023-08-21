@@ -1,0 +1,59 @@
+.closeicons {
+    max-width: 30px;
+    float:right;
+    margin-top: 5px;
+    position: relative;
+    top: -45px;
+    right: 0;
+}
+
+
+.inputsize{
+    max-width: 80%;
+    margin-top: 50px;
+    background-color: rgb(236, 236, 70);
+    height:40px;
+}
+
+/* to clear the input field*/
+.clearbutton{
+    float: right;
+    position: relative;
+    margin-top: -32px;
+    margin-right: 120px;
+    background-color: rgb(220, 216, 230);
+}
+
+
+.viewregions{
+    max-width: 120px;
+    margin-top: 20px;
+    font-style: normal;
+    margin-left:40px;
+}
+
+
+
+/* display autocomplete window !important*/
+.autocomplete-active{
+    background-color: rgb(98, 196, 147) ;
+    list-style-type: none; /* avoid the display of the bullet points */
+    display: block !important;
+
+    max-width:80%;
+    margin-left:0px;
+    height:30px;
+
+}
+
+/* does not work */
+.autocomplete-active:hover{ 
+    background-color: rgb(169, 218, 35);       
+}
+
+.citycode{
+    margin-left:40px;
+    margin-top:-15px;
+    font-size: 16px; 
+}
+

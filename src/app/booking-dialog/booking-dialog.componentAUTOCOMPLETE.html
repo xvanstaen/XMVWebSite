@@ -1,0 +1,31 @@
+
+<div [formGroup]="searchcitycodeform" >
+  
+      <h2 mat-dialog-title> Search {{origin_arrival}}</h2>
+      <button class='closeicons' (click) = OnCancel()> 
+        X
+      </button> 
+  
+      <div> 
+          <input (keyup)="onKey($event)"  autocomplete="off" class="form-control inputsize"  matInput 
+          formControlName="aptcode" 
+          type="text"  placeholder = "Enter airport/city code" [matAutocomplete]="myAutoComplete" >
+
+          <button class="clearbutton" value="aptcode" matSuffix mat-icon-button  (click)="onClear()">
+            X
+          </button>
+          <div style='overflow:scroll; height:180px; max-width:80%'>
+              <mat-autocomplete  #myAutoComplete="matAutocomplete" > <!-- listcity.citycode -->
+                  <div *ngIf="aptcode !== '' ">
+                      <mat-option class="autocomplete-active " (mousedown)="selectedcity(listcity.citycode)" 
+                                            *ngFor = "let listcity of arraycity; let i=index" [value]="listcity.cityname" >
+                        <span class="citycode">{{listcity.citycode}} /  {{listcity.cityname}} </span> 
+                      </mat-option>
+                  </div>
+              </mat-autocomplete>
+          </div>
+      </div>
+       
+      <button mat-button class="viewregions" (click)="OpenViewRegionsDialog()">View all regions
+      </button>
+</div>

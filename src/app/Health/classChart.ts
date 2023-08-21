@@ -81,6 +81,7 @@ export class classAxis{
 
 export class classFileParamChart{
     fileType:string='';
+    updatedAt:string='';
     data:Array<classTabFormChart>=[];
 }
 

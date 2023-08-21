@@ -5,10 +5,10 @@ import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
 
-import {Bucket_List_Info} from '../JsonServerClass';
-import { StructurePhotos } from '../JsonServerClass';
+import {Bucket_List_Info, StructurePhotos} from '../JsonServerClass';
+
 import { BucketExchange } from '../JsonServerClass';
-import { XMVConfig } from '../JsonServerClass';
+
 import { UserParam } from '../JsonServerClass';
 import { EventAug } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
@@ -29,7 +29,7 @@ export class Event02JULComponent {
     
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
-    @Input() ConfigXMV=new XMVConfig;
+
     @Input() identification= new LoginIdentif;
 
     getScreenWidth: any;
@@ -52,7 +52,7 @@ export class Event02JULComponent {
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
-      console.log('ConfigXMV',this.ConfigXMV);
+
     }
 
 

@@ -14,7 +14,7 @@ import { BucketList , Bucket_List_Info} from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer, XMVConfig, LoginIdentif } from '../../JsonServerClass';
+import { configServer, LoginIdentif } from '../../JsonServerClass';
 
 import { environment } from 'src/environments/environment';
 import {manage_input} from '../../manageinput';
@@ -71,11 +71,8 @@ FormChart():FormGroup {
 }
 
 
-
 FillFSelected= {'selected':''};
 
-
-@Input() XMVConfig=new XMVConfig;
 @Input() configServer = new configServer;
 @Input() identification= new LoginIdentif;
 
@@ -125,11 +122,8 @@ SpecificForm=new FormGroup({
   FileName: new FormControl('', { nonNullable: true }),
 })
 
-
-
 NewconfigServer=new configServer;
 isConfigServerRetrieved:boolean=false;
-NewXMVConfig=new XMVConfig;
 
 HTTP_Address:string='';
 HTTP_AddressPOST:string='';

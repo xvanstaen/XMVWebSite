@@ -1,8 +1,8 @@
 
   
   <div *ngIf="bucketMgt.bucket_is_processed===true">
-    <app-WeddingPhotos [EventLogConsole]="myConsole" [myLogConsole]="myLogConsole" [ConfigXMV]="ConfigXMV" 
-    [nextBucketOnChange]="nextBucketOnChange"
+    <app-WeddingPhotos [EventLogConsole]="myConsole" [myLogConsole]="myLogConsole" [configPhoto]="configPhoto" 
+    [nextBucketOnChange]="nextBucketOnChange" [configServer]="configServer"
     [bucketMgt]="bucketMgt"  [WeddingPhotos]="WeddingPhotos" (AddBucket)="process_next_bucket($event)" > 
     </app-WeddingPhotos>
   </div>

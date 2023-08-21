@@ -15,7 +15,7 @@ import { Bucket_List_Info } from '../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
-import { configServer, XMVConfig, LoginIdentif} from '../JsonServerClass';
+import { configServer, LoginIdentif} from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
 import {msginLogConsole} from '../consoleLog'
 import { environment } from 'src/environments/environment';
@@ -41,7 +41,7 @@ export class DictionaryComponent {
       @Inject(LOCALE_ID) private locale: string,
       ) { }
 
-@Input() XMVConfig=new XMVConfig;
+
 @Input() configServer = new configServer;
 @Input() identification= new LoginIdentif;
 
@@ -209,8 +209,8 @@ var i=0;
     tabChar[2].pos=m;
     tabChar.sort((a, b) => (a.pos < b.pos) ? -1 : 1);
 
-    for (i=0; i<tabChar.length && tabChar[i].pos===-1;i++){};
-    if (i<tabChar.length) {j=tabChar[i-1].pos}
+    for (k=0; k<tabChar.length && tabChar[k].pos===-1;k++){};
+    if (k<tabChar.length) {j=tabChar[k-1].pos}
     else {j=-1;}
 
 
