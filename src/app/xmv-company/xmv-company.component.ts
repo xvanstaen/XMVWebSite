@@ -134,7 +134,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     this.Display_Table[this.i_table].display=true;
   }
 
-  Reset(event:number){
+  Reset(event:any){
     this.redisplay_profile=1;
   }
 

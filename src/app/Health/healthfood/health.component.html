@@ -187,8 +187,8 @@
             <div class="skipLine">&nbsp;</div>  
             <div class="posConfirm">
                 <span *ngIf="IsSaveConfirmedSel===false">
-                    <button id='Sel-1' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
-                    <button id='Sel-2' class="sizeButtons" (click)="CancelRecord($event)"> Cancel</button>
+                    <button id='SelConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
+                    <button id='SelCancel' class="sizeButtons" (click)="CancelRecord($event)"> Cancel</button>
                 </span>
             </div>
              <span *ngIf="IsSaveConfirmedSel===true">
@@ -302,8 +302,8 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
     <div class="skipLine">&nbsp;</div>
     <div class="posConfirm">
         <div *ngIf="IsSaveConfirmedCre===false">
-            <button id='Cre_12' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
-            <button id='Cre_22' class="sizeButtons" (click)="CancelRecord($event)"> Cancel</button>
+            <button id='CreConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
+            <button id='CreCancel' class="sizeButtons" (click)="CancelRecord($event)"> Cancel</button>
         </div>
     </div>  
     <span *ngIf="IsSaveConfirmedCre===true">
@@ -675,8 +675,8 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
         <span *ngIf="IsSaveConfirmedAll===false">
             <div class="msg"  style="margin-left:10px;">
                     File has been modified
-                <button id='All_12' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
-                <button id='All_13' class="sizeButtons" style='width:100px;' (click)="CancelUpdateAll($event)"> Cancel changes</button>
+                <button id='AllConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
+                <button id='AllCancel' class="sizeButtons" style='width:100px;' (click)="CancelUpdateAll($event)"> Cancel changes</button>
             </div>
         </span>
         <span *ngIf="this.isMustSaveFile === true">

@@ -1722,9 +1722,14 @@ processSaveParamChart(){
 
 isSaveCaloriesFat:boolean=false;
 saveEvent:any;
+errCalcCalFat:string='';
+calfatNameFile:string='';
 SaveCaloriesFat(event:any){
   this.isSaveCaloriesFat=true;
   this.saveEvent=event;
+  if (event.fileType===undefined){
+    this.calfatNameFile=event;
+  }
   this.checkLockLimit(1,true,true);
 
 }
@@ -1732,8 +1737,9 @@ SaveCaloriesFat(event:any){
 processSaveCaloriesFat(event:any){
   // save this file
  // if (Array.isArray(event)===false){
+
   if (event.fileType===undefined){
-    this.SpecificForm.controls['FileName'].setValue(event);
+    //this.SpecificForm.controls['FileName'].setValue(event);
   } else if (event.tabCaloriesFat.length!==0) {
       this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length);
       for (var i=0; i<event.tabCaloriesFat.length; i++){
@@ -1754,18 +1760,21 @@ processSaveCaloriesFat(event:any){
       this.ConfigCaloriesFat.fileType=this.identification.configFitness.fileType.calories;
     }
     this.ConfigCaloriesFat.updatedAt=strDateTime();
-    this.SaveNewRecord(this.identification.configFitness.bucket, this.SpecificForm.controls['FileName'].value, this.ConfigCaloriesFat, 1);
+    // this.SaveNewRecord(this.identification.configFitness.bucket, this.SpecificForm.controls['FileName'].value, this.ConfigCaloriesFat, 1);
+    this.SaveNewRecord(this.identification.configFitness.bucket, this.calfatNameFile, this.ConfigCaloriesFat, 1);
     this.CreateDropDownCalFat();
 
   }
 }
 
 isSaveRecipeFile:boolean=false;
+recipeNameFile:string='';
 SaveRecipeFile(event:any){
   // save this file
  // if (Array.isArray(event)===false){
   if (event.fileType===undefined){
-    this.SpecificForm.controls['FileName'].setValue(event);
+    //this.SpecificForm.controls['FileName'].setValue(event);
+    this.recipeNameFile=event;
   } else if (event.tabCaloriesFat.length!==0) {
       this.fileRecipe.tabCaloriesFat.splice(0, this.fileRecipe.tabCaloriesFat.length);
       for (var i=0; i<event.tabCaloriesFat.length; i++){
@@ -1784,14 +1793,17 @@ SaveRecipeFile(event:any){
       this.fileRecipe.fileType=this.identification.fitness.fileType.recipe;
     }
     this.fileRecipe.updatedAt=strDateTime();
-    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.fileRecipe, 6);
-
+    // this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.fileRecipe, 6);
+    this.SaveNewRecord(this.identification.fitness.bucket, this.recipeNameFile, this.fileRecipe, 6);
 
   }
 }
 isConfirmSaveA:boolean=false;
+
 ConfirmSaveA(event:any){
   this.theEvent.target.id=event.target.id;
+  this.theEvent.target.value=event.target.value;
+  this.theEvent.target.textContent=event.target.textContent;
   if (this.isMustSaveFile===false){
     this.isConfirmSaveA=true;
       this.checkLockLimit(0,true,false);
@@ -1909,7 +1921,6 @@ CancelSave(){
   this.errorFn='';
   }
 
-errCalcCalFat:string='';
 
 isSaveHealth:boolean=false;
 SaveHealth(event:any){
