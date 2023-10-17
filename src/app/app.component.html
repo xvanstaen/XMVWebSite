@@ -1,5 +1,8 @@
 <body>
-  <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved"></app-xmv-company>
+  <div *ngIf="isCredentials===true">
+      <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved"
+      [credentials]="credentials" (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" ></app-xmv-company>
+  </div>
 </body>
 
 <router-outlet></router-outlet>

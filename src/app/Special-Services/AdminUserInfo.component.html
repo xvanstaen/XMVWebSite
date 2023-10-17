@@ -1,0 +1,48 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+
+
+<div id='targetLogTop' ></div>
+<span style="margin-top:2px;"><br></span>
+
+
+<div *ngIf="Error_Access_Server!==''">
+  <span style='margin-top:10px; margin-left:30px; color:red; font-size:22px;'> Error access to the server : {{Error_Access_Server}}
+  </span>
+</div>
+<span style='margin-top:20px; margin-left:30px;color:blue; font-size:22px;'>{{Message}}</span>
+
+
+<div *ngIf="ContentTodisplay===true">
+      <br><br>
+  
+      <h4>Content reference from file &nbsp;SelectedBucketInfo.name}}</h4>
+      <textarea readonly class="inputObject inputColorRef">>
+          {{ContentObjectRef}}
+      </textarea>
+      <br>
+      <h4>Content to modify </h4> 
+            <span style='margin-top:20px; margin-left:30px;color:red; font-size:20px;' *ngIf="General_Info!==''"> Attention: {{General_Info}} <br>
+                  <span   *ngIf="WrongNbRecords>0" style='margin-top:20px; margin-left:30px;color:red; font-size:16px;'>
+                        {{WrongNbRecords}} &nbsp;records have a wrong format
+                  </span>
+            </span>
+
+            <div *ngFor="let content of TabContent; let i=index">
+
+                  <label *ngIf="IsATable===false" style='margin-top:20px; margin-left:30px;color:blue; font-size:20px;'>record:&nbsp;{{i+1}} - userid= {{theReceivedData.UserId}}</label>
+                  <label *ngIf="IsATable===true" style='margin-top:20px; margin-left:30px;color:blue; font-size:20px;'>record:&nbsp;{{i+1}} - userid= {{theReceivedData[i].UserId}}</label>
+                  <textarea  class="inputObject inputColor" id='C{{i}}' (input)='ModifContent($event)' type='text' value='{{content}}'>  </textarea>
+                  <span style='margin-top:20px; margin-left:30px;color:red; font-size:20px;'>{{TabErrorContent[i]}}</span>
+                  <br> <br>
+
+      </div>
+     
+</div>
+
+
+
+</body>

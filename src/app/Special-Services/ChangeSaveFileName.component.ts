@@ -4,7 +4,6 @@ import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { encrypt, decrypt} from '../EncryptDecryptServices';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
@@ -81,7 +80,7 @@ export class ChangeSaveFileNameComponent {
         const HTTP_Address=this.Google_Bucket_Access_RootPOST + this.SelectedBucketInfo.bucket+ "/o?name=" + this.FileName   + "&uploadType=media" ;
         
         var file=new File ([JSON.stringify(FileToSave)],this.FileName,{type: 'application/json'});
-        this.ManageGoogleService.uploadObject(this.configServer, this.SelectedBucketInfo.bucket, file )
+        this.ManageGoogleService.uploadObject(this.configServer, this.SelectedBucketInfo.bucket, file ,this.FileName)
           .subscribe(
             (res) => {
               if (res.type===4){

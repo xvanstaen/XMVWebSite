@@ -10,8 +10,7 @@ import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angu
 import { Observable } from 'rxjs';
 
 
-import { BucketList } from '../JsonServerClass';
-import { Bucket_List_Info } from '../JsonServerClass';
+import { BucketList ,Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MangoDB and accessed via ManageMangoDBService
@@ -1784,7 +1783,7 @@ SaveRecord(){
 putRecord(GoogleBucket:string, GoogleObject:string, record:any){
     
     var file=new File ([JSON.stringify(record)],GoogleObject, {type: 'application/json'});
-    this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file )
+    this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file ,GoogleObject)
       .subscribe(res => {
               if (res.type===4){
                 this.message='File "'+ GoogleObject +'" is successfully stored in the cloud';
@@ -1988,11 +1987,17 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
     const lengthFile=this.identification.recipe.fileStartName.length;
     const HTTP_Address=this.Google_Bucket_Access_Root+ this.googleBucketName + "/o"  ;
     console.log('RetrieveAllObjects()'+this.googleBucketName);
-    this.http.get<Bucket_List_Info>(HTTP_Address )
+    this.ManageGoogleService.getListMetaObjects(this.configServer, this.googleBucketName )
+    //this.http.get<Bucket_List_Info>(HTTP_Address )
             .subscribe((data ) => {
                   console.log('RetrieveAllObjects() - data received');
                   this.nbCallGetRecord=0;
-                  this.myListOfObjects=data;
+                  
+                  for (var i=0; i<data.length; i++){
+                      const theBucketInfo = new OneBucketInfo;
+                      this.myListOfObjects.items.push(theBucketInfo);
+                      this.myListOfObjects.items[i]=data[i].items;
+                  }
                   this.EventHTTPReceived[iWait]=true;
 
                  var iObjects=-1;

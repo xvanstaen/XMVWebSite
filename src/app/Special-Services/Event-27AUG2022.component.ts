@@ -607,7 +607,7 @@ SaveRecord(){
       
       //var file=new File ([JSON.stringify(this.Table_User_Data[this.identification.id])],this.Table_User_Data[this.identification.id].UserId ,{type: 'application/json'});
       var file=new File ([JSON.stringify(this.Table_User_Data[this.identification.id])],this.Table_User_Data[this.identification.id].UserId ,{type: 'application/json'});
-      this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
+      this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file ,this.Google_Object_Name)
       //this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
       .subscribe(res => {
         //**this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
@@ -685,7 +685,7 @@ SaveRecord(){
 
 
                         var file=new File ([JSON.stringify(this.Table_User_Data)],this.Google_Object_Name,{type: 'application/json'});
-                        this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
+                        this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file, this.Google_Object_Name )
                         //this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
                         .subscribe(res => {
                               this.returnDATA.emit(this.Table_User_Data);
@@ -784,7 +784,7 @@ saveLogConsole(LogConsole:any, type:string){
     this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name=" + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
         
     var file=new File ([JSON.stringify(LogConsole)], this.thetime.substr(0,20)+ type  ,{type: 'application/json'});
-    this.ManageGoogleService.uploadObject(this.configServer, this.configServer.BucketConsole, file )
+    this.ManageGoogleService.uploadObject(this.configServer, this.configServer.BucketConsole, file , this.thetime.substr(0,20)+ type )
     //this.http.post(this.HTTP_Address, LogConsole)
       .subscribe(res => {
               this.SaveConsoleFinished=true;

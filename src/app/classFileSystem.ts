@@ -7,6 +7,7 @@ export class classFileSystem{
     lock:boolean=false;
     createdAt:string="";
     updatedAt:string=""; 
+    userServerId:number=0;
 }
 
 export class classUpdate{
@@ -39,6 +40,8 @@ export class classAccessFile{
             hh:0,
             mn:0
         }
-      }
+      };
+      userServerId:number=0;
+      credentialDate:string="";
   }
 

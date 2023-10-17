@@ -6,7 +6,7 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { Router} from '@angular/router';
 import { ViewportScroller } from "@angular/common";
 import { EventAug } from '../JsonServerClass';
-import { Bucket_List_Info } from '../JsonServerClass';
+import { Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
 
@@ -16,7 +16,7 @@ import { BucketList } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
 import { msgConsole } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
-import { OneBucketInfo } from '../JsonServerClass';
+
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
@@ -120,10 +120,18 @@ RetrieveAllObjects(){
   // bucket name is ListOfObject.config
   this.HTTP_Address=this.Google_Bucket_Access_Root+ this.Bucket_Name + "/o"  ;
   console.log('RetrieveAllObjects()'+this.Bucket_Name);
-  this.http.get<Bucket_List_Info>(this.HTTP_Address )
+  this.ManageGoogleService.getListObjects(this.configServer, this.Bucket_Name )
+  //this.http.get<Bucket_List_Info>(this.HTTP_Address )
           .subscribe((data ) => {
             console.log('RetrieveAllObjects() - data received');
-            this.myListOfObjects=data;
+            for (var i=0; i<data.length; i++){
+              const theObject= new OneBucketInfo;
+              this.myListOfObjects.items.push(theObject);
+              this.myListOfObjects.items[i].name=data[i].name;
+              this.myListOfObjects.items[i].mediaLink=data[i].url;
+              this.myListOfObjects.items[i].bucket=this.Bucket_Name;
+            }
+            
             this.DisplayListOfObjects=true;
             this.scroller.scrollToAnchor('targetTopObjects');
           },

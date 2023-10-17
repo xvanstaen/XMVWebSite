@@ -270,7 +270,7 @@ msg:string="";
 putRecord(GoogleBucket:string, GoogleObject:string, record:any){
     
   var file=new File ([JSON.stringify(record)],GoogleObject, {type: 'application/json'});
-  this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file )
+  this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file , GoogleObject)
     .subscribe(res => {
             if (res.type===4){
               this.msg='File "'+ GoogleObject +'" is successfully stored in the cloud';

@@ -1,6 +1,8 @@
 @import "../FitnessHealthGeneral.css";
 
 
+
+
 ::placeholder{
   font-size:12px;
   color:red;
@@ -8,7 +10,7 @@
 }
 
 .boxAction{
-  width:var(--wAction);
+  background-color: white;
 }
 
 .boxAction:hover{
@@ -16,13 +18,14 @@
 }
 
 
-
 table {
 
     border-collapse: separate;
     margin-left:10px;
+    /*
     width:var(--tableW);
     max-width:var(--tableMaxW); 
+    */
     overflow-y: scroll;
     table-layout: fixed;
     background-color: black;
@@ -39,7 +42,6 @@ th {
   }
     
 td {
-
     border-spacing: 0px;
     height:25px; 
     color:white;
@@ -47,20 +49,26 @@ td {
   }
   
 .subTotal {
+    /*
     height:var(--sTheight);
-    display:inline-block;
-    color:var(--sTcol);
-    font-weight:bold;
     font-size:var(--sTfontW);
+    color:var(--sTcol);
+    */
+    display:inline-block;
+    font-weight:bold;
     margin-top:10px;
   }
 
 .Total {
+  /*
   height:var(--Theight);
-  display:inline-block;
-  color:var(--Tcol);
-  font-weight:bold;
   font-size:var(--TfontW);
+  color:var(--Tcol);
+  */
+  display:inline-block;
+  
+  font-weight:bold;
+  
   border: solid 0px white;
   margin-top:10px;
 
@@ -69,9 +77,11 @@ td {
 
 .trow {
   display:inline-block;
+  /*
   height:var(--rowHeight); 
   color:var(--rowColor);
   background-color:var(--rowBackG);
+  */
   border: solid 0px blue;
   /*
   pointer-events: none; ==> field is read only and data cannot be copied
@@ -82,13 +92,16 @@ td {
 .trow:hover{
     color:blue;
     background-color: white;
+    
   }
 
 .tReadOnly{
   display:inline-block;
+  /*
   height:var(--rowHeight); 
   color:var(--rowColor);
   background-color:var(--rowBackG);
+  */
   border: solid 0px blue;
 }
 
@@ -96,7 +109,7 @@ td {
   border:0px solid blue;
 }
 
-
+/*
 .rowEven{
   background-color: var(--rEven);
 }
@@ -109,13 +122,15 @@ td {
   background-color: var(--rNewbackG);
     color:var(--rNewcol);
   }
-
+*/
 .Colth {
   display:inline-block;
   text-align: center; 
+  /*
   height:var(--thHeight);
   color:var(--thColor);
   background-color:var(--thBackGround);
+  */
     /*pointer-events: none;*/
   }
 
@@ -124,31 +139,31 @@ td {
   }
 
 .widthDate{
-  width:var(--wDate);
+  
   text-align: left; 
   padding-left:10px;
 }
 .widthAction{
-  width:var(--wAction); 
+  
   text-align: center; 
 }
 .widthCalBurnt{
-  width:var(--wCalBurnt);
+  
   text-align: center; 
 }
 .widthMeal{
-  width:var(--wMeal);
+  
   text-align: left;
   padding-left:10px;
 }
 .widthIngr{
-  width:var(--wIngr); 
+  
   text-align: left;
   padding-left:10px;
   
 }
 .widthOther{
-  width:var(--wOther); 
+  
   text-align: center; 
 }
 

@@ -19,16 +19,17 @@ export class BioData{
     url:string='';
     };
 
+
+
     export class LoginIdentif{
       id:number=0;
-      key:number=0;
-      method:string='';
       UserId:string='';
-      psw:string='';
       phone:string='';
       firstname:string='';
       surname:string='';
       IpAddress:string='';
+      userServerId:number=0;
+      credentialDate:string='';
       apps:Array<string>=[];
       ownBuckets:Array<any>=[{name:""}];
       fitness={
@@ -135,38 +136,18 @@ export class TableOfEventLogin{
 
  export class Bucket_List_Info{
   kind:string='storage#object';
-  items:Array<any>=[
-  {
-      kind: "storage#object",
-      id: "manage-login/Event-27AUG2022.json/1655279866897148",
-      selfLink: "https://www.googleapis.com/storage/v1/b/manage-login/o/Event-27AUG2022.json", // link to the general info of the bucket/objectobject
-      mediaLink: "https://storage.googleapis.com/download/storage/v1/b/manage-login/o/Event-27AUG2022.json?generation=1655279866897148&alt=media", // link to get the content of the object
-      name: "Event-27AUG2022.json", // name of the object
-      bucket: "manage-login", //name of the bucket
-      cacheControl:"max-age=0, private, no-store",
-      generation: "1655279866897148", 
-      metageneration: "1",
-      contentType: "application/json", 
-      storageClass: "STANDARD", 
-      size: "", // number of bytes
-      md5Hash: "qdWPGdgcYW4N0Wc2lodB0g==",
-      crc32c: "oLhslw==",
-      etag: "CPzF4YP+rvgCEAE=",
-      timeCreated: "2022-06-15T07:57:46.909Z",
-      updated: "",
-      timeStorageClassUpdated: "",
-  }]
+  items:Array<OneBucketInfo>=[];
 };
 
 
 export class OneBucketInfo{
+      kind:string='';
       bucket: string='';
       contentType: string='';
       crc32c: string='';
       etag: string='';
       generation: string='';
       id: string='';
-      kind: string='';
       md5Hash: string='';
       mediaLink: string='';
       metageneration: string='';
@@ -177,6 +158,7 @@ export class OneBucketInfo{
       timeCreated: string='';
       timeStorageClassUpdated:  string='';
       updated: string='';
+      cacheControl:string='';
 
 };
 
@@ -232,11 +214,11 @@ export class UserParam{
   } 
 
 export class BucketList{
-  Contact: string= "XMV_messages";
-  Login:   string= "manage-login";
-  Console: string= "logconsole";
-  Config:  string= "config-xmvit";
-  Fitness:  string= "xav_fitness";
+  Contact: string= "";
+  UserInfo:   string= "";
+  Console: string= "";
+  Config:  string= "";
+  Fitness:  string= "";
 }
 
 export class msgConsole{
@@ -260,6 +242,7 @@ export class configServer{
   baseUrl:string= '';
   IpAddress:string= '';
   UserSpecific:Array<UserParam>=[];
+  credentialDate:string='';
   bucketFileSystem:string='';
   objectFileSystem:string='';
   timeoutFileSystem={
@@ -277,9 +260,10 @@ export class configServer{
   BucketConfig:string='';
   BucketConsole:string='';
   BucketContact:string='';
-  BucketLogin:string='';
+  BucketUserInfo:string='';
   BucketFitness:string='';
   BucketRecipe:string='';
+  filesToCache=[];
 }
 
 export class classPosSlider{
@@ -292,6 +276,9 @@ export class classPosSlider{
   }
 }
 
+export class   classCredentials {
+  access_token:string=""; id_token:string=""; refresh_token:string=""; token_type:string="";
+  userServerId:number=-1; creationDate:string=""}
 
 
 

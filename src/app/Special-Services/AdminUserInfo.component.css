@@ -1,0 +1,237 @@
+@import "./AdminGeneral.component.css";
+body{
+  max-width: 1200px;
+}
+
+
+
+.labelrecord{
+    font-family: 'Roboto';
+    height:50px;
+    color:red;
+    padding-top:3px;
+    padding-left:10px;
+    margin-left:30px;
+    font-size:22px;  
+    width:170px;
+    font-weight: bold;
+    display:inline-flex;
+}
+
+.recordNb{
+    font-size:22px;  
+    width:30px;
+    height:50px;
+    width:60px;
+    color:blue;
+    padding-left:10px;
+    padding-top:3px;
+    font-weight: bold;
+    display:inline-flex;
+   }
+
+.breakLine{
+    margin-top:80px;
+  }
+
+.common{
+  font-family: 'Roboto';
+  padding-left:10px;
+  padding-top:10px;
+  height:40px;
+  
+  display:inline-flex;
+}
+
+.labelbucket{ 
+    width:180px;
+    color:red;
+    font-size:16px;
+    margin-left:30px;
+ }
+
+.bucket{
+    width:50%;
+    color:blue;
+    font-size:16px; 
+ }
+
+.input{
+  width:50%;
+  color:blue; 
+  font-size:16px;
+}
+
+
+
+.input:hover{
+  background-color: lightgrey;
+
+}
+
+.urCommentsLabel{
+  margin-left:30px;
+  width:20%;
+  height:90px; 
+  color:red;
+  font-size:16px; 
+  display:inline-flex;
+  padding-left:10px;
+  padding-top:40px;
+  float:left;
+ }
+
+
+
+.urComments{
+  font-family: 'Roboto';
+  font-size:16px;
+  display:inline-flex;
+  height:90px; 
+  width:50%;
+
+  color:blue;
+ 
+ }
+ .urComments:hover{
+  background-color: lightgrey;
+ 
+}
+
+.even{
+    color:blue;
+    background-color: lightgrey;
+}
+
+.odd{
+    color:white;
+    background-color: rgb(115, 110, 110);
+}
+
+.empty{
+  color:white;
+  background-color: red;
+  height:10px;
+}
+
+.submit{
+  
+  background-color: lightgrey;
+  margin-left:60px;
+  font-size:16px;
+}
+.submit:hover{
+  color:blue;
+  background-color:cyan;
+}
+
+.savePos{
+  margin-left:100px;
+}
+.savePos:hover{
+  color:blue;
+  background-color:cyan;
+}
+
+.inputObject{
+  height:200px;
+  width:90%;
+  margin-left:20px;
+  font-size: 16px;
+  
+}
+
+.inputColorRef{
+  display:block;
+  border:solid 1px black;
+  color:rgb(241, 241, 246);
+  background-color: rgb(54, 47, 204);
+  overflow: scroll;
+  display:flex;
+}
+.inputColor{
+  color:blue;
+  background-color: lightcyan;
+  display:inline-flex;
+}
+
+.inputColor:hover{
+  background-color: cyan;
+
+}
+
+.pswField{
+  height:50px;
+  width:90%;
+  
+  margin-left:20px;
+  font-size: 16px;
+  overflow: scroll;
+
+}
+/*** ====================================== ***/
+/*** ============== @media1000 ================ ***/
+/*** ====================================== ***/
+ @media only screen and (max-width:10000px) {
+
+
+.common{
+    font-family: 'Roboto';
+    padding-left:10px;
+    padding-top:5px;
+    height:25px;
+    font-size:12px;
+  }
+
+.labelrecord{
+  width:120px;
+  font-size:16px;  
+  height:20px;
+  padding-top:2px;
+  display:inline-flex;
+ }
+
+ .recordNb{
+  font-size:16px;  
+  width:25px;
+  padding-top:2px;
+  display:inline-flex;
+  height:20px;
+ }
+
+ .breakLine{
+   margin-top:5px;
+ }
+
+ .labelbucket{
+  width:120px;
+  font-size:14px;
+ }
+.bucket{
+  width:50%;
+  font-size:14px;
+ }
+
+ .urCommentsLabel{
+  width:120px;
+  height:120px; 
+  font-size:14px;
+ }
+
+ .urComments{
+  font-size:14px;
+  height:120px; 
+  width:50%;
+ }
+ .input{
+  font-size:14px;
+}
+ .empty{
+  height:5px;
+}
+
+.savePos{
+  margin-left:20px;
+  margin-top:5px;
+}
+}

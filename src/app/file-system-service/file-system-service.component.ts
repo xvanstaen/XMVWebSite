@@ -118,7 +118,7 @@ processFileSystem(iWait:number){
 
           // write in FileSystem
           const file=new File ([JSON.stringify(theStatus)], this.tabLock[iWait].objectName, {type: 'application/json'});
-          this.ManageGoogleService.uploadObject(this.configServer, this.configServer.bucketFileSystem, file )
+          this.ManageGoogleService.uploadObject(this.configServer, this.configServer.bucketFileSystem, file , this.tabLock[iWait].objectName)
             .subscribe(res => {
               if (res.type===4){
                 console.log(' file system ' + this.tabLock[iWait].objectName + ' saved ');
@@ -148,7 +148,7 @@ processFileSystem(iWait:number){
                 console.log('record ' + this.tabLock[iWait].objectName + ' locked - createdAT' +  this.tabLock[iWait].createdAt + '  updatedAt' + this.tabLock[iWait].updatedAt);
     
                 const file=new File ([JSON.stringify(theStatus)], this.tabLock[iWait].objectName, {type: 'application/json'});
-                this.ManageGoogleService.uploadObject(this.configServer, this.configServer.bucketFileSystem, file )
+                this.ManageGoogleService.uploadObject(this.configServer, this.configServer.bucketFileSystem, file ,this.tabLock[iWait].objectName)
                   .subscribe(res => {
                       if (res.type===4){
                         console.log(' file system ' + this.tabLock[iWait].objectName + ' saved ');

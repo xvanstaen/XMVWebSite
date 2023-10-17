@@ -149,7 +149,7 @@ onSubmit(event:any){
                           }
                               
     var file=new File ([JSON.stringify(this.myContactForm.value)],  "Message" + this.myDate  + '.json' ,{type: 'application/json'});
-    this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
+    this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file ,  "Message" + this.myDate  + '.json')
     // this.http.post(this.HTTP_Address,this.myContactForm.value )
                                 .subscribe(res => {
                                   if (res.type===4){

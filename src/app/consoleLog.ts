@@ -22,7 +22,6 @@ export function msginLogConsole(msg:string, myConsole:Array<msgConsole>, myLogCo
   }
 
 
-
 export function saveLogConsole(LogConsole:Array<msgConsole>, type:string, HTTP_Address:string){
     const Http = new XMLHttpRequest();
     const myTime=new Date();

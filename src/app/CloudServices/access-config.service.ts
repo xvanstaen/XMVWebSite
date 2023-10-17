@@ -28,7 +28,7 @@ export class AccessConfigService {
   this.configServer.baseUrl='https://test-server-359505.uc.r.appspot.com';
   
   this.configServer.GoogleProjectId='ConfigDB';
-  this.ManageMangoDBService.findConfigbyURL(this.configServer, 'configServer', '')
+  this.ManageMangoDBService.findConfigbyString(this.configServer, 'configServer', '')
   .subscribe(
     data => {
      // test if data is an array if (Array.isArray(data)===true){}

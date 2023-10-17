@@ -7,8 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { LoginIdentif } from '../JsonServerClass';
-import { configServer } from '../JsonServerClass';
+import { configServer, LoginIdentif, classCredentials } from '../JsonServerClass';
 
 import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
 import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
@@ -39,6 +38,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   @Input() isConfigServerRetrieved:boolean=false;
   @Input() INidentification=new LoginIdentif;
   @Output() returnFile= new EventEmitter<any>();
+  @Input() credentials = new classCredentials;
 
   redisplay_profile:number=0;
 
@@ -113,11 +113,11 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
         this.identification=this.INidentification;
     } else {
         this.identification.id=0;
-        this.identification.key=2;
-        this.identification.method="AES";
         this.identification.UserId="";
-        this.identification.psw="";
         this.identification.phone="";
+        //this.identification.key=2;
+        //this.identification.method="AES";
+        //this.identification.psw="";
     }
   }
 
@@ -239,6 +239,18 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
       }
 
   
+  }
+
+  @Output() resetServer= new EventEmitter<any>();
+  @Output() newCredentials= new EventEmitter<any>();
+  fnResetServer(){
+          this.resetServer.emit();
+    }
+  
+  fnNewCredentials(credentials:any){
+      this.identification.userServerId=credentials.userServerId;
+      this.identification.credentialDate=credentials.creationDate;
+      this.newCredentials.emit(credentials);
   }
 }
 

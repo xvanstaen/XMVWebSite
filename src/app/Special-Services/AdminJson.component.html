@@ -21,7 +21,7 @@
 <div style="display:inline-flex; width:90%; height:60px; margin-left:20px;">
     <span  *ngIf="TabAppsAutho[0]==='Y'" (click)="Process('Bucket')" class="dropdown-options dropdown-text">Bucket List</span>
     <span  *ngIf="TabAppsAutho[3]==='Y'"(click)="Process('Contact')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Contact</span>
-    <span  *ngIf="TabAppsAutho[2]==='Y'"(click)="Process('27Aug')" class="dropdown-options dropdown-text">Event 27Aug</span>
+    <span  *ngIf="TabAppsAutho[2]==='Y'"(click)="Process('27Aug')" class="dropdown-options dropdown-text"></span>
     <span  *ngIf="TabAppsAutho[6]==='Y'"(click)="Process('Config')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Config</span>
     <span  *ngIf="TabAppsAutho[5]==='Y'"(click)="Process('Console')" class="dropdown-options dropdown-text">Log console</span>
     <span  *ngIf="TabAppsAutho[7]==='Y'"(click)="Process('Fitness')" class="dropdown-options dropdown-text">Fitness</span>
@@ -30,7 +30,7 @@
     <span  *ngIf="TabAppsAutho[12]==='Y'"(click)="Process('Dictionary')" class="dropdown-options dropdown-text">Dictionary</span>
     <span  *ngIf="TabAppsAutho[9]==='Y'"(click)="Process('ConvMgt')" class="dropdown-options dropdown-text">Conv Mgt</span>
     <span  *ngIf="TabAppsAutho[10]==='Y'"(click)="Process('ConvFn')" class="dropdown-options dropdown-text">Conv Fn</span>
-    <span  *ngIf="TabAppsAutho[4]==='Y'"(click)="Process('Login')" class="dropdown-options dropdown-text">&nbsp;&nbsp;&nbsp;&nbsp;Login</span>
+    <span  *ngIf="TabAppsAutho[4]==='Y'"(click)="Process('UserInfo')" class="dropdown-options dropdown-text">User info</span>
     <!--
     <span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
     -->
@@ -44,7 +44,7 @@
 </div> 
 
 <div *ngIf="GoToComponent===0 " >
-  <div *ngIf="ListOfBucket.Config!==''">
+  
       <div style="margin-left:20px;">
 
       <div *ngFor="let bucketList of TabBuckets; let i=index" style="margin-left:20px; ">
@@ -53,7 +53,7 @@
       </div> 
      
       </div>
-  </div>
+
 </div>
  
 <div *ngIf="EventHTTPReceived[0]===true && Google_Bucket_Name!=='' && GoToComponent===6">
@@ -72,8 +72,8 @@
           <h2> Current configuration parameters of file  </h2>
           <h2>{{SelectedBucketInfo.name}}</h2>
           <div style="margin-left:20px;">
-                <span class='labelbucket odd'>BucketLogin</span> <span class='bucket odd'>  {{configServer.BucketLogin}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.BucketLogin}}</textarea>
+                <span class='labelbucket odd'>BucketUser</span> <span class='bucket odd'>  {{configServer.BucketUserInfo}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.BucketUserInfo}}</textarea>
 
                 <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  {{configServer.BucketConsole}}</span>
                 <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field02' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.BucketConsole}}</textarea>
@@ -197,7 +197,8 @@
   <ng-template #CompoTwo>
     <div *ngIf="GoToComponent===2 else CompoThree ">
       <app-Event-27AUG2022 [identification]="identification"  [configServer]="configServer" [LoginTable_User_Data]="LoginTable_User_Data" 
-          [LoginTable_DecryptPSW]="LoginTable_DecryptPSW"> <!--  (returnDATA)="GetUpdatedTable($event)" -->
+          [LoginTable_DecryptPSW]="LoginTable_DecryptPSW"
+          > <!--  (returnDATA)="GetUpdatedTable($event)" -->
       </app-Event-27AUG2022>
   </div>
   </ng-template>
@@ -212,8 +213,8 @@
   <ng-template #CompoFour>
     <div *ngIf="GoToComponent===4; else CompoFive ">
       <div *ngIf="isDataReceived===true">
-        <app-AdminLogin  [configServer]="configServer" [ListOfBucket]="ListOfBucket" 
-            [theReceivedData]="theReceivedData" (process_login)="Process('Refresh_Login')" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminLogin>
+        <app-AdminUserInfo  [configServer]="configServer" 
+            [theReceivedData]="theReceivedData" (process_userInfo)="Process('Refresh_UserInfo')" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminUserInfo>
       </div>
     </div>
   </ng-template>
@@ -222,7 +223,7 @@
   <ng-template #CompoFive>
     <div *ngIf="GoToComponent===5 ; else CompoSeven">
       <div *ngIf="isDataReceived===true">
-        <app-AdminConsole  [ListOfBucket]="ListOfBucket"
+        <app-AdminConsole 
         [theReceivedData]="theReceivedData" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminConsole>
       </div>
     </div>
@@ -240,9 +241,11 @@
   <ng-template #CompoEight>
     <div *ngIf="GoToComponent===8; else CompoNine">
 
-    <app-health  [identification]="identification"  [configServer]="configServer" [ConfigChart]="ConfigChart"
-    [InHealthAllData]="HealthAllData" [InConfigHTMLFitHealth]='ConfigHTMLFitHealth' [InConfigCaloriesFat]="ConfigCaloriesFat" [InConvertUnit]="ConvertUnit" (returnFile)="ReceiveFiles($event)" >
-    </app-health>
+    <app-health [credentials]="credentials" [identification]="identification"  [configServer]="configServer" [ConfigChart]="ConfigChart"
+    [InHealthAllData]="HealthAllData" [InConfigHTMLFitHealth]='ConfigHTMLFitHealth' [InConfigCaloriesFat]="ConfigCaloriesFat" [InConvertUnit]="ConvertUnit" 
+     (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)">
+    
+  </app-health> <!-- (returnFile)="ReceiveFiles($event)" -->
    
     </div>
   </ng-template>

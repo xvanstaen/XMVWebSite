@@ -115,18 +115,96 @@
             stringDay=theDay.toString();;
         }
 
-        return(theYear.toString()+stringMonth+stringDay+stringHour+stringMin+theDate.substring(12,14));
+        return(theYear.toString()+stringMonth+stringDay+stringHour+stringMin+theDate.substring(12));
     
       }
 
       export function strDateTime(){
-        const aDate=new Date();
-        const theDate=aDate.toUTCString();
-
-        const stringDate=convertDate(aDate,'YYYYMMDD');
-        return(stringDate + theDate.substring(17,19)+theDate.substring(20,22)+theDate.substring(23,25));
+        const theDate=new Date();
+        //const myDate=new Date(theDate).toUTCString();
+        const year=theDate.getUTCFullYear();
+        const month=theDate.getUTCMonth()+1;
+        const day=theDate.getUTCDate();
+        const seconds= theDate.getUTCSeconds();
+        const minutes= theDate.getUTCMinutes();
+        const hour= theDate.getUTCHours();
+        if (month<10){
+          var theMonth='0'+month.toString();;
+        } else {
+          theMonth=month.toString();
+        } 
+        if (day<10){
+          var theDay='0'+day.toString();;
+        } else {
+          theDay=day.toString();;
+        } 
+        if (hour<10){
+          var theHour='0'+hour.toString();;
+        } else {
+          theHour=hour.toString();;
+        } 
+        if (minutes<10){
+          var theMinutes='0'+minutes.toString();;
+        } else {
+          theMinutes=minutes.toString();;
+        } 
+        if (seconds<10){
+          var theSeconds='0'+seconds.toString();;
+        } else {
+          theSeconds=seconds.toString();;
+        } 
+      
+        return (year.toString()+theMonth+theDay+theHour+theMinutes+theSeconds);
       }
-
+      
+      export function defineMyDate(){
+        const theDate=new Date();
+        //const myDate=new Date(theDate).toUTCString();
+        const year=theDate.getUTCFullYear();
+        const month=theDate.getUTCMonth()+1;
+        const day=theDate.getUTCDate();
+        const milliseconds= theDate.getUTCMilliseconds();
+        const seconds= theDate.getUTCSeconds();
+        const minutes= theDate.getUTCMinutes();
+        const hour= theDate.getUTCHours();
+        if (month<10){
+          var theMonth='0'+month.toString();;
+        } else {
+          theMonth=month.toString();
+        } 
+        if (day<10){
+          var theDay='0'+day.toString();;
+        } else {
+          theDay=day.toString();;
+        } 
+        if (hour<10){
+          var theHour='0'+hour.toString();;
+        } else {
+          theHour=hour.toString();;
+        } 
+        if (minutes<10){
+          var theMinutes='0'+minutes.toString();;
+        } else {
+          theMinutes=minutes.toString();;
+        } 
+        if (seconds<10){
+          var theSeconds='0'+seconds.toString();;
+        } else {
+          theSeconds=seconds.toString();;
+        } 
+        if (milliseconds<10){
+          var theMilliseconds='00'+milliseconds.toString();;
+        } else if (milliseconds<100) {
+          theMilliseconds='0'+milliseconds.toString();;
+        } else {
+          theMilliseconds=milliseconds.toString();;
+        }
+      
+      
+        return (year.toString()+theMonth+theDay+theHour+theMinutes+theSeconds+theMilliseconds);
+      
+      
+      }
 
       export function fnCheckLockLimit(configServer:any,tabLock:any,iWait:any, lastInputAt:string, isRecordModified:boolean, isSaveFile:boolean){ 
         var returnValue={
@@ -137,7 +215,7 @@
     
         if (tabLock[iWait].lock!==3){
 
-            const currentTime=strDateTime();
+            const currentTime=defineMyDate();
     
             const timeOutValue=fnAddTime(tabLock[iWait].updatedAt,configServer.timeoutFileSystem.hh,configServer.timeoutFileSystem.mn);
             const bufferTimeOutValue=fnAddTime(tabLock[iWait].updatedAt,configServer.timeoutFileSystem.bufferTO.hh,configServer.timeoutFileSystem.bufferTO.mn);
@@ -176,7 +254,8 @@
                     
                 } else if (tabLock[iWait].lock === 1){
                     //tabLock[iWait].lock = 0; // user has not done anything until timeout;  
-                    returnValue.action="changeTabLock";
+                    // returnValue.action="changeTabLock"; // WHY DOING THAT?
+                    returnValue.action="checkFile";
                 } else if (tabLock[iWait].lock===0 && isRecordModified === true) {
                     //lockFile(iWait); // user is trying to do something but file was not locked
                     returnValue.action="updateSystemFile";

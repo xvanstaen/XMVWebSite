@@ -4,7 +4,6 @@ import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { encrypt, decrypt} from '../EncryptDecryptServices';
 
 import { msginLogConsole } from '../consoleLog';
 import { LoginIdentif } from '../JsonServerClass';
@@ -35,7 +34,6 @@ export class AdminConsoleComponent {
     ) {}
 
     
-    @Input() ListOfBucket=new BucketList;
     @Input() theReceivedData=new Array<msgConsole>();
 
     ContentTodisplay:boolean=false;
