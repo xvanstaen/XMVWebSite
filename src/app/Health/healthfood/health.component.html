@@ -109,7 +109,7 @@
 <div *ngIf="EventHTTPReceived[0]===true && tabLock[0].lock === 2">
     <div style="font-size:16px; color:red; margin-left:20px; display:inline-block; width:100%; margin-top:5px;">
        <span >
-            Sorry, this file is locked by another user - updates are not possible
+        Sorry, file {{tabLock[0].objectName}} is locked by another user - updates are not possible
        </span> 
     </div>
 </div>

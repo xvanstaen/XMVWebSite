@@ -2327,9 +2327,15 @@ returnOnFileSystem(data:any, iWait:number){
     // record is locked by another user; no actions can take place for this user so reset
     this.nbCallCredentials=0;
     if (data.tabLock[iWait].createdAt !== undefined){
-        this.error_msg = this.error_msg + " data returned: lock=" + data.tabLock[iWait].lock +  "  & status=" + data.tabLock[iWait].status ;
+        this.error_msg = this.error_msg + " data returned on file " + data.tabLock[iWait].objectName + " ==> action=" + data.tabLock[iWait].lock +  "  & status=" + data.tabLock[iWait].status ;
           console.log(this.error_msg);
-        if (data.tabLock[iWait].lock ===1 && this.tabLock[iWait].lock === 2) {
+          if (this.tabLock[iWait].action==='unlock'){
+            this.tabLock[iWait].lock=3;
+            this.onInputAction="";
+            this.tabLock[iWait].createdAt="";
+            this.tabLock[iWait].updatedAt="";
+          }
+          else if (data.tabLock[iWait].lock ===1 && this.tabLock[iWait].lock === 2) {
             // file is now locked for this user; need to retrieve the file to ensure we have the latest version
             this.tabLock[iWait]=data.tabLock[iWait];
             this.onInputAction="";
@@ -2484,14 +2490,14 @@ returnOnFileSystem(data:any, iWait:number){
       } else if (data.status===955){
         this.error_msg = data.msg;
         this.theResetServer=true;
-        this.tabLock[iWait].lock=2;
+        this.tabLock[iWait].lock=3;
         
         this.getDefaultCredentials(iWait, true); // update credentials & check File.updatedAt 
 
       }  else if (data.status===956){
         this.error_msg = data.msg;
         this.theResetServer=true;
-        this.tabLock[iWait].lock=2;
+        this.tabLock[iWait].lock=3;
         this.onInputAction="";
         // record is locked by another user
         this.tabLock[iWait].status=720;
@@ -2506,12 +2512,23 @@ returnOnFileSystem(data:any, iWait:number){
         this.getDefaultCredentials(iWait, false); // update credentials only 
 
       } else {
-          console.log('which type of data is it????' + JSON.stringify(data) +  '  on action ' + + this.tabLock[iWait].action);
-          this.nbCallCredentials=0;
-          this.tabLock[iWait].status=999;
+          
+           this.nbCallCredentials=0;
+          
           this.onInputAction="";
-          if (this.tabLock[iWait].action==='lock'){
-            this.tabLock[iWait].lock=2;
+          
+          if (this.tabLock[iWait].action==='lock' || this.tabLock[iWait].action==="unlock"){
+            
+            this.tabLock[iWait].status=0;
+            if (this.tabLock[iWait].action==='lock'){
+              this.tabLock[iWait].lock=2;
+                console.log('which type of data is it????' + JSON.stringify(data) +  '  on action ' + + this.tabLock[iWait].action);
+            } else {
+              this.tabLock[iWait].lock=3;
+            }
+          } else {
+            this.tabLock[iWait].status=999;
+            console.log('which type of data is it????' + JSON.stringify(data) +  '  on action ' + + this.tabLock[iWait].action);
           }
           
       }
