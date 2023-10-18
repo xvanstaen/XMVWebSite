@@ -41,7 +41,7 @@ export class AppComponent {
       
       InitconfigServer.baseUrl='https://test-server-359505.uc.r.appspot.com';
 
-InitconfigServer.baseUrl='http://localhost:8080'; // TO BE DELETED
+// InitconfigServer.baseUrl='http://localhost:8080'; // TO BE DELETED
 
       InitconfigServer.test_prod=test_prod;
       InitconfigServer.GoogleProjectId='ConfigDB';
@@ -64,7 +64,7 @@ InitconfigServer.baseUrl='http://localhost:8080'; // TO BE DELETED
                 } }
               }
           this.configServer.IpAddress=this.IpAddress;
-  this.configServer.baseUrl='http://localhost:8080';  // TO BE DELETED
+//  this.configServer.baseUrl='http://localhost:8080';  // TO BE DELETED
           console.log('configServer is retrieved');
               //this.getTokenOAuth2();
           if (this.credentials.access_token===""){
