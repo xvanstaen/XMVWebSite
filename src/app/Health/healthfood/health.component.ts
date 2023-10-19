@@ -1924,12 +1924,14 @@ CancelSave(){
 
 isSaveHealth:boolean=false;
 SaveHealth(event:any){
+  this.error_msg='';
   this.isSaveHealth=true;
   this.theEvent.target.id=event.target.id;
   this.checkLockLimit(0,true,true);
 }
 
 ProcessSaveHealth(event:any){
+  this.error_msg='';
     this.isSaveHealth=false;
     this.isMustSaveFile=false;
     this.errCalcCalFat='';
@@ -2021,6 +2023,7 @@ ProcessSaveHealth(event:any){
 
 
 SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any, iWait:number){
+  this.error_msg='';
     //var file=new File ([JSON.stringify(this.HealthAllData)],GoogleObject, {type: 'application/json'});
     var file=new File ([JSON.stringify(record)],GoogleObject, {type: 'application/json'});
     if (GoogleObject==='ConsoleLog.json'){
@@ -2269,6 +2272,7 @@ updateLockFile(iWait:number){
 
 iWaitSave:number=0;
 onFileSystem(iWait:number){
+  this.error_msg='';
   var theAction=this.tabLock[iWait].action;
   this.iWaitSave=iWait;
   this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString() )
@@ -2318,7 +2322,7 @@ theResetServer:boolean=false;
 returnOnFileSystem(data:any, iWait:number){
 //this.isTriggerFileSystem=false;
 //const iWait=this.saveIWait;
-
+this.error_msg='';
   if (data.status!== undefined && data.status===200 && data.tabLock !== undefined)  { // tabLock is returned
     console.log('server response: ' + data.tabLock[iWait].object + ' createdAt=' + data.tabLock[iWait].createdAt + '  & updatedAt=' + data.tabLock[iWait].updatedAt + '  & lock value =' + data.tabLock[iWait].lock);
     if (data.tabLock[iWait].credentialDate !== this.credentials.creationDate) { // server was reinitialised
