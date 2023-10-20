@@ -525,7 +525,7 @@ reportCheckLockLimit(event:any){
 }
 
 checkLockLimit(iWait:number, isDataModified:boolean, isSaveFile:boolean){ 
-    var valueCheck={action:'',lockValue:0, lockAction:'' };
+    var valueCheck= {action:'',lockValue:0, lockAction:'' };
     valueCheck=fnCheckLockLimit(this.configServer, this.tabLock, iWait, this.lastInputAt, isDataModified, isSaveFile);
 
     if (iWait===0 && this.tabLock[iWait].lock===2){
@@ -1813,7 +1813,7 @@ ConfirmSaveA(event:any){
 }
 
 ConfirmSave(event:any){
-  
+  this.theResetServer=false;
   if (this.tabLock[0].lock === 1){
     this.isConfirmSaveA=false;
     this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
@@ -1860,11 +1860,6 @@ this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
 if (this.HealthAllData.fileType!==''){
   this.HealthAllData.fileType=this.identification.fitness.fileType.Health;
 }
-
-//const aDate=new Date();
-//const theDate=aDate.toUTCString();
-//const stringDate=convertDate(aDate,'YYYYMMDD');
-//this.HealthAllData.updatedAt=stringDate + theDate.substring(17,19)+theDate.substring(20,22)+theDate.substring(23,25);
 
 this.HealthAllData.updatedAt=strDateTime();
 
@@ -2094,6 +2089,7 @@ LogMsgConsole(msg:string){
 
   SelRadio(event:any){
     // this.checkLockLimit(0);
+    this.theResetServer=false;
     const i = event.substring(2);
     this.error_msg='';
     const NoYes=event.substring(0,1);
@@ -2224,7 +2220,7 @@ beforeUnloadHandler(event:any) {
 processDestroy:boolean=false;
 passDestroy:number=0;
 ngOnDestroy(){
-  
+  this.theResetServer=false;
   this.passDestroy++
   console.log('trigger ngOnDestroy  === pass=' + this.passDestroy);
   if (this.processDestroy===false){
@@ -2272,9 +2268,10 @@ updateLockFile(iWait:number){
 
 iWaitSave:number=0;
 onFileSystem(iWait:number){
-  this.error_msg='';
+  this.error_msg='';  
   var theAction=this.tabLock[iWait].action;
   this.iWaitSave=iWait;
+  this.tabLock[iWait].status=0;
   this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString() )
   .subscribe(
     data  => {  
@@ -2302,42 +2299,30 @@ onFileSystem(iWait:number){
 
 nbRecall:number=0;
 
-/*
-callUpdateSystemFile:number=0;
-isTriggerFileSystem:boolean=false;
-saveIWait:number=0;
 
-updateSystemFile(iWait:number){
-  this.saveIWait=iWait;
-  this.isTriggerFileSystem=true;
-  this.callUpdateSystemFile++
-}
-
-returnFromFileSystem(data:any){
-// must not be deleted; what's the purpose?
-}
-*/
 
 theResetServer:boolean=false;
 returnOnFileSystem(data:any, iWait:number){
 //this.isTriggerFileSystem=false;
 //const iWait=this.saveIWait;
-this.error_msg='';
+  this.error_msg='';
   if (data.status!== undefined && data.status===200 && data.tabLock !== undefined)  { // tabLock is returned
     console.log('server response: ' + data.tabLock[iWait].object + ' createdAt=' + data.tabLock[iWait].createdAt + '  & updatedAt=' + data.tabLock[iWait].updatedAt + '  & lock value =' + data.tabLock[iWait].lock);
     if (data.tabLock[iWait].credentialDate !== this.credentials.creationDate) { // server was reinitialised
+      this.tabLock[iWait]=data.tabLock[iWait];
       this.getDefaultCredentials(iWait, false); // update credentials only 
     }
     // record is locked by another user; no actions can take place for this user so reset
     this.nbCallCredentials=0;
     if (data.tabLock[iWait].createdAt !== undefined){
-        this.error_msg = this.error_msg + " data returned on file " + data.tabLock[iWait].objectName + " ==> action=" + data.tabLock[iWait].lock +  "  & status=" + data.tabLock[iWait].status ;
+        this.error_msg = this.error_msg + " data returned on file " + data.tabLock[iWait].objectName + " ==> action = " + data.tabLock[iWait].action + '  lock = ' + data.tabLock[iWait].lock +  "  & status = " + data.tabLock[iWait].status ;
           console.log(this.error_msg);
           if (this.tabLock[iWait].action==='unlock'){
             this.tabLock[iWait].lock=3;
             this.onInputAction="";
             this.tabLock[iWait].createdAt="";
             this.tabLock[iWait].updatedAt="";
+            
           }
           else if (data.tabLock[iWait].lock ===1 && this.tabLock[iWait].lock === 2) {
             // file is now locked for this user; need to retrieve the file to ensure we have the latest version
@@ -2492,14 +2477,14 @@ this.error_msg='';
             }
           }
       } else if (data.status===955){
-        this.error_msg = data.msg;
+        this.error_msg = this.error_msg + data.msg;
         this.theResetServer=true;
         this.tabLock[iWait].lock=3;
         
         this.getDefaultCredentials(iWait, true); // update credentials & check File.updatedAt 
 
       }  else if (data.status===956){
-        this.error_msg = data.msg;
+        this.error_msg = this.error_msg + data.msg;
         this.theResetServer=true;
         this.tabLock[iWait].lock=3;
         this.onInputAction="";
@@ -2559,20 +2544,21 @@ getDefaultCredentials(iWait:number, checkFile:boolean){
         newCredentials.id_token=data.credentials.id_token
         newCredentials.refresh_token=data.credentials.refresh_token
         newCredentials.token_type=data.credentials.token_type;
-        newCredentials.userServerId=data.credentials.userServerId;
+        newCredentials.userServerId=this.tabLock[iWait].userServerId;
         newCredentials.creationDate=data.credentials.creationDate;
-        this.identification.userServerId=data.credentials.userServerId;
+        this.identification.userServerId=this.tabLock[iWait].userServerId;
         this.identification.credentialDate=data.credentials.creationDate;
         // this.getInfoToken(); // this is a test
+        this.error_msg=this.error_msg+" Server has been reinitialised and credentials updated";
         this.newCredentials.emit(newCredentials);
         for (var i=0; i<7; i++){
           this.tabLock[i].userServerId=this.identification.userServerId;
           this.tabLock[i].credentialDate=this.identification.credentialDate;
-          this.tabLock[i].createdAt='';
-          this.tabLock[i].updatedAt='';
+          //this.tabLock[i].createdAt='';
+          //this.tabLock[i].updatedAt='';
         }
-        this.theResetServer=false;
-        this.msgCredentials='';
+        this.theResetServer=true;
+        //this.msgCredentials='';
         if (checkFile===true){
           // check whether the last update was performed by the same user
           this.ManageGoogleService.getContentObject(this.configServer, this.tabLock[iWait].bucket, this.tabLock[iWait].object )
@@ -2587,6 +2573,7 @@ getDefaultCredentials(iWait:number, checkFile:boolean){
                 } else {
                   this.nbCallCredentials=0;
                   this.msgCredentials='Server has been reinitialised - file is retrieved';
+      this.error_msg=this.error_msg+this.msgCredentials;
                   console.log(this.msgCredentials);
                   if (iWait===0){
                     this.reAccessHealthFile();
@@ -2599,6 +2586,7 @@ getDefaultCredentials(iWait:number, checkFile:boolean){
               } else {
                 this.msgCredentials='Server has been reinitialised - file is retrieved';
                 console.log(this.msgCredentials);
+    this.error_msg=this.error_msg+this.msgCredentials;
                 if (iWait===0){
                   this.reAccessHealthFile();
                 } else if (iWait===1){
@@ -2611,6 +2599,7 @@ getDefaultCredentials(iWait:number, checkFile:boolean){
             err => {
               this.msgCredentials='PB with Server which was reinitialised - relaunch the application';
               console.log(this.msgCredentials);
+  this.error_msg=this.error_msg+this.msgCredentials;
               this.resetServer.emit();
             }
           )
@@ -2620,6 +2609,7 @@ getDefaultCredentials(iWait:number, checkFile:boolean){
       err => {
         console.log('return from requestToken() with error = '+ JSON.stringify(err));
         this.msgCredentials='problem to retrieve credentials data ==>   '+ JSON.stringify(err);
+  this.error_msg=this.error_msg+this.msgCredentials;
         this.resetServer.emit();
         });
 }

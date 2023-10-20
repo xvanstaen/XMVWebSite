@@ -126,6 +126,11 @@ export class ManageGoogleService {
         return this.http.get<any>(http_get);                       
     }
 
+    getMemoryFS(config:configServer): Observable<any> {
+        const http_get=config.baseUrl+'/memoryFS/'+config.GoogleProjectId+'/'+config.test_prod;
+        return this.http.get<any>(http_get);                       
+    }
+
     getTokenOAuth2(config:configServer): Observable<any> {
         const http_get=config.baseUrl+'/requestTokenOAuth2/'+config.GoogleProjectId+'/'+config.test_prod;
         return this.http.get<any>(http_get);                      
@@ -156,6 +161,11 @@ export class ManageGoogleService {
         return this.http.get<any>(http_get);                      
     }  
 
+    getNewServerUsrId(config:configServer): Observable<any> {
+        const http_get=config.baseUrl+'/getNewServerUsrId/'+config.GoogleProjectId+'/'+config.test_prod;
+        return this.http.get<any>(http_get);                      
+    }  
+
     checkLogin(config:configServer,userId:string,psw:string): Observable<any> {
         const http_get=config.baseUrl+'/checkLogin/'+config.GoogleProjectId+'/'+config.test_prod+'/'+userId+'/'+psw; // "/"+myArray+"/"+encodeURIComponent(JSON.stringify(TableCryptKey.theFour))
         return this.http.get<any>(http_get);                      
@@ -173,8 +183,18 @@ export class ManageGoogleService {
         return this.http.get<any>(http_get);                      
     }  
 
-    resetCacheFile(config:configServer): Observable<any> {
-        const http_get=config.baseUrl+'/resetCacheFile/'+config.GoogleProjectId+'/'+config.test_prod;
+    resetCacheFile(config:configServer,fileName:string): Observable<any> {
+        const http_get=config.baseUrl+'/resetCacheFile/'+config.GoogleProjectId+'/'+config.test_prod+'/'+fileName;
+        return this.http.get<any>(http_get);                       
+    }
+    
+    reloadCacheFile(config:configServer): Observable<any> {
+        const http_get=config.baseUrl+'/reloadCacheFile/'+config.GoogleProjectId+'/'+config.test_prod;
+        return this.http.get<any>(http_get);                       
+    }
+    
+    getCacheFile(config:configServer): Observable<any> {
+        const http_get=config.baseUrl+'/getCacheFile/'+config.GoogleProjectId+'/'+config.test_prod;
         return this.http.get<any>(http_get);                       
     }
 }
