@@ -147,7 +147,7 @@ RetrieveAllObjects(){
   
   RetrieveSelectedFile(event:any){
     this.Message='';
-    
+
     //this.FileMedialink=event.mediaLink;
     //this.FileName=event.name;
       this.Return_SelectedBucketInfo.emit(event);
@@ -155,6 +155,13 @@ RetrieveAllObjects(){
       this.ManageGoogleService.getContentObject(this.configServer, event.bucket,event.name )
       .subscribe((data ) => {
         console.log('RetrieveSelectedFile='+event.mediaLink);
+        if (typeof data==="object"){
+
+        } else {
+          
+        }
+        //const v=JSON.stringify(data);
+        //const v2=JSON.parse(data);
         this.scroller.scrollToAnchor('SelectedObjectsFile');
         this.Return_Data.emit(data);
         //

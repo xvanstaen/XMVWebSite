@@ -43,7 +43,10 @@ import { ColorSliderComponent } from 'src/app/color-picker/color-slider/color-sl
 import { RecipeComponent } from './recipe/recipe.component';
 import { DictionaryComponent } from './dictionary/dictionary.component';
 import { FileSystemServiceComponent } from './file-system-service/file-system-service.component';
-
+import { PerformanceSportComponent } from './performance-sport/performance-sport.component';
+import { ManagePointOfRefComponent } from './manage-point-of-ref/manage-point-of-ref.component';
+import { ManageCircuitsComponent } from './manage-circuits/manage-circuits.component';
+import { SportReportsComponent } from './sport-reports/sport-reports.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +79,11 @@ import { FileSystemServiceComponent } from './file-system-service/file-system-se
     ColorSliderComponent,
     RecipeComponent,
     DictionaryComponent,
-    FileSystemServiceComponent
+    FileSystemServiceComponent,
+    PerformanceSportComponent,
+    ManagePointOfRefComponent,
+    ManageCircuitsComponent,
+    SportReportsComponent,
   ],
   imports: [
     AppRoutingModule,

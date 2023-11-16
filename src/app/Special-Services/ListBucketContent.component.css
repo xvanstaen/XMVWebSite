@@ -14,7 +14,7 @@ h2{
   margin-top:20px;
   margin-left:30px;
   width:90%;
-  font-size:36px;
+  font-size:24px;
   font-weight: bold;
   font-family: 'Tangerine';
   letter-spacing: 2px;
@@ -24,7 +24,7 @@ h2{
 h3{
 font-family: 'Roboto';
   font-weight:bold;
-  font-size:22px;
+  font-size:20px;
   letter-spacing: 2px;
 }
 
@@ -42,15 +42,15 @@ font-family: 'Roboto';
 
 .object{
   font-family: 'Roboto';
-  height:60px;
+  height:26px;
   margin-left:30px;
-  font-size:16px;  
+  font-size:14px;  
   width:85%;
   font-weight: bold;
   display:block;
   border:solid 2px blue;
-  padding-top:15px;
-  padding-left:10px;
+  padding-top:1px;
+  padding-left:6px;
 }
 
 
@@ -76,7 +76,7 @@ border: solid 1px black;
 
 .object:hover{
 background-color: cyan;
-font-size:18px;  
+font-size:14px;  
 }
 
 

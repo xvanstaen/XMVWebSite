@@ -124,7 +124,7 @@ export class AdminJsonComponent {
     convertOnly:boolean=false;
 
     dictionaryOnly:boolean=false;
-
+    selectApps:number=0;
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
@@ -171,6 +171,7 @@ ngOnInit(){
             else if (this.identification.apps[i]==='ConvFn'){this.TabAppsAutho[10]='Y';}
             else if (this.identification.apps[i]==='Recipe'){this.TabAppsAutho[11]='Y';}
             else if (this.identification.apps[i]==='Dictionary'){this.TabAppsAutho[12]='Y';}
+            else if (this.identification.apps[i]==='PerfCircuit'){this.TabAppsAutho[13]='Y';}
         }
       }
 
@@ -224,8 +225,22 @@ Process(event:string){
       this.convertOnly=true;
   }  else if (event==='Refresh_UserInfo'){ 
      this.NbRefresh_Bucket++; 
-  }
+  }  else if (event==='PerfCircuit'){
+    this.GoToComponent=13;
+} 
 }
+
+onInput(event:any){
+  this.selectApps=Number(event.target.value);
+  this.dictionaryOnly=false;
+  this.isAppsSelected=false;
+}
+
+isAppsSelected:boolean=false;
+onSelectApps(){
+  this.isAppsSelected=true;
+}
+
 
 getBucket(){
   this.Error_Access_Server='';

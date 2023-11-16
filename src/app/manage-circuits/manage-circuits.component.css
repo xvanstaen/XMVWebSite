@@ -1,0 +1,84 @@
+body{
+    width:590px;
+}
+
+@import "../performance-sport/performance-sport.component.css";
+
+
+
+.inputText{
+    color:blue;
+    background-color: rgb(232, 229, 229);
+    width:140px;
+    height:22px;
+    margin-left:0px;
+    padding-left:10px;
+}
+
+.inputText:hover{
+    background-color: cyan;
+}
+
+.theTitle{
+    background:blue;
+    color:white;
+    padding-left:10px;
+    margin-left:0px;
+    font-size: 15px;
+}
+.theLabel{
+    margin-left:0px;
+    width:140px;
+    display:inline-block;
+    height:22px;
+    padding-left:10px;
+    font-size: 13px;
+}
+
+.shortLabel{
+    width:20px ;display:inline-block;
+}
+
+.section{
+    width:100%; display:inline-block; 
+    border:solid 0px blue; padding-left:5px; 
+    height:22px;
+}
+
+.theBlock{
+    margin-left:40px; margin-top:10px; color:blue; 
+    padding-top:8px; display:block; height:35px; width:570px; 
+    text-align: center; font-size:14px; background-color: cyan; margin-left:40px;
+}
+
+.odd{
+    background-color: rgb(109, 147, 243);
+    font-size: 13px;
+}
+
+.even{
+    background-color: rgb(121, 141, 192);
+    color:black;
+    font-weight:400;
+    font-size: 13px;
+}
+
+.oddPoR{
+    background-color: rgb(109, 243, 203);
+    font-weight:400;
+    font-size: 13px;
+}
+
+.evenPoR{
+    background-color: rgb(88, 198, 165);
+    color:black;
+    font-weight:400;
+    font-size: 13px;
+}
+
+.selCircuit{
+    background-color: cyan;
+    font-size:16px;
+    font-weight: bolder;
+}
+

@@ -118,6 +118,43 @@
     background-color: lightcyan;
 }
 
+
+.options{
+  width:40%; display:inline-block; margin-left:8%;
+}
+
+
+.label{
+  width:150px; color:blue; font-size:14px; display:inline-block; text-align: left; padding-left:10px;
+}
+
+.theInput{
+  width:300px; color:blue; font-size:14px; display:inline-block; background-color: lightgrey;
+}
+
+.theInput:hover {
+  background-color: cyan;
+}
+
+
+.sizeButtons{
+  width:60px;
+  height:22px;
+  font-size:10px;
+  margin-left:10px;
+  background-color:cyan;
+  border-radius: 5px;
+  background-image: linear-gradient(cyan, lightcyan);
+  box-shadow: 2px 2px blue;
+  border: solid 1px blue;
+}
+
+.sizeButtons:hover{
+  background-color:rgb(48, 89, 159);
+  background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+}
+
+
 /*** ====================================== ***/
 /*** ============== @media 600 ================ ***/
 /*** ====================================== ***/

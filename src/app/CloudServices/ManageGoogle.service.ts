@@ -59,6 +59,16 @@ export class ManageGoogleService {
         return this.http.get<any>(http_get);                       
     }
     
+    getTextObject(config:configServer, bucket:string, object:string): Observable<any> {
+        const http_get=config.baseUrl+'/textFile/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'?bucket='+bucket;
+        return this.http.get<any>(http_get);                       
+    }
+    
+    getmediaLinkContent(config:configServer, bucket:string, object:string): Observable<any> {
+        const http_get=config.baseUrl+'/mediaLink/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'?bucket='+bucket;
+        return this.http.get<any>(http_get);                       
+    }
+
     getMetaObject(config:configServer, bucket:string, object:string): Observable<any> {
         const http_get=config.baseUrl+'/meta/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'?bucket='+bucket;
         return this.http.get<any>(http_get);                      
@@ -195,6 +205,11 @@ export class ManageGoogleService {
     
     getCacheFile(config:configServer): Observable<any> {
         const http_get=config.baseUrl+'/getCacheFile/'+config.GoogleProjectId+'/'+config.test_prod;
+        return this.http.get<any>(http_get);                       
+    }
+        
+    insertCacheFile(config:configServer,object:string): Observable<any> {
+        const http_get=config.baseUrl+'/insertCacheFile/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object;
         return this.http.get<any>(http_get);                       
     }
 }

@@ -31,6 +31,8 @@
     <span  *ngIf="TabAppsAutho[9]==='Y'"(click)="Process('ConvMgt')" class="dropdown-options dropdown-text">Conv Mgt</span>
     <span  *ngIf="TabAppsAutho[10]==='Y'"(click)="Process('ConvFn')" class="dropdown-options dropdown-text">Conv Fn</span>
     <span  *ngIf="TabAppsAutho[4]==='Y'"(click)="Process('UserInfo')" class="dropdown-options dropdown-text">User info</span>
+    <span  *ngIf="TabAppsAutho[13]==='Y'"(click)="Process('PerfCircuit')" class="dropdown-options dropdown-text">Perf. Circuit</span>
+
     <!--
     <span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
     -->
@@ -38,6 +40,8 @@
     <div style="display:inline-flex; width:90%; height:60px; margin-left:20px;"></div>
     
 </div>
+
+
 
 <div *ngIf="  this.ActionMessage!==''" style="margin-top:10px;">
   <h2>{{ActionMessage}} </h2>
@@ -179,7 +183,40 @@
     </div>
 </div> 
 
+<div *ngIf="GoToComponent===13" >
+  <span style="width:400px; background-color: cyan;margin-top:20px; margin-left:50px; border:solid 2px red; display:inline-block; ">
+    <span style="width:100%; color:#0000ff; font-size:22px; display:inline-block; text-align: center; padding-top:10px; height:50px;"> Select the apps </span>
+    <br>
+  
+    <span class="options" >1. Performance sport</span>
+    <span class="options" >2. Manage PointOfRef</span>
+    <span class="options" >3. Manage Circuits</span>
+    <span class="options" >4. Reports sport</span>
 
+    <br><br>
+</span>
+<div style="width:100%; display:inline-block; height:2px;">
+    <input style="width:80px; height:30px; margin-left:150px; margin-top:20px; "  placeholder="selection#" type="text" (input)="onInput($event)">
+   
+</div>
+</div>
+
+<div *ngIf="selectApps===1">
+  <app-performance-sport   [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-performance-sport>
+</div>  
+<div *ngIf="selectApps===2">
+  <app-manage-point-of-ref   [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-manage-point-of-ref>
+</div>  
+<div *ngIf="selectApps===3">
+  <app-manage-circuits [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-manage-circuits>
+</div>  
+<div *ngIf="selectApps===4">
+  <app-sport-reports [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-sport-reports>
+</div>  
 
 <div *ngIf="(GoToComponent===4 || GoToComponent===5 || NbRefresh_Bucket>0) && EventHTTPReceived[0]===true && Google_Bucket_Name!=='' ">
       <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="Google_Bucket_Name"  [NbRefresh_Bucket]="NbRefresh_Bucket"
@@ -280,14 +317,7 @@
     </div>
   </ng-template>
 
-  <!--
-<ng-template #CompoSeven>
-    
-    
-  </ng-template>
-
-
-  -->
+ 
   
 <br><br>
 </body>

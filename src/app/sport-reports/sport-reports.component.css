@@ -1,0 +1,36 @@
+body{
+    width:600px;
+}
+
+@import "../performance-sport/performance-sport.component.css";
+
+.quest{
+    display:inline-block;
+    color:blue;
+    font-size:14px;
+    width:100%;
+    margin-left:20px;
+    border: solid 0px red;
+    word-break: break-all;
+}
+
+.aLabel{
+    display:inline-block;
+    color:blue;
+    font-size:15px;
+    width:300px;
+    
+}
+
+.backOdd{
+    background-color: cyan;
+}
+
+
+.backEven{
+    background-color: lightGrey;
+}
+
+.backSubTot{
+    background-color: rgb(163, 161, 161);
+}

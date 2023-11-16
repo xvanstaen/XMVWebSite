@@ -1,0 +1,38 @@
+body{
+    width:590px;
+    margin-left:20px;
+}
+@import "../performance-sport/performance-sport.component.css";
+
+.inputText{
+    color:blue;
+    background-color: rgb(232, 229, 229);
+    width:200px;
+    height:26px;
+    padding-left:5px;
+}
+
+.inputText:hover{
+    background-color: cyan;
+}
+
+.theLabel{
+    color:white; 
+    background:blue;
+    width:200px;
+    display:inline-block;
+    height:26px;
+    padding-left:5px;
+}
+
+.oddC{
+    background-color: rgb(109, 147, 243);
+}
+
+.evenC{
+    background-color: rgb(121, 141, 192);
+    color:black;
+    font-weight:400;
+}
+
+

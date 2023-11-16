@@ -58,7 +58,32 @@
         return(formattedDate);
     }
 
-
+    export function formatHHMNSS(theTime:number){ // theTime is in seconds
+      const hh =  Math.trunc(theTime  / 3600);
+      const MODmn = theTime % 3600;
+      const mn =  Math.trunc(MODmn / 60);
+      const sec = MODmn % 60;
+      var strHH="";
+      var strMN="";
+      var strSEC="";
+      if (hh<10){
+        strHH="0"+hh.toString();
+      } else {
+        strHH=hh.toString();
+      }
+      if (mn<10){
+        strMN="0"+mn.toString();
+      } else {
+        strMN=mn.toString();
+      }
+      if (sec<10){
+        strSEC="0"+sec.toString();
+      } else {
+        strSEC=sec.toString();
+      }
+    
+      return (strHH+":"+strMN+":"+strSEC) ;
+    }
     export function fnAddTime(theDate:string, addHour:number, addMin:number){
         // format of theDate is YYYMMDDHHMNSS
         var stringHour='';
@@ -466,3 +491,33 @@ export function validateLock(fileSystem:Array<classFileSystem>, inData:classAcce
     fileSystem[iRecord].updatedAt=myDate;
     return(fileSystem);
   }
+
+  export function findIds(theId:string,specChar:string){
+    var TabDash=[];
+    var TabOfId:Array<any>=[];
+    //var tabSpecChar=[];
+    var strFound="";
+    TabOfId.splice(0,TabOfId.length);
+    //for (var i=0; i<specChar.length; i++){
+    //  tabSpecChar[i]=specChar.substring(i,i+1);
+    //}
+    var j=-1;
+    for (var i=4; i<theId.length; i++){
+      if (specChar.indexOf(theId.substring(i,i+1))!==-1){
+      // if (theId.substring(i,i+1)===tabSpecChar[0] || theId.substring(i,i+1)===tabSpecChar[1] || theId.substring(i,i+1)===tabSpecChar[2]){
+          j++;
+          TabDash[j]=i+1;
+          TabDash.push(0);
+      }
+    }
+    TabDash[j+1]=theId.length+1;
+  
+    i=0;
+    for (j=0; j<TabDash.length-1; j++){
+      TabOfId[i]=parseInt(theId.substring(TabDash[j],TabDash[j+1]-1));
+      i++;
+    }
+    strFound=theId.substring(0,TabDash[0]-1);
+    return ({"strFound":strFound, "tabOfId":TabOfId})
+  }
+  
