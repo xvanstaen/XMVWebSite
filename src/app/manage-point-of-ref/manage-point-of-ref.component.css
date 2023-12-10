@@ -1,5 +1,5 @@
 body{
-    width:590px;
+    width:580px;
     margin-left:20px;
 }
 @import "../performance-sport/performance-sport.component.css";
@@ -7,9 +7,9 @@ body{
 .inputText{
     color:blue;
     background-color: rgb(232, 229, 229);
-    width:200px;
     height:26px;
-    padding-left:5px;
+    padding-left:2px;
+    display:inline-block;
 }
 
 .inputText:hover{
@@ -19,20 +19,41 @@ body{
 .theLabel{
     color:white; 
     background:blue;
-    width:200px;
     display:inline-block;
     height:26px;
-    padding-left:5px;
+    padding-left:2px;
 }
 
 .oddC{
+    font-weight:400;
     background-color: rgb(109, 147, 243);
 }
 
 .evenC{
     background-color: rgb(121, 141, 192);
-    color:black;
     font-weight:400;
 }
 
+.oddA{
+    font-weight:400;
+    background-color: rgb(121, 192, 146);
+}
+
+.evenA{
+ 
+    background-color: rgb(45, 194, 97);
+    font-weight:400;
+}
+
+.action{
+    font-size:12px;
+}
+
+.action:hover{
+    background-color: yellow;;
+}
+
+.boxData{
+    text-align: center; color:blue; font-size: 16px; width:100%; display:inline-block;
+}
 

@@ -6,21 +6,23 @@ div{
 
 .theLabel{
     margin-left:8px; color:white; background:blue;
-
-
-    width:150px; margin-left:15px; display:block; padding-left:10px; 
+    width:40%; margin-left:15px;  padding-left:10px; 
     border:solid 0px red; height:26px;  
-    color:white; background:blue;  float:left;
+    color:white; background:blue;  
+}
+
+.blockFloat{
+    display:block; 
+    float:left;
 }
 
 .inputText{
     color:blue;
     background-color: rgb(232, 229, 229);
 
-    width:80px;  height:26px; margin-left:15px; padding-left:10px; 
+    width:40%;  height:26px; margin-left:15px; padding-left:10px; 
     border:solid 0px blue; 
-    display:block; 
-    float:left;
+    
 }
 
 .inputText:hover{
@@ -198,3 +200,6 @@ td {
 .Straight-options:hover{
     background-color:lightyellow;
   }
+
+
+

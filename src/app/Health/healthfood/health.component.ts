@@ -40,7 +40,7 @@ import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.servic
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 
-import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit } from '../../MyStdFunctions';
+import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, findIds } from '../../MyStdFunctions';
 
 @Component({
   selector: 'app-health',
@@ -302,7 +302,11 @@ ngOnInit(): void {
   for (var i=0; i<7; i++){
     const thePush=new classAccessFile;
     this.tabLock.push(thePush);
-    this.tabLock[i].lock=3;
+    if (this.identification.triggerFileSystem==="No"){
+      this.tabLock[i].lock=1;
+    } else {
+      this.tabLock[i].lock=3;
+    }
     this.tabLock[i].user=this.identification.UserId;
     this.tabLock[i].iWait=i;
     this.tabLock[i].timeoutFileSystem.hh=this.configServer.timeoutFileSystem.hh;
@@ -319,6 +323,25 @@ ngOnInit(): void {
 
   for (var i=0; i<this.maxEventHTTPrequest; i++){
     this.EventHTTPReceived[i]=false;
+  }
+
+  if (this.InHealthAllData.fileType!==''){
+    this.FillHealthAllInOut(this.HealthAllData,this.InHealthAllData);
+    this.initTrackRecord();
+    this.EventHTTPReceived[0]=true;
+    this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+  } else {
+    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.fileHealth,0);
+  }
+
+  if (this.InConfigHTMLFitHealth.fileType===''){
+    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confHTML,3);
+
+  } else {
+    this.ConfigHTMLFitHealth=this.InConfigHTMLFitHealth;
+    this.confTableAll=this.InConfigHTMLFitHealth.ConfigHealth.confTableAll;
+    this.EventHTTPReceived[3]=true;
+    this.calculateHeight();
   }
 
   this.posDivCalFat=getPosDiv("posTopAppCalFat");
@@ -378,14 +401,7 @@ ngOnInit(): void {
   this.tabLock[0].bucket=this.identification.fitness.bucket;
   this.tabLock[0].object=this.identification.fitness.files.fileHealth;
 
-  if (this.InHealthAllData.fileType!==''){
-    this.FillHealthAllInOut(this.HealthAllData,this.InHealthAllData);
-    this.initTrackRecord();
-    this.EventHTTPReceived[0]=true;
-    this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-  } else {
-    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.fileHealth,0);
-  }
+
   this.tabLock[1].bucket=this.identification.configFitness.bucket;
   this.tabLock[1].object=this.identification.configFitness.files.calories;
 
@@ -404,38 +420,6 @@ ngOnInit(): void {
 
   this.tabLock[3].bucket=this.identification.configFitness.bucket;
   this.tabLock[3].object=this.identification.configFitness.files.confHTML;
-
-  if (this.InConfigHTMLFitHealth.fileType===''){
-    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.confHTML,3);
-
-  } else {
-    this.ConfigHTMLFitHealth=this.InConfigHTMLFitHealth;
-    this.confTableAll=this.InConfigHTMLFitHealth.ConfigHealth.confTableAll;
-    this.EventHTTPReceived[3]=true;
-    this.calculateHeight();
-  }
-
-  if (this.InConfigCaloriesFat.fileType!==''){
-    this.ConfigCaloriesFat=this.InConfigCaloriesFat;
-    this.EventHTTPReceived[1]=true;
-    this.CreateDropDownCalFat();
-  } else {
-    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,1);
-  }
-
-
-  if (this.fileRecipe.fileType===''){
-    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.recipe,6);
-  } 
-
-
-
-  if (this.InConvertUnit.fileType===''){
-    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convertUnit,2);
-  } else {
-    this.ConvertUnit=this.InConvertUnit;
-    this.EventHTTPReceived[2]=true;
-  }
 
 
   // TO BE REVIEWED IN ORDER TO READ, MODIFY ONLINE AND SAVE
@@ -469,7 +453,29 @@ ngOnInit(): void {
   }
 }
 
+accessAllOtherFiles(){
+  
+  if (this.InConfigCaloriesFat.fileType!==''){
+    this.ConfigCaloriesFat=this.InConfigCaloriesFat;
+    this.EventHTTPReceived[1]=true;
+    this.CreateDropDownCalFat();
+  } else {
+    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,1);
+  }
 
+  if (this.fileRecipe.fileType===''){
+    this.GetRecord(this.identification.fitness.bucket,this.identification.fitness.files.recipe,6);
+  } 
+
+  if (this.InConvertUnit.fileType===''){
+    this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convertUnit,2);
+  } else {
+    this.ConvertUnit=this.InConvertUnit;
+    this.EventHTTPReceived[2]=true;
+  }
+}
+
+isForceReset:boolean=false;
 resetBooleans(){
   //this.isCopyFile=false;
   //this.isSelectedDateFound=false;
@@ -479,7 +485,7 @@ resetBooleans(){
   this.tabInputFood.splice(0,this.tabInputFood.length);
   
  
-  if (this.tabLock[0].lock!==1){
+  if (this.tabLock[0].lock!==1 || this.isForceReset===true){
     this.isDeleteConfirmed=false;
     this.isDisplaySpecific=false;
     this.IsSaveConfirmedCre=false;
@@ -492,6 +498,7 @@ resetBooleans(){
     this.isAllDataModified = false;
     this.isMustSaveFile=false;
     this.isSaveHealth=false;
+    this.isForceReset=false;
   }
 
 }
@@ -525,12 +532,17 @@ reportCheckLockLimit(event:any){
 }
 
 checkLockLimit(iWait:number, isDataModified:boolean, isSaveFile:boolean){ 
+  
     var valueCheck= {action:'',lockValue:0, lockAction:'' };
-    valueCheck=fnCheckLockLimit(this.configServer, this.tabLock, iWait, this.lastInputAt, isDataModified, isSaveFile);
+    if (this.identification.triggerFileSystem==="No"){
+        valueCheck.action="noAction";
+    } else {
+        valueCheck=fnCheckLockLimit(this.configServer, this.tabLock, iWait, this.lastInputAt, isDataModified, isSaveFile);
+        if (iWait===0 && this.tabLock[iWait].lock===2){
+          this.isAllDataModified = false;
+        }
+      }
 
-    if (iWait===0 && this.tabLock[iWait].lock===2){
-      this.isAllDataModified = false;
-    }
     if (valueCheck.action!=='noAction'){
       if (valueCheck.action==='updateSystemFile'){
             this.tabLock[iWait].action=valueCheck.lockAction;
@@ -754,7 +766,7 @@ CreateTabFood(item:any, value:any){
 onSelMealFood(event:any){
   //this.resetBooleans();
   this.error_msg='';
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (event.currentTarget.id.substring(0,7)==='selFood'){
     //this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name =event.target.textContent.toLowerCase().trim();
     this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name =this.tabInputFood[this.TabOfId[3]].name;
@@ -770,7 +782,7 @@ onInputDaily(event:any){
   this.theEvent.target.textContent=event.target.textContent;
   this.theEvent.target.value=event.target.value;
   this.onInputAction='onInputDaily';
-  this.lastInputAt=this.lastInputAt=strDateTime();
+  this.lastInputAt=strDateTime();
   this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
 }
 
@@ -784,7 +796,7 @@ onInputDailyA(event:any){
     this.error_msg='';
     var i=0;
     const fieldName=event.target.id.substring(0,4);
-    this.findIds(event.target.id);
+    this.manageIds(event.target.id);
     if (event.target.id.substring(0,3)!=='Sel'){
       this.errorFn='Cre';
       if (fieldName==='date'){
@@ -839,7 +851,7 @@ onInputDailyAll(event:any){
   this.onInputAction='onInputDailyAll';
   this.offsetLeft = event.currentTarget.offsetLeft;
   this.offsetWidth = event.currentTarget.offsetWidth;
-  this.lastInputAt=this.lastInputAt=strDateTime();
+  this.lastInputAt=strDateTime();
   this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
 }
 
@@ -864,7 +876,7 @@ onInputDailyAllA(event:any){
       this.error_msg='';
       var i=0;
       const fieldName=event.target.id.substring(0,7);
-      this.findIds(event.target.id);
+      this.manageIds(event.target.id);
         if (fieldName==='dateAll'){
           this.CheckDupeDate(event.target.value);
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].date=event.target.value;
@@ -960,7 +972,7 @@ onActionA(event:any){
   this.resetBooleans();
   if (this.tabLock[0].lock !== 2){
 
-    this.findIds(event.target.id);
+    this.manageIds(event.target.id);
     this.dialogue[this.prevDialogue]=false;
     if (this.tabLock[0].lock === 0 && event.target.id.substring(0,10)!=='openAction'){
       this.isAllDataModified=true;
@@ -1149,7 +1161,7 @@ onActionA(event:any){
 }
 
 DeleteIngredient(event:any){
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (event.target.id.substring(0,6)==='DelCre'){
     this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2],1);
     if (this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.length===0){
@@ -1176,7 +1188,7 @@ DeleteIngredient(event:any){
 }
 
 DeleteMeal(event:any){
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (event.target.id.substring(0,6)==='DelCre'){
     this.HealthData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1],1);
     if (this.HealthData.tabDailyReport[this.TabOfId[0]].meal.length===0){
@@ -1200,7 +1212,7 @@ DeleteMeal(event:any){
 }
 
 DeleteDay(event:any){
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (event.target.id.substring(0,10)==='DelAllDate'){
     this.HealthAllData.tabDailyReport.splice(this.TabOfId[0],1);
     this.tabNewRecordAll.splice(this.TabOfId[0],1);
@@ -1214,7 +1226,7 @@ DeleteDay(event:any){
 }
 
 CreateIngredient(event:any){
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   const theIngredient=new ClassDish;
   if (event.target.id.substring(0,8)==='CreIngrA'){
     this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2]+1,0,theIngredient);
@@ -1235,7 +1247,7 @@ CreateIngredient(event:any){
 }
 
 CreateMeal(event:any){
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   const theMeal=new ClassMeal;
   if (event.target.id.substring(0,8)==='CreMealA'){
       this.HealthData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1]+1,0,theMeal);
@@ -1270,7 +1282,7 @@ CreateMeal(event:any){
 }
 
 CreateDay(event:any){
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   const theDaily=new DailyReport;
   var iDate=0;
   if (event.target.id.substring(0,8)==='AllDateA'){
@@ -1331,7 +1343,7 @@ FillHealthAllInOut(outFile:any, inFile:any){
                 outFile.tabDailyReport[iOut].meal[jOut].total=inFile.tabDailyReport[i].meal[j].total;
                 var lOut=-1; 
                 for (var k=0; k<inFile.tabDailyReport[i].meal[j].dish.length; k++){
-                    if (inFile.tabDailyReport[i].meal[j].dish[k].name!=='' && inFile.tabDailyReport[i].meal[j].dish[k].quantity!==0){
+                    if (inFile.tabDailyReport[i].meal[j].dish[k].name!=='' ){
                       const theIngr=new ClassDish;
                       outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
                       lOut++
@@ -1358,6 +1370,16 @@ FillHealthAllInOut(outFile:any, inFile:any){
 
 }
 
+manageIds(theId:string){
+  this.error_msg='';
+  this.TabOfId.splice(0,this.TabOfId.length);
+  const theValue= findIds(theId,"-");
+  
+  for (var i=0; i<theValue.tabOfId.length; i++){
+    this.TabOfId[i]=theValue.tabOfId[i];
+  }
+}
+/*
 findIds(theId:string){
   this.error_msg='';
   
@@ -1379,7 +1401,7 @@ findIds(theId:string){
     i++;
   }
 }
-
+*/
 initTrackRecord(){
   for (var i=0; i<this.HealthAllData.tabDailyReport.length; i++){
     if (this.tabNewRecordAll.length===0 || i!==0){
@@ -1473,6 +1495,39 @@ alignRecord(){
   this.isAllDataModified=true;
 }
 
+cleanFile(){
+  for (var i=0; i<this.HealthAllData.tabDailyReport.length; i++){
+    var trouve=false;
+    if (this.HealthAllData.tabDailyReport[i].date.toString().length>10){
+      if (this.HealthAllData.tabDailyReport[i].meal.length===0){
+          trouve=true;
+          this.HealthAllData.tabDailyReport.splice(i,1);
+          i--
+      } else {
+        this.TheSelectDisplays.controls['SelectedDate'].setValue(this.HealthAllData.tabDailyReport[i].date.toString().substring(0,10));
+        this.HealthAllData.tabDailyReport[i].date=this.TheSelectDisplays.controls['SelectedDate'].value;
+      }
+      
+    }
+    for (var j=0; j<this.HealthAllData.tabDailyReport[i].meal.length && trouve===false; j++){
+          if (this.HealthAllData.tabDailyReport[i].meal[j].dish.length===0 && this.HealthAllData.tabDailyReport[i].meal[j].name===""){
+            this.HealthAllData.tabDailyReport[i].meal.splice(j,1);
+            j--
+          } else {
+            for (var k=0; k<this.HealthAllData.tabDailyReport[i].meal[j].dish.length; k++){
+                if (this.HealthAllData.tabDailyReport[i].meal[j].dish[k].name==="" && this.HealthAllData.tabDailyReport[i].meal[j].dish[k].quantity===0){
+                  this.HealthAllData.tabDailyReport[i].meal[j].dish.splice(k,1);
+                  k--
+                }
+            }
+          }
+      }
+    }
+    this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
+    this.initTrackRecord();
+    this.isAllDataModified=true;
+}
+
 GetRecord(Bucket:string,GoogleObject:string, iWait:number){
 
     this.EventHTTPReceived[iWait]=false;
@@ -1482,6 +1537,7 @@ GetRecord(Bucket:string,GoogleObject:string, iWait:number){
         .subscribe((data ) => {        
            
             if (iWait===0){
+                this.accessAllOtherFiles();
                 this.FillHealthAllInOut(this.HealthAllData, data);
                
                 //this.HealthAllData=data;
@@ -1679,7 +1735,8 @@ fillAllData(inRecord:any, outRecord:any){
 
 delDate(event:any){
   this.isDeleteConfirmed=true;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
+  
   this.recordToDelete=this.TabOfId[0];
   const theDate=this.HealthAllData.tabDailyReport[this.recordToDelete].date;
   this.error_msg='confirm record#' + this.recordToDelete + ' with date=' + theDate + 'to be deleted';
@@ -1801,15 +1858,21 @@ SaveRecipeFile(event:any){
 isConfirmSaveA:boolean=false;
 
 ConfirmSaveA(event:any){
+  this.resetBooleans();
   this.theEvent.target.id=event.target.id;
   this.theEvent.target.value=event.target.value;
   this.theEvent.target.textContent=event.target.textContent;
-  if (this.isMustSaveFile===false){
-    this.isConfirmSaveA=true;
-      this.checkLockLimit(0,true,false);
-  } else if (this.tabLock[0].lock === 1){
+  if (this.identification.triggerFileSystem==="No"){
     this. ConfirmSave(event);
+  } else {
+    if (this.isMustSaveFile===false){
+      this.isConfirmSaveA=true;
+        this.checkLockLimit(0,true,false);
+    } else if (this.tabLock[0].lock === 1){
+      this. ConfirmSave(event);
+    }
   }
+
 }
 
 ConfirmSave(event:any){
@@ -1876,7 +1939,7 @@ this.errorFn='';
 }
 
 CancelRecord(event:any){
-this.findIds(event.target.id);
+this.manageIds(event.target.id);
 this.isMustSaveFile = false;
 if (event.target.id.substring(0,3)==='Cre'){
   this.HealthData.tabDailyReport.splice(0,this.HealthData.tabDailyReport.length);
@@ -1922,7 +1985,12 @@ SaveHealth(event:any){
   this.error_msg='';
   this.isSaveHealth=true;
   this.theEvent.target.id=event.target.id;
-  this.checkLockLimit(0,true,true);
+  if (this.identification.triggerFileSystem==="Yes"){
+    this.checkLockLimit(0,true,true);
+  } else {
+    this.ProcessSaveHealth(event);
+  }
+  
 }
 
 ProcessSaveHealth(event:any){
@@ -1991,6 +2059,7 @@ ProcessSaveHealth(event:any){
               this.calculateHealth(this.HealthAllData.tabDailyReport[i]);
               if (this.error_msg!==''){
                 this.errCalcCalFat='errors found while caculating calories and fat';
+                this.error_msg="";
               }
               this.HealthAllData.tabDailyReport[i].total=this.returnData.outHealthData.total;
               this.HealthAllData.tabDailyReport[i].meal=this.returnData.outHealthData.meal;
@@ -2018,7 +2087,7 @@ ProcessSaveHealth(event:any){
 
 
 SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any, iWait:number){
-  this.error_msg='';
+    this.error_msg='';
     //var file=new File ([JSON.stringify(this.HealthAllData)],GoogleObject, {type: 'application/json'});
     var file=new File ([JSON.stringify(record)],GoogleObject, {type: 'application/json'});
     if (GoogleObject==='ConsoleLog.json'){
@@ -2028,8 +2097,9 @@ SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any, iWait:number
       }  
     this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file , GoogleObject)
       .subscribe(res => {
+              
               if (res.type===4){
-                this.error_msg='File "'+ GoogleObject +'" is successfully stored in the cloud';
+                
                 if (iWait===0 ){
                   this.isAllDataModified=false;
                 } else if (iWait===1 ){
@@ -2043,8 +2113,9 @@ SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any, iWait:number
                 if (iWait===0 || iWait===1 || iWait===5 || iWait===6){
                   // update field 'updatedAt' in file system 
                   this.updateLockFile(iWait);
-
                 }
+                this.isForceReset=true;
+                this.error_msg='File "'+ GoogleObject +'" is successfully stored in the cloud';
                 // this.returnFile.emit(record); // not needed as files are stored in cache of backend server
               }
             },
@@ -2272,28 +2343,34 @@ onFileSystem(iWait:number){
   var theAction=this.tabLock[iWait].action;
   this.iWaitSave=iWait;
   this.tabLock[iWait].status=0;
-  this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString() )
-  .subscribe(
-    data  => {  
+  if (this.identification.triggerFileSystem==="No"){
+    this.tabLock[iWait].lock=1;
+    this.tabLock[iWait].action="";
+  } else {
+    
+    this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString() )
+    .subscribe(
+      data  => {  
+          if (theAction === 'onDestroy'){
+            // console.log('onDestroy ==> '+ JSON.stringify(data));
+            this.tabLock[iWait].status=0;
+          } else {
+            this.returnOnFileSystem(data,iWait);
+          }
+            
+      },
+      err => {
         if (theAction === 'onDestroy'){
-          // console.log('onDestroy ==> '+ JSON.stringify(data));
-          this.tabLock[iWait].status=0;
+          if (err.status===900){
+            // destroy is fine
+          } else {
+              console.log('Google updateFileSystem general error='+err.status + '  specific error= ' +err.error.error + ' & message= ' + err.error.message);
+              this.error_msg = this.error_msg + '   update FileSystem ='+err.status + '  specific error= ' +err.error.error + ' & message= ' + err.error.message;          
+          }
         } else {
-          this.returnOnFileSystem(data,iWait);
-        }
-          
-    },
-    err => {
-      if (theAction === 'onDestroy'){
-        if (err.status===900){
-          // destroy is fine
-        } else {
-            console.log('Google updateFileSystem general error='+err.status + '  specific error= ' +err.error.error + ' & message= ' + err.error.message);
-            this.error_msg = this.error_msg + '   update FileSystem ='+err.status + '  specific error= ' +err.error.error + ' & message= ' + err.error.message;          
-        }
-      } else {
-        this.returnOnFileSystem(err, iWait);
-     } })
+          this.returnOnFileSystem(err, iWait);
+      } })
+  }
 }
 
 

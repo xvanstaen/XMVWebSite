@@ -9,6 +9,7 @@
 
 <div id='targetTopObjects' ></div>
     <!-- ================ -->
+<div >
       <span style="margin-top:30px;"><br></span>
 
 
@@ -18,13 +19,13 @@
       </div>
       <span style='margin-top:30px; color:blue; font-size:14px;'>{{Message}}</span>
       <div *ngIf="DisplayListOfObjects===true">
-        <div>
+        
             <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
                   (click)="RetrieveSelectedFile(ListObject)">  
                 <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
                 <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
           </li>
-        </div>
+       
       </div>
       <div *ngIf="DisplayListOfObjects===false">
 
@@ -33,8 +34,6 @@
       </div>
 
       <div id='SelectedObjectsFile' ></div>
- 
-
-
 <br><br>
+</div>
 </body>

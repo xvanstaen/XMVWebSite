@@ -12,11 +12,12 @@ import { Observable } from 'rxjs';
 import { findIds, formatHHMNSS } from '../MyStdFunctions';
 
 import {msginLogConsole} from '../consoleLog'
-import { configServer, LoginIdentif, OneBucketInfo, classPointOfRef, msgConsole, classCredentials } from '../JsonServerClass';
+import { configServer, LoginIdentif, OneBucketInfo, classFilePerf, classFileSport, classPointOfRef, msgConsole, classCredentials } from '../JsonServerClass';
 import { classGarminGoldenCheetah } from '../classGarminGoldenCheetah';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+
 
 
 @Component({
@@ -47,6 +48,7 @@ export class PerformanceSportComponent {
     @Input() isPerfRetrieved : boolean = false;
     tabPoR:Array<classPointOfRef>=[];
     perf:Array<any>=[];
+    filePerf=new classFileSport;
     perfLaps:Array<any>=[];
     i : number = 0;
     lastOccurrence:number=0;
@@ -74,6 +76,9 @@ export class PerformanceSportComponent {
       seconds: new FormControl(800, { nonNullable: true }),
       meters: new FormControl(500, { nonNullable: true }),
       fileName: new FormControl("", { nonNullable: true }),
+      sport: new FormControl("", { nonNullable: true }),
+      theDate: new FormControl("", { nonNullable: true }),
+      perfName: new FormControl("", { nonNullable: true }),
     })
     NbRefresh_Bucket=0;
 
@@ -101,7 +106,7 @@ specificGet(){ // may be rejected because no access to public in Google cloud
 BucketInfo(event:any){
   this.SelectedBucketInfo=event;
   this.formOptions.controls["fileName"].setValue(this.SelectedBucketInfo.name);
- 
+  console.log('Performance-sport - bucket name is '+this.SelectedBucketInfo.name);
   //this.specificGet();
   /*
   this.ManageGoogleService.getTextObject(this.configServer, this.bucketName, this.SelectedBucketInfo.name )
@@ -339,8 +344,9 @@ processTrackPoint(theString:string){
     const end=theString.indexOf('</'+tabLabels[i]);
     tabResults[i]=theString.substring(start+1,end);
   }
-
-  this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+  const thePerf=new classFilePerf;
+  //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+  this.perf.push(thePerf);
   this.perf[this.perf.length-1].time=tabResults[0];
   this.perf[this.perf.length-1].lat=Number(tabResults[1]);
   this.perf[this.perf.length-1].lon=Number(tabResults[2]);
@@ -364,6 +370,7 @@ processTrackPoint(theString:string){
 file=new File([JSON.stringify(event)], 'myGPXfile', {type: 'application/json'});
 ReceivedData(event:any){
     //this.theReceivedData=event;
+    console.log('performance-sport event is:' + JSON.stringify(event));
     const stringNumber="0123456789.";
     this.isPerfProcessCompleted=false;
     this.isDataReceived=true;
@@ -433,8 +440,9 @@ ReceivedData(event:any){
 
             iPerf++
             if (iPerf===1){
-
-                this.perf.push({time:0,dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+              const thePerf=new classFilePerf;
+              //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+              this.perf.push(thePerf);
                 
                 this.perf[this.perf.length-1].time=Number(event.text.substring(j,k));
             } else if (iPerf===2){
@@ -470,7 +478,9 @@ ReceivedData(event:any){
                     if (processSec === true){
                       if (k<lengthText){
 
-                        this.perf.push({time:0,dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+                        const thePerf=new classFilePerf;
+                        //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+                        this.perf.push(thePerf);
                         this.perf[this.perf.length-1].time=this.perf.length - 1 + Number(this.perf[0].time);
                       }
                       iPerf=1;
@@ -497,7 +507,9 @@ ReceivedData(event:any){
           this.myString = event.text.substring(fileRide);
           
           for (j=0; this.myString.length > 60; j++){
-            this.perf.push({time:0,dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+            const thePerf=new classFilePerf;
+            //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+            this.perf.push(thePerf);
             this.perf[this.perf.length-1].time=this.fillPerf(0,',');
             this.perf[this.perf.length-1].dist=this.fillPerf(1,',');
             this.perf[this.perf.length-1].speed=this.fillPerf(2,',');
@@ -515,7 +527,9 @@ ReceivedData(event:any){
    
     } else if (Array.isArray(event) && event[0].speed!==undefined){
         for (j=0; j<event.length; j++){
-          this.perf.push({time:0,dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+          const thePerf=new classFilePerf;
+          //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+          this.perf.push(thePerf);
           if (event[j].sec!==undefined){
             this.perf[j].time=event[j].sec;
           } else if (event[j].time!==undefined){
@@ -542,7 +556,42 @@ ReceivedData(event:any){
             this.perf[j].slope=event[j].slope;
           }
         }
-    }
+    } else if (event.fileType!==undefined){
+        for (j=0; j<event.content.length; j++){
+          const thePerf=new classFilePerf;
+          //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+          this.perf.push(thePerf);
+          if (event.content[j].sec!==undefined){
+            this.perf[j].time=event.content[j].sec;
+          } else if (event.content[j].time!==undefined){
+            this.perf[j].time=event.content[j].time;
+          }
+          this.perf[j].dist=event.content[j].dist;
+          this.perf[j].speed=event.content[j].speed;
+          if (event.content[j].heart!==undefined) {
+            this.perf[j].heart=event.content[j].heart;
+          }
+          if (event.content[j].heart!==undefined) {
+            this.perf[j].speed=event.content[j].speed;
+          }
+          if (event.content[j].alt!==undefined) {
+            this.perf[j].alt=event.content[j].alt;
+          }
+          if (event.content[j].lat!==undefined) {
+            this.perf[j].lat=event.content[j].lat;
+          }
+          if (event.content[j].lon!==undefined) {
+            this.perf[j].lon=event.content[j].lon;
+          }
+          if (event.content[j].slope!==undefined) {
+            this.perf[j].slope=event.content[j].slope;
+          }
+
+        }
+        this.formOptions.controls['sport'].setValue(event.sport);
+        this.formOptions.controls['theDate'].setValue(event.theDate);
+      }
+  
 
     var k=0;
     this.errorMessage="";
@@ -577,7 +626,9 @@ ReceivedData(event:any){
     
 
     if (this.isPerfRetrieved===true){
-        this.returnPerf.emit({name:this.SelectedBucketInfo.name,content:this.perf});
+      this.createFilePerf();
+      console.log('Performance-sport end process, SelectedBucketInfo.name' + this.SelectedBucketInfo.name + '  name of the file=' + this.filePerf.name + "  and length of perf file is " + this.filePerf.content.length);
+      this.returnPerf.emit({name:this.SelectedBucketInfo.name,file:this.filePerf});
     }
 
   }
@@ -943,10 +994,20 @@ cancelFile(){
   this.isConfirmSave=false;
 }
 
+createFilePerf(){
+  this.filePerf.fileType='perfRawData';
+  this.filePerf.circuit='';
+  this.filePerf.name='';
+  this.filePerf.sport=this.formOptions.controls['sport'].value;
+  this.filePerf.theDate=this.formOptions.controls['theDate'].value;
+  this.filePerf.content=this.perf;
+}
+
 saveFile(){
   this.errorMessage='';
+  this.createFilePerf();
   // const fileName =this.formOptions.controls["fileName"].value;
-  var file=new File ([JSON.stringify(this.perf)], this.formOptions.controls["fileName"].value, {type: 'application/json'});
+  var file=new File ([JSON.stringify(this.filePerf)], this.formOptions.controls["fileName"].value, {type: 'application/json'});
  
   this.ManageGoogleService.uploadObject(this.configServer, this.identification.performanceSport.bucket, file , this.formOptions.controls["fileName"].value)
     .subscribe(

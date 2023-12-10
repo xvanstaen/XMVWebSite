@@ -225,6 +225,28 @@ onActionCountry(event:any){
 }
 
 
+onSelOrAction(event:any){
+  this.resetBooleans();
+  const theEvent={
+    target:{
+      id:""
+    }
+  }
+  this.TabOfId.splice(0,this.TabOfId.length);
+  const theValue= findIds(event.target.id,"-");
+  for (var i=0; i<theValue.tabOfId.length; i++){
+    this.TabOfId[i]=theValue.tabOfId[i];
+  }
+
+  if (this.isCircuitSelected===false){
+      theEvent.target.id="Action-"+this.TabOfId[0].toString();
+      this.onActionPoR(theEvent);
+  } else {
+      theEvent.target.id="Selection-"+this.TabOfId[0].toString();
+      this.onSelectPoR(theEvent);
+  }
+}
+
 
 onActionPoR(event:any){
 

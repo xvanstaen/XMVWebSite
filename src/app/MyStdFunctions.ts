@@ -502,7 +502,7 @@ export function validateLock(fileSystem:Array<classFileSystem>, inData:classAcce
     //  tabSpecChar[i]=specChar.substring(i,i+1);
     //}
     var j=-1;
-    for (var i=4; i<theId.length; i++){
+    for (var i=0; i<theId.length; i++){
       if (specChar.indexOf(theId.substring(i,i+1))!==-1){
       // if (theId.substring(i,i+1)===tabSpecChar[0] || theId.substring(i,i+1)===tabSpecChar[1] || theId.substring(i,i+1)===tabSpecChar[2]){
           j++;

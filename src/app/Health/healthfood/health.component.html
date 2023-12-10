@@ -59,7 +59,6 @@
         <div class="skipLine">&nbsp;</div>   
 
 
-
 <div *ngIf="error_msg!=='' && errorFn==='Copy'" class="error">{{error_msg}}</div>
 <!--
 <div style="margin-left:25px; font-size:14px; color:blue; dislay: inline-block; background-color: cyan;">{{message}}</div>
@@ -88,7 +87,25 @@
     <div class="skipLine">&nbsp;</div>
 </div>
 
-<div *ngIf="errCalcCalFat!==''" class="error">{{errCalcCalFat}}</div>
+<div  *ngIf="errCalcCalFat" >
+    <div class="skipLine">&nbsp;</div>
+    <div style="margin-top:8px; margin-left:8px; color:red; font-weight: bold; width:400px; display:inline-block; background: rgb(241, 229, 229);"  >
+        <div class="skipLine">&nbsp;</div>
+            {{errCalcCalFat}}
+        <div class="skipLine">&nbsp;</div>
+    </div>
+</div>
+
+<div *ngIf="(theResetServer===false && ((isDeleteConfirmed===false && error_msg!=='' && errorFn==='delDate') || 
+(IsSaveConfirmedAll===false && error_msg!=='' && errorFn==='All')))">
+    <div class="skipLine">&nbsp;</div>
+    <div  style="margin-top:8px; margin-left:8px; color:red; font-weight: bold; width:400px; display:inline-block; background: lightgrey;"  > 
+        <div class="skipLine">&nbsp;</div>
+        {{error_msg}}
+        <div class="skipLine">&nbsp;</div>
+    </div>
+    <div class="skipLine">&nbsp;</div>
+</div>
 
 <!--    Create COPY OF HealthAllData file -->
 <div *ngIf="EventHTTPReceived[0]===true && isCopyFile===true" style="margin-left:20px; border: blue 2px double; background-color: silver; width:90%">
@@ -341,15 +358,7 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
             <button id='Del-2' class="sizeButtons" (click)="cancelDelDate()"> Cancel</button>
         </div>
     </div>
-    <div *ngIf="(theResetServer===false && ((isDeleteConfirmed===false && error_msg!=='' && errorFn==='delDate') || 
-                 (IsSaveConfirmedAll===false && error_msg!=='' && errorFn==='All')))">
-        <div  style="margin-top:8px; margin-left:8px; color:red; font-weight: bold; width:400px; display:inline-block; background: lightgrey;"  > 
-            <div class="skipLine">&nbsp;</div>
-            {{error_msg}}
-            <div class="skipLine">&nbsp;</div>
-        </div>
-        <div class="skipLine">&nbsp;</div>
-    </div>
+   
     <div>
         <form  [formGroup]="TheSelectDisplays"  >
             <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Filter </span>
@@ -704,6 +713,13 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
         </span>
         <div class="skipLine">&nbsp;</div>
     </div>
+    <div class="skipLine">&nbsp;</div>
+    <div *ngIf="tabLock[0].lock !==2" class="msg"  style="margin-left:10px;">
+            Do you want to clean your Health file?
+            <button id='cleanFile' class="sizeButtons" (click)="cleanFile()"> Yes</button>
+    </div>
+
+</div>
 </div>
 <div class="skipLine">&nbsp;</div>
 <div class="skipLine">&nbsp;</div>
@@ -717,6 +733,7 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
     </app-check-file-update>
 </div>
 -->
-</div>
+
+
 </body>
 

@@ -47,6 +47,7 @@ import { PerformanceSportComponent } from './performance-sport/performance-sport
 import { ManagePointOfRefComponent } from './manage-point-of-ref/manage-point-of-ref.component';
 import { ManageCircuitsComponent } from './manage-circuits/manage-circuits.component';
 import { SportReportsComponent } from './sport-reports/sport-reports.component';
+import { SportAnalysisComponent } from './sport-analysis/sport-analysis.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { SportReportsComponent } from './sport-reports/sport-reports.component';
     ManagePointOfRefComponent,
     ManageCircuitsComponent,
     SportReportsComponent,
+    SportAnalysisComponent,
   ],
   imports: [
     AppRoutingModule,

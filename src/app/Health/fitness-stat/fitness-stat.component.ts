@@ -28,7 +28,7 @@ import {classPosDiv, getPosDiv} from '../../getPosDiv';
 
 import {ConfigFitness, ConfigSport, PerformanceFitness, ClassSport, ClassResult, ClassActivity, ClassExercise} from '../ClassFitness';
 import {BigData, CreturnedData, CmyEvent, Ctarget} from '../ClassFitness';
-
+import { findIds } from 'src/app/MyStdFunctions';
 
 export class ClassFilesAlreadyMerged{
   name:string='A';
@@ -433,7 +433,7 @@ newPrevDialog:number=0;
 onAction(event:any){
   this.newTabDialog[this.newPrevDialog]=false;
   this.TabAction.splice(0,this.TabAction.length);
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   this.TabAction.push({name:'',type:''});
     this.TabAction[this.TabAction.length-1].name='Cancel';
     this.TabAction[this.TabAction.length-1].type='';
@@ -1002,7 +1002,7 @@ DropDownData(event:any){
 }
 theArrow(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (  event.target.id.substring(0,5)==='Sport'){
     this.myEvent.idString='lSpo-'+this.TabOfId[0];
     this.prev_Dialogue=0;
@@ -1029,7 +1029,7 @@ theArrow(event:any){
 
 onArrow(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (  event.target.id.substring(0,6)==='lSport'){
     this.prev_Dialogue=6;
   } else if (  event.target.id.substring(0,9)==='lActivity'){
@@ -1054,7 +1054,7 @@ onInput(event:any){
   // This is only used for NewPerformanceFitness
     
     this.OpenDialogue[this.prev_Dialogue]=false;
-    this.findIds(event.target.id);
+    this.manageIds(event.target.id);
     //event.target.value;
     if (  event.target.id.substring(0,4)==='Spor'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].Sport_name=event.target.value;
@@ -1093,7 +1093,7 @@ onInput(event:any){
      // This is only used for NewPerformanceFitness
     
      this.OpenDialogue[this.prev_Dialogue]=false;
-     this.findIds(event.target.id);
+     this.manageIds(event.target.id);
       // for sports such as runnning/cycling, result of the performance with type of perf (e.g. avd speed), the value of the perforamnce and the unit of that value (e.g. km/h) 
     if (event.target.id.substring(0,5)==='tPerf'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[this.TabOfId[3]].perf_type=event.target.value;
@@ -1119,7 +1119,7 @@ onInputList(event:any){
   // This is only used for myConfigFitness
   
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   // configuration
   if (event.target.id.substring(0,4)==='cSpo'){ // input sport (e.g. running)
     this.MyConfigFitness.ListSport[this.TabOfId[0]].sportName=event.target.value;
@@ -1140,7 +1140,7 @@ onInputTab(event:any){
     // This is only used for myConfigFitness
    
     this.OpenDialogue[this.prev_Dialogue]=false;
-    this.findIds(event.target.id);
+    this.manageIds(event.target.id);
     // ==== management of the tables
     // data coming from user input
   if (event.target.id.substring(0,7)==='inSport'){
@@ -1161,7 +1161,7 @@ onInputTab(event:any){
 onClickList(event:any){
  
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
     // ==== management of the tables
     // data coming from dropdown list
   if (event.target.id.substring(0,6)==='lSport'){ 
@@ -1226,7 +1226,7 @@ CheckDate(event:any){
 // Add and Delete items related to NewPerformanceFitness
 addItem(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
 
   if (event.target.id.substring(0,4)==='Spor'){
     this.ClassActiv = new ClassSport;
@@ -1264,7 +1264,7 @@ addItem(event:any){
 
 
 delItem(event:any){
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   this.OpenDialogue[this.prev_Dialogue]=false;
   if (event.target.id.substring(0,4)==='Spor'){
     this.NewPerformanceFitness.Sport.splice(this.TabOfId[0],1);
@@ -1283,7 +1283,7 @@ delItem(event:any){
 // Add and Delete items related to ConfigFitness
 addConfig(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (event.target.id.substring(0,4)==='aSpo'){
     const TheSport=new ConfigSport;
     this.MyConfigFitness.ListSport.push(TheSport);
@@ -1314,7 +1314,7 @@ addConfig(event:any){
 
 delConfig(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (event.target.id.substring(0,4)==='dSpo'){
     this.MyConfigFitness.ListSport.splice(this.TabOfId[0],1);
   } else  if (event.target.id.substring(0,4)==='dAct'){
@@ -1354,7 +1354,7 @@ addList(event:any){
 
 delList(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.findIds(event.target.id);
+  this.manageIds(event.target.id);
   if (event.target.id.substring(0,4)==='dSpo'){
     this.MyConfigFitness.TabSport.splice(this.TabOfId[0],1);
 
@@ -1376,6 +1376,18 @@ delList(event:any){
 }
 
 idText:string='';
+manageIds(theId:string){
+  this.error_msg='';
+  this.TabOfId.splice(0,this.TabOfId.length);
+  const theValue= findIds(theId,"-");
+  
+  for (var i=0; i<theValue.tabOfId.length; i++){
+    this.TabOfId[i]=theValue.tabOfId[i];
+  }
+  this.idText=theValue.strFound;
+}
+
+/*
 findIds(theId:string){
   this.error_msg='';
   this.message='';
@@ -1400,6 +1412,8 @@ findIds(theId:string){
   }
   this.idText=theId.substring(0,TabDash[0]-1);
 }
+*/
+
 
 GetAllObjects(){
   // bucket name is ListOfObject.config
@@ -1840,7 +1854,7 @@ ActionCalendar(event:any){
 
   for (i=0; (this.TabDisplayCalendar[i]===false || this.TabDisplayCalendar[i]=== undefined) && i<this.TabDisplayCalendar.length; i++){};
   if (this.TabDisplayCalendar.length===0 || i>this.TabDisplayCalendar.length-1 || this.TabDisplayCalendar[i]===false){
-      this.findIds(event.target.id);
+      this.manageIds(event.target.id);
       this.TabDisplayCalendar[this.TabOfId[0]]=true;
       this.TabDisplayId[this.TabOfId[0]]=this.TabOfId[0];
       this.DisplayCalendar=true;
@@ -1859,7 +1873,7 @@ ActionCalendar(event:any){
           SaveTabOfId.push(0);
           SaveTabOfId[i]=this.TabOfId[i];
       }
-      this.findIds(event.target.id);
+      this.manageIds(event.target.id);
       this.ErrorinputDate[this.TabOfId[0]] = this.Error_OpenCalendar;
       for (i=0; i<SaveTabOfId.length-1; i++){
         this.TabOfId[i]=SaveTabOfId[i];

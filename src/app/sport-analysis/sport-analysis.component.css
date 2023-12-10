@@ -1,0 +1,107 @@
+
+
+@import "../performance-sport/performance-sport.component.css";
+
+
+
+.theXCol{
+  color:blue;
+  background-color: cyan;
+  border:solid 2px rgb(176, 9, 9);
+  text-align:center;
+  display:inline-block;
+  
+}
+
+.myHeader{
+  color:blue;
+  background-color: rgb(96, 196, 96);
+  text-align:center;
+  border:solid 2px rgb(21, 138, 21);
+  display:inline-block;
+}
+
+.refW{
+  width:230px;
+}
+
+.loopW{
+  width:70px;
+}
+
+
+.theItem{
+    font-family: 'Roboto';
+    height:26px;
+    margin-left:30px;
+    font-size:14px;  
+    width:90%;
+    font-weight: bold;
+    display:block;
+    border:solid 2px blue;
+    padding-top:1px;
+    padding-left:6px;
+
+  }
+  
+.object{
+    font-size:14px;  
+
+  }
+  
+.object li {
+  cursor: pointer;
+  border-radius: 4px;
+  display: block;
+  border: solid 0px black;
+  }
+.object li.selected:hover {
+
+  background-color: #b15b0b !important;
+  border: solid 1px blue(0, 255, 42);
+}
+.object li:hover {
+  color: #607D8B;
+  background-color: rgb(46, 30, 216);
+  left: .1em;
+  border: solid 1px black;
+}
+  
+  
+.object:hover{
+  background-color: rgb(217, 230, 173);
+  font-size:14px;  
+  }
+
+.even{
+    background-color: rgb(75, 236, 75);
+  }
+
+.odd{
+    background-color: rgb(161, 240, 161);
+  }
+
+.userSel{
+    color:white;
+    font-weight: bolder;
+    background-color: rgb(14, 14, 202);
+  }
+
+.userSel:hover{
+    color:white;
+    font-weight: bolder;
+    background-color: rgb(97, 97, 199);
+  }
+
+.widthUserSel{
+    width:16px;
+    display:inline-block;
+
+  }
+
+.myScrollBar{
+    scrollbar-color:orange rgb(155, 247, 247);
+    scrollbar-width: thick;
+    overflow-y:scroll; 
+    overflow-x:hidden;
+}

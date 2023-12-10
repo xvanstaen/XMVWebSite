@@ -18,7 +18,7 @@
                 </span>
             </div>
             <div    style="margin-left:20px;  width:100% ; background-color: cyan;">
-                <div style="margin-top:10px; display:inline-block; height:45px; width:100%;margin-left:10px; ">
+                <div style="margin-top:10px; display:inline-block; height:60px; width:270px; margin-left:120px; ">
                     <li class="Straight-options" style="width:90px; height:25px; padding-left:10px; display:inline-block;" *ngFor="let tab of tabAction; let i=index; " [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 }">
                         <span   id="selAction-{{TabOfId[0]}}-{{i}}" (click)="onActionPoR($event)">{{tab}}</span>
                     </li>
@@ -29,9 +29,9 @@
     </div>
 
     <div *ngIf="isUpdateRef===true || isAddRef===true || isDeleteRef===true" [formGroup]="formOptions" style="margin-left:19px;; width:90%; display:inline-block; border:solid 2px blue; margin-top:10px;">
-        <span *ngIf="isUpdateRef===true" style="margin-left:80px; color:blue; font-size: 16px; ">Modify Point Of Reference</span>
-        <span *ngIf="isAddRef===true" style="margin-left:80px; color:blue; font-size: 16px;  ">Add Point Of Reference</span>
-        <span *ngIf="isDeleteRef===true" style="margin-left:80px; color:blue; font-size: 16px;  ">Delete Point Of Reference</span>
+        <span *ngIf="isUpdateRef===true" class="boxData">Modify Point Of Reference</span>
+        <span *ngIf="isAddRef===true" class="boxData">Add Point Of Reference</span>
+        <span *ngIf="isDeleteRef===true" class="boxData">Delete Point Of Reference</span>
         
        <div style="margin-top:10px; width:100%; display:inline-block;">
             <label class="theLabel" style="padding-top:2px;" >reference</label>
@@ -48,39 +48,16 @@
             <input type="text"   class="inputText"  style="width:250px;" formControlName="lgt" value="lgt" >
         </div>
        
-        <button *ngIf="isUpdateRef===true"  id='confirmModify-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px;" (click)="onActionPoR($event)"> Confirm modif</button>
-        <button *ngIf="isAddRef===true"  id='confirmAdd-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px;" (click)="onActionPoR($event)"> Confirm Add</button>
-        <button *ngIf="isDeleteRef===true"  id='confirmDel-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px;" (click)="onActionPoR($event)"> Confirm delete</button>
+        <button *ngIf="isUpdateRef===true"  id='confirmModify-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px; margin-left:150px;" (click)="onActionPoR($event)"> Confirm modif</button>
+        <button *ngIf="isAddRef===true"  id='confirmAdd-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px; margin-left:150px;" (click)="onActionPoR($event)"> Confirm Add</button>
+        <button *ngIf="isDeleteRef===true"  id='confirmDel-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px; margin-left:150px;" (click)="onActionPoR($event)"> Confirm delete</button>
         <button  id='cancelAction-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px;" (click)="onActionPoR($event)"> Cancel action</button>
         <div class="skipline error" *ngIf="errorMsg!==''">errorMsg</div>
         <div class="skipLine"></div>
     </div>
     
 
-    <div *ngIf="isFileModified===true && tabDialog[0]===false" style="border:solid 1px red; width:450px; display:inline-block; margin-left:19px;;">
-        <div class="skipLine"></div>
-        <div *ngIf="saveConfirmed===false">
-            <label style="width:100%; text-align: center; display:inline-block; color:blue; font-size:16px;" >File has been modified </label>
-            <label  style="width:40%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Do you want to save it?</label>
-            <button   id='confirmSave' class="sizeButtons" style="width:80px;" (click)="manageUpdates($event)"> YES </button>
-            <!-- 
-            <button   id='cancelSave' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> Cancel </button>
-            -->
-            <div class="skipLine"></div>
-            <label style="width:100%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Do you want to cancel all your updates?</label>
-            <button   id='reinitialize' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> YES </button>
-            <button   id='noReinit' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> NO </button>
-            <div class="skipLine"></div>
-        </div>
-        <div *ngIf="saveConfirmed===true"  [formGroup]="formOptions">
-            <label  style="width:90%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Name of the file to update</label>
-            <input type="text"  class="inputText" style="width:90%; margin-left:15px;" formControlName="fileName" value="fileName" >
-            <button   id='saveFile' class="sizeButtons" style="margin-top:10px; margin-left:80px; width:80px;" (click)="manageUpdates($event)"> Submit </button>
-            <button   id='cancelSave' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> Cancel save</button>
-            <div class="skipLine"></div>
-        </div>
-        
-    </div>
+
 
 
     <div *ngIf="errorMsg!==''" >
@@ -106,27 +83,29 @@
                 </li>
             </div>
     </div>
-    <div *ngIf="tabDialog[1]===true" style="margin-left:20px; margin-top:10px; "> <!-- class="dropDown" -->
-        <div  class=" StraightDropDown"    style="height:25px; width:500px;">
-            <li class="Straight-options" style="width:80px; display:inline-block; padding-left: 3px;"  *ngFor="let tab of tabActionCountry; let i=index; " [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 }">
-                <span  id="selAction-{{TabOfId[0]}}-{{i}}" (click)="onActionCountry($event)">{{tab}}</span>
-            </li>
-        </div>
-    </div>
+
 
 
     <div style="width:100%; display:inline-block; " [ngStyle]="{'margin-top.px': tabDialog[0]===true ? 10 : 10}" >
         <div style="width:100%; display:inline-block; height:22px; margin-left:40px;">
             <label class="theLabel" style="padding-top:2px; width:20px; background-color: lightgrey;">&nbsp;</label>
-            <label class="theLabel" style="padding-top:2px;">Country</label>
-            <label class="theLabel" style="padding-top:2px;">Code ISO</label>
+            <label class="theLabel" style="padding-top:2px; width:210px;">Country</label>
+            <label class="theLabel" style="padding-top:2px; width:210px;">Code ISO</label>
         </div>
         <div *ngFor="let tabC of filePoR; let j=index" style="width:90%; margin-left:40px; display:inline-block;  height:22px; ">
+
             <span  *ngIf="isCircuitSelected===false" (click)="onActionCountry($event)" id="actionCountry-{{j}}" class="inputText" style="width:20px;"  [ngClass]="{'evenC':j % 2 ===0, 'oddC': j % 2 !==0}">A</span>
             <span  *ngIf="isCircuitSelected===true" (click)="onActionCountry($event)" id="selectedCountry-{{j}}" class="inputText" style="width:20px;"  [ngClass]="{'evenC':j % 2 ===0, 'oddC': j % 2 !==0}">S</span>
-            <input type="text"  (input)="onActionCountry($event)" id="Country-{{j}}" class="inputText" value="{{tabC.country}}"  [ngClass]="{'evenC':j % 2 ===0, 'oddC': j % 2 !==0}" >
-            <input type="text"   (input)="onActionCountry($event)" id="Code-{{j}}" class="inputText" value="{{tabC.code}}"  [ngClass]="{'evenC':j % 2 ===0, 'oddC': j % 2 !==0}" >
-
+            <input type="text"  (input)="onActionCountry($event)" id="Country-{{j}}" class="inputText" value="{{tabC.country}}"  style="width:210px;"[ngClass]="{'evenC':j % 2 ===0, 'oddC': j % 2 !==0}" >
+            <input type="text"   (input)="onActionCountry($event)" id="Code-{{j}}" class="inputText" value="{{tabC.code}}"  style="width:210px;"[ngClass]="{'evenC':j % 2 ===0, 'oddC': j % 2 !==0}" >
+            
+            <div *ngIf="tabDialog[1]===true && TabOfId[0]===j" style="margin-left:140px; margin-top:2px; "> <!-- class="dropDown" -->
+                <div  class=" StraightDropDown"    style="height:60px; width:250px;">
+                    <li class="Straight-options" style="width:80px; display:inline-block; padding-left: 3px;"  *ngFor="let tab of tabActionCountry; let i=index; " [ngClass]="{'evenA': i % 2 === 0 , 'oddA': i % 2 === 1 }">
+                        <span  id="selAction-{{TabOfId[0]}}-{{i}}" (click)="onActionCountry($event)">{{tab}}</span>
+                    </li>
+                </div>
+            </div>
             <table  *ngIf="iCountryPoR===j" style="margin-left:-20px; display:inline-block; width:100%; "> <!-- *ngIf="isDeleteRef===false && isUpdateRef===false && isDeleteRef===false" -->
 
                     <tr>
@@ -140,21 +119,47 @@
                     </tr>
 
             </table>
-            <table  *ngIf="iCountryPoR===j" style="margin-left:-20px; display:inline-block; width:100%; max-height:150px; overflow-y:scroll;">
+            <table  *ngIf="iCountryPoR===j " style="margin-left:-20px; display:inline-block; width:100%; max-height:150px; overflow-y:scroll;">
                     <tr *ngFor="let tab of filePoR[j].PoR; let i=index" >
                         <td class="tabRow action" style="border-left:solid 1px blue; width:20px;"  [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" > 
                             <span *ngIf="isCircuitSelected===false" (click)="onActionPoR($event)" id="Action-{{i}}"> A </span>
                             <span *ngIf="isCircuitSelected===true" (click)="onSelectPoR($event)" id="Selection-{{i}}"> S </span>
                         </td>
-                        <td class="tabRow" style="border-left:solid 1px blue; text-align: left; padding-left:10px; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.ref}} </td>
-                        <td class="tabRow" style="width:150px;" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lat}}</td>
-                        <td class="tabRow" style="border-right:solid 1px blue; width:150px;" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lon}}</td>                        
+                        <td class="tabRow  action" (click)="onSelOrAction($event)" id="SelorAction-{{i}}" style="border-left:solid 1px blue; text-align: left; padding-left:10px; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.ref}} </td>
+                        <td class="tabRow  action" (click)="onSelOrAction($event)" id="SelorAction-{{i}}" style="width:150px;" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lat}}</td>
+                        <td class="tabRow  action" (click)="onSelOrAction($event)" id="SelorAction-{{i}}" style="border-right:solid 1px blue; width:150px;" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lon}}</td>                        
                     </tr>
     
             </table>
+            <div *ngIf="iCountryPoR===j" class="skipLine"></div>
         </div>
     </div>
     <div style="margin-top:30px;  display:block;">&nbsp;</div>
+</div>
+
+<div *ngIf="isFileModified===true" style="border:solid 1px red; width:450px; display:inline-block; margin-left:60px;;">
+    <div class="skipLine"></div>
+    <div *ngIf="saveConfirmed===false">
+        <label style="width:100%; text-align: center; display:inline-block; color:blue; font-size:16px;" >File has been modified </label>
+        <label  style="width:40%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Do you want to save it?</label>
+        <button   id='confirmSave' class="sizeButtons" style="width:80px;" (click)="manageUpdates($event)"> YES </button>
+        <!-- 
+        <button   id='cancelSave' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> Cancel </button>
+        -->
+        <div class="skipLine"></div>
+        <label style="width:100%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Do you want to cancel all your updates?</label>
+        <button   id='reinitialize' class="sizeButtons"  style="width:80px; margin-left:120px;" (click)="manageUpdates($event)"> YES </button>
+        <button   id='noReinit' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> NO </button>
+        <div class="skipLine"></div>
+    </div>
+    <div *ngIf="saveConfirmed===true"  [formGroup]="formOptions">
+        <label  style="width:90%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Name of the file to update</label>
+        <input type="text"  class="inputText" style="width:90%; margin-left:15px;" formControlName="fileName" value="fileName" >
+        <button   id='saveFile' class="sizeButtons" style="margin-top:10px; margin-left:80px; width:80px;" (click)="manageUpdates($event)"> Submit </button>
+        <button   id='cancelSave' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> Cancel save</button>
+        <div class="skipLine"></div>
+    </div>
+    
 </div>
 
 <div id="bottomPage" *ngIf="isCircuitSelected===false" style="margin-top:100px;  display:block;">&nbsp;</div>

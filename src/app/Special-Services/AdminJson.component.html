@@ -191,7 +191,8 @@
     <span class="options" >1. Performance sport</span>
     <span class="options" >2. Manage PointOfRef</span>
     <span class="options" >3. Manage Circuits</span>
-    <span class="options" >4. Reports sport</span>
+    <span class="options" >4. Sport report</span>
+    <span class="options" >5. Sport analysis</span>
 
     <br><br>
 </span>
@@ -217,6 +218,10 @@
   <app-sport-reports [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-sport-reports>
 </div>  
+<div *ngIf="selectApps===5">
+  <app-sport-analysis [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-sport-analysis>
+</div> 
 
 <div *ngIf="(GoToComponent===4 || GoToComponent===5 || NbRefresh_Bucket>0) && EventHTTPReceived[0]===true && Google_Bucket_Name!=='' ">
       <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="Google_Bucket_Name"  [NbRefresh_Bucket]="NbRefresh_Bucket"

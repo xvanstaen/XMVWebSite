@@ -87,6 +87,7 @@ export class ManageCircuitsComponent {
     strFound:string="";
    
     errorMsg:string="";
+    sizeBox:number=0;
 
 ngOnInit(){
 /***
@@ -148,6 +149,7 @@ onInput(event:any){
       this.isDeleteCircuit=true;
     } else if (this.tabActionH[this.TabOfId[1]]==="Zoom-in"){
         this.expandCircuit=this.TabOfId[0];
+        this.sizeTheBox();
     } else if (this.tabActionH[this.TabOfId[1]]==="Zoom-out"){
         this.expandCircuit=-1;
   } 
@@ -272,9 +274,19 @@ manageUpdates(event:any){
   } else if (event.target.id==="noReinit"){
     
   } else if (event.target.id==="saveFile"){
+    this.checkCodeCircuit();
     this.saveFile(this.identification.circuits.bucket, this.identification.circuits.file, this.fileCircuit);
   } else if (event.target.id==="cancelSave"){
       this.saveConfirmed=false;
+  }
+}
+
+checkCodeCircuit(){
+  for (var i=0; i<this.fileCircuit.length; i++){
+    if (this.fileCircuit[i].code===undefined || this.fileCircuit[i].code===""){
+      for (var j=0; j<this.listCountry.length && this.listCountry[j].country!==this.fileCircuit[i].country; j++){}
+      this.fileCircuit[i].code=this.listCountry[j].code + '-' + i.toString();
+    }
   }
 }
 
@@ -300,6 +312,19 @@ saveFile(bucket:string, object:string,record:any){
         this.scroller.scrollToAnchor('bottomCircuit');
       })
 }
+sizeTheBox(){
+  const maxSizeBox=400;
+  const marginSizeBox=60;
+  if (this.expandCircuit!==-1){
+    this.sizeBox= (this.fileCircuit[this.expandCircuit].points.length + this.fileCircuit.length) * this.sizeRow + marginSizeBox + 80;
+  } else {
+    this.sizeBox= this.fileCircuit.length * this.sizeRow + marginSizeBox;
+  }
+  if (this.sizeBox > maxSizeBox){
+    this.sizeBox=maxSizeBox;
+  }
+}
+sizeRow:number=30;
 
 GetRecord(bucketName:string,objectName:string, iWait:number){
   this.errorMessage="";
@@ -312,6 +337,8 @@ GetRecord(bucketName:string,objectName:string, iWait:number){
           this.fileCircuit.splice(0,this.fileCircuit.length);
           this.fileCircuit=data;
           this.isFileCircuitReceived=true;
+          this.sizeTheBox();
+          
           }
         else if (iWait===2){ // Circuits
           if (data.text === undefined){
@@ -347,9 +374,11 @@ GetRecord(bucketName:string,objectName:string, iWait:number){
           this.fileCircuit[0].name="";
           this.fileCircuit[0].country="Singapore";
           this.fileCircuit[0].city="";
+          this.fileCircuit[0].code="SI-"+this.fileCircuit.length.toString();
           const recordPoR= new classPointOfRef;
           this.fileCircuit[0].points.push(recordPoR);
           this.isFileCircuitReceived=true;
+          this.sizeTheBox();
           }
         this.scroller.scrollToAnchor('bottomCircuit');
       })

@@ -1,36 +1,58 @@
 
 <div style="width:500px; margin-left:15px; " >
     <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="bucketName"  [NbRefresh_Bucket]="NbRefresh_Bucket"
-          (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
+          (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)">
+        </app-ListBucketContent>
 </div>
 
-<div *ngIf="isPerfRetrieved===false">
+<div class="error" *ngIf="errorMsg!==''">
+    <div class="skipLine"></div>
+    {{errorMsg}}
+    <div class="skipLine"></div>
+</div>
+<div *ngIf="isPerfRetrieved===false && isFileProcessed===true && perf.length>0">
+    
+    <div *ngIf="SelectedBucketInfo.name!==''" style="margin-left:40px; width:380px; display:inline-block; background-color:cyan; border:blue 1px solid;">
+        <span style="color:black; font-size:18px; font-weight: bolder; text-align:center; display:inline-block; width:100%;">Selected file </span>
+            <span style="color:green; font-size:14px; font-weight: bolder; text-align: center; display:inline-block; width:100%;">
+                {{this.SelectedBucketInfo.name}}
+            </span>
+            <div class="skipLine"></div>
+    </div>
     <form [formGroup]="formOptions" >
 
-        <div style="margin-left:40px; width:300px; display:block; height:140px; border:solid 2px blue;">
+        <div style="margin-left:40px; width:380px; display:block; height:140px; border:solid 2px blue;">
             <div style="margin-left:80px; color:blue; display:block; font-size: 16px; height:35px; ">Display data for every</div>
 
 
-            <input type="text"   class="inputText" formControlName="seconds" value="seconds" >
-            <label   class="theLabel" >seconds</label>
+            <input type="text"   class="inputText blockFloat" formControlName="seconds" value="seconds" >
+            <label   class="theLabel blockFloat" >seconds</label>
                 
-            <input type="text"   class="inputText" formControlName="meters" value="meters" >
-            <label class="theLabel">meters</label>
+            <input type="text"   class="inputText blockFloat" formControlName="meters" value="meters" >
+            <label class="theLabel blockFloat">meters</label>
 
             <button *ngIf="isFileProcessed===true && perf.length>0" id='selOptions' class="sizeButtons" style="margin-top:10px; margin-left:100px; " (click)="checkOptions()"> Submit</button>
                 
-            <div class="skipline error" *ngIf="errorMsg!==''">{{errorMsg}}</div>
+            
         </div>
     </form>
-    <div class="skipLine"></div>
-
+    <form [formGroup]="formOptions" >
+        <div class="skipLine"></div>
+        <div style="margin-left:40px; width:380px; display:inline-block; border:solid 2px blue;">
+            <div class="skipLine"></div>
+            <label class="theLabel" style="width:35%; display:inline-block;">Sport</label>
+            <input type="text"   class="inputText" style="width:50%; display:inline-block;" formControlName="sport" value="sport" >
+            <label class="theLabel" style="width:35%; display:inline-block;">Date</label>
+            <input type="text"   class="inputText" style="width:50%; display:inline-block;" formControlName="theDate" value="theDate"  placeholder="dd/mm/yyyy">
+            <div class="skipLine"></div>
+        </div>
+    </form>
+   
     <div *ngIf="isManagePointOfRef===false">
         <div class="skipLine"></div>
         <div style="width:300px; display:inline-block; height:30px; padding-top:5px; padding-left:15px; margin-left:40px; background-color: cyan;">Manage Point Of Reference  </div>
         <button  class="sizeButtons" style="width:80px;" (click)="actionPointOfRef('managePoRef')">Submit</button>
         <div class="skipLine"></div>
-        
-    
     </div>
     <div *ngIf="isManagePointOfRef===true">
         <div style="width:300px; display:inline-block; height:30px; padding-top:5px; padding-left:15px; margin-left:40px; background-color: cyan;">Manage Point Of Reference </div>
@@ -39,9 +61,7 @@
         <app-manage-point-of-ref [configServer]="configServer" [identification]="identification">
         </app-manage-point-of-ref>
     </div>
-
-
-
+    <div id="topTable" class="skipLine"></div>
     <div *ngIf="isPerfProcessCompleted===true">
 
         <table style="margin-left:40px;">
@@ -199,7 +219,7 @@
     <div class="skipLine"></div>
     <div  class="skipLine"></div>
     <div class="skipLine"></div>
-    <div id="bottomPage" class="skipLine"></div>
+    <div id="bottomPage"></div>
     <div class="skipLine"></div>
     <div class="skipLine"></div>
 </div>

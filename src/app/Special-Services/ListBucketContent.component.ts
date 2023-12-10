@@ -41,6 +41,7 @@ export class ListBucketContentComponent {
     @Input() NbRefresh_Bucket=0;
 
     @Input() Bucket_Name:string='';
+
     @Output() Return_SelectedBucketInfo=new EventEmitter<OneBucketInfo>();
     
     @Output() Return_Data= new EventEmitter<any>();
@@ -118,7 +119,7 @@ ngOnInit(){
 
 RetrieveAllObjects(){
   // bucket name is ListOfObject.config
-  this.HTTP_Address=this.Google_Bucket_Access_Root+ this.Bucket_Name + "/o"  ;
+  //this.HTTP_Address=this.Google_Bucket_Access_Root+ this.Bucket_Name + "/o"  ;
   console.log('RetrieveAllObjects()'+this.Bucket_Name);
   this.ManageGoogleService.getListObjects(this.configServer, this.Bucket_Name )
   //this.http.get<Bucket_List_Info>(this.HTTP_Address )
@@ -147,14 +148,16 @@ RetrieveAllObjects(){
   
   RetrieveSelectedFile(event:any){
     this.Message='';
-
+    const saveEvent=event;
     //this.FileMedialink=event.mediaLink;
     //this.FileName=event.name;
-      this.Return_SelectedBucketInfo.emit(event);
+      
+
      // this.http.get<any>(event.mediaLink )
       this.ManageGoogleService.getContentObject(this.configServer, event.bucket,event.name )
       .subscribe((data ) => {
-        console.log('RetrieveSelectedFile='+event.mediaLink);
+        console.log('ListBucket - RetrieveSelectedFile= '+event.mediaLink);
+        this.Return_SelectedBucketInfo.emit(saveEvent);
         if (typeof data==="object"){
 
         } else {

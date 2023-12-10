@@ -4,15 +4,19 @@ body{
 
 @import "../performance-sport/performance-sport.component.css";
 
-
+.bodyColor{
+    background-color: cyan;
+}
 
 .inputText{
     color:blue;
     background-color: rgb(232, 229, 229);
-    width:140px;
     height:22px;
     margin-left:0px;
+    
     padding-left:10px;
+    display:block;
+    float:left;
 }
 
 .inputText:hover{
@@ -22,10 +26,22 @@ body{
 .theTitle{
     background:blue;
     color:white;
-    padding-left:10px;
-    margin-left:0px;
+    text-align: center;
     font-size: 15px;
+    display:inline-block;
+    height:22px;
 }
+
+.titlePOR{
+    background:rgb(0, 255, 89);
+    color:blue;
+    text-align: center;
+    font-size: 13px;
+    display:block;
+    float:left;
+    height:22px;
+}
+
 .theLabel{
     margin-left:0px;
     width:140px;
@@ -36,12 +52,12 @@ body{
 }
 
 .shortLabel{
-    width:20px ;display:inline-block;
+    width:20px ; display:inline-block;
 }
 
 .section{
     width:100%; display:inline-block; 
-    border:solid 0px blue; padding-left:5px; 
+    border:solid 1px blue; padding-left:5px; 
     height:22px;
 }
 
@@ -51,34 +67,53 @@ body{
     text-align: center; font-size:14px; background-color: cyan; margin-left:40px;
 }
 
+
+
+.myScrollBar{
+    scrollbar-color:orange rgb(155, 247, 247);
+    scrollbar-width: thick;
+    overflow-y:scroll; 
+    overflow-x:hidden;
+}
+
 .odd{
-    background-color: rgb(109, 147, 243);
+    background-color: rgb(79, 234, 210);
+    font-weight:400;
+    font-size: 13px;
+}
+.even{
+    background-color: rgb(80, 166, 153);
+    font-weight:400;
     font-size: 13px;
 }
 
-.even{
-    background-color: rgb(121, 141, 192);
-    color:black;
+.oddAction{
+    background-color: rgb(208, 235, 138);
+    font-weight:400;
+    font-size: 13px;
+}
+.evenAction{
+    background-color: rgb(150, 204, 15);
     font-weight:400;
     font-size: 13px;
 }
 
 .oddPoR{
-    background-color: rgb(109, 243, 203);
+    background-color: lightgrey;
     font-weight:400;
     font-size: 13px;
 }
 
 .evenPoR{
-    background-color: rgb(88, 198, 165);
-    color:black;
+    background-color: rgb(211, 136, 136);
     font-weight:400;
     font-size: 13px;
 }
 
 .selCircuit{
-    background-color: cyan;
-    font-size:16px;
+    background-color: rgb(33, 97, 87);
+    font-size:14px;
     font-weight: bolder;
+    color:white;
 }
 
