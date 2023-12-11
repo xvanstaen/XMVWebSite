@@ -705,13 +705,26 @@ if (this.HealthAllData.tabDailyReport.length>0){
 }
 
 CreateTabFood(item:any, value:any){
-  this.tabInputMeal.splice(0,this.tabInputMeal.length);
-  this.tabInputFood.splice(0,this.tabInputFood.length);
-  var iTab:number=0;
+  
+  
+  var iTab:number=-1;
   this.error_msg='';
 
   if (item==='Food'){
-    iTab=-1;
+    this.tabInputFood.splice(0,this.tabInputFood.length);
+    this.tabFood.sort((a, b) => (a.name < b.name) ? -1 : 1);
+    for (var i=0; i<this.tabFood.length && this.tabFood[i].name.toLowerCase().trim().substring(0,value.length)!==value.toLowerCase().trim(); i++){}
+    if (i<this.tabFood.length){
+      for (var i=i; i<this.tabFood.length && this.tabFood[i].name.toLowerCase().trim().substring(0,value.length)===value.toLowerCase().trim(); i++){
+        iTab++;
+        this.tabInputFood.push({name:"",serving:"",unit:""});
+        this.tabInputFood[iTab].name=this.tabFood[i].name.toLowerCase().trim();
+        this.tabInputFood[iTab].serving=this.tabFood[i].serving;
+        this.tabInputFood[iTab].unit=this.tabFood[i].unit;
+      }
+    }
+    /***
+
     for (var i=0; i<this.tabFood.length; i++){
       if (this.tabFood[i].name.toLowerCase().trim().indexOf(value.toLowerCase().trim()) !== -1){
         iTab++;
@@ -721,6 +734,7 @@ CreateTabFood(item:any, value:any){
         this.tabInputFood[iTab].unit=this.tabFood[i].unit;
       }
     }
+     */
     this.sizeBoxContentFood=this.sizeBox.heightItem  * this.tabInputFood.length;
     if (this.sizeBoxContentFood>this.sizeBox.maxHeightContent){
       this.sizeBoxContentFood=this.sizeBox.maxHeightContent;
@@ -734,11 +748,12 @@ CreateTabFood(item:any, value:any){
 
     this.styleBoxFood=getStyleDropDownContent(this.sizeBoxContentFood, this.sizeBox.widthContent );
     //this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 24, this.selectedPosition.y -this.posDivAfterTitle.Client.Top - 255, this.sizeBox.scrollY);
-    this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft +100, this.posItem, this.sizeBox.scrollY);
+    this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 25 , this.posItem + 40, this.sizeBox.scrollY);
 
   }
   else if (item==='Meal'){
-      iTab=-1;
+    this.tabInputMeal.splice(0,this.tabInputMeal.length);
+
       for (var i=0; i<this.tabMeal.length; i++){
         if (this.tabMeal[i].name.substr(0,value.trim().length).toLowerCase().trim()===value.toLowerCase().trim()){
           iTab++;
@@ -758,7 +773,7 @@ CreateTabFood(item:any, value:any){
 
       this.styleBoxMeal=getStyleDropDownContent(this.sizeBoxContentMeal, this.sizeBox.widthContent - 50);
       //this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 20,  this.selectedPosition.y - this.posDivAfterTitle.Client.Top  - 255, this.sizeBox.scrollY);
-      this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft +70,  this.posItem, this.sizeBox.scrollY);
+      this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 25,  this.posItem + 40, this.sizeBox.scrollY);
     }
 
 }
@@ -877,25 +892,25 @@ onInputDailyAllA(event:any){
       var i=0;
       const fieldName=event.target.id.substring(0,7);
       this.manageIds(event.target.id);
-        if (fieldName==='dateAll'){
+      if (fieldName==='ingrAll'){
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
+        this.CreateTabFood('Food',event.target.value);
+      }  else   if (fieldName==='quanAll'){
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].quantity=event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
+      } else   if (fieldName==='unitAll'){
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].unit=event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
+      } else if (fieldName==='dateAll'){
           this.CheckDupeDate(event.target.value);
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].date=event.target.value;
           this.tabNewRecordAll[this.TabOfId[0]].nb=1;
-        } else   if (fieldName==='mealAll'){
+      } else if (fieldName==='mealAll'){
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name=event.target.value;
           this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].nb=1;
           this.CreateTabFood('Meal',event.target.value);
-        } else   if (fieldName==='ingrAll'){
-          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=event.target.value;
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
-          this.CreateTabFood('Food',event.target.value);
-        }  else   if (fieldName==='quanAll'){
-          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].quantity=event.target.value;
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
-        } else   if (fieldName==='unitAll'){
-          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].unit=event.target.value;
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb=1;
-        } else   if (fieldName==='burnAll'){
+      } else      if (fieldName==='burnAll'){
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].burntCalories=event.target.value;
           this.tabNewRecordAll[this.TabOfId[0]].nb=1;
         } 

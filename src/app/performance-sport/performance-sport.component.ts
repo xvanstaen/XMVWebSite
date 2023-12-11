@@ -370,7 +370,7 @@ processTrackPoint(theString:string){
 file=new File([JSON.stringify(event)], 'myGPXfile', {type: 'application/json'});
 ReceivedData(event:any){
     //this.theReceivedData=event;
-    console.log('performance-sport event is:' + JSON.stringify(event));
+    // console.log('performance-sport event is:' + JSON.stringify(event));
     const stringNumber="0123456789.";
     this.isPerfProcessCompleted=false;
     this.isDataReceived=true;

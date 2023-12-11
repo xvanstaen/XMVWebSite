@@ -311,7 +311,7 @@ export class classCircuitRec
     }
 
 export class classFilePerf{
-    time:number=0;dist:number=0;speed:number=0;heart:number=0;alt:number=0;lat:number=0;lon:number=0;slope=0;
+    time:number=0;dist:number=0;speed:number=0;heart:number=0;alt:number=0;lat:number=0;lon:number=0;slope=0;refPoR:string="";exclude:string="";
 }
 
 export class classFileSport
@@ -323,6 +323,7 @@ export class classFileSport
       theDate:string="";
       content:Array<any>=[];
       codeName:string="";
+      refPoints:Array<any>=[]; // contains the list of PoR already found
     }
 
 export class classTotalLoop{

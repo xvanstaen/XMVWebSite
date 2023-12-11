@@ -4,73 +4,55 @@
 </head> 
 <body>
 
- <div class="skipLine">&nbsp;</div>
-    <div id='posTopHealth' [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:280px; margin-left:20px; border:solid 2px blue; ">
-        <div class="skipLine">&nbsp;</div>  
-        <div  >
-            <div class="theRadio">Create a new day </div>  
-            <input  (click)='SelRadio("Y-1")' class="theRadioButt" type="radio" name="CreateNew" formControlName="CreateNew" id="CreateNew"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-            <input  (click)='SelRadio("N-1")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CreateNew" formControlName="CreateNew" id="CreateNew"  value="N">  <span class="YesNo">&nbsp;&nbsp;No</span> 
-        </div>
-    
-        <div  >
-            <div class="theRadio">Display a specific day </div> 
-            <input  (click)='SelRadio("Y-2")' class="theRadioButt" type="radio" name="DisplaySpecific" formControlName="DisplaySpecific" id="DisplaySpecific" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-            <input  (click)='SelRadio("N-2")' class="theRadioButt" style="margin-left:10px;" type="radio" name="DisplaySpecific" formControlName="DisplaySpecific" id="DisplaySpecific" value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
-        </div>
-    
-        <div  >
-            <div class="theRadio">Display all days </div> 
-            <input  (click)='SelRadio("Y-3")'class="theRadioButt" type="radio" name="DisplayAll" formControlName="DisplayAll" id="DisplayAll" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-            <input  (click)='SelRadio("N-3")'class="theRadioButt"  style="margin-left:10px;" type="radio" name="DisplayAll" formControlName="DisplayAll" id="DisplayAll" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
-        </div>
-         
-        <div  >
-            <div class="theRadio">Copy Master File </div> 
-            <input  (click)='SelRadio("Y-4")' class="theRadioButt" type="radio" name="CopyFile" formControlName="CopyFile" id="CopyFile" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-            <input  (click)='SelRadio("N-4")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CopyFile" formControlName="CopyFile" id="CopyFile" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
-        </div>
-
-        <div  >
-            <div class="theRadio">Mgt Calories & Fat </div> 
-            <input    (click)='SelRadio("Y-5")' class="theRadioButt" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
-            <input   (click)='SelRadio("N-5")' class="theRadioButt" style="margin-left:10px;" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
-        </div>
-        <div >
-            <div class="theRadio">Calculate Calories & Fat </div> 
-            <input  *ngIf="EventHTTPReceived[2]===true" (click)='SelRadio("Y-6")' class="theRadioButt" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="Y" >  <span *ngIf="EventHTTPReceived[2]===true" class="YesNo">&nbsp;&nbsp;Yes</span>
-            <input  *ngIf="EventHTTPReceived[2]===true" (click)='SelRadio("N-6")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="N" >  <span  *ngIf="EventHTTPReceived[2]===true"sclass="YesNo">&nbsp;&nbsp;No</span>
-        </div>
-        <div >
-            <div class="theRadio">Display the charts </div> 
-            <input  (click)='SelRadio("Y-7")' class="theRadioButt" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-            <input  (click)='SelRadio("N-7")' class="theRadioButt" style="margin-left:10px;" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
-        </div>
-        <div >
-            <div class="theRadio">Re-load HTML configuration file </div> 
-            <input  (click)='SelRadio("Y-8")' class="theRadioButt" type="radio" name="ReloadHTML"  id="ReloadHTML" formControlName="ReloadHTML" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-            <input  (click)='SelRadio("N-8")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadHTML" formControlName="ReloadHTML" id="ReloadHTML" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
-        </div>
-        <div >
-            <div class="theRadio">Re-load Chart configuration file </div> 
-            <input  (click)='SelRadio("Y-9")' class="theRadioButt" type="radio" name="ReloadChart"  id="ReloadChart" formControlName="ReloadChart"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-            <input  (click)='SelRadio("N-9")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadChart"  formControlName="ReloadChart"  id="ReloadChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
-        </div>
-        <div class="skipLine">&nbsp;</div>   
-
-
-<div *ngIf="error_msg!=='' && errorFn==='Copy'" class="error">{{error_msg}}</div>
-<!--
-<div style="margin-left:25px; font-size:14px; color:blue; dislay: inline-block; background-color: cyan;">{{message}}</div>
--->
-<div *ngIf="theResetServer===true && error_msg!=='' ">
-    <div class="skipLine">&nbsp;</div>
-    <div  style="color:red; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  > 
-        <div class="skipLine">&nbsp;</div>
-        {{error_msg}}
-        <div class="skipLine">&nbsp;</div>
+<div class="skipLine">&nbsp;</div>
+<div id='posTopHealth' [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:280px; margin-left:20px; border:solid 2px blue; ">
+    <div class="skipLine">&nbsp;</div>  
+    <div  >
+        <div class="theRadio">Create a new day </div>  
+        <input  (click)='SelRadio("Y-1")' class="theRadioButt" type="radio" name="CreateNew" formControlName="CreateNew" id="CreateNew"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-1")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CreateNew" formControlName="CreateNew" id="CreateNew"  value="N">  <span class="YesNo">&nbsp;&nbsp;No</span> 
     </div>
-    <div class="skipLine">&nbsp;</div>
+    <div  >
+        <div class="theRadio">Display a specific day </div> 
+        <input  (click)='SelRadio("Y-2")' class="theRadioButt" type="radio" name="DisplaySpecific" formControlName="DisplaySpecific" id="DisplaySpecific" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-2")' class="theRadioButt" style="margin-left:10px;" type="radio" name="DisplaySpecific" formControlName="DisplaySpecific" id="DisplaySpecific" value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
+    </div>
+    <div  >
+        <div class="theRadio">Display all days </div> 
+        <input  (click)='SelRadio("Y-3")'class="theRadioButt" type="radio" name="DisplayAll" formControlName="DisplayAll" id="DisplayAll" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-3")'class="theRadioButt"  style="margin-left:10px;" type="radio" name="DisplayAll" formControlName="DisplayAll" id="DisplayAll" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
+    </div>
+    <div  >
+        <div class="theRadio">Copy Master File </div> 
+        <input  (click)='SelRadio("Y-4")' class="theRadioButt" type="radio" name="CopyFile" formControlName="CopyFile" id="CopyFile" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-4")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CopyFile" formControlName="CopyFile" id="CopyFile" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
+    </div>
+    <div  >
+        <div class="theRadio">Mgt Calories & Fat </div> 
+        <input    (click)='SelRadio("Y-5")' class="theRadioButt" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
+        <input   (click)='SelRadio("N-5")' class="theRadioButt" style="margin-left:10px;" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
+    </div>
+    <div >
+        <div class="theRadio">Calculate Calories & Fat </div> 
+        <input  *ngIf="EventHTTPReceived[2]===true" (click)='SelRadio("Y-6")' class="theRadioButt" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="Y" >  <span *ngIf="EventHTTPReceived[2]===true" class="YesNo">&nbsp;&nbsp;Yes</span>
+        <input  *ngIf="EventHTTPReceived[2]===true" (click)='SelRadio("N-6")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="N" >  <span  *ngIf="EventHTTPReceived[2]===true"sclass="YesNo">&nbsp;&nbsp;No</span>
+    </div>
+     <div >
+        <div class="theRadio">Display the charts </div> 
+        <input  (click)='SelRadio("Y-7")' class="theRadioButt" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-7")' class="theRadioButt" style="margin-left:10px;" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
+    </div>
+    <div >
+        <div class="theRadio">Re-load HTML configuration file </div> 
+        <input  (click)='SelRadio("Y-8")' class="theRadioButt" type="radio" name="ReloadHTML"  id="ReloadHTML" formControlName="ReloadHTML" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-8")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadHTML" formControlName="ReloadHTML" id="ReloadHTML" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
+    </div>
+    <div >
+         <div class="theRadio">Re-load Chart configuration file </div> 
+        <input  (click)='SelRadio("Y-9")' class="theRadioButt" type="radio" name="ReloadChart"  id="ReloadChart" formControlName="ReloadChart"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-9")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadChart"  formControlName="ReloadChart"  id="ReloadChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
+    </div>
+    <div class="skipLine">&nbsp;</div>   
 </div>
 
 <div id='posTopAppCalFat' *ngIf="isMgtCaloriesFat===true && EventHTTPReceived[1]===true && EventHTTPReceived[6]===true  && tabLock[1].lock!==3">
@@ -87,6 +69,18 @@
     <div class="skipLine">&nbsp;</div>
 </div>
 
+<div *ngIf="error_msg!=='' && errorFn==='Copy'" class="error">{{error_msg}}</div>
+
+<div *ngIf="theResetServer===true && error_msg!=='' ">
+    <div class="skipLine">&nbsp;</div>
+    <div  style="color:red; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  > 
+        <div class="skipLine">&nbsp;</div>
+        {{error_msg}}
+        <div class="skipLine">&nbsp;</div>
+    </div>
+    <div class="skipLine">&nbsp;</div>
+</div>
+
 <div  *ngIf="errCalcCalFat" >
     <div class="skipLine">&nbsp;</div>
     <div style="margin-top:8px; margin-left:8px; color:red; font-weight: bold; width:400px; display:inline-block; background: rgb(241, 229, 229);"  >
@@ -97,7 +91,7 @@
 </div>
 
 <div *ngIf="(theResetServer===false && ((isDeleteConfirmed===false && error_msg!=='' && errorFn==='delDate') || 
-(IsSaveConfirmedAll===false && error_msg!=='' && errorFn==='All')))">
+        (IsSaveConfirmedAll===false && error_msg!=='' && errorFn==='All')))">
     <div class="skipLine">&nbsp;</div>
     <div  style="margin-top:8px; margin-left:8px; color:red; font-weight: bold; width:400px; display:inline-block; background: lightgrey;"  > 
         <div class="skipLine">&nbsp;</div>
@@ -141,98 +135,93 @@
     </div>
     <div class="skipLine">&nbsp;</div>
     <div *ngIf="isSelectedDateFound===true">
-            <div style="width:90%; margin-left:45px;">
-                <label class="theLabel">Date</label>
-                <input type="date" (input)="onInputDaily($event)" id="Seldate-{{0}}" class="inputText" value="{{SelectedRecord.date}}" >
+        <div style="width:90%; margin-left:45px;">
+            <label class="theLabel">Date</label>
+            <input type="date" (input)="onInputDaily($event)" id="Seldate-{{0}}" class="inputText" value="{{SelectedRecord.date}}" >
+        </div>
+        <div style="width:90%; margin-left:45px;">
+            <label class="theLabel" >burnt calories</label>
+            <input type="text"   (input)="onInputDaily($event)" id="Selburn" class="inputText" value="{{SelectedRecord.burntCalories}}" >
+        </div>            
+        <div *ngFor="let meal of SelectedRecord.meal; let k=index" [ngClass]="{'even': k % 2 ===0, 'odd': k % 2 !==0}" class="mealBlock">
+            <div class="dropdown " >
+                <span id="SelDialogueMeal-{{k}}" class="circle" style='margin-left:20px;' (click)="onAction($event)">A</span>
+                <div  *ngIf="dialogue[4]===true && TabOfId[0]===k" [ngStyle]="styleBox">
+                     <div  [ngStyle]="styleBoxOption" >
+                        <li *ngFor="let action of TabAction; let m=index;" 
+                                class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    (click)="onAction($event)" id="SelMeal-{{k}}" [value]="action.name" >{{action.name}}
+                        </li>
+
+                     </div>
+                </div>
             </div>
-            <div style="width:90%; margin-left:45px;">
-                <label class="theLabel" >burnt calories</label>
-                <input type="text"   (input)="onInputDaily($event)" id="Selburn" class="inputText" value="{{SelectedRecord.burntCalories}}" >
-            </div>            
-            <div *ngFor="let meal of SelectedRecord.meal; let k=index" [ngClass]="{'even': k % 2 ===0, 'odd': k % 2 !==0}" class="mealBlock">
+            <label class="theLabel lMeal"  >Meal</label>
+            <input  type="text" (input)="onInputDaily($event)" id="Selmeal-{{k}}" class="inputText" value="{{meal.name}}" >
+
+            <div *ngFor="let theIngred of SelectedRecord.meal[k].dish; let j=index" style="margin-left:30px;">
                 <div class="dropdown " >
-                    <span id="SelDialogueMeal-{{k}}" class="circle" style='margin-left:20px;' (click)="onAction($event)">A</span>
-
-                    <div  *ngIf="dialogue[4]===true && TabOfId[0]===k" [ngStyle]="styleBox">
-                        <div   [ngStyle]="styleBoxOption" >
-
+                    <span id="SelDialogueIngr-{{k}}-{{j}}" class="circle" (click)="onAction($event)">A</span>
+                    <div  *ngIf="dialogue[5]===true && TabOfId[0]===k && TabOfId[1]===j" [ngStyle]="styleBox">
+                        <div  [ngStyle]="styleBoxOption">
                             <li *ngFor="let action of TabAction; let m=index;" 
-                                    class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                        (click)="onAction($event)" id="SelMeal-{{k}}" [value]="action.name" >{{action.name}}</li>
-
-                        </div>
-                    </div>
-                </div>
-                <label class="theLabel lMeal"  >Meal</label>
-                <input  type="text" (input)="onInputDaily($event)" id="Selmeal-{{k}}" class="inputText" value="{{meal.name}}" >
-
-                <div *ngFor="let theIngred of SelectedRecord.meal[k].dish; let j=index" style="margin-left:30px;">
-                    <div class="dropdown " >
-                        <span id="SelDialogueIngr-{{k}}-{{j}}" class="circle" (click)="onAction($event)">A</span>
-
-                        <div  *ngIf="dialogue[5]===true && TabOfId[0]===k && TabOfId[1]===j" [ngStyle]="styleBox">
-                            <div  [ngStyle]="styleBoxOption">
-
-                                    <li *ngFor="let action of TabAction; let m=index;" 
                                         class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                            (click)="onAction($event)" id="SelIngr-{{k}}-{{j}}" [value]="action.name" >{{action.name}}</li>
-
-                            </div>
+                                            (click)="onAction($event)" id="SelIngr-{{k}}-{{j}}" [value]="action.name" >{{action.name}}
+                            </li>
                         </div>
-                    </div>
-                    
-                    <label class="theLabel lDish"  >Dish</label>
-                    <input type="text"  (input)="onInputDaily($event)" id="Selingr-{{k}}-{{j}}" class="inputText" value="{{theIngred.name}}" >
-                    <div class="spanUnit">
-                        <label class="theLabel lUnit" >quantity</label>
-                        <input type="text" (input)="onInputDaily($event)" id="Selquan-{{k}}-{{j}}" class="inputText" value="{{theIngred.quantity}}" > 
-                        <span class="oneRowUnit" *ngIf="getScreenWidth>830" >
-                            <label class="theLabel lUnit">unit</label>
-                            <input type="text" (input)="onInputDaily($event)" id="Selunit-{{k}}-{{j}}" class="inputText" value="{{theIngred.unit}}" >
-                        </span>
-    
-                        <div  *ngIf="getScreenWidth<829" >
-                            <label class="theLabel lUnit">unit</label>
-                            <input type="text" (input)="onInputDaily($event)" id="Selunit-{{k}}-{{j}}" class="inputText" value="{{theIngred.unit}}" >
-                        </div>
-
                     </div>
                 </div>
-
-            </div>
-
-            <div class="skipLine">&nbsp;</div>  
-            <div class="posConfirm">
-                <span *ngIf="IsSaveConfirmedSel===false">
-                    <button id='SelConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
-                    <button id='SelCancel' class="sizeButtons" (click)="CancelRecord($event)"> Cancel</button>
-                </span>
-            </div>
-             <span *ngIf="IsSaveConfirmedSel===true">
-                <form  [formGroup]="SpecificForm" >
-                    <div class="msg"  >
-                        Please enter the name of the file to save  :
-                        <input type='text' formControlName="FileName" >
-                    </div>                        
-                    <div class="skipLine">&nbsp;</div>
-                    <div class="posConfirm">
-                        <button id='Sel-3' class="sizeButtons" (click)="SaveHealth($event)">Confirm</button>
-                        <button id='Sel-4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
-                    </div>
-                </form>
                     
+                <label class="theLabel lDish"  >Dish</label>
+                <input type="text"  (input)="onInputDaily($event)" id="Selingr-{{k}}-{{j}}" class="inputText" value="{{theIngred.name}}" >
+                <div class="spanUnit">
+                    <label class="theLabel lUnit" >quantity</label>
+                    <input type="text" (input)="onInputDaily($event)" id="Selquan-{{k}}-{{j}}" class="inputText" value="{{theIngred.quantity}}" > 
+                    <span class="oneRowUnit" *ngIf="getScreenWidth>830" >
+                         <label class="theLabel lUnit">unit</label>
+                        <input type="text" (input)="onInputDaily($event)" id="Selunit-{{k}}-{{j}}" class="inputText" value="{{theIngred.unit}}" >
+                    </span>
+                    <div  *ngIf="getScreenWidth<829" >
+                        <label class="theLabel lUnit">unit</label>
+                        <input type="text" (input)="onInputDaily($event)" id="Selunit-{{k}}-{{j}}" class="inputText" value="{{theIngred.unit}}" >
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="skipLine">&nbsp;</div>  
+        <div class="posConfirm">
+            <span *ngIf="IsSaveConfirmedSel===false">
+                <button id='SelConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
+                <button id='SelCancel' class="sizeButtons" (click)="CancelRecord($event)"> Cancel</button>
             </span>
-            <div class="skipLine">&nbsp;</div> 
+        </div>
+        <span *ngIf="IsSaveConfirmedSel===true">
+            <form  [formGroup]="SpecificForm" >
+                <div class="msg"  >
+                    Please enter the name of the file to save  :
+                    <input type='text' formControlName="FileName" >
+                </div>                        
+                <div class="skipLine">&nbsp;</div>
+                <div class="posConfirm">
+                    <button id='Sel-3' class="sizeButtons" (click)="SaveHealth($event)">Confirm</button>
+                    <button id='Sel-4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
+                </div>
+            </form>
+                    
+        </span>
+        <div class="skipLine">&nbsp;</div> 
     </div>
 </div>
 
 <!--   CREATION OF A DAY  -->
 
 <div *ngIf="isCreateNew===true && this.tabLock[0].lock !== 2"
-style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px green; width:90%">
+            style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px green; width:90%">
     <div class="skipLine">&nbsp;</div>
     <div  style="display:block; color:white; background:blue; width:80%; height:40px; margin-left:20px; border:solid 0px blue; text-align: center; font-size:16px; padding-top:8px;">
-    Create your record
+            Create your record
     </div>
     <div class="error" *ngIf="errorFn==='Cre'">
         <div class="skipLine">&nbsp;</div>
@@ -242,14 +231,12 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
     <div *ngFor="let myDaily of HealthData.tabDailyReport; let i=index" >
         <div class="dropdown " >
             <span id="CreDialogueDate-{{i}}" class="circle" style='margin-left:20px;' (click)="onAction($event)">A</span>
-
             <div  *ngIf="dialogue[0]===true && TabOfId[0]===i" [ngStyle]="styleBox">
                 <div   [ngStyle]="styleBoxOption">
-
                     <li *ngFor="let action of TabAction; let m=index;" 
                             class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                (click)="onAction($event)" id="ActionDate-{{i}}" [value]="action.name" >{{action.name}}</li>
-
+                                (click)="onAction($event)" id="ActionDate-{{i}}" [value]="action.name" >{{action.name}}
+                    </li>
                 </div>
             </div>
         </div>
@@ -269,26 +256,23 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
                     <div   [ngStyle]="styleBoxOption">
                         <li *ngFor="let action of TabAction; let m=index;" 
                                 class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                    (click)="onAction($event)" id="CreMeal-{{i}}-{{k}}" [value]="action.name" >{{action.name}}</li> 
+                                    (click)="onAction($event)" id="CreMeal-{{i}}-{{k}}" [value]="action.name" >{{action.name}}
+                        </li> 
                     </div>
                 </div>
             </div>
             <label class="theLabel lMeal"  >Meal</label>
             <input type="text" (input)="onInputDaily($event)" id="meal-{{i}}-{{k}}" class="inputText" value="{{meal.name}}" >
-
-
-
+            
             <div *ngFor="let theIngred of HealthData.tabDailyReport[i].meal[k].dish; let j=index" style="margin-left:30px;">
                 <div class="dropdown " >
                     <span id="CreDialogueIngr-{{i}}-{{k}}-{{j}}" class="circle" (click)="onAction($event)">A</span>
-
                     <div  *ngIf="dialogue[2]===true && TabOfId[0]===i && TabOfId[1]===k && TabOfId[2]===j" [ngStyle]="styleBox">
-                        <div   [ngStyle]="styleBoxOption">
-
+                        <div  [ngStyle]="styleBoxOption">
                                 <li *ngFor="let action of TabAction; let m=index;" 
                                     class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                        (click)="onAction($event)" id="CreIngr-{{i}}-{{k}}-{{j}}" [value]="action.name" >{{action.name}}</li>
-  
+                                        (click)="onAction($event)" id="CreIngr-{{i}}-{{k}}-{{j}}" [value]="action.name" >{{action.name}}
+                                </li> 
                         </div>
                     </div>
                 </div>
@@ -342,16 +326,10 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
 
 <!--------------- DISPLAY ALL -->
 <div *ngIf="EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true" style="margin-left:20px;">
-    <!--
-    <div style="font-size:12px; color:red; width:100%;">{{error_msg}}</div>
-    -->
-  
     <div id="ListAll">&nbsp;</div> 
     <div *ngIf="isDeleteConfirmed===true">
         <div class="skipLine">&nbsp;</div>
-        <div class="error"   >
-            {{error_msg}}
-        </div>
+        <div class="error" >{{error_msg}}</div>
         <div class="skipLine">&nbsp;</div>
         <div class="posConfirm">
             <button id='Del-1' class="sizeButtons" (click)="ConfirmDelDate()">Confirm</button>
@@ -382,12 +360,7 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
     </div>
 
     <div style="margin-top:1px; width:98%; min-width:98%;"></div>
-    <!--
-        --thHeight:{{confTableAll.title.height}}; --thColor:{{confTableAll.title.color}}; --thBackground:{{confTableAll.title.background}}; 
-        --wDate:{{confTableAll.colWidth.date}}; --wAction:{{confTableAll.colWidth.action}}; --wMeal:{{confTableAll.colWidth.meal}};
-        --wIngr:{{confTableAll.colWidth.ingr}}; --wCalBurnt:{{confTableAll.colWidth.calBurnt}}; 
-        --wOther:{{confTableAll.colWidth.other}};
-    -->
+
     <div   id="posAfterTitle"  [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width, 'color':confTableAll.color, 'background-color':confTableAll.background }"  
         style="overflow-y:scroll; padding:0.3px; " >
         <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
@@ -430,21 +403,18 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
     <div class="dropdown " *ngIf=" dialogue[6]===true">
 
         <div  [ngStyle]="styleBox" >
-            <div  [ngStyle]="styleBoxOption">
-        
+            <div  [ngStyle]="styleBoxOption">       
                 <li *ngFor="let action of NewTabAction; let m=index;" 
                         class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                             (click)="onDropDownAll($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{action.type}}-{{action.name}}">
                             <span *ngIf="m>0">&nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}</span>
                             <span *ngIf="m===0">&nbsp;&nbsp;{{action.name}}</span>
                 </li>
-            </div>            
-        
+            </div>                   
         </div>
     </div>
     <div [ngStyle]="styleBox"  *ngIf="isDeleteItem===true">
-        <div  [ngStyle]="styleBoxOption" style="  background: cyan; ">
-
+        <div [ngStyle]="styleBoxOption" style="  background: cyan; ">
             <div style="width:100%; color:blue; font-size:14px; text-align: center; ">Confirm the deletion of {{delMsg}}</div> 
                 <div  class="theRadio" style='margin-left:40px; margin-top:8px;'>
                     <input   style='margin-left:18px;'(click)='DelAfterConfirm($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="Y" > &nbsp;&nbsp;Yes 
@@ -459,8 +429,7 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
 
     <div class="dropdown " *ngIf="tabInputMeal.length>0 ">
         <div  [ngStyle]="styleBoxMeal" >
-            <div   [ngStyle]="styleBoxOptionMeal" 
-                                >  
+            <div   [ngStyle]="styleBoxOptionMeal">  
                 <li *ngFor="let tabMeal of tabInputMeal; let m=index;" 
                         class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                             (click)="onSelMealFood($event)" id="selMeal-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{tabMeal}}">
@@ -472,10 +441,8 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
 
     <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH EXISTING FOOD STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputFood-->
     <div class="dropdown " *ngIf="tabInputFood.length>0">
-
         <div [ngStyle]="styleBoxFood" >
             <div   [ngStyle]="styleBoxOptionFood">
-        
                 <li *ngFor="let tabFood of tabInputFood; let m=index;" 
                         class="Straight-options" [ngStyle]="{'width.px':sizeBox.widthOptions}" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                             (click)="onSelMealFood($event)" id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="m">
@@ -490,29 +457,16 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
                 'height.px': confTableAll.height, 'background-color':confTableAll.background}"
                 style="overflow:scroll"  > 
 
-
-
-
         <div *ngFor="let myDaily of HealthAllData.tabDailyReport; let i=index">
         
             <div *ngFor="let meal of HealthAllData.tabDailyReport[i].meal; let k=index">
               
                 <div *ngFor="let theIngred of HealthAllData.tabDailyReport[i].meal[k].dish; let j=index">
 
-                   <!--
-                     style="--rowHeight:{{confTableAll.row.height}}; --rowColor:{{confTableAll.row.color}}; --rowBackG:{{confTableAll.row.background}}; 
-                            --rEven:{{confTableAll.row.even}}; --rOdd:{{confTableAll.row.odd}}; --rNewbackG:{{confTableAll.rowNew.background}};  --rNewcol:{{confTableAll.rowNew.color}};
-                            --wDate:{{confTableAll.colWidth.date}}; --wAction:{{confTableAll.colWidth.action}}; --wMeal:{{confTableAll.colWidth.meal}};
-                            --wIngr:{{confTableAll.colWidth.ingr}}; --wCalBurnt:{{confTableAll.colWidth.calBurnt}}; 
-                            --wOther:{{confTableAll.colWidth.other}}; " 
-                   -->
-                    <div 
-                           
-
-                            *ngIf="searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
+                    <div *ngIf="searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
                             (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))">
                            
-                            <div  *ngIf="checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)"
+                        <div  *ngIf="checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)"
                             [ngStyle]="{'backgroung-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}"  >
                             
                             <span   class="tReadOnly  widthAction boxAction" 
@@ -526,9 +480,9 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
                                 *ngIf="k===0 && j===0" id="dateAll-{{i}}"  (input)="onInputDailyAll($event)" value="{{ myDaily.date}}" >
                             <span  class="trow widthDate " 
                                 [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                style="pointer-events: none;" *ngIf="k!==0 || j!==0"  >&nbsp;</span>
+                                style="pointer-events: none;" *ngIf="k!==0 || j!==0"  >&nbsp;
+                            </span>
                             
-
                             <input type="text" class="trow widthCalBurnt" 
                                 [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 *ngIf="k===0 && j===0" id="burnAll-{{i}}"  (input)="onInputDailyAll($event)" 
@@ -536,14 +490,16 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
                             <span type="text" class="trow widthCalBurnt" 
                                 [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 *ngIf="k!==0 || j!==0" id="burnAll-{{i}}"  (input)="onInputDailyAll($event)" 
-                                   >&nbsp;</span>
+                                   >&nbsp;
+                            </span>
             
                             <input type="text" class="trow widthMeal"  
                                 [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 *ngIf="j===0" id="mealAll-{{i}}-{{k}}"  (input)="onInputDailyAll($event)" value="{{meal.name }}"   >
                             <span  class="trow widthMeal" 
                                 [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                style="pointer-events: none;" *ngIf="j!==0"   >&nbsp;</span>
+                                style="pointer-events: none;" *ngIf="j!==0"   >&nbsp;
+                            </span>
 
                             <input type="text" class="trow widthIngr"
                                 [ngStyle]="{'width':confTableAll.colWidth.ingr , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
@@ -553,7 +509,7 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
                                 [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.quantity }}"id="quanAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)"  >
                             
-                                <input type="text"  class="trow widthOther"  
+                            <input type="text"  class="trow widthOther"  
                                 [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.unit }}" id="unitAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)" >
                             <input type="text"  class="tReadOnly widthCalBurnt"      
@@ -561,7 +517,7 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
                                 value="{{theIngred.calFat.Calories  | number:'1.0-0'}}"  >
                             <input type="text"  class="tReadOnly widthOther"  
                                 [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                             value="{{theIngred.calFat.Cholesterol  | number:'1.1-1'}}"  >
+                                value="{{theIngred.calFat.Cholesterol  | number:'1.1-1'}}"  >
                             <input type="text"  class="tReadOnly  widthOther"  
                                 [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.GlyIndex  | number:'1.1-1'}}"  >
@@ -628,8 +584,7 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
                         <!--
                             style="--Tcol:{{confTableAll.Total.color}}; --TfontW:{{confTableAll.Total.fontWeight}}; --Theight:{{confTableAll.Total.height}}"
                         -->
-                        <div *ngIf="HealthAllData.tabDailyReport[i].meal.length-1===k && HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''" [ngStyle]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}"
-                        >
+                        <div *ngIf="HealthAllData.tabDailyReport[i].meal.length-1===k && HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''" [ngStyle]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}">
                             <span class="Total widthAction" 
                             [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
                             >&nbsp;</span>                           
@@ -720,7 +675,7 @@ style="margin-left:20px; background-color: rgb(162, 249, 205); border:double 1px
     </div>
 
 </div>
-</div>
+
 <div class="skipLine">&nbsp;</div>
 <div class="skipLine">&nbsp;</div>
 <div class="skipLine">&nbsp;</div>

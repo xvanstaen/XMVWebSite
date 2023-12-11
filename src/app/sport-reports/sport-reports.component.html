@@ -31,7 +31,7 @@
         </app-manage-circuits>
     </div>  
  
-    <div  class="quest" style="width:580px; margin-left:20px; background-color: cyan;" *ngIf="isSpecificCircuitReceived===true || filePerf.length>0"  >
+    <div  class="quest" style="width:580px; margin-left:20px; background-color: cyan;" *ngIf="isSpecificCircuitReceived===true && filePerf.length>0"  >
 
         <div style="width:100%; display:inline-block; text-align: center; font-size:17px; font-weight: bolder; margin-top:4px; "> You have selected</div>
       
@@ -43,14 +43,13 @@
             <span class="aLabel"  style="padding-left:15px; width:30%;"> Performance file </span>
             <span  style="color:blue; font-weight: bold; width:65%;" >{{nameFilePerf}}</span>
         </div>
-        <div *ngIf="isPerfCircuitRetrieved===0" style="width:100%; display:inline-block;  margin-top:8px; background-color: cyan; color:blue">
-            Do you want to retrieve the PerfCircuit file if it exists
+        <div class="quest" >
+            <div class="aLabel " style="width:100%;"> Do you want to retrieve the PerfCircuit file if it exists</div>
             <button class="sizeButtons" style="margin-top:8px;" id="Yes" (click)="retrievePerfCircuit('Yes')">Yes</button>
             <button class="sizeButtons" style="margin-top:8px;" id="No" (click)="retrievePerfCircuit('No')">No</button>
         </div>
-        <div class="quest"  style="margin-top:5px;" *ngIf="isSpecificCircuitReceived===true && filePerf.length>0 && 
-                    (isPerfCircuitRetrieved===2 || isPerfCircuitRetrieved===3)">
-            <div class="aLabel " style="width:100%;"> Do you want to calculate the performance of your activity?</div>
+        <div class="quest"  style="margin-top:5px;" >
+            <div class="aLabel " style="width:100%; font-weight:bolder; "> Do you want to calculate the performance of your activity?</div>
             <button class="sizeButtons" style="margin-top:8px;" id="CircuitYes" (click)="onCalculatePerf()">Yes</button>
             <button class="sizeButtons" id="CircuitNo" >No</button>
         </div>
@@ -61,7 +60,7 @@
     </div>
     <div class="skipLine"></div> 
     <div *ngIf="errorMessage!==''" style="color:red; font-size:15px; width:120px; display:inline-block">{{errorMessage}}</div>
-    <div   style=" margin-left:20px; " *ngIf="(tabCircuit.length>0 || isPerfCircuitRetrieved===1) && perfTotalCircuit.length>0">
+    <div   style=" margin-left:20px; " *ngIf="perfTotalCircuit.length>0">
 
         <div class="quest"  style="width:580px; margin-top:5px; margin-left:0px; background-color: rgb(245, 101, 101)" *ngIf="isFilesToSave===false">
             <div class="skipLine"></div> 
@@ -84,7 +83,7 @@
             </div>
             <div class="skipLine"></div>
         </div>
-        <div class="quest"  style=" width:580px;margin-left:0px; margin-top:5px; background-color: rgb(245, 101, 101); color:green; font-size: 16px; font-weight: bolder;" *ngIf="saveMsg!==''" >{{saveMsg}}</div>
+        <div class="quest"  style=" width:580px;margin-left:0px; margin-top:5px; background-color: rgb(245, 101, 101); color:green; font-size: 16px; font-weight: bolder;" *ngIf="saveMsg!==''" >{{nbSavedFiles}}{{saveMsg}}</div>
         <div class="skipLine"></div> 
         <div *ngIf="isManageExclude===true" style="width:100%; display:inline-block;">
             <div > <!-- class="dropdown " -->
@@ -111,10 +110,14 @@
                         <label style="width:160px; padding-left:10px; color:blue;">To PoR</label> {{perfCircuit[TabOfId[0]].newLoop[TabOfId[1]].to}} 
                     </div>
                     <button *ngIf="perfCircuit[TabOfId[0]].newLoop[TabOfId[1]].exclude!==''" class="sizeButtons" style="margin-top:8px;" id="accept" (click)="actionExclude($event)">Accept</button>
-                    <button *ngIf="perfCircuit[TabOfId[0]].newLoop[TabOfId[1]].exclude!=='D'" class="sizeButtons" style="margin-top:8px;" id="delete" (click)="actionExclude($event)">Delete</button>
-                    <button *ngIf="perfCircuit[TabOfId[0]].newLoop[TabOfId[1]].exclude!=='E'" class="sizeButtons" style="margin-top:8px;" id="exclude" (click)="actionExclude($event)">Exclude</button>
-                    
-                    <button class="sizeButtons" style="margin-top:8px;" id="keep" (click)="actionExclude($event)">No action</button>
+                    <button *ngIf="perfCircuit[TabOfId[0]].newLoop[TabOfId[1]].exclude!=='E' && perfCircuit[TabOfId[0]].newLoop[TabOfId[1]].exclude!=='D'" class="sizeButtons" style="margin-top:8px;" id="exclude" (click)="actionExclude($event)">Exclude</button>
+                    <button  *ngIf="perfCircuit[TabOfId[0]].newLoop[TabOfId[1]].exclude!=='D'"class="sizeButtons" style="margin-top:8px;" id="delete" (click)="actionExclude($event)">Delete</button>
+                    <button  class="sizeButtons" style="margin-top:8px;" id="restore" (click)="actionExclude($event)">Restore</button>
+                     
+                    <button class="sizeButtons" style="margin-top:8px;" id="keep" (click)="actionExclude($event)">Cancel</button>
+                    <div style="color:blue; width:100%;  display:inline-block;" *ngIf="perfCircuit[TabOfId[0]].newLoop[TabOfId[1]].exclude==='D'">
+                        <label style="width:160px; padding-left:10px; color:blue;">Note: Delete will erase the data of the selected item </label>  
+                    </div>
                     <div [formGroup]="formOptions" >
                         <div style="width:95%; margin-left:10px; display:inline-block; margin-top:25px; color:red">{{errorMsg}}</div>
                         <div style="width:100%; display:inline-block; margin-top:25px;">
@@ -124,42 +127,43 @@
                             <label style="width:150px; padding-left:10px; color:blue;">Lat & Lon</label>{{newLat}} &nbsp;{{newLon}}
                         </div>
                         <button  class="sizeButtons" style="margin-top:8px;" id="search" (click)="actionExclude($event)">Search</button>
-                        <button  *ngIf="isNewRecordValid===true && isModifOk===true" class="sizeButtons" style="margin-top:8px;" id="modify" (click)="actionExclude($event)">Modify</button>
+                        <button  *ngIf="isNewRecordValid===true && isModifOk===true" class="sizeButtons" style="margin-top:8px;" id="modFrom" (click)="actionExclude($event)">Modify From</button>
+                        <button  *ngIf="isNewRecordValid===true && isModifOk===true" class="sizeButtons" style="margin-top:8px;" id="modTo" (click)="actionExclude($event)">Modify To</button>
                         <div class="skipLine"></div> 
                     </div>
                     
                 </div>
             </div>
         </div>
-        <div   id='scroll-1' style="overflow:hidden;  max-height:400px; max-width:701px;">
+        <div   id='scroll-1' style="overflow:hidden;  max-height:400px; " [ngStyle]="{'max-width.px':maxWidthTable}">
             
     
         <!-- Action on loop: delete or restore -->
-            <table  [ngStyle]="{'width.px':(perfTotalCircuit[0].newLoop.length)*80+200}"> 
+            <table  [ngStyle]="{'width.px':widthTable}"> 
                 <thead>
                     <tr  style="background-color:lightgrey;">
                         <td class="tabH" style="text-align:center; width:200px;">Action </td>
                         <td class="actionLoop tabH " *ngFor="let sub of tabManageLoop; let j=index" id="loop-{{j}}" (click)="manageDisplayLoop($event)" 
-                                        [ngClass]="{'delLoop':tabManageLoop[j]==='D'}" >
+                                        [ngClass]="{'delLoop':tabExclDel[j]==='D'}" >
                             
                             <span style="text-align:center; " id="loop-{{j}}"   >{{sub}}</span>
                         </td>
                     </tr>
                     <tr>
                         <th class="tabH"  style="width:200px; ">Section </th>
-                        <th class="tabH"  *ngFor="let tab of perfTotalCircuit[0].newLoop; let i=index"  [ngClass]="{'delLoop':tabManageLoop[i]==='D'}">Loop#{{i+1}} </th>
+                        <th class="tabH"  *ngFor="let tab of perfTotalCircuit[0].newLoop; let i=index"  [ngClass]="{'delLoop':tabExclDel[i]==='D'}">Loop#{{i+1}} </th>
                     </tr>
                 </thead>
             </table>
         </div>
-        <div   style="overflow:scroll;  max-height:500px; max-width:701px; " class="myScrollBar" id="scroll-2" (scroll)="syncScrollBar($event)">
-            <table   [ngStyle]="{'width.px':(perfTotalCircuit[0].newLoop.length)*80+200}"> 
+        <div   style="overflow-y:scroll;  max-height:500px;" [ngStyle]="{'max-width.px':maxWidthTable, 'overflow-x': widthTable === maxWidthTable ? 'hidden' : 'overflow' }" class="myScrollBar" id="scroll-2" (scroll)="syncScrollBar($event)">
+            <table   [ngStyle]="{'width.px':widthTable}"> 
                 
                 <tbody *ngFor="let tab of perfCircuit; let i=index" [ngClass]=" {'backSubTot': i ===nbItemsLoop, 'backEven': i !==nbItemsLoop && i % 2 ===0, 'backOdd': i !==nbItemsLoop && i % 2 !==0}"  >
                     
                     <tr >
                         <td class="tabRow" style="text-align:center; width:200px;">{{tab.newLoop[0].from}}'-'{{tab.newLoop[0].to}} </td>
-                        <td class="tabH" [ngStyle]="{'width.px':80}" *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabManageLoop[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabManageLoop[j]==='D'}"
+                        <td class="tabH" [ngStyle]="{'width.px':80}" *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabExclDel[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabExclDel[j]==='D'}"
                             (click)="manageExclude($event)" id="E-{{i}}-{{j}}">
                             <span style="text-align:center; " id="E-{{i}}-{{j}}" *ngIf="sub.perfRecordFrom!==0" >{{sub.perfRecordFrom}}<br>{{sub.perfRecordTo}}</span>
                         </td>
@@ -167,26 +171,26 @@
                     </tr>
                     <tr >
                         <td class="tabRow" style="text-align:right; padding-right:10px;">Time (sec)</td>
-                        <td class="tabH" *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabManageLoop[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabManageLoop[j]==='D'}"
+                        <td class="tabH" *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabExclDel[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabExclDel[j]==='D'}"
                             (click)="manageExclude($event)" id="E-{{i}}-{{j}}">
                         <span id="E-{{i}}-{{j}}" >{{sub.theTime}} </span></td> 
                     </tr>
                     <tr >
                         <td class="tabRow" style="text-align:right; padding-right:10px;">Time</td>
-                        <td class="tabH"  *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabManageLoop[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabManageLoop[j]==='D'}"
+                        <td class="tabH"  *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabExclDel[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabExclDel[j]==='D'}"
                             (click)="manageExclude($event)" id="E-{{i}}-{{j}}">
                         <span  id="E-{{i}}-{{j}}">{{sub.strTime}}</span> </td>
                     </tr>
                     <tr >
                         <td class="tabRow" style="text-align:right;  padding-right:10px;">Distance (km)</td>
-                        <td class="tabH" *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabManageLoop[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabManageLoop[j]==='D'}"
+                        <td class="tabH" *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabExclDel[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabExclDel[j]==='D'}"
                         (click)="manageExclude($event)" id="E-{{i}}-{{j}}">
                         <span id="E-{{i}}-{{j}}">{{sub.dist  | number:'1.1-3'}} </span>
                     </td>
                     </tr>
                     <tr >
                         <td class="tabRow" style="text-align:right;  padding-right:10px;">Speed (km/h)</td>
-                        <td class="tabH" *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabManageLoop[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabManageLoop[j]==='D'}"
+                        <td class="tabH" *ngFor="let sub of perfCircuit[i].newLoop; let j=index"  [ngClass]="{'exclude':perfCircuit[i].newLoop[j].exclude==='E' && tabExclDel[j]!=='D','mgtExcl':perfCircuit[i].newLoop[j].exclude==='D', 'delLoop':tabExclDel[j]==='D'}"
                         (click)="manageExclude($event)" id="E-{{i}}-{{j}}">
                         <span  id="E-{{i}}-{{j}}" >{{sub.speed  | number:'1.1-2'}} </span></td>
                     </tr>
@@ -195,24 +199,24 @@
             <div class="skipLine"></div>
             
         </div>
-        <div *ngIf="perfTotalCircuit.length>0"  id='scroll-3' style="overflow:hidden;  max-height:400px; max-width:701px;">
-            <table [ngStyle]="{'width.px':(perfTotalCircuit[0].newLoop.length)*80+200}" class="okTotalLoop">
+        <div *ngIf="perfTotalCircuit.length>0"  id='scroll-3' style="overflow:hidden;  max-height:400px;" [ngStyle]="{'max-width.px':maxWidthTable}">
+            <table [ngStyle]="{'width.px':widthTable}" class="okTotalLoop">
                 <thead>
                     <tr>
                         <th class="tabH okTotalLoop" style="width:200px; " >TOTAL CIRCUIT</th>
-                        <th class="tabH " *ngFor="let tab of perfTotalCircuit[0].newLoop; let i=index"  [ngClass]="{'delLoop':tabManageLoop[i]==='D', 'okTotalLoop':tabManageLoop[i]!=='D'}">Loop#{{i+1}} </th>
+                        <th class="tabH " *ngFor="let tab of perfTotalCircuit[0].newLoop; let i=index"  [ngClass]="{'delLoop':tabExclDel[i]==='D', 'okTotalLoop':tabExclDel[i]!=='D'}">Loop#{{i+1}} </th>
                     </tr>
                 </thead>
                 <tbody *ngFor="let tab of perfTotalCircuit; let i=index">
                     
                     <tr  *ngIf="i===0">
                         <td class="tabRow okTotalLoop" style="text-align:right;  padding-right:10px;">Time</td>
-                        <td class="tabH"   *ngFor="let sub of perfTotalCircuit[i].newLoop; let j=index"  [ngClass]="{'delLoop':tabManageLoop[j]==='D', 'okTotalLoop':tabManageLoop[j]!=='D'}">
+                        <td class="tabH"   *ngFor="let sub of perfTotalCircuit[i].newLoop; let j=index"  [ngClass]="{'delLoop':tabExclDel[j]==='D', 'okTotalLoop':tabExclDel[j]!=='D'}">
                         <span >{{sub.theTime}} sec - {{sub.strTime}}</span></td> 
                     </tr>
                     <tr  *ngIf="i===0">
                         <td class="tabRow okTotalLoop" style="text-align:right;  padding-right:10px;">Dist & Speed</td>
-                        <td class="tabH"   *ngFor="let sub of perfTotalCircuit[i].newLoop; let j=index"  [ngClass]="{'delLoop':tabManageLoop[j]==='D', 'okTotalLoop':tabManageLoop[j]!=='D'}">
+                        <td class="tabH"   *ngFor="let sub of perfTotalCircuit[i].newLoop; let j=index"  [ngClass]="{'delLoop':tabExclDel[j]==='D', 'okTotalLoop':tabExclDel[j]!=='D'}">
                         <span>{{sub.dist  | number:'1.1-3'}} km - {{sub.speed  | number:'1.1-2'}} km/h</span></td> 
                     </tr>
                 </tbody>
