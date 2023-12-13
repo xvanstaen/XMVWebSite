@@ -450,13 +450,11 @@ sortCircuit(){
   var iHighValue=0;
   var jHighValue=0;
 
-
   // create last record
   const classWork=new classWorkCircuit;
   this.circuitPOR.push(classWork);
   i=this.circuitPOR.length-1;
   this.circuitPOR[i].name="end loop";
-
 
   // create tabCircuit
   for ( i=0; i<this.circuitPOR.length; i++){
@@ -477,14 +475,9 @@ sortCircuit(){
       }
     }
   }
-  
-  
-
   // sort the PoR based on the record numbers found in filePerf
   this.tabCircuit.sort((a, b) => (a.record < b.record) ? -1 : 1);
-  console.log('the end');
-
-
+  //console.log('the end');
   this.nbItemsLoop=-1;
   for (i=1; i<this.tabCircuit.length; i++){
 
@@ -503,14 +496,12 @@ sortCircuit(){
             }
           }
           if (trouve===false && this.nbItemsLoop>1){
-
               this.perfCircuit.push({newLoop:[]});
               const iCheck=this.perfCircuit.length-1;
               for (var j=0; j<this.nbItemsLoop; j++){
                 const classLoop=new classNewLoop;
                 this.perfCircuit[iCheck].newLoop.push(classLoop);
               }
-
               this.perfCircuit[iCheck].newLoop[0].from=this.tabCircuit[i-1].name;
               this.perfCircuit[iCheck].newLoop[0].to=this.tabCircuit[i].name;
               trouve=true;
@@ -521,18 +512,13 @@ sortCircuit(){
           if (trouve===true ){
             const classLoop=new classNewLoop;
             for (var iCheck=this.perfCircuit[l].newLoop.length-1; this.perfCircuit[l].newLoop.length<this.nbItemsLoop && iCheck>0 ; iCheck--){
-              
               this.perfCircuit[l].newLoop.push(classLoop);
             }
             this.perfCircuit[l].newLoop.push(classLoop);
             tabLen=l;
-            
             loopLen=this.perfCircuit[l].newLoop.length-1;
             var theLoop=loopLen;
-
-
             this.perfCircuit[tabLen].newLoop[loopLen].loop=theLoop;
-            
             this.perfCircuit[tabLen].newLoop[loopLen].dist = this.filePerf[this.tabCircuit[i].record].dist - this.filePerf[this.tabCircuit[i-1].record].dist;
             this.perfCircuit[tabLen].newLoop[loopLen].theTime = this.filePerf[this.tabCircuit[i].record].time - this.filePerf[this.tabCircuit[i-1].record].time;
             this.perfCircuit[tabLen].newLoop[loopLen].speed = this.perfCircuit[tabLen].newLoop[loopLen].dist * 1000 / this.perfCircuit[tabLen].newLoop[loopLen].theTime * 3.6; 
@@ -542,27 +528,7 @@ sortCircuit(){
             this.perfCircuit[tabLen].newLoop[loopLen].perfRecordFrom = this.tabCircuit[i-1].record;
             this.perfCircuit[tabLen].newLoop[loopLen].perfRecordTo = this.tabCircuit[i].record;
             this.perfCircuit[tabLen].newLoop[loopLen].exclude = this.tabCircuit[i].exclude;
-            
-    /*  
-            //var iNew=this.perfTotalCircuit[0].newLoop.length-1;
-          
-            if (this.perfTotalCircuit[0].newLoop.length-1<theLoop){
-              //this.perfTotalCircuit.push({newLoop:[]});
-              this.perfTotalCircuit[0].newLoop.push({dist:0, theTime:0, speed:0, strTime:"", from:"",to:""});
-              this.nbItemsLoop++
-            }
-
-            this.perfTotalCircuit[0].newLoop[this.nbItemsLoop].dist=this.perfTotalCircuit[0].newLoop[this.nbItemsLoop].dist+this.perfCircuit[l].newLoop[loopLen].dist;
-            this.perfTotalCircuit[0].newLoop[this.nbItemsLoop].theTime=this.perfTotalCircuit[0].newLoop[this.nbItemsLoop].theTime+this.perfCircuit[l].newLoop[loopLen].theTime;
-            this.perfTotalCircuit[0].newLoop[this.nbItemsLoop].loop=theLoop;
-            if (this.perfTotalCircuit[0].newLoop[this.nbItemsLoop].from===""){
-              this.perfTotalCircuit[0].newLoop[this.nbItemsLoop].from=this.tabCircuit[i-1].name;
-            }
-            this.perfTotalCircuit[0].newLoop[this.nbItemsLoop].to=this.tabCircuit[i].name;
-
-    */
           } else {
-
             this.perfCircuit.push({newLoop:[]});
             tabLen=this.perfCircuit.length-1;
             const classLoop=new classNewLoop;
@@ -574,107 +540,17 @@ sortCircuit(){
             this.perfCircuit[tabLen].newLoop[loopLen].strTime=formatHHMNSS(this.perfCircuit[tabLen].newLoop[loopLen].theTime);
             this.perfCircuit[tabLen].newLoop[loopLen].from=this.tabCircuit[i-1].name;
             this.perfCircuit[tabLen].newLoop[loopLen].to=this.tabCircuit[i].name;
-            //this.perfCircuit[tabLen].newLoop[loopLen].perfRecord = this.tabCircuit[i].record;
             this.perfCircuit[tabLen].newLoop[loopLen].perfRecordFrom = this.tabCircuit[i-1].record;
             this.perfCircuit[tabLen].newLoop[loopLen].perfRecordTo = this.tabCircuit[i].record;
             this.perfCircuit[tabLen].newLoop[loopLen].exclude = this.tabCircuit[i].exclude;
             this.perfCircuit[tabLen].newLoop[loopLen].loop = loopLen;
-    /*
-            if (this.perfTotalCircuit.length===0){
-              this.perfTotalCircuit.push({newLoop:[]});
-              this.perfTotalCircuit[0].newLoop.push({dist:0, theTime:0, speed:0, strTime:"", from:"",to:""});
-              this.nbItemsLoop++
-            }
-            
-            this.perfTotalCircuit[0].newLoop[this.perfTotalCircuit[0].newLoop.length-1].dist=this.perfTotalCircuit[0].newLoop[this.perfTotalCircuit[0].newLoop.length-1].dist+this.perfCircuit[tabLen].newLoop[loopLen].dist;
-            this.perfTotalCircuit[0].newLoop[this.perfTotalCircuit[0].newLoop.length-1].theTime=this.perfTotalCircuit[0].newLoop[this.perfTotalCircuit[0].newLoop.length-1].theTime+this.perfCircuit[tabLen].newLoop[loopLen].theTime;
-            if (this.perfTotalCircuit[0].newLoop[this.perfTotalCircuit[0].newLoop.length-1].from===""){
-                this.perfTotalCircuit[0].newLoop[this.perfTotalCircuit[0].newLoop.length-1].from=this.tabCircuit[i-1].name;
-            }
-            this.perfTotalCircuit[0].newLoop[this.perfTotalCircuit[0].newLoop.length-1].to=this.tabCircuit[i].name;
-    */
+
           }
       }
               
     }
 
-/*  
-  for (i=0; i<this.perfTotalCircuit[0].newLoop.length; i++){
-      if (this.perfTotalCircuit[0].newLoop[i].dist!==0){
-        this.perfTotalCircuit[0].newLoop[i].strTime=formatHHMNSS(this.perfTotalCircuit[0].newLoop[i].theTime);
-        this.perfTotalCircuit[0].newLoop[i].speed=this.perfTotalCircuit[0].newLoop[i].dist * 1000 / this.perfTotalCircuit[0].newLoop[i].theTime * 3.6;  
-      } else {
-        this.perfTotalCircuit[0].newLoop.splice(i,1);
-        i--
-      }
-  }
 
-  if (this.perfTotalCircuit[0].newLoop.length>0){
-    
-    for ( j=1; j<this.perfCircuit.length && this.perfCircuit[j].newLoop.length===this.perfCircuit[j-1].newLoop.length; j++){
-      totalLoop++
-    }
-   
-    if (j>1 && totalLoop<this.nbItemsLoop-1){
-      this.perfTotalCircuit.push({newLoop:[]});
-      for (var i=0; i<this.perfCircuit[0].newLoop.length; i++){
-        this.perfTotalCircuit[1].newLoop.push({dist:0, theTime:0, speed:0, strTime:"", from:"",to:""});
-        
-      }
-    
-
-      for ( i=1; i<this.perfCircuit.length-1 && iTotal<totalLoop-1; i++){
-         
-        if (this.perfCircuit[i].newLoop.length-1===this.perfCircuit[i-1].newLoop.length-1){
-          // item is part of a loop
-          if (i===1){
-            iTotal++
-            for ( j=0; j<this.perfCircuit[i].newLoop.length; j++){
-              this.perfTotalCircuit[1].newLoop[j].dist=Number(this.perfTotalCircuit[1].newLoop[j].dist)+Number(this.perfCircuit[0].newLoop[j].dist);
-              this.perfTotalCircuit[1].newLoop[j].theTime=Number(this.perfTotalCircuit[1].newLoop[j].theTime)+Number(this.perfCircuit[0].newLoop[j].theTime);
-            }
-          }
-          iTotal++
-          for ( j=0; j<this.perfCircuit[i].newLoop.length; j++){
-            this.perfTotalCircuit[1].newLoop[j].dist=Number(this.perfTotalCircuit[1].newLoop[j].dist)+Number(this.perfCircuit[i].newLoop[j].dist);
-            this.perfTotalCircuit[1].newLoop[j].theTime=Number(this.perfTotalCircuit[1].newLoop[j].theTime)+Number(this.perfCircuit[i].newLoop[j].theTime);
-          }
-        }
-      }
-    }
-*/
-  
-  /*
-  console.log('totalLoop for subTotal='+totalLoop+' max loop='+this.nbItemsLoop )
-  if (this.perfTotalCircuit.length===2){
-    
-    this.perfCircuit.splice(totalLoop,0,{newLoop:[]});
-
-    for ( i=0; i<this.perfTotalCircuit[1].newLoop.length; i++){
-        this.perfTotalCircuit[1].newLoop[i].strTime=formatHHMNSS(this.perfTotalCircuit[1].newLoop[i].theTime);
-        this.perfTotalCircuit[1].newLoop[i].speed=this.perfTotalCircuit[1].newLoop[i].dist * 1000 / this.perfTotalCircuit[1].newLoop[i].theTime * 3.6;
-        const classLoop=new classNewLoop;
-        this.perfCircuit[totalLoop].newLoop.push(classLoop);
-        this.perfCircuit[totalLoop].newLoop[i].dist=this.perfTotalCircuit[1].newLoop[i].dist;
-        this.perfCircuit[totalLoop].newLoop[i].theTime=this.perfTotalCircuit[1].newLoop[i].theTime;
-        this.perfCircuit[totalLoop].newLoop[i].strTime=this.perfTotalCircuit[1].newLoop[i].strTime;
-        this.perfCircuit[totalLoop].newLoop[i].speed=this.perfTotalCircuit[1].newLoop[i].speed;
-        this.perfCircuit[totalLoop].newLoop[i].from="SUB TOTAL LOOP";
-        this.perfCircuit[totalLoop].newLoop[i].to="";
-      }
-
-      this.nbItemsLoop=totalLoop;
-    }
-  */
-
-
-/*
-  }
-  for (i=0; i<this.perfTotalCircuit[0].newLoop.length; i++){
-    this.tabManageLoop[i]="";
-  
-  }
-*/
   for (i=1; i<this.perfCircuit.length; i++){
     for (j=this.perfCircuit[i].newLoop.length; j<this.perfCircuit[0].newLoop.length; j++){
         const classLoop=new classNewLoop;

@@ -193,6 +193,7 @@
     <span class="options" >3. Manage Circuits</span>
     <span class="options" >4. Sport report</span>
     <span class="options" >5. Sport analysis</span>
+    <span class="options" >6. Sport raw data mgt</span>
 
     <br><br>
 </span>
@@ -221,6 +222,10 @@
 <div *ngIf="selectApps===5">
   <app-sport-analysis [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-sport-analysis>
+</div> 
+<div *ngIf="selectApps===6">
+  <app-sport-perf-raw-data-mgt [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-sport-perf-raw-data-mgt>
 </div> 
 
 <div *ngIf="(GoToComponent===4 || GoToComponent===5 || NbRefresh_Bucket>0) && EventHTTPReceived[0]===true && Google_Bucket_Name!=='' ">

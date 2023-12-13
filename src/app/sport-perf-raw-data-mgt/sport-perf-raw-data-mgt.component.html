@@ -1,0 +1,138 @@
+
+<body>
+
+<div  class="tabHeader" style="margin-top:15px;"> 
+    <h2>Select a file to manage</h2>
+</div>
+<!--
+<app-performance-sport   [configServer]="configServer" [identification]="identification" [credentials]="credentials"
+(returnPerf)="onSelectPerf($event)" [isPerfRetrieved]="isPerfRetrieved">
+</app-performance-sport>
+-->
+<div style="width:580px; display:inline-block; ">
+    <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="bucketName"  [NbRefresh_Bucket]="NbRefresh_Bucket"
+            (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)">
+    </app-ListBucketContent>
+</div>
+
+<div *ngIf="isPoRFileReturned===false">
+    <app-manage-point-of-ref [configServer]="configServer" [identification]="identification"
+            [isCircuitSelected]="isCircuitSelected" 
+            (returnFile)="manageFile($event)" (returnSelection)="onSelectPoR($event)">
+    </app-manage-point-of-ref>
+</div>
+
+<div class="tabHeader" *ngIf="filePerf.length===0">
+    <h3 *ngIf="errorMsg!==''">{{errorMsg}}</h3>
+    <h2  *ngIf="errorMsg===''"> No file retrieved yet </h2>
+</div>
+<div *ngIf="isFileReceived===true" style=" display:block; margin-left:20px;">
+    <button class="sizeButtons"  style="font-weight:bolder; font-size:14px;width:120px; height:50px;" id="xxx" (click)="onDownloadFile($event)">Download full file</button>
+
+    <button *ngIf=" isDisplayPerf===false && filePerf.length>0" class="sizeButtons"  style="font-weight:bolder; font-size:14px;width:120px; height:50px;" id="PerfNo" (click)="onDisplayPerf('Yes')">Display full Perf file</button>
+        
+    <button *ngIf="isDisplayPerf===true  && filePerf.length>0" class="sizeButtons" style="font-weight:bolder; font-size:14px;width:120px; height:50px;"id="PerfYes" (click)="onDisplayPerf('No')">Remove Display all Perf file</button>
+            
+    <div class="skipLine"></div>
+</div>
+<div *ngIf="filePerf.length===0" style="margin-top:50px;">&nbsp;</div>
+
+<div id="topPage"></div>
+<div *ngIf="filePerf.length>0">
+    <div class="tabHeader" *ngIf="tabPerfPoR.length===0">
+        <h2 >No PoR records found  </h2>
+    </div>
+
+    <div class="tabHeader">
+        <h2 > {{nameFilePerf}}<br>{{tabPerfPoR.length}} PoR records </h2>
+    </div>
+
+    <div class="tabHeader"  id="scroll-1" style="margin-top:-6px;">
+        <div class="blockH" >
+            <label style="width:80px;">Time</label>
+            <label >Latitude & Longitude</label>
+            <label >Point of reference</label>
+        </div>
+    </div>
+    <div class="tabContent scrollBar" id="scroll-2" (scroll)="syncScrollBar($event)" style="margin-top:-6px;">
+        <div *ngFor="let perf of tabPerfPoR; let i=index;">
+            <div class="blockR" [ngStyle]="{'margin-top.px': i===0 ? 0 : -4}" id="sel-{{i}}" (click)="onSelectPerfRow($event)" [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
+                <label id="sel-{{i}}" style="width:80px;">{{filePerf[perf.recNb].time}}</label> 
+                <label id="sel-{{i}}">{{filePerf[perf.recNb].lat | number:'1.6-6'}} &nbsp;{{filePerf[perf.recNb].lon | number:'1.6-6'}}</label> 
+                <label id="sel-{{i}}" style="width:250px; text-align:left;">{{filePerf[perf.recNb].refPoR}} </label> 
+            </div>
+        </div>
+        <div class="skipLine"></div>
+    </div>
+
+    <div class="tabHeader" *ngIf="tabPerfPoR.length===0">
+        <h2 >No PoR records found  </h2>
+    </div>
+</div>
+
+<!--    Display selected -->
+<div *ngIf="selItem!==-1" class="tabContent " style="overflow:hidden; height:190px;">
+    <div class="blockR" >
+        <span> Ref: </span><label style="margin-top:5px; width:290px; text-align:left;">{{filePerf[perfNb].refPoR}} </label>Record#{{perfNb}}
+    </div>
+    <div class="blockR" style="margin-top:-4px;">
+        <span> Time</span><label style="text-align:left; width:150px;">{{filePerf[perfNb].time}}</label> 
+        <span> Dist: </span><label style="text-align:left;"> {{filePerf[perfNb].dist}}</label> 
+    </div>
+    <div class="blockR" style="margin-top:-4px;">
+        <span> Heart: </span><label style="text-align:left; width:150px;">{{filePerf[perfNb].heart}}</label> 
+        <span> Lat & Lon: </span><label style="text-align:left;">{{filePerf[perfNb].lat | number:'1.6-6'}} &nbsp;{{filePerf[perfNb].lon | number:'1.6-6'}}</label> 
+    </div>
+    <div class="blockR" style="margin-top:-4px;">
+        <span> Slope: </span><label style="text-align:left; width:150px;">{{filePerf[perfNb].slope }} </label> 
+        <span> Alt: </span><label style="text-align:left;">{{filePerf[perfNb].alt }} </label> 
+        
+    </div>
+    <div *ngIf="selItem!==-1" style="display:block;">
+        <span style="width:80px;">New PoR</span> <input type="text" id="newPoR" name="newPoR" [value]="newPoR" style="width:280px; display:inline-block;" (input)="onInputPoR($event)">
+        <button id="confirm" (click)="onInputPoR($event)" class="sizeButtons" >Update</button>
+    </div>
+    <div style="color:red; width:200px; margin-left:80px; font-weight:bolder; margin-top:8px;">{{newPoRmsg}}</div>
+</div>
+
+
+<div *ngIf="tabInputPoR.length>0 && selItem!==-1" style="margin-left:25px; width:600px; height:100px; overflow-y:scroll;" class="myScrollBar">
+    <li class="theLi" *ngFor="let tab of tabInputPoR; let i=index" [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}"
+    (click)="onInputPoR($event)" id="selPoR-{{i}}">
+        <span id="selPoR-{{i}}" style="width:100%; display:inline-block">
+        {{tab.ref}}&nbsp;{{tab.lat}}&nbsp;{{tab.lon}}&nbsp;{{tab.varLat}}&nbsp;{{tab.varLon}}
+        </span>
+    </li>
+</div>
+<div class="skipLine"></div>
+<div *ngIf="isPerfFileModified" >
+    <button id="reset" (click)="onResetFile()" class="sizeButtons" >Reset Perf</button>
+    <button id="save" (click)="onSavePerfFile()" class="sizeButtons" >Save Perf</button>
+</div>
+<div class="skipLine"></div>
+<!-- display full performance file -->
+<div *ngIf="filePerf.length>0 && isDisplayPerf===true" >
+    <div class="tabHeader">
+        <h2 > {{nameFilePerf}}<br>{{filePerf.length}} records </h2>
+    </div>
+    <div class="tabHeader"  id="scroll-1" style="margin-top:-6px;">
+        <div class="blockH" >
+            <label style="width:80px;">Time</label>
+            <label >Latitude & Longitude</label>
+            <label >Point of reference</label>
+        </div>
+    </div>
+    <div class="tabContent myScrollBar" id="scroll-2" (scroll)="syncScrollBar($event)" style="margin-top:-6px;">
+        <div *ngFor="let perf of filePerf; let i=index;">
+            <div class="blockR" [ngStyle]="{'margin-top.px': i===0 ? 0 : -4}" id="perfSel-{{i}}" (click)="onSelectPerfRow($event)" [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
+                <label id="perfSel-{{i}}" style="width:80px;">{{perf.time}}</label> 
+                <label id="perfSel-{{i}}">{{perf.lat | number:'1.6-6'}} &nbsp;{{perf.lon | number:'1.6-6'}}</label> 
+                <label id="perfSel-{{i}}" style="width:250px; text-align:left;">{{perf.refPoR}} </label> 
+            </div>
+        </div>
+        <div class="skipLine"></div>
+    </div>
+</div>
+
+<div style="margin-top:50px;">&nbsp;</div>
+</body>

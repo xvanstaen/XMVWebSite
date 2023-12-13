@@ -627,7 +627,7 @@ ReceivedData(event:any){
 
     if (this.isPerfRetrieved===true){
       this.createFilePerf();
-      console.log('Performance-sport end process, SelectedBucketInfo.name' + this.SelectedBucketInfo.name + '  name of the file=' + this.filePerf.name + "  and length of perf file is " + this.filePerf.content.length);
+      console.log('Performance-sport end process, SelectedBucketInfo.name' + this.SelectedBucketInfo.name + "  and length of perf file is " + this.filePerf.content.length);
       this.returnPerf.emit({name:this.SelectedBucketInfo.name,file:this.filePerf});
     }
 
@@ -997,7 +997,7 @@ cancelFile(){
 createFilePerf(){
   this.filePerf.fileType='perfRawData';
   this.filePerf.circuit='';
-  this.filePerf.name='';
+  this.filePerf.name=this.SelectedBucketInfo.name;
   this.filePerf.sport=this.formOptions.controls['sport'].value;
   this.filePerf.theDate=this.formOptions.controls['theDate'].value;
   this.filePerf.content=this.perf;
@@ -1043,57 +1043,3 @@ waitHTTP(loop:number, maxloop:number, eventNb:number){
 
 }
 
-/**
- fillLatLon(startR:number,endR:number ){
-  var tabDic:Array<any>=[];
-
-  var totalRow=endR - startR +1;
-  var k=1;
-
-  tabDic[k]=Math.trunc(totalRow/2);
-  this.perf[startR+tabDic[k]].lat = (this.perf[endR+1].lat + this.perf[startR-1].lat)/2;
-  this.perf[startR+tabDic[k]].lon = (this.perf[endR+1].lon + this.perf[startR-1].lon)/2;
-
-  var refRow=tabDic[k];
-  for (var i=0; i<totalRow; i++){
-    refRow=Math.trunc(refRow/2);
-    var endLoop=false;
-    k++;
-    tabDic[k]=refRow;
-    if (this.perf[startR+tabDic[k]].lat===0){
-      for (var l=startR+tabDic[k]-1; l>startR-2 && this.perf[l].lat===0; l--){};
-      for (var m=startR+tabDic[k]+1; m<endR+2 && this.perf[m].lat===0; m++){};
-      this.perf[startR+tabDic[k]].lat = (this.perf[m].lat + this.perf[l].lat)/2;
-      this.perf[startR+tabDic[k]].lon = (this.perf[m].lon + this.perf[l].lon)/2;
-    }
-    
-
-    
-    for (var j= 3; endLoop===false; j++){
-      if (refRow * j<totalRow){
-        k++;
-        tabDic[k]=refRow * j;
-        if (this.perf[startR+tabDic[k]].lat===0){
-          for (var l=startR+tabDic[k]-1; l>startR-2 && this.perf[l].lat===0; l--){};
-          for (var m=startR+tabDic[k]+1; m<endR+2 && this.perf[m].lat===0; m++){};
-          this.perf[startR+tabDic[k]].lat = (this.perf[m].lat + this.perf[l].lat)/2;
-          this.perf[startR+tabDic[k]].lon = (this.perf[m].lon + this.perf[l].lon)/2;
-        }
-      } else {endLoop=true}
-    }
-    if (refRow===2){
-      i=totalRow+1;
-    }
-     console.log('end dichotomie');
-  }
-
-  for (var i=startR; i<endR+1; i++){
-      if (this.perf[i].lat === 0){
-          for (var l=i-1; l>startR-2 && this.perf[l].lat===0; l--){};
-          for (var n=i+1; n<endR+2 && this.perf[n].lat===0; n++){};
-          this.perf[i].lat = (this.perf[n].lat + this.perf[l].lat)/2;
-          this.perf[i].lon = (this.perf[n].lon + this.perf[l].lon)/2;
-      }
-  }
-}
- */

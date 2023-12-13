@@ -1,0 +1,94 @@
+
+
+@import "../performance-sport/performance-sport.component.css";
+
+body{
+    width:1000px;
+}
+div{
+    --mWidth:500px;
+}
+
+h2{
+    font-size:20px;
+    text-align: center;
+    border:2px solid blue;
+    padding-top:5px;
+}
+
+h3{
+    font-size:14px;
+    text-align: center;
+    border:2px solid blue;
+    padding-top:5px;
+}
+
+span{
+    width:80px;
+    display:inline-block;
+    padding-top:2px;
+    text-align: left;
+    padding-left:5px;
+}
+
+label{
+    width:200px;
+    display:inline-block;
+    padding-top:2px;
+    text-align: center;
+}
+
+.blockH{
+    width:550px; 
+    display:inline-block;
+    height:35px;
+    font-size:15px;
+    border:solid 0px red;
+}
+
+.blockR{
+    width:550px;
+    display:inline-block;
+    height:25px;
+    border:solid 0px red;
+    overflow-x:hidden;
+}
+
+.blockR:hover{
+    background-color:lightGreen;
+}
+
+.tabHeader{
+    max-height:300px; 
+    width:var(--mWidth);
+    margin-left:25px; 
+    display:inline-block; 
+    border:2px solid blue;
+    border-bottom:0px solid blue;
+    background-color: blue;
+    color:white;
+    overflow-x:hidden;
+    
+}
+
+.tabContent{
+    max-height:300px; 
+    max-width:var(--mWidth);
+    width:var(80px+200px+250px+15px);
+    margin-left:25px; 
+    display:inline-block; 
+    border:2px solid blue;
+    background-color: cyan;
+    color:blue;
+    overflow:scroll;
+}
+
+.theLi{
+    height:25px; 
+    list-style-type: none;
+}
+
+.theLi:hover{
+    background-color: lightgreen;
+}
+

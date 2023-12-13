@@ -201,5 +201,8 @@ td {
     background-color:lightyellow;
   }
 
-
+.myScrollBar{
+    scrollbar-color:orange rgb(155, 247, 247);
+    scrollbar-width: thin;
+}
 
