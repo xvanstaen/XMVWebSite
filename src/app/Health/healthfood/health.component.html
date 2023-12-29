@@ -55,25 +55,27 @@
     <div class="skipLine">&nbsp;</div>   
 </div>
 
-<div id='posTopAppCalFat' *ngIf="isMgtCaloriesFat===true && EventHTTPReceived[1]===true && EventHTTPReceived[6]===true  && tabLock[1].lock!==3">
-    <app-calories-fat [identification]="identification"  [configServer]="configServer"  [posDivCalFat]="posDivCalFat" [inFileRecipe]="fileRecipe"
-    [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock[1]" (myEmit)="SaveCaloriesFat($event)"
-    (myEmitRecipe)="SaveRecipeFile($event)" (reportCheckLockLimit)="reportCheckLockLimit($event)" (cancelSaveOther)="CancelSaveOthers($event)">
+<div id='posTopAppCalFat' *ngIf="isMgtCaloriesFat===true && EventHTTPReceived[1]===true && EventHTTPReceived[6]===true  && tabLock[1].lock!==3">  
+    <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [saveCalFatMsg]="saveCalFatMsg"
+        [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock[1]" (myEmit)="SaveCaloriesFat($event)"
+        (myEmitRecipe)="SaveRecipeFile($event)" (reportCheckLockLimit)="reportCheckLockLimit($event)" (cancelSaveOther)="CancelSaveOthers($event)">
     </app-calories-fat>
     <div class="skipLine">&nbsp;</div>
 </div>
+
 <div id='posTopAppReportHealth' *ngIf="isDisplayChart===true && EventHTTPReceived[4]===true && EventHTTPReceived[0]===true && EventHTTPReceived[5]===true && tabLock[5].lock!==3">
+    
     <app-report-health [identification]="identification"  [configServer]="configServer"  [INFileParamChart]="fileParamChart" [tabLock]="tabLock[5]"
     [ConfigChartHealth]="ConfigChart.chartHealth"  [HealthAllData]="HealthAllData" (returnFile)="saveParamChart($event)" (reportCheckLockLimit)="reportCheckLockLimit($event)"  (cancelSaveOther)="CancelSaveOthers($event)">
     </app-report-health>
     <div class="skipLine">&nbsp;</div>
 </div>
 
-<div *ngIf="error_msg!=='' && errorFn==='Copy'" class="error">{{error_msg}}</div>
+
 
 <div *ngIf="theResetServer===true && error_msg!=='' ">
     <div class="skipLine">&nbsp;</div>
-    <div  style="color:red; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  > 
+    <div  style="color:red; margin-left:20px; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  > 
         <div class="skipLine">&nbsp;</div>
         {{error_msg}}
         <div class="skipLine">&nbsp;</div>
@@ -81,7 +83,7 @@
     <div class="skipLine">&nbsp;</div>
 </div>
 
-<div  *ngIf="errCalcCalFat" >
+<div  *ngIf="errCalcCalFat!==''" >
     <div class="skipLine">&nbsp;</div>
     <div style="margin-top:8px; margin-left:8px; color:red; font-weight: bold; width:400px; display:inline-block; background: rgb(241, 229, 229);"  >
         <div class="skipLine">&nbsp;</div>
@@ -93,7 +95,7 @@
 <div *ngIf="(theResetServer===false && ((isDeleteConfirmed===false && error_msg!=='' && errorFn==='delDate') || 
         (IsSaveConfirmedAll===false && error_msg!=='' && errorFn==='All')))">
     <div class="skipLine">&nbsp;</div>
-    <div  style="margin-top:8px; margin-left:8px; color:red; font-weight: bold; width:400px; display:inline-block; background: lightgrey;"  > 
+    <div  style="margin-top:8px; margin-left:20px; color:red; font-weight: bold; width:400px; display:inline-block; background: lightgrey;"  > 
         <div class="skipLine">&nbsp;</div>
         {{error_msg}}
         <div class="skipLine">&nbsp;</div>
@@ -326,6 +328,10 @@
 
 <!--------------- DISPLAY ALL -->
 <div *ngIf="EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true" style="margin-left:20px;">
+    <div style="font-size:16px; color:blue; background-color:cyan; border:2px solid darkcyan; display:inline-block; 
+            height:46px; text-align:center; padding-top:10px; margin-top:15px;" [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width}">
+            HEALTH DATA MANAGEMENT
+    </div>
     <div id="ListAll">&nbsp;</div> 
     <div *ngIf="isDeleteConfirmed===true">
         <div class="skipLine">&nbsp;</div>
@@ -395,13 +401,11 @@
                     style='text-align:center' type="text" value="Carbs">
     </div>
 
-
     <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
     <div id="posAfterTitleB" style="margin-top:1px; width:98%; min-width:98%;"></div>
 
     <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
     <div class="dropdown " *ngIf=" dialogue[6]===true">
-
         <div  [ngStyle]="styleBox" >
             <div  [ngStyle]="styleBoxOption">       
                 <li *ngFor="let action of NewTabAction; let m=index;" 
@@ -425,8 +429,6 @@
     </div>
 
     <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH MEALS STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputMeal-->
-
-
     <div class="dropdown " *ngIf="tabInputMeal.length>0 ">
         <div  [ngStyle]="styleBoxMeal" >
             <div   [ngStyle]="styleBoxOptionMeal">  

@@ -65,15 +65,17 @@ export class HealthComponent implements OnInit {
 
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;
-  @Input() InHealthAllData=new mainDailyReport;
-  @Input() InConfigCaloriesFat=new mainClassCaloriesFat;
-  @Input() InConvertUnit=new mainClassConv;
-  @Input() InConfigHTMLFitHealth=new classConfHTMLFitHealth;
-  @Input() InConfigChart=new classConfigChart;
-  @Input() InFileParamChart=new classFileParamChart;
   @Input() triggerFunction:number=0;
-
   @Input() credentials=new classCredentials;
+
+
+  InHealthAllData=new mainDailyReport;
+  InConfigCaloriesFat=new mainClassCaloriesFat;
+  InConvertUnit=new mainClassConv;
+  InConfigHTMLFitHealth=new classConfHTMLFitHealth;
+  InConfigChart=new classConfigChart;
+  InFileParamChart=new classFileParamChart;
+ 
   
   fileParamChart=new classFileParamChart;
   ConfigChart=new classConfigChart;
@@ -713,6 +715,7 @@ CreateTabFood(item:any, value:any){
   if (item==='Food'){
     this.tabInputFood.splice(0,this.tabInputFood.length);
     this.tabFood.sort((a, b) => (a.name < b.name) ? -1 : 1);
+    /***
     for (var i=0; i<this.tabFood.length && this.tabFood[i].name.toLowerCase().trim().substring(0,value.length)!==value.toLowerCase().trim(); i++){}
     if (i<this.tabFood.length){
       for (var i=i; i<this.tabFood.length && this.tabFood[i].name.toLowerCase().trim().substring(0,value.length)===value.toLowerCase().trim(); i++){
@@ -723,7 +726,7 @@ CreateTabFood(item:any, value:any){
         this.tabInputFood[iTab].unit=this.tabFood[i].unit;
       }
     }
-    /***
+    ***/
 
     for (var i=0; i<this.tabFood.length; i++){
       if (this.tabFood[i].name.toLowerCase().trim().indexOf(value.toLowerCase().trim()) !== -1){
@@ -734,22 +737,23 @@ CreateTabFood(item:any, value:any){
         this.tabInputFood[iTab].unit=this.tabFood[i].unit;
       }
     }
-     */
-    this.sizeBoxContentFood=this.sizeBox.heightItem  * this.tabInputFood.length;
-    if (this.sizeBoxContentFood>this.sizeBox.maxHeightContent){
-      this.sizeBoxContentFood=this.sizeBox.maxHeightContent;
-      this.sizeBoxFood=this.sizeBox.maxHeightOptions;
-      this.sizeBox.scrollY="scroll";
-    } else {
-      this.sizeBoxFood=this.sizeBoxContentFood;
-      this.sizeBox.scrollY="hidden";
+    if (this.tabInputFood.length>1){
+
+      this.sizeBoxContentFood=this.sizeBox.heightItem  * this.tabInputFood.length;
+      if (this.sizeBoxContentFood>this.sizeBox.maxHeightContent){
+        this.sizeBoxContentFood=this.sizeBox.maxHeightContent;
+        this.sizeBoxFood=this.sizeBox.maxHeightOptions;
+        this.sizeBox.scrollY="scroll";
+      } else {
+        this.sizeBoxFood=this.sizeBoxContentFood;
+        this.sizeBox.scrollY="hidden";
+      }
+      this.findPosItem(this.sizeBoxFood);
+
+      this.styleBoxFood=getStyleDropDownContent(this.sizeBoxContentFood, this.sizeBox.widthContent );
+      //this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 24, this.selectedPosition.y -this.posDivAfterTitle.Client.Top - 255, this.sizeBox.scrollY);
+      this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 25 , this.posItem + 40, this.sizeBox.scrollY);
     }
-    this.findPosItem(this.sizeBoxFood);
-
-    this.styleBoxFood=getStyleDropDownContent(this.sizeBoxContentFood, this.sizeBox.widthContent );
-    //this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 24, this.selectedPosition.y -this.posDivAfterTitle.Client.Top - 255, this.sizeBox.scrollY);
-    this.styleBoxOptionFood=getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft - 25 , this.posItem + 40, this.sizeBox.scrollY);
-
   }
   else if (item==='Meal'){
     this.tabInputMeal.splice(0,this.tabInputMeal.length);
@@ -824,6 +828,12 @@ onInputDailyA(event:any){
       } else   if (fieldName==='ingr'){
         this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=event.target.value;
         this.CreateTabFood('Food',event.target.value);
+        if (this.tabInputFood.length===1){
+          this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=event.target.value;
+        } else {
+          this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name=this.tabInputFood[0].name;
+          this.tabInputFood.splice(0, this.tabInputFood.length)
+        }
 
       }  else   if (fieldName==='quan'){
         this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].quantity=event.target.value;
@@ -1781,7 +1791,13 @@ isSaveParamChart:boolean=false;
 saveParamChart(event:any){
   this.isSaveParamChart=true;
   this.fileParamChart.data=event;
-  this.checkLockLimit(5,true,true);
+  
+  if (this.identification.triggerFileSystem==="No"){
+    this.processSaveParamChart();
+  } else {
+    this.checkLockLimit(5,true,true);
+  }
+  
 }
 
 
@@ -1802,7 +1818,12 @@ SaveCaloriesFat(event:any){
   if (event.fileType===undefined){
     this.calfatNameFile=event;
   }
-  this.checkLockLimit(1,true,true);
+  if (this.identification.triggerFileSystem==="No"){
+    this.processSaveCaloriesFat(event);
+  } else {
+    this.checkLockLimit(1,true,true);
+  }
+  
 
 }
 
@@ -1813,6 +1834,7 @@ processSaveCaloriesFat(event:any){
   if (event.fileType===undefined){
     //this.SpecificForm.controls['FileName'].setValue(event);
   } else if (event.tabCaloriesFat.length!==0) {
+    
       this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length);
       for (var i=0; i<event.tabCaloriesFat.length; i++){
         const CalFatClass = new ClassCaloriesFat;
@@ -1834,6 +1856,14 @@ processSaveCaloriesFat(event:any){
     this.ConfigCaloriesFat.updatedAt=strDateTime();
     // this.SaveNewRecord(this.identification.configFitness.bucket, this.SpecificForm.controls['FileName'].value, this.ConfigCaloriesFat, 1);
     this.SaveNewRecord(this.identification.configFitness.bucket, this.calfatNameFile, this.ConfigCaloriesFat, 1);
+    /*
+    if (event.fileType===''){
+      event.fileType=this.identification.configFitness.fileType.calories;
+    }
+    event.updatedAt=strDateTime();
+    
+    this.SaveNewRecord(this.identification.configFitness.bucket, this.calfatNameFile, event, 1);
+    */
     this.CreateDropDownCalFat();
 
   }
@@ -2124,24 +2154,34 @@ SaveNewRecord(GoogleBucket:string, GoogleObject:string, record:any, iWait:number
                 } else if (iWait===6 ){
                   this.isSaveRecipeFile=false;
                 } 
-                this.isAllDataModified=false;
-                if (iWait===0 || iWait===1 || iWait===5 || iWait===6){
+                //this.isAllDataModified=false;
+
+                if ((iWait===0 || iWait===1 || iWait===5 || iWait===6) && this.identification.triggerFileSystem!=="No"){
                   // update field 'updatedAt' in file system 
                   this.updateLockFile(iWait);
                 }
                 this.isForceReset=true;
-                this.error_msg='File "'+ GoogleObject +'" is successfully stored in the cloud';
+                this.tabLock[iWait].status=0;
+                if (iWait===1 || iWait===6){
+                  this.saveCalFatMsg = 'File "' + GoogleObject + '" is successfully stored in the cloud';
+                } else {
+                this.error_msg='File "' + GoogleObject + '" is successfully stored in the cloud';
                 // this.returnFile.emit(record); // not needed as files are stored in cache of backend server
+                }
               }
             },
             error_handler => {
               //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
-              this.error_msg='File' + GoogleObject +' *** Save action failed - status is '+error_handler.status;
+              if (iWait===1){
+                this.saveCalFatMsg = 'File "' + GoogleObject + '" *** Save action failed - status is '+error_handler.status;
+              } else {
+                this.error_msg='File' + GoogleObject + '" *** Save action failed - status is '+error_handler.status;
+              }  
             } 
           )
       }
 
-
+saveCalFatMsg:string="";
 
 waitHTTP(loop:number, max_loop:number, eventNb:number){
   const pas=500;
@@ -2706,19 +2746,11 @@ getDefaultCredentials(iWait:number, checkFile:boolean){
         });
 }
 
-firstLoop:boolean=true;
-ngOnChanges(changes: SimpleChanges) { 
-    if (this.firstLoop===true){
-      this.firstLoop=false;
-    } else {
-      for (const propName in changes){
-        const j=changes[propName];
-        if (propName==='credentials'){
-          console.log('credentials have been updated');
-        }
-      }
-    }
 
+ngOnChanges(changes: SimpleChanges) { 
+    if (changes['credentials'].firstChange===false){
+        console.log('health component : credentials have been updated');
+    }
 }
 
 getChartFiles(){
@@ -2753,5 +2785,7 @@ reAccessConfigCal(){
   this.ConfigCaloriesFat.tabCaloriesFat.splice(this.ConfigCaloriesFat.tabCaloriesFat.length);
   this.GetRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,1);
 }
+
+
 
 }

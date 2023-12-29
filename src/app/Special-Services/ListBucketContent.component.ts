@@ -6,7 +6,7 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { Router} from '@angular/router';
 import { ViewportScroller } from "@angular/common";
 import { EventAug } from '../JsonServerClass';
-import { Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
+import { classTabMetaPerso , Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
 
@@ -41,6 +41,7 @@ export class ListBucketContentComponent {
     @Input() NbRefresh_Bucket=0;
 
     @Input() Bucket_Name:string='';
+    @Input() tabMetaPerso: Array<classTabMetaPerso> = [];
 
     @Output() Return_SelectedBucketInfo=new EventEmitter<OneBucketInfo>();
     
@@ -75,9 +76,6 @@ export class ListBucketContentComponent {
     Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
   
     Error_Access_Server:string='';
-
-
-
 
     fileRetrieved:boolean=false;
          // ACCESS TO GOOGLE STORAGE
@@ -120,17 +118,29 @@ ngOnInit(){
 RetrieveAllObjects(){
   // bucket name is ListOfObject.config
   //this.HTTP_Address=this.Google_Bucket_Access_Root+ this.Bucket_Name + "/o"  ;
+  var stringMetaPerso="";
+  if (this.tabMetaPerso.length > 0){
+    stringMetaPerso='{"' + this.tabMetaPerso[0].key + '":"' + this.tabMetaPerso[0].value +'"}';
+  }
+  var receivedMeta="";
   console.log('RetrieveAllObjects()'+this.Bucket_Name);
-  this.ManageGoogleService.getListObjects(this.configServer, this.Bucket_Name )
+  this.ManageGoogleService.getListMetaObjects(this.configServer, this.Bucket_Name )
+  //this.ManageGoogleService.getListObjects(this.configServer, this.Bucket_Name )
   //this.http.get<Bucket_List_Info>(this.HTTP_Address )
           .subscribe((data ) => {
             console.log('RetrieveAllObjects() - data received');
             for (var i=0; i<data.length; i++){
-              const theObject= new OneBucketInfo;
-              this.myListOfObjects.items.push(theObject);
-              this.myListOfObjects.items[i].name=data[i].name;
-              this.myListOfObjects.items[i].mediaLink=data[i].url;
-              this.myListOfObjects.items[i].bucket=this.Bucket_Name;
+              if (stringMetaPerso==="" || (stringMetaPerso!=="" && data[i].items.metadata!==undefined &&
+                JSON.stringify(data[i].items.metadata).indexOf(stringMetaPerso)!==-1)) {
+                
+              
+                const theObject= new OneBucketInfo;
+                this.myListOfObjects.items.push(theObject);
+                
+                this.myListOfObjects.items[i].name=data[i].items.name;
+                this.myListOfObjects.items[i].mediaLink=data[i].items.url;
+                this.myListOfObjects.items[i].bucket=this.Bucket_Name;
+            }
             }
             
             this.DisplayListOfObjects=true;

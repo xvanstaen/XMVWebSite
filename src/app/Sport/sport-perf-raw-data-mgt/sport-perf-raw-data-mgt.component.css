@@ -1,12 +1,12 @@
 
 
-@import "../performance-sport/performance-sport.component.css";
+@import '../sport.component.css';
 
 body{
     width:1000px;
 }
 div{
-    --mWidth:500px;
+    --mWidth:580px;
 }
 
 h2{
@@ -39,7 +39,7 @@ label{
 }
 
 .blockH{
-    width:550px; 
+    width:6300px; 
     display:inline-block;
     height:35px;
     font-size:15px;
@@ -47,7 +47,7 @@ label{
 }
 
 .blockR{
-    width:550px;
+    width:630px;
     display:inline-block;
     height:25px;
     border:solid 0px red;

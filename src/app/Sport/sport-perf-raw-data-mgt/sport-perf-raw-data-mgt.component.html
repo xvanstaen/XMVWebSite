@@ -44,12 +44,13 @@
     </div>
 
     <div class="tabHeader">
-        <h2 > {{nameFilePerf}}<br>{{tabPerfPoR.length}} PoR records </h2>
+        <h2 > {{theFile.name}}<br>{{tabPerfPoR.length}} PoR records </h2>
     </div>
 
     <div class="tabHeader"  id="scroll-1" style="margin-top:-6px;">
         <div class="blockH" >
             <label style="width:80px;">Time</label>
+            <label style="width:80px;">Record</label>
             <label >Latitude & Longitude</label>
             <label >Point of reference</label>
         </div>
@@ -58,6 +59,7 @@
         <div *ngFor="let perf of tabPerfPoR; let i=index;">
             <div class="blockR" [ngStyle]="{'margin-top.px': i===0 ? 0 : -4}" id="sel-{{i}}" (click)="onSelectPerfRow($event)" [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
                 <label id="sel-{{i}}" style="width:80px;">{{filePerf[perf.recNb].time}}</label> 
+                <label id="sel-{{i}}" style="width:80px;">{{perf.recNb}}</label> 
                 <label id="sel-{{i}}">{{filePerf[perf.recNb].lat | number:'1.6-6'}} &nbsp;{{filePerf[perf.recNb].lon | number:'1.6-6'}}</label> 
                 <label id="sel-{{i}}" style="width:250px; text-align:left;">{{filePerf[perf.recNb].refPoR}} </label> 
             </div>
@@ -76,7 +78,7 @@
         <span> Ref: </span><label style="margin-top:5px; width:290px; text-align:left;">{{filePerf[perfNb].refPoR}} </label>Record#{{perfNb}}
     </div>
     <div class="blockR" style="margin-top:-4px;">
-        <span> Time</span><label style="text-align:left; width:150px;">{{filePerf[perfNb].time}}</label> 
+        <span> Time</span><label style="text-align:left; width:80px;">{{filePerf[perfNb].time}}</label> 
         <span> Dist: </span><label style="text-align:left;"> {{filePerf[perfNb].dist}}</label> 
     </div>
     <div class="blockR" style="margin-top:-4px;">
@@ -113,7 +115,7 @@
 <!-- display full performance file -->
 <div *ngIf="filePerf.length>0 && isDisplayPerf===true" >
     <div class="tabHeader">
-        <h2 > {{nameFilePerf}}<br>{{filePerf.length}} records </h2>
+        <h2 > {{theFile.name}}<br>{{filePerf.length}} records </h2>
     </div>
     <div class="tabHeader"  id="scroll-1" style="margin-top:-6px;">
         <div class="blockH" >
@@ -134,5 +136,20 @@
     </div>
 </div>
 
-<div style="margin-top:50px;">&nbsp;</div>
+
+<div *ngIf="isPoRFileReturned===true && isFileReceived===true && specificCircuit.points.length>0 && filePerf.length>0">
+
+    <div class="quest" 
+                style="background-color: green; color:white; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:-10px; boder:2px solid green;">
+        <div style=margin-top:10px;>Circuit from PoR file  <br> {{theFile.name}}</div>
+        <div style="margin-top:-15px;">
+        <app-build-loop-from-perf
+            [specificCircuit]="specificCircuit" [filePerf]="filePerf" [headerPerf]="headerPerf" [nbSave]="nbSave"
+                    (savePerf)="onSavePerfPoRFile($event)">
+        </app-build-loop-from-perf>
+        </div>
+        <div class="skipLine"></div>
+    </div>
+</div>
+
 </body>

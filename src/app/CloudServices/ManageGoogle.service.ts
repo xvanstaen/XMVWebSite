@@ -27,8 +27,6 @@ export class ManageGoogleService {
        
     //    @Inject('baseUrl') private baseURL:string) {this.baseURL=baseURL}
 
-
-
     myHeader=new HttpHeaders({'content-type': 'application/json',
     'cache-control': 'private, max-age=0',
     'Authorization': 'Bearer ya29.a0AbVbY6MILZfEfuz2p5TZVpC-H49MRTY1gpL6ooXilb3XX26y_DdKVfBxTNGBlosBpVclb_mfDubxk2vWMOUx3LBoG4SkZj1IXHwpgrU2nRNk3vQq1gsVXmcdaLGUXdPz9EicBXVvFS6F5SLtj8GA6E5KLmAMaCgYKAXYSARASFQFWKvPllv_18IAH9e7Y6c4HRJbQ8w0163'
@@ -76,34 +74,76 @@ export class ManageGoogleService {
 
 
     uploadObject(config:configServer, bucket:string, file: File, object:string): Observable<HttpEvent<any>> {
+       /*
         const newMetadata = {
             cacheControl: 'public,max-age=0,no-cache,no-store',
             contentType: 'application/json'
           };
+        */
         const cacheControl= 'public,max-age=0,no-cache,no-store';
         const contentType= 'json';
         var formData: FormData = new FormData();
-        formData.append('metadata', JSON.stringify(newMetadata));
+        //formData.append('metadata', JSON.stringify(newMetadata));
         formData.append('file', file);
         const http_post=config.baseUrl+'/upload/'+config.GoogleProjectId+'/'+object+'/'+config.test_prod+'/'+cacheControl+'/'+contentType+'?bucket='+bucket;
         const req = new HttpRequest('POST', http_post, formData,  {
-        // headers: this.myHeader,
-        reportProgress: false,
-        responseType: 'json'
-        });
+                reportProgress: false,
+                responseType: 'json'
+                });
         return this.http.request(req);
     }
 
+    uploadObjectMetaPerso(config:configServer, bucket:string, file: File, object:string, metaCache:string, metaType:string, metaPerso:any): Observable<HttpEvent<any>> {
+        /*
+        const newMetadata = {
+            cacheControl: metaCache,
+            contentType: metaType,
+          };
+        */
+        var contentType="";
+        if (metaCache===""){
+            metaCache='public,max-age=0,no-cache,no-store';
+        }
+        var i=metaType.indexOf('/');
+        if (i!==-1){
+            contentType= metaType.substring(i+1); // 'json' or 'text';
+        }
+        
 
-    updateMetadata(config:configServer, bucket:string, objectN:string, newMetaData:any): Observable<HttpEvent<any>> {
+        var formData: FormData = new FormData();
+        //formData.append('metadata', JSON.stringify(newMetadata));
+        formData.append('file', file);
 
-            const http_post=config.baseUrl+'/updateMeta/'+config.GoogleProjectId+'/'+config.test_prod+'/'+objectN+'/'+newMetaData+'?bucket='+bucket;
-            const req = new HttpRequest('POST', http_post, objectN);
-            return this.http.request(req);
+        var theMetaPerso = "";
+        if (Array.isArray(metaPerso)===true){
+            theMetaPerso=JSON.stringify(metaPerso);
+        } else {
+            theMetaPerso=metaPerso;
         }
 
-    deleteObject(config:configServer, bucket:string, objectN:string): Observable<HttpEvent<any>> {
+        const http_post=config.baseUrl+'/uploadMetaPerso/'+config.GoogleProjectId+'/'+object+'/'+config.test_prod+'/'+metaCache+'/'+contentType+'/'+theMetaPerso+'?bucket='+bucket;
+        const req = new HttpRequest('POST', http_post, formData,  {
+                reportProgress: false,
+                responseType: 'json'
+                });
+        return this.http.request(req);
+    }
 
+    updateMetaData(config:configServer, bucket:string, objectN:string, metaCache:string, metaType:string, metaPerso:any): Observable<HttpEvent<any>> {
+        var i=metaType.indexOf('/');
+        metaType=metaType.substring(0,i)+'-'+metaType.substring(i+1);
+        var theMetaPerso = "";
+        if (Array.isArray(metaPerso)===true){
+            theMetaPerso=JSON.stringify(metaPerso);
+        } else {
+            theMetaPerso=metaPerso;
+        }
+        const http_post=config.baseUrl+'/updateMeta/'+config.GoogleProjectId+'/'+config.test_prod+'/'+objectN+'/'+metaCache+'/'+metaType+'/'+theMetaPerso+'?bucket='+bucket;
+        const req = new HttpRequest('POST', http_post, objectN);
+        return this.http.request(req);
+    }
+
+    deleteObject(config:configServer, bucket:string, objectN:string): Observable<HttpEvent<any>> {
             const http_post=config.baseUrl+'/delete/'+config.GoogleProjectId+'/'+config.test_prod+'/'+objectN+'?bucket='+bucket;
             //const req = new HttpRequest('GET', objectN);
             return this.http.get<any>(http_post);

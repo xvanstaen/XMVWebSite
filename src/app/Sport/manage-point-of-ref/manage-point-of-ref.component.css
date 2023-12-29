@@ -2,7 +2,7 @@ body{
     width:580px;
     margin-left:20px;
 }
-@import "../performance-sport/performance-sport.component.css";
+@import '../sport.component.css';
 
 .inputText{
     color:blue;

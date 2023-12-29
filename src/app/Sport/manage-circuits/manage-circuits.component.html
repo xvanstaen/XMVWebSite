@@ -88,6 +88,7 @@
                             <label class="inputText shortLabel " [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }"  id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">{{j+1}}</label>
                         
                             <input type="text" class="inputText"   style="width:210px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="PoRef-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].points[j].ref}}">
+                            <input type="text" class="inputText"   style="width:210px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="dist-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].dist[j]}}">
                             <!-- <label  class="inputText" id="PoRalt-{{i}}-{{j}}" >{{fileCircuit[i].points[j].alt}}</label> --> 
                             <label class="inputText" style="width:120px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lat}}</label>
                             <label class="inputText" style="width:120px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lon}}</label>

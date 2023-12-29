@@ -3,6 +3,15 @@ div{
     --rowH: 30px;
 }
 
+.quest{
+    display:inline-block;
+    color:blue;
+    font-size:14px;
+    width:100%;
+    margin-left:20px;
+    border: solid 0px red;
+    word-break: break-all;
+}
 
 .theLabel{
     margin-left:8px; color:white; background:blue;
@@ -47,13 +56,14 @@ div{
 .sizeButtons{
     width:60px;
     height:22px;
-    font-size:10px;
     margin-left:50px;
     background-color:cyan;
     border-radius: 5px;
     background-image: linear-gradient(cyan, lightcyan);
     box-shadow: 2px 2px blue;
     border: solid 1px blue;
+    color:blue;
+    font-size:11px;
 }
 
 .sizeButtons:hover{
@@ -194,7 +204,6 @@ td {
     padding-top:4px;
     border:solid blue 0px; 
     display:inline-block;
-    float:none;
   }
 
 .Straight-options:hover{
@@ -205,4 +214,3 @@ td {
     scrollbar-color:orange rgb(155, 247, 247);
     scrollbar-width: thin;
 }
-

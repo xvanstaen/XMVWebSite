@@ -520,4 +520,5 @@ export function validateLock(fileSystem:Array<classFileSystem>, inData:classAcce
     strFound=theId.substring(0,TabDash[0]-1);
     return ({"strFound":strFound, "tabOfId":TabOfId})
   }
+
   

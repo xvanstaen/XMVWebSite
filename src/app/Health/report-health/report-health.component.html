@@ -347,10 +347,12 @@
             
             </div> 
             <div style="width:100%; display:inline-block; margin-top:5px;" *ngIf="selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'">
-                <span class="trow" style="width:25%; "> start date</span><input  type="date"  class='inputText' style="width:36%;" formControlName="startRange"  > 
+                <span class="trow" style="width:25%; "> start date</span>
+                <input  type="date"  class='inputText' style="width:36%;" formControlName="startRange"  > 
             </div>
             <div style="width:100%; display:inline-block; margin-top:5px;"  *ngIf="selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'">
-                <span class="trow" style="width:25%; "> end date</span><input  type="date"   class='inputText' style="width:36%;" formControlName="endRange"  > 
+                <span class="trow" style="width:25%; "> end date</span>
+                <input  type="date"   class='inputText' style="width:36%;" formControlName="endRange"  > 
             </div>
         
         </form>
@@ -422,8 +424,49 @@
 
 
 <div class="skipLine">&nbsp;</div>
+<div style="width:95%; max-width:410px; margin-left:20px; border:solid 2px blue; display:block;">
+    <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">CHANGE PARAMETERS FOR ALL CHARTS
+    </div>
 
-
+    <form  [formGroup]="paramAllCharts" style="margin-left:20px;">
+        <div style="width:100%; display:inline-block;">
+            <div class="skipLine">&nbsp;</div>
+            <div style="width:100%; display:inline-block;  margin-top:5px;">    
+                <span class="trow" style="width:25%; "> period</span>
+                <input  type="text"   class='inputText' style="width:46%;" formControlName="period" placeholder="daily/weekly/monthly" value="period"> 
+                <span id="selPeriod" class="circle" *ngIf="tabLock.lock===1" style='margin-left:5px;' (click)="selectPeriodAll($event)">A</span>
+                <div *ngIf="isPeriodSelected===true  && tabLock.lock===1">
+                    <div class="dropdown" >
+                        <div class="Straight-content" style="margin-left:90px;">
+                            <div  class="StraightDropDown " [ngStyle]="{'height.px':tabPeriod.length * 30}" >
+                                <li *ngFor="let action of tabPeriod; let m=index;" 
+                                        class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                            (click)="selectPeriodAll($event)" id="selectedPeriod" [value]="action" >{{action}}
+                                </li>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div> 
+            <div style="width:100%; display:inline-block; margin-top:5px;" >
+                <span class="trow" style="width:25%; "> start date</span>
+                <input  type="date"  class='inputText' style="width:46%;" formControlName="startRange" value="startRange" > 
+            </div>
+            <div style="width:100%; display:inline-block; margin-top:5px;" >
+                <span class="trow" style="width:25%; "> end date</span>
+                <input  type="date"   class='inputText' style="width:46%;" formControlName="endRange"  value="endRange">             
+            </div>
+        </div>
+    </form>
+    <div class="skipLine">&nbsp;</div>
+    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="clear" (click)="forAllCharts($event)"> Clear fields
+    </button>
+    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="apply" (click)="forAllCharts($event)"> Process
+    </button>
+    <div class="skipLine">&nbsp;</div>
+</div>
+<div class="skipLine">&nbsp;</div>
 
 <!--   **************************** CANVAS **************************** -->
 

@@ -58,12 +58,13 @@ export class CaloriesFatComponent implements OnInit {
   @Input() ConfigCaloriesFat=new mainClassCaloriesFat;
   @Input() inFileRecipe=new mainClassCaloriesFat;
   @Input() HTMLCaloriesFat=new classConfCaloriesFat;
-  @Input()  tabLock= new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-  
+  @Input() tabLock= new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
+  @Input() saveCalFatMsg:string="";
+  // @Input() posDivCalFat= new classPosDiv;
 
   ConvToDisplay=new mainConvItem;
 
-  @Input() posDivCalFat= new classPosDiv;
+ 
           
   @Output() myEmit= new EventEmitter<any>();
   @Output() myEmitRecipe= new EventEmitter<any>();
@@ -195,7 +196,13 @@ onWindowResize() {
   this.getScreenHeight = window.innerHeight;
   }
 
-ngOnInit(): void {
+ngOnInit(){
+ 
+  if (this.tabLock.lock===1){
+    this.inputReadOnly=false;
+  } else {
+    this.inputReadOnly=true;
+  }
 
   this.posDivTable=getPosDiv("posStartTable");
 
@@ -257,8 +264,10 @@ ngOnInit(): void {
   } else { 
     this.fillConfig(this.outFileRecipe, this.inFileRecipe, 'Recipe');
   }
-
+  this.isInitComplete=true;
 }
+
+isInitComplete:boolean=false;
 
 fillConfig(outFile:any,inFile:any, type:string){
   if (type==='Calories'){
@@ -545,7 +554,10 @@ scrollTop:number=0;
 
 
 onInput(event:any){
-  this.reportCheckLockLimit.emit({iWait:1,isDataModified:true,isSaveFile:false});
+  this.returnEmit.saveAction="";
+  if (this.identification.triggerFileSystem==="Yes"){
+    this.reportCheckLockLimit.emit({iWait:1,isDataModified:true,isSaveFile:false});
+  }
   //this.getPosAfterTitle();
   //this.offsetHeight= event.currentTarget.offsetHeight;
   this.offsetLeft = event.currentTarget.offsetLeft;
@@ -732,6 +744,7 @@ onSelRecipeFood(event:any){
 
 isRecipeFoodInput:boolean=false;
 onInputRecipe(event:any){ 
+  this.returnEmit.saveAction="";
   //this.offsetHeight= event.currentTarget.offsetHeight;
   this.offsetLeft = event.currentTarget.offsetLeft;
   //this.offsetTop = event.currentTarget.offsetTop;
@@ -822,6 +835,7 @@ onInputRecipe(event:any){
 
 checkText:string='';
 SearchText(event:any){
+  this.returnEmit.saveAction="";
   if (event.currentTarget.id==='search' && event.currentTarget.value!==''){
     this.checkText=event.currentTarget.value.toLowerCase().trim();
   } else { 
@@ -829,6 +843,7 @@ SearchText(event:any){
   }
 }
 onFilter(event:any){
+  this.returnEmit.saveAction="";
   this.filterType=false;
   this.filterFood=false;
   this.filterRecipe=false;
@@ -1048,41 +1063,30 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
 }
 
 initTabLock1:number=0;
-firstLoop:boolean=true;
+//firstLoop:boolean=true;
 inputReadOnly:boolean=true;
-ngOnChanges(changes: SimpleChanges) { 
- 
-  var i=0;
-    for (const propName in changes){
-        const j=changes[propName];
-        if (propName==='tabLock'){
-            if (this.firstLoop===true){
-                console.log('report chart ==> ngOnChange this.firstLoop===true   current value of tabLock[1]=' + changes[propName].currentValue.lock +  
-                '  & previous value initTabLock1 was=' + this.initTabLock1 + '  & input() TabLock[1]=' + this.tabLock.lock);
-                this.firstLoop=false;
-              } else {
-                  console.log('report chart ==> ngOnChange this.firstLoop===false   current tabLock[1]=' + changes[propName].currentValue.lock + 
-                        '  & previous value initTabLock1 was=' + this.initTabLock1 + '  & input() TabLock[1]=' + this.tabLock.lock);
-                  if (this.returnEmit.saveAction==='RecipeSave' || this.returnEmit.saveAction==='ConfigCalSave') {
-                    if ( this.tabLock.lock===1 && (this.tabLock.status===0 || this.tabLock.status===300) ){
-                      this.error_msg = 'File ' + this.SpecificForm.controls['FileNameRecipe'].value + 'has been successfully saved';
-                    } else {
-                      this.error_msg = 'File ' + this.SpecificForm.controls['FileNameRecipe'].value + 'has not been saved - error=' + this.tabLock.status;
-                    }
-                    this.returnEmit.saveAction='';
-                  }
-  
-                }
 
-            this.initTabLock1=changes[propName].currentValue.lock;
-            if (this.initTabLock1===1){
-                this.inputReadOnly=false;
-            } else {
-                this.inputReadOnly=true;
-            }
-            
-          } 
+ngOnChanges(changes: SimpleChanges) { 
+ //console.log('ngOnChanges CalFat' + JSON.stringify(changes));
+ for (const propName in changes){
+    if (propName==="saveCalFatMsg"){
+            this.error_msg = this.saveCalFatMsg;
         }
-    // //this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j)); 
-}
+    else 
+    if (propName==="tabLock" && changes['tabLock'].firstChange===true){
+        console.log('report chart ==> ngOnChange this.firstLoop===true   current value of tabLock[1]=' + changes['tabLock'].currentValue.lock +  
+                '  & previous value initTabLock1 was=' + this.initTabLock1 + '  & input() TabLock[1]=' + this.tabLock.lock + '  & status =' + this.tabLock.status+ '  & iWait =' + this.tabLock.iWait);
+                //this.firstLoop=false;
+             
+    } else if (propName==="tabLock" && changes['tabLock'].firstChange===false){
+        console.log('report chart ==> ngOnChange this.firstLoop===false   current tabLock[1]=' + changes['tabLock'].currentValue.lock + 
+                        '  & previous value initTabLock1 was=' + this.initTabLock1 + '  & input() TabLock[1]=' + this.tabLock.lock+ '  & status =' + this.tabLock.status + '  & iWait =' + this.tabLock.iWait);
+                        //this.firstLoop=false;
+        
+      }
+    }
+  } 
+
+
+
 }

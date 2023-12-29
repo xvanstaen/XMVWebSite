@@ -14,47 +14,16 @@
 <div *ngIf="tabLock.lock===2">
     <div class="error" style="font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
 </div>
-
-
-<div class="posConfirm">
-    <span *ngIf="IsSaveRecipeConfirmed===false">
-        <span class="msg"  >
-                 Update your recipe file
-        </span>
-        <button id='RecipeSave' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
-        <button id='RecipeCancel' class="sizeButtons" (click)="CancelUpdates($event)"> Cancel</button>
-        </span>
-    <div *ngIf="error_msg!==''">
-        <div class="skipLine">&nbsp;</div>  
-        <span class="error" >error:&nbsp;{{error_msg}}</span>
-        <div class="skipLine">&nbsp;</div> 
-    </div> 
-</div>
-<div *ngIf="IsSaveRecipeConfirmed===true">
-    <form  [formGroup]="SpecificForm" >
-        <div class="msg"  >
-             Please enter the name of the recipe file to save  :
-            <input type='text' formControlName="FileNameRecipe" >
-        </div>                        <div class="skipLine">&nbsp;</div>
-        <div class="posConfirm">
-            <button id='RecipeSave' class="sizeButtons" (click)="SaveFile($event)">Confirm</button>
-            <button id='RecipeCanel' class="sizeButtons" (click)="CancelSave($event)"> Cancel</button>
-        </div>
-    </form>
-             
-</div>
-
-
+<div *ngIf="isInitComplete===true">
 <div style="font-size:16px; color:blue; background-color:cyan; border:2px solid darkcyan; display:inline-block; 
-     height:46px; text-align:center; padding-top:10px; margin-top:15px;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+64}">
+     height:46px; text-align:center; padding-top:10px; margin-top:15px;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+80}">
      RECIPE
 </div>
 <div 
        [ngStyle]="{'height.px':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth+80, 'width.px': HTMLCaloriesFat.width+80, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background }" 
        style=" padding:0.3px; --thHeight:{{HTMLCaloriesFat.title.height}}; --thColor:{{HTMLCaloriesFat.title.color}}; --thBackground:{{HTMLCaloriesFat.title.background}}; 
        --wType:{{HTMLCaloriesFat.colWidth.type}}; --wAction:{{HTMLCaloriesFat.colWidth.action}}; 
-       --wIngr:{{HTMLCaloriesFat.colWidth.ingr}}; 
-       --wOther:{{HTMLCaloriesFat.colWidth.other}};">
+       --wIngr:{{HTMLCaloriesFat.colWidth.ingr}}; --wOther:{{HTMLCaloriesFat.colWidth.other}};">
   
     <div class="widthAction tHeader" >Action</div>
     <div class="widthRecipe tHeader" style='padding-top:3px;' >Recipe
@@ -253,40 +222,45 @@
 </div>
 
 
-
-<div class="skipLine">&nbsp;</div>  
-<div *ngIf="tabLock.lock===1">
 <div class="posConfirm">
-    <span *ngIf="IsSaveConfirmed===false">
+    <div class="skipLine">&nbsp;</div> 
+    <span *ngIf="IsSaveRecipeConfirmed===false">
         <span class="msg"  >
-            Update your configuration file
+                 Update your recipe file
         </span>
-        <button id='Cal-1' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
-        <button id='Cal-2' class="sizeButtons" (click)="CancelUpdates($event)"> Cancel</button>
+        <button id='RecipeSave' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
+        <button id='RecipeCancel' class="sizeButtons" (click)="CancelUpdates($event)"> Cancel</button>
     </span>
-    <div *ngIf="error_msg!==''">
+    <div *ngIf="error_msg!=='' && returnEmit.saveAction==='RecipeSave'">
         <div class="skipLine">&nbsp;</div>  
         <span class="error" >error:&nbsp;{{error_msg}}</span>
         <div class="skipLine">&nbsp;</div> 
     </div> 
 </div>
-<span *ngIf="IsSaveConfirmed===true">
+<div *ngIf="IsSaveRecipeConfirmed===true">
     <form  [formGroup]="SpecificForm" >
         <div class="msg"  >
-            Please enter the name of the file to save  :
-            <input type='text' formControlName="FileName" >
-        </div>                        <div class="skipLine">&nbsp;</div>
+             Please enter the name of the recipe file to save  :
+            <input type='text' formControlName="FileNameRecipe" >
+        </div>                        
+        <div class="skipLine">&nbsp;</div>
         <div class="posConfirm">
-            <button id='Cal-3' class="sizeButtons" (click)="SaveFile($event)">Confirm</button>
-            <button id='Cal-4' class="sizeButtons" (click)="CancelSave($event)"> Cancel</button>
+            <button id='RecipeSave' class="sizeButtons" (click)="SaveFile($event)">Confirm</button>
+            <button id='RecipeCanel' class="sizeButtons" (click)="CancelSave($event)"> Cancel</button>
         </div>
     </form>
-        
-</span>
+             
 </div>
 
+
+<div class="skipLine">&nbsp;</div>  
 <div *ngIf="tabLock.lock===2">
     <div class="error" style="font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
+</div>
+<div class="skipLine">&nbsp;</div> 
+<div style="font-size:16px; color:blue; background-color:cyan; border:2px solid darkcyan; display:inline-block; 
+     height:46px; text-align:center; padding-top:10px; margin-top:15px;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
+     MANAGE CALORIES & FAT
 </div>
 <div class="skipLine">&nbsp;</div> 
       <!-- =======================================================
@@ -444,7 +418,36 @@
     </div> 
 
 </div>
-
-
+<div *ngIf="tabLock.lock===1">
+    <div class="skipLine">&nbsp;</div> 
+    <div class="posConfirm">
+        <span *ngIf="IsSaveConfirmed===false">
+            <span class="msg"  >
+                Update your configuration file
+            </span>
+            <button id='Cal-1' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
+            <button id='Cal-2' class="sizeButtons" (click)="CancelUpdates($event)"> Cancel</button>
+        </span>
+        <div *ngIf="error_msg!=='' && returnEmit.saveAction==='ConfigCalSave'">
+            <div class="skipLine">&nbsp;</div>  
+            <span style="color:red; margin-left:20px; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  >{{error_msg}}</span>
+            <div class="skipLine">&nbsp;</div> 
+        </div> 
+    </div>
+    <span *ngIf="IsSaveConfirmed===true">
+        <form  [formGroup]="SpecificForm" >
+            <div class="msg"  >
+                Please enter the name of the file to save  :
+                <input type='text' formControlName="FileName" >
+            </div>                        <div class="skipLine">&nbsp;</div>
+            <div class="posConfirm">
+                <button id='ConfigCalSave' class="sizeButtons" (click)="SaveFile($event)">Confirm</button>
+                <button id='Cal-4' class="sizeButtons" (click)="CancelSave($event)"> Cancel</button>
+            </div>
+        </form>
+            
+    </span>
+</div>
+</div>
 </body>
 

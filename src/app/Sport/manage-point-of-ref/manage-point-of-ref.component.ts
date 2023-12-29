@@ -9,9 +9,10 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import {msginLogConsole} from '../consoleLog'
-import { configServer, LoginIdentif, OneBucketInfo, classPointOfRef, classCountryPoR, msgConsole, classCredentials, classCircuitRec } from '../JsonServerClass';
-import { findIds } from '../MyStdFunctions';
+import {msginLogConsole} from '../../consoleLog'
+import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
+import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
+import { findIds } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
@@ -58,6 +59,9 @@ export class ManagePointOfRefComponent {
       lat: new FormControl(0, { nonNullable: true }),
       lgt: new FormControl(0, { nonNullable: true }),
       fileName: new FormControl("", { nonNullable: true }),
+      prio: new FormControl("", { nonNullable: true }),
+      varLat: new FormControl(0, { nonNullable: true }),
+      varLon: new FormControl(0, { nonNullable: true }),
     })
 
     istabPointOfRef:boolean=false;
@@ -270,23 +274,29 @@ onActionPoR(event:any){
       if (this.tabAction[this.TabOfId[1]]==="Cancel"){ 
         this.tabDialog[0]=false;
       } else  if (this.tabAction[this.TabOfId[1]]==='Add before' || this.tabAction[this.TabOfId[1]]==='Add after'){ // Add before
-        this.saveAction = this.tabAction[this.TabOfId[1]];   
-        this.saveRecord=this.TabOfId[0]; 
-        this.formOptions.controls["pointRef"].setValue("");
+            this.saveAction = this.tabAction[this.TabOfId[1]];   
+            this.saveRecord=this.TabOfId[0]; 
+            this.formOptions.controls["pointRef"].setValue("");
             this.formOptions.controls["lat"].setValue(0);
             this.formOptions.controls["lgt"].setValue(0);
-              this.isAddRef=true;
+            this.formOptions.controls["varLat"].setValue(0);
+            this.formOptions.controls["varLon"].setValue(0);
+            this.formOptions.controls["prio"].setValue("lat");
+            this.isAddRef=true;
         } else {
             this.formOptions.controls["pointRef"].setValue(this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].ref);
             this.formOptions.controls["lat"].setValue(this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].lat);
             this.formOptions.controls["lgt"].setValue(this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].lon);
+            this.formOptions.controls["varLat"].setValue(this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].varLat);
+            this.formOptions.controls["varLon"].setValue(this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].varLon);
+            this.formOptions.controls["prio"].setValue(this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].prio);
             if (this.tabAction[this.TabOfId[1]]==="Modify"){ 
               this.isUpdateRef=true;
-        } else if (this.tabAction[this.TabOfId[1]]==="Delete"){ 
+            } else if (this.tabAction[this.TabOfId[1]]==="Delete"){ 
               this.isDeleteRef=true;
-        } 
+            } 
 
-        }
+          }
     } else if (theValue.strFound==="confirmAdd"){
         this.checkFormData();
         if (this.errorMsg===""){
@@ -299,8 +309,11 @@ onActionPoR(event:any){
             }
             
             this.filePoR[this.iCountryPoR].PoR[this.saveRecord].ref=this.formOptions.controls["pointRef"].value;
+            this.filePoR[this.iCountryPoR].PoR[this.saveRecord].prio=this.formOptions.controls["prio"].value;
             this.filePoR[this.iCountryPoR].PoR[this.saveRecord].lat=Number(this.formOptions.controls["lat"].value);
             this.filePoR[this.iCountryPoR].PoR[this.saveRecord].lon=Number(this.formOptions.controls["lgt"].value);
+            this.filePoR[this.iCountryPoR].PoR[this.saveRecord].varLat=Number(this.formOptions.controls["varLat"].value);
+            this.filePoR[this.iCountryPoR].PoR[this.saveRecord].varLon=Number(this.formOptions.controls["varLon"].value);
             this.isFileModified=true;
             this.isAddRef=false;
             this.tabDialog[0]=false;
@@ -309,8 +322,11 @@ onActionPoR(event:any){
         this.checkFormData();
         if (this.errorMsg===""){
           this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].ref=this.formOptions.controls["pointRef"].value;
+          this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].prio=this.formOptions.controls["prio"].value;
           this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].lat=Number(this.formOptions.controls["lat"].value);
           this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].lon=Number(this.formOptions.controls["lgt"].value);
+          this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].varLat=Number(this.formOptions.controls["varLat"].value);
+          this.filePoR[this.iCountryPoR].PoR[this.TabOfId[0]].varLon=Number(this.formOptions.controls["varLon"].value);
             this.isFileModified=true;
             this.isUpdateRef=false;
             this.tabDialog[0]=false;
@@ -338,7 +354,9 @@ saveConfirmed:boolean=false;
 checkFormData(){
   this.errorMsg="";
   if (this.formOptions.controls["pointRef"].value==="" || this.formOptions.controls["lat"].value===""
-      || this.formOptions.controls["lgt"].value ===""){
+      || this.formOptions.controls["lgt"].value ==="" || this.formOptions.controls["prio"].value ===""
+      || this.formOptions.controls["varLat"].value ==="" || this.formOptions.controls["varLon"].value ===""
+      ){
         this.errorMsg="All fields are mandatory";
   } else if (isNaN(this.formOptions.controls["lat"].value) 
   || isNaN(this.formOptions.controls["lgt"].value)){
@@ -360,6 +378,7 @@ manageUpdates(event:any){
   } else if (event.target.id==="noReinit"){
     
   } else if (event.target.id==="saveFile"){
+    
       this.saveFile(this.configServer.PointOfRef.bucket, this.formOptions.controls["fileName"].value, this.filePoR);
   } else if (event.target.id==="cancelSave"){
       this.saveConfirmed=false;
@@ -411,18 +430,43 @@ GetRecord(bucketName:string,objectName:string, iWait:number){
       .subscribe((data ) => {  
           if (iWait===0){ 
             this.filePoR.splice(0,this.filePoR.length);
-            for (var j=0; j<data.length; j++){
+            for (var i=0; i<data.length; i++){
              const mainRec = new classCountryPoR;
              this.filePoR.push(mainRec);
-              this.filePoR[j].country=data[j].country;
-              this.filePoR[j].code=data[j].code;
-              for (var i=0; i<data[j].PoR.length; i++){
+              this.filePoR[i].country=data[i].country;
+              this.filePoR[i].code=data[i].code;
+              for (var j=0; j<data[i].PoR.length; j++){
                 const theClass=new classPointOfRef;
-                this.filePoR[j].PoR.push(theClass);
-                this.filePoR[j].PoR[i] = data[j].PoR[i];
+                this.filePoR[i].PoR.push(theClass);
+
+                this.filePoR[i].PoR[j].ref=data[i].PoR[j].ref;
+                this.filePoR[i].PoR[j].lat=data[i].PoR[j].lat;
+                this.filePoR[i].PoR[j].lon=data[i].PoR[j].lon;   
+                if (data[i].PoR[j].alt === undefined){  
+                  this.filePoR[i].PoR[j].alt=0;
+                } else {
+                  this.filePoR[i].PoR[j].alt=data[i].PoR[j].alt;  
+                }
+
+                if (data[i].PoR[j].prio === undefined){
+                      this.filePoR[i].PoR[j].prio="lat";
+                } else {
+                      this.filePoR[i].PoR[j].prio=data[i].PoR[j].prio;
+                }
+                if (data[i].PoR[j].varLat === undefined){
+                      this.filePoR[i].PoR[j].varLat=0.0002;
+                } else {
+                      this.filePoR[i].PoR[j].varLat=data[i].PoR[j].varLat;
+                }
+                if (data[i].PoR[j].varLon === undefined){
+                      this.filePoR[i].PoR[j].varLon=0.00002;
+                } else {
+                      this.filePoR[i].PoR[j].varLon=data[i].PoR[j].varLon;
+                }
+               
               }
             }
-
+                // this.filePoR[j].PoR[i] = data[j].PoR[i];
             if (this.isCircuitSelected){
               this.returnFile.emit(this.filePoR);
             }

@@ -47,6 +47,18 @@
             <label class="theLabel" style="padding-top:2px;">longitude</label>
             <input type="text"   class="inputText"  style="width:250px;" formControlName="lgt" value="lgt" >
         </div>
+        <div style="display:inline-block; height;32px; width:100%;">
+            <label class="theLabel" style="padding-top:2px;">priority</label>
+            <input type="text"   class="inputText"  style="width:250px;" formControlName="prio" value="prio" >
+        </div>
+        <div style="display:inline-block; height;32px; width:100%;">
+            <label class="theLabel" style="padding-top:2px;">var lat</label>
+            <input type="text"   class="inputText"  style="width:250px;" formControlName="varLat" value="varLat" >
+        </div>
+        <div style="display:inline-block; height;32px; width:100%;">
+            <label class="theLabel" style="padding-top:2px;">var lon</label>
+            <input type="text"   class="inputText"  style="width:250px;" formControlName="varLon" value="varLon" >
+        </div>
        
         <button *ngIf="isUpdateRef===true"  id='confirmModify-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px; margin-left:150px;" (click)="onActionPoR($event)"> Confirm modif</button>
         <button *ngIf="isAddRef===true"  id='confirmAdd-{{TabOfId[0]}}' class="sizeButtons"  style="width:120px; margin-left:150px;" (click)="onActionPoR($event)"> Confirm Add</button>
@@ -101,8 +113,8 @@
             
             <div *ngIf="tabDialog[1]===true && TabOfId[0]===j" style="margin-left:140px; margin-top:2px; "> <!-- class="dropDown" -->
                 <div  class=" StraightDropDown"    style="height:60px; width:250px;">
-                    <li class="Straight-options" style="width:80px; display:inline-block; padding-left: 3px;"  *ngFor="let tab of tabActionCountry; let i=index; " [ngClass]="{'evenA': i % 2 === 0 , 'oddA': i % 2 === 1 }">
-                        <span  id="selAction-{{TabOfId[0]}}-{{i}}" (click)="onActionCountry($event)">{{tab}}</span>
+                    <li  id="selAction-{{TabOfId[0]}}-{{i}}" (click)="onActionCountry($event)" class="Straight-options" style="width:80px; display:inline-block; padding-left: 3px;"  *ngFor="let tab of tabActionCountry; let i=index; " [ngClass]="{'evenA': i % 2 === 0 , 'oddA': i % 2 === 1 }">
+                        <span  id="selAction-{{TabOfId[0]}}-{{i}}" >{{tab}}</span>
                     </li>
                 </div>
             </div>

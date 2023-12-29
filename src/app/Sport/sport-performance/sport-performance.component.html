@@ -1,8 +1,8 @@
 
 <div style="width:500px; margin-left:15px; " >
     <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="bucketName"  [NbRefresh_Bucket]="NbRefresh_Bucket"
-          (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)">
-        </app-ListBucketContent>
+          [tabMetaPerso]="tabMetaPerso" (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)">
+    </app-ListBucketContent>
 </div>
 
 <div class="error" *ngIf="errorMsg!==''">
@@ -10,6 +10,8 @@
     {{errorMsg}}
     <div class="skipLine"></div>
 </div>
+
+<!-- isPerfRetrieved===true means a component wants to retrieve the perf file only -->
 <div *ngIf="isPerfRetrieved===false && isFileProcessed===true && perf.length>0">
     
     <div *ngIf="SelectedBucketInfo.name!==''" style="margin-left:40px; width:380px; display:inline-block; background-color:cyan; border:blue 1px solid;">

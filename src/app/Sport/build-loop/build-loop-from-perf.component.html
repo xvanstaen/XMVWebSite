@@ -1,0 +1,11 @@
+
+
+<div style=" margin-left:15px; display:block;" *ngIf="perfCircuitRef.length>0 && isInitFileEnded===true">
+    <app-display-circuit-loop
+        [perfCircuit]="perfCircuitRef"  [filePerf]="fwdFilePerf" [headerPerf]="fwdHeaderPerf" [nbSave]="loopNbSave" [displayTab]="displayTab"      
+        (savePerf)="fwdSavePerf($event)">
+    </app-display-circuit-loop>
+</div>
+<div *ngIf="errMsg!==''" class="error" style=" margin-left:20px; display:inline-block; width:580px; font-weight: bolder; height:28px; padding-top:4px;">
+    {{errMsg}}
+</div>

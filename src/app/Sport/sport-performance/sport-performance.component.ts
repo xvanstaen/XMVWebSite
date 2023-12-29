@@ -9,23 +9,25 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { findIds, formatHHMNSS } from '../MyStdFunctions';
-
-import {msginLogConsole} from '../consoleLog'
-import { configServer, LoginIdentif, OneBucketInfo, classFilePerf, classFileSport, classPointOfRef, msgConsole, classCredentials } from '../JsonServerClass';
-import { classGarminGoldenCheetah } from '../classGarminGoldenCheetah';
+import { msginLogConsole } from '../../consoleLog'
+import { configServer, LoginIdentif,  OneBucketInfo, classTabMetaPerso, msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
+import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
+import { fromGPXtoTXT } from '../convertGPXtoTXT';
+import { fromTCXtoJSON } from '../convertTCXtoTXT';
+import { findIds, formatHHMNSS } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { fillHeaderFile } from '../commonSportFunctions';
 
 
 
 @Component({
-  selector: 'app-performance-sport',
-  templateUrl: './performance-sport.component.html',
-  styleUrls: ['./performance-sport.component.css']
+  selector: 'app-sport-performance',
+  templateUrl: './sport-performance.component.html',
+  styleUrls: ['./sport-performance.component.css']
 })
-export class PerformanceSportComponent {
+export class SportPerformanceComponent {
 
 
   constructor(
@@ -45,14 +47,17 @@ export class PerformanceSportComponent {
     @Input() configServer = new configServer;
     @Input() identification= new LoginIdentif;
 
-    @Input() isPerfRetrieved : boolean = false;
+    @Input() isPerfRetrieved : boolean = false; // create perf and return it to the calling component
+
+    tabMetaPerso: Array<classTabMetaPerso> = [];
+
     tabPoR:Array<classPointOfRef>=[];
     perf:Array<any>=[];
+
     filePerf=new classFileSport;
-    perfLaps:Array<any>=[];
     i : number = 0;
     lastOccurrence:number=0;
-    cheetahRecord = new classGarminGoldenCheetah;
+    headerPerf=new classHeaderFileSport;
 
     EventHTTPReceived:Array<boolean>=[];
     maxEventHTTPrequest:number=20;
@@ -86,11 +91,25 @@ export class PerformanceSportComponent {
     isManagePointOfRef:boolean=false;
     isConfirmSave:boolean=false;
 
+    tabSecond:Array<any>=[];
+    tabMeter:Array<any>=[];
+    alt={lowest:2000,lDist:0,highest:0,hDist:0};
+    heart={lowest:200,lDist:0,highest:0,hDist:0};
+    speed={highest:0,dist:0}
+  
+    isPerfProcessCompleted:boolean=false;
+
+  isFileProcessed:boolean=false;
+
+  errorMsg:string="";
+
 ngOnInit(){
-
   this.bucketName=this.identification.performanceSport.bucket;
-
-
+  
+  const theClass=new classTabMetaPerso;
+  this.tabMetaPerso.push(theClass);
+  this.tabMetaPerso[0].key="fileType";
+  this.tabMetaPerso[0].value="performance";
 }
 /***
 specificGet(){ // may be rejected because no access to public in Google cloud
@@ -120,7 +139,6 @@ BucketInfo(event:any){
  */
 }
 
-
 actionPointOfRef(event:any){
   if (event==="managePoRef"){
     this.isManagePointOfRef=true;
@@ -135,242 +153,11 @@ confirmSave(event:any){
   }
 }
 
-processGPXfile(event:any){
-const trkpt ='<trkpt';
-const lat='lat=\"';
-const lon='lon="';
-const ele='ele>';
-const strTime='time>'
-const heart='ns3:hr>';
-var trouve=false;
-var myGPXFile:Array<any>=[];
-var myGPXtxt:string='';
-myGPXFile.splice(0,myGPXFile.length);
-var strGPX=event.text;
-var strLen=strGPX.length;
-var prevTime=0;
-while (strLen>0){
-
-  var sTrkpt=strGPX.indexOf(trkpt);
-  if (sTrkpt!==-1){
-    var eTrkpt=strGPX.indexOf('</trkpt>');
-    var strSearch=strGPX.substring(sTrkpt,eTrkpt);
-    myGPXFile.push({lat:0,lon:0,ele:0,heart:0,time:'',elapse:0, cumulElapse:0});
-    var start=strSearch.indexOf(lat) + lat.length;
-    var end=strSearch.indexOf('\" lon=\"');
-    myGPXFile[myGPXFile.length-1].lat=strSearch.substring(start,end);
-    myGPXtxt=myGPXtxt+strSearch.substring(start,end)+"\t";
-  
-    const strLon=strSearch.substring(end);
-    start=strLon.indexOf(lon) + lon.length;
-    end=strLon.indexOf('\">\n');
-    myGPXFile[myGPXFile.length-1].lon=strLon.substring(start,end);
-    myGPXtxt=myGPXtxt+strLon.substring(start,end)+"\t";
-
-    start=strSearch.indexOf(ele) + ele.length;
-    end=strSearch.indexOf('</'+ele);
-    myGPXFile[myGPXFile.length-1].ele=strSearch.substring(start,end);
-    myGPXtxt=myGPXtxt+strSearch.substring(start,end)+"\t";
-
-    start=strSearch.indexOf(heart) + heart.length;
-    end=strSearch.indexOf('</'+heart);
-    myGPXFile[myGPXFile.length-1].heart=strSearch.substring(start,end);
-    myGPXtxt=myGPXtxt+strSearch.substring(start,end)+"\t";
-  
-    start=strSearch.indexOf('<'+strTime) + strTime.length + 1;
-    end=strSearch.indexOf('</'+strTime);
-    myGPXFile[myGPXFile.length-1].time=strSearch.substring(start,end);
-    myGPXtxt=myGPXtxt+strSearch.substring(start,end)+"\t";
-
-    start=myGPXFile[myGPXFile.length-1].time.indexOf('T') +  1;
-    end=myGPXFile[myGPXFile.length-1].time.indexOf('.000Z');
-
-    const Thour=Number(myGPXFile[myGPXFile.length-1].time.substring(start,start+2));
-    const Tmn=Number(myGPXFile[myGPXFile.length-1].time.substring(start+3,start+5));
-    const Tsec=Number(myGPXFile[myGPXFile.length-1].time.substring(start+6,start+8));
-    
-    if (myGPXFile.length>1){
-      myGPXFile[myGPXFile.length-1].elapse=(Thour)*3600+Tmn*60+Tsec - prevTime;
-      myGPXFile[myGPXFile.length-1].cumulElapse=myGPXFile[myGPXFile.length-2].cumulElapse+myGPXFile[myGPXFile.length-1].elapse;
-    } else {
-      myGPXFile[myGPXFile.length-1].elapse=0;
-      myGPXFile[myGPXFile.length-1].cumulElapse==0;
-    }
-    myGPXtxt=myGPXtxt+myGPXFile[myGPXFile.length-1].cumulElapse+"\r\n";
-    prevTime = Thour*3600+Tmn*60+Tsec;
-
-
-    strGPX=strGPX.substring(eTrkpt+8);
-    strLen=strGPX.length;
-  } else {
-    strLen=0;
-  }
-}
-
-    var file=new File ([JSON.stringify(myGPXFile)], 'myJSON-GPXfile', {type: 'application/json'});
-      
-    this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myJSON-GPXfile')
-        .subscribe(
-            res => {
-                if (res.type===4){ 
-
-                }
-          })
-      var file=new File ([JSON.stringify(myGPXtxt)], 'myTEXT-GPXfile', {type: 'application/json'}); 
-            this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myTEXT-GPXfile')
-                .subscribe(
-              res => {
-                  if (res.type===4){ 
-                    console.log('GPX text file is saved');
-                  }
-            },
-            err => {
-              console.log(err);
-            })
-
-
-}
-
-processTCXfile(event:any){
-
-  const lap='Lap StartTime=\"';
-  const timeSec='TotalTimeSeconds>';
-  const distMeters='DistanceMeters>';
-  const calories='Calories>';
-  const maxSpeed='MaximumSpeed>';
-  const maxHeartRate='MaximumHeartRateBpm>';
-  const avgHeartRate='AverageHeartRateBpm>';
-  const heartValue='Value>'
-  const track="Trackpoint>";
-  const lengthText=event.text.length;
-  const zoulou='000Z';
-
-  var theStr=event.text;
-  var trouve=false;
-  var nbLaps=0;
-  var iLoop=0;
-  var maxLoop=100;
-  this.perfLaps.splice(0,this.perfLaps.length);
-  while (trouve===false && iLoop<maxLoop){
-    iLoop++
-    const startLap = theStr.indexOf('<'+lap);
-    const endLap = theStr.indexOf('</Lap>');
-    if (startLap!==-1 && endLap!==-1){
-        var strLap = theStr.substring(startLap,endLap);
-        this.perfLaps.push({lap:0,date:"",dist:0,maxSpeed:0,maxHeart:0,avgHeart:0,cal:0});
-        nbLaps++
-        this.perfLaps[this.perfLaps.length-1].lap=nbLaps;
-        var sLength=strLap.indexOf(lap)+lap.length;
-        var eLength=strLap.indexOf(zoulou)+4;
-        this.perfLaps[this.perfLaps.length-1].date=strLap.substring(sLength,eLength);
-
-        sLength=strLap.indexOf(timeSec)+timeSec.length;
-        eLength=strLap.indexOf('</'+timeSec);
-        this.perfLaps[this.perfLaps.length-1].time=strLap.substring(sLength,eLength);
-
-        sLength=strLap.indexOf(calories)+calories.length;
-        eLength=strLap.indexOf('</'+calories);
-        this.perfLaps[this.perfLaps.length-1].cal=strLap.substring(sLength,eLength);
-
-        sLength=strLap.indexOf(distMeters)+distMeters.length;
-        eLength=strLap.indexOf('</'+distMeters);
-        this.perfLaps[this.perfLaps.length-1].dist=strLap.substring(sLength,eLength);
-
-        sLength=strLap.indexOf(maxSpeed)+maxSpeed.length;
-        eLength=strLap.indexOf('</'+maxSpeed);
-        this.perfLaps[this.perfLaps.length-1].maxSpeed=Number(strLap.substring(sLength,eLength))*3.6;
-
-        sLength=strLap.indexOf(avgHeartRate);
-        eLength=strLap.indexOf('</'+avgHeartRate);
-        var strB=strLap.substring(sLength,eLength);
-        sLength=strB.indexOf(heartValue)+heartValue.length;
-        eLength=strB.indexOf('</'+heartValue);
-        this.perfLaps[this.perfLaps.length-1].avgHeart=strB.substring(sLength,eLength);
-
-        sLength=strLap.indexOf(maxHeartRate);
-        eLength=strLap.indexOf('</'+maxHeartRate);
-        strB=strLap.substring(sLength,eLength);
-        sLength=strB.indexOf(heartValue)+heartValue.length;
-        eLength=strB.indexOf('</'+heartValue);
-        this.perfLaps[this.perfLaps.length-1].maxHeart=strB.substring(sLength,eLength);
-       
-
-        for (var i=strLap.length; i>0; i--){
-            const startTrack=strLap.indexOf('<'+track);
-            const endTrack=strLap.indexOf('</'+track);
-            if (startTrack!==-1 && endTrack !==-1){
-                const strTrack=strLap.substring(startTrack,endTrack);
-                this.processTrackPoint(strTrack);
-                strLap=strLap.substring(endTrack+track.length);
-            } else i=0;
-
-        }
-
-        theStr=theStr.substring(endLap+6);
-
-    } else {
-      trouve=true;
-
-      var file=new File ([JSON.stringify(this.perfLaps)], 'myJSON-CSVfile', {type: 'application/json'});
- 
-      this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myJSON-CSVfile')
-        .subscribe(
-          res => {
-            if (res.type===4){ 
-
-            }
-          })
-      file=new File ([JSON.stringify(this.perf)], 'myJSON-TCXfile', {type: 'application/json'});
-      
-            this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myJSON-TCXfile')
-              .subscribe(
-                res => {
-                  if (res.type===4){ 
-
-                  }
-          })
-    }
-  }
-  console.log('end');
-}
-
-processTrackPoint(theString:string){
-  var tabLabels=['Time>','LatitudeDegrees>','LongitudeDegrees>','AltitudeMeters>','DistanceMeters>','Value>','ns3:Speed>']
-  var tabResults=[];
-  // const heart='HeartRateBpm>';
-  
-  for (var i=0; i<tabLabels.length; i++){
-    const start=theString.indexOf('<'+tabLabels[i]) + tabLabels[i].length;
-    const end=theString.indexOf('</'+tabLabels[i]);
-    tabResults[i]=theString.substring(start+1,end);
-  }
-  const thePerf=new classFilePerf;
-  //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
-  this.perf.push(thePerf);
-  this.perf[this.perf.length-1].time=tabResults[0];
-  this.perf[this.perf.length-1].lat=Number(tabResults[1]);
-  this.perf[this.perf.length-1].lon=Number(tabResults[2]);
-  this.perf[this.perf.length-1].alt=Number(tabResults[3]);
-  this.perf[this.perf.length-1].dist=Number(tabResults[4]);
-  this.perf[this.perf.length-1].heart=Number(tabResults[5]);
-  if (Number(tabResults[6])*3.6===0 && this.perf.length>1){
-      this.perf[this.perf.length-1].speed=(this.perf[this.perf.length-1].dist-this.perf[this.perf.length-2].dist)*100*3.6;
-  } else {
-      this.perf[this.perf.length-1].speed=Number(tabResults[6])*3.6;
-  }
-  
-
-  if (this.perf.length>1){
-      this.perf[this.perf.length-1].slope=(this.perf[this.perf.length-2].alt-this.perf[this.perf.length-1].alt)/(this.perf[this.perf.length-2].dist-this.perf[this.perf.length-1].dist)*100;
-  }
-
-}
-
-
-file=new File([JSON.stringify(event)], 'myGPXfile', {type: 'application/json'});
 ReceivedData(event:any){
-    //this.theReceivedData=event;
-    // console.log('performance-sport event is:' + JSON.stringify(event));
+
+    // console.log('performance-sport event is:' + JSON.stringify(event));    
+    //this.headerPerf=fillHeaderFile(event,this.headerPerf);
+    var file=new File([JSON.stringify(event)], 'myGPXfile', {type: 'application/json'});
     const stringNumber="0123456789.";
     this.isPerfProcessCompleted=false;
     this.isDataReceived=true;
@@ -382,62 +169,51 @@ ReceivedData(event:any){
     var maxFields=3;
     this.perf.splice(0,this.perf.length);
     this.scroller.scrollToAnchor('result');
-    if (typeof event==="object" && event.text!==undefined){
+    if (typeof event==="object" && event.text!==undefined){ // text file has been retrieved
         const lengthText=event.text.length;
         const isGPX = event.text.indexOf('<gpx creator=');
         if (isGPX === -1){
           var fileTCX = event.text.indexOf("<TotalTimeSeconds>"); // format of the file is TCX
           if (fileTCX!==-1){
-            this.file=new File ([JSON.stringify(event)], 'myTCXfile', {type: 'application/json'});
+            file =new File ([JSON.stringify(event)], 'myTCXfile', {type: 'application/json'});
           }
         } else {
-            this.file=new File ([JSON.stringify(event)], 'myGPXfile', {type: 'application/json'});
+            file=new File ([JSON.stringify(event)], 'myGPXfile', {type: 'application/json'});
  
         } 
-
-        
-        this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', this.file ,  'myTCXfile')
+        this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myTCXfile')
           .subscribe(
             res => {
               if (res.type===4){ 
 
               }
             })
-
-
-
         // test if file contains all columns
         // Time	Distance	Heart rate	Speed	Altitude	Latitude	Longitude	Slope
-        
         const fileType = event.text.indexOf("Altitude"); // if =-1 contains 3 columns only
         const fileRide = event.text.indexOf("RIDE"); // if =-1 contains 3 columns only
-        
         var iLoop=0;
         if (isGPX !== -1){
-          this.processGPXfile(event);
+            this.processGPXfile(event);
             console.log('end GTX');
             this.perf.splice(0,this.perf.length);
         } else if (fileTCX !== -1){
-          this.processTCXfile(event);
+            this.processTCXfile(event);
             console.log('end TCX');
             this.perf.splice(0,this.perf.length);
         } else if (fileRide===-1){
           if (fileType!==-1 ){
             maxFields=8;
           }
-          
-          for ( this.i=0; this.i<lengthText && stringNumber.indexOf(event.text.substring(this.i,this.i+1))===-1 ; this.i++){
-          }
+        for ( this.i=0; this.i<lengthText && stringNumber.indexOf(event.text.substring(this.i,this.i+1))===-1 ; this.i++){}
           // "\t" refers to tabulation
-          for (this.i=this.i; this.i<lengthText; this.i++){
+        for (this.i=this.i; this.i<lengthText; this.i++){
             for (j=this.i; j<lengthText && event.text.substring(j,j+1)==="\t"; j++){
               // search first tabulation character
             }
             for (k=j+1; k<lengthText && stringNumber.indexOf(event.text.substring(k,k+1))>-1; k++){
               // search first non tabulation character
             }
-            
-
             iPerf++
             if (iPerf===1){
               const thePerf=new classFilePerf;
@@ -451,15 +227,12 @@ ReceivedData(event:any){
                     // there is no separation - tabulation - betweeen speed and next sec
                     // each row is +1 sec; start of sec is this.perf[0].time ; most of the time should be 0
                     // next sec = this.perf.length + this.perf[0].time
-                    
                     var processSec = true;
                     if ( event.text.substring(k+1,k+2)!=="\t" ){
                       // character is not a tabulation; not a standard text format
                       processSec = false;
                     } 
-                    
                     lengthSec=0;
-
                     if (k<lengthText && processSec === true){
                         trouve=false;
                         for (var z=10; trouve===false; z=z*10){
@@ -474,12 +247,9 @@ ReceivedData(event:any){
                     } else {
                       this.perf[this.perf.length-1].slope=Number(event.text.substring(j,k-lengthSec));
                     }
-                    
                     if (processSec === true){
                       if (k<lengthText){
-
                         const thePerf=new classFilePerf;
-                        //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
                         this.perf.push(thePerf);
                         this.perf[this.perf.length-1].time=this.perf.length - 1 + Number(this.perf[0].time);
                       }
@@ -487,7 +257,6 @@ ReceivedData(event:any){
                     } else {
                       iPerf=0;
                     }
-    
             } else if (fileType!==-1) { // 
                 if (iPerf===3){
                   this.perf[this.perf.length-1].heart=Number(event.text.substring(j,k));
@@ -505,7 +274,6 @@ ReceivedData(event:any){
           }
         } else { // fileRide !== -1 which means it is a "RIDE" record
           this.myString = event.text.substring(fileRide);
-          
           for (j=0; this.myString.length > 60; j++){
             const thePerf=new classFilePerf;
             //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
@@ -521,78 +289,20 @@ ReceivedData(event:any){
           }
           console.log('length myString=' + this.myString.length +   'myStr='+this.myString);
           console.log('last record : j=' + j + "  data is " + JSON.stringify(this.perf[this.perf.length-1]));
-        
-        
         }
-   
     } else if (Array.isArray(event) && event[0].speed!==undefined){
         for (j=0; j<event.length; j++){
-          const thePerf=new classFilePerf;
-          //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
-          this.perf.push(thePerf);
-          if (event[j].sec!==undefined){
-            this.perf[j].time=event[j].sec;
-          } else if (event[j].time!==undefined){
-            this.perf[j].time=event[j].time;
-          }
-          this.perf[j].dist=event[j].dist;
-          this.perf[j].speed=event[j].speed;
-          if (event[j].heart!==undefined) {
-            this.perf[j].heart=event[j].heart;
-          }
-          if (event[j].heart!==undefined) {
-            this.perf[j].speed=event[j].speed;
-          }
-          if (event[j].alt!==undefined) {
-            this.perf[j].alt=event[j].alt;
-          }
-          if (event[j].lat!==undefined) {
-            this.perf[j].lat=event[j].lat;
-          }
-          if (event[j].lon!==undefined) {
-            this.perf[j].lon=event[j].lon;
-          }
-          if (event[j].slope!==undefined) {
-            this.perf[j].slope=event[j].slope;
-          }
+          this.fillPerfRecord(event,j);
         }
     } else if (event.fileType!==undefined){
         for (j=0; j<event.content.length; j++){
+          this.fillPerfRecord(event.content,j);
           const thePerf=new classFilePerf;
-          //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
-          this.perf.push(thePerf);
-          if (event.content[j].sec!==undefined){
-            this.perf[j].time=event.content[j].sec;
-          } else if (event.content[j].time!==undefined){
-            this.perf[j].time=event.content[j].time;
-          }
-          this.perf[j].dist=event.content[j].dist;
-          this.perf[j].speed=event.content[j].speed;
-          if (event.content[j].heart!==undefined) {
-            this.perf[j].heart=event.content[j].heart;
-          }
-          if (event.content[j].heart!==undefined) {
-            this.perf[j].speed=event.content[j].speed;
-          }
-          if (event.content[j].alt!==undefined) {
-            this.perf[j].alt=event.content[j].alt;
-          }
-          if (event.content[j].lat!==undefined) {
-            this.perf[j].lat=event.content[j].lat;
-          }
-          if (event.content[j].lon!==undefined) {
-            this.perf[j].lon=event.content[j].lon;
-          }
-          if (event.content[j].slope!==undefined) {
-            this.perf[j].slope=event.content[j].slope;
-          }
-
         }
         this.formOptions.controls['sport'].setValue(event.sport);
         this.formOptions.controls['theDate'].setValue(event.theDate);
       }
   
-
     var k=0;
     this.errorMessage="";
     for (var i=0; i<this.perf.length; i++){
@@ -613,29 +323,19 @@ ReceivedData(event:any){
           i=k;
         }
       }
-
-
-
-
     this.lastOccurrence=this.perf.length-1;
     if ( this.perf.length===0){
       this.errorMsg = this.errorMsg + "  file perf is empty - check the problem";
     } else {
       this.isFileProcessed=true;
     }
-    
-
-    if (this.isPerfRetrieved===true){
+    if (this.isPerfRetrieved===true ){
       this.createFilePerf();
       console.log('Performance-sport end process, SelectedBucketInfo.name' + this.SelectedBucketInfo.name + "  and length of perf file is " + this.filePerf.content.length);
-      this.returnPerf.emit({name:this.SelectedBucketInfo.name,file:this.filePerf});
+      this.returnPerf.emit(this.filePerf);
     }
-
   }
 
-  isFileProcessed:boolean=false;
-
-  errorMsg:string="";
   checkOptions(){
     this.errorMsg="";
     if (isNaN(this.formOptions.controls['seconds'].value)){
@@ -666,7 +366,42 @@ fillPerf(iRecord:number, specChar:string){
   return (myNb);
 }
 
-
+fillPerfRecord(event:any,j:number){
+  const thePerf=new classFilePerf;
+  //this.perf.push({time:'',dist:0,speed:0,heart:0,alt:0,lat:0,lon:0,slope:0});
+  this.perf.push(thePerf);
+  if (event[j].sec!==undefined){
+    this.perf[j].time=event[j].sec;
+  } else if (event[j].time!==undefined){
+    this.perf[j].time=event[j].time;
+  }
+  this.perf[j].dist=event[j].dist;
+  this.perf[j].speed=event[j].speed;
+  if (event[j].heart!==undefined) {
+    this.perf[j].heart=event[j].heart;
+  }
+  if (event[j].heart!==undefined) {
+    this.perf[j].speed=event[j].speed;
+  }
+  if (event[j].alt!==undefined) {
+    this.perf[j].alt=event[j].alt;
+  }
+  if (event[j].lat!==undefined) {
+    this.perf[j].lat=event[j].lat;
+  }
+  if (event[j].lon!==undefined) {
+    this.perf[j].lon=event[j].lon;
+  }
+  if (event[j].slope!==undefined) {
+    this.perf[j].slope=event[j].slope;
+  }
+  if (event[j].refPoR!==undefined) {
+    this.perf[j].refPoR=event[j].refPoR;
+  }
+  if (event[j].exclude!==undefined) {
+    this.perf[j].exclude=event[j].exclude;
+  }
+}
 
 
 newFillLatLon(startR:number,endR:number){
@@ -786,18 +521,10 @@ primeTabDic[iPrimeDic]=firstRowRef;
           }
 
     }
-    console.log('end of the loop');
-
     
 }
 
-  tabSecond:Array<any>=[];
-  tabMeter:Array<any>=[];
-  alt={lowest:2000,lDist:0,highest:0,hDist:0};
-  heart={lowest:200,lDist:0,highest:0,hDist:0};
-  speed={highest:0,dist:0}
 
-  isPerfProcessCompleted:boolean=false;
   performancePerSec(){
 
   this.tabMeter.splice(0,this.tabMeter.length);
@@ -1006,10 +733,12 @@ createFilePerf(){
 saveFile(){
   this.errorMessage='';
   this.createFilePerf();
+
+  const theType='application/json';
   // const fileName =this.formOptions.controls["fileName"].value;
-  var file=new File ([JSON.stringify(this.filePerf)], this.formOptions.controls["fileName"].value, {type: 'application/json'});
+  var file=new File ([JSON.stringify(this.filePerf)], this.formOptions.controls["fileName"].value, {type: theType});
  
-  this.ManageGoogleService.uploadObject(this.configServer, this.identification.performanceSport.bucket, file , this.formOptions.controls["fileName"].value)
+  this.ManageGoogleService.uploadObjectMetaPerso(this.configServer, this.identification.performanceSport.bucket, file , this.formOptions.controls["fileName"].value, "", theType, this.tabMetaPerso)
     .subscribe(
       res => {
         if (res.type===4){ 
@@ -1040,6 +769,52 @@ waitHTTP(loop:number, maxloop:number, eventNb:number){
       }  
   }
 
+
+processGPXfile(event:any){
+  var fnConvert=fromGPXtoTXT(event);
+  var file=new File ([JSON.stringify(fnConvert.theFile)], 'myJSON-GPXfile', {type: 'application/json'});
+  this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myJSON-GPXfile')
+              .subscribe(
+        res => {
+            if (res.type===4){ 
+
+            }
+        })
+  var file=new File ([JSON.stringify(fnConvert.theTXT)], 'myTEXT-GPXfile', {type: 'application/json'}); 
+  this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myTEXT-GPXfile')
+                .subscribe(
+        res => {
+            if (res.type===4){ 
+                  console.log('GPX text file is saved');
+            }
+        },
+        err => {
+            console.log(err);
+        })
+
+}
+
+processTCXfile(event:any){
+  var fnConvert=fromTCXtoJSON(event);
+  var file=new File ([JSON.stringify(fnConvert.theLaps)], 'myJSON-CSVfile', {type: 'application/json'});
+  this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myJSON-CSVfile')
+              .subscribe(
+      res => {
+        if (res.type===4){ 
+
+          }
+      })
+
+  var file=new File ([JSON.stringify(fnConvert.thePerf)], 'myJSON-TCXfile', {type: 'application/json'});
+  this.ManageGoogleService.uploadObject(this.configServer, 'xmv-tests', file ,  'myJSON-TCXfile')
+              .subscribe(
+      res => {
+        if (res.type===4){ 
+
+          }
+      })
+
+}
 
 }
 

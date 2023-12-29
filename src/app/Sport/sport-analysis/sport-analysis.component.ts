@@ -9,9 +9,10 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import {msginLogConsole} from '../consoleLog'
-import { configServer, LoginIdentif, OneBucketInfo, classFileSport, classTotalLoop, classNewLoop, classPointOfRef, classCircuitRec, Bucket_List_Info, classCredentials } from '../JsonServerClass';
-import { findIds, formatHHMNSS } from '../MyStdFunctions';
+import {msginLogConsole} from '../../consoleLog'
+import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
+import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
+import { findIds, formatHHMNSS } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
