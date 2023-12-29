@@ -1,5 +1,5 @@
 
-FROM --platform=linux/amd64 node:16.14.2-alpine3.14 AS my-app-build
+FROM --platform=linux/amd64 node:18.2.0-alpine3.14 AS my-app-build
 
 # FROM --platform=linux/arm64/v8 node:16.14.2-alpine3.14 AS my-app-build
 # FROM --platform=linux/arm64 node:16.14.2-alpine3.14 AS my-app-build
@@ -13,7 +13,7 @@ ENV NODE_ENV=production
 WORKDIR /usr/src/app 
 COPY package.json package-lock.json ./
 #COPY ["package.json", "package-lock.json*", "./"]
-RUN npm install npm@10.2.0 --only=production 
+RUN npm install npm@10.2.2 --only=production 
 #RUN npm install --production
 
 COPY . ./

@@ -289,7 +289,7 @@ manageUpdates(event:any){
     
   } else if (event.target.id==="saveFile"){
     this.checkCodeCircuit();
-    this.saveFile(this.identification.circuits.bucket, this.identification.circuits.file, this.fileCircuit);
+    this.saveFile(this.identification.circuits.bucket, this.formOptions.controls["fileName"].value, this.fileCircuit);
   } else if (event.target.id==="cancelSave"){
       this.saveConfirmed=false;
   }
