@@ -8,104 +8,86 @@
 <app-dictionary [configServer]="configServer" [identification]="identification"  ></app-dictionary>
 </div>
 <div *ngIf="dictionaryOnly===false">
+
+    <div *ngIf="EventHTTPReceived[0]===true && isCreateRecipeName===false && isRecipeModified===false && theListOfObjects.length>1" style="width:450px;  margin-top:5px; display:inline-block;" >
+        <div class="objectHeader" style="margin-left:10px; font-size:18px; width:100%; display:inline-block;">Select the recipe file
+        </div>
+        <li   *ngFor="let listFile of theListOfObjects; let i=index" style="list-style: none; width:100%; display:inline-block;" (click)='RadioSelection($event)' >
+            <input   *ngIf="fileNb===i" class="radioButton"  type="radio"  name="theRadio" id="selFile-{{i}}" value="Y"  checked>
+            <input   *ngIf="fileNb!==i" class="radioButton"  type="radio"  name="theRadio" id="selFile-{{i}}" value="N"  >
+            <span [ngClass]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}"   id="selFile-{{i}}" class=" object" style="margin-left:10px; padding-top:-25px; width:100%; " >
+                <span id="selFile-{{i}}" style="margin-left:15px; display:inline-block;" >{{i+1}} - {{listFile.name}}</span>
+            </span>
+        </li>   
+   
+    </div>
     
-<div *ngIf="EventHTTPReceived[0]===true && isCreateRecipeName===false && isRecipeModified===false && theListOfObjects.length>1" style="min-width:400px; max-width:500px; margin-top:5px;" >
-    <div class="objectHeader" style="margin-left:10px; font-size:14px; width:96%; display:inline-block;">Select the type of recipe(s)</div>
-    <!--
-            <div   *ngFor="let listFile of theListOfObjects; let i=index" >
-                    <div style="list-style-type: none; ">
-                            <input   *ngIf="recordRecipe===i" class="radioButton" (click)='RadioSelection($event)' type="radio"  name="theRadio" id="{{i}}" value="Y"  checked>
-                            <input   *ngIf="recordRecipe!==i" class="radioButton" (click)='RadioSelection($event)' type="radio"  name="theRadio" id="{{i}}" value="N"  >
-                            <div  [ngClass]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}"   class=" object" style="margin-left:10px; padding-top:-25px;" ><span style="margin-left:15px;" >{{i+1}} - {{listFile.name}}</span></div>
-          
+<div style="width:100%; display:inline-block;">
+    <div *ngIf="EventHTTPReceived[0]===true  && recipeFile.listTypeRecipe.length>1" style="max-width:450px; width:100%; margin-top:5px; display:inline-block;" >
+        <div style=" margin-left:10px; font-size:14px; width:100%; border:blue solid 1px; background-color:cyan;">
+            <div class="objectHeader" style="margin-left:0px; font-size:16px; width:100%; display:inline-block; border:0px solid blue;">
+                <span style="margin-left:-8%;">&nbsp;</span>
+                <span (click)="selLanguage('FR')"><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagFrance.png" ></span>
+                <span style="margin-left:10px;">&nbsp;</span>
+                <span  (click)="selLanguage('UK')"><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagUK.png" ></span>
+                <span style="margin-left:50px;">Select the type of recipe(s)</span>
+            
+            </div>
+            <div style="margin-top:3px;"></div>
+
+            <div class="theBox" >
+                <div  [ngClass]="{'typeRecipeLargeBox':recipeFile.listTypeRecipe.length>7, 'typeRecipeSmallBox':recipeFile.listTypeRecipe.length<8}" >
+                    <div style="margin-top:5px;"></div>
+                    <div  *ngFor="let listType of recipeFile.listTypeRecipe; let i=index"  >
+                        <div *ngIf="i===0" style="margin-left:10px; width:96%; display:inline-block; height:27px;" (click)='RadioSelection($event)'>
+                            <div  style="padding-left:15px;  width:47%; display:inline-block; " id="TypeAll"  class="listObj even2"[ngClass]="{'listObjSel':selectedTypeFr==='ALL'}"  (click)='RadioSelection($event)' 
+                                            id="TypeAll" >0 - 
+                                    <span *ngIf="yourLanguage==='FR'"   
+                                            id="TypeAll">Tous (défaut)</span>
+                                    <span *ngIf="yourLanguage==='UK'" 
+                                            id="TypeAll">All (default)</span>
+                            </div>
+                            <div  style="margin-left:8px; ; padding-left:15px; width:47%; display:inline-block;" id="TypeA-{{i}}"  class="listObj even1" [ngClass]="{'listObjSel':i===radioSelect}"  (click)='RadioSelection($event)' 
+                                                id="TypeA-{{i}}" >{{i+1}} - 
+                                    <span *ngIf="yourLanguage==='FR'" 
+                                                id="TypeA-{{i}}"> {{listType.Fr.trim()}} </span>
+                                    <span *ngIf="yourLanguage==='UK'" 
+                                                id="TypeA-{{i}}"> {{listType.En.trim()}} </span>
+                            </div>
+                        </div>
+                        <div *ngIf="i > 0 && i % 2=== 1" style="margin-left:10px; width:96%; display:inline-block;  " (click)='RadioSelection($event)' >
+                            <div  class="listObj" style="padding-left:15px; width:47%; display:inline-block;" id="TypeA-{{i}}" [ngClass]="{'even1': i % 4 === 1 , 'even2': i % 4 === 3,'listObjSel':i===radioSelect}"  (click)='RadioSelection($event)' 
+                                    id="TypeA-{{i}}" >{{i+1}} - 
+                                    <span *ngIf="yourLanguage==='FR'" 
+                                    id="TypeA-{{i}}"> {{listType.Fr.trim()}} </span>
+                                    <span *ngIf="yourLanguage==='UK'"
+                                    id="TypeA-{{i}}"> {{listType.En.trim()}} </span>
+                            </div>
+                    
+                            <div *ngIf="  i < recipeFile.listTypeRecipe.length-1"  class="listObj" id="TypeB-{{i+1}}" style="margin-left:8px; padding-left:15px; width:47%; display:inline-block;" [ngClass]="{'even2': (i + 1) % 4 === 2 , 'even1': (i + 1) % 4 === 0, 'listObjSel':i+1===radioSelect}"  (click)='RadioSelection($event)' 
+                                    id="TypeB-{{i+1}}" >{{i+2}} - 
+                                    <span *ngIf="yourLanguage==='FR'" 
+                                    id="TypeB-{{i+1}}"> {{recipeFile.listTypeRecipe[i+1].Fr.trim()}} </span>
+                                    <span *ngIf="yourLanguage==='UK'" 
+                                    id="TypeB-{{i+1}}"> {{recipeFile.listTypeRecipe[i+1].En.trim()}} </span>
+                            </div>
+                        </div>
                     </div>
-                  
-            </div>   
-    -->
-    <!--
-        <div   *ngFor="let listFile of theListOfObjects; let i=index" >
-                
-            <div *ngIf="i % 2=== 0" style="margin-left:10px; " > 
-                    <div   class="listObj"   [ngClass]="{'even1': i % 4 === 0 , 'even2': i % 4 === 2 }"> 
-                        <div style="padding-left:15px; width:100%; display:inline-block; " [ngClass]="{'listObjSel':i===radioSelect}"  (click)='RadioSelection($event)' 
-                                id="listA-{{i}}" >{{i+1}} - {{listFile.name}}</div>
-                    </div>
-                    <div  *ngIf=" i < theListOfObjects.length-2"  class="listObj"   [ngClass]="{'even2': (i + 1) % 4 === 1 , 'even1': (i + 1) % 4 === 3}"> 
-                        <div style="padding-left:15px; width:100%; display:inline-block;  " [ngClass]="{'listObjSel':i+1===radioSelect}"  (click)='RadioSelection($event)' 
-                                id="listB-{{i+1}}" >{{i+2}} - {{theListOfObjects[i+1].name}}</div>
-                    </div>
+                    <div style="margin-top:5px;"></div>
                 </div>  
-
-        </div>    
-    -->
-</div>
-    
-
-<div *ngIf="EventHTTPReceived[0]===true  && recipeFile.listTypeRecipe.length>1" style="min-width:390px; max-width:490px; margin-top:5px; " >
-    <div style=" margin-left:10px; font-size:14px; width:94%; border:blue solid 1px; background-color:cyan;">
-        <div class="objectHeader" style="margin-left:0px; font-size:16px; width:100%; display:inline-block; border:0px solid blue;">
-            <span style="margin-left:-8%;">&nbsp;</span>
-            <span (click)="selLanguage('FR')"><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagFrance.png" ></span>
-            <span style="margin-left:10px;">&nbsp;</span>
-            <span  (click)="selLanguage('UK')"><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagUK.png" ></span>
-            <span style="margin-left:50px;">Select the type of recipe(s)</span>
-        
+            </div>
+            <div style="margin-top:3px; margin-left:150px;">
+                <button id='but_2' class="sizeButtons" (click)="onRefresh()"> Refresh</button> 
+            </div>
+            <div style="margin-top:7px;"></div>
         </div>
-        <div style="margin-top:3px;"></div>
-
-        <div class="theBox" >
-            <div  [ngClass]="{'typeRecipeLargeBox':recipeFile.listTypeRecipe.length>7, 'typeRecipeSmallBox':recipeFile.listTypeRecipe.length<8}" >
-                <div style="margin-top:5px;"></div>
-                <div  *ngFor="let listType of recipeFile.listTypeRecipe; let i=index"  >
-                    <div *ngIf="i===0" style="margin-left:10px; width:96%; display:inline-block; height:27px;">
-                        <div  style="padding-left:15px;  width:47%; display:inline-block; " class="listObj even2"[ngClass]="{'listObjSel':selectedTypeFr==='ALL'}"  (click)='RadioSelection($event)' 
-                                        id="TypeAll" >0 - 
-                                <span *ngIf="yourLanguage==='FR'"  (click)='RadioSelection($event)' 
-                                        id="TypeAll">Tous (défaut)</span>
-                                <span *ngIf="yourLanguage==='UK'"  (click)='RadioSelection($event)' 
-                                        id="TypeAll">All (default)</span>
-                        </div>
-                        <div  style="margin-left:8px; ; padding-left:15px; width:47%; display:inline-block;" class="listObj even1" [ngClass]="{'listObjSel':i===radioSelect}"  (click)='RadioSelection($event)' 
-                                            id="TypeA-{{i}}" >{{i+1}} - 
-                                <span *ngIf="yourLanguage==='FR'" (click)='RadioSelection($event)' 
-                                            id="TypeA-{{i}}"> {{listType.Fr.trim()}} </span>
-                                <span *ngIf="yourLanguage==='UK'" (click)='RadioSelection($event)' 
-                                            id="TypeA-{{i}}"> {{listType.En.trim()}} </span>
-                        </div>
-                    </div>
-                    <div *ngIf="i > 0 && i % 2=== 1" style="margin-left:10px; width:96%; display:inline-block;  ">
-                        <div  class="listObj" style="padding-left:15px; width:47%; display:inline-block;" [ngClass]="{'even1': i % 4 === 1 , 'even2': i % 4 === 3,'listObjSel':i===radioSelect}"  (click)='RadioSelection($event)' 
-                                id="TypeA-{{i}}" >{{i+1}} - 
-                                <span *ngIf="yourLanguage==='FR'" (click)='RadioSelection($event)' 
-                                id="TypeA-{{i}}"> {{listType.Fr.trim()}} </span>
-                                <span *ngIf="yourLanguage==='UK'" (click)='RadioSelection($event)' 
-                                id="TypeA-{{i}}"> {{listType.En.trim()}} </span>
-                        </div>
-                
-                        <div *ngIf="  i < recipeFile.listTypeRecipe.length-1"  class="listObj" style="margin-left:8px; padding-left:15px; width:47%; display:inline-block;" [ngClass]="{'even2': (i + 1) % 4 === 2 , 'even1': (i + 1) % 4 === 0, 'listObjSel':i+1===radioSelect}"  (click)='RadioSelection($event)' 
-                                id="TypeB-{{i+1}}" >{{i+2}} - 
-                                <span *ngIf="yourLanguage==='FR'" (click)='RadioSelection($event)' 
-                                id="TypeB-{{i+1}}"> {{recipeFile.listTypeRecipe[i+1].Fr.trim()}} </span>
-                                <span *ngIf="yourLanguage==='UK'" (click)='RadioSelection($event)' 
-                                id="TypeB-{{i+1}}"> {{recipeFile.listTypeRecipe[i+1].En.trim()}} </span>
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-top:5px;"></div>
-            </div>  
-        </div>
-        <div style="margin-top:3px;">
-            <button id='but_2' class="sizeButtons" (click)="onRefresh()"> Refresh</button> 
-        </div>
-        <div style="margin-top:5px;"></div>
     </div>
 </div>
-
 <div *ngIf="EventHTTPReceived[1]===true" style=" margin-left:10px; width:94%; max-width:650px; margin-top:20px;" >
     <div id="posDivBeforeTitle"></div>
     <div *ngIf='isCreateRecipeName===false' style="width:100%; border:solid 2px blue;">
         <div style="margin-top:8px;"></div>
-    <!-- ====== SEARCH RECIPE ====== -->
+        <!-- ====== SEARCH RECIPE ====== -->
         <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Search recipe </span>
         <input type="text" [value]="textToSearch" id='search' (input)="searchText($event)" (click)="searchText($event)"
             style="margin-left:10px; width:120px; height:25px; color:blue; ">
@@ -115,9 +97,9 @@
             <li *ngFor="let tab of tabSearch; let m=index;" class="recipeStraight-options " style="margin-left:5px;"
                             [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                             (click)="afterDropDownSel($event)" id="selText-{{m}}" >
-                    <span *ngIf="m % 3 ===0" (click)="afterDropDownSel($event)" id="selText-{{m}}"  >{{tab.name}}   </span>
-                    <span *ngIf="m % 3 ===1" (click)="afterDropDownSel($event)" id="selText-{{m}}"  >{{tab.name}}   </span>
-                    <span *ngIf="m % 3 ===2" (click)="afterDropDownSel($event)" id="selText-{{m}}"  >{{tab.name}}   </span>
+                    <span *ngIf="m % 3 ===0"  id="selText-{{m}}"  >{{tab.name}}   </span>
+                    <span *ngIf="m % 3 ===1"  id="selText-{{m}}"  >{{tab.name}}   </span>
+                    <span *ngIf="m % 3 ===2"  id="selText-{{m}}"  >{{tab.name}}   </span>
             </li>
         </div>
         <div style="margin-top:8px;"></div>
@@ -134,18 +116,28 @@
     </div>
 
     
-    <div *ngIf="IsSaveConfirmed===true" style="margin-left:20px; width:80%">
-        <div class="msg"  >
-            Please enter the name of the file you want to save your data in :
+    <div *ngIf="IsSaveConfirmed===true" style="margin-left:10px; width:400px; border:solid 2px green; background-color: lightgrey;">
+        <div class="msg" style="font-size:15px;  text-align: center;" >
+            Save the data in file : 
         </div>
         <form  [formGroup]="SpecificForm" >
-            <input type='text' style='margin-left:20px; background-color:lightgrey;' formControlName="FileName" >
+            <div style="width:100%; display:inline-block; margin-top:10px;">
+                <span class="fileLabel" >Header</span>
+                <input type='text' class="fileInput" formControlName="fileHeader" >
+            </div>
+            <div style="width:100%; display:inline-block;">
+                <span class="fileLabel" >Name</span>
+                <input type='text' class="fileInput" formControlName="fileName" >
+            </div>
             <br><br>
-            <button id='but_3' class="sizeButtons" (click)="SaveRecord()">Confirm</button>
+            <button id='but_3' class="sizeButtons" style="margin-left:100px;" (click)="SaveRecord()">Confirm</button>
             <button id='but_4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
         </form>
-        <br><br>
+        <br>
     </div>  
+    <div *ngIf="IsSaveConfirmed===true">
+        <br>
+    </div>
     <div *ngIf="isCreateRecipeName===true">
         <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Create name recipe </span>
         <input type="text" [value]="temporaryNameRecipe" id="input" (input)="nameRecipe($event)"
@@ -227,10 +219,10 @@
             <div style='margin-left:15px; display:inline-block; color:blue; font-weight:bold; margin-top:-20px;'>{{recipeFile.recipe[recordRecipe].name}} </div>
             
             <div class="menuBox" id="listRecipe" (click)="onAction($event)">
-            <mat-icon  class="menu"  id="listRecipe" (click)="onAction($event)" >
-               menu
-            </mat-icon>
-        </div>
+                <mat-icon  class="menu"  id="listRecipe"  >
+                menu
+                </mat-icon>
+            </div>
 
         </div>
 
@@ -260,7 +252,7 @@
                     </mat-icon>
                 </span>
                 <span  *ngIf='theStdPersoDisplay[0]==="N"'>
-                    <mat-icon style=" color: blue;" class="eye" id="eyeStd" id="eyeStd" (click)='selStdPer($event)' >
+                    <mat-icon style=" color: blue;" class="eye" id="eyeStd"  (click)='selStdPer($event)' >
                         visibility
                     </mat-icon>
                 </span>
@@ -274,12 +266,12 @@
                 <div style='font-size:16px; width:50%;  text-align: right;  margin-top:8px;  display:inline-block; color:blue'>Personnalized
                 </div>
                 <span  *ngIf='theStdPersoDisplay[1]==="Y"'>
-                    <mat-icon style=" color: red;" class="eye" id="eyeStd" id="eyePerso" (click)='selStdPer($event)' >
+                    <mat-icon style=" color: red;" class="eye"  id="eyePerso" (click)='selStdPer($event)' >
                         visibility_off
                     </mat-icon>
                 </span>
                 <span  *ngIf='theStdPersoDisplay[1]==="N"'>
-                    <mat-icon style=" color: blue;" class="eye" id="eyeStd" id="eyePerso" (click)='selStdPer($event)' >
+                    <mat-icon style=" color: blue;" class="eye"  id="eyePerso" (click)='selStdPer($event)' >
                         visibility
                     </mat-icon>
                 </span>

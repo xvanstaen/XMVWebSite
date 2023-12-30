@@ -8,6 +8,18 @@
   
 }
 
+.fileInput{
+  margin-left:20px; width:150px; background-color:lightgreen;
+}
+
+.fileInput:hover{
+   background-color:cyan;
+}
+
+.fileLabel{
+  width:90px; display:inline-block; color:blue; padding-left:15px;
+}
+
 .theType{
   margin-left:15px; display:inline-block; color:blue; font-weight:bold; 
   margin-top:-20px; height:20px; width:180px; font-size:14px; background-color:lightgrey;

@@ -208,7 +208,8 @@ theStdPersoDisplay:Array<string>=['Y','N'];
 eyeNutritionFact:Array<string>=['N','N'];
 
 SpecificForm=new FormGroup({
-  FileName: new FormControl('', { nonNullable: true }),
+  fileName: new FormControl('', { nonNullable: true }),
+  fileHeader: new FormControl('', { nonNullable: true }),
   changeValue: new FormControl('', { nonNullable: true }),
 })
 
@@ -397,13 +398,13 @@ if (this.radioSelect!==this.idNb){
   this.radioSelect=this.idNb;
   //this.tabSearch.splice(0,this.tabSearch.length);
   //this.textToSearch = "";
-  if (this.idText.substring(0,4)==="List"){
+ if (this.idText==="selFile" ){
 
-  
-    //const val=Number(event.target.id.substring(0,1));
-    if (  this.fileNb !== Number(event.target.id)){
+    if (  this.fileNb !== this.idNb){
       this.recipeFile.recipe.splice(0,this.recipeFile.recipe.length);
+      this.recipeFile.listTypeRecipe.splice(0,this.recipeFile.listTypeRecipe.length);
       this.initialRecipeFile.recipe.splice(0,this.initialRecipeFile.recipe.length);
+      this.initialRecipeFile.listTypeRecipe.splice(0,this.initialRecipeFile.listTypeRecipe.length);
       this.fileNb = this.radioSelect;
       //this.getRecord(this.googleBucketName, this.myListOfObjects.items[this.fileNb].name,1);
       const nameOfFile=this.theListOfObjects[this.fileNb].header+this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json;
@@ -549,62 +550,65 @@ afterDropDown(event:any){
   if (event.target.id==='Action'){
       if (event.target.textContent.trim()==="Cancel" ){
 
-      } else if (event.target.textContent.trim()==="Delete" ){
-        this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,1);
-        this.tabUpdateRef[this.recordRecipe].splice(this.idNb,1);
-      } else if (event.target.textContent.trim()==="Add after" ){
-        const pushData=new classRecipe;
-        this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb+1,0,pushData);
-        const pushDataPerso=new classRecipe;
-        this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
-        this.tabUpdateRef[this.recordRecipe].splice(this.idNb+1,0,{init:0});
-        this.tabUpdateRef[this.recordRecipe+1].init=-1;
-      } else if (event.target.textContent.trim()==="Add before" ){
-        const pushData=new classRecipe;
-        this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,0,pushData);
-        const pushDataPerso=new classRecipe;
-        this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
-        this.tabUpdateRef[this.recordRecipe].splice(this.idNb,0,{init:0});
-        this.tabUpdateRef[this.recordRecipe].init=-1;
-      } else if (event.target.textContent.trim().substring(0,8)==="Copy ALL" ){
-        this.copyFromTo(this.recipeFile.recipe[this.recordRecipe].dataPerso,this.recipeFile.recipe[this.recordRecipe].data);
-      } else if (event.target.textContent.trim().substring(0,4)==="Copy" ){
-        for (i=0; i<this.recipeFile.recipe[this.recordRecipe].dataPerso.length && 
-          this.recipeFile.recipe[this.recordRecipe].dataPerso[i].ingr!==""; i++){}
-        if (i===this.recipeFile.recipe[this.recordRecipe].dataPerso.length){
+      } else 
+      { this.isRecipeModified=true;
+        if (event.target.textContent.trim()==="Delete" ){
+          this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,1);
+          this.tabUpdateRef[this.recordRecipe].splice(this.idNb,1);
+        } else if (event.target.textContent.trim()==="Add after" ){
           const pushData=new classRecipe;
-          this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+          this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb+1,0,pushData);
           const pushDataPerso=new classRecipe;
           this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
-          i=this.recipeFile.recipe[this.recordRecipe].dataPerso.length-1;
-          
-        }
-        this.recipeFile.recipe[this.recordRecipe].dataPerso[i].ingr=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr;
-        this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity;
-        this.recipeFile.recipe[this.recordRecipe].dataPerso[i].unit=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].unit;
+          this.tabUpdateRef[this.recordRecipe].splice(this.idNb+1,0,{init:0});
+          this.tabUpdateRef[this.recordRecipe+1].init=-1;
+        } else if (event.target.textContent.trim()==="Add before" ){
+          const pushData=new classRecipe;
+          this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,0,pushData);
+          const pushDataPerso=new classRecipe;
+          this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
+          this.tabUpdateRef[this.recordRecipe].splice(this.idNb,0,{init:0});
+          this.tabUpdateRef[this.recordRecipe].init=-1;
+        } else if (event.target.textContent.trim().substring(0,8)==="Copy ALL" ){
+          this.copyFromTo(this.recipeFile.recipe[this.recordRecipe].dataPerso,this.recipeFile.recipe[this.recordRecipe].data);
+        } else if (event.target.textContent.trim().substring(0,4)==="Copy" ){
+          for (i=0; i<this.recipeFile.recipe[this.recordRecipe].dataPerso.length && 
+            this.recipeFile.recipe[this.recordRecipe].dataPerso[i].ingr!==""; i++){}
+          if (i===this.recipeFile.recipe[this.recordRecipe].dataPerso.length){
+            const pushData=new classRecipe;
+            this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+            const pushDataPerso=new classRecipe;
+            this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
+            i=this.recipeFile.recipe[this.recordRecipe].dataPerso.length-1;
+            
+          }
+          this.recipeFile.recipe[this.recordRecipe].dataPerso[i].ingr=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr;
+          this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity;
+          this.recipeFile.recipe[this.recordRecipe].dataPerso[i].unit=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].unit;
 
-      } else if (event.target.textContent.trim()==="Move after" ){
-        if (this.idNb<this.recipeFile.recipe[this.recordRecipe].data.length-1){
-          var saveData=new classRecipe;
-          saveData=this.recipeFile.recipe[this.recordRecipe].data[this.idNb];
-          this.recipeFile.recipe[this.recordRecipe].data[this.idNb]=this.recipeFile.recipe[this.recordRecipe].data[this.idNb+1];
-          this.recipeFile.recipe[this.recordRecipe].data[this.idNb+1]=saveData;
+        } else if (event.target.textContent.trim()==="Move after" ){
+          if (this.idNb<this.recipeFile.recipe[this.recordRecipe].data.length-1){
+            var saveData=new classRecipe;
+            saveData=this.recipeFile.recipe[this.recordRecipe].data[this.idNb];
+            this.recipeFile.recipe[this.recordRecipe].data[this.idNb]=this.recipeFile.recipe[this.recordRecipe].data[this.idNb+1];
+            this.recipeFile.recipe[this.recordRecipe].data[this.idNb+1]=saveData;
+          }
+        } else if (event.target.textContent.trim()==="Move before" ){
+          if (this.idNb>0){
+            var saveData=new classRecipe;
+            saveData=this.recipeFile.recipe[this.recordRecipe].data[this.idNb];
+            this.recipeFile.recipe[this.recordRecipe].data[this.idNb]=this.recipeFile.recipe[this.recordRecipe].data[this.idNb-1];
+            this.recipeFile.recipe[this.recordRecipe].data[this.idNb-1]=saveData;
+          }
+          
+        } else if (event.target.textContent.trim()==="Change value for all" ){
+          this.isChangeValueForAll=true;
+          this.currentValue=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity;
+          this.currentIngr=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr;
+          this.margLeftChangeAll=30;
+        } else if (event.target.textContent.trim()==="Calculate nutrition facts" ){
+          this.calculateNutrition('std');
         }
-      } else if (event.target.textContent.trim()==="Move before" ){
-        if (this.idNb>0){
-          var saveData=new classRecipe;
-          saveData=this.recipeFile.recipe[this.recordRecipe].data[this.idNb];
-          this.recipeFile.recipe[this.recordRecipe].data[this.idNb]=this.recipeFile.recipe[this.recordRecipe].data[this.idNb-1];
-          this.recipeFile.recipe[this.recordRecipe].data[this.idNb-1]=saveData;
-        }
-        
-      } else if (event.target.textContent.trim()==="Change value for all" ){
-        this.isChangeValueForAll=true;
-        this.currentValue=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity;
-        this.currentIngr=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr;
-        this.margLeftChangeAll=30;
-      } else if (event.target.textContent.trim()==="Calculate nutrition facts" ){
-        this.calculateNutrition('std');
     }
   } 
 }
@@ -638,56 +642,60 @@ afterDropDownPerso(event:any){
   var i=0;
   if (event.target.textContent.trim()==="Cancel" ){
 
-  } else if (event.target.textContent.trim()==="Delete" ){
+  } else 
+  {
+    this.isRecipeModified=true;
+    if (event.target.textContent.trim()==="Delete" ){
       
-  } else if (event.target.textContent.trim()==="Add after" ){
-      const pushDataPerso=new classRecipe;
-      this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(this.idNb+1,0,pushDataPerso);
-      const pushData=new classRecipe;
-      this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
-  } else if (event.target.textContent.trim()==="Add before" ){
-      const pushDataPerso=new classRecipe;
-      this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(this.idNb,0,pushDataPerso);
-      const pushData=new classRecipe;
-      this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
-  } else if (event.target.textContent.trim().substring(0,8)==="Copy ALL" ){
-        this.copyFromTo(this.recipeFile.recipe[this.recordRecipe].data,this.recipeFile.recipe[this.recordRecipe].dataPerso);
-  } else if (event.target.textContent.trim().substring(0,4)==="Copy" ){
-      for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].data.length && 
-        this.recipeFile.recipe[this.recordRecipe].data[i].ingr!==""; i++){}
-      if (i===this.recipeFile.recipe[this.recordRecipe].data.length){
+    } else if (event.target.textContent.trim()==="Add after" ){
         const pushDataPerso=new classRecipe;
-        this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
+        this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(this.idNb+1,0,pushDataPerso);
         const pushData=new classRecipe;
         this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
-        i=this.recipeFile.recipe[this.recordRecipe].data.length-1;
-      }
-      this.recipeFile.recipe[this.recordRecipe].data[i].ingr=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr;
-      this.recipeFile.recipe[this.recordRecipe].data[i].quantity=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
-      this.recipeFile.recipe[this.recordRecipe].data[i].unit=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].unit;
+    } else if (event.target.textContent.trim()==="Add before" ){
+        const pushDataPerso=new classRecipe;
+        this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(this.idNb,0,pushDataPerso);
+        const pushData=new classRecipe;
+        this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+    } else if (event.target.textContent.trim().substring(0,8)==="Copy ALL" ){
+          this.copyFromTo(this.recipeFile.recipe[this.recordRecipe].data,this.recipeFile.recipe[this.recordRecipe].dataPerso);
+    } else if (event.target.textContent.trim().substring(0,4)==="Copy" ){
+        for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].data.length && 
+          this.recipeFile.recipe[this.recordRecipe].data[i].ingr!==""; i++){}
+        if (i===this.recipeFile.recipe[this.recordRecipe].data.length){
+          const pushDataPerso=new classRecipe;
+          this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
+          const pushData=new classRecipe;
+          this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+          i=this.recipeFile.recipe[this.recordRecipe].data.length-1;
+        }
+        this.recipeFile.recipe[this.recordRecipe].data[i].ingr=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr;
+        this.recipeFile.recipe[this.recordRecipe].data[i].quantity=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
+        this.recipeFile.recipe[this.recordRecipe].data[i].unit=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].unit;
 
-  } else if (event.target.textContent.trim()==="Move after" ){
-      if (this.idNb<this.recipeFile.recipe[this.recordRecipe].dataPerso.length-1){
-        var saveData=new classRecipe;
-        saveData=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb];
-        this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb]=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb+1];
-        this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb+1]=saveData;
-      }
-  } else if (event.target.textContent.trim()==="Move before" ){
-      if (this.idNb>0){
-        var saveData=new classRecipe;
-        saveData=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb];
-        this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb]=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb-1];
-        this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb-1]=saveData;
-      } 
-  } else if (event.target.textContent.trim()==="Change value for all" ){
-      this.isChangeValueForAllPerso=true;
-      this.currentValue=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
-      this.currentIngr=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr;
-      this.margLeftChangeAll=30;
-  } else if (event.target.textContent.trim()==="Calculate nutrition facts" ){
-        this.calculateNutrition('perso');
+    } else if (event.target.textContent.trim()==="Move after" ){
+        if (this.idNb<this.recipeFile.recipe[this.recordRecipe].dataPerso.length-1){
+          var saveData=new classRecipe;
+          saveData=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb];
+          this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb]=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb+1];
+          this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb+1]=saveData;
+        }
+    } else if (event.target.textContent.trim()==="Move before" ){
+        if (this.idNb>0){
+          var saveData=new classRecipe;
+          saveData=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb];
+          this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb]=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb-1];
+          this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb-1]=saveData;
+        } 
+    } else if (event.target.textContent.trim()==="Change value for all" ){
+        this.isChangeValueForAllPerso=true;
+        this.currentValue=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
+        this.currentIngr=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr;
+        this.margLeftChangeAll=30;
+    } else if (event.target.textContent.trim()==="Calculate nutrition facts" ){
+          this.calculateNutrition('perso');
     }
+  }
 }
 
 afterDropDownRecipe(event:any){
@@ -699,7 +707,10 @@ afterDropDownRecipe(event:any){
   this.isActionRecipe=false;
   if (this.tabActionRecipe[event.target.value]==="Cancel"){
 
-  } else if (this.tabActionRecipe[event.target.value]==="Delete"){
+  } else {
+    this.isRecipeModified=true;
+    if (this.tabActionRecipe[event.target.value]==="Delete"){
+      
       this.isDeleteRecipe=true;   
       this.delMsg=this.recipeFile.recipe[this.recordRecipe].name; 
       //this.styleBox=getStyleDropDownContent(90, 240);
@@ -723,29 +734,30 @@ afterDropDownRecipe(event:any){
         'border':'1px blue solid'
         }
 
-  } else if (this.tabActionRecipe[event.target.value]==="Create" ){
-      this.isRecipeModified=true;
-      this.isCreateRecipeName=true;
+    } else if (this.tabActionRecipe[event.target.value]==="Create" ){
+        this.isRecipeModified=true;
+        this.isCreateRecipeName=true;
 
-  } else if (this.tabActionRecipe[event.target.value]==="Duplicate"){
-      this.isRecipeModified=true;
-      this.isCreateRecipeName=true;
-      this.isDuplicate=true;
+    } else if (this.tabActionRecipe[event.target.value]==="Duplicate"){
+        this.isRecipeModified=true;
+        this.isCreateRecipeName=true;
+        this.isDuplicate=true;
 
-  } else if (this.tabActionRecipe[event.target.value]==="Rename"){
-      this.isChangeRecipeName=true;
-      this.temporaryNameRecipe="";
+    } else if (this.tabActionRecipe[event.target.value]==="Rename"){
+        this.isChangeRecipeName=true;
+        this.temporaryNameRecipe="";
      } else  if (this.tabActionRecipe[event.target.value]==="Calculate nut. facts for all recipes"){
-      this.calculateNutritionForAllRecipe();
+        this.calculateNutritionForAllRecipe();
      } else if (this.tabActionRecipe[event.target.value]==="Transfer nut. facts to CalFat"){
-      this.transferToCalFat();
+        this.transferToCalFat();
      } else  if (this.tabActionRecipe[event.target.value]==="Translate FR to UK"){
-      this.translateComments('FrToUk');
+        this.translateComments('FrToUk');
      } else  if (this.tabActionRecipe[event.target.value]==="Translate UK to FR"){
-      this.translateComments('UkToFr');
+        this.translateComments('UkToFr');
      } else  if (this.tabActionRecipe[event.target.value]==="Reinitialise"){
-      this.reInitialieRecipe();
+        this.reInitialieRecipe();
      }
+    }
 }
 
 copyFromTo(toRecord:any, fromRecord:any){
@@ -1394,6 +1406,7 @@ reInitialieRecipe(){
 onInputType(event:any){
     this.resetBooleans();
     const theValue=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
+    this.isRecipeModified=true;
     if (event.target.id==='Fr'){
       this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeFr.trim(),"Fr",this.recipeFile.recipe[this.recordRecipe].name.trim());
       this.recipeFile.recipe[this.recordRecipe].typeFr=theValue;
@@ -1417,6 +1430,7 @@ onInputType(event:any){
 
 
 updateInListType(recipeName:string,lang:string,action:string){
+  this.isRecipeModified=true;
   var i=0;
   var theValue="ALL";
   if (lang==="FR"){
@@ -1541,6 +1555,7 @@ onDropdownListType(event:any){
 }
 
 updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:string){
+  this.isRecipeModified=true;
   var trouve=false;
   var iType=0;
   if (oldType===""){
@@ -1662,6 +1677,7 @@ refreshFileType(inFile:any){
 }
 
 updateFileType(inFile:any){
+   
     var iList=0;
     inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
     inFile.listTypeRecipe[iList].Fr=inFile.recipe[0].typeFr;
@@ -1752,9 +1768,10 @@ CancelSave(){
 ConfirmSave(){
     this.resetBooleans();
     this.tabDialog[this.prevDialog]=false;
-    const nameOfFile=this.theListOfObjects[this.fileNb].header+this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json;
+    //const nameOfFile=this.theListOfObjects[this.fileNb].header+this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json;
     //this.SpecificForm.controls['FileName'].setValue(this.myListOfObjects.items[this.fileNb].name);
-    this.SpecificForm.controls['FileName'].setValue(nameOfFile);
+    this.SpecificForm.controls['fileHeader'].setValue(this.theListOfObjects[this.fileNb].header);
+    this.SpecificForm.controls['fileName'].setValue(this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json);
     this.IsSaveConfirmed = true;
   }
 
@@ -1765,16 +1782,18 @@ calculateNutritionForAllRecipe(){
 
   }
   this.recipeFile.updatedAt=strDateTime();
-  this.putRecord(this.googleBucketName, this.SpecificForm.controls['FileName'].value, this.recipeFile);
-  this.recordRecipe=saveRecipeRecord;
-  this.message='Nutrition facts calculated and saved for all recipes';
-  this.isRecipeModified=false;
+  this.message="";
+  this.isRecipeModified=true;
+  //this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
+  //this.recordRecipe=saveRecipeRecord;
+  //this.message='Nutrition facts calculated and saved for all recipes';
+  //this.isRecipeModified=false;
 }
 
 SaveRecord(){
     this.calculateNutrition('all');
     this.recipeFile.updatedAt=strDateTime();
-    this.putRecord(this.googleBucketName, this.SpecificForm.controls['FileName'].value, this.recipeFile);
+    this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
     this.resetBooleans();
     this.isRecipeModified=false;
     this.isCreateRecipeName=false;
@@ -1811,6 +1830,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                 if (iWait===1){
                   this.isFileRetrieved=true;
                   this.initialRecipeFile.recipe.splice(0,this.initialRecipeFile.recipe.length);
+                  this.initialRecipeFile.listTypeRecipe.splice(0,this.initialRecipeFile.listTypeRecipe.length);
                   this.initialRecipeFile.fileType=data.fileType;
                   for (var i=0; i<data.listTypeRecipe.length; i++){
                     
@@ -1998,7 +2018,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                       this.myListOfObjects.items.push(theBucketInfo);
                       this.myListOfObjects.items[i]=data[i].items;
                   }
-                  this.EventHTTPReceived[iWait]=true;
+                 
 
                  var iObjects=-1;
                   for (i=this.myListOfObjects.items.length-1; i>-1; i--){
@@ -2022,7 +2042,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                     this.recordRecipe=0;
                   }
                   this.myListOfObjects=new Bucket_List_Info; 
-
+                  this.EventHTTPReceived[iWait]=true;
             },
             error_handler => {
                   console.log('RECIPE RetrieveAllObjects() - error handler; HTTP='+HTTP_Address);

@@ -185,47 +185,40 @@
 
 <div *ngIf="GoToComponent===13" >
   <span style="width:400px; background-color: cyan;margin-top:20px; margin-left:50px; border:solid 2px red; display:inline-block; ">
-    <span style="width:100%; color:#0000ff; font-size:22px; display:inline-block; text-align: center; padding-top:10px; height:50px;"> Select the apps </span>
-    <br>
-  
-    <span class="options" >1. Performance sport</span>
-    <span class="options" >2. Manage PointOfRef</span>
-    <span class="options" >3. Manage Circuits</span>
-    <span class="options" >4. Sport report</span>
-    <span class="options" >5. Sport analysis</span>
-    <span class="options" >6. Sport raw data mgt</span>
-
-    <br><br>
-</span>
-<div style="width:100%; display:inline-block; height:2px;">
-    <input style="width:80px; height:30px; margin-left:150px; margin-top:20px; "  placeholder="selection#" type="text" (input)="onInput($event)">
-   
-</div>
+      <span style="width:100%; color:#0000ff; font-size:22px; display:inline-block; text-align: center; padding-top:10px; height:50px;"> Select the apps 
+      </span>
+      <br>
+      <span class="options" >1. Performance sport</span>
+      <span class="options" >2. Manage PointOfRef</span>
+      <span class="options" >3. Manage Circuits</span>
+      <span class="options" >4. Sport report</span>
+      <span class="options" >5. Sport analysis</span>
+      <br><br>
+  </span>
+  <div style="width:100%; display:inline-block; height:2px;">
+      <input style="width:80px; height:30px; margin-left:150px; margin-top:20px; "  placeholder="selection#" type="text" (input)="onInput($event)">
+  </div>
 </div>
 
-<div *ngIf="selectApps===1">
+<div *ngIf="GoToComponent===13 && selectApps===1">
   <app-performance-sport   [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-performance-sport>
 </div>  
-<div *ngIf="selectApps===2">
+<div *ngIf="GoToComponent===13 && selectApps===2">
   <app-manage-point-of-ref   [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-manage-point-of-ref>
 </div>  
-<div *ngIf="selectApps===3">
+<div *ngIf="GoToComponent===13 && selectApps===3">
   <app-manage-circuits [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-manage-circuits>
 </div>  
-<div *ngIf="selectApps===4">
+<div *ngIf="GoToComponent===13 && selectApps===4">
   <app-sport-reports [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-sport-reports>
 </div>  
-<div *ngIf="selectApps===5">
+<div *ngIf="GoToComponent===13 && selectApps===5">
   <app-sport-analysis [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-sport-analysis>
-</div> 
-<div *ngIf="selectApps===6">
-  <app-sport-perf-raw-data-mgt [configServer]="configServer" [identification]="identification" [credentials]="credentials">
-  </app-sport-perf-raw-data-mgt>
 </div> 
 
 <div *ngIf="(GoToComponent===4 || GoToComponent===5 || NbRefresh_Bucket>0) && EventHTTPReceived[0]===true && Google_Bucket_Name!=='' ">

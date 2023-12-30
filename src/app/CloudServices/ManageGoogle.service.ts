@@ -252,4 +252,9 @@ export class ManageGoogleService {
         const http_get=config.baseUrl+'/insertCacheFile/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object;
         return this.http.get<any>(http_get);                       
     }
+
+    getCacheConsole(config:configServer): Observable<any> {
+        const http_get=config.baseUrl+'/getCacheConsole/'+config.GoogleProjectId+'/'+config.test_prod;
+        return this.http.get<any>(http_get);                       
+    }
 }
