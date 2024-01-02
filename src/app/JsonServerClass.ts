@@ -273,7 +273,7 @@ export class configServer{
   BucketUserInfo:string='';
   BucketFitness:string='';
   BucketRecipe:string='';
-  filesToCache=[];
+  FilesToCache:Array<{bucket:"",object:""}>=[];
   PointOfRef={
     bucket:"config-xmvit",
     file:"PointOfReference.json",

@@ -440,9 +440,8 @@
             </div>             
         </div>
     </div>
-
     <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH EXISTING FOOD STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputFood-->
-    <div class="dropdown " *ngIf="tabInputFood.length>0">
+    <div class="dropdown " *ngIf="isInputFood===true && tabInputFood.length>0">
         <div [ngStyle]="styleBoxFood" >
             <div   [ngStyle]="styleBoxOptionFood">
                 <li *ngFor="let tabFood of tabInputFood; let m=index;" 

@@ -8,6 +8,11 @@ export class classFileSystem{
     createdAt:string="";
     updatedAt:string=""; 
     userServerId:number=0;
+    credentialDate:string="";
+    timeoutFileSystem={
+        hh:0,
+        mn:0,
+    }
 }
 
 export class classUpdate{

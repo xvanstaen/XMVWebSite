@@ -554,20 +554,22 @@ afterDropDown(event:any){
       { this.isRecipeModified=true;
         if (event.target.textContent.trim()==="Delete" ){
           this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,1);
-          this.tabUpdateRef[this.recordRecipe].splice(this.idNb,1);
+          this.tabUpdateRef.splice(this.idNb,1);
         } else if (event.target.textContent.trim()==="Add after" ){
           const pushData=new classRecipe;
           this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb+1,0,pushData);
           const pushDataPerso=new classRecipe;
           this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
-          this.tabUpdateRef[this.recordRecipe].splice(this.idNb+1,0,{init:0});
+          this.tabUpdateRef.splice(this.idNb+1,0, {init:0});
+          
           this.tabUpdateRef[this.recordRecipe+1].init=-1;
         } else if (event.target.textContent.trim()==="Add before" ){
           const pushData=new classRecipe;
           this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,0,pushData);
           const pushDataPerso=new classRecipe;
           this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
-          this.tabUpdateRef[this.recordRecipe].splice(this.idNb,0,{init:0});
+          this.tabUpdateRef.splice(this.idNb,0,{init:0});
+         
           this.tabUpdateRef[this.recordRecipe].init=-1;
         } else if (event.target.textContent.trim().substring(0,8)==="Copy ALL" ){
           this.copyFromTo(this.recipeFile.recipe[this.recordRecipe].dataPerso,this.recipeFile.recipe[this.recordRecipe].data);
@@ -1785,7 +1787,7 @@ calculateNutritionForAllRecipe(){
   this.message="";
   this.isRecipeModified=true;
   //this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
-  //this.recordRecipe=saveRecipeRecord;
+  this.recordRecipe=saveRecipeRecord;
   //this.message='Nutrition facts calculated and saved for all recipes';
   //this.isRecipeModified=false;
 }
@@ -1847,6 +1849,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                   }
                   
                   for (var i=0; i<data.recipe.length; i++){
+                    
                     this.tabUpdateRef.push({init:0});
                     this.tabUpdateRef[this.tabUpdateRef.length-1].init=i;
                     const classRecord=new classRecordRecipe;
