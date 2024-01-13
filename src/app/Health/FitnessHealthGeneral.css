@@ -113,6 +113,8 @@ body{
     background-image: linear-gradient(cyan, lightcyan);
     box-shadow: 2px 2px blue;
     border: solid 1px blue;
+    display:table-cell;
+    vertical-align:middle;
 }
 
 .sizeButtons:hover{

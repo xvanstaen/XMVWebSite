@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
-import { Tutorial } from 'src/app/components/TutorialClass';
+import { configServer } from '../JsonServerClass';
 
-const baseUrl = 'http://localhost:8080/api/tutorials';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,27 +10,39 @@ export class TutorialService {
    
   constructor(private   http: HttpClient) { }
 
-  getAll(): Observable<Tutorial[]> {
-    return this.http.get<Tutorial[]>(baseUrl);
+  getAll(config:configServer, db:string,collection:string): Observable<any> {
+    const http_get=config.mongoServer+'/findTutAll/'+db+'/'+config.test_prod+'/'+collection;
+    return this.http.get<any>(http_get); 
   }
-  get(id: any): Observable<Tutorial> {
-    return this.http.get(`${baseUrl}/${id}`);
+  getById(config:configServer, db:string,collection:string,id: any): Observable<any> {
+    const http_get=config.mongoServer+'/findTutById/'+db+'/'+config.test_prod+'/'+collection+'/'+id;
+    return this.http.get<any>(http_get); 
   }
-  create(data: Tutorial): Observable<any> {
-    return this.http.post(baseUrl, data);
+  getByCriteria(config:configServer, db:string,collection:string,criteria: any, field:any): Observable<any> {
+    const http_get=config.mongoServer+'/findTutByString/'+db+'/'+config.test_prod+'/'+collection+'/'+field+'?searchString='+criteria;
+    return this.http.get<any>(http_get); 
   }
-  update(id: any, data: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${id}`, data);
+  upload(config:configServer, db:string,collection:string,record: any): Observable<any> {
+    const http_get=config.mongoServer+'/uploadTut/'+db+'/'+config.test_prod+'/'+collection;
+    return this.http.put<any>(http_get,record); 
   }
-  delete(id: any): Observable<any> {
-    return this.http.delete(`${baseUrl}/${id}`);
+  update(config:configServer, db:string,collection:string,id: any, record: any): Observable<any> {
+    const http_get=config.mongoServer+'/updateTut/'+db+'/'+config.test_prod+'/'+collection+'/'+id;
+    return this.http.put<any>(http_get,record); 
   }
-  deleteAll(): Observable<any> {
-    return this.http.delete(baseUrl);
+  deleteById(config:configServer, db:string,collection:string,id: any): Observable<any> {
+    const http_get=config.mongoServer+'/deleteTut/'+db+'/'+config.test_prod+'/'+collection+'/'+id;
+    return this.http.get<any>(http_get); 
   }
-  findByTitle(title: any): Observable<Tutorial[]> {
-    return this.http.get<Tutorial[]>(`${baseUrl}?title=${title}`);
+  deleteByCriteria(config:configServer, db:string,collection:string,criteria: any, field:any): Observable<any> {
+    const http_get=config.mongoServer+'/deleteTutByString/'+db+'/'+config.test_prod+'/'+collection+'/'+field+'?searchString='+criteria;
+    return this.http.get<any>(http_get); 
   }
+  deleteAll(config:configServer, db:string,collection:string): Observable<any> {
+    const http_get=config.mongoServer+'/deleteAllTut/'+db+'/'+config.test_prod+'/'+collection;
+    return this.http.get<any>(http_get); 
+  }
+
 
   // Error 
   handleError(error: HttpErrorResponse) {

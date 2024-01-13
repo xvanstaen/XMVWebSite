@@ -218,8 +218,8 @@ export class XMVTestProd{
 }
 
 export class UserParam{
-    id:string="XMVanstaen";
-    type:string="";
+    theId:string="XMVanstaen";
+    theType:string="";
     log:boolean=false;
   } 
 
@@ -245,11 +245,13 @@ export class Return_Data{
 
 export class configServer{
   title:string= '';
-  SourceJson_Google_Mongo:string= '';
   test_prod:string= '';
   GoogleProjectId:string= '';
-  Mongo_Google:string= '';
-  baseUrl:string= '';
+  project:string="";
+  consoleBucket:string= '';
+  googleServer:string= '';
+  mongoServer:string= '';
+  fileSystemServer:string= '';
   IpAddress:string= '';
   UserSpecific:Array<UserParam>=[];
   credentialDate:string='';
@@ -267,18 +269,18 @@ export class configServer{
         mn:0
     }
   };
-  BucketConfig:string='';
-  BucketConsole:string='';
-  BucketContact:string='';
-  BucketUserInfo:string='';
-  BucketFitness:string='';
-  BucketRecipe:string='';
-  FilesToCache:Array<{bucket:"",object:""}>=[];
+  filesToCache:Array<classFilesToCache>=[];
   PointOfRef={
     bucket:"config-xmvit",
     file:"PointOfReference.json",
     };
 }
+
+export class classFilesToCache{
+  bucket:string="";
+  object:string="";
+}
+
 
 export class classPosSlider{
   top:number=0;

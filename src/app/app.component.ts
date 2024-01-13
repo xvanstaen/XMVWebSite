@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { configServer, classCredentials } from './JsonServerClass';
 import { environment } from 'src/environments/environment';
+import { fillConfig } from './copyFilesFunction';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ import { environment } from 'src/environments/environment';
 export class AppComponent {
   constructor(
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDB: ManageMangoDBService,
+    private ManageMongoDB: ManageMongoDBService,
     private http: HttpClient,
     ) {}
       // import configuration files
@@ -39,13 +40,16 @@ export class AppComponent {
      }
       const InitconfigServer=new configServer;
       
-      InitconfigServer.baseUrl='https://test-server-359505.uc.r.appspot.com';
-
-// InitconfigServer.baseUrl='http://localhost:8080'; // TO BE DELETED
+      InitconfigServer.googleServer='https://xmv-it-consulting.uc.r.appspot.com';
+      InitconfigServer.mongoServer='https://test-server-359505.uc.r.appspot.com';
+      InitconfigServer.fileSystemServer=='https://serverfs.ue.r.appspot.com/'
+      // "https://xmv-it-consulting.uc.r.appspot.com"
+      // 'https://test-server-359505.uc.r.appspot.com'
+      // 'http://localhost:8080'
 
       InitconfigServer.test_prod=test_prod;
-      InitconfigServer.GoogleProjectId='ConfigDB';
-      this.ManageMangoDB.findConfig(InitconfigServer, 'configServer')
+      //InitconfigServer.GoogleProjectId='ConfigDB';
+      this.ManageMongoDB.findConfig(InitconfigServer, 'configServer')
       .subscribe(
         data => {
          // test if data is an array if (Array.isArray(data)===true){}
@@ -54,16 +58,18 @@ export class AppComponent {
 
         
           if (Array.isArray(data) === false){
-            this.configServer = data;
+            this.configServer = fillConfig(data);
+            //this.configServer = data;
           } else {
-
-  
             for (let i=0; i<data.length; i++){
                 if (data[i].title==="configServer" && data[i].test_prod===test_prod){
-                    this.configServer = data[i];
-                } }
+                  this.configServer = fillConfig(data[i]);
+                  // this.configServer = data[i];
+                } 
               }
+          }
           this.configServer.IpAddress=this.IpAddress;
+          this.configServer.project="XMVWebSite";
 //  this.configServer.baseUrl='http://localhost:8080';  // TO BE DELETED
           console.log('configServer is retrieved');
               //this.getTokenOAuth2();

@@ -4,7 +4,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { encrypt, decrypt} from '../EncryptDecryptServices';
+//import { encrypt, decrypt} from '../EncryptDecryptServices';
 
 import { msginLogConsole } from '../consoleLog';
 import { LoginIdentif } from '../JsonServerClass';
@@ -19,7 +19,7 @@ import { Return_Data } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 @Component({
   selector: 'app-AdminLogin',
@@ -42,7 +42,7 @@ export class AdminLoginComponent {
     private scroller: ViewportScroller,
     private fb:FormBuilder,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     ) {
     }
 
@@ -127,7 +127,7 @@ ngOnInit(){
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
-      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
+      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.consoleBucket + "/o?name="  ;
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
@@ -292,9 +292,9 @@ ConfirmSave(event:string){
 
 onCrypt(type_crypto:string){
     if (type_crypto==='Encrypt'){
-            this.Encrypt=encrypt(this.Decrypt,this.Crypto_Key,this.Crypto_Method);
+            //this.Encrypt=encrypt(this.Decrypt,this.Crypto_Key,this.Crypto_Method);
       } else { // event=Decrypt
-            this.Decrypt=decrypt(this.Encrypt,this.Crypto_Key,this.Crypto_Method);
+            //this.Decrypt=decrypt(this.Encrypt,this.Crypto_Key,this.Crypto_Method);
           } 
   }
 

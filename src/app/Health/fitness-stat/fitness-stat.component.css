@@ -498,6 +498,8 @@ div{
         height:32px;
         font-size:10px;
         margin-left:10px;
+        display:table-cell;
+        vertical-align:middle;
       }
 
     .inputText{

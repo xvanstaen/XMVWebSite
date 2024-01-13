@@ -179,7 +179,7 @@ SizeImage(){
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
     this.device_type = navigator.userAgent;
-    this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
+    this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + 'logconsole'+ "/o?name="  ;
     if (this.EventLogConsole.length!==0){
       for (this.i=0; this.i<this.EventLogConsole.length-1; this.i++){
         let theMSG=new msgConsole;

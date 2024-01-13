@@ -15,7 +15,7 @@ import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFil
 import { findIds } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 @Component({
   selector: 'app-manage-point-of-ref',
@@ -29,7 +29,7 @@ export class ManagePointOfRefComponent {
     private http: HttpClient,
     private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
     private datePipe: DatePipe,
     ) { }
@@ -84,6 +84,7 @@ export class ManagePointOfRefComponent {
 
 ngOnInit(){
 
+  /*
   this.ManageGoogleService.insertCacheFile(this.configServer,this.configServer.PointOfRef.file)
   .subscribe((data ) => {  
 
@@ -92,7 +93,7 @@ ngOnInit(){
   err => {
     console.log('error on insertCacheFile :'+ JSON.stringify(err));
   });
-
+  */
   this.GetRecord(this.configServer.PointOfRef.bucket,this.configServer.PointOfRef.file,0);
   this.GetRecord(this.configServer.PointOfRef.bucket,"CountryISOPreferred.json",2);
 

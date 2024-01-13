@@ -110,7 +110,7 @@ ngOnInit(){
       this.getScreenHeight = window.innerHeight;
       this.EventHTTPReceived1=false;
       this.bucketMgt.Nb_Buckets_processed=0;
-      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
+      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + 'logconsole'+ "/o?name="  ;
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
@@ -121,9 +121,9 @@ ngOnInit(){
       this.bucketMgt.GetOneBucketOnly=this.configPhoto.GetOneBucketOnly;
       this.bucketMgt.Max_Nb_Bucket_Wedding=this.configPhoto.Max_Nb_Bucket_Wedding;
     
-      for (this.i=0; this.i<this.configServer.UserSpecific.length && this.identification.UserId!==this.configServer.UserSpecific[this.i].id; this.i++){}
+      for (this.i=0; this.i<this.configServer.UserSpecific.length && this.identification.UserId!==this.configServer.UserSpecific[this.i].theId; this.i++){}
 
-      if (this.i<this.configServer.UserSpecific.length && this.identification.UserId===this.configServer.UserSpecific[this.i].id){
+      if (this.i<this.configServer.UserSpecific.length && this.identification.UserId===this.configServer.UserSpecific[this.i].theId){
             this.myLogConsole=this.configServer.UserSpecific[this.i].log;
           }  else{ 
               this.myLogConsole=false;

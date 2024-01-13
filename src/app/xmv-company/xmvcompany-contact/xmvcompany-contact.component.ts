@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormGroup, FormControl, UntypedFormControl, Validators} from '@angular/forms';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 import { configServer } from 'src/app/JsonServerClass';
 
@@ -29,7 +29,7 @@ export class XMVCompanyContactComponent implements OnInit {
 
     private http: HttpClient,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     ) {}
 
 @Input() configServer=new configServer;

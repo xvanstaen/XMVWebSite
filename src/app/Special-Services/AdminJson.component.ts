@@ -19,7 +19,7 @@ import {ConfigFitness} from '../Health/ClassFitness';
 import {classConfHTMLFitHealth} from '../Health/classConfHTMLTableAll';
 import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 
 @Component({
@@ -58,7 +58,7 @@ export class AdminJsonComponent {
     private http: HttpClient,
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     ) {}
 
     getScreenWidth: any;
@@ -138,7 +138,7 @@ ngOnInit(){
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
-      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name="  ;
+      this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + 'logconsole' + "/o?name="  ;
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
@@ -197,14 +197,14 @@ Process(event:string){
     this.ActionMessage='Administration of User info ';
     this.GoToComponent=4; 
     this.NbRefresh_Bucket=0;
-    this.Google_Bucket_Name=this.configServer.BucketUserInfo;
+    this.Google_Bucket_Name='xmv-user-info';
   } else if (event==='Console'){
     this.GoToComponent=5;
     this.ActionMessage='Administration of Log Console';
-    this.Google_Bucket_Name=this.configServer.BucketConsole;
+    this.Google_Bucket_Name='logcondole';
   } else if (event==='Config'){
     this.ActionMessage='Administration of Configuration parameters';
-    this.Google_Bucket_Name=this.configServer.BucketConfig;
+    this.Google_Bucket_Name='config-xmvit';
     this.GoToComponent=6;
     this.scroller.scrollToAnchor('targetConfig');
   }   else if (event==='Fitness'){
@@ -345,9 +345,9 @@ TextInput(event:any){
 
 UpdateconfigPhoto(){
   //if (this.IsFieldModified[1]===true){this.ModifconfigServer.BucketLogin=this.ModifiedField[1]};
-  if (this.IsFieldModified[2]===true){this.ModifconfigServer.BucketConsole=this.ModifiedField[2]};
-  if (this.IsFieldModified[3]===true){this.ModifconfigServer.BucketContact=this.ModifiedField[3]};
-  if (this.IsFieldModified[4]===true){this.ModifconfigServer.SourceJson_Google_Mongo=this.ModifiedField[4]};
+  //if (this.IsFieldModified[2]===true){this.ModifconfigServer.BucketConsole=this.ModifiedField[2]};
+  //if (this.IsFieldModified[3]===true){this.ModifconfigServer.BucketContact=this.ModifiedField[3]};
+ // if (this.IsFieldModified[4]===true){this.ModifconfigServer.SourceJson_Google_Mongo=this.ModifiedField[4]};
   if (this.IsFieldModified[5]===true){this.ModifconfigPhoto.Max_Nb_Bucket_Wedding=Number(this.ModifiedField[5])};
   if (this.IsFieldModified[6]===true){
     if (this.ModifiedField[6]==='false'){this.ModifconfigPhoto.GetOneBucketOnly=false};
@@ -379,9 +379,9 @@ UpdateconfigPhoto(){
   for (let i=0; i<this.ModifconfigServer.UserSpecific.length; i++){
     let j=this.ModifconfigPhoto.TabBucketPhoto.length+16+(i*2);
     if (this.IsFieldModified[j+i]===true)
-             {this.ModifconfigServer.UserSpecific[i].id=this.ModifiedField[j+i]};
+             {this.ModifconfigServer.UserSpecific[i].theId=this.ModifiedField[j+i]};
     if (this.IsFieldModified[j+i+1]===true)
-             {this.ModifconfigServer.UserSpecific[i].type=this.ModifiedField[i+j+1]};
+             {this.ModifconfigServer.UserSpecific[i].theType=this.ModifiedField[i+j+1]};
     if (this.IsFieldModified[j+i+2]===true){
               if (this.ModifiedField[i+j+2]==='true'){ this.ModifconfigServer.UserSpecific[i].log=true};
               if (this.ModifiedField[i+j+2]==='false'){ this.ModifconfigServer.UserSpecific[i].log=false};

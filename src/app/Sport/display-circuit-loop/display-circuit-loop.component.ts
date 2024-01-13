@@ -16,7 +16,7 @@ import { findIds, formatHHMNSS } from '../../MyStdFunctions';
 import { fillHeaderFile , reinitTotal, copyInitPerf, copyLegInOut, copyInOut, copyLoopInOut, updateTabPor, createPerfTotal} from '../commonSportFunctions';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 @Component({
   selector: 'app-display-circuit-loop',
@@ -29,7 +29,7 @@ export class DisplayCircuitLoopComponent {
     private http: HttpClient,
     private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
     private datePipe: DatePipe,
     ) { }

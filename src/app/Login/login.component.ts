@@ -17,7 +17,7 @@ import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
 import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
 import {ConfigFitness} from '../Health/ClassFitness';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +31,7 @@ export class LoginComponent {
     private router:Router,
     private http: HttpClient,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     ) {}
 
     @Input() configServer=new configServer;

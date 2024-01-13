@@ -327,6 +327,12 @@
 </div>
 
 <!--------------- DISPLAY ALL -->
+<div *ngIf="EventHTTPReceived[0]===false ||  EventHTTPReceived[3]===false " style="margin-left:20px; width:500px; display:block; height:35px; 
+            text-align:center; background-color: lightyellow; font-size:16px;">
+    File is being retrieved and processed
+</div>
+
+<div class="skipLine">&nbsp;</div>
 <div *ngIf="EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true" style="margin-left:20px;">
     <div style="font-size:16px; color:blue; background-color:cyan; border:2px solid darkcyan; display:inline-block; 
             height:46px; text-align:center; padding-top:10px; margin-top:15px;" [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width}">
@@ -357,14 +363,24 @@
         </form>
         <div class="skipLine">&nbsp;</div>
     </div>
+
+    <form  [formGroup]="TheSelectDisplays"  >
+        <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Search ingredient </span>
+        <input type="text" formControlName="searchString"  
+            style="margin-left:10px; width:120px; height:25px; color:blue; ">
+        <button id='submit' class="sizeButtons" style="margin-left:10px;" (click)="actionSearchText($event)">Submit</button>
+        <button id='clear' class="sizeButtons" style="margin-left:10px;" (click)="actionSearchText($event)">Clear</button>
+    </form>
+    <div class="skipLine">&nbsp;</div>
+    <!--
     <div>
         <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Search ingredient </span>
         <input type="text" [value]="checkText" id='search' (input)="SearchText($event)"
             style="margin-left:10px; width:120px; height:25px; color:blue; ">
-        <button id='CancelText' class="sizeButtons" style="margin-left:10px;" (click)="SearchText($event)">Cancel</button>
+        <button id='CancelText' class="sizeButtons" style="margin-left:10px;" (click)="SearchText($event)">Clear</button>
         <div class="skipLine">&nbsp;</div>
     </div>
-
+    -->
     <div style="margin-top:1px; width:98%; min-width:98%;"></div>
 
     <div   id="posAfterTitle"  [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width, 'color':confTableAll.color, 'background-color':confTableAll.background }"  
@@ -459,7 +475,7 @@
                 style="overflow:scroll"  > 
 
         <div *ngFor="let myDaily of HealthAllData.tabDailyReport; let i=index">
-        
+            <div *ngIf="(i >= minNum && i<=maxNum) || checkText!==''">
             <div *ngFor="let meal of HealthAllData.tabDailyReport[i].meal; let k=index">
               
                 <div *ngFor="let theIngred of HealthAllData.tabDailyReport[i].meal[k].dish; let j=index">
@@ -468,19 +484,19 @@
                             (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))">
                            
                         <div  *ngIf="checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)"
-                            [ngStyle]="{'backgroung-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}"  >
+                            [ngStyle]="{'backgroung-color': i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}"  >
                             
                             <span   class="tReadOnly  widthAction boxAction" 
-                                [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color': i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 id="openAction-{{i}}-{{k}}-{{j}}" (click)="onAction($event)">
                                 <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" (click)="onNoAction($event)">A</span>
                             </span>
 
                             <input type="date" class="trow widthDate " 
-                                [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 *ngIf="k===0 && j===0" id="dateAll-{{i}}"  (input)="onInputDailyAll($event)" value="{{ myDaily.date}}" >
                             <span  class="trow widthDate " 
-                                [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 style="pointer-events: none;" *ngIf="k!==0 || j!==0"  >&nbsp;
                             </span>
                             
@@ -489,7 +505,7 @@
                                 *ngIf="k===0 && j===0" id="burnAll-{{i}}"  (input)="onInputDailyAll($event)" 
                                 value="{{ myDaily.burntCalories }}"   > 
                             <span type="text" class="trow widthCalBurnt" 
-                                [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 *ngIf="k!==0 || j!==0" id="burnAll-{{i}}"  (input)="onInputDailyAll($event)" 
                                    >&nbsp;
                             </span>
@@ -498,44 +514,44 @@
                                 [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 *ngIf="j===0" id="mealAll-{{i}}-{{k}}"  (input)="onInputDailyAll($event)" value="{{meal.name }}"   >
                             <span  class="trow widthMeal" 
-                                [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 style="pointer-events: none;" *ngIf="j!==0"   >&nbsp;
                             </span>
 
                             <input type="text" class="trow widthIngr"
                                 [ngStyle]="{'width':confTableAll.colWidth.ingr , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                id="ingrAll-{{i}}-{{k}}-{{j}}"   (input)="onInputDailyAll($event)" value="{{theIngred.name }}"  >
+                                id="ingrAll-{{i}}-{{k}}-{{j}}"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{theIngred.name }}"  >
 
                             <input type="text"  class="trow widthOther"
                                 [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.quantity }}"id="quanAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)"  >
                             
                             <input type="text"  class="trow widthOther"  
-                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.unit }}" id="unitAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)" >
                             <input type="text"  class="tReadOnly widthCalBurnt"      
-                                [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.Calories  | number:'1.0-0'}}"  >
                             <input type="text"  class="tReadOnly widthOther"  
-                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.Cholesterol  | number:'1.1-1'}}"  >
                             <input type="text"  class="tReadOnly  widthOther"  
-                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.GlyIndex  | number:'1.1-1'}}"  >
                             <input type="text"  class="tReadOnly  widthOther"  
-                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.Sugar  | number:'1.1-1'}}" >
                             <input type="text"  class="tReadOnly  widthOther"  
-                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.Fat.Saturated  | number:'1.1-1' }}" >
                             <input type="text"  class="tReadOnly  widthOther"  
-                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.Fat.Total  | number:'1.1-1'}}" >
                             <input type="text"  class="tReadOnly  widthOther"  
-                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.Protein | number:'1.1-1' }}"  >
                             <input type="text"  class="tReadOnly  widthOther"  
-                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 value="{{theIngred.calFat.Carbs  | number:'1.1-1'}}"  >
 
                         </div>
@@ -636,9 +652,13 @@
                     </div>
                 </div>
             </div>
+        </div>  
         </div>
-    </div>
-
+    </div> 
+    <div class="skipLine">&nbsp;</div>
+    <button *ngIf="minNum>1" id='prev' class="sizeButtons"  style="width:80px;" (click)="pagePrev()"> Prev page</button>
+    <button id='next' class="sizeButtons"  style="width:80px;" (click)="pageNext()"> Next page</button>
+    <span stle="margin-left:30px;"> page# &nbsp; &nbsp;{{numPage}} </span>
     <div class="skipLine">&nbsp;</div>
     <div *ngIf="isAllDataModified===true && tabLock[0].lock !==2">
     

@@ -9,14 +9,14 @@ import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angu
 
 
 // configServer is needed to use ManageGoogleService
-// it is stored in MangoDB and accessed via ManageMangoDBService
+// it is stored in MongoDB and accessed via ManageMongoDBService
 import { configServer } from '../../JsonServerClass';
 import { environment } from 'src/environments/environment';
 import { LoginIdentif } from '../../JsonServerClass';
 
 import {eventoutput, thedateformat} from '../../apt_code_name';
 
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 
 import {ConfigFitness} from '../ClassFitness';
@@ -41,7 +41,7 @@ export class FitnessChartComponent implements OnInit {
   constructor(    private http: HttpClient,
     private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,) {

@@ -17,7 +17,7 @@ import { fillHeaderFile, updateTabPor, copyInitPerf, reinitTotal } from '../comm
 import { findIds, formatHHMNSS } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 @Component({
   selector: 'app-build-loop-from-perf',
@@ -30,7 +30,7 @@ export class BuildLoopFromPerfComponent {
     private http: HttpClient,
     private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
     private datePipe: DatePipe,
     ) { }

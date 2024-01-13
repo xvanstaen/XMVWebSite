@@ -17,7 +17,7 @@ import { fromTCXtoJSON } from '../convertTCXtoTXT';
 import { findIds, formatHHMNSS } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { fillHeaderFile } from '../commonSportFunctions';
 
 
@@ -34,7 +34,7 @@ export class SportPerformanceComponent {
     private http: HttpClient,
     private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
     private datePipe: DatePipe,
     ) { }

@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
-// it is stored in MangoDB and accessed via ManageMangoDBService
+// it is stored in MongoDB and accessed via ManageMongoDBService
 
 import { msginLogConsole } from '../../consoleLog'
 import { configServer, LoginIdentif, msgConsole, classCredentials } from '../../JsonServerClass';
@@ -38,7 +38,7 @@ import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../classChart';
 import { classFileSystem, classAccessFile } from '../../classFileSystem';
 
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { AccessConfigService } from 'src/app/CloudServices/access-config.service';
 
@@ -55,7 +55,7 @@ export class HealthComponent implements OnInit {
     private http: HttpClient,
     private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
@@ -154,6 +154,7 @@ export class HealthComponent implements OnInit {
     DisplayChart: new FormControl('N', { nonNullable: true }),
     ReloadHTML: new FormControl('N', { nonNullable: true }),
     ReloadChart: new FormControl('N', { nonNullable: true }),
+    searchString: new FormControl('', { nonNullable: true }),
     startRange: new FormControl('', [
       Validators.required,
       // validates date format yyyy-mm-dd with regular expression
@@ -280,6 +281,7 @@ export class HealthComponent implements OnInit {
   titleHeight: number = 0;
   posItem: number = 0;
   eventClientY: number = 0;
+  /*
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
     //this.selectedPosition = { x: event.pageX, y: event.pageY };
@@ -287,20 +289,17 @@ export class HealthComponent implements OnInit {
     this.posDivAfterTitle = getPosDiv("posAfterTitle");
     this.eventClientY = event.clientY;
   }
+  */
+
+  actionMouseUp(event:any){
+    this.posDivAfterTitle = getPosDiv("posAfterTitle");
+    this.eventClientY = event.clientY;
+  }
 
   foodPos: number = 0;
   findPosItem(sizeBox: any) {
-    //this.posItem=this.confTableAll.height - this.posDivAfterTitle.ClientRect.Top - this.titleHeight;
-
     this.foodPos = Math.trunc(Number(this.eventClientY) - Number(this.posDivAfterTitle.ClientRect.Top) - Number(this.titleHeight)) ;
-    //if (this.foodPos===0) { this.foodPos=1;}
-
     this.posItem =  this.foodPos - Number(sizeBox) / 2 + 10;
-    /*
-    if (Number(sizeBox) + this.foodPos > this.confTableAll.height) {
-      this.posItem = this.confTableAll.height - Number(sizeBox);
-    }
-    */
   }
 
   @HostListener('window:resize', ['$event'])
@@ -309,9 +308,41 @@ export class HealthComponent implements OnInit {
     this.getScreenHeight = window.innerHeight;
   }
 
+  maxItemsPerPage:number=30;
+  numPage:number=1;
+  displayHealthAllData = new mainDailyReport;
+  minNum:number=0;
+  maxNum:number=0;
+
+  manageDisplayAll(){
+    var iOut = -1;
+    for (var i= (this.numPage-1) * this.maxItemsPerPage; i< this.HealthAllData.tabDailyReport.length; i++){
+        iOut++
+        this.fillHealthOneDay(this.displayHealthAllData, this.HealthAllData, i, iOut);
+    }
+
+  }
+
+  pageNext(){
+    if (this.maxItemsPerPage * this.numPage < this.HealthAllData.tabDailyReport.length){
+      this.numPage ++
+    }
+    this.minNum = (this.numPage-1) * this.maxItemsPerPage + 1;
+    this.maxNum = this.minNum + this.maxItemsPerPage;
+  }
+
+  pagePrev(){
+    if (this.numPage > 1){
+      this.numPage --
+    }
+    this.minNum = (this.numPage-1) * this.maxItemsPerPage ;
+    this.maxNum = this.minNum + this.maxItemsPerPage;
+  }
+
+
   ngOnInit(): void {
-    //this.getPosDivOthers();
-    //this.getPosDivAfterTitle();
+    this.minNum = 0 ;
+    this.maxNum = this.maxItemsPerPage;
 
     for (var i = 0; i < 7; i++) {
       const thePush = new classAccessFile;
@@ -337,15 +368,16 @@ export class HealthComponent implements OnInit {
 
     for (var i = 0; i < this.maxEventHTTPrequest; i++) {
       this.EventHTTPReceived[i] = false;
+      this.TabLoop[i]=0;
     }
 
-    if (this.InHealthAllData.fileType !== '') {
+    if (this.InHealthAllData.fileType === '') {
+      this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
+    } else {
       this.FillHealthAllInOut(this.HealthAllData, this.InHealthAllData);
       this.initTrackRecord();
       this.EventHTTPReceived[0] = true;
       this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-    } else {
-      this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
     }
 
     if (this.InConfigHTMLFitHealth.fileType === '') {
@@ -526,6 +558,17 @@ export class HealthComponent implements OnInit {
       this.checkText = '';
     }
   }
+
+  actionSearchText(event: any) {
+    this.resetBooleans();
+    if (event.target.id === 'submit'){
+      this.checkText = this.TheSelectDisplays.controls['searchString'].value;
+    } else {
+      this.checkText = '';
+      this.TheSelectDisplays.controls['searchString'].setValue('');
+    }
+  }
+
 
   lastInputAt: string = '';
   isMustSaveFile: boolean = false;
@@ -1375,46 +1418,50 @@ export class HealthComponent implements OnInit {
 
       iOut++
 
-      const theDaily = new DailyReport;
-      outFile.tabDailyReport.push(theDaily);
-      outFile.tabDailyReport[iOut].burntCalories = inFile.tabDailyReport[i].burntCalories;
-      outFile.tabDailyReport[iOut].date = inFile.tabDailyReport[i].date;
-      outFile.tabDailyReport[iOut].total = inFile.tabDailyReport[i].total;
-      var jOut = -1;
-      for (var j = 0; j < inFile.tabDailyReport[i].meal.length; j++) {
-        if (inFile.tabDailyReport[i].meal[j].dish.length > 0) {
-          const theMeal = new ClassMeal;
-          outFile.tabDailyReport[iOut].meal.push(theMeal);
-          jOut++
-          outFile.tabDailyReport[iOut].meal[jOut].name = inFile.tabDailyReport[i].meal[j].name;
-          outFile.tabDailyReport[iOut].meal[jOut].total = inFile.tabDailyReport[i].meal[j].total;
-          var lOut = -1;
-          for (var k = 0; k < inFile.tabDailyReport[i].meal[j].dish.length; k++) {
-            if (inFile.tabDailyReport[i].meal[j].dish[k].name !== '') {
-              const theIngr = new ClassDish;
-              outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
-              lOut++
-              outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].name = inFile.tabDailyReport[i].meal[j].dish[k].name;
-              outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].quantity = inFile.tabDailyReport[i].meal[j].dish[k].quantity;
-              outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].unit = inFile.tabDailyReport[i].meal[j].dish[k].unit;
-              outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat = inFile.tabDailyReport[i].meal[j].dish[k].calFat;
-            } else {
-              const theIngr = new ClassDish;
-              outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
-              lOut++
-            }
-          }
-        } else {
-          const theMeal = new ClassMeal;
-          outFile.tabDailyReport[iOut].meal.push(theMeal);
-          jOut++
-          const theIngr = new ClassDish;
-          outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
-        }
-      }
+      this.fillHealthOneDay(outFile, inFile, i, iOut);
       //    }
     }
 
+  }
+
+  fillHealthOneDay(outFile: any, inFile: any, i:number, iOut:number) {
+    const theDaily = new DailyReport;
+    outFile.tabDailyReport.push(theDaily);
+    outFile.tabDailyReport[iOut].burntCalories = inFile.tabDailyReport[i].burntCalories;
+    outFile.tabDailyReport[iOut].date = inFile.tabDailyReport[i].date;
+    outFile.tabDailyReport[iOut].total = inFile.tabDailyReport[i].total;
+    var jOut = -1;
+    for (var j = 0; j < inFile.tabDailyReport[i].meal.length; j++) {
+      if (inFile.tabDailyReport[i].meal[j].dish.length > 0) {
+        const theMeal = new ClassMeal;
+        outFile.tabDailyReport[iOut].meal.push(theMeal);
+        jOut++
+        outFile.tabDailyReport[iOut].meal[jOut].name = inFile.tabDailyReport[i].meal[j].name;
+        outFile.tabDailyReport[iOut].meal[jOut].total = inFile.tabDailyReport[i].meal[j].total;
+        var lOut = -1;
+        for (var k = 0; k < inFile.tabDailyReport[i].meal[j].dish.length; k++) {
+          if (inFile.tabDailyReport[i].meal[j].dish[k].name !== '') {
+            const theIngr = new ClassDish;
+            outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
+            lOut++
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].name = inFile.tabDailyReport[i].meal[j].dish[k].name;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].quantity = inFile.tabDailyReport[i].meal[j].dish[k].quantity;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].unit = inFile.tabDailyReport[i].meal[j].dish[k].unit;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat = inFile.tabDailyReport[i].meal[j].dish[k].calFat;
+          } else {
+            const theIngr = new ClassDish;
+            outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
+            lOut++
+          }
+        }
+      } else {
+        const theMeal = new ClassMeal;
+        outFile.tabDailyReport[iOut].meal.push(theMeal);
+        jOut++
+        const theIngr = new ClassDish;
+        outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
+      }
+    }
   }
 
   manageIds(theId: string) {
@@ -1576,17 +1623,17 @@ export class HealthComponent implements OnInit {
   }
 
   GetRecord(Bucket: string, GoogleObject: string, iWait: number) {
-
+    console.log('GetRecord - iWait='+iWait);
     this.EventHTTPReceived[iWait] = false;
     this.NbWaitHTTP++;
     this.waitHTTP(this.TabLoop[iWait], 30000, iWait);
     this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject)
       .subscribe((data) => {
-
+        console.log('GetRecord - data received for iWait='+iWait);
         if (iWait === 0) {
-          this.accessAllOtherFiles();
+          console.log('file HealthAllData received');
           this.FillHealthAllInOut(this.HealthAllData, data);
-
+  
           //this.HealthAllData=data;
           this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
           if (this.HealthAllData.fileType === '') {
@@ -1732,7 +1779,11 @@ export class HealthComponent implements OnInit {
         if (iWait !== 7 && iWait !== 8 && iWait !== 9) {
           // this.returnFile.emit(data); // not needed as files are stored in cache of backend server
         }
+        console.log('GetRecord - data processed for iWait='+iWait + '  EventHTTPReceived=true');
         this.EventHTTPReceived[iWait] = true;
+        if (iWait===0){
+          this.accessAllOtherFiles();
+        }
 
       },
         error_handler => {
@@ -2206,18 +2257,20 @@ export class HealthComponent implements OnInit {
   saveCalFatMsg: string = "";
 
   waitHTTP(loop: number, max_loop: number, eventNb: number) {
-    const pas = 500;
+    const pas = 100;
     if (loop % pas === 0) {
-      console.log('waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop);
+      console.log(eventNb + ' waitHTTP fn  ==> loop=' + loop + ' max_loop=' + max_loop);
     }
     loop++
+    this.TabLoop[eventNb]++
 
     this.id_Animation[eventNb] = window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
     if (loop > max_loop || this.EventHTTPReceived[eventNb] === true) {
-      console.log('exit waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop + ' this.EventHTTPReceived=' +
+      
+      console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
         this.EventHTTPReceived[eventNb]);
       if (this.EventHTTPReceived[eventNb] === true) {
-        window.cancelAnimationFrame(this.id_Animation[eventNb]);
+          window.cancelAnimationFrame(this.id_Animation[eventNb]);
       }
     }
   }

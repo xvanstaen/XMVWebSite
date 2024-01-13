@@ -6,7 +6,7 @@ import { ViewportScroller } from "@angular/common";
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 import { OneBucketInfo } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
@@ -27,7 +27,7 @@ export class ChangeSaveFileNameComponent {
         private scroller: ViewportScroller,
         private fb:FormBuilder,
         private ManageGoogleService: ManageGoogleService,
-        private ManageMangoDBService: ManageMangoDBService,
+        private ManageMongoDBService: ManageMongoDBService,
         ) {}  
     
     @Input() DataToHttpPost:any;

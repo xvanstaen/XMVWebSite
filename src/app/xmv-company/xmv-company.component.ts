@@ -14,7 +14,7 @@ import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalori
 import {ConfigFitness} from '../Health/ClassFitness';
 import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import {classConfHTMLFitHealth} from '../Health/classConfHTMLTableAll';
 
 @Component({
@@ -30,7 +30,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     private router:Router,
     private cdref: ChangeDetectorRef,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     ) {}
   
   @Input() configServer=new configServer;
@@ -134,7 +134,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     this.Display_Table[this.i_table].display=true;
   }
 
-  Reset(event:any){
+  Reset(event:number){
     this.redisplay_profile=1;
   }
 

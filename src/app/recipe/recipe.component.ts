@@ -13,13 +13,13 @@ import { Observable } from 'rxjs';
 import { BucketList ,Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
-// it is stored in MangoDB and accessed via ManageMangoDBService
+// it is stored in MongoDB and accessed via ManageMongoDBService
 import { configServer, LoginIdentif} from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
 import {msginLogConsole} from '../consoleLog'
 import { environment } from 'src/environments/environment';
 
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 
@@ -90,7 +90,7 @@ export class RecipeComponent {
     private http: HttpClient,
     private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,

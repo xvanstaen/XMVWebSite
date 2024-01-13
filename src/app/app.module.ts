@@ -29,7 +29,7 @@ import { ChangeSaveFileNameComponent}  from './Special-Services/ChangeSaveFileNa
 import { OneCalendarComponent } from './one-calendar/one-calendar.component';
 import { FitnessStatComponent } from './Health/fitness-stat/fitness-stat.component';
 import { ManageGoogleService} from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService} from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService} from 'src/app/CloudServices/ManageMongoDB.service';
 import { AccessConfigService} from 'src/app/CloudServices/access-config.service';
 import { FitnessChartComponent } from './Health/fitness-chart/fitness-chart.component';
 import { MyDropDownComponent } from './Health/my-drop-down/my-drop-down.component';
@@ -107,7 +107,7 @@ import { BuildLoopFromPerfComponent } from './Sport/build-loop/build-loop-from-p
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
-    DatePipe, AccessConfigService, ManageGoogleService, ManageMangoDBService,  
+    DatePipe, AccessConfigService, ManageGoogleService, ManageMongoDBService,  
   ],
   bootstrap: [AppComponent]
 })

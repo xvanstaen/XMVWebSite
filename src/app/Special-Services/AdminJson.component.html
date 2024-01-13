@@ -76,18 +76,18 @@
           <h2> Current configuration parameters of file  </h2>
           <h2>{{SelectedBucketInfo.name}}</h2>
           <div style="margin-left:20px;">
-                <span class='labelbucket odd'>BucketUser</span> <span class='bucket odd'>  {{configServer.BucketUserInfo}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.BucketUserInfo}}</textarea>
+                <span class='labelbucket odd'>BucketUser</span> <span class='bucket odd'>  xmv-user-info</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  xx</textarea>
 
-                <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  {{configServer.BucketConsole}}</span>
-                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field02' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.BucketConsole}}</textarea>
+                <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  logConsole</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field02' (input)='TextInput($event)' class='FieldText '>  xx</textarea>
                 
-                <span class='labelbucket odd'>BucketContact</span> <span class='bucket odd'> {{configServer.BucketContact}}</span>
-                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field03' (input)='TextInput($event)' class='FieldText '> {{ModifconfigServer.BucketContact}}</textarea>
-
+                <span class='labelbucket odd'>BucketContact</span> <span class='bucket odd'> xmv-messages</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field03' (input)='TextInput($event)' class='FieldText '> xx</textarea>
+<!--
                 <span class='labelbucket odd'>SourceJson_Google_Mongo</span> <span class='bucket odd'>  {{configServer.SourceJson_Google_Mongo}}</span>
                 <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field04' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.SourceJson_Google_Mongo}}</textarea>
-
+-->
                 <span class='labelbucket even'>Max_Nb_Bucket_Wedding</span> <span class='bucket even'>  {{SelectedconfigPhoto.Max_Nb_Bucket_Wedding}}</span>
                 <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field05' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.Max_Nb_Bucket_Wedding}}</textarea>
 
@@ -146,17 +146,17 @@
                         <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     </span> 
                     
-                    <span class='bucketA  odd'>id</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].id}}  </span>
+                    <span class='bucketA  odd'>id</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].theId}}  </span>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     <span class='bucketA  even'> &nbsp;</span>
                     <textarea id='field{{i+(2*i)+ModifconfigPhoto.TabBucketPhoto.length+16}}' 
-                                (input)='TextInput($event)' class='FieldTextA '>  {{configServer.UserSpecific[i].id}}  </textarea>
+                                (input)='TextInput($event)' class='FieldTextA '>  {{configServer.UserSpecific[i].theId}}  </textarea>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
-                    <span class='bucketA  odd'>type</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].type}}  </span>
+                    <span class='bucketA  odd'>type</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].theType}}  </span>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     <span class='bucketA  even'> &nbsp;</span>
                     <textarea id='field{{i+1+(2*i)+ModifconfigPhoto.TabBucketPhoto.length+16}}' 
-                                  (input)='TextInput($event)' class='FieldTextA '>  {{configServer.UserSpecific[i].type}}</textarea>
+                                  (input)='TextInput($event)' class='FieldTextA '>  {{configServer.UserSpecific[i].theType}}</textarea>
                     <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     
                     <span class='bucketA  odd'>log</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].log}}  </span>

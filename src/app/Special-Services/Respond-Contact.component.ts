@@ -7,7 +7,7 @@ import { configServer, OneBucketInfo } from '../JsonServerClass';
 import { Bucket_List_Info } from '../JsonServerClass';
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 @Component({
   selector: 'app-Respond-Contact',
@@ -21,7 +21,7 @@ export class RespondContactComponent {
     private router:Router,
     private http: HttpClient,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     ) {}
   
     @Input() configServer=new configServer;

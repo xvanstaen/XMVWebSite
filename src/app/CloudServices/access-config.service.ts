@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
 // configServer is needed to use ManageGoogleService
-// it is stored in MangoDB and accessed via ManageMangoDBService
+// it is stored in MongoDB and accessed via ManageMongoDBService
 import { configServer } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
 
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -16,7 +16,7 @@ import { Observable } from 'rxjs';
 
 export class AccessConfigService {
 
-  constructor(  private ManageMangoDBService: ManageMangoDBService,
+  constructor(  private ManageMongoDBService: ManageMongoDBService,
                 private   http: HttpClient,
               ) { }
   configServer=new configServer;
@@ -24,11 +24,11 @@ export class AccessConfigService {
 //getConfig():Observable<configServer>{
   getConfig(){
   var test_prod='prod';
-  //this.configServer.baseUrl='https://localhost:8080';
-  this.configServer.baseUrl='https://test-server-359505.uc.r.appspot.com';
+  //this.configServer.mongoServer='https://localhost:8080';
+  this.configServer.mongoServer='https://test-server-359505.uc.r.appspot.com';
   
   this.configServer.GoogleProjectId='ConfigDB';
-  this.ManageMangoDBService.findConfigbyString(this.configServer, 'configServer', '')
+  this.ManageMongoDBService.findConfig(this.configServer, 'configServer' )
   .subscribe(
     data => {
      // test if data is an array if (Array.isArray(data)===true){}

@@ -6,7 +6,7 @@ import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
 
-import { encrypt, decrypt} from '../EncryptDecryptServices';
+//import { encrypt, decrypt} from '../EncryptDecryptServices';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
@@ -19,7 +19,7 @@ import { configServer } from '../JsonServerClass';
 // EventCommentStructure
 
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { ManageMangoDBService } from 'src/app/CloudServices/ManageMangoDB.service';
+import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
 @Component({
   selector: 'app-Event-27AUG2022',
@@ -34,7 +34,7 @@ export class Event27AugComponent {
     private http: HttpClient,
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMangoDBService: ManageMangoDBService,
+    private ManageMongoDBService: ManageMongoDBService,
     private fb: FormBuilder,
     ) {}
   
@@ -56,7 +56,7 @@ export class Event27AugComponent {
       psw: new FormControl('', { nonNullable: true }),
       firstname: new  FormControl('', { nonNullable: true }),
       surname: new  FormControl('', { nonNullable: true }),
-      apps:this.fb.array([]),
+      //apps:this.fb.array([]), // CHECK WHAT IS THE ISSUE??
     });
 
     myForm = new FormGroup({
@@ -707,9 +707,9 @@ SaveRecord(){
 
 onCrypt(type_crypto:string){
     if (type_crypto==='Encrypt'){
-            this.Encrypt=encrypt(this.Decrypt,this.Crypto_Key,this.Crypto_Method);
+            //this.Encrypt=encrypt(this.Decrypt,this.Crypto_Key,this.Crypto_Method);
       } else { // event=Decrypt
-            this.Decrypt=decrypt(this.Encrypt,this.Crypto_Key,this.Crypto_Method);
+            //this.Decrypt=decrypt(this.Encrypt,this.Crypto_Key,this.Crypto_Method);
           } 
   }
 
@@ -781,10 +781,10 @@ saveLogConsole(LogConsole:any, type:string){
     const consoleLength=LogConsole.length;
     this.SaveConsoleFinished=false;
     // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
-    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.configServer.BucketConsole+ "/o?name=" + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
+    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.configServer.consoleBucket+ "/o?name=" + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
         
     var file=new File ([JSON.stringify(LogConsole)], this.thetime.substr(0,20)+ type  ,{type: 'application/json'});
-    this.ManageGoogleService.uploadObject(this.configServer, this.configServer.BucketConsole, file , this.thetime.substr(0,20)+ type )
+    this.ManageGoogleService.uploadObject(this.configServer,this.configServer.consoleBucket, file , this.thetime.substr(0,20)+ type )
     //this.http.post(this.HTTP_Address, LogConsole)
       .subscribe(res => {
               this.SaveConsoleFinished=true;
