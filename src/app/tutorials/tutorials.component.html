@@ -1,0 +1,382 @@
+
+<body>
+
+
+  <div  style="margin-top:8px; margin-left:20px;">
+
+    <div class="theTitle" style="width:500px;; border:2px blue solid; font-size:18px; background-color: lightskyblue; margin-top:5px;"> Tests MONGO DB</div>
+    <div style="width:500px; display:block; background-color: cyan; text-align: center; border:solid 2px green;">
+        <div class="theTitle"> Select the type of file</div>
+        <div *ngFor="let tab of tabActions; let i=index" class="forHover" id="sel-{{i}}" (click)="onSelectType($event)"
+                    [ngStyle]="{'background-color': i % 2 ===0 ? 'lightgreen' : 'lightyellow', 'display':'inline-block',
+                                 'text-align':'center', 'font-size':14}">
+                <div *ngIf="selectedAction===i"  id="sel-{{i}}" class="forHover" style="height:38px; padding-top:8px; width:140px; font-size:16px; background-color: blue; color:white; font-weight: bolder; display:inline-block;">{{tab}}</div>
+                <div *ngIf="selectedAction!==i"  id="sel-{{i}}" class="forHover" style="height:38px; padding-top:8px; width:100px; display:inline-block;">{{tab}}</div>
+        </div>
+        <div class="skipLine"></div>
+    </div>
+
+
+    <div class="blockMgt" style="margin-left:0px;">
+        <div class="theTitle" style="background-color: lightskyblue;"> Global search and delete</div>
+        <div class="subBlock">
+            <div class="label">Record type</div> <input type="text" class="theInputMid" value="{{typeRecord}}" (input)="onInput($event)" id="type">
+        </div>
+        <div class="subBlock">
+            <div class="label">Data base</div> <input type="text" class="theInputMid" value="{{db}}" (input)="onInput($event)" id="db">
+        </div>
+        <div *ngIf="(isDelById===true && saveAction==='commonObjectId') || isDelAll===true || 
+                    isDelByString===true " >
+
+            <div class="dropdown">
+                <div class="Straight-content">
+                    <div class="StraightDropDown" style="margin-top:5px; height:180px; margin-left:10px; width:480px; background-color: lightyellow;">
+                    
+                        <div class="StraightOptions straightOverr" *ngIf="isDelById===true"> Do you confirm the deletion of record <br><br>{{objectId}} </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isDelAll===true">Do you confirm the deletion of all records </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isDelByString===true">Do you confirm the deletion of record  with criteria <br><br> {{theSearch}} in bucket {{theSearchField}}</div>
+                        <button class="sizeButtons buttConfirm" id="confirm" (click)="onActionDropDown($event)">Yes</button> 
+                        <button class="sizeButtons buttCancel"  id="cancel" (click)="onActionDropDown($event)">No</button> 
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="subBlock">    
+            <div class="label">Collection</div> <input type="text" class="theInputMid" value="{{collection}}" (input)="onInput($event)" id="collection">
+        </div>
+        <div class="subBlock">
+            <div class="label">Search field</div> <input type="text" class="theInputMid" value="{{theSearchField}}" (input)="onInput($event)" id="theSearchField">
+        </div>
+        <div class="subBlock">    
+            <div class="label">Search string</div> <input type="text" class="theInputMid" value="{{theSearch}}" (input)="onInput($event)" id="theSearch">
+        </div>
+        <div class="subBlock">
+            <div class="label">Object Id</div> <input type="text" class="theInputMid" value="{{objectId}}" (input)="onInput($event)" id="objectId">
+       </div>
+
+       <div style="margin-left:50px; margin-top:8px;" >
+            <button class="sizeButtons sizeButtonsOverride" id="commonSearch" (click)="findByString($event)">Find by search</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="commonSearchId" (click)="findById($event)">Find by id</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="commonAll" (click)="findAll($event)">Get all</button> 
+        </div>
+        <div style="margin-left:50px; margin-top:8px;" >
+            <button class="sizeButtons sizeButtonsOverride" id="commonDelAll" (click)="delAll()">Delete all</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="commonDelByString" (click)="delByString()">Delete by string</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="commonObjectId" (click)="delById($event)">Delete by ID</button> 
+       </div>
+        <div class="skipLine"></div>
+        <div *ngIf="error!==''" style="width:100%; display:inline-block;">
+                <div class="errMsg">{{error}}</div>
+        </div>
+    </div>
+  </div>
+    <div class="blockMgt" *ngIf="selectedAction===0">
+        <div class="theTitle"> File System management</div>
+        <div class="subBlock">
+            <div class="label">id</div> <input type="text" class="theInputLong" value="{{tabIdFS[isSelectedIdFS]}}" (input)="onInputFS($event)" id='idFS'>
+        </div>
+        <div class="subBlock">
+            <div class="label">collection</div> <input type="text" class="theInput" value="{{collectionFS}}" (input)="onInputFS($event)" id='collectionFS'>
+            <div class="label">db</div> <input type="text" class="theInput" value="{{dbFS}}" (input)="onInputFS($event)"  id='dbFS'>
+        </div>
+        <div class="subBlock">
+            <div class="label">bucket</div> <input type="text" class="theInput" value="{{recordFS.bucket}}" (input)="onInputFS($event)" id="bucket">
+            <div class="label">object</div> <input type="text" class="theInput" value="{{recordFS.object}}" (input)="onInputFS($event)" id="object">        
+        </div>
+        <div *ngIf="(isDelById===true && saveAction==='commonObjectId') || isSaveSpecific===true || 
+                            isUpdateSpecific===true  " >
+            <div class="dropdown">
+                <div class="Straight-content" >
+                    <div class="StraightDropDown" style="margin-top:5px; height:180px; margin-left:10px; width:480px; background-color: lightyellow;">
+                    
+                        <div class="StraightOptions straightOverr" *ngIf="isDelById===true"> Do you confirm the deletion of record <br><br>{{tabIdFS[isSelectedIdFS]}} </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isSaveSpecific===true">Do you confirm the creation of the record </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isUpdateSpecific===true">Do you confirm the update of record <br><br> {{tabIdFS[isSelectedIdFS]}}</div>
+                        <button class="sizeButtons buttConfirm" id="confirm" (click)="onActionDropDown($event)">Yes</button> 
+                        <button class="sizeButtons buttCancel"  id="cancel" (click)="onActionDropDown($event)">No</button> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="subBlock">
+            <div class="label">createdAt</div> <input type="text" class="theInput" value="{{recordFS.createdAt}}" (input)="onInputFS($event)" id="createdAt">
+            <div class="label">updatedAt</div> <input type="text" class="theInput" value="{{recordFS.updatedAt}}" (input)="onInputFS($event)" id="updatedAt">
+        </div>
+        <div class="subBlock">
+            <div class="label">lock</div> <input type="boolean" class="theInput" value="{{recordFS.lock}}" (input)="onInputFS($event)" id="lock">
+            <div class="label">credentialDate </div> <input type="text" class="theInput" value="{{recordFS.credentialDate}}" (input)="onInputFS($event)" id="credentialDate">
+        </div>
+        
+        <div class="subBlock">
+            <div class="label">byUser</div> <input type="text" class="theInput" value="{{recordFS.byUser}}" (input)="onInputFS($event)" id="byUser">
+            <div class="label">userServerId</div> <input type="text" class="theInput" value="{{recordFS.userServerId}}" (input)="onInputFS($event)" id="userServerId">
+        </div>
+        <div class="subBlock">
+            <div class="label">Time Out hh</div> <input type="text" class="theInput" value="{{recordFS.timeoutFileSystem.hh}}" (input)="onInputFS($event)" id="hh">
+            <div class="label">Time Out mn</div> <input type="text" class="theInput" value="{{recordFS.timeoutFileSystem.mn}}" (input)="onInputFS($event)" id="mn">
+        </div>
+        <div style="margin-left:70px; margin-top:8px;" >
+            <button class="sizeButtons sizeButtonsOverride" id="saveFS" (click)="actionSave($event)">Create</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="updateFS" (click)="actionUpdate($event)">Update</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="delIdFS" (click)="delById($event)">Delete by ID</button> 
+        </div>
+        <div class="skipLine"></div>
+        <div *ngIf="tabIdFS.length>1" class="listTitle ">
+            <div class="theTitle"> List of file system records</div>
+        </div>
+        <div *ngIf="tabIdFS.length>1" class="listRec">
+                <div *ngFor="let tab of tabIdFS; let i=index" style="width:100%; display:inline-block" (click)="selectId($event)"  id="FSY-{{i}}">
+                <div class="forHover" id="FSY-{{i}}" style="padding-left:30px; width:400px; display:inline-block" [ngClass]=" {'even': i % 2 ===0, 'odd': i % 2 !==0}" >
+                    {{tab}}
+                </div>
+            </div>
+        </div>
+        <br>
+     </div>
+
+    <div class="blockMgt" *ngIf="selectedAction===1">
+        <div class="theTitle"> Password management</div>
+        <div class="subBlock">
+            <div class="label">id</div> <input type="text" class="theInputLong" value="{{tabIdPSW[isSelectedIdPSW]}}" (input)="onInputPSW($event)" id='idPSW'>
+        </div>
+        <div class="subBlock">
+            <div class="label">collection</div> <input type="text" class="theInput" value="{{collectionPSW}}" (input)="onInputPSW($event)"  id='collectionPSW'>
+            <div class="label">db</div> <input type="text" class="theInput" value="{{dbPSW}}" (input)="onInputPSW($event)"  id='dbPSW'>
+        </div>
+        <div *ngIf="(isDelById===true && saveAction!=='commonObjectId') || isSaveSpecific===true || 
+                            isUpdateSpecific===true  " >
+            <div class="dropdown">
+                <div class="Straight-content" >
+                    <div class="StraightDropDown" style="margin-top:5px; height:180px; margin-left:10px; width:480px; background-color: lightyellow;">
+                    
+                        <div class="StraightOptions straightOverr" *ngIf="isDelById===true"> Do you confirm the deletion of record <br><br>{{tabIdPSW[isSelectedIdPSW]}} </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isSaveSpecific===true">Do you confirm the creation of the record </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isUpdateSpecific===true">Do you confirm the update of record <br><br> {{tabIdPSW[isSelectedIdPSW]}}</div>
+                        <button class="sizeButtons buttConfirm" id="confirm" (click)="onActionDropDown($event)">Yes</button> 
+                        <button class="sizeButtons buttCancel"  id="cancel" (click)="onActionDropDown($event)">No</button> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="subBlock">
+            <div class="label">id PSW</div> <input type="text" class="theInput" value="{{recordPSW.id}}" (input)="onInputPSW($event)"  id='idPSW'>
+            <div class="label">UserId</div> <input type="text" class="theInput" value="{{recordPSW.UserId}}" (input)="onInputPSW($event)"  id='UserId'>
+        </div>
+        <div class="subBlock">
+            <div class="label">psw</div> <input type="text" class="theInput" value="{{recordPSW.psw}}" (input)="onInputPSW($event)"  id='psw'>
+            <div class="label">key</div> <input type="text" class="theInput" value="{{recordPSW.key}}" (input)="onInputPSW($event)"  id='key'>
+        </div>
+        <div class="subBlock">
+            <div class="label">method</div> <input type="text" class="theInput" value="{{recordPSW.method}}" (input)="onInputPSW($event)"  id='method'>
+            <div class="label">cryptoAuth</div> <input type="text" class="theInput" value="{{recordPSW.cryptoAuth}}" (input)="onInputPSW($event)"  id='cryptoAuth'>
+        </div>
+        
+        <div class="subBlock">
+            <div class="label">bucketUserInfo</div> <input type="text" class="theInput" value="{{recordPSW.bucketUserInfo}}" (input)="onInputPSW($event)"  id='bucketUserInfo'>
+        </div>
+        <div style="margin-left:70px; margin-top:8px;" >
+            <button class="sizeButtons sizeButtonsOverride" id="savePSW" (click)="actionSave($event)">Create</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="updatePSW" (click)="actionUpdate($event)">Update</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="delIdPSW" (click)="delById($event)">Delete by ID</button> 
+        </div>
+        <div class="skipLine"></div>
+        <div *ngIf="tabIdPSW.length>1" class="listTitle ">
+            <div class="theTitle"> List of user psw records</div>
+        </div>
+        <div *ngIf="tabIdPSW.length>1" class="listRec">
+            <div *ngFor="let tab of tabIdPSW; let i=index" style="width:100%; display:inline-block" (click)="selectId($event)"  id="PSW-{{i}}">
+                    <div class="forHover" id="PSW-{{i}}" style="padding-left:30px; width:400px; display:inline-block" [ngClass]=" {'even': i % 2 ===0, 'odd': i % 2 !==0}" >
+                        {{tab}}
+                    </div>
+            </div>
+        </div>
+        <br>
+    </div>
+
+    <div class="blockMgt" *ngIf="selectedAction===2">
+        <div class="theTitle"> Tutorials management</div>
+        <div class="subBlock">
+            <div class="label">id</div> <input type="text" class="theInputLong" value="{{tabIdTuto[isSelectedIdTuto]}}" (input)="onInputTuto($event)" id='idTuto'>
+        </div>
+        <div class="subBlock">
+            <div class="label">collection</div> <input type="text" class="theInput" value="{{collectionTuto}}" (input)="onInputTuto($event)"  id='collectionTuto'>
+            <div class="label">db</div> <input type="text" class="theInput" value="{{dbTuto}}" (input)="onInputTuto($event)"  id='dbTuto'>
+        </div>
+        <div class="subBlock">
+            <div class="label">Title</div> <input type="text" class="theInput" value="{{recordTuto.title}}" (input)="onInputTuto($event)"  id='title'>
+            <div class="label">Published</div> <input type="text" class="theInput" value="{{recordTuto.published}}" (input)="onInputTuto($event)"  id='published'>
+        </div>
+        <div class="subBlock">
+            <div class="label">Description</div> <input type="text" class="theInputLong" value="{{recordTuto.description}}" (input)="onInputTuto($event)"  id='description'>
+        </div>
+        <div *ngIf="(isDelById===true && saveAction!=='commonObjectId') || isSaveSpecific===true || 
+                            isUpdateSpecific===true  " >
+            <div class="dropdown">
+                <div class="Straight-content" >
+                    <div class="StraightDropDown" style="margin-top:5px; height:180px; margin-left:10px; width:480px; background-color: lightyellow;">
+                    
+                        <div class="StraightOptions straightOverr" *ngIf="isDelById===true"> Do you confirm the deletion of record <br><br>{{tabIdTuto[isSelectedIdTuto]}} </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isSaveSpecific===true">Do you confirm the creation of the record </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isUpdateSpecific===true">Do you confirm the update of record <br><br> {{tabIdTuto[isSelectedIdTuto]}}</div>
+                        <button class="sizeButtons buttConfirm" id="confirm" (click)="onActionDropDown($event)">Yes</button> 
+                        <button class="sizeButtons buttCancel"  id="cancel" (click)="onActionDropDown($event)">No</button> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-left:70px; margin-top:8px;" >
+            <button class="sizeButtons sizeButtonsOverride" id="saveTuto" (click)="actionSave($event)">Create</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="updateTuto" (click)="actionUpdate($event)">Update</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="delIdTuto" (click)="delById($event)">Delete by ID</button> 
+        </div>
+        <div class="skipLine"></div>
+        <div *ngIf="tabIdTuto.length>1" class="listTitle ">
+            <div class="theTitle"> List of tutorials records</div>
+        </div>
+        <div *ngIf="tabIdTuto.length>1" class="listRec">
+            <div *ngFor="let tab of tabIdTuto; let i=index" style="width:100%; display:inline-block" (click)="selectId($event)"  id="TUT-{{i}}">
+                    <div class="forHover" id="TUT-{{i}}" style="padding-left:30px; width:100%; display:inline-block" [ngClass]=" {'even': i % 2 ===0, 'odd': i % 2 !==0}" >
+                        {{tab}}
+                    </div>
+            </div>
+        </div>
+        <br>
+    </div>
+
+    <div class="blockMgt" *ngIf="selectedAction===3" >
+        <div class="theTitle"> Configuration management</div>
+        
+        <div class="subBlock">
+            <div class="labelMid">collection</div> <input type="text" class="configInput" value="{{collectionConfig}}" (input)="onInputConfig($event)"  id='collectionConfig'>
+            <div class="labelMid">db</div> <input type="text" class="configInput" value="{{dbConfig}}" (input)="onInputConfig($event)"  id='dbConfig'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Title</div> <input type="text" class="configInput" value="{{recordConfig.title}}" (input)="onInputConfig($event)"  id='title'>
+            <div class="labelMid">Bucket console</div> <input type="text" class="configInput" value="{{recordConfig.consoleBucket}}" (input)="onInputConfig($event)"  id='console'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">id</div> <input type="text" class="theInput" value="{{tabIdConfig[isSelectedIdConfig]}}" (input)="onInputConfig($event)" id='idConfig'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Google Url</div> <input type="text" class="theInput" value="{{recordConfig.googleServer}}" (input)="onInputConfig($event)"  id='googleUrl'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Mongo Url</div> <input type="text" class="theInput" value="{{recordConfig.mongoServer}}" (input)="onInputConfig($event)"  id='mongoUrl'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">FS Url</div> <input type="text" class="theInput" value="{{recordConfig.fileSystemServer}}" (input)="onInputConfig($event)"  id='fileSystemUrl'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Test/Prod</div> <input type="text" class="configInput" value="{{recordConfig.test_prod}}" (input)="onInputConfig($event)"  id='test_prod'>
+            <div class="labelMid">Project Id</div> <input type="text" class="configInput" value="{{recordConfig.GoogleProjectId}}" (input)="onInputConfig($event)"  id='projectId'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Ip Address</div> <input type="text" class="configInput" value="{{recordConfig.IpAddress}}" (input)="onInputConfig($event)"  id='ipAddress'>
+            <div class="labelMid">Credential</div> <input type="text" class="configInput" value="{{recordConfig.credentialDate}}" (input)="onInputConfig($event)"  id='credential'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Project</div> <input type="text" class="configInput" value="{{recordConfig.project}}" (input)="onInputConfig($event)"  id='project'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Time Out hour</div> <input type="text" class="configInput" value="{{recordConfig.timeoutFileSystem.hh}}" (input)="onInputConfig($event)"  id='TOhh'>
+            <div class="labelMid">minute(s)</div> <input type="text" class="configInput" value="{{recordConfig.timeoutFileSystem.mn}}" (input)="onInputConfig($event)"  id='TOmn'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Buffer TO hour</div> <input type="text" class="configInput" value="{{recordConfig.timeoutFileSystem.bufferTO.hh}}" (input)="onInputConfig($event)"  id='bufferTOhh'>
+            <div class="labelMid">minute(s)</div> <input type="text" class="configInput" value="{{recordConfig.timeoutFileSystem.bufferTO.mn}}" (input)="onInputConfig($event)"  id='bufferTOmn'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">Buffer Input hour</div> <input type="text" class="configInput" value="{{recordConfig.timeoutFileSystem.bufferInput.hh}}" (input)="onInputConfig($event)"  id='bufferInputhh'>
+            <div class="labelMid">minute(s)</div> <input type="text" class="configInput" value="{{recordConfig.timeoutFileSystem.bufferInput.mn}}" (input)="onInputConfig($event)"  id='bufferInputmn'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">PoR bucket</div> <input type="text" class="configInput" value="{{recordConfig.PointOfRef.bucket}}" (input)="onInputConfig($event)"  id='PoRBucket'>
+            <div class="labelMid">PoR object</div> <input type="text" class="configInput" value="{{recordConfig.PointOfRef.file}}" (input)="onInputConfig($event)"  id='PoRBObject'>
+        </div>
+        <div class="subBlock">
+            <div class="labelMid">FS bucket</div> <input type="text" class="configInput" value="{{recordConfig.bucketFileSystem}}" (input)="onInputConfig($event)"  id='bucketFS'>
+            <div class="labelMid">FS object</div> <input type="text" class="configInput" value="{{recordConfig.objectFileSystem}}" (input)="onInputConfig($event)"  id='objectFS'>
+        </div>
+
+        <div class="subBlock"  style="height:15px;"> <span class='label'>User specific</span></div>
+        <div *ngFor="let tab of recordConfig.UserSpecific; let i=index">
+            <input class="inputA" value="A" id="usrSpec-{{i}}" (click)="onActionConfig($event)">
+            <span class='labelShort'  style="margin-left:0px; width:35px;" > Id:</span><input type="text"  class='configInput' value={{tab.theId}}  (input)="onInputTabConfig($event)" id="idxx-{{i}}"> 
+            <span class='labelShort' style="margin-left:1px; width:50px;">Type: </span><input type="text"  class='configInput'   value={{tab.theType}} (input)="onInputTabConfig($event)" id="type-{{i}}"> 
+            <span class='labelShort' style="margin-left:1px; width:45px;"> Log:</span> <input type="text"  class='configInputShort'    value={{tab.log}} (input)="onInputTabConfig($event)" id="logx-{{i}}"> 
+        </div>
+        <div *ngIf="itemUsrSpec!==-1  && isDisplayTabActionField===true" >
+            <div class="dropdown">
+                <div class="Straight-content" >
+                    <div style="width:100%; display:inline-block; height:40px; margin-left:5px;">
+                        <div *ngFor="let tab of tabActionField; let i=index"  style="font-size:14px; width:145px; display:inline-block; "
+                                [ngStyle]="{'background-color': i % 2 ===0 ? 'lightYellow' : 'orange'}" id="xxxSpec-{{i}}"  >
+                            <div  style=" width:145px; display:inline-block; text-align:center; padding-top:4px; " class="forHover" id="xxxSpec-{{i}}" (click)="onActionConfig($event)">
+                                <span  class="forHover" >{{tab}}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="(isDelById===true && saveAction!=='commonObjectId') || isSaveSpecific===true || 
+                            isUpdateSpecific===true  " >
+            <div class="dropdown">
+                <div class="Straight-content" >
+                    <div class="StraightDropDown" style="margin-top:5px; height:180px; margin-left:10px; width:480px; background-color: lightyellow;">
+                    
+                        <div class="StraightOptions straightOverr" *ngIf="isDelById===true"> Do you confirm the deletion of record <br><br>{{tabIdConfig[isSelectedIdConfig]}} </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isSaveSpecific===true">Do you confirm the creation of the record </div>
+                        <div class="StraightOptions straightOverr" *ngIf="isUpdateSpecific===true">Do you confirm the update of record <br><br> {{tabIdConfig[isSelectedIdConfig]}}</div>
+                        <button class="sizeButtons buttConfirm" id="confirm" (click)="onActionDropDown($event)">Yes</button> 
+                        <button class="sizeButtons buttCancel"  id="cancel" (click)="onActionDropDown($event)">No</button> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="subBlock" style="height:15px;"> <span class='label'>Files to cache</span></div>
+        
+            <div style="margin-left:80px; display:block; min-width:220px;"> Bucket
+            <div  style="margin-left:110px; width:80px; display:inline-block;"> Object</div>
+        </div>
+        
+        <div *ngFor="let tab of recordConfig.filesToCache; let i=index" >
+            <input class="inputA" value="A" id="fileToCache-{{i}}" (click)="onActionConfig($event)">
+            <input type="text"  class='theInputMid'  style='height:25px; margin-left:10px;' value={{recordConfig.filesToCache[i].bucket}}  (input)="onInputTabConfig($event)" id="buck-{{i}}"> 
+            <input type="text"  class='theInputMid'  style='height:25px; margin-left:10px;' value={{recordConfig.filesToCache[i].object}}  (input)="onInputTabConfig($event)" id="obje-{{i}}"> 
+            <div *ngIf="itemFileToCache!==-1 && itemFileToCache===i && isDisplayTabActionField===true" >
+                <div class="dropdown">
+                    <div class="Straight-content" >
+                        <div style="width:100%; display:inline-block; height:40px; margin-left:5px;">
+                            <div *ngFor="let tab of tabActionField; let i=index"  style="font-size:14px; width:145px; display:inline-block; "
+                                    [ngStyle]="{'background-color': i % 2 ===0 ? 'lightYellow' : 'orange'}" id="xxxToCache-{{i}}"  >
+                                <div  style=" width:145px; display:inline-block; text-align:center; padding-top:4px; " class="forHover" id="xxxToCache-{{i}}" (click)="onActionConfig($event)">
+                                    <span  class="forHover" >{{tab}}</span>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-left:70px; margin-top:8px;" >
+            <button class="sizeButtons sizeButtonsOverride" id="saveConfig" (click)="actionSave($event)">Create</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="updateConfig" (click)="actionUpdate($event)">Update</button> 
+            <button class="sizeButtons sizeButtonsOverride" id="delIdConfig" (click)="delById($event)">Delete by ID</button> 
+        </div>
+        <div class="skipLine"></div>
+        <div *ngIf="tabIdConfig.length>1" class="listTitle ">
+            <div class="theTitle"> List of configuration records</div>
+        </div>
+        <div *ngIf="tabIdConfig.length>1" class="listRec">
+            <div *ngFor="let tab of tabIdConfig; let i=index" style="width:100%; display:inline-block" (click)="selectId($event)"  id="CON-{{i}}">
+                    <div class="forHover" id="CON-{{i}}" style="padding-left:30px;" [ngClass]=" {'even': i % 2 ===0, 'odd': i % 2 !==0}" >
+                        {{tab}}
+                    </div>
+            </div>
+        </div>
+        <br>
+    </div>
+
+</body>

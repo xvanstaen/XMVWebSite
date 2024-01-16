@@ -5,7 +5,7 @@ import { HttpClient,  HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 
-import { XMVTestProd, configServer, LoginIdentif , classCredentials, EventAug, Bucket_List_Info } from '../JsonServerClass';
+import { XMVTestProd, configServer, LoginIdentif , classUserLogin, classCredentials, EventAug, Bucket_List_Info } from '../JsonServerClass';
 
 
 import { environment } from 'src/environments/environment';
@@ -53,7 +53,11 @@ export class LoginComponent {
     @Input() HealthAllData=new mainDailyReport; 
     @Input() credentials = new classCredentials;
 
+    @Input() configServerChanges:number=0;
+
     ConfigTestProd=new XMVTestProd;
+
+    userLogin=new classUserLogin;
 
     id_Animation:Array<number>=[];
 
@@ -70,7 +74,7 @@ export class LoginComponent {
     getScreenHeight: any;
     device_type:string='';
     routing_code:number=0;
-    text_error:string='';
+    error:string='';
     i:number=0;
 
     myForm = new FormGroup({
@@ -143,37 +147,54 @@ export class LoginComponent {
 
 getLogin(object:string,psw:string){
     // this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject )
-    this.ManageGoogleService.checkLogin(this.configServer, object, psw )
+    this.configServer.userLogin.id=this.myForm.controls['userId'].value;
+    this.configServer.userLogin.psw=this.myForm.controls['password'].value;
+    this.configServer.userLogin.accessLevel="";
+
+    this.ManageGoogleService.checkLogin(this.configServer )
         .subscribe((data ) => {    
-            this.Encrypt_Data=data;
-            this.routing_code=1;
-            this.Encrypt_Data.userServerId=this.credentials.userServerId;
-            this.Encrypt_Data.credentialDate=this.credentials.creationDate;
-            this.Encrypt_Data.IpAddress=this.configServer.IpAddress;
-            this.my_output2.emit(this.routing_code.toString());
+          this.getUserAccessLevel();
+
+          this.Encrypt_Data=data;
+          this.routing_code=1;
+          this.Encrypt_Data.userServerId=this.credentials.userServerId;
+          this.Encrypt_Data.credentialDate=this.credentials.creationDate;
+          this.Encrypt_Data.IpAddress=this.configServer.IpAddress;
+          this.my_output2.emit(this.routing_code.toString());
       },
         err=> {
           console.log('error to checkLogin - error status=' + err.status + ' '+ err.message );
         })
   }
 
-
+  getUserAccessLevel(){
+    this.ManageGoogleService.getSecurityAccess(this.configServer )
+    .subscribe((data ) => {  
+          if (data.status===200){
+            this.configServer.userLogin.accessLevel = data.accessLevel;
+          } else {
+            this.error=data.msg
+          }
+      },
+      err =>{
+          console.log('getSecurityAccess  error ' + err);
+          this.error="Server problem. Lower level of access has been assigned"
+      });
+  }
 
 
 ValidateData(){
-
-  
   console.log('validateData()');
   if (this.myForm.controls['userId'].value==='')  {
-    this.text_error=" provide your user id";
+    this.error=" provide your user id";
   }
   else
   if (this.myForm.controls['password'].value==='')  {
-    this.text_error=" provide your password";
+    this.error=" provide your password";
   }
   else
   {
-    this.text_error='';
+    this.error='';
     this.getLogin( this.myForm.controls['userId'].value, this.myForm.controls['password'].value);
   }
 }
@@ -188,7 +209,7 @@ onClear(){
     userId: '',
     password:''
   });
-  this.text_error='';
+  this.error='';
 }
 
 

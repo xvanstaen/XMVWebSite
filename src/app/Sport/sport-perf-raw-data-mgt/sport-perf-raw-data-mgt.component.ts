@@ -34,12 +34,9 @@ export class SportPerfRawDataMgtComponent {
     private datePipe: DatePipe,
     ) { }
 
-  @Output() newCredentials= new EventEmitter<any>();
-  @Output() resetServer= new EventEmitter<any>();
-
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;
-  @Input() credentials= new classCredentials;
+
   nbSave:number=0; // to trigger ngOnChanges when file 'theFile' is updated
 
   @Output() savePerf= new EventEmitter<any>();

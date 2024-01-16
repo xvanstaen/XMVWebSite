@@ -34,8 +34,7 @@ export class ManageCircuitsComponent {
     private datePipe: DatePipe,
     ) { }
 
-    @Output() newCredentials= new EventEmitter<any>();
-    @Output() resetServer= new EventEmitter<any>();
+
     @Output() returnCircuit= new EventEmitter<any>();
     @Input() configServer = new configServer;
     @Input() identification= new LoginIdentif;

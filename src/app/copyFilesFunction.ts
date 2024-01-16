@@ -1,4 +1,5 @@
 import { configServer, UserParam, classFilesToCache  } from './JsonServerClass';
+import { classCredentials} from './JsonServerClass';
 
 export function fillConfig(inFile:configServer){
     var outFile=new configServer;
@@ -10,7 +11,7 @@ export function fillConfig(inFile:configServer){
     outFile.googleServer = inFile.googleServer;
     outFile.mongoServer = inFile.mongoServer;
     outFile.fileSystemServer = inFile.fileSystemServer;
-    
+    outFile.project = inFile.project;
     outFile.IpAddress = inFile.IpAddress;
     if (inFile.credentialDate!==undefined){
       outFile.credentialDate = inFile.credentialDate;
@@ -28,6 +29,16 @@ export function fillConfig(inFile:configServer){
     
     outFile.PointOfRef.bucket = inFile.PointOfRef.bucket;
     outFile.PointOfRef.file = inFile.PointOfRef.file;
+    if (inFile.userLogin!==undefined){
+      outFile.userLogin.id=inFile.userLogin.id;
+      outFile.userLogin.psw=inFile.userLogin.psw;
+      outFile.userLogin.accessLevel=inFile.userLogin.accessLevel;
+    } else {
+      outFile.userLogin.id="";
+      outFile.userLogin.psw="";
+      outFile.userLogin.accessLevel="";
+    }
+    
     
     for (var i=0; i<inFile.filesToCache.length; i++){
       const theClass=new classFilesToCache;
@@ -52,4 +63,14 @@ export function fillConfig(inFile:configServer){
         outFile.UserSpecific[0].theType = "";
     }
     return outFile;
+  }
+
+  export function fillCredentials(inRecord:any){
+    var outRecord=new classCredentials;
+    outRecord.access_token=inRecord.access_token;
+    outRecord.id_token=inRecord.id_token
+    outRecord.refresh_token=inRecord.refresh_token
+    outRecord.token_type=inRecord.token_type;
+    outRecord.creationDate=inRecord.creationDate;
+    return (outRecord);
   }

@@ -37,12 +37,8 @@ export class SportReportsComponent {
     private datePipe: DatePipe,
     ) { }
 
-    @Output() newCredentials= new EventEmitter<any>();
-    @Output() resetServer= new EventEmitter<any>();
-
     @Input() configServer = new configServer;
     @Input() identification= new LoginIdentif;
-    @Input() credentials= new classCredentials;
 
     firstPoR:string="";
     firstPoRNb:number=0;

@@ -10,7 +10,7 @@ import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angu
 import { Observable } from 'rxjs';
 
 import { BucketList , Bucket_List_Info, OneBucketInfo} from '../../JsonServerClass';
-import { fillConfig } from '../../copyFilesFunction';
+
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MongoDB and accessed via ManageMongoDBService
@@ -1767,30 +1767,25 @@ waitHTTP(loop:number, max_loop:number, eventNb:number){
 
 
 RetrieveConfig(){
-  var test_prod='prod';
-  if (environment.production === false){
-    test_prod='test';
-  }
+    var test_prod='prod';
  
-    //'https://localhost:8080';
-    //'https://test-server-359505.uc.r.appspot.com';
-  this.configServer.mongoServer='https://xmv-it-consulting.uc.r.appspot.com';
-  //this.configServer.GoogleProjectId='ConfigDB';
-  this.ManageMongoDBService.findConfig(this.configServer, 'configServer')
+    //this.configServer.baseUrl='https://localhost:8080';
+    this.configServer.googleServer='https://test-server-359505.uc.r.appspot.com';
+    
+    this.configServer.GoogleProjectId='ConfigDB';
+    this.ManageMongoDBService.findConfig(this.configServer, 'configServer')
     .subscribe(
       data => {
      
-      if (Array.isArray(data) === false){
-        this.configServer = fillConfig(data);
-        //this.configServer = data;
-      } else {
-          for (let i=0; i<data.length; i++){
-              if (data[i].title==="configServer" && data[i].test_prod===test_prod){
-                this.configServer = fillConfig(data[i]);
-                // this.configServer = data[i];
-              } 
-          }
-        }
+       if (environment.production === false){
+          test_prod='test';
+       }
+      
+      for (let i=0; i<data.length; i++){
+          if (data[i].title==="configServer" && data[i].test_prod===test_prod){
+              this.configServer = data[i];
+          } 
+      }
       this.GetAllObjects();
       this.isConfigServerRetrieved=true;
       this.scroller.scrollToAnchor('AccessToListFiles');

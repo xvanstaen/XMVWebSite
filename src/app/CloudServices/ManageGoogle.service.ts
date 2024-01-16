@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { HttpClient, HttpRequest, HttpEvent,  HttpErrorResponse, HttpHeaders, HttpContext } from '@angular/common/http';
 import { BioData } from '../JsonServerClass';
 import { ThisReceiver } from '@angular/compiler';
-import { configServer } from '../JsonServerClass';
+import { configServer, classUserLogin } from '../JsonServerClass';
 import { classFileSystem, classAccessFile }  from 'src/app/classFileSystem';
 
 @Injectable({
@@ -24,13 +24,13 @@ export class ManageGoogleService {
     'Authorization': 'Bearer ya29.a0AbVbY6MILZfEfuz2p5TZVpC-H49MRTY1gpL6ooXilb3XX26y_DdKVfBxTNGBlosBpVclb_mfDubxk2vWMOUx3LBoG4SkZj1IXHwpgrU2nRNk3vQq1gsVXmcdaLGUXdPz9EicBXVvFS6F5SLtj8GA6E5KLmAMaCgYKAXYSARASFQFWKvPllv_18IAH9e7Y6c4HRJbQ8w0163'
     });
 
-checkLogin(config:configServer,userId:string,psw:string): Observable<any> {
-    const http_get=config.googleServer+'/checkLogin/'+config.GoogleProjectId+'/'+config.test_prod+'/'+userId+'/'+encodeURIComponent(psw); // "/"+myArray+"/"+encodeURIComponent(JSON.stringify(TableCryptKey.theFour))
+checkLogin(config:configServer): Observable<any> {
+    const http_get=config.googleServer+'/checkLogin/'+config.GoogleProjectId+'/'+config.test_prod+'/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw); // "/"+myArray+"/"+encodeURIComponent(JSON.stringify(TableCryptKey.theFour))
     return this.http.get<any>(http_get);                      
 }  
 
 getListBuckets(config:configServer): Observable<any> {
-    return this.http.get<any>(config.googleServer+'/lBucket/'+config.GoogleProjectId+'/'+config.test_prod);                       
+    return this.http.get<any>(config.googleServer+'/lBucket/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod);                       
 }
 
 getListObjects(config:configServer, bucket:string): Observable<any> {
@@ -48,7 +48,7 @@ getListMetaObjects(config:configServer, bucket:string): Observable<any> {
 }
 
 getContentObject(config:configServer, bucket:string, object:string): Observable<any> {
-    const http_get=config.googleServer+'/files/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'?bucket='+bucket;
+    const http_get=config.googleServer+'/files/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'?bucket='+bucket;
     return this.http.get<any>(http_get);                       
 }
 
@@ -58,7 +58,7 @@ getTextObject(config:configServer, bucket:string, object:string): Observable<any
 }
 
 getmediaLinkContent(config:configServer, bucket:string, object:string): Observable<any> {
-    const http_get=config.googleServer+'/mediaLink/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'?bucket='+bucket;
+    const http_get=config.googleServer+'/mediaLink/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'?bucket='+bucket;
     return this.http.get<any>(http_get);                       
 }
 
@@ -75,7 +75,7 @@ uploadObject(config:configServer, bucket:string, file: File, object:string): Obs
     var formData: FormData = new FormData();
     //formData.append('metadata', JSON.stringify(newMetadata));
     formData.append('file', file);
-    const http_post=config.googleServer+'/upload/'+config.GoogleProjectId+'/'+object+'/'+config.test_prod+'/'+cacheControl+'/'+encodeURIComponent(contentType)+'?bucket='+bucket;
+    const http_post=config.googleServer+'/upload/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+object+'/'+config.test_prod+'/'+cacheControl+'/'+encodeURIComponent(contentType)+'?bucket='+bucket;
     const req = new HttpRequest('POST', http_post, formData,  {
             reportProgress: false,
             responseType: 'json'
@@ -85,17 +85,9 @@ uploadObject(config:configServer, bucket:string, file: File, object:string): Obs
 
 uploadObjectMetaPerso(config:configServer, bucket:string, file: File, object:string, metaCache:string, metaType:string, metaPerso:any): Observable<HttpEvent<any>> {
 
-    var contentType="";
     if (metaCache===""){
         metaCache='public,max-age=0,no-cache,no-store';
     }
-    /*
-    var i=metaType.indexOf('/');
-    if (i!==-1){
-        contentType= metaType.substring(i+1); // 'json' or 'text';
-    }
-    */
-
     var formData: FormData = new FormData();
     //formData.append('metadata', JSON.stringify(newMetadata));
     formData.append('file', file);
@@ -116,10 +108,7 @@ uploadObjectMetaPerso(config:configServer, bucket:string, file: File, object:str
 }
 
 updateMetaData(config:configServer, bucket:string, objectN:string, metaCache:string, metaType:string, metaPerso:any): Observable<HttpEvent<any>> {
-    /*
-    var i=metaType.indexOf('/');
-    metaType=metaType.substring(0,i)+'-'+metaType.substring(i+1);
-    */
+
     var theMetaPerso = "";
     if (Array.isArray(metaPerso)===true){
         theMetaPerso=JSON.stringify(metaPerso);
@@ -132,24 +121,24 @@ updateMetaData(config:configServer, bucket:string, objectN:string, metaCache:str
 }
 
 deleteObject(config:configServer, bucket:string, objectN:string): Observable<HttpEvent<any>> {
-        const http_post=config.googleServer+'/delete/'+config.GoogleProjectId+'/'+config.test_prod+'/'+objectN+'?bucket='+bucket;
+        const http_get=config.googleServer+'/delete/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+objectN+'?bucket='+bucket;
         //const req = new HttpRequest('GET', objectN);
-        return this.http.get<any>(http_post);
+        return this.http.get<any>(http_get);
     }
 
 renameObject(config:configServer, bucket:string, SRCobject:string, DESTobject:string): Observable<HttpEvent<any>> {
-        const http_post=config.googleServer+'/rename/'+config.GoogleProjectId+'/'+config.test_prod+'/'+SRCobject+'/'+DESTobject+'?bucket='+bucket;
+        const http_get=config.googleServer+'/rename/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+SRCobject+'/'+DESTobject+'?bucket='+bucket;
         //const req = new HttpRequest('GET', objectN);
-        return this.http.get<any>(http_post);
+        return this.http.get<any>(http_get);
     }
 
 moveObject(config:configServer, bucket:string, DESTbucket:string,  SRCobject:string, DESTobject:string): Observable<HttpEvent<any>> {
-        const http_post=config.googleServer+'/move/'+config.GoogleProjectId+'/'+config.test_prod+'/'+DESTbucket+'/'+ SRCobject+'/'+ DESTobject+'?bucket='+bucket;
+        const http_get=config.googleServer+'/move/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+DESTbucket+'/'+ SRCobject+'/'+ DESTobject+'?bucket='+bucket;
         //const req = new HttpRequest('GET', objectN);
-        return this.http.get<any>(http_post);
+        return this.http.get<any>(http_get);
     }
 copyObject(config:configServer, bucket:string, DESTbucket:string, SRCobject:string, DESTobject:string): Observable<HttpEvent<any>> {
-        const http_post=config.googleServer+'/copy/'+config.GoogleProjectId+'/'+config.test_prod+'/'+DESTbucket+'/'+SRCobject+'/'+DESTobject+'?bucket='+bucket;
+        const http_post=config.googleServer+'/copy/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+DESTbucket+'/'+SRCobject+'/'+DESTobject+'?bucket='+bucket;
         //const req = new HttpRequest('GET', objectN);
         return this.http.get<any>(http_post);
     }
@@ -164,6 +153,11 @@ getDefaultCredentials(config:configServer): Observable<any> {
     return this.http.get<any>(http_get);                      
 }  
 
+getCredentials(config:configServer): Observable<any> {
+    const http_get=config.googleServer+'/getCredentials/'+config.GoogleProjectId+'/'+config.test_prod;
+    return this.http.get<any>(http_get);                      
+}  
+
 getServerVersion(config:configServer): Observable<any> {
     const http_get=config.googleServer+'/serverVersion/'+config.GoogleProjectId+'/'+config.test_prod;
     return this.http.get<any>(http_get);                      
@@ -175,5 +169,8 @@ onFileSystem(config:configServer, bucket:string, object:string, tabLock:Array<cl
     return this.http.get<any>(http_get);                       
 }
 
-
+getSecurityAccess(config:configServer){
+    const http_get=config.googleServer+'/getSecurity/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod;
+    return this.http.get<any>(http_get);
+}
 }

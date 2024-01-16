@@ -51,8 +51,6 @@ export class AdminJsonComponent {
 
   @Input() WeddingPhotos:Array<StructurePhotos>=[];
 
-
-
   constructor(
     private router:Router,
     private http: HttpClient,
@@ -248,8 +246,13 @@ getBucket(){
   this.ManageGoogleService.getListBuckets(this.configServer)
     .subscribe(
       data => {
-        console.log('successful retrieval of list of buckets ', data);
-        this.TabBuckets =data;
+        if (data.status===undefined){
+          console.log('successful retrieval of list of buckets ', data);
+          this.TabBuckets =data;
+        } else {
+          this.Error_Access_Server = data.msg;
+        }
+        
       },
       error => {
         this.Error_Access_Server='failure to get list of buckets ;  error = '+ error;

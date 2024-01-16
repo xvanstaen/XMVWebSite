@@ -4,7 +4,7 @@ import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service'
 import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { configServer, classCredentials } from './JsonServerClass';
 import { environment } from 'src/environments/environment';
-import { fillConfig } from './copyFilesFunction';
+import { fillConfig, fillCredentials } from './copyFilesFunction';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +24,8 @@ export class AppComponent {
   IpAddress:string="";
   isConfigServerRetrieved:boolean=false;
   credentials = new classCredentials;
+  credentialsFS = new classCredentials;
+  credentialsMongo = new classCredentials;
   isCredentials:boolean=false;
 
   ngOnInit(){
@@ -74,8 +76,12 @@ export class AppComponent {
           console.log('configServer is retrieved');
               //this.getTokenOAuth2();
           if (this.credentials.access_token===""){
-              this.getDefaultCredentials();
-              } 
+              this.getDefaultCredentials('Google');
+          }  if (this.credentials.access_token===""){
+              this.getDefaultCredentials('Mongo');
+          }  if (this.credentials.access_token===""){
+              this.getDefaultCredentials('FS');
+          } 
         this.isConfigServerRetrieved=true;
         },
         error => {
@@ -84,18 +90,18 @@ export class AppComponent {
         });
   }
 
-  getDefaultCredentials(){
+  getDefaultCredentials(serverType:any){
     console.log('getDefaultCredentials()');
     this.ManageGoogleService.getDefaultCredentials(this.configServer  )
     .subscribe(
         (data ) => {
-          this.credentials.access_token=data.credentials.access_token;
-          this.credentials.id_token=data.credentials.id_token
-          this.credentials.refresh_token=data.credentials.refresh_token
-          this.credentials.token_type=data.credentials.token_type;
-          this.credentials.userServerId=data.credentials.userServerId;
-          this.credentials.creationDate=data.credentials.creationDate;
-          // this.getInfoToken(); // this is a test
+          if (serverType==='Google'){
+            this.credentials = fillCredentials(data);
+          } else if (serverType==='Mongo'){
+              this.credentialsMongo = fillCredentials(data);
+          } else if (serverType==='mongo'){
+              this.credentialsFS = fillCredentials(data);
+          }
           this.isCredentials=true;
 
         },
@@ -104,13 +110,13 @@ export class AppComponent {
           });
   }
 
-  fnResetServer(){
+  fnResetServer(event:any){
     this.isCredentials=false;
 
     //this.isResetServer=true;
     //this.isIdRetrieved=false;
 
-    this.getDefaultCredentials();
+    this.getDefaultCredentials(event);
   }
 
   fnNewCredentials(credentials:any){

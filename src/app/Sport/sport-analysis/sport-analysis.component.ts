@@ -34,12 +34,8 @@ export class SportAnalysisComponent {
     private datePipe: DatePipe,
     ) { }
 
-  @Output() newCredentials= new EventEmitter<any>();
-  @Output() resetServer= new EventEmitter<any>();
-
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;
-  @Input() credentials= new classCredentials;
 
   allFilesPerf:Array<any>=[];
   allFilesTotal:Array<any>=[];

@@ -34,8 +34,6 @@ export class ManagePointOfRefComponent {
     private datePipe: DatePipe,
     ) { }
 
-    @Output() newCredentials= new EventEmitter<any>();
-    @Output() resetServer= new EventEmitter<any>();
     @Output() returnFile= new EventEmitter<any>();
     @Output() returnSelection= new EventEmitter<any>();
     @Output() returnSelCountry= new EventEmitter<any>();

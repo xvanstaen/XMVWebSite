@@ -144,6 +144,53 @@
     
       }
 
+      export function addMonthDay(theDate:Date,plusMonth:number,plusDay:number, separator:string){
+        //const theDate=new Date();
+        
+        var year=theDate.getUTCFullYear();
+        var month=theDate.getUTCMonth()+1;
+        var day=theDate.getUTCDate();
+        //const seconds= theDate.getUTCSeconds();
+        //const minutes= theDate.getUTCMinutes();
+        //const hour= theDate.getUTCHours();
+        const tabDayByMonth=[31,28,31,30,31,30,31,31,30,31,30,31];
+        day=day+plusDay;        // can be positive or negative value
+         // can be positive or negative value
+        if (day > tabDayByMonth[month-1]){
+          day = day - tabDayByMonth[month-1];
+          month = month + 1;
+        } else if (day < 0){
+          if (month > 0){
+            day = tabDayByMonth[month-1] + day;
+          } else if (month === 0){
+            day = tabDayByMonth[11] + day;
+          } else if (month === 12){
+            day = tabDayByMonth[0] + day;
+          }
+          month = month - 1;
+        }
+        month=month+plusMonth; 
+        if (month > 12){
+          month = 1;
+          year = year + 1;
+        } else if (month === 0){
+          month=12;
+          year = year - 1;
+        }
+
+        if (month<10){
+          var theMonth='0'+month.toString();;
+        } else {
+          theMonth=month.toString();
+        } 
+        if (day<10){
+          var theDay='0'+day.toString();;
+        } else {
+          theDay=day.toString();;
+        } 
+        return (year.toString()+separator+theMonth+separator+theDay);
+      }
+
       export function strDateTime(){
         const theDate=new Date();
         //const myDate=new Date(theDate).toUTCString();
@@ -264,7 +311,6 @@
                 returnValue.action="ConfirmSave";
               }
               
-    
             } else if (Number(currentTime) <= Number(timeOutValue) && Number(lastInputAt) >= Number(bufferLastInput)
                                     && tabLock[iWait].lock === 1 && isRecordModified === true){
               //updateLockFile(iWait);

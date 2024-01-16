@@ -29,7 +29,7 @@
                 </div>
                 <div *ngIf="isDeleteCircuit===true && TabOfId[0]===i" style="width:565px; display:block; color:blue; margin-left:5px; background-color: cyan;"> 
                     <span > Do you confrm the deletion of PoR {{tab.name}}</span>
-                    <div style="dislay:block; margin-left:50px;">
+                    <div style="display:block; margin-left:50px;">
                         <button  class="sizeButtons" (click)="onInput($event)" id="delCircuitYES-{{TabOfId[0]}}">YES </button>
                         <button  class="sizeButtons" (click)="onInput($event)" id="delCircuitNO-{{TabOfId[0]}}">NO </button>
                     </div>
@@ -123,7 +123,7 @@
             
         </div>
         <div *ngIf="selectionCircuit===false" style="text-align:left; border:red 0px solid; display:block; width:100%;"> 
-            <span style="width100%; margin-top:0px; padding-left:30px; display:inline-block; float:left; padding-top:5px; border:green 0px solid; font-size:15px; height:35px;">Do you want to update all PoR values?</span>
+            <span style="width:100%; margin-top:0px; padding-left:30px; display:inline-block; padding-top:5px; border:green 0px solid; font-size:15px; height:35px;">Do you want to update all PoR values?</span>
             <button  class="sizeButtons" style="margin-left:15px;" (click)="updateAllCircuits($event)" id="updatePoRYES">YES </button>
             <button  class="sizeButtons" style="margin-left:15px;" (click)="updateAllCircuits($event)" id="updatePoRNO">NO </button>
         </div>

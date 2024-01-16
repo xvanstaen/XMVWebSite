@@ -39,6 +39,8 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   @Input() INidentification=new LoginIdentif;
   @Output() returnFile= new EventEmitter<any>();
   @Input() credentials = new classCredentials;
+  @Input() credentialsMongo = new classCredentials;
+  @Input() credentialsFS = new classCredentials;
 
   redisplay_profile:number=0;
 

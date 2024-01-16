@@ -1,0 +1,10 @@
+@import "../app.component.css";
+
+.mainBlock{
+    margin-left:20px; width:450px;  background-color:skyblue; 
+    display:inline-block;  border:solid 2px green;
+  }
+
+.labelOverr{
+    margin-top:6px; margin-left:10px; width:120px;
+}

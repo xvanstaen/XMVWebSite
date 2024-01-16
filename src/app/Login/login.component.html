@@ -28,7 +28,7 @@
     <form class="form_box" [formGroup]="myForm" >
 
         <div>
-            <label class="error_msg">  {{text_error}}</label>
+            <label class="error_msg">  {{error}}</label>
         </div>
         <div>
             <label class="field-name">user-id</label>
@@ -54,6 +54,15 @@
     </form>
   </div>
 </div>
+
+
+<div *ngIf="configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High' ">
+  <div style="width:600px; display:inline-block">
+  <app-test-server-js   [configServer]="configServer" [credentials]="credentials" [configServerChanges]="configServerChanges" >
+  </app-test-server-js>
+</div>
+</div>  
+
 
   <!-- ======== FOOTER ======== -->
 <div class='myfooter'  *ngIf="routing_code!==5">

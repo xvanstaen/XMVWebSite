@@ -52,6 +52,10 @@ import { SportPerfRawDataMgtComponent } from './Sport/sport-perf-raw-data-mgt/sp
 import { SportPerformanceComponent } from './Sport/sport-performance/sport-performance.component';
 import { DisplayCircuitLoopComponent } from './Sport/display-circuit-loop/display-circuit-loop.component';
 import { BuildLoopFromPerfComponent } from './Sport/build-loop/build-loop-from-perf.component';
+import { TutorialsComponent } from './tutorials/tutorials.component';
+import { SelectServerComponent } from './select-server/select-server.component';
+
+import { TestServerJSComponent } from './test-server-js/test-server-js.component';
 
 @NgModule({
   declarations: [
@@ -93,6 +97,9 @@ import { BuildLoopFromPerfComponent } from './Sport/build-loop/build-loop-from-p
     SportPerformanceComponent,
     DisplayCircuitLoopComponent,
     BuildLoopFromPerfComponent ,
+    TutorialsComponent,
+    SelectServerComponent ,
+    TestServerJSComponent
   ],
   imports: [
     AppRoutingModule,

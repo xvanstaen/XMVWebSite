@@ -15,8 +15,7 @@
   <br><br>
 </div>
 <div *ngIf="Error_Access_Server!==''">
-  <span style='margin-top:20px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
-  </span>
+  <span style='margin-top:20px; color:red; font-size:16px;'> {{Error_Access_Server}}</span>
 </div>
 <div style="display:inline-flex; width:90%; height:60px; margin-left:20px;">
     <span  *ngIf="TabAppsAutho[0]==='Y'" (click)="Process('Bucket')" class="dropdown-options dropdown-text">Bucket List</span>
@@ -40,8 +39,6 @@
     <div style="display:inline-flex; width:90%; height:60px; margin-left:20px;"></div>
     
 </div>
-
-
 
 <div *ngIf="  this.ActionMessage!==''" style="margin-top:10px;">
   <h2>{{ActionMessage}} </h2>

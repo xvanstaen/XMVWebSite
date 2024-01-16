@@ -68,8 +68,10 @@ export class HealthComponent implements OnInit {
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
   @Input() triggerFunction: number = 0;
+  
   @Input() credentials = new classCredentials;
-
+  @Input() credentialsMongo = new classCredentials;
+  @Input() credentialsFS = new classCredentials;
 
   InHealthAllData = new mainDailyReport;
   InConfigCaloriesFat = new mainClassCaloriesFat;
@@ -281,6 +283,13 @@ export class HealthComponent implements OnInit {
   titleHeight: number = 0;
   posItem: number = 0;
   eventClientY: number = 0;
+
+  saveServer={
+    google:"",
+    mongo:"",
+    FS:""
+  }
+
   /*
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
@@ -341,6 +350,12 @@ export class HealthComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+    // used to open files in parallel using the google and mongo servers
+    this.saveServer.google=this.configServer.googleServer;
+    this.saveServer.mongo=this.configServer.mongoServer;
+    this.saveServer.FS=this.configServer.fileSystemServer;
+
     this.minNum = 0 ;
     this.maxNum = this.maxItemsPerPage;
 
@@ -358,7 +373,10 @@ export class HealthComponent implements OnInit {
       this.tabLock[i].timeoutFileSystem.mn = this.configServer.timeoutFileSystem.mn;
       this.tabLock[i].IpAddress = this.configServer.IpAddress;
       this.tabLock[i].userServerId = this.identification.userServerId;
-      this.tabLock[i].credentialDate = this.identification.credentialDate;
+      // this.tabLock[i].credentialDate = this.identification.credentialDate;
+
+      // to be used to access FileSystem
+      this.tabLock[i].credentialDate = this.credentialsFS.creationDate;
     }
 
     this.tabLock[0].objectName = this.identification.fitness.files.fileHealth + this.identification.UserId;
@@ -1626,12 +1644,17 @@ export class HealthComponent implements OnInit {
     console.log('GetRecord - iWait='+iWait);
     this.EventHTTPReceived[iWait] = false;
     this.NbWaitHTTP++;
+    if (iWait===0 || iWait===4){
+      this.configServer.googleServer=this.saveServer.mongo;
+    }
     this.waitHTTP(this.TabLoop[iWait], 30000, iWait);
     this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject)
       .subscribe((data) => {
         console.log('GetRecord - data received for iWait='+iWait);
         if (iWait === 0) {
           console.log('file HealthAllData received');
+          this.configServer.googleServer=this.saveServer.google;
+
           this.FillHealthAllInOut(this.HealthAllData, data);
   
           //this.HealthAllData=data;
@@ -1703,6 +1726,8 @@ export class HealthComponent implements OnInit {
           this.calculateHeight();
         }
         else if (iWait === 4) {
+          this.configServer.googleServer=this.saveServer.google;
+
           this.ConfigChart.fileType = data.fileType;
           if (data.updatedAt !== undefined) {
             this.ConfigChart.updatedAt = data.updatedAt;
@@ -2516,9 +2541,11 @@ export class HealthComponent implements OnInit {
     this.error_msg = '';
     if (data.status !== undefined && data.status === 200 && data.tabLock !== undefined) { // tabLock is returned
       console.log('server response: ' + data.tabLock[iWait].object + ' createdAt=' + data.tabLock[iWait].createdAt + '  & updatedAt=' + data.tabLock[iWait].updatedAt + '  & lock value =' + data.tabLock[iWait].lock);
-      if (data.tabLock[iWait].credentialDate !== this.credentials.creationDate) { // server was reinitialised
+      if (data.tabLock[iWait].credentialDate !== this.credentialsFS.creationDate) { // server was reinitialised
         this.tabLock[iWait] = data.tabLock[iWait];
-        this.getDefaultCredentials(iWait, false); // update credentials only 
+        if (this.configServer.googleServer===this.configServer.fileSystemServer){
+          this.getDefaultCredentials(iWait, false); // update credentials only 
+        }
       }
       // record is locked by another user; no actions can take place for this user so reset
       this.nbCallCredentials = 0;
@@ -2703,9 +2730,9 @@ export class HealthComponent implements OnInit {
         } else if (iWait === 5) {
           this.reAccessChartFile();
         }
-
-        this.getDefaultCredentials(iWait, false); // update credentials only 
-
+        if (this.configServer.googleServer===this.configServer.fileSystemServer){
+          this.getDefaultCredentials(iWait, false); // update credentials only 
+        }
       } else {
 
         this.nbCallCredentials = 0;
@@ -2806,7 +2833,7 @@ export class HealthComponent implements OnInit {
                   this.msgCredentials = 'PB with Server which was reinitialised - relaunch the application';
                   console.log(this.msgCredentials);
                   this.error_msg = this.error_msg + this.msgCredentials;
-                  this.resetServer.emit();
+                  this.resetServer.emit('Google');
                 }
               )
 
@@ -2816,7 +2843,7 @@ export class HealthComponent implements OnInit {
           console.log('return from requestToken() with error = ' + JSON.stringify(err));
           this.msgCredentials = 'problem to retrieve credentials data ==>   ' + JSON.stringify(err);
           this.error_msg = this.error_msg + this.msgCredentials;
-          this.resetServer.emit();
+          //this.resetServer.emit('Google');
         });
   }
 
@@ -2824,9 +2851,13 @@ export class HealthComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     for (const propName in changes) {
       const j = changes[propName];
-      if (propName === 'credentials') {
+      if (propName === 'credentials' || propName === 'credentialsMongo' || propName === 'credentialsFS') {
         if (changes['credentials'].firstChange === false) {
-          console.log('health component : credentials have been updated');
+          console.log('health component : credentials related to Google server have been updated');
+        } else if (changes['credentialsMongo'].firstChange === false) {
+          console.log('health component : credentials related to Mongo server have been updated');
+        } else if (changes['credentialsFS'].firstChange === false) {
+          console.log('health component : credentials related toFile System server have been updated');
         }
       }
     }

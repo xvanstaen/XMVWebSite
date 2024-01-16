@@ -39,7 +39,7 @@ import {AccessConfigService} from 'src/app/CloudServices/access-config.service';
 import { classAxis, classLegendChart, classPluginTitle , classTabFormChart, classFileParamChart, classReturnColor} from '../classChart';
 import { classFileSystem, classAccessFile}  from '../../classFileSystem';
 
-
+import { addMonthDay } from '../../MyStdFunctions';
 @Component({
   selector: 'app-report-health',
   templateUrl: './report-health.component.html',
@@ -594,8 +594,17 @@ ngOnInit() {
         this.changeCanvas(i);
       }
     }
-    this.paramAllCharts.controls['startRange'].setValue("01/01/2024");
-  }
+ 
+      const theDate = new Date();
+      const newDate = addMonthDay(theDate,-1,0,'-') // minus 1 month
+      this.paramAllCharts.controls['startRange'].setValue(newDate);
+      const event={
+        target:{
+          id:'apply'
+        }
+      }
+      this.forAllCharts(event);
+    }
   
 enableForm(){
   this.selectChart.get('chartType')?.enable();
@@ -740,7 +749,10 @@ changeCanvas(i:number){
 forAllCharts(event:any){
   if (event.target.id==="clear"){
       this.paramAllCharts.controls['period'].setValue(this.tabPeriod[0]);
-      this.paramAllCharts.controls['startRange'].setValue('202401-01');
+      
+      const theDate = new Date();
+      const newDate = addMonthDay(theDate,-1,0,'-') // minus 1 month
+      this.paramAllCharts.controls['startRange'].setValue(newDate);
       this.paramAllCharts.controls['endRange'].setValue('');
 
   } else if (event.target.id==="apply"){
@@ -2230,7 +2242,7 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
                
                 font:{
                   size:theboxfontSize,
-                 weight:this.tabParamChart[nb].legendBox.font.weight,
+                  weight:this.tabParamChart[nb].legendBox.font.weight,
                   family:this.tabParamChart[nb].legendBox.font.family,
                 }
                 
@@ -2249,7 +2261,7 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
                   },  
               font:{
                   size:this.tabParamChart[nb].legendTitle.font.size,
-                 weight:this.tabParamChart[nb].legendTitle.font.weight,
+                  weight:this.tabParamChart[nb].legendTitle.font.weight,
                   family:this.tabParamChart[nb].legendTitle.font.family,
                 }
               },
@@ -2326,7 +2338,7 @@ specialDraw(dateLabel:Array<any>, theDatasets:Array<any>, nb:number){
               color:TitleColor,
               font:{
                   size:this.tabParamChart[nb].chartTitle.font.size,
-                 weight:this.tabParamChart[nb].chartTitle.font.weight,
+                  weight:this.tabParamChart[nb].chartTitle.font.weight,
                   family:this.tabParamChart[nb].chartTitle.font.family,
                 }
             },

@@ -39,9 +39,6 @@ export class SportPerformanceComponent {
     private datePipe: DatePipe,
     ) { }
 
-    @Output() newCredentials= new EventEmitter<any>();
-    @Output() returnFile= new EventEmitter<any>();
-    @Output() resetServer= new EventEmitter<any>();
     @Output() returnPerf= new EventEmitter<any>();
 
     @Input() configServer = new configServer;
@@ -704,11 +701,16 @@ GetRecord(bucketName:string,objectName:string, iWait:number){
 
 getBucket(){
   this.errorMessage="";
+
   this.ManageGoogleService.getListBuckets(this.configServer)
     .subscribe(
       data => {
-        console.log('successful retrieval of list of buckets ');
-        this.TabBuckets =data;
+        if (data.status===undefined ){
+          console.log('successful retrieval of list of buckets ');
+          this.TabBuckets =data;
+        } else {
+          this.errorMessage=data.msg;
+        }
       },
       error => {
         this.errorMessage='failure to get list of buckets ;  error = '+ error;

@@ -20,7 +20,7 @@
     </div>
     <div *ngIf="isBuildFromPerf===true">
         <div class="quest" 
-                 style="background-color: lightblue; color:white; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:10px; boder:2px solid green;">
+                 style="background-color: lightblue; color:white; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:10px; border:2px solid green;">
             <div style=margin-top:10px;>Circuit created from PoR contained in perf file <br> {{headerPerf.name}}</div>
             
             <div *ngIf="saveMsg!==''" style="width:100%; display:inline-block; color:red;">{{saveMsg}}</div>
@@ -34,13 +34,13 @@
         </div>
     </div>
     <div *ngIf="isPerfRetrieved===true">
-        <app-sport-performance   [configServer]="configServer" [identification]="identification" [credentials]="credentials"
+        <app-sport-performance   [configServer]="configServer" [identification]="identification" 
         (returnPerf)="onSelectPerf($event)" [isPerfRetrieved]="isPerfRetrieved">
         </app-sport-performance>
     </div>  
 
     <div *ngIf="selectionCircuit===true">
-        <app-manage-circuits [configServer]="configServer" [identification]="identification" [credentials]="credentials"
+        <app-manage-circuits [configServer]="configServer" [identification]="identification" 
         (returnCircuit)="onSelectCircuit($event)" [selectionCircuit]="selectionCircuit">
         </app-manage-circuits>
     </div>  
@@ -95,7 +95,7 @@
     </div>
     <div   style=" margin-left:20px; " *ngIf="perfCircuit.length>0">
         <div class="quest" 
-                style="background-color: cyan; color:white; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:10px; boder:2px solid green;">
+                style="background-color: cyan; color:white; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:10px; border:2px solid green;">
             <div style=margin-top:10px;>New circuit <br> </div>
             <div style="margin-top:-15px;">
                     <app-display-circuit-loop
@@ -110,7 +110,7 @@
     <div *ngIf="perfCircuitRef.length>0">
 
         <div class="quest" 
-                    style="background-color: green; color:white; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:10px; boder:2px solid green;">
+                    style="background-color: green; color:white; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:10px; border:2px solid green;">
             <div style=margin-top:10px;>Existing circuit <br> </div>
             <div style="margin-top:-15px;">
                 <app-display-circuit-loop

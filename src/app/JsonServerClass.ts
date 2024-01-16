@@ -20,6 +20,11 @@ export class BioData{
     };
 
 
+    export class classUserLogin{
+      id:string='';
+      psw:string='';
+      accessLevel='';
+    }
 
     export class LoginIdentif{
       id:number=0;
@@ -274,6 +279,7 @@ export class configServer{
     bucket:"config-xmvit",
     file:"PointOfReference.json",
     };
+  userLogin=new classUserLogin;
 }
 
 export class classFilesToCache{
