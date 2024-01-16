@@ -1647,15 +1647,21 @@ export class HealthComponent implements OnInit {
     if (iWait===0 || iWait===4){
       this.configServer.googleServer=this.saveServer.mongo;
     }
-    this.waitHTTP(this.TabLoop[iWait], 30000, iWait);
+    this.waitHTTP(this.TabLoop[iWait], 3000, iWait);
     this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject)
       .subscribe((data) => {
         console.log('GetRecord - data received for iWait='+iWait);
+        var noPb=true;
+        if (data.status!==undefined && data.status!==200){
+          this.error_msg = data.msg;
+          noPb=false;
+        } else
+        //JSON.stringify(data)
         if (iWait === 0) {
           console.log('file HealthAllData received');
           this.configServer.googleServer=this.saveServer.google;
 
-          this.FillHealthAllInOut(this.HealthAllData, data);
+          this.FillHealthAllInOut(this.HealthAllData,data);
   
           //this.HealthAllData=data;
           this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
@@ -1801,6 +1807,9 @@ export class HealthComponent implements OnInit {
 
           }
         }
+        if (noPb===true){
+         
+       
         if (iWait !== 7 && iWait !== 8 && iWait !== 9) {
           // this.returnFile.emit(data); // not needed as files are stored in cache of backend server
         }
@@ -1809,10 +1818,10 @@ export class HealthComponent implements OnInit {
         if (iWait===0){
           this.accessAllOtherFiles();
         }
-
+        } 
       },
         error_handler => {
-          this.EventHTTPReceived[iWait] = true;
+          //this.EventHTTPReceived[iWait] = true;
           if (iWait === 0) {
             this.error_msg = 'File ' + this.identification.fitness.files.fileHealth + ' does not exist. Create it';
 
@@ -2282,7 +2291,7 @@ export class HealthComponent implements OnInit {
   saveCalFatMsg: string = "";
 
   waitHTTP(loop: number, max_loop: number, eventNb: number) {
-    const pas = 100;
+    const pas = 500;
     if (loop % pas === 0) {
       console.log(eventNb + ' waitHTTP fn  ==> loop=' + loop + ' max_loop=' + max_loop);
     }
@@ -2294,6 +2303,7 @@ export class HealthComponent implements OnInit {
       
       console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
         this.EventHTTPReceived[eventNb]);
+        window.cancelAnimationFrame(this.id_Animation[eventNb]);
       if (this.EventHTTPReceived[eventNb] === true) {
           window.cancelAnimationFrame(this.id_Animation[eventNb]);
       }
@@ -2851,15 +2861,15 @@ export class HealthComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     for (const propName in changes) {
       const j = changes[propName];
-      if (propName === 'credentials' || propName === 'credentialsMongo' || propName === 'credentialsFS') {
-        if (changes['credentials'].firstChange === false) {
+      
+        if (propName === 'credentials' && changes['credentials'].firstChange === false) {
           console.log('health component : credentials related to Google server have been updated');
-        } else if (changes['credentialsMongo'].firstChange === false) {
+        } else if (propName === 'credentialsMongo' && changes['credentialsMongo'].firstChange === false) {
           console.log('health component : credentials related to Mongo server have been updated');
-        } else if (changes['credentialsFS'].firstChange === false) {
+        } else if (propName === 'credentialsFS' && changes['credentialsFS'].firstChange === false) {
           console.log('health component : credentials related toFile System server have been updated');
         }
-      }
+      
     }
   }
 
