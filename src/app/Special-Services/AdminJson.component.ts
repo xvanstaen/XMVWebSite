@@ -29,21 +29,13 @@ import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.servic
 })
 
 export class AdminJsonComponent {
+
   @Output() returnFile= new EventEmitter<any>();
-
-  @Input() ConfigCaloriesFat=new mainClassCaloriesFat;
-  @Input() ConvertUnit=new mainClassConv;
-  @Input() ConvToDisplay=new mainConvItem;
-  @Input() theTabOfUnits=new mainClassUnit;
-  @Input() WeightRefTable=new mainRecordConvert;
-  @Input() ConfigHTMLFitHealth=new classConfHTMLFitHealth;
-  @Input() ConfigChart=new classConfigChart;
-  @Input() MyConfigFitness=new ConfigFitness;
-
-  @Input() HealthAllData=new mainDailyReport; 
 
   @Input() LoginTable_User_Data:Array<EventAug>=[];
   @Input() LoginTable_DecryptPSW:Array<string>=[];
+
+  @Input() ConvToDisplay=new mainConvItem;
 
   @Input() configServer=new configServer;
   @Input() credentials = new classCredentials;
@@ -259,49 +251,6 @@ getBucket(){
         console.log(this.Error_Access_Server);
        
       });
-}
-
-ReceiveFiles(event:any){
-
-  if (event.fileType!=='' && 
-          event.fileType===this.identification.configFitness.fileType.convertUnit){ 
-      this.ConvertUnit=event;
-      
-
-  } else if (event.fileType!=='' && 
-          event.fileType===this.identification.configFitness.fileType.convToDisplay){ 
-       this.ConvToDisplay=event;
-
-  } else if (event.fileType!=='' && 
-          event.fileType===this.identification.configFitness.fileType.tabOfUnits){ 
-      this.theTabOfUnits=event;
-
-  } else if (event.fileType!=='' && 
-        event.fileType===this.identification.configFitness.fileType.weightReference){ 
-      this.WeightRefTable=event;
-
-    } else if (event.fileType!=='' && 
-    event.fileType===this.identification.fitness.fileType.FitnessMyConfig){ 
-  this.MyConfigFitness=event;
-  }
-
-  else if (event.fileType!=='' && 
-      event.fileType===this.identification.fitness.fileType.Health){
-    this.HealthAllData=event;
-  }
-
-  else if (event.fileType!=='' && 
-      event.fileType===this.identification.configFitness.fileType.calories){ 
-    this.ConfigCaloriesFat=event;
-  } 
-  else if (event.fileType!=='' && 
-      event.fileType===this.identification.configFitness.fileType.confHTML){ 
-    this.ConfigHTMLFitHealth=event;
-  } else if (event.fileType!=='' && 
-      event.fileType===this.identification.configFitness.fileType.confChart){ 
-      this.ConfigChart=event;
-      }
-  this.returnFile.emit(event);
 }
 
 

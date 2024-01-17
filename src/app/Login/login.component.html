@@ -55,13 +55,27 @@
   </div>
 </div>
 
-
+<!--
 <div *ngIf="configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High' ">
   <div style="width:600px; display:inline-block">
-  <app-test-server-js   [configServer]="configServer" [credentials]="credentials" [configServerChanges]="configServerChanges" >
-  </app-test-server-js>
-</div>
+    <app-test-server-js   [configServer]="configServer" [credentials]="credentials" 
+        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
+        [configServerChanges]="configServerChanges" >
+    </app-test-server-js>
+  </div>
 </div>  
+-->
+
+<div  *ngIf="routing_code===1">
+  <app-user-functions
+  [identification]="Encrypt_Data"  [configServer]="configServer"  
+   [configServerChanges]="configServerChanges" [credentials]="credentials"
+  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
+   (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" 
+  >
+
+  </app-user-functions>
+</div>
 
 
   <!-- ======== FOOTER ======== -->
@@ -77,64 +91,18 @@
 
 
 <!-- THIS IS TO MANAGE THE DIFFERENT JSON OBJECTS STORED IN GOOGLE CLOUD OR ./assets -->
+
 <ng-template #AdminJson> 
-  <div  *ngIf="routing_code===1; else firstevent">
+  <div  *ngIf="routing_code===99">
     <app-AdminJson [identification]="Encrypt_Data"  [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
-          [LoginTable_DecryptPSW]="Table_DecryptPSW" [ConfigChart]="ConfigChart" 
-          [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat" [MyConfigFitness]="MyConfigFitness"
-          [ConvertUnit]="ConvertUnit"  [ConfigHTMLFitHealth]='ConfigHTMLFitHealth' [ConvToDisplay]="ConvToDisplay" [theTabOfUnits]="theTabOfUnits"  [WeightRefTable]="WeightRefTable"
+          [LoginTable_DecryptPSW]="Table_DecryptPSW" [configServerChanges]="configServerChanges"
+          [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
           [credentials]="credentials" (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" 
           >
-    </app-AdminJson> <!-- (returnFile)="ReceiveFiles($event)" -->
+    </app-AdminJson> 
   </div> 
 </ng-template>
 
-<!--
-<ng-template #firstevent>  
-<div  *ngIf="routing_code===2; else secondevent">
-    <app-Event-02JUL2022 [identification]="Encrypt_Data"  [LoginTable_User_Data]="Table_User_Data" 
-    [LoginTable_DecryptPSW]="Table_DecryptPSW"></app-Event-02JUL2022>
-</div> 
-</ng-template>
 
-  <app-GetImages   [identification]="identification" [WeddingPhotos]="WeddingPhotos">
-  </app-GetImages>
--->
-
-
-
-<!-- [destination]="source" -->
-<!-- THIS IS TO MANAGE WEDDING PICTURES -->
-<ng-template #firstevent>  
-  <div  *ngIf="routing_code===2; else secondevent">
-    <a href="https://xvanstaen.github.io/WeddingPhoto/"> Redirect</a>
-    
-    <!-- <a href="https://xvanstaen.github.io/AllFunctions"></a>
-      <app-GetImages [identification]="Encrypt_Data"  [LoginTable_User_Data]="Table_User_Data" 
-      [LoginTable_DecryptPSW]="Table_DecryptPSW"></app-GetImages>
-        --> 
-  </div>
-
-  </ng-template>
-  
-
-
-<ng-template #secondevent> 
-  <div  *ngIf="routing_code===3; else fitness">
-    <app-Event-27AUG2022 [identification]="Encrypt_Data"  [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
-    [LoginTable_DecryptPSW]="Table_DecryptPSW" (returnDATA)="GetUpdatedTable($event)">
-    </app-Event-27AUG2022>
-  </div> 
-</ng-template>
-<ng-template #fitness> 
-  <div  *ngIf="routing_code===5; else wrongevent">
-    <app-fitness-stat  [identification]="Encrypt_Data" [configServer]="configServer">
-    </app-fitness-stat>
-  </div> 
-</ng-template>
-
-<ng-template #wrongevent> 
-  <div> Wrong routing_code : {{routing_code}}</div>
-</ng-template>
 
 </body>

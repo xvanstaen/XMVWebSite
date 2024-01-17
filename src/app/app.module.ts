@@ -56,6 +56,8 @@ import { TutorialsComponent } from './tutorials/tutorials.component';
 import { SelectServerComponent } from './select-server/select-server.component';
 
 import { TestServerJSComponent } from './test-server-js/test-server-js.component';
+import { UserFunctionsComponent } from './user-functions/user-functions.component';
+import { RoutingAppComponent } from './routing-app/routing-app.component';
 
 @NgModule({
   declarations: [
@@ -99,7 +101,9 @@ import { TestServerJSComponent } from './test-server-js/test-server-js.component
     BuildLoopFromPerfComponent ,
     TutorialsComponent,
     SelectServerComponent ,
-    TestServerJSComponent
+    TestServerJSComponent,
+    UserFunctionsComponent,
+    RoutingAppComponent
   ],
   imports: [
     AppRoutingModule,

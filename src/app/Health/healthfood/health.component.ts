@@ -372,10 +372,11 @@ export class HealthComponent implements OnInit {
       this.tabLock[i].timeoutFileSystem.hh = this.configServer.timeoutFileSystem.hh;
       this.tabLock[i].timeoutFileSystem.mn = this.configServer.timeoutFileSystem.mn;
       this.tabLock[i].IpAddress = this.configServer.IpAddress;
-      this.tabLock[i].userServerId = this.identification.userServerId;
+      
       // this.tabLock[i].credentialDate = this.identification.credentialDate;
 
       // to be used to access FileSystem
+      this.tabLock[i].userServerId = this.credentialsFS.userServerId;
       this.tabLock[i].credentialDate = this.credentialsFS.creationDate;
     }
 
@@ -2303,10 +2304,10 @@ export class HealthComponent implements OnInit {
       
       console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
         this.EventHTTPReceived[eventNb]);
-        window.cancelAnimationFrame(this.id_Animation[eventNb]);
-      if (this.EventHTTPReceived[eventNb] === true) {
-          window.cancelAnimationFrame(this.id_Animation[eventNb]);
-      }
+      window.cancelAnimationFrame(this.id_Animation[eventNb]);
+      //if (this.EventHTTPReceived[eventNb] === true) {
+      //    window.cancelAnimationFrame(this.id_Animation[eventNb]);
+      //}
     }
   }
 
@@ -2690,12 +2691,19 @@ export class HealthComponent implements OnInit {
         } else {
           this.tabLock[iWait].status = 300;
         }
-      } else if (data.status === 700 || data.status === 710) { // requested to unlock record which does not exist or is locked by another user
+      } else if (data.status === 700 || data.status === 712 || data.status === 710) { // requested to unlock record which does not exist or is locked by another user
         this.nbCallCredentials = 0;
         this.nbCallCredentials = 0;
         this.tabLock[iWait].lock = 0;
         this.tabLock[iWait].status = data.status;
         this.onInputAction = "";
+        if (data.status === 712){
+          this.error_msg="Access to get credentials is forbidden, updates are not possible";
+        } else if (data.status === 700){
+          this.error_msg="System failure, updates are not possible";
+        } else {
+          this.error_msg="Record cannot be unlocked, updates are not possible";
+        }
 
       } else if (data.status === 666) {
         console.log("server cannot process file system because is processed by another user; try once more in 2 seconds");

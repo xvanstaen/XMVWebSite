@@ -19,6 +19,8 @@ import {ConfigFitness} from '../Health/ClassFitness';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
+import { fillCredentials } from '../copyFilesFunction';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -35,25 +37,13 @@ export class LoginComponent {
     ) {}
 
     @Input() configServer=new configServer;
+    @Input() credentials = new classCredentials;
+    @Input() credentialsMongo = new classCredentials;
+    @Input() credentialsFS = new classCredentials;
+    @Input() configServerChanges:number=0;
 
     @Input() identification=new LoginIdentif; 
 
-    @Input() ConfigChart=new classConfigChart;
-    
-    @Input() ConfigCaloriesFat=new mainClassCaloriesFat;
-
-    @Input() ConvertUnit=new mainClassConv;
-    @Input() ConvToDisplay=new mainConvItem;
-    @Input() theTabOfUnits=new mainClassUnit;
-    @Input() WeightRefTable=new mainRecordConvert;
-    @Input() ConfigHTMLFitHealth=new classConfHTMLFitHealth;
-  
-    @Input() MyConfigFitness=new ConfigFitness;
-  
-    @Input() HealthAllData=new mainDailyReport; 
-    @Input() credentials = new classCredentials;
-
-    @Input() configServerChanges:number=0;
 
     ConfigTestProd=new XMVTestProd;
 
@@ -64,9 +54,11 @@ export class LoginComponent {
     j_loop:Array<number>=[];
     max_j_loop:number=20000;
 
-    @Output() my_output1= new EventEmitter<any>();
+  
     @Output() my_output2= new EventEmitter<string>();
-    @Output() returnFile= new EventEmitter<any>();
+
+    @Output() resetServer= new EventEmitter<any>();
+    @Output() newCredentials= new EventEmitter<any>();
     
     
     myHeader= new  HttpHeaders();
@@ -153,8 +145,9 @@ getLogin(object:string,psw:string){
 
     this.ManageGoogleService.checkLogin(this.configServer )
         .subscribe((data ) => {    
-          this.getUserAccessLevel();
 
+          this.getUserAccessLevel();
+          this.getDefaultCredentials('FS');
           this.Encrypt_Data=data;
           this.routing_code=1;
           this.Encrypt_Data.userServerId=this.credentials.userServerId;
@@ -173,7 +166,7 @@ getLogin(object:string,psw:string){
           if (data.status===200){
             this.configServer.userLogin.accessLevel = data.accessLevel;
           } else {
-            this.error=data.msg
+            // this.error=data.msg
           }
       },
       err =>{
@@ -183,8 +176,27 @@ getLogin(object:string,psw:string){
   }
 
 
+getDefaultCredentials(serverType:string){
+  console.log('getDefaultCredentials()');
+  this.ManageGoogleService.getDefaultCredentials(this.configServer  )
+    .subscribe(
+        (data ) => {
+          if (serverType==='Google'){
+            this.credentials = fillCredentials(data.credentials);
+          } else if (serverType==='Mongo'){
+              this.credentialsMongo = fillCredentials(data.credentials);
+          } else if (serverType==='FS'){
+              this.credentialsFS = fillCredentials(data.credentials);
+          }
+          
+        },
+        err => {
+          console.log('return from requestToken() with error = '+ JSON.stringify(err));
+        });
+  }
+
 ValidateData(){
-  console.log('validateData()');
+  //console.log('validateData()');
   if (this.myForm.controls['userId'].value==='')  {
     this.error=" provide your user id";
   }
@@ -213,47 +225,6 @@ onClear(){
 }
 
 
-ReceiveFiles(event:any){
-
-  if (event.fileType!=='' && 
-          event.fileType===this.identification.configFitness.fileType.convertUnit){ 
-      this.ConvertUnit=event;
-
-  } else if (event.fileType!=='' && 
-          event.fileType===this.identification.configFitness.fileType.convToDisplay){ 
-       this.ConvToDisplay=event;
-
-  } else if (event.fileType!=='' && 
-          event.fileType===this.identification.configFitness.fileType.tabOfUnits){ 
-      this.theTabOfUnits=event;
-
-  } else if (event.fileType!=='' && 
-        event.fileType===this.identification.configFitness.fileType.weightReference){ 
-      this.WeightRefTable=event;
-
-  } else if (event.fileType!=='' && 
-        event.fileType===this.identification.fitness.fileType.FitnessMyConfig){ 
-      this.MyConfigFitness=event;
-  }
-
-  else if (event.fileType!=='' && 
-        event.fileType===this.identification.fitness.fileType.Health){
-      this.HealthAllData=event;
-  }
-
-  else if (event.fileType!=='' && 
-        event.fileType===this.identification.configFitness.fileType.calories){ 
-      this.ConfigCaloriesFat=event;
-  }   
-  else if (event.fileType!=='' && 
-        event.fileType===this.identification.configFitness.fileType.confHTML){ 
-      this.ConfigHTMLFitHealth=event;
-    } else if (event.fileType!=='' && 
-        event.fileType===this.identification.configFitness.fileType.confChart){ 
-      this.ConfigChart=event;
-    }
-  this.returnFile.emit(event);
-}
 //ngOnChanges(changes: SimpleChanges) {   
       //console.log('onChanges login.ts');
 //  }
@@ -275,8 +246,6 @@ ngOnChanges(changes: SimpleChanges) {
 }
 
 
-@Output() resetServer= new EventEmitter<any>();
-@Output() newCredentials= new EventEmitter<any>();
 
 fnResetServer(){
       this.resetServer.emit();

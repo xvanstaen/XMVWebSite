@@ -20,7 +20,15 @@ export class AppComponent {
       // import configuration files
       // access MongoDB
 
+  tabServers: Array<string> = [
+    'http://localhost:8080', 'https://test-server-359505.uc.r.appspot.com',
+    'https://xmv-it-consulting.uc.r.appspot.com', 'https://serverfs.ue.r.appspot.com'
+  ]
+
   configServer=new configServer;
+  initConfigServer=new configServer;
+  configServerChanges:number=0;
+
   IpAddress:string="";
   isConfigServerRetrieved:boolean=false;
   credentials = new classCredentials;
@@ -28,43 +36,40 @@ export class AppComponent {
   credentialsMongo = new classCredentials;
   isCredentials:boolean=false;
 
+  isNewUser:boolean=true;
+  isResetServer:boolean=false;
+  isIdRetrieved:boolean=false;
+  saveServerUsrId:number=0;
+
   ngOnInit(){
     this.http.get("http://api.ipify.org/?format=json").subscribe((res:any)=>{
       this.IpAddress = res.ip;
     });
-      this.RetrieveConfig();
+    this.initConfigServer.googleServer=this.tabServers[2];
+    this.initConfigServer.mongoServer=this.tabServers[3];
+    this.initConfigServer.fileSystemServer=this.tabServers[1];
+    this.RetrieveConfig();
   }
   
   RetrieveConfig(){
-      var test_prod='prod';
+    
       if (environment.production === false){
-        test_prod='test';
+        this.initConfigServer.test_prod='test';
+     } else {
+      this.initConfigServer.test_prod='prod';
      }
-      const InitconfigServer=new configServer;
       
-      InitconfigServer.googleServer='https://xmv-it-consulting.uc.r.appspot.com';
-      InitconfigServer.mongoServer='https://test-server-359505.uc.r.appspot.com';
-      InitconfigServer.fileSystemServer=='https://serverfs.ue.r.appspot.com/'
-      // "https://xmv-it-consulting.uc.r.appspot.com"
-      // 'https://test-server-359505.uc.r.appspot.com'
-      // 'http://localhost:8080'
-
-      InitconfigServer.test_prod=test_prod;
       //InitconfigServer.GoogleProjectId='ConfigDB';
-      this.ManageMongoDB.findConfig(InitconfigServer, 'configServer')
+      this.ManageMongoDB.findConfig(this.initConfigServer, 'configServer')
       .subscribe(
         data => {
-         // test if data is an array if (Array.isArray(data)===true){}
-         //     this.configServer=data[0];
-       
 
-        
           if (Array.isArray(data) === false){
             this.configServer = fillConfig(data);
             //this.configServer = data;
           } else {
             for (let i=0; i<data.length; i++){
-                if (data[i].title==="configServer" && data[i].test_prod===test_prod){
+                if (data[i].title==="configServer" && data[i].test_prod===this.initConfigServer.test_prod){
                   this.configServer = fillConfig(data[i]);
                   // this.configServer = data[i];
                 } 
@@ -72,7 +77,7 @@ export class AppComponent {
           }
           this.configServer.IpAddress=this.IpAddress;
           this.configServer.project="XMVWebSite";
-//  this.configServer.baseUrl='http://localhost:8080';  // TO BE DELETED
+
           console.log('configServer is retrieved');
               //this.getTokenOAuth2();
           if (this.credentials.access_token===""){
@@ -82,6 +87,10 @@ export class AppComponent {
           }  if (this.credentials.access_token===""){
               this.getDefaultCredentials('FS');
           } 
+        if (this.isNewUser===true){
+            this.assignNewServerUsrId();
+            this.isNewUser=false;
+          }
         this.isConfigServerRetrieved=true;
         },
         error => {
@@ -112,19 +121,30 @@ export class AppComponent {
 
   fnResetServer(event:any){
     this.isCredentials=false;
-
-    //this.isResetServer=true;
-    //this.isIdRetrieved=false;
-
+    this.isResetServer=true;
+    this.isIdRetrieved=false;
     this.getDefaultCredentials(event);
+    this.assignNewServerUsrId();
   }
 
   fnNewCredentials(credentials:any){
-    //this.isCredentials=false;
-    //this.isResetServer=true;
-    //this.isIdRetrieved=false;
-
+    this.isResetServer=true;
     this.credentials=credentials;
+  }
+
+    
+  
+  assignNewServerUsrId(){
+    this.ManageGoogleService.getNewServerUsrId(this.configServer)
+    .subscribe(
+        (data ) => {
+            this.credentials.userServerId=data.credentials.userServerId;
+            this.saveServerUsrId=data.credentials.userServerId;
+          },
+          err => {
+
+          }
+    )
   }
 
 

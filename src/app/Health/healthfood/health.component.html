@@ -126,6 +126,13 @@
        </span> 
     </div>
 </div>
+<div *ngIf="EventHTTPReceived[0]===true && error_msg!=='' ">
+    <div style="font-size:16px; color:red; margin-left:20px; display:inline-block; width:100%; margin-top:5px;">
+       <span >
+            {{error_msg}}
+       </span> 
+    </div>
+</div>
 
 <div *ngIf="EventHTTPReceived[0]===true && isDisplaySpecific===true && tabLock[0].lock !== 2" style="margin-left:20px; width:90%; border: blue 2px double; background-color: silver;">
    

@@ -72,5 +72,6 @@ export function fillConfig(inFile:configServer){
     outRecord.refresh_token=inRecord.refresh_token
     outRecord.token_type=inRecord.token_type;
     outRecord.creationDate=inRecord.creationDate;
+    outRecord.userServerId=inRecord.userServerId;
     return (outRecord);
   }

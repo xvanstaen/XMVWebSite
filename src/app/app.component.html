@@ -1,7 +1,7 @@
 <body>
   <div *ngIf="isCredentials===true">
       <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved"
-      [credentials]="credentials" [credentialsFS]="credentialsFS" [credentialsMongo]="credentialsMongo"
+      [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
       (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)" ></app-xmv-company>
   </div>
 </body>

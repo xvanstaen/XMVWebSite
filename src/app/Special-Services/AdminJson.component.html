@@ -270,7 +270,7 @@
     <div *ngIf="GoToComponent===7; else CompoEight">
 
     <app-fitness-stat  [identification]="identification"  [configServer]="configServer" 
-         [InMyConfigFitness]="MyConfigFitness" (returnFile)="ReceiveFiles($event)">
+        >
     </app-fitness-stat>
    
     </div> 
@@ -278,8 +278,8 @@
   <ng-template #CompoEight>
     <div *ngIf="GoToComponent===8; else CompoNine">
 
-    <app-health [credentials]="credentials" [identification]="identification"  [configServer]="configServer" [ConfigChart]="ConfigChart"
-    [InHealthAllData]="HealthAllData" [InConfigHTMLFitHealth]='ConfigHTMLFitHealth' [InConfigCaloriesFat]="ConfigCaloriesFat" [InConvertUnit]="ConvertUnit" 
+    <app-health [credentials]="credentials" [identification]="identification"  [configServer]="configServer" 
+    
      (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)">
     
   </app-health> <!-- (returnFile)="ReceiveFiles($event)" -->
@@ -289,8 +289,7 @@
   <ng-template #CompoNine>
     <div *ngIf="GoToComponent===9; else CompoTen">
 
-    <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly" 
-    [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [IntheTabOfUnits]="theTabOfUnits"  [InWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"     
+    <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly"    
     >
     </app-converter>
    
@@ -300,7 +299,6 @@
     <div *ngIf="GoToComponent===10; else CompoEleven">
 
     <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly" 
-     [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [intheTabOfUnits]="theTabOfUnits"  [inWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"
          >
     </app-converter>
    
@@ -310,7 +308,7 @@
     <div *ngIf="GoToComponent===11">
 
       <app-recipe  [identification]="identification"  [configServer]="configServer"  
-      [InConvToDisplay]="ConvToDisplay"     [dictionaryOnly]="dictionaryOnly"
+        [dictionaryOnly]="dictionaryOnly" [InConvToDisplay]="ConvToDisplay" 
      >
      </app-recipe>
    

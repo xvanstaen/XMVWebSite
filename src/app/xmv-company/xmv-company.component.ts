@@ -34,13 +34,16 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     ) {}
   
   @Input() configServer=new configServer;
-
   @Input() isConfigServerRetrieved:boolean=false;
   @Input() INidentification=new LoginIdentif;
-  @Output() returnFile= new EventEmitter<any>();
   @Input() credentials = new classCredentials;
   @Input() credentialsMongo = new classCredentials;
   @Input() credentialsFS = new classCredentials;
+  @Input() configServerChanges:number=0;
+
+  @Output() resetServer= new EventEmitter<any>();
+  @Output() newCredentials= new EventEmitter<any>();
+  @Output() returnFile= new EventEmitter<any>();
 
   redisplay_profile:number=0;
 
@@ -63,11 +66,6 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   device_type:string='';
 
   selected_offer:string='';
-
-  /***  
-   to keep identification and psw of the user ; information 
-   is passed by login.component.ts through [identification]="identif" 
-  */
  
   identification=new LoginIdentif;
 
@@ -117,9 +115,6 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
         this.identification.id=0;
         this.identification.UserId="";
         this.identification.phone="";
-        //this.identification.key=2;
-        //this.identification.method="AES";
-        //this.identification.psw="";
     }
   }
 
@@ -199,7 +194,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     this.cdref.detectChanges();
     // console.log('cdref',this.cdref.detectChanges());
   }
-
+/*
   ReceiveFiles(event:any){
 
     if (event.fileType!=='' && 
@@ -242,9 +237,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
   
   }
-
-  @Output() resetServer= new EventEmitter<any>();
-  @Output() newCredentials= new EventEmitter<any>();
+*/
   fnResetServer(){
           this.resetServer.emit();
     }

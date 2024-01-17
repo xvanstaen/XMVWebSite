@@ -1,0 +1,63 @@
+
+
+<form [formGroup]="myForm"  (ngSubmit)="onUpdate('1')">
+    <div class='BlockTable'>
+        <span style='margin-left:40px;'>Use CSS GRID</span>
+        <span *ngIf='Length_Array===0' style='color:red; font-size: 20px;margin-left:40px;'><br><br>JsonServer is down</span>
+        <ul  *ngFor = "let theList of AngularWebSite; let i=index;">
+            
+            <span class='tableTopicURL' *ngIf = "i===0; else header"> </span>
+            
+            <ng-template  #header>
+                <span class='tableTopicURL' *ngIf = "i===1; else test">
+                    <span > Delete</span>
+                    <span class='boxTopic'> {{theList.topic}}</span>
+                    <span class='boxURL'> {{theList.url}}</span>
+                </span>
+            </ng-template>  
+            <ng-template  #test>
+                <span class='tableTopicURL' *ngIf='theList.type!=="D" && theList.type!=="C"; else DelItem'>
+                    <input   style='margin-top:15px;' type="checkbox"  value=[theList.type] (click)=onDelete(theList.id)> 
+                    <span class='boxTopic'><a href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></span>
+                    <span class='boxURL'> {{theList.url}}</span>
+                </span>
+                <ng-template #DelItem >
+                        <span class='tableTopicURL'*ngIf='theList.type==="D" ; else CreatedItem' >
+                            <input  style='background-color: rgb(199, 97, 117);margin-top:15px;' value=[theList.type] type="checkbox"   (click)=onDelete(theList.id) checked>
+                            <span style='background-color: rgb(199, 97, 117); ' class='boxTopic'><a href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></span>
+                            <span style='background-color: rgb(199, 97, 117); 'class='boxURL'> {{theList.url}}</span>
+                        </span>
+                </ng-template>
+                <ng-template #CreatedItem>
+                        <span class='tableTopicURL' >
+                            <span  style='margin-top:5px;color:blue;' value=[theList.type]   (click)=onDelete(theList.id) >C</span>
+                            <span class='boxTopic'  ><a href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></span>
+                            <span class='boxURL' > {{theList.url}}</span>
+                        </span>
+                </ng-template>
+            </ng-template>
+        </ul>   
+    </div>
+
+    <div *ngIf='Create_Record===true' >
+        <div>
+            <label style='margin-top:40px; max-width:120px; margin-left:30px;color:blue;'>Topic</label>
+            <input style='width:400px; margin-left:30px;' formControlName='topic' placeholder='enter topic'>
+        </div>
+        <div>
+            <label style='margin-top:40px; max-width:120px;  margin-left:30px; color:blue;'>URL</label>
+            <input style='width:400px; margin-left:40px;'formControlName='url' placeholder='enter url'>
+        </div>
+        <div><button id='1' style='font-size: 18px; margin-top:30px; margin-left:180px; color:red; font-size: 14px; height:30px; width:70px;' type="submit">Submit</button>
+        <button id='2' style='font-size: 18px; margin-left:40px; color:red; font-size: 14px; height:30px; width:70px;' (click)='onClear("2")' type="button">Clear</button></div>
+        <div style='margin-left:40px; color:red; font-size: 12px; '>{{httpError}}</div>
+
+    </div>
+
+    <div class="button_position"  *ngIf='Length_Array!==0 && Create_Record===false'>
+        <button id='3' class="buttonCreate"  type='button' (click)='onCreate("3")'style='width:160px; height:60px; margin-top:60px; margin-left:180px;font-size: 20px;'>Create</button>
+        <button id='4'  type='button' (click)='onSave("4")' style='width:120px; height:60px; margin-left:20px;font-size: 20px; margin-top:30px;'  >Save</button>
+        <button id='5'  type='button' (click)='onClearAll("5")' style='width:120px; height:60px; margin-left:20px;font-size:20px; margin-top:30px;'  >Clear</button>
+        <button id='6'  type='button' [routerLink]="['/myXMVcompany']" style='width:40px; height: 40px; margin-left:200px;font-size:12px; margin-top:30px; border-radius: 50%;'  >EXIT</button>    
+    </div>
+</form>

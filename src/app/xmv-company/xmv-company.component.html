@@ -148,7 +148,6 @@
             <app-xmvcompany-offer [redisplay_child]="display_GoToContact" (my_output1)='Display_Contact()'
             [selectedoffer]="selected_offer"
             >
-
             </app-xmvcompany-offer>
               
           </div> 
@@ -224,11 +223,9 @@
         <div *ngIf='isConfigServerRetrieved===true'>
             <span class='mainbody'>  
               <app-login  [identification]="identification" [configServer]="configServer" [credentials]="credentials"
-                (my_output1)='TheIdentifObject($event)' (my_output2)='TheLoginRoute($event)' [ConfigChart]="ConfigChart"
-                [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat" [MyConfigFitness]="MyConfigFitness"
-                [ConvertUnit]="ConvertUnit" [ConvToDisplay]="ConvToDisplay" [theTabOfUnits]="theTabOfUnits"  [WeightRefTable]="WeightRefTable" 
-                [ConfigHTMLFitHealth]="ConfigHTMLFitHealth" [WeightRefTable]="WeightRefTable" 
+              [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
                 
+                (my_output1)='TheIdentifObject($event)' (my_output2)='TheLoginRoute($event)' 
                 [credentials]="credentials" (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)"
                  >            <!-- (returnFile)="ReceiveFiles($event)" --> 
             </app-login>
