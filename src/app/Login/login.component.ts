@@ -19,7 +19,7 @@ import {ConfigFitness} from '../Health/ClassFitness';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 
-import { fillCredentials } from '../copyFilesFunction';
+import { fillCredentials , fillConfig} from '../copyFilesFunction';
 
 @Component({
   selector: 'app-login',
@@ -100,6 +100,11 @@ export class LoginComponent {
 
     EventHTTPReceived:Array<boolean>=[];
     FileType={TestProd:''};
+
+    tabServers: Array<string> = [
+      'http://localhost:8080', 'https://test-server-359505.uc.r.appspot.com',
+      'https://xmv-it-consulting.uc.r.appspot.com', 'https://serverfs.ue.r.appspot.com'
+      ]
   
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
@@ -108,6 +113,9 @@ export class LoginComponent {
     }
 
   ngOnInit(){
+
+      this.getCredentialsFS();
+
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
       this.device_type = navigator.userAgent;
@@ -126,32 +134,75 @@ export class LoginComponent {
       this.routing_code=0;
       this.EventHTTPReceived[0]=false;
 
-      if (this.identification.UserId!=='') {
-          this.myForm.controls['userId'].setValue(this.identification.UserId);
+      if (this.configServer.userLogin.id!=='') {
+          this.myForm.controls['userId'].setValue(this.configServer.userLogin.id);
 
       } else {
-          this.myForm.controls['action'].setValue("");
-        }
+          this.myForm.controls['userId'].setValue("");
+      }
+      if (this.configServer.userLogin.psw!=='') {
+        this.decryptAllPSW();
+      } else {
+        this.myForm.controls['password'].setValue("");
+      }
 
   }
+savePsw:string="";
+decryptAllPSW(){
+  this.ManageGoogleService.decryptAllFn(this.configServer,this.configServer.userLogin.psw, 1, 'AES', "Yes")
+      .subscribe((data ) => { 
+        if (data.status===undefined){
+          this.savePsw = data;
+          this.myForm.controls['password'].setValue(data);
 
+        } else {
+          this.error = data.msg;
+          this.myForm.controls['password'].setValue("");
+        }
+    },
+    err => {
+      this.error = err.msg;
+      this.myForm.controls['password'].setValue("");
+    })
+}
 
+getLogin(){
+ // this.configServer.googleServer=this.tabServers[0];
+ if (this.myForm.controls['userId'].value!==this.configServer.userLogin.id || this.myForm.controls['password'].value !== this.savePsw){
+    this.ManageGoogleService.encryptAllFn(this.configServer,this.myForm.controls['password'].value, 1, 'AES', 'Yes')
+    .subscribe((data ) => { 
+        if (data.status===undefined){
+          this.configServer.userLogin.id=this.myForm.controls['userId'].value;
+          this.configServer.userLogin.psw=data.response;
+          this.configServer.userLogin.accessLevel="";
+          this.checkLogin();
+        } else {
+          this.error = data.msg;
+        }
+      },
+      err => {
+        this.error = err.msg;
+      })
+    } else {
+      this.routing_code=1;
+      this.Encrypt_Data=this.identification;
+      this.Encrypt_Data.userServerId=this.credentialsFS.userServerId;
+      this.Encrypt_Data.credentialDate=this.credentialsFS.creationDate;
+      this.Encrypt_Data.IpAddress=this.configServer.IpAddress;
+    }
+}
 
-getLogin(object:string,psw:string){
+checkLogin(){
     // this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject )
-    this.configServer.userLogin.id=this.myForm.controls['userId'].value;
-    this.configServer.userLogin.psw=this.myForm.controls['password'].value;
-    this.configServer.userLogin.accessLevel="";
-
     this.ManageGoogleService.checkLogin(this.configServer )
         .subscribe((data ) => {    
 
           this.getUserAccessLevel();
-          this.getDefaultCredentials('FS');
           this.Encrypt_Data=data;
+          this.identification=data;
           this.routing_code=1;
-          this.Encrypt_Data.userServerId=this.credentials.userServerId;
-          this.Encrypt_Data.credentialDate=this.credentials.creationDate;
+          this.Encrypt_Data.userServerId=this.credentialsFS.userServerId;
+          this.Encrypt_Data.credentialDate=this.credentialsFS.creationDate;
           this.Encrypt_Data.IpAddress=this.configServer.IpAddress;
           this.my_output2.emit(this.routing_code.toString());
       },
@@ -165,6 +216,7 @@ getLogin(object:string,psw:string){
     .subscribe((data ) => {  
           if (data.status===200){
             this.configServer.userLogin.accessLevel = data.accessLevel;
+            this.configServerChanges++
           } else {
             // this.error=data.msg
           }
@@ -176,24 +228,21 @@ getLogin(object:string,psw:string){
   }
 
 
-getDefaultCredentials(serverType:string){
-  console.log('getDefaultCredentials()');
-  this.ManageGoogleService.getDefaultCredentials(this.configServer  )
-    .subscribe(
-        (data ) => {
-          if (serverType==='Google'){
-            this.credentials = fillCredentials(data.credentials);
-          } else if (serverType==='Mongo'){
-              this.credentialsMongo = fillCredentials(data.credentials);
-          } else if (serverType==='FS'){
-              this.credentialsFS = fillCredentials(data.credentials);
-          }
-          
-        },
-        err => {
-          console.log('return from requestToken() with error = '+ JSON.stringify(err));
-        });
-  }
+
+  getCredentialsFS(){
+    const theServer='fileSystem';
+    this.ManageGoogleService.getFSCredentials(this.configServer)
+      .subscribe(
+          (data ) => {
+            this.credentialsFS.creationDate = data.credentials.creationDate;
+            this.credentialsFS.userServerId = data.credentials.userServerId
+            console.log('getCredentials server='+theServer +' '+JSON.stringify(data));
+          },
+          err => {
+            console.log("return from getCredentials() for server '" + theServer + "' with error = "+ err.status);
+          });
+    }
+
 
 ValidateData(){
   //console.log('validateData()');
@@ -207,7 +256,7 @@ ValidateData(){
   else
   {
     this.error='';
-    this.getLogin( this.myForm.controls['userId'].value, this.myForm.controls['password'].value);
+    this.getLogin();
   }
 }
 

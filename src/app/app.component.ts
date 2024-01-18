@@ -41,29 +41,36 @@ export class AppComponent {
   isIdRetrieved:boolean=false;
   saveServerUsrId:number=0;
 
+  isRetrievedConfig:boolean=false;
+
   ngOnInit(){
     this.http.get("http://api.ipify.org/?format=json").subscribe((res:any)=>{
       this.IpAddress = res.ip;
     });
     this.initConfigServer.googleServer=this.tabServers[2];
-    this.initConfigServer.mongoServer=this.tabServers[3];
+    this.initConfigServer.mongoServer=this.tabServers[2];
     this.initConfigServer.fileSystemServer=this.tabServers[1];
     this.RetrieveConfig();
   }
   
   RetrieveConfig(){
     
-      if (environment.production === false){
+
+    if (environment.production === false){
         this.initConfigServer.test_prod='test';
-     } else {
+    } else {
       this.initConfigServer.test_prod='prod';
-     }
-      
+    }
+    this.TabLoop[0]=0;
+    this.EventHTTPReceived[0]=false;
+    this.waitHTTP(this.TabLoop[0],2000,0);
+    this.error="";
       //InitconfigServer.GoogleProjectId='ConfigDB';
-      this.ManageMongoDB.findConfig(this.initConfigServer, 'configServer')
+    this.ManageMongoDB.findConfig(this.initConfigServer, 'configServer')
       .subscribe(
         data => {
-
+          this.EventHTTPReceived[0]=true;
+          this.isRetrievedConfig=true;
           if (Array.isArray(data) === false){
             this.configServer = fillConfig(data);
             //this.configServer = data;
@@ -94,6 +101,7 @@ export class AppComponent {
         this.isConfigServerRetrieved=true;
         },
         error => {
+          this.EventHTTPReceived[0]=true;
           console.log('error to retrieve the configuration file ;  error = ', error.status);
          
         });
@@ -108,7 +116,7 @@ export class AppComponent {
             this.credentials = fillCredentials(data);
           } else if (serverType==='Mongo'){
               this.credentialsMongo = fillCredentials(data);
-          } else if (serverType==='mongo'){
+          } else if (serverType==='FS'){
               this.credentialsFS = fillCredentials(data);
           }
           this.isCredentials=true;
@@ -118,6 +126,33 @@ export class AppComponent {
           console.log('return from requestToken() with error = '+ JSON.stringify(err));
           });
   }
+  error:string="";
+  EventHTTPReceived:Array<boolean>=[];
+  TabLoop:Array<number>=[];
+  id_Animation:Array<any>=[];
+  waitHTTP(loop: number, max_loop: number, eventNb: number) {
+    const pas = 500;
+    if (loop % pas === 0) {
+      console.log(eventNb + ' waitHTTP fn  ==> loop=' + loop + ' max_loop=' + max_loop);
+    }
+    loop++
+    this.TabLoop[eventNb]++
+
+    this.id_Animation[eventNb] = window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
+    if (loop > max_loop || this.EventHTTPReceived[eventNb] === true) {
+      
+      console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
+        this.EventHTTPReceived[eventNb]);
+      window.cancelAnimationFrame(this.id_Animation[eventNb]);
+      if (loop > max_loop && this.EventHTTPReceived[eventNb] === false){
+        this.error="MongoDB cannot be accessed"
+      }
+      //if (this.EventHTTPReceived[eventNb] === true) {
+      //    window.cancelAnimationFrame(this.id_Animation[eventNb]);
+      //}
+    }
+  }
+
 
   fnResetServer(event:any){
     this.isCredentials=false;

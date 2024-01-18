@@ -1,4 +1,36 @@
 <body>
+
+  <div *ngIf="isRetrievedConfig===false" >
+    <div style=" display:inline-block; width:600px; margin-top:20px; ">
+    <div style="margin-left:30px;  display:block; float:left; width:100px; ">
+      <div class='  mylogo smcirclesize example_two' >
+          <div class='smwhitecircle'>
+              <span class='smXMV'>XMV</span >
+              <span  class='smITConsulting'>IT Consulting</span >
+          </div>
+      </div>
+    </div>
+    <div style="display:block; width:400px;  font-size:12px; margin-top:30px;margin-left:150px; height:32px;background-color: red; color:white;">
+     
+          <mat-icon  style="padding-left:5px;font-size:14px; display:inline-block;  width:25px; padding-top:6px;"> smartphone</mat-icon> 
+          <div   style="display:inline-block;  width:150px; ">  +65 8268 0480</div>
+          <mat-icon    style="font-size:14px; ; display:inline-block; ; width:25px; padding-top:6px;" > email</mat-icon>   
+          <div  style="display:inline-block;  height:10px; width:150px;">xvanstaen@xmv-it.com</div>
+      
+      </div>
+  </div>
+  </div>
+  <div *ngIf="isRetrievedConfig===false && error===''"  style="display:block; margin-top:50px; ">
+    
+      <div style="font-size:16px; color:white; background-color: blue; width:500px; display:inline-block; text-align: center; margin-left:30px;">
+          Server is being initilized ....
+      </div>
+  </div>
+  <div *ngIf="error!==''" >
+    <div style="font-size:16px;  margin-top:50px; color:white; background-color: blue; width:500px; display:inline-block; text-align: center; margin-left:30px;">
+      {{error}}
+      </div>
+  </div>
   <div *ngIf="isCredentials===true">
       <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved"
       [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"

@@ -1,4 +1,63 @@
 
+@import "./xmv-company/MyLogo.css";
+
+    
+.pos_icons{
+    background-color:rgb(46, 78, 221);
+    opacity: 0.8;
+    color:white;
+    height:35px;
+    border: solid 0px black;
+    margin-left:30px;
+    margin-top:-30px;
+    }
+
+.div_icons:hover{
+    background-color:red;
+}
+
+.div_icons{
+    width:80%;
+    margin-left:10%;
+    display: flex; 
+    border: solid 0px blue;
+    padding-left:5%;
+    text-align: center;
+    margin-top:6px;
+    color:white;
+    font-weight:bold;
+    height:20px;
+    }
+
+
+.icons {
+   
+    font-size:14px;
+    padding-top:3px;
+    margin-left:25px;
+
+    }
+
+.icons_data{
+    font-size:12px;
+    margin-left:-6px;
+    padding-top:1px;
+    
+    }
+
+.icons-email {
+
+        font-size:14px;
+        margin-left:20px;
+        padding-top:3px;
+        }
+    
+.icons_data-email{
+        font-size:12px;
+        margin-left:-2px;
+        }
+  
+
 .radioButton{
     appearance: none;
   

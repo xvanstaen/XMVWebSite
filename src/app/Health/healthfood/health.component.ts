@@ -112,6 +112,7 @@ export class HealthComponent implements OnInit {
   error_msg: string = '';
 
   EventHTTPReceived: Array<boolean> = [];
+  EventStopWaitHTTP: Array<boolean> = [];
   maxEventHTTPrequest: number = 20;
   id_Animation: Array<number> = [];
   TabLoop: Array<number> = [];
@@ -1644,14 +1645,16 @@ export class HealthComponent implements OnInit {
   GetRecord(Bucket: string, GoogleObject: string, iWait: number) {
     console.log('GetRecord - iWait='+iWait);
     this.EventHTTPReceived[iWait] = false;
+    this.EventStopWaitHTTP[iWait]=false;
     this.NbWaitHTTP++;
     if (iWait===0 || iWait===4){
-      this.configServer.googleServer=this.saveServer.mongo;
+      this.configServer.googleServer=this.saveServer.FS;
     }
     this.waitHTTP(this.TabLoop[iWait], 3000, iWait);
     this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject)
       .subscribe((data) => {
         console.log('GetRecord - data received for iWait='+iWait);
+        this.EventStopWaitHTTP[iWait]=true;
         var noPb=true;
         if (data.status!==undefined && data.status!==200){
           this.error_msg = data.msg;
@@ -1821,15 +1824,16 @@ export class HealthComponent implements OnInit {
         }
         } 
       },
-        error_handler => {
-          //this.EventHTTPReceived[iWait] = true;
+        err => {
+          this.EventStopWaitHTTP[iWait]=true;
           if (iWait === 0) {
-            this.error_msg = 'File ' + this.identification.fitness.files.fileHealth + ' does not exist. Create it';
+            this.error_msg = 'Problem to retrieve file ' + this.identification.fitness.files.fileHealth ;
 
           } else if (iWait === 1) {
-            this.error_msg = 'File ' + this.identification.configFitness.files.calories + ' does not exist. Create it';
+            this.error_msg = 'Problem to retrieve file ' + this.identification.configFitness.files.calories ;
 
           }
+          console.log('get record '+this.error_msg + " error="+JSON.stringify(err));
         }
       )
   }
@@ -2300,7 +2304,7 @@ export class HealthComponent implements OnInit {
     this.TabLoop[eventNb]++
 
     this.id_Animation[eventNb] = window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
-    if (loop > max_loop || this.EventHTTPReceived[eventNb] === true) {
+    if (loop > max_loop || this.EventHTTPReceived[eventNb] === true || this.EventStopWaitHTTP[eventNb] === true) {
       
       console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
         this.EventHTTPReceived[eventNb]);
@@ -2555,7 +2559,7 @@ export class HealthComponent implements OnInit {
       if (data.tabLock[iWait].credentialDate !== this.credentialsFS.creationDate) { // server was reinitialised
         this.tabLock[iWait] = data.tabLock[iWait];
         if (this.configServer.googleServer===this.configServer.fileSystemServer){
-          this.getDefaultCredentials(iWait, false); // update credentials only 
+          //this.getDefaultCredentials(iWait, false); // update credentials only 
         }
       }
       // record is locked by another user; no actions can take place for this user so reset

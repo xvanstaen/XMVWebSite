@@ -157,6 +157,10 @@ getCredentials(config:configServer): Observable<any> {
     const http_get=config.googleServer+'/getCredentials/'+config.GoogleProjectId+'/'+config.test_prod;
     return this.http.get<any>(http_get);                      
 }  
+getFSCredentials(config:configServer): Observable<any> {
+    const http_get=config.fileSystemServer+'/credentialsFS/'+config.GoogleProjectId+'/'+config.test_prod;
+    return this.http.get<any>(http_get);                      
+}  
 
 getServerVersion(config:configServer): Observable<any> {
     const http_get=config.googleServer+'/serverVersion/'+config.GoogleProjectId+'/'+config.test_prod;
@@ -173,4 +177,17 @@ getSecurityAccess(config:configServer){
     const http_get=config.googleServer+'/getSecurity/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod;
     return this.http.get<any>(http_get);
 }
+
+encryptAllFn(config:configServer,data:string,key:number,method:string,authoriz:string): Observable<any> {
+    //const myArray=encodeURIComponent(JSON.stringify(TableCryptKey.tab));
+    const http_get=config.googleServer+'/encryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+authoriz;
+    return this.http.get<any>(http_get);                      
+}  
+
+decryptAllFn(config:configServer,data:string,key:number,method:string,authoriz:string): Observable<any> {
+    const http_get=config.googleServer+'/decryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+authoriz;
+  
+    return this.http.get<any>(http_get);                      
+}  
+
 }
