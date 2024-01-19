@@ -158,7 +158,7 @@ getCredentials(config:configServer): Observable<any> {
     return this.http.get<any>(http_get);                      
 }  
 getFSCredentials(config:configServer): Observable<any> {
-    const http_get=config.fileSystemServer+'/credentialsFS/'+config.GoogleProjectId+'/'+config.test_prod;
+    const http_get=config.fileSystemServer+'/credentialsFS/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(config.fileSystemServer);
     return this.http.get<any>(http_get);                      
 }  
 
@@ -169,7 +169,7 @@ getServerVersion(config:configServer): Observable<any> {
 
 
 onFileSystem(config:configServer, bucket:string, object:string, tabLock:Array<classAccessFile>, iWait:string): Observable<any> {
-    const http_get=config.fileSystemServer+'/onFileSystem/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'/'+JSON.stringify(tabLock)+'/'+iWait+'?bucket='+bucket;
+    const http_get=config.fileSystemServer+'/onFileSystem/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(config.fileSystemServer)+'/'+object+'/'+JSON.stringify(tabLock)+'/'+iWait+'?bucket='+bucket;
     return this.http.get<any>(http_get);                       
 }
 

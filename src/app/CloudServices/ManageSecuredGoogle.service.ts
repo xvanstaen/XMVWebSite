@@ -26,12 +26,12 @@ export class ManageSecuredGoogleService {
 
 
     resetFS(config:configServer, bucket:string, object:string, tabLock:Array<classAccessFile>, iWait:number): Observable<any> {
-        const http_get=config.fileSystemServer+'/resetFS/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'/'+JSON.stringify(tabLock)+'/'+iWait+'?bucket='+bucket;
+        const http_get=config.fileSystemServer+'/resetFS/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(config.fileSystemServer)+'/'+object+'/'+JSON.stringify(tabLock)+'/'+iWait+'?bucket='+bucket;
         return this.http.get<any>(http_get);                       
     }
 
     getMemoryFS(config:configServer): Observable<any> {
-        const http_get=config.fileSystemServer+'/memoryFS/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod;
+        const http_get=config.fileSystemServer+'/memoryFS/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(config.fileSystemServer);
         return this.http.get<any>(http_get);                       
     }
 

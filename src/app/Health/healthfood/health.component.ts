@@ -2535,7 +2535,7 @@ export class HealthComponent implements OnInit {
                 // destroy is fine
               } else {
                 console.log('Google updateFileSystem general error=' + err.status + '  specific error= ' + err.error.error + ' & message= ' + err.error.message);
-                this.error_msg = this.error_msg + '   update FileSystem =' + err.status + '  specific error= ' + err.error.error + ' & message= ' + err.error.message;
+                this.error_msg = this.error_msg + '   update FileSystem =' + err.status ;
               }
             } else {
               this.returnOnFileSystem(err, iWait);
@@ -2567,6 +2567,7 @@ export class HealthComponent implements OnInit {
       if (data.tabLock[iWait].createdAt !== undefined) {
         this.error_msg = this.error_msg + " data returned on file " + data.tabLock[iWait].objectName + " ==> action = " + data.tabLock[iWait].action + '  lock = ' + data.tabLock[iWait].lock + "  & status = " + data.tabLock[iWait].status;
         console.log(this.error_msg);
+        this.error_msg='';
         if (this.tabLock[iWait].action === 'unlock') {
           this.tabLock[iWait].lock = 3;
           this.onInputAction = "";
@@ -2733,14 +2734,14 @@ export class HealthComponent implements OnInit {
           }
         }
       } else if (data.status === 955) {
-        this.error_msg = this.error_msg + data.msg;
+        this.error_msg = this.error_msg + 'status error=' + data.status;
         this.theResetServer = true;
         this.tabLock[iWait].lock = 3;
 
-        this.getDefaultCredentials(iWait, true); // update credentials & check File.updatedAt 
+        //this.getDefaultCredentials(iWait, true); // update credentials & check File.updatedAt 
 
       } else if (data.status === 956) {  // record is locked by another user
-        this.error_msg = this.error_msg + data.msg;
+        this.error_msg = "status " + data.status + " - record is locked by another user"; // data.msg;
         this.theResetServer = true;
         this.tabLock[iWait].lock = 3;
         this.onInputAction = "";
@@ -2752,9 +2753,9 @@ export class HealthComponent implements OnInit {
         } else if (iWait === 5) {
           this.reAccessChartFile();
         }
-        if (this.configServer.googleServer===this.configServer.fileSystemServer){
-          this.getDefaultCredentials(iWait, false); // update credentials only 
-        }
+        //if (this.configServer.googleServer===this.configServer.fileSystemServer){
+        //  this.getDefaultCredentials(iWait, false); // update credentials only 
+        //}
       } else {
 
         this.nbCallCredentials = 0;
@@ -2767,11 +2768,13 @@ export class HealthComponent implements OnInit {
           if (this.tabLock[iWait].action === 'lock') {
             this.tabLock[iWait].lock = 2;
             console.log('which type of data is it????' + JSON.stringify(data) + '  on action ' + + this.tabLock[iWait].action);
+            this.error_msg= "status " + data.status + " - record is locked ";
           } else {
             this.tabLock[iWait].lock = 3;
           }
         } else {
           this.tabLock[iWait].status = 999;
+          this.error_msg= "status " + data.status + " - unknown error "
           console.log('which type of data is it????' + JSON.stringify(data) + '  on action ' + + this.tabLock[iWait].action);
         }
 
@@ -2781,6 +2784,7 @@ export class HealthComponent implements OnInit {
       console.log('which type of data is it???? : ' + JSON.stringify(data));
       this.tabLock[iWait].status = 999;
       if (this.tabLock[iWait].action === 'lock') {
+        this.error_msg= "status  999 - record is locked ";
         this.tabLock[iWait].lock = 2;
       }
     }
@@ -2789,7 +2793,7 @@ export class HealthComponent implements OnInit {
 
   msgCredentials: string = '';
   nbCallCredentials: number = 0;
-  getDefaultCredentials(iWait: number, checkFile: boolean) {
+  getDefaultCredentials(iWait: number, checkFile: boolean) { // NOT USED ANYMORE!!!!!
     console.log('getDefaultCredentials()');
     var newCredentials = new classCredentials;
     this.ManageGoogleService.getDefaultCredentials(this.configServer)

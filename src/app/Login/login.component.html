@@ -68,10 +68,10 @@
 
 <div  *ngIf="routing_code===1">
   <app-user-functions
-  [identification]="Encrypt_Data"  [configServer]="configServer"  
+  [identification]="identification"  [configServer]="configServer"  
    [configServerChanges]="configServerChanges" [credentials]="credentials"
   [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
-   (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" 
+   (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)"
   >
 
   </app-user-functions>
@@ -94,7 +94,7 @@
 
 <ng-template #AdminJson> 
   <div  *ngIf="routing_code===99">
-    <app-AdminJson [identification]="Encrypt_Data"  [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
+    <app-AdminJson [identification]="identification"  [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
           [LoginTable_DecryptPSW]="Table_DecryptPSW" [configServerChanges]="configServerChanges"
           [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
           [credentials]="credentials" (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" 

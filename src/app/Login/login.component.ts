@@ -80,7 +80,6 @@ export class LoginComponent {
     Crypto_Method:string='';
     Crypto_Error:string='';
     Crypto_Key:number=0;
-    Encrypt_Data=new LoginIdentif;
 
     Table_User_Data:Array<EventAug>=[];
     Table_DecryptPSW:Array<string>=[];
@@ -133,18 +132,17 @@ export class LoginComponent {
 
       this.routing_code=0;
       this.EventHTTPReceived[0]=false;
-
+console.log('Init login ID & PSW ' + this.configServer.userLogin.id + ' ' + this.configServer.userLogin.psw);
+console.log('this.identification.userId ' + this.identification.UserId );
       if (this.configServer.userLogin.id!=='') {
           this.myForm.controls['userId'].setValue(this.configServer.userLogin.id);
 
-      } else {
-          this.myForm.controls['userId'].setValue("");
-      }
+      } 
       if (this.configServer.userLogin.psw!=='') {
-        this.decryptAllPSW();
-      } else {
-        this.myForm.controls['password'].setValue("");
-      }
+        if (this.identification.UserId!==""){
+          this.decryptAllPSW();
+        }
+      } 
 
   }
 savePsw:string="";
@@ -183,13 +181,12 @@ getLogin(){
       err => {
         this.error = err.msg;
       })
-    } else {
-      this.routing_code=1;
-      this.Encrypt_Data=this.identification;
-      this.Encrypt_Data.userServerId=this.credentialsFS.userServerId;
-      this.Encrypt_Data.credentialDate=this.credentialsFS.creationDate;
-      this.Encrypt_Data.IpAddress=this.configServer.IpAddress;
-    }
+  } else {
+    this.routing_code=1;
+    this.identification.userServerId=this.credentialsFS.userServerId;
+    this.identification.credentialDate=this.credentialsFS.creationDate;
+    this.identification.IpAddress=this.configServer.IpAddress;
+  }
 }
 
 checkLogin(){
@@ -198,12 +195,11 @@ checkLogin(){
         .subscribe((data ) => {    
 
           this.getUserAccessLevel();
-          this.Encrypt_Data=data;
           this.identification=data;
           this.routing_code=1;
-          this.Encrypt_Data.userServerId=this.credentialsFS.userServerId;
-          this.Encrypt_Data.credentialDate=this.credentialsFS.creationDate;
-          this.Encrypt_Data.IpAddress=this.configServer.IpAddress;
+          this.identification.userServerId=this.credentialsFS.userServerId;
+          this.identification.credentialDate=this.credentialsFS.creationDate;
+          this.identification.IpAddress=this.configServer.IpAddress;
           this.my_output2.emit(this.routing_code.toString());
       },
         err=> {
@@ -229,9 +225,9 @@ checkLogin(){
 
 
 
-  getCredentialsFS(){
-    const theServer='fileSystem';
-    this.ManageGoogleService.getFSCredentials(this.configServer)
+getCredentialsFS(){
+  const theServer='fileSystem';
+  this.ManageGoogleService.getFSCredentials(this.configServer)
       .subscribe(
           (data ) => {
             this.credentialsFS.creationDate = data.credentials.creationDate;
@@ -241,7 +237,7 @@ checkLogin(){
           err => {
             console.log("return from getCredentials() for server '" + theServer + "' with error = "+ err.status);
           });
-    }
+  }
 
 
 ValidateData(){
@@ -274,26 +270,19 @@ onClear(){
 }
 
 
-//ngOnChanges(changes: SimpleChanges) {   
-      //console.log('onChanges login.ts');
-//  }
-
 
 firstLoop:boolean=true;
 ngOnChanges(changes: SimpleChanges) { 
-    if (this.firstLoop===true){
-      this.firstLoop=false;
-    } else {
-      for (const propName in changes){
-        const j=changes[propName];
-        if (propName==='credentials'){
-            this.Encrypt_Data.userServerId=this.credentials.userServerId;
-            this.Encrypt_Data.credentialDate=this.credentials.creationDate;
-        }
+  for (const propName in changes){
+    const j=changes[propName];
+    if (propName==='credentialsFS'){
+      if (changes[propName].firstChange === false) {
+        this.identification.userServerId=this.credentialsFS.userServerId;
+        this.identification.credentialDate=this.credentialsFS.creationDate;
       }
     }
+  }
 }
-
 
 
 fnResetServer(){
@@ -301,10 +290,21 @@ fnResetServer(){
   }
 
 fnNewCredentials(credentials:any){
-  this.Encrypt_Data.userServerId=credentials.userServerId;
-  this.Encrypt_Data.credentialDate=credentials.creationDate;
+  this.identification.userServerId=credentials.userServerId;
+  this.identification.credentialDate=credentials.creationDate;
   this.newCredentials.emit(credentials);
 }
 
+
+changeServerName(event:any){
+  if (event==='FS'){
+    this.getCredentialsFS();
+  } else  if (event==='Google'){
+
+  } else  if (event==='Mongo'){
+
+  }
+  
+}
 
 }

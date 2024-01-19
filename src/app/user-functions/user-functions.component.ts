@@ -46,6 +46,9 @@ export class UserFunctionsComponent {
     @Input() LoginTable_DecryptPSW:Array<string>=[];
   
     @Input() ConvToDisplay=new mainConvItem;
+
+    @Output() serverChange=  new EventEmitter<any>();
+
     convertOnly:boolean=true;
 
     selectApps:number=0;
@@ -61,6 +64,7 @@ export class UserFunctionsComponent {
     isCredentials:boolean=true;
 
 ngOnInit(){
+  console.log('test');
 }
 
 
@@ -72,10 +76,15 @@ onInput(event:any){
   this.isAppsSelected=false;
 }
 
+serverTest:string="";
 onSelectApps(){
   this.isAppsSelected=true;
   this.selectApps=this.inputSelect;
-  if (this.selectApps===11){
+  if (this.selectApps===16){
+    this.serverTest='server';
+  } else if (this.selectApps===17){
+    this.serverTest='tutorials';
+  } else if (this.selectApps===11){
     this.selHealthFunction=5;
   } else if (this.selectApps===12){
     this.selHealthFunction=3;
@@ -89,12 +98,21 @@ onSelectApps(){
 }
 
 getServerNames(event:any){
-  this.configServer.googleServer=event.google;;
-  this.configServer.mongoServer=event.mongo;
-  this.configServer.fileSystemServer=event.fileSystem;
-  //this.newConfigServer.googleServer=event.google;;
-  //this.newConfigServer.mongoServer=event.mongo;
-  //this.newConfigServer.fileSystemServer=event.fileSystem;
+  if (this.configServer.googleServer!==event.google){
+    this.configServer.googleServer=event.google;
+    this.serverChange.emit('Google');
+  }
+  
+  if (this.configServer.mongoServer!==event.mongo){
+    this.configServer.mongoServer=event.mongo;
+    this.serverChange.emit('Mongo');
+  }
+  
+  if (this.configServer.fileSystemServer!==event.fileSystem){
+    this.configServer.fileSystemServer=event.fileSystem;
+    this.serverChange.emit('FS');
+  }
+
   this.configServerChanges++;
 }
 fnResetServer(event:any){

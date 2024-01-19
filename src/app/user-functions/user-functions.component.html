@@ -4,10 +4,12 @@
   </head>
 <body>
 
-
-<app-select-server [initConfigServer]="configServer" 
+<div style="margin-top:40px; width:100%; display:inline-block;">
+    <app-select-server [initConfigServer]="configServer" 
                     (returnServer)="getServerNames($event)">
-</app-select-server>
+    </app-select-server>
+</div>
+
 
 <!--
 <div style="margin-left:30px; margin-top:40px; width:300px;">
@@ -26,7 +28,7 @@
 
 -->
 
-<div   style=" max-width: 440px; ">
+<div   style=" max-width: 440px;margin-top:8px; ">
     <span style="width:94%; background-color: cyan; margin-left:20px; border:solid 2px red; display:inline-block; ">
         <span style="width:100%; color:#0000ff; font-size:22px; display:inline-block; text-align: center; padding-top:10px; height:50px;"> Select the apps </span>
         <br>
@@ -48,17 +50,19 @@
         <span class="options" >13. Health Chart</span>
         <span class="options" >14. Recipe</span>
         <span class="options" >15. Dicto for recipe</span>
-        <span *ngIf="configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High'" class="options" >16. Test servers</span>
+        <span *ngIf="configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High'" class="options" >16. Manage servers</span>
         <span *ngIf="configServer.userLogin.accessLevel!=='High' && configServer.userLogin.accessLevel!=='Very High'" class="options" > &nbsp;</span>
-        <span class="options" >17. Performance sport</span>
-        <span class="options" >18. Manage PointOfRef</span>
-        <span class="options" >19. Manage Circuits</span>
-        <span class="options" >20. Sport report</span>
-        <span class="options" >21. Sport analysis</span>
-        <span class="options" >22. Sport Raw Data Mgt</span>
-        <span class="options" >23. Fitness</span>
-        <span class="options" >24. Photos</span>
-        <span class="options" >25. 27AUG2022</span>
+        <span *ngIf="configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High'" class="options" >17. Test Tutorials</span>
+        <span *ngIf="configServer.userLogin.accessLevel!=='High' && configServer.userLogin.accessLevel!=='Very High'" class="options" > &nbsp;</span>
+        <span class="options" >18. Performance sport</span>
+        <span class="options" >19. Manage PointOfRef</span>
+        <span class="options" >20. Manage Circuits</span>
+        <span class="options" >21. Sport report</span>
+        <span class="options" >22. Sport analysis</span>
+        <span class="options" >23. Sport Raw Data Mgt</span>
+        <span class="options" >24. Fitness</span>
+        <span class="options" >25. Photos</span>
+        <span class="options" >26. 27AUG2022</span>
 
         <br><br>
     </span>
@@ -114,46 +118,46 @@
         >
         </app-recipe>
     </div>  
-    <div *ngIf="selectApps===16 && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High') ">
-        <app-test-server-js   [configServer]="configServer" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges" >
+    <div *ngIf="(selectApps===16 || selectApps===17) && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High') ">
+        <app-test-server-js   [serverTest]="serverTest" [configServer]="configServer" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges" >
         </app-test-server-js>
     </div>  
-    <div *ngIf="selectApps===17">
+    <div *ngIf="selectApps===18">
         <app-performance-sport   [configServer]="configServer" [identification]="identification" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS">
         </app-performance-sport>
     </div>  
-    <div *ngIf="selectApps===18">
+    <div *ngIf="selectApps===19">
         <app-manage-point-of-ref   [configServer]="configServer" [identification]="identification" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS">
         </app-manage-point-of-ref>
     </div>  
-    <div *ngIf="selectApps===19">
+    <div *ngIf="selectApps===20">
         <app-manage-circuits [configServer]="configServer" [identification]="identification" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS">
         </app-manage-circuits>
     </div>  
-    <div *ngIf="selectApps===20">
+    <div *ngIf="selectApps===21">
         <app-sport-reports [configServer]="configServer" [identification]="identification" [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS">
         </app-sport-reports>
     </div>  
-    <div *ngIf="selectApps===21">
+    <div *ngIf="selectApps===22">
         <app-sport-analysis [configServer]="configServer" [identification]="identification" [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS">
         </app-sport-analysis>
     </div> 
-    <div *ngIf="selectApps===22">
+    <div *ngIf="selectApps===23">
         <app-sport-perf-raw-data-mgt [configServer]="configServer" [identification]="identification" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS">
         </app-sport-perf-raw-data-mgt>
     </div> 
-    <div *ngIf="selectApps===23">
+    <div *ngIf="selectApps===24">
         <app-fitness-stat  [identification]="identification"  [configServer]="configServer" 
         >
         </app-fitness-stat>
     </div> 
-    <div *ngIf="selectApps===24">
+    <div *ngIf="selectApps===25">
         <app-GetImages [identification]="identification" [LoginTable_User_Data]="LoginTable_User_Data" [configServer]="configServer"
         [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
         </app-GetImages>
     </div> 
 
-    <div *ngIf="selectApps===25">
+    <div *ngIf="selectApps===26">
         <app-Event-27AUG2022 [identification]="identification"  [configServer]="configServer" [LoginTable_User_Data]="LoginTable_User_Data" 
         [LoginTable_DecryptPSW]="LoginTable_DecryptPSW"
         > <!--  (returnDATA)="GetUpdatedTable($event)" -->

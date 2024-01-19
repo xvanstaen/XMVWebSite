@@ -25,6 +25,8 @@ export class SelectServerComponent {
   @Input() initConfigServer = new configServer;
   @Output() returnServer = new EventEmitter<any>();
 
+  @Input() selectOneServer :boolean = false;
+  @Output() returnOneServer = new EventEmitter<any>();
 
   tabServers: Array<string> = [
     'http://localhost:8080', 'https://test-server-359505.uc.r.appspot.com',
@@ -35,9 +37,14 @@ export class SelectServerComponent {
   saveSelectedServer:string="";
 
   ngOnInit(){
-    this.theForm.controls['googleServer'].setValue(this.initConfigServer.googleServer);
-    this.theForm.controls['mongoServer'].setValue(this.initConfigServer.mongoServer);
-    this.theForm.controls['fileSystemServer'].setValue(this.initConfigServer.fileSystemServer);
+    if (this.selectOneServer===false){
+      this.theForm.controls['googleServer'].setValue(this.initConfigServer.googleServer);
+      this.theForm.controls['mongoServer'].setValue(this.initConfigServer.mongoServer);
+      this.theForm.controls['fileSystemServer'].setValue(this.initConfigServer.fileSystemServer);
+    } else {
+      this.isSelectServer=true;
+    }
+    
   }
 
 
@@ -48,24 +55,30 @@ export class SelectServerComponent {
 
   selectServer(event: any) {
     this.isSelectServer=false;
-    if (this.saveSelectedServer==='google'){
-      //this.configServer.googleServer = event.target.textContent.trim();
-      this.theForm.controls['googleServer'].setValue(event.target.textContent.trim());
-    } else if (this.saveSelectedServer==='mongo'){
-      //this.configServer.mongoServer = event.target.textContent.trim();
-      this.theForm.controls['mongoServer'].setValue(event.target.textContent.trim());
-    } else if (this.saveSelectedServer==='fileSystem'){
-      //this.configServer.fileSystemServer = event.target.textContent.trim();
-      this.theForm.controls['fileSystemServer'].setValue(event.target.textContent.trim());
-    } 
-    this.submitValues();
+    if (this.selectOneServer===true){
+      this.returnOneServer.emit({'server':event.target.textContent.trim()});
+    } else {
+      if (this.saveSelectedServer==='google'){
+        //this.configServer.googleServer = event.target.textContent.trim();
+        this.theForm.controls['googleServer'].setValue(event.target.textContent.trim());
+      } else if (this.saveSelectedServer==='mongo'){
+        //this.configServer.mongoServer = event.target.textContent.trim();
+        this.theForm.controls['mongoServer'].setValue(event.target.textContent.trim());
+      } else if (this.saveSelectedServer==='fileSystem'){
+        //this.configServer.fileSystemServer = event.target.textContent.trim();
+        this.theForm.controls['fileSystemServer'].setValue(event.target.textContent.trim());
+      } 
+      this.submitValues();
+    }
   }
 
   submitValues(){
-    this.returnServer.emit({'google':this.theForm.controls['googleServer'].value,
-                            'mongo':this.theForm.controls['mongoServer'].value,
-                            'fileSystem':this.theForm.controls['fileSystemServer'].value,
-                          });
+
+      this.returnServer.emit({'google':this.theForm.controls['googleServer'].value,
+                              'mongo':this.theForm.controls['mongoServer'].value,
+                              'fileSystem':this.theForm.controls['fileSystemServer'].value,
+                            });
+
   }
 
 }
