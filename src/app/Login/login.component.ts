@@ -193,17 +193,22 @@ checkLogin(){
     // this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject )
     this.ManageGoogleService.checkLogin(this.configServer )
         .subscribe((data ) => {    
-
-          this.getUserAccessLevel();
-          this.identification=data;
-          this.routing_code=1;
-          this.identification.userServerId=this.credentialsFS.userServerId;
-          this.identification.credentialDate=this.credentialsFS.creationDate;
-          this.identification.IpAddress=this.configServer.IpAddress;
-          this.my_output2.emit(this.routing_code.toString());
+         
+            this.getUserAccessLevel();
+            this.identification=data;
+            this.routing_code=1;
+            this.identification.userServerId=this.credentialsFS.userServerId;
+            this.identification.credentialDate=this.credentialsFS.creationDate;
+            this.identification.IpAddress=this.configServer.IpAddress;
+            this.my_output2.emit(this.routing_code.toString());
       },
         err=> {
-          console.log('error to checkLogin - error status=' + err.status + ' '+ err.message );
+          if (err.error.status!==undefined && err.error.status==520){
+            this.error='invalid user-id/password';
+          } else {
+            this.error=err.msg;
+            console.log('error to checkLogin - error status=' + err.status + ' '+ err.message );
+          }
         })
   }
 

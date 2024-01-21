@@ -131,10 +131,13 @@ export class TestServerJSComponent {
     searchCriteria: new FormControl({ value: '', disabled: false }, { nonNullable: true }),
     idRecord: new FormControl({ value: '', disabled: false }, { nonNullable: true }),
     serverForAction: new FormControl({ value: '', disabled: false }, { nonNullable: true }),
+    userId: new FormControl({ value: '', disabled: false }, { nonNullable: true }),
+    iWait: new FormControl({ value: '', disabled: false }, { nonNullable: true }),
+
   });
 
   tabAction: Array<string> = ['cancel', 'list all buckets', 'list all objects', 'get file content', 'get list metadata for all objects', 'get metadata for one object', 'create & save metadata' , 'update metadata for one object',  'save object', 'save object with meta perso' , 'rename object', 
-  'copy object', 'move object', 'delete object', 'get cache console', 'reset cache console', 'get memory File System','reset memory File System','get cache file', 'reset cache file', 'reload cache file', 'get credentials', 'manage config','get server version'];
+  'copy object', 'move object', 'delete object', 'get cache console', 'reset cache console', 'get memory File System','reset memory File System','reset memory all FS','get cache file', 'reset cache file', 'reload cache file', 'get credentials', 'manage config','get server version'];
   
   tabConfig:Array<string>=['find cache config', 'reset cache config','find config by criteria', 'find all config', "update config by id", "upload config", "delete config by Id", "create config"]
   /*
@@ -264,8 +267,8 @@ export class TestServerJSComponent {
     //this.theForm.controls['nameServer'].setValue(this.tabServers[1]);
     this.theForm.controls['testProd'].setValue('test');
     this.theForm.controls['dataBase'].setValue('Google');
-    this.theForm.controls['srcBucket'].setValue('xav_fitness');
-    this.theForm.controls['srcObject'].setValue('Copie de HealthTracking');
+    this.theForm.controls['srcBucket'].setValue('');
+    this.theForm.controls['srcObject'].setValue('');
     this.theForm.controls['destBucket'].setValue('');
     this.theForm.controls['destObject'].setValue('');
     this.theForm.controls['fileContent'].setValue('');
@@ -523,7 +526,14 @@ storeTitle(event:any){
 
       } else if (event.target.textContent.trim() === 'reset memory File System') {
         this.isDisplayAction=false;
-        this.resetMemoryFS(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value);
+        this.saveActionResetFS='reset memory File System';
+        this.isUserIdForFS=true;
+        //this.resetMemoryFS(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value);
+      } else if (event.target.textContent.trim() === 'reset memory all FS') {
+        this.isDisplayAction=false;
+        this.saveActionResetFS='reset memory all FS';
+        this.isUserIdForFS=true;
+        //this.onResetFS();
       }  else if (event.target.textContent.trim() === 'reset cache file') {
         this.isDisplayAction=false;
         this.resetCacheFile();
@@ -591,6 +601,7 @@ storeTitle(event:any){
       }, 
       err => {
         this.error="Cache file could not be reset, error:" + err;
+        this.manageErrorMsg(err);
         this.EventHTTPReceived[16]=false;
       });
   }
@@ -610,6 +621,7 @@ storeTitle(event:any){
     }, 
     err => {
       this.error="Cache file could not be retrieved, error:" + err;
+      this.manageErrorMsg(err);
       this.EventHTTPReceived[16]=false;
     });
   }
@@ -635,6 +647,7 @@ storeTitle(event:any){
     }, 
     err => {
       this.error="Cache file has not been reloaded, error:" + err;
+      this.manageErrorMsg(err);
       this.EventHTTPReceived[16]=false;
     });
   }
@@ -1096,7 +1109,7 @@ listConfig(){
           this.EventStopWaitHTTP[0]=true;
           this.configServer.googleServer=saveGoogleServer;
           //console.log('Metaobject not retrieved ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
         });
   }
 
@@ -1119,7 +1132,7 @@ listConfig(){
           //console.log('Metaobject not retrieved ' + err.status);
           this.EventStopWaitHTTP[1]=true;
           this.configServer.googleServer=saveGoogleServer;
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[1] = true;
         });
   }
@@ -1160,7 +1173,7 @@ listConfig(){
       },
         err => {
           //console.log('Metaobject not retrieved ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[2] = true;
         });
   }
@@ -1188,7 +1201,7 @@ listConfig(){
         err => {
           this.configServer.googleServer=saveGoogleServer;
           //console.log('Error to copy ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[7] = true;
           this.EventStopWaitHTTP[7]=true;
         });
@@ -1218,7 +1231,7 @@ listConfig(){
         err => {
           this.configServer.googleServer=saveGoogleServer;
           //console.log('Error to copy ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[7] = true;
           this.EventStopWaitHTTP[7]=true;
         });
@@ -1249,7 +1262,7 @@ listConfig(){
           this.EventStopWaitHTTP[7]=true;
           this.configServer.googleServer=saveGoogleServer;
           //console.log('Error to copy ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[7] = true;
         });
   }
@@ -1278,7 +1291,7 @@ listConfig(){
           this.EventStopWaitHTTP[6]=true;
           this.configServer.googleServer=saveGoogleServer;
           //console.log('Error to move ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[6] = true;
         });
   }
@@ -1344,7 +1357,7 @@ listConfig(){
           this.EventStopWaitHTTP[5]=true;
           this.configServer.googleServer=saveGoogleServer;
           //console.log('Metadata not updated for unloadfileSystem');
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[5] = true;
         });
   }
@@ -1380,7 +1393,7 @@ listConfig(){
           this.EventStopWaitHTTP[3]=true;
           this.configServer.googleServer=saveGoogleServer;
           //console.log('Metaobject not retrieved ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[3] = true;
         });
   }
@@ -1442,7 +1455,7 @@ listConfig(){
           this.EventStopWaitHTTP[3]=true;
           this.configServer.googleServer=saveGoogleServer;
           //console.log('Metaobject not retrieved ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[4] = false;
         });
   }
@@ -1480,7 +1493,7 @@ listConfig(){
           this.EventStopWaitHTTP[8]=true;
           this.configServer.googleServer=saveGoogleServer;
           console.log('Upload of object and meaPerso failed ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[8] = true;
         });
   }
@@ -1541,13 +1554,24 @@ listConfig(){
           this.EventStopWaitHTTP[10]=true;
           this.configServer.googleServer=saveGoogleServer;
           this.EventHTTPReceived[10] = true;
-          this.error= err;
+          this.manageErrorMsg(err);
         })
   }
   /* =================== FILE SYSTEM & MEMORY FS  =============*/
 
+  manageErrorMsg(err:any){
+    if (err.message!==undefined){
+      this.error = 'Server may be down  '; // + + err.message;
+    } else if (err.err.msg!==undefined){
+      this.error = err.msg;
+    }
+
+  }
+
+
   getMemoryFS() {
     this.error="";
+    this.isUserIdForFS=false;  
     this.EventHTTPReceived[11] = false;
     this.EventStopWaitHTTP[11]=false;
     this.waitHTTP(this.TabLoop[11], this.maxLoop, 11);
@@ -1559,21 +1583,26 @@ listConfig(){
           this.EventStopWaitHTTP[11]=true;
           this.configServer.fileSystemServer=saveGoogleServer;
           if (data.status===undefined || data.status===200){
-            this.memoryFS.splice(0,this.memoryFS.length);
-            for (var i=0; i<data.data.length; i++){
-              this.memoryFS.push({fileName:"",record:[]});
-              this.memoryFS[i].fileName=data.data[i].fileName;
-              if (data.data[i].content.length===0){
-                this.error=this.error + " --- " + "File System " + this.memoryFS[i].fileName+ " memory is empty";
-              } else {
-                for (var j=0; j<data.data[i].content.length; j++){
-                  const theClass=new classFileSystem;
-                  this.memoryFS[i].record.push(theClass);
-                  this.memoryFS[i].record[this.memoryFS[i].record.length-1]=data.data[i].content[j];
-                  
+            if (data.data.length===0){
+              this.error='Memory file system is empty';``
+            } else {
+              this.memoryFS.splice(0,this.memoryFS.length);
+              for (var i=0; i<data.data.length; i++){
+                this.memoryFS.push({fileName:"",record:[]});
+                this.memoryFS[i].fileName=data.data[i].fileName;
+                if (data.data[i].content.length===0){
+                  this.error=this.error + " --- " + "File System " + this.memoryFS[i].fileName+ " memory is empty";
+                } else {
+                  for (var j=0; j<data.data[i].content.length; j++){
+                    const theClass=new classFileSystem;
+                    this.memoryFS[i].record.push(theClass);
+                    this.memoryFS[i].record[this.memoryFS[i].record.length-1]=data.data[i].content[j];
+                    
+                  }
                 }
               }
             }
+            
           } else { 
             this.error=data.msg;
           }
@@ -1583,19 +1612,43 @@ listConfig(){
           this.EventStopWaitHTTP[11]=true;
           this.configServer.fileSystemServer=saveGoogleServer;
           //console.log('Error to move ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
+          
           this.EventHTTPReceived[11] = true;
         });
   }
 
-  resetMemoryFS(srcBucket:string, srcObject:string) {
-    
+  isUserIdForFS:boolean=false;
+  saveActionResetFS:string="";
+  manageResetFS(){
+    this.tabLock.splice(0,this.tabLock.length);
+    for (var i = 0; i < 7; i++) {
+      const thePush = new classAccessFile;
+      this.tabLock.push(thePush);
+    }
+    this.error="";
+    this.isUserIdForFS=false;   
     this.EventHTTPReceived[12] = false;
     this.EventStopWaitHTTP[12]=false;
+    if (this.theForm.controls['iWait'].value ==="") {
+      this.theForm.controls['iWait'].setValue(0);
+    }
+
+    this.tabLock[this.theForm.controls['iWait'].value].objectName= this.theForm.controls['srcObject'].value + this.theForm.controls['userId'].value;
     this.waitHTTP(this.TabLoop[12], this.maxLoop, 12);
-    const saveGoogleServer=this.configServer.googleServer;
+    
+    
+    if (this.saveActionResetFS==='reset memory File System'){
+      this.resetMemoryFS();
+    } else if (this.saveActionResetFS==='reset memory all FS'){
+      this.onResetFS()
+    }
+  }
+
+  resetMemoryFS() {
+    const saveGoogleServer=this.configServer.fileSystemServer;
     this.configServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
-    this.ManageSecuredGoogleService.resetFS(this.configServer, srcBucket, srcObject,this.tabLock,0)
+    this.ManageSecuredGoogleService.resetFS(this.configServer, this.theForm.controls['srcBucket'].value,this.theForm.controls['srcObject'].value,this.tabLock,this.theForm.controls['iWait'].value)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[12]=true;
@@ -1607,30 +1660,27 @@ listConfig(){
           this.EventStopWaitHTTP[12]=true;
           this.configServer.fileSystemServer=saveGoogleServer;
           //console.log('Error to move ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[12] = true;
         });
   }
 
 
-  onResetFS(){
+  onResetFS(){ // this is to reset file system memory either all or only one FS
+    // THIS NEEDS TO BE CODED
     const iWait=this.theForm.controls['iWait'].value;
-    this.tabLock[iWait].object=this.theForm.controls['dataFile'].value;
-    this.tabLock[iWait].objectName=this.theForm.controls['fileSystem'].value;
-    this.tabLock[iWait].bucket=this.theForm.controls['bucket'].value;
-    this.tabLock[iWait].user=this.theForm.controls['userId'].value;
-    if (this.theForm.controls['action'].value==='resetAll'){
+    const saveGoogleServer=this.configServer.fileSystemServer;
+    this.configServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
+    if (this.theForm.controls['action'].value==='reset memory all FS'){
       this.tabLock[iWait].action='resetAll';
     } else {
       this.tabLock[iWait].action='resetFS';
     }
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageSecuredGoogleService.resetFS(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString() )
+    this.ManageSecuredGoogleService.resetFS(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, this.theForm.controls['iWait'].value)
     .subscribe(
       (data ) => {   
-          this.configServer.googleServer=saveGoogleServer;
-        if (data.status===undefined || data.status===200){
+          this.configServer.fileSystemServer=saveGoogleServer;
+        if (data.status===undefined ){
           console.log('resetFS reponse is : ' + JSON.stringify(data));
           this.error="FS has been reset";
         } else {
@@ -1638,8 +1688,9 @@ listConfig(){
         }
       },
       err => {
-          this.configServer.googleServer=saveGoogleServer;
+          this.configServer.fileSystemServer=saveGoogleServer;
         console.log('error from resetFS : ' + JSON.stringify(err));
+        this.manageErrorMsg(err);
       }
       )
       }
@@ -1668,6 +1719,7 @@ listConfig(){
           this.configServer.googleServer=saveGoogleServer;
           console.log(' error request credentials = '+ JSON.stringify(err));
           this.EventHTTPReceived[17]=false;
+          this.manageErrorMsg(err);
         });
   }
 
@@ -1691,6 +1743,7 @@ listConfig(){
         },
         err => {
           this.configServer.googleServer=saveGoogleServer;
+          this.manageErrorMsg(err);
           console.log('return from requestToken() with error = '+ JSON.stringify(err));
           });
   }
@@ -1752,7 +1805,7 @@ listConfig(){
           this.EventStopWaitHTTP[8]=true;
         this.configServer.googleServer=saveGoogleServer;
           console.log('Metaobject not retrieved ' + err.status);
-          this.error = JSON.stringify(err);
+          this.manageErrorMsg(err);
           this.EventHTTPReceived[8] = true;
         });
   }
@@ -1774,6 +1827,7 @@ listConfig(){
         },
         err => {
           console.log(JSON.stringify(err));
+          this.manageErrorMsg(err);
         })
   }
 

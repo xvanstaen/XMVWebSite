@@ -76,7 +76,13 @@
                     <textarea type="text" class="theInputMid" style='margin-left:15px; width:90%; height:150px; text-align:left; vertical-align: top;' formControlName="fileContent"></textarea>
                     <br><br>
                 </div>
-
+                <div *ngIf="isUserIdForFS===true">
+                    <span class="theLine">
+                        <label class="label" style="width:180px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
+                        <label class="label" style="width:180px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
+                        <button class="button" (click)="manageResetFS()">Submit</button>
+                    </span>
+                </div>
             </form>
         </div>
     </div>
@@ -125,7 +131,19 @@
         
         </div>
     </div>   
-
+    <div style="display:block">
+        <div class="mainBlock" style="border:solid 2px green; margin-top:5px;">
+            <form [formGroup]="theForm"  >
+                <div *ngIf="isUserIdForFS===true">
+                    <span class="theLine">
+                        <label class="label" style="width:180px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
+                        <label class="label" style="width:180px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
+                        <button class="button" (click)="manageResetFS()">Submit</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
     <div style="display:block">
         <div class="mainBlock" style="border:solid 2px green; margin-top:5px;">
             <span *ngIf="error!==''" style=" min-height:25px; font-size:15px; color:white; background-color: blue; width:100%; display:inline-block; word-break:break-all;padding-left:10px; padding-top:5px; padding-bottom:5px; ">{{error}}</span>
