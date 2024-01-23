@@ -63,7 +63,6 @@ export class TestServerJSComponent {
   newConfigServer = new configServer;
 
   retrievedConfigServer= new configServer;
-  updatedConfigServer= new configServer;
 
   HTTP_Address: string = 'https://storage.googleapis.com/upload/storage/v1/b/config-xmvit/o?uploadType=media&name=unloadfileSystem&metadata={cache-control:no-cache,no-store,max-age=0}';
   HTTP_AddressPOST: string = '';
@@ -137,21 +136,11 @@ export class TestServerJSComponent {
   });
 
   tabAction: Array<string> = ['cancel', 'list all buckets', 'list all objects', 'get file content', 'get list metadata for all objects', 'get metadata for one object', 'create & save metadata' , 'update metadata for one object',  'save object', 'save object with meta perso' , 'rename object', 
-  'copy object', 'move object', 'delete object', 'get cache console', 'reset cache console', 'get memory File System','reset memory File System','reset memory all FS','get cache file', 'reset cache file', 'reload cache file', 'get credentials', 'manage config','get server version'];
+  'copy object', 'move object', 'delete object', 'get cache console', 'get memory File System','get cache file', 'get credentials', 'manage config','get server version','reset memory File System','reset memory all FS', 'reset cache console','reset cache file', 'reload cache file'];
   
-  tabConfig:Array<string>=['find cache config', 'reset cache config','find config by criteria', 'find all config', "update config by id", "upload config", "delete config by Id", "create config"]
-  /*
-  router.get("/config/:db/:testProd/:collection", config.findConfig);
-  router.get("/configByString/:db/:testProd/:collection/:searchField", config.findConfig); // contains the searchString query
-  router.get("/resetConfig/:db/:testProd/:collection", config.resetConfig);
-  router.get("/allConfig/:db/:testProd/:collection", config.getAllConfig);
-  router.put("/updateConfig/:db/:testProd/:collection/:id", config.updateConfig);
-  router.put("/uploadConfig/:db/:testProd/:collection", config.uploadConfig);
-  router.get("/delConfigById/:db/:testProd/:collection/:id", config.delConfigById);
-  */
+  tabConfig:Array<string>=['find cache config', 'reset cache config','find config by criteria', 'find all config', "update config by id", "upload config", "delete config by Id", "create config"];
 
   tabActionMongo: Array<string> = ['cancel', 'list config', 'update config', 'upload config', 'delete config'];
-
 
   tabServers: Array<string> = [
     'http://localhost:8080', 'https://test-server-359505.uc.r.appspot.com','https://xmv-it-consulting.uc.r.appspot.com',  'https://serverfs.ue.r.appspot.com'
@@ -226,18 +215,8 @@ export class TestServerJSComponent {
         "Accept": this.accept,
       });
     }
-    //this.newConfigServer=this.configServer;
     this.newConfigServer=fillConfig(this.configServer);
-
-    /*
-    this.newConfigServer.googleServer = this.theForm.controls['googleServer'].value;
-    this.newConfigServer.mongoServer = this.theForm.controls['mongoServer'].value;
-    this.newConfigServer.fileSystemServer = this.theForm.controls['fileSystemServer'].value;
-    this.newConfigServer.test_prod=this.theForm.controls['testProd'].value;
-    */
     this.isInitDone=true;
-
-  
   }
 
   searchServer(){
@@ -248,9 +227,6 @@ export class TestServerJSComponent {
     this.selectOneServer=false;
     this.theForm.controls['serverForAction'].setValue(event.server);
   }
-
-
-
 
   inputMetaPerso(event: any) {
     if (event.target.id.substring(0, 2) === "K-") {
@@ -264,7 +240,6 @@ export class TestServerJSComponent {
 
     this.titleConfig = "";
     this.theForm.controls['server'].setValue('server');
-    //this.theForm.controls['nameServer'].setValue(this.tabServers[1]);
     this.theForm.controls['testProd'].setValue('test');
     this.theForm.controls['dataBase'].setValue('Google');
     this.theForm.controls['srcBucket'].setValue('');
@@ -365,22 +340,22 @@ export class TestServerJSComponent {
   getServerVersion(i:number){
     this.EventHTTPReceived[15] = false;
     this.EventStopWaitHTTP[15]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getServerVersion(this.configServer)
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageGoogleService.getServerVersion(this.newConfigServer)
         .subscribe(
           (data) => {
           this.isGetServerFunction=true;
           this.tabVersionServer[i]=data.version;
           this.serverVersion=data.version;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.EventHTTPReceived[15] = true;
           this.EventStopWaitHTTP[15]=true;
         }, 
         err =>{
           this.EventStopWaitHTTP[15]=true;
           this.serverVersion="";
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.error = "status:" +err.err.status + " - " + err.err.message;
           console.log('error');
         })
@@ -552,7 +527,7 @@ storeTitle(event:any){
 
       } else if (event.target.textContent.trim() === 'get credentials') {
         this.isDisplayAction=false;
-        this.getDefaultCredentials();
+        //this.getDefaultCredentials();
         this.getCredentials();
 
       }  else if (event.target.textContent.trim() === 'get server version') {
@@ -586,7 +561,8 @@ storeTitle(event:any){
 
   resetCacheFile(){
     this.resetObjectCacheFile();
-    this.ManageSecuredGoogleService.resetCacheFile(this.configServer, "All" )
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.resetCacheFile(this.newConfigServer, "All" )
       .subscribe((data ) => {  
         if (data.status===undefined || data.status===200){
         this.EventHTTPReceived[16]=true;
@@ -608,7 +584,8 @@ storeTitle(event:any){
 
   getCacheFile(){
     this.resetObjectCacheFile();
-    this.ManageSecuredGoogleService.getCacheFile(this.configServer )
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.getCacheFile(this.newConfigServer )
     .subscribe((data ) => {  
       if (data.status===undefined || data.status===200){
       this.EventHTTPReceived[16]=true;
@@ -634,7 +611,8 @@ storeTitle(event:any){
 
   reloadCacheFile(){
     this.resetObjectCacheFile();
-    this.ManageSecuredGoogleService.reloadCacheFile(this.configServer )
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.reloadCacheFile(this.newConfigServer )
     .subscribe((data ) => {  
       if (data.status===undefined || data.status===200){
       this.EventHTTPReceived[16]=true;
@@ -723,7 +701,8 @@ this.theForm.controls['idRecord'].setValue("");
 
 dataConfigServer = new configServer;
 findCacheConfig(){
-  this.ManageMongoDBService.findConfig(this.configServer,'configServer' )
+  this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+  this.ManageMongoDBService.findConfig(this.newConfigServer,'configServer' )
   .subscribe((data ) => { 
     if (data.status ===200){
       this.error="Cache config has been successfully reset" ; 
@@ -741,7 +720,8 @@ findCacheConfig(){
 }
 
 findAllConfig(){
-  this.ManageMongoDBService.findAllConfig(this.configServer,'configServer' )
+  this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+  this.ManageMongoDBService.findAllConfig(this.newConfigServer,'configServer' )
   .subscribe((data ) => { 
     this.dataConfigServer = new configServer;
     this.dataConfigServer = this.responseConfig(data, this.dataConfigServer);
@@ -812,7 +792,8 @@ confActionCancel(event:any){
 
 findConfigByString(){
   if (this.theForm.controls['searchField'].value!=="" && this.theForm.controls['searchCriteria'].value!==""){
-    this.ManageMongoDBService.findConfigByString(this.configServer, 'configServer', this.theForm.controls['searchField'].value, this.theForm.controls['searchCriteria'].value )
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageMongoDBService.findConfigByString(this.newConfigServer, 'configServer', this.theForm.controls['searchField'].value, this.theForm.controls['searchCriteria'].value )
     .subscribe((data ) => { 
       this.dataConfigServer = new configServer;
       this.dataConfigServer= this.responseConfig(data, this.dataConfigServer);
@@ -834,7 +815,8 @@ updateConfigById(){
   if (i<this.tabOfId.length){
     this.tabOfConfig[i]=fillConfig(this.dataConfigServer);
   }
-  this.ManageMongoDBService.updateConfig(this.configServer,  'configServer', this.theForm.controls['idRecord'].value, this.dataConfigServer)
+  this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+  this.ManageMongoDBService.updateConfig(this.newConfigServer,  'configServer', this.theForm.controls['idRecord'].value, this.dataConfigServer)
   .subscribe((data ) => { 
     if (data.status===200){
       this.errorConfig="Config has been successfully updated" ; 
@@ -849,7 +831,8 @@ updateConfigById(){
 }
 
 deleteConfigById(){
-  this.ManageMongoDBService.delConfigById(this.configServer,  'configServer', this.theForm.controls['idRecord'].value)
+  this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+  this.ManageMongoDBService.delConfigById(this.newConfigServer,  'configServer', this.theForm.controls['idRecord'].value)
   .subscribe((data ) => { 
     if (data.status===200){
       this.errorConfig="Config has been successfully deleted" ; 
@@ -865,7 +848,8 @@ deleteConfigById(){
 }
 
 uploadConfig(){
-  this.ManageMongoDBService.uploadConfig(this.configServer, 'configServer', this.dataConfigServer)
+  this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+  this.ManageMongoDBService.uploadConfig(this.newConfigServer, 'configServer', this.dataConfigServer)
   .subscribe((data ) => { 
     if (data.status===200){
       this.errorConfig="Config has been successfully uploaded" ; 
@@ -881,7 +865,8 @@ uploadConfig(){
 }
 
 resetCacheConfig(){
-  this.ManageMongoDBService.resetCacheConfig(this.configServer,'configServer')
+  this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+  this.ManageMongoDBService.resetCacheConfig(this.newConfigServer,'configServer')
   .subscribe((data ) => { 
     this.errorConfig=data.msg; 
     console.log(data);
@@ -911,13 +896,14 @@ listConfig(){
         
     // this is for allFunctions only so that test BackendServer is used
     this.EventHTTPReceived[13] = false;
-    this.configServer=new configServer;
-    this.configServer.googleServer=this.theForm.controls['googleServer'].value;
-    this.configServer.mongoServer=this.theForm.controls['mongoServer'].value;
-    this.configServer.fileSystemServer=this.theForm.controls['fileSystemServer'].value;
-    this.configServer.test_prod=this.theForm.controls['testProd'].value; // retrieve the corresponding record test or production
-    this.configServer.GoogleProjectId='ConfigDB';
-    this.ManageMongoDBService.findAllConfig(this.configServer, 'configServer')
+    //this.configServer=new configServer;
+    //this.configServer.googleServer=this.theForm.controls['googleServer'].value;
+    //this.configServer.mongoServer=this.theForm.controls['mongoServer'].value;
+    //this.configServer.fileSystemServer=this.theForm.controls['fileSystemServer'].value;
+    //this.configServer.test_prod=this.theForm.controls['testProd'].value; // retrieve the corresponding record test or production
+    //this.configServer.GoogleProjectId='ConfigDB';
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageMongoDBService.findAllConfig(this.newConfigServer, 'configServer')
   // this.ManageMongoDB.findConfigbyURL(this.configServer, 'retrievedConfigServer', '')
         .subscribe(
           (data) => {
@@ -1045,43 +1031,6 @@ listConfig(){
     this.configServerChanges++;
   }
 
-  fillConfig(inFile:any,outFile:any){
-    outFile.title = inFile.title;
-    outFile.SourceJson_Google_Mongo = inFile.SourceJson_Google_Mongo;
-    outFile.test_prod = inFile.test_prod;
-    outFile.GoogleProjectId = inFile.GoogleProjectId;
-    outFile.googleServer = inFile.googleServer;
-    outFile.mongoServer = inFile.mongoServer;
-    outFile.fileSystemServer = inFile.mongoServer;
-    outFile.consoleBucket = inFile.consoleBucket;
-    outFile.IpAddress = inFile.IpAddress;
-    if (inFile.credentialDate!==undefined){
-      outFile.credentialDate = inFile.credentialDate;
-    } else {outFile.credentialDate = ""};
-    outFile.bucketFileSystem = inFile.bucketFileSystem;
-    outFile.objectFileSystem = inFile.objectFileSystem;
-    outFile.timeoutFileSystem.hh= inFile.timeoutFileSystem.hh;
-    outFile.timeoutFileSystem.mn = inFile.timeoutFileSystem.mn;
-    outFile.timeoutFileSystem.bufferTO.hh= inFile.timeoutFileSystem.bufferTO.hh;
-    outFile.timeoutFileSystem.bufferTO.mn = inFile.timeoutFileSystem.bufferTO.mn;
-    outFile.timeoutFileSystem.bufferInput.hh = inFile.timeoutFileSystem.bufferInput.hh;
-    outFile.timeoutFileSystem.bufferInput.mn = inFile.timeoutFileSystem.bufferInput.mn;
-    outFile.PointOfRef.bucket = inFile.PointOfRef.bucket;
-    outFile.PointOfRef.file = inFile.PointOfRef.file;
-    for (var i=0; i<inFile.filesToCache.length; i++){
-      const theClass=new classFilesToCache
-      outFile.filesToCache.push(theClass);
-      outFile.filesToCache[i].bucket = inFile.filesToCache[i].bucket;
-      outFile.filesToCache[i].object = inFile.filesToCache[i].object;
-    }
-    
-    if (inFile.UserSpecific!==undefined){
-      outFile.UserSpecific=inFile.UserSpecific;
-    } else {
-      const theClass=new UserParam;
-      this.dataConfigServer.UserSpecific.push(theClass);
-    }
-  }
 
   /* =================== MANAGE OBJECTS  =============*/
 
@@ -1089,13 +1038,13 @@ listConfig(){
     this.EventHTTPReceived[0] = false;
     this.EventStopWaitHTTP[0]=false;
     this.waitHTTP(this.TabLoop[0], this.maxLoop, 0);
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getListBuckets(this.configServer)
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageGoogleService.getListBuckets(this.newConfigServer)
       .subscribe((data) => {
         this.EventStopWaitHTTP[0]=true;
         //console.log(JSON.stringify(data));
-        this.configServer.googleServer=saveGoogleServer;
+        //this.configServer.googleServer=saveGoogleServer;
         if (data.status===undefined || data.status===200){
           this.returnFileContent = JSON.stringify(data);
         this.TabBuckets = data;
@@ -1107,7 +1056,7 @@ listConfig(){
       },
         err => {
           this.EventStopWaitHTTP[0]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Metaobject not retrieved ' + err.status);
           this.manageErrorMsg(err);
         });
@@ -1117,13 +1066,13 @@ listConfig(){
     this.EventHTTPReceived[1] = false;
     this.waitHTTP(this.TabLoop[1], this.maxLoop, 1);
     this.EventStopWaitHTTP[1]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getListObjects(this.configServer, bucket)
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageGoogleService.getListObjects(this.newConfigServer, bucket)
       .subscribe((data) => {
         //console.log(JSON.stringify(data));
         this.myListOfObjects.items = data;
-        this.configServer.googleServer=saveGoogleServer;
+        //this.configServer.googleServer=saveGoogleServer;
         this.returnFileContent = JSON.stringify(data);
         this.EventHTTPReceived[1] = true;
         this.EventStopWaitHTTP[1]=true;
@@ -1131,7 +1080,7 @@ listConfig(){
         err => {
           //console.log('Metaobject not retrieved ' + err.status);
           this.EventStopWaitHTTP[1]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.manageErrorMsg(err);
           this.EventHTTPReceived[1] = true;
         });
@@ -1141,18 +1090,18 @@ listConfig(){
     this.EventHTTPReceived[2] = false;
     this.waitHTTP(this.TabLoop[2], this.maxLoop, 2);
     this.EventStopWaitHTTP[2]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getContentObject(this.configServer, bucket, object)
+   // const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageGoogleService.getContentObject(this.newConfigServer, bucket, object)
       .subscribe((data) => {
         //console.log(JSON.stringify(data)); 
         this.returnFileContent = JSON.stringify(data);
-        this.configServer.googleServer=saveGoogleServer;
+        //this.configServer.googleServer=saveGoogleServer;
         this.EventHTTPReceived[2] = true;
         this.EventStopWaitHTTP[2]=true;
       },
         err => {
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Metaobject not retrieved ' + err.status);
           this.error = "cannot retrieve file " + object + "   error==> " + JSON.stringify(err);
           this.EventHTTPReceived[2] = true;
@@ -1181,14 +1130,14 @@ listConfig(){
   deleteObject(srcbucket: any, srcobject: any) {
     this.EventHTTPReceived[7] = false;
     this.EventStopWaitHTTP[7]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.waitHTTP(this.TabLoop[7], this.maxLoop, 7);
-    this.ManageGoogleService.deleteObject(this.configServer, srcbucket, srcobject)
+    this.ManageGoogleService.deleteObject(this.newConfigServer, srcbucket, srcobject)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[7]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           var theResp:any;
           theResp=data;
           if (theResp.status===undefined || theResp.status===200){
@@ -1199,7 +1148,7 @@ listConfig(){
           }
         },
         err => {
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Error to copy ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[7] = true;
@@ -1211,13 +1160,13 @@ listConfig(){
   renameObject(srcbucket: any, srcobject: any, destobject: any) {
     this.EventHTTPReceived[7] = false;
     this.EventStopWaitHTTP[7]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.waitHTTP(this.TabLoop[7], this.maxLoop, 7);
-    this.ManageGoogleService.renameObject(this.configServer, srcbucket, srcobject, destobject)
+    this.ManageGoogleService.renameObject(this.newConfigServer, srcbucket, srcobject, destobject)
       .subscribe(
         data => {
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           var theResp:any;
           theResp=data;
           if (theResp.status===undefined || theResp.status===200){
@@ -1229,7 +1178,7 @@ listConfig(){
           } 
         },
         err => {
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Error to copy ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[7] = true;
@@ -1240,14 +1189,14 @@ listConfig(){
   moveObject(srcbucket: any, srcobject: any, destbucket: any, destobject: any) {
     this.EventHTTPReceived[7] = false;
     this.EventStopWaitHTTP[7]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.waitHTTP(this.TabLoop[7], this.maxLoop, 7);
     
-    this.ManageGoogleService.moveObject(this.configServer,srcbucket, destbucket, srcobject, destobject)
+    this.ManageGoogleService.moveObject(this.newConfigServer,srcbucket, destbucket, srcobject, destobject)
       .subscribe(
         (data) => {
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.EventStopWaitHTTP[7]=true;
           var theResp:any;
           theResp=data;
@@ -1260,7 +1209,7 @@ listConfig(){
         },
         err => {
           this.EventStopWaitHTTP[7]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Error to copy ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[7] = true;
@@ -1270,14 +1219,14 @@ listConfig(){
   copyObject(srcbucket: any, srcobject: any, destbucket: any, destobject: any) {
     this.EventHTTPReceived[6] = false;
     this.EventStopWaitHTTP[6]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.waitHTTP(this.TabLoop[6], this.maxLoop, 6);
-    this.ManageGoogleService.copyObject(this.configServer, srcbucket, destbucket, srcobject, destobject)
+    this.ManageGoogleService.copyObject(this.newConfigServer, srcbucket, destbucket, srcobject, destobject)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[6]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           var theResp:any;
           theResp=data;
           if (theResp.status===undefined || theResp.status===200){
@@ -1289,7 +1238,7 @@ listConfig(){
         },
         err => {
           this.EventStopWaitHTTP[6]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Error to move ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[6] = true;
@@ -1332,15 +1281,15 @@ listConfig(){
     this.metaDataMsg="";
     this.EventHTTPReceived[5] = false;
     this.EventStopWaitHTTP[5]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.waitHTTP(this.TabLoop[5], this.maxLoop, 5);
     this.strMetaDataPerso = "";
-    this.ManageGoogleService.updateMetaData(this.configServer, bucket, object, this.theForm.controls['metaControl'].value, this.theForm.controls['metaType'].value, this.tabMetaPerso)
+    this.ManageGoogleService.updateMetaData(this.newConfigServer, bucket, object, this.theForm.controls['metaControl'].value, this.theForm.controls['metaType'].value, this.tabMetaPerso)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[5]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           if (data.type === 4 && data.status === 200) {
             this.returnFileContent = JSON.stringify(data);
             this.metaDataMsg=data.body.message;
@@ -1355,7 +1304,7 @@ listConfig(){
         },
         err => {
           this.EventStopWaitHTTP[5]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Metadata not updated for unloadfileSystem');
           this.manageErrorMsg(err);
           this.EventHTTPReceived[5] = true;
@@ -1367,12 +1316,12 @@ listConfig(){
     this.EventHTTPReceived[3] = false;
     this.EventStopWaitHTTP[3]=false;
     this.waitHTTP(this.TabLoop[3], this.maxLoop, 3);
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getListMetaObjects(this.configServer, bucket)
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageGoogleService.getListMetaObjects(this.newConfigServer, bucket)
       .subscribe((data) => {
         this.EventStopWaitHTTP[3]=true;
-        this.configServer.googleServer=saveGoogleServer;
+        //this.configServer.googleServer=saveGoogleServer;
         //console.log(JSON.stringify(data));
         this.myListOfObjects.items.splice(0, this.myListOfObjects.items.length);
         this.tabListMetaPerso.splice(0,this.tabListMetaPerso.length);
@@ -1391,7 +1340,7 @@ listConfig(){
       },
         err => {
           this.EventStopWaitHTTP[3]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Metaobject not retrieved ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[3] = true;
@@ -1409,15 +1358,15 @@ listConfig(){
   getMetaData(bucket: any, object: any) {
     this.EventHTTPReceived[4] = false;
     this.EventStopWaitHTTP[4]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.waitHTTP(this.TabLoop[4], this.maxLoop, 4);
     this.strMetaDataPerso = "";
-    this.ManageGoogleService.getMetaObject(this.configServer, bucket, object)
+    this.ManageGoogleService.getMetaObject(this.newConfigServer, bucket, object)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[4]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           var k=0;
           this.returnFileContent = JSON.stringify(data);
           this.theForm.controls['metaControl'].setValue(data.cacheControl);
@@ -1453,7 +1402,7 @@ listConfig(){
         },
         err => {
           this.EventStopWaitHTTP[3]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           //console.log('Metaobject not retrieved ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[4] = false;
@@ -1472,12 +1421,12 @@ listConfig(){
     var file = new File([JSON.stringify(myObject)], srcobject, { type: 'application/json' });
     this.EventHTTPReceived[8] = false;
     this.EventStopWaitHTTP[8]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.waitHTTP(this.TabLoop[8], this.maxLoop, 8);
-    this.ManageGoogleService.uploadObjectMetaPerso(this.configServer, srcbucket, file, srcobject, this.theForm.controls['metaControl'].value, this.theForm.controls['metaType'].value, this.tabMetaPerso)
+    this.ManageGoogleService.uploadObjectMetaPerso(this.newConfigServer, srcbucket, file, srcobject, this.theForm.controls['metaControl'].value, this.theForm.controls['metaType'].value, this.tabMetaPerso)
       .subscribe(data => {
-        this.configServer.googleServer=saveGoogleServer;
+        //this.configServer.googleServer=saveGoogleServer;
         this.EventStopWaitHTTP[8]=true;
         if (data.type === 4 && data.status === 200) {
           console.log(JSON.stringify(data));
@@ -1491,7 +1440,7 @@ listConfig(){
       },
         err => {
           this.EventStopWaitHTTP[8]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           console.log('Upload of object and meaPerso failed ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[8] = true;
@@ -1503,22 +1452,40 @@ listConfig(){
   getCacheConsole() {
     this.EventHTTPReceived[10] = false;
     this.waitHTTP(this.TabLoop[10], this.maxLoop, 10);
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageSecuredGoogleService.getCacheConsole(this.configServer)
+    this.memoryCacheConsole.splice(0,this.memoryCacheConsole.length);
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.getCacheConsole(this.newConfigServer)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[10]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           if (Array.isArray(data.msg)=== true){
-            this. memoryCacheConsole.splice(0,this. memoryCacheConsole.length);
+           
             for (var i=0; i<data.msg.length; i++){
-              const theClass={theDate:'',msg:"",content:""};
-              this. memoryCacheConsole.push(theClass);
-              this. memoryCacheConsole[i].theDate=data.msg[i].theDate;
-              this. memoryCacheConsole[i].msg=data.msg[i].msg;
+              const theClass={theDate:'',msg:"",content:"",credentials:"",tabLock:"",otherUser:""};
+              this.memoryCacheConsole.push(theClass);
+              this.memoryCacheConsole[i].theDate=data.msg[i].theDate;
+              this.memoryCacheConsole[i].msg=data.msg[i].msg;
               //if (typeof data.msg[i].content === 'object'){
-              this. memoryCacheConsole[i].content=JSON.stringify(data.msg[i].content);
+              if (data.msg[i].content!==undefined){
+                if (data.msg[i].content.credentials!==undefined){
+                  this.memoryCacheConsole[i].credentials=data.msg[i].content.credentials;
+  
+                } else if (data.msg[i].content.tabLock!==undefined){
+                  this.memoryCacheConsole[i].tabLock=data.msg[i].content.tabLock;
+  
+                } else {
+                  if (data.msg[i].updatedAt!==undefined){
+                    this.memoryCacheConsole[i].otherUser=data.msg[i].content;
+                  } else {
+                    this.memoryCacheConsole[i].content=JSON.stringify(data.msg[i].content);
+                  }
+                  
+                }
+              }
+              
+              
               //}
             }
           } else {
@@ -1530,7 +1497,7 @@ listConfig(){
         err => {
           //console.log('Error to move ' + err.status);
           this.EventStopWaitHTTP[10]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.error = JSON.stringify(err);
           this.EventHTTPReceived[10] = true;
         });
@@ -1540,19 +1507,19 @@ listConfig(){
     this.EventHTTPReceived[10] = false;
     this.EventStopWaitHTTP[10]=false;
     this.waitHTTP(this.TabLoop[10], this.maxLoop, 10);
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageSecuredGoogleService.resetCacheConsole(this.configServer)
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.resetCacheConsole(this.newConfigServer)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[10]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.EventHTTPReceived[10] = true;
           this.error=data.msg;
         },
         err => {
           this.EventStopWaitHTTP[10]=true;
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.EventHTTPReceived[10] = true;
           this.manageErrorMsg(err);
         })
@@ -1575,13 +1542,13 @@ listConfig(){
     this.EventHTTPReceived[11] = false;
     this.EventStopWaitHTTP[11]=false;
     this.waitHTTP(this.TabLoop[11], this.maxLoop, 11);
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
-    this.ManageSecuredGoogleService.getMemoryFS(this.configServer)
+   // const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.getMemoryFS(this.newConfigServer)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[11]=true;
-          this.configServer.fileSystemServer=saveGoogleServer;
+          //this.configServer.fileSystemServer=saveGoogleServer;
           if (data.status===undefined || data.status===200){
             if (data.data.length===0){
               this.error='Memory file system is empty';``
@@ -1610,7 +1577,7 @@ listConfig(){
         },
         err => {
           this.EventStopWaitHTTP[11]=true;
-          this.configServer.fileSystemServer=saveGoogleServer;
+          //this.configServer.fileSystemServer=saveGoogleServer;
           //console.log('Error to move ' + err.status);
           this.manageErrorMsg(err);
           
@@ -1634,7 +1601,7 @@ listConfig(){
       this.theForm.controls['iWait'].setValue(0);
     }
 
-    this.tabLock[this.theForm.controls['iWait'].value].objectName= this.theForm.controls['srcObject'].value + this.theForm.controls['userId'].value;
+    this.tabLock[this.theForm.controls['iWait'].value].objectName= this.theForm.controls['srcObject'].value ;//+ this.theForm.controls['userId'].value;
     this.waitHTTP(this.TabLoop[12], this.maxLoop, 12);
     
     
@@ -1646,19 +1613,19 @@ listConfig(){
   }
 
   resetMemoryFS() {
-    const saveGoogleServer=this.configServer.fileSystemServer;
-    this.configServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
-    this.ManageSecuredGoogleService.resetFS(this.configServer, this.theForm.controls['srcBucket'].value,this.theForm.controls['srcObject'].value,this.tabLock,this.theForm.controls['iWait'].value)
+   // const saveGoogleServer=this.configServer.fileSystemServer;
+    this.newConfigServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.resetFS(this.newConfigServer, this.theForm.controls['srcBucket'].value,this.theForm.controls['srcObject'].value,this.tabLock,this.theForm.controls['iWait'].value)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[12]=true;
-          this.configServer.fileSystemServer=saveGoogleServer;
+          //this.configServer.fileSystemServer=saveGoogleServer;
             this.error=data.msg;
             this.EventHTTPReceived[12] = true;
         },
         err => {
           this.EventStopWaitHTTP[12]=true;
-          this.configServer.fileSystemServer=saveGoogleServer;
+          //this.configServer.fileSystemServer=saveGoogleServer;
           //console.log('Error to move ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[12] = true;
@@ -1669,17 +1636,17 @@ listConfig(){
   onResetFS(){ // this is to reset file system memory either all or only one FS
     // THIS NEEDS TO BE CODED
     const iWait=this.theForm.controls['iWait'].value;
-    const saveGoogleServer=this.configServer.fileSystemServer;
-    this.configServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.fileSystemServer;
+    this.newConfigServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
     if (this.theForm.controls['action'].value==='reset memory all FS'){
       this.tabLock[iWait].action='resetAll';
     } else {
       this.tabLock[iWait].action='resetFS';
     }
-    this.ManageSecuredGoogleService.resetFS(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, this.theForm.controls['iWait'].value)
+    this.ManageSecuredGoogleService.resetFS(this.newConfigServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, this.theForm.controls['iWait'].value)
     .subscribe(
       (data ) => {   
-          this.configServer.fileSystemServer=saveGoogleServer;
+        //this.configServer.fileSystemServer=saveGoogleServer;
         if (data.status===undefined ){
           console.log('resetFS reponse is : ' + JSON.stringify(data));
           this.error="FS has been reset";
@@ -1688,7 +1655,7 @@ listConfig(){
         }
       },
       err => {
-          this.configServer.fileSystemServer=saveGoogleServer;
+        //this.configServer.fileSystemServer=saveGoogleServer;
         console.log('error from resetFS : ' + JSON.stringify(err));
         this.manageErrorMsg(err);
       }
@@ -1700,12 +1667,12 @@ listConfig(){
   getDefaultCredentials(){
     this.stringCredentials="";
 
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getDefaultCredentials(this.configServer)
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageGoogleService.getDefaultCredentials(this.newConfigServer)
           .subscribe(
         (data ) => {
-          this.configServer.googleServer=saveGoogleServer;
+            //this.configServer.googleServer=saveGoogleServer;
             this.stringCredentials=JSON.stringify(data);
             this.credentials.access_token=data.credentials.access_token;
             this.credentials.id_token=data.credentials.id_token
@@ -1716,7 +1683,7 @@ listConfig(){
             this.EventHTTPReceived[17]=true;
         },
         err => {
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           console.log(' error request credentials = '+ JSON.stringify(err));
           this.EventHTTPReceived[17]=false;
           this.manageErrorMsg(err);
@@ -1724,25 +1691,27 @@ listConfig(){
   }
 
   getCredentials(){
-    console.log('getDefaultCredentials()');
+    console.log('getCredentials()');
 
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getCredentials(this.configServer )
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.EventHTTPReceived[17]=false;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageGoogleService.getCredentials(this.newConfigServer )
     .subscribe(
         (data ) => {
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.credentials.access_token=data.credentials.access_token;
           this.credentials.id_token=data.credentials.id_token
           this.credentials.refresh_token=data.credentials.refresh_token
           this.credentials.token_type=data.credentials.token_type;
           this.credentials.userServerId=data.credentials.userServerId;
-          this.credentials.creationDate=data.credentials.creationDate;
+          this.credentials.creationDate=data.credentials.creationDate.substring(0,4)+'/'+data.credentials.creationDate.substring(4,6)+'/'+data.credentials.creationDate.substring(6,8)+' '+data.credentials.creationDate.substring(8,10)+':'+data.credentials.creationDate.substring(10,12)+':'+data.credentials.creationDate.substring(12,14)+' '+data.credentials.creationDate.substring(14);
          this.returnFileContent=JSON.stringify(data);
-         this.isDisplayAction=true;
+         this.EventHTTPReceived[17]=true;
+         //this.isDisplayAction=true;
         },
         err => {
-          this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           this.manageErrorMsg(err);
           console.log('return from requestToken() with error = '+ JSON.stringify(err));
           });
@@ -1788,13 +1757,13 @@ listConfig(){
     var file = new File([JSON.stringify(myObject)], srcobject, { type: 'application/json' });
     this.EventHTTPReceived[8] = false;
     this.EventStopWaitHTTP[8]=false;
-    const saveGoogleServer=this.configServer.googleServer;
-    this.configServer.googleServer=this.theForm.controls['serverForAction'].value;
+    //const saveGoogleServer=this.configServer.googleServer;
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.waitHTTP(this.TabLoop[8], this.maxLoop, 8);
-    this.ManageGoogleService.uploadObject(this.configServer, srcbucket, file, srcobject)
+    this.ManageGoogleService.uploadObject(this.newConfigServer, srcbucket, file, srcobject)
       .subscribe(data => {
         this.EventStopWaitHTTP[8]=true;
-        this.configServer.googleServer=saveGoogleServer;
+        //this.configServer.googleServer=saveGoogleServer;
         if (data.type === 4 && data.status === 200) {
           console.log(JSON.stringify(data));
           this.returnFileContent = JSON.stringify(data);
@@ -1803,7 +1772,7 @@ listConfig(){
       },
         err => {
           this.EventStopWaitHTTP[8]=true;
-        this.configServer.googleServer=saveGoogleServer;
+          //this.configServer.googleServer=saveGoogleServer;
           console.log('Metaobject not retrieved ' + err.status);
           this.manageErrorMsg(err);
           this.EventHTTPReceived[8] = true;

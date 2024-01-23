@@ -1,5 +1,5 @@
 <body>
-
+<!--
   <div *ngIf="isRetrievedConfig===false" >
     <div style=" display:inline-block; width:600px; margin-top:20px; ">
     <div style="margin-left:30px;  display:block; float:left; width:100px; ">
@@ -31,11 +31,15 @@
       {{error}}
       </div>
   </div>
+
   <div *ngIf="isCredentials===true">
-      <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved"
+      
+  </div>
+  -->
+
+  <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved"
       [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
       (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)" ></app-xmv-company>
-  </div>
 </body>
 
 <router-outlet></router-outlet>

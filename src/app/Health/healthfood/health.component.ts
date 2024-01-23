@@ -381,9 +381,9 @@ export class HealthComponent implements OnInit {
       this.tabLock[i].credentialDate = this.credentialsFS.creationDate;
     }
 
-    this.tabLock[0].objectName = this.identification.fitness.files.fileHealth + this.identification.UserId;
+    this.tabLock[0].objectName = this.identification.fitness.files.fileHealth; // + this.identification.UserId;
     this.tabLock[1].objectName = this.identification.configFitness.files.calories;
-    this.tabLock[5].objectName = this.identification.fitness.files.myChartConfig + this.identification.UserId;;
+    this.tabLock[5].objectName = this.identification.fitness.files.myChartConfig; //  + this.identification.UserId;
 
 
     for (var i = 0; i < this.maxEventHTTPrequest; i++) {
@@ -632,6 +632,8 @@ export class HealthComponent implements OnInit {
         this.theEvent.target.id = 'All'; // ===== change value of target.id if created record or if selRecord  
         this.ConfirmSave(this.theEvent);
       }
+    } else if (this.isConfirmSaveA === true) {
+      this.ConfirmSave(this.theEvent);
     } else if (this.onInputAction === "onInputDailyAll") {
       this.onInputAction = "";
       this.onInputDailyAllA(this.theEvent);
@@ -641,9 +643,7 @@ export class HealthComponent implements OnInit {
     } else if (this.onInputAction === "onInputDaily") {
       this.onInputAction = "";
       this.onInputDailyA(this.theEvent);
-    } else if (this.isConfirmSaveA === true) {
-      this.ConfirmSave(this.theEvent);
-    }
+    } 
   }
 
   dateRangeSelection(event: any) {
@@ -2015,6 +2015,7 @@ export class HealthComponent implements OnInit {
   isConfirmSaveA: boolean = false;
 
   ConfirmSaveA(event: any) {
+    this.error_msg = '';
     this.resetBooleans();
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.value = event.target.value;
@@ -2033,6 +2034,7 @@ export class HealthComponent implements OnInit {
   }
 
   ConfirmSave(event: any) {
+    this.error_msg = '';
     this.theResetServer = false;
     if (this.tabLock[0].lock === 1) {
       this.isConfirmSaveA = false;
@@ -2159,6 +2161,7 @@ export class HealthComponent implements OnInit {
     var i = 0
     this.IsSaveConfirmedCre = false;
     this.IsSaveConfirmedSel = false;
+    this.isAllDataModified = false;
     if (event.target.id.substring(0, 3) === 'Sel') {
       this.calculateHealth(this.SelectedRecord);
       if (this.error_msg !== '') {
@@ -2240,6 +2243,7 @@ export class HealthComponent implements OnInit {
 
     this.HealthAllData.updatedAt = strDateTime();
     this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData, 0);
+    this.updateLockFile(0);
   }
 
 
@@ -2268,7 +2272,7 @@ export class HealthComponent implements OnInit {
           }
           //this.isAllDataModified=false;
 
-          if ((iWait === 0 || iWait === 1 || iWait === 5 || iWait === 6) && this.identification.triggerFileSystem !== "No") {
+          if (( iWait === 1 || iWait === 5 || iWait === 6) && this.identification.triggerFileSystem !== "No") {
             // update field 'updatedAt' in file system 
             this.updateLockFile(iWait);
           }
@@ -2284,6 +2288,9 @@ export class HealthComponent implements OnInit {
       },
         error_handler => {
           //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
+          if (iWait === 0){
+            this.isAllDataModified = true;
+          }
           if (iWait === 1) {
             this.saveCalFatMsg = 'File "' + GoogleObject + '" *** Save action failed - status is ' + error_handler.status;
           } else {
@@ -2509,7 +2516,6 @@ export class HealthComponent implements OnInit {
 
   iWaitSave: number = 0;
   onFileSystem(iWait: number) {
-    this.error_msg = '';
     var theAction = this.tabLock[iWait].action;
     this.iWaitSave = iWait;
     this.tabLock[iWait].status = 0;
@@ -2518,7 +2524,7 @@ export class HealthComponent implements OnInit {
       this.tabLock[iWait].action = "";
     } else {
 
-      this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString())
+        this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString())
         .subscribe(
           data => {
             if (theAction === 'onDestroy') {
@@ -2553,7 +2559,7 @@ export class HealthComponent implements OnInit {
   returnOnFileSystem(data: any, iWait: number) {
     //this.isTriggerFileSystem=false;
     //const iWait=this.saveIWait;
-    this.error_msg = '';
+    
     if (data.status !== undefined && data.status === 200 && data.tabLock !== undefined) { // tabLock is returned
       console.log('server response: ' + data.tabLock[iWait].object + ' createdAt=' + data.tabLock[iWait].createdAt + '  & updatedAt=' + data.tabLock[iWait].updatedAt + '  & lock value =' + data.tabLock[iWait].lock);
       if (data.tabLock[iWait].credentialDate !== this.credentialsFS.creationDate) { // server was reinitialised
@@ -2567,7 +2573,6 @@ export class HealthComponent implements OnInit {
       if (data.tabLock[iWait].createdAt !== undefined) {
         this.error_msg = this.error_msg + " data returned on file " + data.tabLock[iWait].objectName + " ==> action = " + data.tabLock[iWait].action + '  lock = ' + data.tabLock[iWait].lock + "  & status = " + data.tabLock[iWait].status;
         console.log(this.error_msg);
-        this.error_msg='';
         if (this.tabLock[iWait].action === 'unlock') {
           this.tabLock[iWait].lock = 3;
           this.onInputAction = "";
@@ -2741,7 +2746,7 @@ export class HealthComponent implements OnInit {
         //this.getDefaultCredentials(iWait, true); // update credentials & check File.updatedAt 
 
       } else if (data.status === 956) {  // record is locked by another user
-        this.error_msg = "status " + data.status + " - record is locked by another user"; // data.msg;
+        this.error_msg = "status " + data.status + " " + data.msg;
         this.theResetServer = true;
         this.tabLock[iWait].lock = 3;
         this.onInputAction = "";
