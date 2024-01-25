@@ -108,8 +108,8 @@ export class AppComponent {
   }
 
   getDefaultCredentials(serverType:any){
-    console.log('getDefaultCredentials()');
-    this.ManageGoogleService.getDefaultCredentials(this.configServer  )
+    console.log('getCredentials()');
+    this.ManageGoogleService.getCredentials(this.configServer  )
     .subscribe(
         (data ) => {
           if (serverType==='Google'){
@@ -130,6 +130,7 @@ export class AppComponent {
   EventHTTPReceived:Array<boolean>=[];
   TabLoop:Array<number>=[];
   id_Animation:Array<any>=[];
+  
   waitHTTP(loop: number, max_loop: number, eventNb: number) {
     const pas = 500;
     if (loop % pas === 0) {

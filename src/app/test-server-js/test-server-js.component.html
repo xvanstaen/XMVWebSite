@@ -55,8 +55,7 @@
         </div>
     </div>
     <!-- large text -->
-    <div class="skipLine"></div>
-    <div *ngIf="isGetServerFunction===true" style="display:block;">
+    <div *ngIf="isGetServerFunction===true" style="display:block; margin-top:5px;">
         <div *ngFor="let tab of tabServers; let i=index">
             <span class="theLine" style="margin-top:5px;">
                 <label class="label" style="width:180px; ">{{tab}} - {{tabVersionServer[i]}}</label> 
@@ -70,11 +69,10 @@
         </form>
     </div>
 
-    <div style="display:block">
-        <button class="sizeButtons" style='margin-left:60px; width:150px; height:35px; font-weight: bolder;' id="clearAll" (click)="reinitialise()">Clear all fields</button> 
-    </div>
+    <button class="sizeButtons" style='display:block; margin-left:170px; width:150px; height:35px; font-weight: bolder;' id="clearAll" (click)="reinitialise()">Clear all fields
+    </button> 
 
-    <div style="display:block; width:450px; border:solid 2px green;  margin-top:4px; margin-left:20px; background-color:lightskyblue;">
+    <div style="display:block; width:450px; border:solid 2px green;  margin-top:20px; margin-left:20px; background-color:lightskyblue;">
         
         <div style="  width:100%; display:inline-block;  height:30px; padding-top:5px; text-align: center; ">
             ACTION TO PERFORM
