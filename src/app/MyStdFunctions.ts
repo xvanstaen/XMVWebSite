@@ -541,29 +541,46 @@ export function validateLock(fileSystem:Array<classFileSystem>, inData:classAcce
   export function findIds(theId:string,specChar:string){
     var TabDash=[];
     var TabOfId:Array<any>=[];
-    //var tabSpecChar=[];
     var strFound="";
     TabOfId.splice(0,TabOfId.length);
-    //for (var i=0; i<specChar.length; i++){
-    //  tabSpecChar[i]=specChar.substring(i,i+1);
-    //}
+
     var j=-1;
+    /*
     for (var i=0; i<theId.length; i++){
       if (specChar.indexOf(theId.substring(i,i+1))!==-1){
-      // if (theId.substring(i,i+1)===tabSpecChar[0] || theId.substring(i,i+1)===tabSpecChar[1] || theId.substring(i,i+1)===tabSpecChar[2]){
           j++;
           TabDash[j]=i+1;
           TabDash.push(0);
       }
     }
+    */
+    TabDash.push(0);
+    for (var i=0; i<theId.length; i++){
+      const k=theId.substring(i).indexOf(specChar);
+      if (k!==-1){
+          j++;
+          if (j>0){
+            TabDash[j]=k+TabDash[j-1]+1;         
+          } else {
+            TabDash[j]=k;
+          }
+          i=TabDash[j];
+          
+          TabDash.push(0);
+      } else {
+        i=theId.length;
+      }
+    }
+
+
     TabDash[j+1]=theId.length+1;
   
     i=0;
     for (j=0; j<TabDash.length-1; j++){
-      TabOfId[i]=parseInt(theId.substring(TabDash[j],TabDash[j+1]-1));
+      TabOfId[i]=parseInt(theId.substring(TabDash[j]+1,TabDash[j+1]));
       i++;
     }
-    strFound=theId.substring(0,TabDash[0]-1);
+    strFound=theId.substring(0,TabDash[0]);
     return ({"strFound":strFound, "tabOfId":TabOfId})
   }
 

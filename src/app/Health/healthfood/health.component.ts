@@ -84,9 +84,9 @@ export class HealthComponent implements OnInit {
   fileParamChart = new classFileParamChart;
   ConfigChart = new classConfigChart;
   ConvertUnit = new mainClassConv;
-  HealthData = new mainDailyReport;;   // to create a new record
+
   HealthAllData = new mainDailyReport; // contain the full object
-  SelectedRecord = new DailyReport;
+
   ConfigCaloriesFat = new mainClassCaloriesFat;
   fileRecipe = new mainClassCaloriesFat;
 
@@ -123,14 +123,11 @@ export class HealthComponent implements OnInit {
     FileName: new FormControl('', { nonNullable: true }),
   })
 
-  IsSaveConfirmedCre: boolean = false;
-  IsSaveConfirmedSel: boolean = false;
-  isCreateNew: boolean = false;
-  isDisplaySpecific: boolean = false;
+
   isDisplayAll: boolean = false;
   isCopyFile: boolean = false;
   isMgtCaloriesFat: boolean = false;
-  isSelectedDateFound: boolean = false;
+
   isDeleteConfirmed: boolean = false;
   isAllDataModified: boolean = false;
   IsSaveConfirmedAll: boolean = false;
@@ -142,12 +139,11 @@ export class HealthComponent implements OnInit {
   isForceReset: boolean = false;
 
   errorFn: string = '';
-  SelectedRecordNb: number = -1;
+
   recordToDelete: number = 0;
 
   TheSelectDisplays: FormGroup = new FormGroup({
-    CreateNew: new FormControl('N', { nonNullable: true }),
-    DisplaySpecific: new FormControl('N', { nonNullable: true }),
+
     DisplayAll: new FormControl('N', { nonNullable: true }),
     CopyFile: new FormControl('N', { nonNullable: true }),
     MgtCalories: new FormControl('N', { nonNullable: true }),
@@ -215,21 +211,24 @@ export class HealthComponent implements OnInit {
 
   /****  CONFIGURATION PARAMETERS FOR HTML *****/
   confTableAll = new classConfTableAll;
-
   ConfigHTMLFitHealth = new classConfHTMLFitHealth;
 
   filterCalc: boolean = false;
   filterHealth: boolean = false;
+
   searchOneDate: number = 0;
   searchOneDateHealth: number = 0;
   isRangeDateError: boolean = false;
 
   isDeleteItem: boolean = false;
+
   prevDialogue: number = 0;
   dialogue: Array<boolean> = [false, false, false, false, false, false, false]; // CREdate=0; CREmeal=1; CREingr=2; SELdate=3; SELmeal=4; SELingr=5; allData=6
-
+  
+  onInputAction: string = '';
   myAction: string = '';
   myType: string = '';
+
   tabNewRecordAll: Array<any> = [
     {
       nb: 0,
@@ -249,8 +248,7 @@ export class HealthComponent implements OnInit {
   tabFood: Array<any> = [{ name: '' }];
   tabInputMeal: Array<any> = [];
   tabInputFood: Array<any> = [];
-  //selType:string='';
-  //selFood:string='';
+
 
   // Dropdown box dimension
 
@@ -274,6 +272,19 @@ export class HealthComponent implements OnInit {
     y: 0
   };
 
+  offsetHeight: number = 0;
+  offsetLeft: number = 0;
+  offsetTop: number = 0;
+  offsetWidth: number = 0;
+  scrollHeight: number = 0;
+  scrollTop: number = 0;
+
+  posDelConfirm: number = 0;
+  posDelDate = 330;
+  posDelMeal = 410;
+  posDelIngr = 480;
+  delMsg: string = '';
+
   posDivCalFat = new classPosDiv;
   posDivReportHealth = new classPosDiv;
   posDivAfterTitle = new classPosDiv;
@@ -282,6 +293,7 @@ export class HealthComponent implements OnInit {
   tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
 
   titleHeight: number = 0;
+  foodPos: number = 0;
   posItem: number = 0;
   eventClientY: number = 0;
 
@@ -290,6 +302,38 @@ export class HealthComponent implements OnInit {
     mongo:"",
     FS:""
   }
+
+  lastInputAt: string = '';
+
+  isConfirmSaveA: boolean = false;
+
+  isSaveRecipeFile: boolean = false;
+  recipeNameFile: string = '';
+
+  isMustSaveFile: boolean = false;
+  isSaveCaloriesFat: boolean = false;
+  isSaveHealth: boolean = false;
+  isSaveParamChart: boolean = false;
+
+  saveEvent: any;
+  errCalcCalFat: string = '';
+  saveCalFatMsg: string = "";
+  calfatNameFile: string = '';
+ 
+  nbRecall: number = 0;
+  theResetServer: boolean = false;
+
+  msgCredentials: string = '';
+  nbCallCredentials: number = 0;
+
+  processDestroy: boolean = false;
+  passDestroy: number = 0;
+
+  maxItemsPerPage:number=30;
+  numPage:number=1;
+  displayHealthAllData = new mainDailyReport;
+  minNum:number=0;
+  maxNum:number=0;
 
   /*
   @HostListener('window:mouseup', ['$event'])
@@ -306,7 +350,7 @@ export class HealthComponent implements OnInit {
     this.eventClientY = event.clientY;
   }
 
-  foodPos: number = 0;
+
   findPosItem(sizeBox: any) {
     this.foodPos = Math.trunc(Number(this.eventClientY) - Number(this.posDivAfterTitle.ClientRect.Top) - Number(this.titleHeight)) ;
     this.posItem =  this.foodPos - Number(sizeBox) / 2 + 10;
@@ -318,11 +362,6 @@ export class HealthComponent implements OnInit {
     this.getScreenHeight = window.innerHeight;
   }
 
-  maxItemsPerPage:number=30;
-  numPage:number=1;
-  displayHealthAllData = new mainDailyReport;
-  minNum:number=0;
-  maxNum:number=0;
 
   manageDisplayAll(){
     var iOut = -1;
@@ -348,7 +387,6 @@ export class HealthComponent implements OnInit {
     this.minNum = (this.numPage-1) * this.maxItemsPerPage ;
     this.maxNum = this.minNum + this.maxItemsPerPage;
   }
-
 
   ngOnInit(): void {
 
@@ -380,35 +418,19 @@ export class HealthComponent implements OnInit {
       this.tabLock[i].userServerId = this.credentialsFS.userServerId;
       this.tabLock[i].credentialDate = this.credentialsFS.creationDate;
     }
-
     this.tabLock[0].objectName = this.identification.fitness.files.fileHealth; // + this.identification.UserId;
     this.tabLock[1].objectName = this.identification.configFitness.files.calories;
     this.tabLock[5].objectName = this.identification.fitness.files.myChartConfig; //  + this.identification.UserId;
-
-
+    
     for (var i = 0; i < this.maxEventHTTPrequest; i++) {
       this.EventHTTPReceived[i] = false;
+      this.EventStopWaitHTTP[i] = false;
       this.TabLoop[i]=0;
     }
 
-    if (this.InHealthAllData.fileType === '') {
-      this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
-    } else {
-      this.FillHealthAllInOut(this.HealthAllData, this.InHealthAllData);
-      this.initTrackRecord();
-      this.EventHTTPReceived[0] = true;
-      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-    }
+    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
 
-    if (this.InConfigHTMLFitHealth.fileType === '') {
-      this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confHTML, 3);
-
-    } else {
-      this.ConfigHTMLFitHealth = this.InConfigHTMLFitHealth;
-      this.confTableAll = this.InConfigHTMLFitHealth.ConfigHealth.confTableAll;
-      this.EventHTTPReceived[3] = true;
-      this.calculateHeight();
-    }
+    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confHTML, 3);
 
     this.posDivCalFat = getPosDiv("posTopAppCalFat");
     this.posDivAfterTitle = getPosDiv("posTopAppReportHealth");
@@ -487,9 +509,6 @@ export class HealthComponent implements OnInit {
     this.tabLock[3].bucket = this.identification.configFitness.bucket;
     this.tabLock[3].object = this.identification.configFitness.files.confHTML;
 
-    // TO BE REVIEWED IN ORDER TO READ, MODIFY ONLINE AND SAVE
-    //this.ConfigHTMLFitness.tabConfig[0].confTableAll=this.confTableAll;
-    //this.SaveNewRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confHTML, this.ConfigHTMLFitness);
 
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
@@ -515,25 +534,9 @@ export class HealthComponent implements OnInit {
   }
 
   accessAllOtherFiles() {
-
-    if (this.InConfigCaloriesFat.fileType !== '') {
-      this.ConfigCaloriesFat = this.InConfigCaloriesFat;
-      this.EventHTTPReceived[1] = true;
-      this.CreateDropDownCalFat();
-    } else {
-      this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.calories, 1);
-    }
-
-    if (this.fileRecipe.fileType === '') {
-      this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.recipe, 6);
-    }
-
-    if (this.InConvertUnit.fileType === '') {
-      this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.convertUnit, 2);
-    } else {
-      this.ConvertUnit = this.InConvertUnit;
-      this.EventHTTPReceived[2] = true;
-    }
+    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.calories, 1);
+    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.recipe, 6);
+    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.convertUnit, 2);
   }
 
 
@@ -547,10 +550,7 @@ export class HealthComponent implements OnInit {
     //this.tabInputFood.splice(0,this.tabInputFood.length);
     if (this.tabLock[0].lock !== 1 || this.isForceReset === true) {
       this.isDeleteConfirmed = false;
-      this.isDisplaySpecific = false;
-      this.IsSaveConfirmedCre = false;
-      this.IsSaveConfirmedSel = false;
-      this.isCreateNew = false;
+
       this.IsSaveConfirmedAll = false;
       this.isAllDataModified = false;
       this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
@@ -588,10 +588,6 @@ export class HealthComponent implements OnInit {
       this.TheSelectDisplays.controls['searchString'].setValue('');
     }
   }
-
-
-  lastInputAt: string = '';
-  isMustSaveFile: boolean = false;
 
   reportCheckLockLimit(event: any) {
     this.checkLockLimit(event.iWait, event.isDataModified, event.isSaveFile);
@@ -640,9 +636,6 @@ export class HealthComponent implements OnInit {
     } else if (this.onInputAction === "onAction") {
       this.onInputAction = "";
       this.onActionA(this.theEvent);
-    } else if (this.onInputAction === "onInputDaily") {
-      this.onInputAction = "";
-      this.onInputDailyA(this.theEvent);
     } 
   }
 
@@ -684,10 +677,26 @@ export class HealthComponent implements OnInit {
         this.dateRangeEndHealth = endD;
         this.searchOneDateHealth = search;
       }
-      this.TheSelectDisplays.controls['startRange'].setValue('');
-      this.TheSelectDisplays.controls['endRange'].setValue('');
+      // MUST FIND THE PAGE
+      for (var i=0; i<this.HealthAllData.tabDailyReport.length && this.HealthAllData.tabDailyReport[i].date!==this.dateRangeStartHealth; i++){};
+      if (i<this.HealthAllData.tabDailyReport.length){
+        this.numPage = Math.trunc(i / this.maxItemsPerPage) + 1;
+        this.minNum = (this.numPage-1) * this.maxItemsPerPage + 1;
+        this.maxNum = this.minNum + this.maxItemsPerPage;
+      } 
     }
+  }
 
+  clearDates(){
+    this.TheSelectDisplays.controls['startRange'].setValue('');
+    this.TheSelectDisplays.controls['endRange'].setValue('');
+    this.resetBooleans();
+    this.error_msg = '';
+    this.isRangeDateError = false;
+    this.searchOneDateHealth = 0;
+    this.numPage=1;
+    this.minNum=1;
+    this.maxNum = this.minNum + this.maxItemsPerPage;
   }
 
   CreateDropDownCalFat() {
@@ -698,8 +707,6 @@ export class HealthComponent implements OnInit {
     var j = 0;
 
     for (i = 0; i < this.ConfigCaloriesFat.tabCaloriesFat.length; i++) {
-      //this.tabType.push({name:''});
-      //this.tabType[this.tabType.length-1].name=this.ConfigCaloriesFat.tabCaloriesFat[i].Type.toLowerCase().trim();
       for (j = 0; j < this.ConfigCaloriesFat.tabCaloriesFat[i].Content.length; j++) {
         this.tabFood.push({ name: '', serving: "", unit: "" });
         this.tabFood[this.tabFood.length - 1].name = this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Name.toLowerCase().trim();
@@ -707,7 +714,6 @@ export class HealthComponent implements OnInit {
         this.tabFood[this.tabFood.length - 1].unit = this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].ServingUnit.toLowerCase().trim();
       }
     }
-    //this.tabType.sort((a, b) => (a.name < b.name) ? -1 : 1);
     this.tabFood.sort((a, b) => (a.name < b.name) ? -1 : 1);
 
   }
@@ -722,17 +728,6 @@ export class HealthComponent implements OnInit {
   }
 
   SelectDisplay() {
-
-    if (this.TheSelectDisplays.controls['CreateNew'].value === 'Y') {
-      this.isCreateNew = true;
-    } else {
-      this.isCreateNew = false;
-    }
-    if (this.TheSelectDisplays.controls['DisplaySpecific'].value === 'Y') {
-      this.isDisplaySpecific = true;
-    } else {
-      this.isDisplaySpecific = false;
-    }
     if (this.TheSelectDisplays.controls['DisplayAll'].value === 'Y') {
       this.isDisplayAll = true;
     } else {
@@ -740,23 +735,6 @@ export class HealthComponent implements OnInit {
     }
   }
 
-  onSelectedDate() {
-    this.error_msg = '';
-    this.errorFn = '';
-    const selected = this.TheSelectDisplays.controls['SelectedDate'].value;
-    this.isSelectedDateFound = false;
-    var i = 0;
-    for (i = 0; i < this.HealthAllData.tabDailyReport.length && this.HealthAllData.tabDailyReport[i].date !== this.TheSelectDisplays.controls['SelectedDate'].value; i++) { }
-    if (i < this.HealthAllData.tabDailyReport.length) {
-      // date is found
-      this.SelectedRecord = new DailyReport;
-      this.fillAllData(this.HealthAllData.tabDailyReport[i], this.SelectedRecord);
-
-      //this.SelectedRecord=this.HealthAllData.tabDailyReport[i];
-      this.isSelectedDateFound = true;
-      this.SelectedRecordNb = i;
-    } else { this.error_msg = 'no record found for this date'; this.errorFn = 'Sel'; }
-  }
 
   CheckDupeDate(theDate: Date) {
     var i = 0;
@@ -786,8 +764,6 @@ export class HealthComponent implements OnInit {
         console.log('nbDelItem=' + nbDelItem);
       } else {
         this.tabInputFood.splice(0, this.tabInputFood.length);
-        //this.tabFood.sort((a, b) => (a.name < b.name) ? -1 : 1);
-
         for (var i = 0; i < this.tabFood.length; i++) {
           if (this.tabFood[i].name.toLowerCase().trim().indexOf(value.toLowerCase().trim()) !== -1) {
             iTab++;
@@ -800,7 +776,6 @@ export class HealthComponent implements OnInit {
       }
       if (this.tabInputFood.length === 1) {
         this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name = this.tabInputFood[0].name;
-        //this.tabInputFood.splice(0,this.tabInputFood.length);
       }
       this.sizeBoxContentFood = this.sizeBox.heightItem * this.tabInputFood.length;
       if (this.sizeBoxContentFood > this.sizeBox.maxHeightContent) {
@@ -812,25 +787,7 @@ export class HealthComponent implements OnInit {
         this.sizeBox.scrollY = "hidden";
       }
       this.findPosItem(this.sizeBoxFood);
-      /***
-      this.styleBoxFood = {
-        'width': this.sizeBoxContentFood + 'px',
-        'height': this.sizeBox.widthContent + 'px',
-        'position': 'absolute',
-        'z-index': '1'
-      }
 
-      this.styleBoxOptionFood = {
-        'background-color':'lightgrey',
-        'height': this.sizeBoxFood + 'px',
-        'width': this.sizeBox.widthOptions + 'px',
-        'margin-left': this.offsetLeft + 90 + 'px',
-        'margin-top' :  this.posItem + 1 + 'px',
-        'overflow-x': 'hidden',
-        'overflow-y': scrollY,
-        'border':'1px lightgrey solid'
-        }
-      */
       this.styleBoxFood = getStyleDropDownContent(this.sizeBoxContentFood, this.sizeBox.widthContent);
       this.styleBoxOptionFood = getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft + 100, this.posItem, this.sizeBox.scrollY); // this.offsetLeft - 25   this.posItem +40
 
@@ -857,7 +814,7 @@ export class HealthComponent implements OnInit {
 
       this.styleBoxMeal = getStyleDropDownContent(this.sizeBoxContentMeal, this.sizeBox.widthContent - 50);
       //this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 20,  this.selectedPosition.y - this.posDivAfterTitle.Client.Top  - 255, this.sizeBox.scrollY);
-      this.styleBoxOptionMeal = getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 25, this.posItem + 40, this.sizeBox.scrollY);
+      this.styleBoxOptionMeal = getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 25, this.posItem+30, this.sizeBox.scrollY);
     }
 
   }
@@ -876,83 +833,7 @@ export class HealthComponent implements OnInit {
     }
   }
 
-  onInputDaily(event: any) {
-    this.theEvent.target.id = event.target.id;
-    this.theEvent.target.textContent = event.target.textContent;
-    this.theEvent.target.value = event.target.value;
-    this.onInputAction = 'onInputDaily';
-    this.lastInputAt = strDateTime();
-    this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
-  }
-
-  onInputDailyA(event: any) {
-
-    //this.lastInputAt=strDateTime();
-    //this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
-
-    if (this.tabLock[0].lock !== 2) {
-      this.resetBooleans();
-      this.error_msg = '';
-      var i = 0;
-      const fieldName = event.target.id.substring(0, 4);
-      this.manageIds(event.target.id);
-      if (event.target.id.substring(0, 3) !== 'Sel') {
-        this.errorFn = 'Cre';
-        if (fieldName === 'ingr') {
-          this.isInputFood = true;
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
-          this.CreateTabFood('Food', event.target.value);
-          if (this.tabInputFood.length === 1 && event.target.value.length > this.strInputFood.length) {
-            this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name = this.tabInputFood[0].name;
-            //this.tabInputFood.splice(0, this.tabInputFood.length)
-          } else {
-            this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name = event.target.value;
-          }
-          this.strInputFood = event.target.value;
-        } else if (fieldName === 'date') {
-          this.CheckDupeDate(event.target.value);
-          this.HealthData.tabDailyReport[this.TabOfId[0]].date = event.target.value;
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
-        } else if (fieldName === 'meal') {
-          this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name = event.target.value;
-          this.CreateTabFood('Meal', event.target.value);
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
-        } else if (fieldName === 'quan') {
-          this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].quantity = event.target.value;
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
-        } else if (fieldName === 'unit') {
-          this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].unit = event.target.value;
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
-        } else if (fieldName === 'burn') {
-          this.HealthData.tabDailyReport[this.TabOfId[0]].burntCalories = event.target.value;
-          this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
-        }
-      } else if (event.target.id.substring(0, 7) === 'Selmeal') {
-        this.errorFn = 'Sel';
-        this.SelectedRecord.meal[this.TabOfId[0]].name = event.target.value;
-      } else if (event.target.id.substring(0, 7) === 'Selingr') {
-        this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].name = event.target.value;
-      } else if (event.target.id.substring(0, 7) === 'Selquan') {
-        this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].quantity = event.target.value;
-      } else if (event.target.id.substring(0, 7) === 'Selunit') {
-        this.SelectedRecord.meal[this.TabOfId[0]].dish[this.TabOfId[1]].unit = event.target.value;
-      } else if (event.target.id.substring(0, 7) === 'Selburn') {
-        this.SelectedRecord.burntCalories = event.target.value;
-      } else if (event.target.id.substring(0, 7) === 'Seldate') {
-        if (event.target.value !== this.TheSelectDisplays.controls['SelectedDate'].value) {
-          this.CheckDupeDate(event.target.value);
-        }
-        this.SelectedRecord.date = event.target.value;
-      }
-    }
-  }
-
-  offsetHeight: number = 0;
-  offsetLeft: number = 0;
-  offsetTop: number = 0;
-  offsetWidth: number = 0;
-  scrollHeight: number = 0;
-  scrollTop: number = 0;
+ 
 
   onInputDailyAll(event: any) {
     this.theEvent.target.id = event.target.id;
@@ -967,7 +848,6 @@ export class HealthComponent implements OnInit {
     } else {
       this.onInputDailyAllA(event);
     }
-    
   }
 
   onInputDailyAllA(event: any) {
@@ -1028,12 +908,6 @@ export class HealthComponent implements OnInit {
   }
 
 
-  posDelConfirm: number = 0;
-  posDelDate = 330;
-  posDelMeal = 410;
-  posDelIngr = 480;
-  delMsg: string = '';
-
   DelAfterConfirm(event: any) {
     this.resetBooleans();
     this.isDeleteItem = false;
@@ -1042,21 +916,16 @@ export class HealthComponent implements OnInit {
         this.theEvent.target.id = 'DelAllDate-' + this.TabOfId[0];
 
         this.DeleteDay(this.theEvent);
-
       }
       else
         if (this.theEvent.target.id.substring(0, 10) === 'DelAllMeal') {
           this.theEvent.target.id = 'DelAllMeal-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-
           this.DeleteMeal(this.theEvent);
-
         }
         else
           if (this.theEvent.target.id.substring(0, 7) === 'DelAll-') {
             this.theEvent.target.id = 'DelAll-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-
             this.DeleteIngredient(this.theEvent);
-
           }
     }
   }
@@ -1064,8 +933,6 @@ export class HealthComponent implements OnInit {
   onNoAction(event: any) {
     console.log('no action ');
   }
-
-  onInputAction: string = '';
 
   onAction(event: any) {
     this.theEvent.target.id = event.target.id;
@@ -1076,12 +943,8 @@ export class HealthComponent implements OnInit {
   }
 
   onActionA(event: any) {
-
-    //this.lastInputAt=strDateTime();
-    //this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
     this.resetBooleans();
     if (this.tabLock[0].lock !== 2) {
-
       this.manageIds(event.target.id);
       this.dialogue[this.prevDialogue] = false;
       if (this.tabLock[0].lock === 0 && event.target.id.substring(0, 10) !== 'openAction') {
@@ -1118,9 +981,7 @@ export class HealthComponent implements OnInit {
                 this.delMsg = ' date=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].date;
                 this.posDelConfirm = this.posDelDate;
                 this.isDeleteItem = true;
-
               }
-
             } else if (this.myType.trim() === "meal") {
               if (this.myAction === "insert after") {
                 this.theEvent.target.id = 'AllMealA-' + this.TabOfId[0] + '-' + this.TabOfId[1];
@@ -1135,9 +996,7 @@ export class HealthComponent implements OnInit {
                 this.delMsg = ' meal=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;
                 this.posDelConfirm = this.posDelMeal;
                 this.isDeleteItem = true;
-
               }
-
             } else if (this.myType.trim() === "food") {
               if (this.myAction === "insert before") {
                 this.theEvent.target.id = 'AllIngrB-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
@@ -1157,114 +1016,28 @@ export class HealthComponent implements OnInit {
               }
             }
           }
-        }
-        else if (event.target.id.substring(0, 15) === 'CreDialogueDate') {
-          this.prevDialogue = 0;
-          this.dialogue[this.prevDialogue] = true;
-        } else if (event.target.id.substring(0, 15) === 'CreDialogueMeal') {
-          this.prevDialogue = 1;
-          this.dialogue[this.prevDialogue] = true;
-        } else if (event.target.id.substring(0, 15) === 'CreDialogueIngr') {
-          this.prevDialogue = 2;
-          this.dialogue[this.prevDialogue] = true;
-        } else if (event.target.id.substring(0, 15) === 'SelDialogueDate') {
-          this.prevDialogue = 3;
-          this.dialogue[this.prevDialogue] = true;
-        } else if (event.target.id.substring(0, 15) === 'SelDialogueMeal') {
-          this.prevDialogue = 4;
-          this.dialogue[this.prevDialogue] = true;
-        } else if (event.target.id.substring(0, 15) === 'SelDialogueIngr') {
-          this.prevDialogue = 5;
-          this.dialogue[this.prevDialogue] = true;
-        } else if (event.target.id.substring(0, 7) === 'SelMeal') {
-          if (event.target.textContent === 'insert after') {
-            this.theEvent.target.id = 'SelMealA-' + this.TabOfId[0];
-            this.CreateMeal(this.theEvent);
-
-          } else if (event.target.textContent === 'insert before') {
-            this.theEvent.target.id = 'SelMealB-' + this.TabOfId[0];
-            this.CreateMeal(this.theEvent);
-
-          } else if (event.target.textContent === 'delete') {
-            this.theEvent.target.id = 'DelSelMeal-' + this.TabOfId[0];
-            this.DeleteMeal(this.theEvent);
-
-          }
-        } else if (event.target.id.substring(0, 7) === 'SelIngr') {
-          if (event.target.textContent === 'insert after') {
-            this.theEvent.target.id = 'SelIngrA-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-            this.CreateIngredient(this.theEvent);
-
-          } else if (event.target.textContent === 'insert before') {
-            this.theEvent.target.id = 'SelIngrB-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-            this.CreateIngredient(this.theEvent);
-
-          } else if (event.target.textContent === 'delete') {
-            this.theEvent.target.id = 'DelSelIngr-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-            this.DeleteIngredient(this.theEvent);
-
-          }
-        } else if (event.target.id.substring(0, 7) === 'CreMeal') {
-          if (event.target.textContent === 'insert after') {
-            this.theEvent.target.id = 'CreMealA-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-            this.CreateMeal(this.theEvent);
-
-          } else if (event.target.textContent === 'insert before') {
-            this.theEvent.target.id = 'CreMealB-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-            this.CreateMeal(this.theEvent);
-
-          } else if (event.target.textContent === 'delete') {
-            this.theEvent.target.id = 'DelCreMeal-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-            this.DeleteMeal(this.theEvent);
-
-          }
-        } else if (event.target.id.substring(0, 7) === 'CreIngr') {
-          if (event.target.textContent === 'insert after') {
-            this.theEvent.target.id = 'CreIngrA-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-            this.CreateIngredient(this.theEvent);
-
-          } else if (event.target.textContent === 'insert before') {
-            this.theEvent.target.id = 'CreIngrB-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-            this.CreateIngredient(this.theEvent);
-
-          } else if (event.target.textContent === 'delete') {
-            this.theEvent.target.id = 'DelCreIngr-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-            this.DeleteIngredient(this.theEvent);
-
-          }
         } else if (event.target.id.substring(0, 10) === 'ActionDate') {
           if (event.target.textContent === 'insert after') {
             this.theEvent.target.id = 'DateA-' + this.TabOfId[0];
             this.CreateDay(this.theEvent);
-
           } else if (event.target.textContent === 'insert before') {
             this.theEvent.target.id = 'DateB-' + this.TabOfId[0];
             this.CreateDay(this.theEvent);
-
           } else if (event.target.textContent === 'delete') {
             this.theEvent.target.id = 'DelDate-' + this.TabOfId[0];
             this.DeleteDay(this.theEvent);
-
           }
         }
-
-
         if (this.prevDialogue < 6) {
           this.sizeBox.heightOptions = this.sizeBox.heightItem * (this.TabAction.length + 1);
           this.sizeBox.heightContent = this.sizeBox.heightOptions;
-
           this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
           this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 30, 0, this.sizeBox.scrollY);
-
-
         } else if (this.isDeleteItem === true) {
           this.sizeBox.heightOptions = 90;
           this.sizeBox.heightContent = 90;
-
           this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, 240);
-          //this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, 240,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - this.posDelConfirm, this.sizeBox.scrollY);
           this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, 240, 60, this.posItem, this.sizeBox.scrollY);
-
         }
       }
     }
@@ -1272,46 +1045,19 @@ export class HealthComponent implements OnInit {
 
   DeleteIngredient(event: any) {
     this.manageIds(event.target.id);
-    if (event.target.id.substring(0, 6) === 'DelCre') {
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 1);
-      if (this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.length === 0) {
-        this.theEvent.target.id = 'CreIngrA-' + this.TabOfId[0];
-        this.CreateIngredient(this.theEvent);
-      } else {
-        this.tabNewRecordAll.splice(this.TabOfId[0].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 1));
-      }
-    } else if (event.target.id.substring(0, 6) === 'DelSel') {
-      this.SelectedRecord.meal[this.TabOfId[0]].dish.splice(this.TabOfId[1], 1);
-      if (this.SelectedRecord.meal[this.TabOfId[1]].dish.length === 0) {
-        this.theEvent.target.id = 'SelIngrA-' + this.TabOfId[0];
-        this.CreateIngredient(this.theEvent);
-      }
-    } else if (event.target.id.substring(0, 6) === 'DelAll') {
+    if (event.target.id.substring(0, 6) === 'DelAll') {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 1);
       this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food.splice(this.TabOfId[2], 1);
       if (this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.length === 0) {
         this.theEvent.target.id = 'AllIngrA-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
         this.CreateIngredient(this.theEvent);
-
       }
     }
   }
 
   DeleteMeal(event: any) {
     this.manageIds(event.target.id);
-    if (event.target.id.substring(0, 6) === 'DelCre') {
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1], 1);
-      if (this.HealthData.tabDailyReport[this.TabOfId[0]].meal.length === 0) {
-        this.theEvent.target.id = 'CreMealA-' + this.TabOfId[0];
-        this.CreateMeal(this.theEvent);
-      }
-    } else if (event.target.id.substring(0, 6) === 'DelSel') {
-      this.SelectedRecord.meal.splice(this.TabOfId[0], 1);
-      if (this.SelectedRecord.meal.length === 0) {
-        this.theEvent.target.id = 'SellMealA-' + this.TabOfId[0];
-        this.CreateMeal(this.theEvent);
-      }
-    } else if (event.target.id.substring(0, 6) === 'DelAll') {
+    if (event.target.id.substring(0, 6) === 'DelAll') {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1], 1);
       this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1], 1);
       if (this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.length === 0) {
@@ -1326,56 +1072,25 @@ export class HealthComponent implements OnInit {
     if (event.target.id.substring(0, 10) === 'DelAllDate') {
       this.HealthAllData.tabDailyReport.splice(this.TabOfId[0], 1);
       this.tabNewRecordAll.splice(this.TabOfId[0], 1);
-    } else if (event.target.id.substring(0, 7) === 'DelDate') {
-      this.HealthData.tabDailyReport.splice(this.TabOfId[0], 1);
-      if (this.HealthData.tabDailyReport.length === 0) {
-        this.theEvent.target.id = 'New';
-        this.CreateDay(this.theEvent);
-      }
-    }
+    } 
   }
 
   CreateIngredient(event: any) {
     this.manageIds(event.target.id);
     const theIngredient = new ClassDish;
-    if (event.target.id.substring(0, 8) === 'CreIngrA') {
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2] + 1, 0, theIngredient);
-    } if (event.target.id.substring(0, 8) === 'CreIngrB') {
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 0, theIngredient);
-    } else if (event.target.id.substring(0, 8) === 'SelIngrA') { // create after current ingredient
-      this.SelectedRecord.meal[this.TabOfId[0]].dish.splice(this.TabOfId[1] + 1, 0, theIngredient);
-    } else if (event.target.id.substring(0, 8) === 'SelIngrB') { // create before current ingredient
-      this.SelectedRecord.meal[this.TabOfId[0]].dish.splice(this.TabOfId[1], 0, theIngredient);
-    } if (event.target.id.substring(0, 8) === 'AllIngrA') {
+    if (event.target.id.substring(0, 8) === 'AllIngrA') {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2] + 1, 0, theIngredient);
       this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food.splice(this.TabOfId[2] + 1, 0, { nb: 1 });
     } if (event.target.id.substring(0, 8) === 'AllIngrB') {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 0, theIngredient);
       this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food.splice(this.TabOfId[2], 0, { nb: 1 });
     }
-
   }
 
   CreateMeal(event: any) {
     this.manageIds(event.target.id);
     const theMeal = new ClassMeal;
-    if (event.target.id.substring(0, 8) === 'CreMealA') {
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1] + 1, 0, theMeal);
-      const theIngredient = new ClassDish;
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1] + 1].dish.push(theIngredient);
-    } else if (event.target.id.substring(0, 8) === 'CreMealB') { // create before current  meal
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1], 0, theMeal);
-      const theIngredient = new ClassDish;
-      this.HealthData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.push(theIngredient);
-    } else if (event.target.id.substring(0, 8) === 'SelMealA') { // create after current  meal
-      this.SelectedRecord.meal.splice(this.TabOfId[0] + 1, 0, theMeal);
-      const theIngredient = new ClassDish;
-      this.SelectedRecord.meal[this.TabOfId[0] + 1].dish.push(theIngredient);
-    } else if (event.target.id.substring(0, 8) === 'SelMealB') { // create before current  meal
-      this.SelectedRecord.meal.splice(this.TabOfId[0], 0, theMeal);
-      const theIngredient = new ClassDish;
-      this.SelectedRecord.meal[this.TabOfId[0]].dish.push(theIngredient);
-    } else if (event.target.id.substring(0, 8) === 'AllMealA') {
+    if (event.target.id.substring(0, 8) === 'AllMealA') {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1] + 1, 0, theMeal);
       const theIngredient = new ClassDish;
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1] + 1].dish.push(theIngredient);
@@ -1388,7 +1103,6 @@ export class HealthComponent implements OnInit {
       const trackNew = { nb: 1, food: [{ nb: 1 }] };
       this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1], 0, trackNew);
     }
-
   }
 
   CreateDay(event: any) {
@@ -1405,26 +1119,6 @@ export class HealthComponent implements OnInit {
       iDate = this.TabOfId[0];
       const trackNew = { nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
       this.tabNewRecordAll.splice(this.TabOfId[0], 0, trackNew);
-    } if (event.target.id.substring(0, 5) === 'DateA') {
-      this.HealthData.tabDailyReport.splice(this.TabOfId[0] + 1, 0, theDaily);
-      iDate = this.TabOfId[0] + 1;
-    } else if (event.target.id.substring(0, 5) === 'DateB') {
-      this.HealthData.tabDailyReport.splice(this.TabOfId[0], 0, theDaily)
-      iDate = this.TabOfId[0];
-    } else if (event.target.id === 'New') {
-      this.HealthData.tabDailyReport.push(theDaily);
-      iDate = this.HealthData.tabDailyReport.length - 1;
-    }
-    if (event.target.id.substring(0, 7) === 'AllDate') {
-      const theMeal = new ClassMeal;
-      this.HealthAllData.tabDailyReport[iDate].meal.push(theMeal);
-      const theIngredient = new ClassDish;
-      this.HealthAllData.tabDailyReport[iDate].meal[0].dish.push(theIngredient);
-    } else if (event.target.id.substring(0, 4) === 'Date' || event.target.id.substring(0, 3) === 'New') {
-      const theMeal = new ClassMeal;
-      this.HealthData.tabDailyReport[iDate].meal.push(theMeal);
-      const theIngredient = new ClassDish;
-      this.HealthData.tabDailyReport[iDate].meal[0].dish.push(theIngredient);
     }
   }
 
@@ -1434,14 +1128,9 @@ export class HealthComponent implements OnInit {
       outFile.updatedAt = inFile.updatedAt;
     } else { outFile.updatedAt = ''; }
     for (var i = 0; i < inFile.tabDailyReport.length; i++) {
-      // if (inFile.tabDailyReport[i].meal.length!==0){
-
       iOut++
-
       this.fillHealthOneDay(outFile, inFile, i, iOut);
-      //    }
     }
-
   }
 
   fillHealthOneDay(outFile: any, inFile: any, i:number, iOut:number) {
@@ -1493,29 +1182,7 @@ export class HealthComponent implements OnInit {
       this.TabOfId[i] = theValue.tabOfId[i];
     }
   }
-  /*
-  findIds(theId:string){
-    this.error_msg='';
-    
-    var TabDash=[];
-    this.TabOfId.splice(0,this.TabOfId.length);
-    var j=-1;
-    for (var i=4; i<theId.length; i++){
-      if (theId.substring(i,i+1)==='-'){
-          j++;
-          TabDash[j]=i+1;
-          TabDash.push(0);
-      }
-    }
-    TabDash[j+1]=theId.length+1;
-  
-    i=0;
-    for (j=0; j<TabDash.length-1; j++){
-      this.TabOfId[i]=parseInt(theId.substring(TabDash[j],TabDash[j+1]-1));
-      i++;
-    }
-  }
-  */
+
   initTrackRecord() {
     for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
       if (this.tabNewRecordAll.length === 0 || i !== 0) {
@@ -1536,79 +1203,7 @@ export class HealthComponent implements OnInit {
         }
       }
     }
-    // this.alignRecord();
   }
-
-  alignRecord() {
-    for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
-      if (this.HealthAllData.tabDailyReport[i].total.Carbs === undefined) {
-        this.theEvent.target.id = 'AllDateA-' + i;
-        this.CreateDay(this.theEvent);
-        this.HealthAllData.tabDailyReport[i + 1].date = this.HealthAllData.tabDailyReport[i].date;
-        this.HealthAllData.tabDailyReport[i + 1].burntCalories = this.HealthAllData.tabDailyReport[i].burntCalories;
-        this.HealthAllData.tabDailyReport[i + 1].total.Calories = this.HealthAllData.tabDailyReport[i].total.Calories;
-        this.HealthAllData.tabDailyReport[i + 1].total.Cholesterol = this.HealthAllData.tabDailyReport[i].total.Cholesterol;
-        this.HealthAllData.tabDailyReport[i + 1].total.Name = this.HealthAllData.tabDailyReport[i].total.Name;
-        this.HealthAllData.tabDailyReport[i + 1].total.GlyIndex = this.HealthAllData.tabDailyReport[i].total.GlyIndex;
-        this.HealthAllData.tabDailyReport[i + 1].total.Serving = this.HealthAllData.tabDailyReport[i].total.Serving;
-        this.HealthAllData.tabDailyReport[i + 1].total.ServingUnit = this.HealthAllData.tabDailyReport[i].total.ServingUnit;
-        this.HealthAllData.tabDailyReport[i + 1].total.Sugar = this.HealthAllData.tabDailyReport[i].total.Sugar;
-        this.HealthAllData.tabDailyReport[i + 1].total.Fat.Saturated = this.HealthAllData.tabDailyReport[i].total.Fat.Saturated;
-        this.HealthAllData.tabDailyReport[i + 1].total.Fat.Total = this.HealthAllData.tabDailyReport[i].total.Fat.Total;
-        this.HealthAllData.tabDailyReport[i + 1].total.Carbs = this.HealthAllData.tabDailyReport[i].total.Carbs;
-        this.HealthAllData.tabDailyReport[i + 1].total.Protein = this.HealthAllData.tabDailyReport[i].total.Protein;
-
-        for (var j = 0; j < this.HealthAllData.tabDailyReport[i].meal.length; j++) {
-          if (j > 0) {
-            const nb1 = i + 1;
-            const nb2 = j - 1;
-            this.theEvent.target.id = 'AllMealA-' + nb1 + '-' + nb2;
-            this.CreateMeal(this.theEvent);
-          }
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Calories = this.HealthAllData.tabDailyReport[i].meal[j].total.Calories;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Cholesterol = this.HealthAllData.tabDailyReport[i].meal[j].total.Cholesterol;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Name = this.HealthAllData.tabDailyReport[i].meal[j].total.Name;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.GlyIndex = this.HealthAllData.tabDailyReport[i].meal[j].total.GlyIndex;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Serving = this.HealthAllData.tabDailyReport[i].meal[j].total.Serving;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.ServingUnit = this.HealthAllData.tabDailyReport[i].meal[j].total.ServingUnit;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Sugar = this.HealthAllData.tabDailyReport[i].meal[j].total.Sugar;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Fat.Saturated = this.HealthAllData.tabDailyReport[i].meal[j].total.Fat.Saturated;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Fat.Total = this.HealthAllData.tabDailyReport[i].meal[j].total.Fat.Total;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Carbs = this.HealthAllData.tabDailyReport[i].meal[j].total.Carbs;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].total.Protein = this.HealthAllData.tabDailyReport[i].meal[j].total.Protein;
-          this.HealthAllData.tabDailyReport[i + 1].meal[j].name = this.HealthAllData.tabDailyReport[i].meal[j].name;
-          for (var k = 0; k < this.HealthAllData.tabDailyReport[i].meal[j].dish.length; k++) {
-            if (k > 0) {
-              const nb1 = i + 1;
-              const nb2 = j;
-              const nb3 = k - 1;
-              this.theEvent.target.id = 'AllIngrA-' + nb1 + '-' + nb2 + '-' + nb3;
-              this.CreateIngredient(this.theEvent);
-            }
-
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].name = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].name;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].quantity = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].quantity;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].unit = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].unit;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Calories = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Calories;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Cholesterol = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Cholesterol;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Name = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Name;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.GlyIndex = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.GlyIndex;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Serving = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Serving;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.ServingUnit = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.ServingUnit;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Sugar = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Sugar;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Fat.Saturated = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Fat.Saturated;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Fat.Total = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Fat.Total;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Carbs = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Carbs;
-            this.HealthAllData.tabDailyReport[i + 1].meal[j].dish[k].calFat.Protein = this.HealthAllData.tabDailyReport[i].meal[j].dish[k].calFat.Protein;
-          }
-        }
-        this.theEvent.target.id = 'DelAllDate-' + i;
-        this.DeleteDay(this.theEvent);
-      }
-    }
-    this.isAllDataModified = true;
-  }
-
   cleanFile() {
     for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
       var trouve = false;
@@ -1898,8 +1493,7 @@ export class HealthComponent implements OnInit {
     this.CancelSave()
 
   }
-
-  isSaveParamChart: boolean = false;
+  
   saveParamChart(event: any) {
     this.isSaveParamChart = true;
     this.fileParamChart.data = event;
@@ -1909,9 +1503,7 @@ export class HealthComponent implements OnInit {
     } else {
       this.checkLockLimit(5, true, true);
     }
-
   }
-
 
   processSaveParamChart() {
     this.fileParamChart.fileType = this.identification.fitness.fileType.myChart;
@@ -1920,10 +1512,7 @@ export class HealthComponent implements OnInit {
     this.SaveNewRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, this.fileParamChart, 5);
   }
 
-  isSaveCaloriesFat: boolean = false;
-  saveEvent: any;
-  errCalcCalFat: string = '';
-  calfatNameFile: string = '';
+
   SaveCaloriesFat(event: any) {
     this.isSaveCaloriesFat = true;
     this.saveEvent = event;
@@ -1935,14 +1524,9 @@ export class HealthComponent implements OnInit {
     } else {
       this.checkLockLimit(1, true, true);
     }
-
-
   }
 
   processSaveCaloriesFat(event: any) {
-    // save this file
-    // if (Array.isArray(event)===false){
-
     if (event.fileType === undefined) {
       //this.SpecificForm.controls['FileName'].setValue(event);
     } else if (event.tabCaloriesFat.length !== 0) {
@@ -1959,30 +1543,17 @@ export class HealthComponent implements OnInit {
         }
       }
 
-
-
-      // this.ConfigCaloriesFat=event;
       if (this.ConfigCaloriesFat.fileType === '') {
         this.ConfigCaloriesFat.fileType = this.identification.configFitness.fileType.calories;
       }
       this.ConfigCaloriesFat.updatedAt = strDateTime();
-      // this.SaveNewRecord(this.identification.configFitness.bucket, this.SpecificForm.controls['FileName'].value, this.ConfigCaloriesFat, 1);
       this.SaveNewRecord(this.identification.configFitness.bucket, this.calfatNameFile, this.ConfigCaloriesFat, 1);
-      /*
-      if (event.fileType===''){
-        event.fileType=this.identification.configFitness.fileType.calories;
-      }
-      event.updatedAt=strDateTime();
-      
-      this.SaveNewRecord(this.identification.configFitness.bucket, this.calfatNameFile, event, 1);
-      */
+
       this.CreateDropDownCalFat();
 
     }
   }
 
-  isSaveRecipeFile: boolean = false;
-  recipeNameFile: string = '';
   SaveRecipeFile(event: any) {
     // save this file
     // if (Array.isArray(event)===false){
@@ -2012,7 +1583,6 @@ export class HealthComponent implements OnInit {
 
     }
   }
-  isConfirmSaveA: boolean = false;
 
   ConfirmSaveA(event: any) {
     this.error_msg = '';
@@ -2040,34 +1610,7 @@ export class HealthComponent implements OnInit {
       this.isConfirmSaveA = false;
       this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
       this.error_msg = '';
-      if (event.target.id.substring(0, 3) === 'Cre') {
-        // CHECK THAT THERE IS NO DUPE FOR THE DATE 
-        var i = 0;
-        for (i = 0; i < this.HealthData.tabDailyReport.length && this.error_msg === ''; i++) {
-          this.CheckDupeDate(this.HealthData.tabDailyReport[i].date);
-        }
-        if (this.error_msg === '') {
-          this.IsSaveConfirmedCre = true;
-          this.IsSaveConfirmedSel = false;
-        } else {
-          this.errorFn = 'Cre';
-          this.IsSaveConfirmedCre = false;
-          this.IsSaveConfirmedSel = false;
-        }
-      } else if (event.target.id.substring(0, 3) === 'Sel') {
-        // CHECK THAT THERE IS NO DUPE FOR THE DATE 
-        if (this.SelectedRecord.date !== this.TheSelectDisplays.controls['SelectedDate'].value) {
-          this.CheckDupeDate(this.SelectedRecord.date);
-        }
-        if (this.error_msg === '') {
-          this.IsSaveConfirmedCre = false;
-          this.IsSaveConfirmedSel = true;
-        } else {
-          this.errorFn = 'Sel';
-          this.IsSaveConfirmedCre = false;
-          this.IsSaveConfirmedSel = false;
-        }
-      } else if (event.target.id.substring(0, 3) === 'All') {
+      if (event.target.id.substring(0, 3) === 'All') {
         this.IsSaveConfirmedAll = true;
         this.errorFn = 'All';
       }
@@ -2077,14 +1620,11 @@ export class HealthComponent implements OnInit {
   }
 
   SaveCopy() {
-
     this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
     if (this.HealthAllData.fileType !== '') {
       this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
     }
-
     this.HealthAllData.updatedAt = strDateTime();
-
     this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData, -1);
     this.isCopyFile = false;
     this.TheSelectDisplays.controls['CopyFile'].setValue('N');
@@ -2097,20 +1637,6 @@ export class HealthComponent implements OnInit {
     this.errorFn = '';
   }
 
-  CancelRecord(event: any) {
-    this.manageIds(event.target.id);
-    this.isMustSaveFile = false;
-    if (event.target.id.substring(0, 3) === 'Cre') {
-      this.HealthData.tabDailyReport.splice(0, this.HealthData.tabDailyReport.length);
-      this.theEvent.target.id = 'New';
-      this.CreateDay(this.theEvent);
-    } else if (event.target.id.substring(0, 3) === 'Sel') {
-      this.SelectedRecord = new DailyReport;
-      this.isSelectedDateFound = false;
-      this.TheSelectDisplays.controls['SelectedDate'].setValue('');
-      // this.fillAllData(this.HealthAllData.tabDailyReport[this.SelectedRecordNb], this.SelectedRecord);
-    }
-  }
 
   CancelSaveOthers(iWait: number) {
     if (iWait === 1) {
@@ -2130,16 +1656,13 @@ export class HealthComponent implements OnInit {
     this.FillHealthAllInOut(this.HealthAllData, this.InHealthAllData);
     this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
     this.initTrackRecord();
-    this.IsSaveConfirmedCre = false;
-    this.IsSaveConfirmedSel = false;
+
     this.IsSaveConfirmedAll = false;
     this.isAllDataModified = false;
     this.error_msg = '';
     this.errorFn = '';
   }
 
-
-  isSaveHealth: boolean = false;
   SaveHealth(event: any) {
     this.error_msg = '';
     this.isSaveHealth = true;
@@ -2159,44 +1682,9 @@ export class HealthComponent implements OnInit {
     this.errCalcCalFat = '';
     var trouve = false;
     var i = 0
-    this.IsSaveConfirmedCre = false;
-    this.IsSaveConfirmedSel = false;
-    this.isAllDataModified = false;
-    if (event.target.id.substring(0, 3) === 'Sel') {
-      this.calculateHealth(this.SelectedRecord);
-      if (this.error_msg !== '') {
-        this.errCalcCalFat = 'errors found while caculating calories and fat';
-      }
-      this.SelectedRecord.total = this.returnData.outHealthData.total;
-      this.SelectedRecord.meal = this.returnData.outHealthData.meal;
-      this.SelectedRecord.burntCalories = this.returnData.outHealthData.burntCalories;
-      if (this.SelectedRecord.date === this.TheSelectDisplays.controls['SelectedDate'].value) {
-        this.HealthAllData.tabDailyReport.splice(this.SelectedRecordNb, 1);
-      }
-      this.errorFn = 'Sel';
-      const theDaily = new DailyReport;
-      this.HealthAllData.tabDailyReport.splice(this.SelectedRecordNb, 0, theDaily);
-      this.fillAllData(this.SelectedRecord, this.HealthAllData.tabDailyReport[this.SelectedRecordNb]);
-      this.SelectedRecord = new DailyReport;
-      this.isSelectedDateFound = false;
-      this.TheSelectDisplays.controls['SelectedDate'].setValue('');
-      // insert the updated record of SelectedData
 
-    } else if (event.target.id.substring(0, 3) === 'Cre') {
-      this.errorFn = 'Cre';
-      // insert the record at the end of HealthData
-      for (i = 0; i < this.HealthData.tabDailyReport.length; i++) {
-        const theDaily = new DailyReport;
-        this.HealthAllData.tabDailyReport.push(theDaily);
-        this.fillAllData(this.HealthData.tabDailyReport[i], this.HealthAllData.tabDailyReport[this.HealthAllData.tabDailyReport.length - 1]);
-        this.calculateHealth(this.HealthData.tabDailyReport[i]);
-        if (this.error_msg !== '') {
-          this.errCalcCalFat = 'errors found while caculating calories and fat';
-        }
-        this.HealthData.tabDailyReport[i].total = this.returnData.outHealthData.total;
-        this.HealthData.tabDailyReport[i].meal = this.returnData.outHealthData.meal;
-      }
-    } else if (event.target.id.substring(0, 3) === 'All') {
+    this.isAllDataModified = false;
+    if (event.target.id.substring(0, 3) === 'All') {
       this.IsSaveConfirmedAll = false;
       for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
         trouve = false;
@@ -2231,15 +1719,9 @@ export class HealthComponent implements OnInit {
     if (this.HealthAllData.fileType !== '') {
       this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
     }
-    // if (event.target.id.substring(0,3)==='All'){
+
     this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
     this.initTrackRecord();
-    //}
-
-    //const aDate=new Date();
-    //const theDate=aDate.toUTCString();
-    //const stringDate=convertDate(aDate,'YYYYMMDD');
-    //this.HealthAllData.updatedAt=stringDate + theDate.substring(17,19)+theDate.substring(20,22)+theDate.substring(23,25);
 
     this.HealthAllData.updatedAt = strDateTime();
     this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData, 0);
@@ -2300,8 +1782,6 @@ export class HealthComponent implements OnInit {
       )
   }
 
-  saveCalFatMsg: string = "";
-
   waitHTTP(loop: number, max_loop: number, eventNb: number) {
     const pas = 500;
     if (loop % pas === 0) {
@@ -2316,9 +1796,6 @@ export class HealthComponent implements OnInit {
       console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
         this.EventHTTPReceived[eventNb]);
       window.cancelAnimationFrame(this.id_Animation[eventNb]);
-      //if (this.EventHTTPReceived[eventNb] === true) {
-      //    window.cancelAnimationFrame(this.id_Animation[eventNb]);
-      //}
     }
   }
 
@@ -2334,39 +1811,13 @@ export class HealthComponent implements OnInit {
 
   }
 
-
   SelRadio(event: any) {
     // this.checkLockLimit(0);
     this.theResetServer = false;
     const i = event.substring(2);
     this.error_msg = '';
     const NoYes = event.substring(0, 1);
-    if (i === '1') {
-      if (NoYes === 'Y') {
-        this.isCreateNew = true;
-
-        if (this.tabLock[0].lock !== 1) {
-          this.lockFile(0);
-        }
-      } else {
-        this.isCreateNew = false;
-        if (this.tabLock[0].lock === 1 && this.isDisplaySpecific === false && this.isDisplayAll === false) {
-          this.unlockFile(0);
-        }
-      }
-    } else if (i === '2') {
-      if (NoYes === 'Y') {
-        this.isDisplaySpecific = true;
-        if (this.tabLock[0].lock !== 1) {
-          this.lockFile(0);
-        }
-      } else {
-        this.isDisplaySpecific = false;
-        if (this.tabLock[0].lock === 1 && this.isCreateNew === false && this.isDisplayAll === false) {
-          this.unlockFile(0);
-        }
-      }
-    } else if (i === '3') {
+   if (i === '3') {
       if (NoYes === 'Y') {
         this.dialogue[this.prevDialogue] = false;
         this.isDisplayAll = true;
@@ -2374,7 +1825,7 @@ export class HealthComponent implements OnInit {
           this.lockFile(0);
         }
       } else {
-        if (this.tabLock[0].lock === 1 && this.isCreateNew === false && this.isDisplaySpecific === false) {
+        if (this.tabLock[0].lock === 1) {
           this.unlockFile(0);
         }
         this.isDisplayAll = false;
@@ -2465,8 +1916,7 @@ export class HealthComponent implements OnInit {
   beforeUnloadHandler(event: any) {
     this.ngOnDestroy();
   }
-  processDestroy: boolean = false;
-  passDestroy: number = 0;
+  
   ngOnDestroy() {
     this.theResetServer = false;
     this.passDestroy++
@@ -2528,7 +1978,6 @@ export class HealthComponent implements OnInit {
         .subscribe(
           data => {
             if (theAction === 'onDestroy') {
-              // console.log('onDestroy ==> '+ JSON.stringify(data));
               this.tabLock[iWait].status = 0;
             } else {
               this.returnOnFileSystem(data, iWait);
@@ -2550,23 +1999,13 @@ export class HealthComponent implements OnInit {
     }
   }
 
-
-  nbRecall: number = 0;
-
-
-
-  theResetServer: boolean = false;
   returnOnFileSystem(data: any, iWait: number) {
-    //this.isTriggerFileSystem=false;
-    //const iWait=this.saveIWait;
+
     
     if (data.status !== undefined && data.status === 200 && data.tabLock !== undefined) { // tabLock is returned
       console.log('server response: ' + data.tabLock[iWait].object + ' createdAt=' + data.tabLock[iWait].createdAt + '  & updatedAt=' + data.tabLock[iWait].updatedAt + '  & lock value =' + data.tabLock[iWait].lock);
       if (data.tabLock[iWait].credentialDate !== this.credentialsFS.creationDate) { // server was reinitialised
         this.tabLock[iWait] = data.tabLock[iWait];
-        if (this.configServer.googleServer===this.configServer.fileSystemServer){
-          //this.getDefaultCredentials(iWait, false); // update credentials only 
-        }
       }
       // record is locked by another user; no actions can take place for this user so reset
       this.nbCallCredentials = 0;
@@ -2618,9 +2057,6 @@ export class HealthComponent implements OnInit {
             this.onActionA(this.theEvent);
           } else if (this.tabLock[iWait].action === 'check&update' && data.tabLock[iWait].status === 0 && this.isMustSaveFile === true) {
             this.ConfirmSave(this.theEvent);
-          } else if (data.tabLock[iWait].lock === 1 && this.onInputAction === "onInputDaily") {
-            this.onInputAction = "";
-            this.onInputDailyA(this.theEvent);
           } else {
             console.log('File is locked; no specific action; process continues');
             this.onInputAction = "";
@@ -2642,10 +2078,7 @@ export class HealthComponent implements OnInit {
         } else if (this.onInputAction === "onInputDailyAll") {
           this.onInputAction = "";
           this.onInputDailyAllA(this.theEvent);
-        } else if (this.onInputAction === "onInputDaily") {
-          this.onInputAction = "";
-          this.onInputDailyA(this.theEvent);
-        }
+        } 
         if (iWait === 0) {
           if (this.isSaveHealth === true) {
             this.ProcessSaveHealth(this.theEvent);
@@ -2743,8 +2176,6 @@ export class HealthComponent implements OnInit {
         this.theResetServer = true;
         this.tabLock[iWait].lock = 3;
 
-        //this.getDefaultCredentials(iWait, true); // update credentials & check File.updatedAt 
-
       } else if (data.status === 956) {  // record is locked by another user
         this.error_msg = "status " + data.status + " " + data.msg;
         this.theResetServer = true;
@@ -2758,9 +2189,7 @@ export class HealthComponent implements OnInit {
         } else if (iWait === 5) {
           this.reAccessChartFile();
         }
-        //if (this.configServer.googleServer===this.configServer.fileSystemServer){
-        //  this.getDefaultCredentials(iWait, false); // update credentials only 
-        //}
+
       } else {
 
         this.nbCallCredentials = 0;
@@ -2796,8 +2225,58 @@ export class HealthComponent implements OnInit {
   }
 
 
-  msgCredentials: string = '';
-  nbCallCredentials: number = 0;
+  getChartFiles() {
+    if (this.InConfigChart.fileType === '') {
+      this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confChart, 4);
+    } else {
+      this.ConfigChart = this.InConfigChart;
+      this.EventHTTPReceived[4] = true;
+    }
+
+    if (this.fileParamChart.fileType === '') {
+      this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, 5);
+    } else {
+      this.fileParamChart = this.InFileParamChart;
+      this.EventHTTPReceived[5] = true;
+    }
+
+  }
+
+  reAccessHealthFile() {
+    console.log('reAccessHealthFile');
+    this.HealthAllData.tabDailyReport.splice(0, this.HealthAllData.tabDailyReport.length);
+    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
+  }
+
+  reAccessChartFile() {
+    this.fileParamChart.data.splice(this.fileParamChart.data.length);
+    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, 5);
+  }
+
+  reAccessConfigCal() {
+    this.ConfigCaloriesFat.tabCaloriesFat.splice(this.ConfigCaloriesFat.tabCaloriesFat.length);
+    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.calories, 1);
+  }
+
+/*
+  ngOnChanges(changes: SimpleChanges) {
+    for (const propName in changes) {
+      const j = changes[propName];
+      
+        if (propName === 'credentials' && changes['credentials'].firstChange === false) {
+          console.log('health component : credentials related to Google server have been updated');
+        } else if (propName === 'credentialsMongo' && changes['credentialsMongo'].firstChange === false) {
+          console.log('health component : credentials related to Mongo server have been updated');
+        } else if (propName === 'credentialsFS' && changes['credentialsFS'].firstChange === false) {
+          console.log('health component : credentials related toFile System server have been updated');
+        }
+      
+    }
+  }
+*/
+
+/*
+
   getDefaultCredentials(iWait: number, checkFile: boolean) { // NOT USED ANYMORE!!!!!
     console.log('getDefaultCredentials()');
     var newCredentials = new classCredentials;
@@ -2879,54 +2358,6 @@ export class HealthComponent implements OnInit {
   }
 
 
-  ngOnChanges(changes: SimpleChanges) {
-    for (const propName in changes) {
-      const j = changes[propName];
-      
-        if (propName === 'credentials' && changes['credentials'].firstChange === false) {
-          console.log('health component : credentials related to Google server have been updated');
-        } else if (propName === 'credentialsMongo' && changes['credentialsMongo'].firstChange === false) {
-          console.log('health component : credentials related to Mongo server have been updated');
-        } else if (propName === 'credentialsFS' && changes['credentialsFS'].firstChange === false) {
-          console.log('health component : credentials related toFile System server have been updated');
-        }
-      
-    }
-  }
-
-  getChartFiles() {
-    if (this.InConfigChart.fileType === '') {
-      this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confChart, 4);
-    } else {
-      this.ConfigChart = this.InConfigChart;
-      this.EventHTTPReceived[4] = true;
-    }
-
-    if (this.fileParamChart.fileType === '') {
-      this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, 5);
-    } else {
-      this.fileParamChart = this.InFileParamChart;
-      this.EventHTTPReceived[5] = true;
-    }
-
-  }
-
-  reAccessHealthFile() {
-    console.log('reAccessHealthFile');
-    this.HealthAllData.tabDailyReport.splice(0, this.HealthAllData.tabDailyReport.length);
-    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
-  }
-
-  reAccessChartFile() {
-    this.fileParamChart.data.splice(this.fileParamChart.data.length);
-    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, 5);
-  }
-
-  reAccessConfigCal() {
-    this.ConfigCaloriesFat.tabCaloriesFat.splice(this.ConfigCaloriesFat.tabCaloriesFat.length);
-    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.calories, 1);
-  }
-
-
+*/
 
 }

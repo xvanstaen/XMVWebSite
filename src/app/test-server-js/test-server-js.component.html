@@ -1,38 +1,6 @@
 
 
-<!--
-    <form [formGroup]="theForm" class="mainBlock"  style=" margin-top:15px; ">
-     
-        <div class="label" style="margin-top:16px; margin-left:10px; width:120px;">Server name</div> 
-            <input type="text" class="theInput" id="google" formControlName="googleServer" (click)="onActionServer($event)">
-            <input type="text" class="theInput" id="mongo" formControlName="mongoServer" (click)="onActionServer($event)">
-            <input type="text" class="theInput" id="fileSystem" formControlName="fileSystemServer" (click)="onActionServer($event)">
-        <span class="label" style="margin-top:3px; margin-left:10px; font-size:12px"> ({{serverVersion}})</span> 
-        <div class="skipLine"></div>
-    </form>
-    
 
-<div *ngIf="isSelectServer===true" class="dropdown" >
-    <div  class="Straight-content" style="width:100%; height:180px; background-color: white;">
-        <div  class="StraightDropDown StraightDropDownOverride">
-            <span style="text-align: center; font-size:16px; width:100%; display:inline-block; height:35px; padding-top:6px;">Select the server</span>
-            <li *ngFor="let server of tabServers; let m=index;" 
-                    class="Straight-options "  [ngClass]=" {'even': m % 2 ===0, 'odd': m % 2 !==0}" 
-                        (click)="selectServer($event)" id="selectedServer" [value]="server" >{{server}}
-            </li>
-        </div>
-    </div>
-</div>  
-
--->
-
-<!--
-<div *ngIf="configServer.project!=='AllFunctions'">
-    <app-select-server [initConfigServer]="configServer" 
-                    (returnServer)="getServerNames($event)">
-    </app-select-server>
-</div>
--->
 <div style="display:block;" *ngIf="isInitDone===true && serverTest==='tutorials'">
         <app-tutorials [configServer]="newConfigServer" [configServerChanges]="configServerChanges" > 
         </app-tutorials>
@@ -131,22 +99,20 @@
         
         </div>
     </div>   
-    <div style="display:block">
+    <div style="display:block" *ngIf="isUserIdForFS===true">
         <div class="mainBlock" style="border:solid 2px green; margin-top:5px;">
             <form [formGroup]="theForm"  >
-                <div *ngIf="isUserIdForFS===true">
-                    <span class="theLine">
-                        <label class="label" style="width:180px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
-                        <label class="label" style="width:180px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
-                        <button class="button" (click)="manageResetFS()">Submit</button>
-                    </span>
-                </div>
+                <span class="theLine">
+                    <label class="label" style="width:180px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
+                    <label class="label" style="width:180px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
+                    <button class="button" (click)="manageResetFS()">Submit</button>
+                </span>
             </form>
         </div>
     </div>
-    <div style="display:block">
+    <div style="display:block" *ngIf="error!==''" >
         <div class="mainBlock" style="border:solid 2px green; margin-top:5px;">
-            <span *ngIf="error!==''" style=" min-height:25px; font-size:15px; color:white; background-color: blue; width:100%; display:inline-block; word-break:break-all;padding-left:10px; padding-top:5px; padding-bottom:5px; ">{{error}}</span>
+            <span style=" min-height:25px; font-size:15px; color:white; background-color: blue; width:100%; display:inline-block; word-break:break-all;padding-left:10px; padding-top:5px; padding-bottom:5px; ">{{error}}</span>
         </div>
     </div>
 
@@ -239,7 +205,8 @@
 
 
     <div *ngIf="this.EventHTTPReceived[10]===true " style="margin-left:20px; width:450px; display:block; ">
-        <div style='font-size:20px; font-weight: bolder; width:100%; display:inline-block; padding-top:15px; text-align: center;' > Server Cache Console</div> 
+        <div style='font-size:20px; font-weight: bolder; width:100%; display:inline-block; padding-top:15px; text-align: center;' > Cache Console</div> 
+        <div style='font-size:20px; font-weight: bolder; width:100%; display:inline-block; padding-top:15px; text-align: center;' > server: {{theForm.controls['serverForAction'].value}}</div> 
         <div style=' width:100%; margin-top:4px; display:inline-block; border: solid 2px blue;  max-height:300px; overflow-y:scroll; '>
             <div *ngFor="let tab of memoryCacheConsole; let i=index " >
                 <div style=' width:100%;  display:inline-block; border: solid 2px red; '>
@@ -268,31 +235,34 @@
             </div>
         </div>
     </div>
-
-    <div *ngIf="this.EventHTTPReceived[11]===true || this.EventHTTPReceived[12]===true"  style="margin-left:20px; width:450px;">
+<!-- FILE SYSTEM-->
+    <div *ngIf="this.EventHTTPReceived[11]===true || this.EventHTTPReceived[12]===true"  style="margin-left:20px; width:450px; display:inline-block; max-height:480px;height:460px; border:green solid 2px;  overflow-y:scroll;">
         
-        <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:15px; margin-left:150px;' > Memory File System</div> 
-        <div *ngFor="let tab of memoryFS; let i=index ">
-            <span style=' width:100%; display:inline-block;'>
-                <span style=' width:470px; display:inline-block; border: solid 2px red; text-align: center;'>{{tab.fileName}} </span>
-            </span>
-        
-            <li *ngFor="let record of memoryFS[i].record; let j=index " style=' width:100%; display:inline-block; '>
-                <div style=' width:470px; display:inline-block; border: solid 2px red; '>
-                    <div class="skipLine"></div>
-                    <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{record.bucket}}</span></span>
-                    <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{record.object}}</span></span>
-                    <span class="theLine"><span class='label'>By user</span><span class='theMetadata'>{{record.byUser}}</span></span>
-                    <span class="theLine"><span class='label'>Created at</span><span class='theMetadata'>{{record.createdAt.substring(0,4)}}/{{record.createdAt.substring(4,6)}}/{{record.createdAt.substring(6,8)}} &nbsp;{{record.createdAt.substring(8,10)}}:{{record.createdAt.substring(10,12)}}:{{record.createdAt.substring(12,14)}}&nbsp;{{record.createdAt.substring(14)}}</span></span>
-                    <span class="theLine"><span class='label'>Updated at</span><span class='theMetadata'>{{record.updatedAt.substring(0,4)}}/{{record.updatedAt.substring(4,6)}}/{{record.updatedAt.substring(6,8)}} &nbsp;{{record.updatedAt.substring(8,10)}}:{{record.updatedAt.substring(10,12)}}:{{record.updatedAt.substring(12,14)}}&nbsp;{{record.updatedAt.substring(14)}}</span></span>
-                    <span class="theLine"><span class='label'>Credential date</span><span class='theMetadata'>{{record.credentialDate.substring(0,4)}}/{{record.credentialDate.substring(4,6)}}/{{record.credentialDate.substring(6,8)}} &nbsp;{{record.credentialDate.substring(8,10)}}:{{record.credentialDate.substring(10,12)}}:{{record.credentialDate.substring(12,14)}}&nbsp;{{record.credentialDate.substring(14)}}</span></span>
-                    <span class="theLine"><span class='label'>User server id</span><span class='theMetadata'>{{record.userServerId}}</span></span>
-                    <span class="theLine"><span class='label'>Lock</span><span class='theMetadata'>{{record.lock}}</span></span>
-                    <span class="theLine"><span class='label'>Timeout hour(s)</span><span *ngIf="record.timeoutFileSystem!==undefined" class='theMetadata'>{{record.timeoutFileSystem.hh}}</span></span>
-                    <span class="theLine"><span class='label'>Timeout minute(s)</span><span *ngIf="record.timeoutFileSystem!==undefined" class='theMetadata'>{{record.timeoutFileSystem.mn}}</span></span>
-                    <div class="skipLine"></div>
+        <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:15px; text-align: center;' > Memory File System</div> 
+        <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:15px; text-align: center;' > server: {{theForm.controls['serverForAction'].value}}</div> 
+        <div style=" width:100%; display:inline-block; overflow-y:scroll;">    
+            <div *ngFor="let tab of memoryFS; let i=index ">
+                <div style=' width:100%; display:inline-block;'>
+                    <span style=' width:470px; display:inline-block; border: solid 2px red; text-align: center;'>{{tab.fileName}} </span>
                 </div>
-            </li>
+            
+                <li *ngFor="let record of memoryFS[i].record; let j=index " style=' width:100%; display:inline-block;'>
+                    <div style=' width:470px; display:inline-block; border: solid 2px red; '>
+                        <div class="skipLine"></div>
+                        <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{record.bucket}}</span></span>
+                        <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{record.object}}</span></span>
+                        <span class="theLine"><span class='label'>By user</span><span class='theMetadata'>{{record.byUser}}</span></span>
+                        <span class="theLine"><span class='label'>Created at</span><span class='theMetadata'>{{record.createdAt.substring(0,4)}}/{{record.createdAt.substring(4,6)}}/{{record.createdAt.substring(6,8)}} &nbsp;{{record.createdAt.substring(8,10)}}:{{record.createdAt.substring(10,12)}}:{{record.createdAt.substring(12,14)}}&nbsp;{{record.createdAt.substring(14)}}</span></span>
+                        <span class="theLine"><span class='label'>Updated at</span><span class='theMetadata'>{{record.updatedAt.substring(0,4)}}/{{record.updatedAt.substring(4,6)}}/{{record.updatedAt.substring(6,8)}} &nbsp;{{record.updatedAt.substring(8,10)}}:{{record.updatedAt.substring(10,12)}}:{{record.updatedAt.substring(12,14)}}&nbsp;{{record.updatedAt.substring(14)}}</span></span>
+                        <span class="theLine"><span class='label'>Credential date</span><span class='theMetadata'>{{record.credentialDate.substring(0,4)}}/{{record.credentialDate.substring(4,6)}}/{{record.credentialDate.substring(6,8)}} &nbsp;{{record.credentialDate.substring(8,10)}}:{{record.credentialDate.substring(10,12)}}:{{record.credentialDate.substring(12,14)}}&nbsp;{{record.credentialDate.substring(14)}}</span></span>
+                        <span class="theLine"><span class='label'>User server id</span><span class='theMetadata'>{{record.userServerId}}</span></span>
+                        <span class="theLine"><span class='label'>Lock</span><span class='theMetadata'>{{record.lock}}</span></span>
+                        <span class="theLine"><span class='label'>Timeout hour(s)</span><span *ngIf="record.timeoutFileSystem!==undefined" class='theMetadata'>{{record.timeoutFileSystem.hh}}</span></span>
+                        <span class="theLine"><span class='label'>Timeout minute(s)</span><span *ngIf="record.timeoutFileSystem!==undefined" class='theMetadata'>{{record.timeoutFileSystem.mn}}</span></span>
+                        <div class="skipLine"></div>
+                    </div>
+                </li>
+            </div>
         </div>
     </div>
 
@@ -312,7 +282,7 @@
     <div class="skipLine"></div>
     <div *ngIf="isInputMetadata===true" style=' width:450px; display:inline-block;  margin-left:20px; border: solid 2px blue;'> <!--  *ngIf="currentAction==='updateMetadata' -->
         <h2 >Create metadata & update </h2> 
-        <h2> {{theForm.controls['srcObject'].value}} </h2>
+        <h3> {{theForm.controls['srcObject'].value}} </h3>
         <form [formGroup]="theForm" >
             <div style="margin-top:8px;">
                 <span class="theLine">
@@ -346,21 +316,16 @@
 
     <div *ngIf="this.EventHTTPReceived[17]===true " class="mainBlock mainBlockOverride"  style=" color:blue; font-size:14px; border:blue solid 2px; word-break: break-all; padding:10px; max-height:200px;">
         <h2 >Credentials </h2> 
+        <h3 >server: {{theForm.controls['serverForAction'].value}}</h3> 
         <div style="width:30%; color:red;display:inline-block; margin-left:10px;">userServerId</div><div style="width:65%; display:inline-block;">{{credentials.userServerId}}</div>
         <div style="width:30%; color:red;display:inline-block; margin-left:10px;">creationDate</div><div style="width:65%; display:inline-block;">{{credentials.creationDate}}</div>
-        
-        <!--
-            <div style="display:inline-block; height:4px; width:100%;"></div>
-        <div style="width:30%; color:red;display:inline-block; margin-left:10px;">access_token</div><div style="width:65%; display:inline-block;  word-break: break-all;">{{credentials.access_token}}</div>
-    
-        <div style="width:30%; color:red;display:inline-block; margin-left:10px;">id_token</div><div style="width:65%; display:inline-block;  word-break: break-all;">{{credentials.id_token}}</div>
-        -->
         <div style="width:30%; color:red;display:inline-block; margin-left:10px;">refresh_token</div><div style="width:65%; display:inline-block;  word-break: break-all;">{{credentials.refresh_token}}</div>
         <div style="width:30%; color:red;display:inline-block; margin-left:10px;">token_type</div><div style="width:65%; display:inline-block;  word-break: break-all;">{{credentials.token_type}}</div>
     </div>
 
     <div *ngIf="this.EventHTTPReceived[16]===true" style="margin-left:20px; margin-top:10px; width:450px; border: solid 2px blue;">
         <h2 >Cache file(s) </h2> 
+        <h2 >server: {{theForm.controls['serverForAction'].value}}</h2> 
         <div style="display:inline-block; height:4px; width:100%;"></div>
 
         <button class="largeButtons"  id="getCache" style="margin-left:15px;" (click)="getCacheFile()">Get cache file</button> 
@@ -389,7 +354,7 @@
     </div>
 
     <div *ngIf="isManageConfig===true" class="mainBlock" style="height:170px; max-height:200px; background-color: rgb(23, 220, 167); border-bottom:0px;">
-        <h2>Manage config</h2>
+        <h2>Manage config </h2>
         <div style=" margin-top:4px; width:400px; display:inline-block;  margin-left:25px;">
                 <li *ngFor="let action of tabConfig; let m=index;" 
                         class="Straight-options "  style="width:45%; display:inline-block; margin-left:5px; margin-top:3px; " [ngClass]=" {'even': m % 4 ===0, 'odd': m % 4 ===1, 'evenBis': m % 4 ===2, 'oddBis': m % 4 ===3}" 

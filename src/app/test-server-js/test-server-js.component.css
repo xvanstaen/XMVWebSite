@@ -1,6 +1,10 @@
 
 @import "../app.component.css";
 
+h3{
+width:100%; display:inline-block; font-size:15px; font-weight: bolder; color:blue;
+text-align: center;
+}
 
 .mainBlock{
   margin-left:20px; width:450px; max-width:650px; max-height:100px; background-color:skyblue; 
