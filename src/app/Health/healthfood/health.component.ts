@@ -1120,6 +1120,13 @@ export class HealthComponent implements OnInit {
       const trackNew = { nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
       this.tabNewRecordAll.splice(this.TabOfId[0], 0, trackNew);
     }
+
+    if (event.target.id.substring(0, 7) === 'AllDate') {
+      const theMeal = new ClassMeal;
+      this.HealthAllData.tabDailyReport[iDate].meal.push(theMeal);
+      const theIngredient = new ClassDish;
+      this.HealthAllData.tabDailyReport[iDate].meal[0].dish.push(theIngredient);
+    } 
   }
 
   FillHealthAllInOut(outFile: any, inFile: any) {
