@@ -1,5 +1,11 @@
     import { classFileSystem, classAccessFile }  from 'src/app/classFileSystem';
 
+    export function convertLongFormatDate(theDate:string) {
+      // format to return is yyyy/mm/dd hh:mn:ss ms
+      const newFormat= theDate.substring(0,4)+"/"+theDate.substring(4,6)+"/"+theDate.substring(6,8)+" "+theDate.substring(8,10)+":"+theDate.substring(10,12)+":"+theDate.substring(12,14)+" "+theDate.substring(14);
+      return (newFormat)
+    }
+
     export function convertDate(theDate:Date, theFormat:string) {
         var formattedDate:string=theFormat;
         var YY:number= theDate.getFullYear();

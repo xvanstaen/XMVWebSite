@@ -60,6 +60,13 @@ export class TestServerJSComponent {
 
   @Output() serverChange=  new EventEmitter<any>();
 
+  initData={
+    getRecord:false,
+    record:[],
+    app:"",
+    nbCalls:0,
+    }
+
   newConfigServer = new configServer;
 
   retrievedConfigServer= new configServer;
@@ -226,7 +233,9 @@ export class TestServerJSComponent {
   
   getOneServer(event:any){
     this.selectOneServer=false;
-    this.theForm.controls['serverForAction'].setValue(event.server);
+    if (event.server.trim()!=="cancel"){
+      this.theForm.controls['serverForAction'].setValue(event.server);
+    }
   }
 
   inputMetaPerso(event: any) {
@@ -1401,8 +1410,27 @@ listConfig(){
   }
 
   /* =================== CACHE CONSOLE  =============*/
-
+  gotoGetCacheConsole:boolean=false;
+  reTriggerFn:number=0;
   getCacheConsole() {
+    this.initData.getRecord=true;
+    this.initData.record=[];
+    this.initData.app="getCacheConsole";
+    this.initData.nbCalls++
+    this.reTriggerFn++
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.gotoGetCacheConsole=true;
+  }
+
+  appReturnError(event:any){
+    if (event.app==="getCacheConsole"){
+      this.error=event.error;
+      //this.gotoGetCacheConsole=false;;
+    }
+    
+  }
+
+  getCacheConsoleBis() {
     this.initBeforeCallAPI(10);
     this.memoryCacheConsole.splice(0,this.memoryCacheConsole.length);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;

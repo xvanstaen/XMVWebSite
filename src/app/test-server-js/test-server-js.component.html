@@ -200,6 +200,13 @@
         </div>
         
     </div>
+    <div *ngIf="gotoGetCacheConsole===true">
+        <app-cache-console [configServer]="newConfigServer" [initData]="initData" [reTriggerFn]="reTriggerFn"
+        (returnError)="appReturnError($event)"
+        >
+
+        </app-cache-console>
+    </div>
 
 
     <div *ngIf="this.EventHTTPReceived[10]===true " style="margin-left:20px; width:450px; display:block; ">

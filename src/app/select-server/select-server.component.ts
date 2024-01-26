@@ -29,7 +29,7 @@ export class SelectServerComponent {
   @Output() returnOneServer = new EventEmitter<any>();
 
   tabServers: Array<string> = [
-    'http://localhost:8080', 'https://test-server-359505.uc.r.appspot.com',
+    'cancel','http://localhost:8080', 'https://test-server-359505.uc.r.appspot.com',
     'https://xmv-it-consulting.uc.r.appspot.com', 'https://serverfs.ue.r.appspot.com'
     ]
   
@@ -57,7 +57,7 @@ export class SelectServerComponent {
     this.isSelectServer=false;
     if (this.selectOneServer===true){
       this.returnOneServer.emit({'server':event.target.textContent.trim()});
-    } else {
+    } else if (event.target.textContent.trim()!=='cancel'){
       if (this.saveSelectedServer==='google'){
         //this.configServer.googleServer = event.target.textContent.trim();
         this.theForm.controls['googleServer'].setValue(event.target.textContent.trim());

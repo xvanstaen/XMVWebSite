@@ -58,6 +58,7 @@ import { SelectServerComponent } from './select-server/select-server.component';
 import { TestServerJSComponent } from './test-server-js/test-server-js.component';
 import { UserFunctionsComponent } from './user-functions/user-functions.component';
 import { RoutingAppComponent } from './routing-app/routing-app.component';
+import { CacheConsoleComponent } from './cache-console/cache-console.component';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,8 @@ import { RoutingAppComponent } from './routing-app/routing-app.component';
     SelectServerComponent ,
     TestServerJSComponent,
     UserFunctionsComponent,
-    RoutingAppComponent
+    RoutingAppComponent,
+    CacheConsoleComponent
   ],
   imports: [
     AppRoutingModule,
