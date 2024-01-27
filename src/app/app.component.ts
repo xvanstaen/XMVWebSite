@@ -41,6 +41,8 @@ export class AppComponent {
   isIdRetrieved:boolean=false;
   saveServerUsrId:number=0;
 
+  saveGoogleServer:string="";
+
   isRetrievedConfig:boolean=false;
 
   ngOnInit(){
@@ -84,20 +86,24 @@ export class AppComponent {
           }
           this.configServer.IpAddress=this.IpAddress;
           this.configServer.project="XMVWebSite";
-
+          this.saveGoogleServer = this.configServer.googleServer;
           console.log('configServer is retrieved');
               //this.getTokenOAuth2();
           if (this.credentials.access_token===""){
-              this.getDefaultCredentials('Google');
-          }  if (this.credentials.access_token===""){
-              this.getDefaultCredentials('Mongo');
-          }  if (this.credentials.access_token===""){
-              this.getDefaultCredentials('FS');
+              this.getServerUsrId('Google');
+          }  
+          if (this.credentialsMongo.access_token===""){
+              this.getServerUsrId('Mongo');
+          }  
+          if (this.credentialsFS.access_token===""){
+              this.getServerUsrId('FS');
           } 
+        /*
         if (this.isNewUser===true){
             this.assignNewServerUsrId();
             this.isNewUser=false;
           }
+        */
         this.isConfigServerRetrieved=true;
         },
         error => {
@@ -107,17 +113,25 @@ export class AppComponent {
         });
   }
 
-  getDefaultCredentials(serverType:any){
+  getServerUsrId(serverType:any){
     console.log('getCredentials()');
-    this.ManageGoogleService.getCredentials(this.configServer  )
+    
+    if (serverType==='Mongo'){
+        this.configServer.googleServer = this.configServer.mongoServer;
+    } else if (serverType==='FS'){
+      this.configServer.googleServer = this.configServer.fileSystemServer
+    }
+    //this.ManageGoogleService.getCredentials(this.configServer  )
+    this.ManageGoogleService.getNewServerUsrId (this.configServer  )
     .subscribe(
         (data ) => {
           if (serverType==='Google'){
-            this.credentials = fillCredentials(data);
+            this.configServer.googleServer = this.saveGoogleServer;
+            this.credentials = fillCredentials(data.credentials);
           } else if (serverType==='Mongo'){
-              this.credentialsMongo = fillCredentials(data);
+              this.credentialsMongo = fillCredentials(data.credentials);
           } else if (serverType==='FS'){
-              this.credentialsFS = fillCredentials(data);
+              this.credentialsFS = fillCredentials(data.credentials);
           }
           this.isCredentials=true;
 
@@ -144,13 +158,10 @@ export class AppComponent {
       
       console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
         this.EventHTTPReceived[eventNb]);
-      window.cancelAnimationFrame(this.id_Animation[eventNb]);
-      if (loop > max_loop && this.EventHTTPReceived[eventNb] === false){
-        this.error="MongoDB cannot be accessed"
-      }
-      //if (this.EventHTTPReceived[eventNb] === true) {
-      //    window.cancelAnimationFrame(this.id_Animation[eventNb]);
-      //}
+        window.cancelAnimationFrame(this.id_Animation[eventNb]);
+        if (loop > max_loop && this.EventHTTPReceived[eventNb] === false){
+          this.error="MongoDB cannot be accessed"
+        }
     }
   }
 
@@ -159,8 +170,8 @@ export class AppComponent {
     this.isCredentials=false;
     this.isResetServer=true;
     this.isIdRetrieved=false;
-    this.getDefaultCredentials(event);
-    this.assignNewServerUsrId();
+    this.getServerUsrId(event);
+    //this.assignNewServerUsrId();
   }
 
   fnNewCredentials(credentials:any){
@@ -168,8 +179,19 @@ export class AppComponent {
     this.credentials=credentials;
   }
 
+  changeServerName(event:any){
+    if (event==="Google"){
+      this.getServerUsrId('Google');
+    }  
+    if (event==="Mongo"){
+        this.getServerUsrId('Mongo');
+    }  
+    if (event==="FS"){
+        this.getServerUsrId('FS');
+    } 
+  }
     
-  
+  /*
   assignNewServerUsrId(){
     this.ManageGoogleService.getNewServerUsrId(this.configServer)
     .subscribe(
@@ -182,7 +204,7 @@ export class AppComponent {
           }
     )
   }
-
+  */
 
 }
 

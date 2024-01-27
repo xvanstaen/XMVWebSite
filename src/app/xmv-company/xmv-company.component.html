@@ -226,7 +226,7 @@
               [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
                 
                 (my_output1)='TheIdentifObject($event)' (my_output2)='TheLoginRoute($event)' 
-                [credentials]="credentials" (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)"
+                [credentials]="credentials" (resetServer)="fnResetServer()" (serverChange)="changeServerName($event)" (newCredentials)="fnNewCredentials($event)"
                  >            <!-- (returnFile)="ReceiveFiles($event)" --> 
             </app-login>
           </span>  

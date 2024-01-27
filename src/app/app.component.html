@@ -39,7 +39,7 @@
 
   <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved"
       [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
-      (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)" ></app-xmv-company>
+      (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)"></app-xmv-company>
 </body>
 
 <router-outlet></router-outlet>

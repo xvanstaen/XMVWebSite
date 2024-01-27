@@ -247,5 +247,18 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
       this.identification.credentialDate=credentials.creationDate;
       this.newCredentials.emit(credentials);
   }
+
+  @Output() serverChange=  new EventEmitter<any>();
+  changeServerName(event:any){
+    if (event==='FS'){
+      this.serverChange.emit('FS');
+    } else  if (event==='Google'){
+      this.serverChange.emit('Google');
+    } else  if (event==='Mongo'){
+      this.serverChange.emit('Mongo');
+    }
+
+  }
+
 }
 

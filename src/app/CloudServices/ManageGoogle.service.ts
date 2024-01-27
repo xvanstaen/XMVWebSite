@@ -157,11 +157,12 @@ getCredentials(config:configServer): Observable<any> {
     const http_get=config.googleServer+'/getCredentials/'+config.GoogleProjectId+'/'+config.test_prod;
     return this.http.get<any>(http_get);                      
 }  
+/*
 getFSCredentials(config:configServer): Observable<any> {
     const http_get=config.fileSystemServer+'/credentialsFS/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(config.fileSystemServer);
     return this.http.get<any>(http_get);                      
 }  
-
+*/
 getServerVersion(config:configServer): Observable<any> {
     const http_get=config.googleServer+'/serverVersion/'+config.GoogleProjectId+'/'+config.test_prod;
     return this.http.get<any>(http_get);                      

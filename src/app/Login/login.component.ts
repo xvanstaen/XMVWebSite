@@ -113,8 +113,6 @@ export class LoginComponent {
 
   ngOnInit(){
 
-      this.getCredentialsFS();
-
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
       this.device_type = navigator.userAgent;
@@ -214,7 +212,7 @@ checkLogin(){
 
   getUserAccessLevel(){
     this.ManageGoogleService.getSecurityAccess(this.configServer )
-    .subscribe((data ) => {  
+      .subscribe((data ) => {  
           if (data.status===200){
             this.configServer.userLogin.accessLevel = data.accessLevel;
             this.configServerChanges++
@@ -227,23 +225,6 @@ checkLogin(){
           this.error="Server problem. Lower level of access has been assigned"
       });
   }
-
-
-
-getCredentialsFS(){
-  const theServer='fileSystem';
-  this.ManageGoogleService.getFSCredentials(this.configServer)
-      .subscribe(
-          (data ) => {
-            this.credentialsFS.creationDate = data.credentials.creationDate;
-            this.credentialsFS.userServerId = data.credentials.userServerId
-            console.log('getCredentials server='+theServer +' '+JSON.stringify(data));
-          },
-          err => {
-            console.log("return from getCredentials() for server '" + theServer + "' with error = "+ err.status);
-          });
-  }
-
 
 ValidateData(){
   //console.log('validateData()');
@@ -261,7 +242,6 @@ ValidateData(){
   }
 }
 
-
 GetUpdatedTable(event:any){
   this.Table_User_Data=event;
 }
@@ -275,8 +255,29 @@ onClear(){
 }
 
 
+fnResetServer(){
+  this.resetServer.emit();
+}
 
-firstLoop:boolean=true;
+fnNewCredentials(credentials:any){
+  this.identification.userServerId=credentials.userServerId;
+  this.identification.credentialDate=credentials.creationDate;
+  this.newCredentials.emit(credentials);
+}
+
+@Output() serverChange=  new EventEmitter<any>();
+changeServerName(event:any){
+  if (event==='FS'){
+    this.serverChange.emit('FS');
+  } else  if (event==='Google'){
+    this.serverChange.emit('Google');
+  } else  if (event==='Mongo'){
+    this.serverChange.emit('Mongo');
+  }
+
+}
+
+/*
 ngOnChanges(changes: SimpleChanges) { 
   for (const propName in changes){
     const j=changes[propName];
@@ -288,28 +289,22 @@ ngOnChanges(changes: SimpleChanges) {
     }
   }
 }
+*/
 
-
-fnResetServer(){
-      this.resetServer.emit();
+/*
+getCredentials(){
+  const theServer='fileSystem';
+  this.ManageGoogleService.getCredentials(this.configServer)
+      .subscribe(
+          (data ) => {
+            this.credentialsFS.creationDate = data.credentials.creationDate;
+            this.credentialsFS.userServerId = data.credentials.userServerId
+            console.log('getCredentials server='+theServer +' '+JSON.stringify(data));
+          },
+          err => {
+            console.log("return from getCredentials() for server '" + theServer + "' with error = "+ err.status);
+          });
   }
-
-fnNewCredentials(credentials:any){
-  this.identification.userServerId=credentials.userServerId;
-  this.identification.credentialDate=credentials.creationDate;
-  this.newCredentials.emit(credentials);
-}
-
-
-changeServerName(event:any){
-  if (event==='FS'){
-    this.getCredentialsFS();
-  } else  if (event==='Google'){
-
-  } else  if (event==='Mongo'){
-
-  }
-  
-}
+*/
 
 }
