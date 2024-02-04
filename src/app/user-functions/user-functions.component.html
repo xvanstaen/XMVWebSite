@@ -107,11 +107,10 @@
     </div>  
     
     <div *ngIf="selectApps>10  &&  selectApps<14">
-        
-        <app-health  [identification]="identification"  [configServer]="configServer"  [triggerFunction]="selHealthFunction" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
+        <app-main-health  [identification]="identification"  [configServer]="configServer"  [triggerFunction]="selHealthFunction" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
              (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)"
         >
-        </app-health>
+        </app-main-health>
     </div>  
 
     <div *ngIf="selectApps===14 || selectApps===15">

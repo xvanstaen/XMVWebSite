@@ -65,7 +65,7 @@ export class AppComponent {
     }
     this.TabLoop[0]=0;
     this.EventHTTPReceived[0]=false;
-    this.waitHTTP(this.TabLoop[0],2000,0);
+    this.waitHTTP(this.TabLoop[0],3000,0);
     this.error="";
       //InitconfigServer.GoogleProjectId='ConfigDB';
     this.ManageMongoDB.findConfig(this.initConfigServer, 'configServer')

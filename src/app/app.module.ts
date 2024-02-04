@@ -59,6 +59,7 @@ import { TestServerJSComponent } from './test-server-js/test-server-js.component
 import { UserFunctionsComponent } from './user-functions/user-functions.component';
 import { RoutingAppComponent } from './routing-app/routing-app.component';
 import { CacheConsoleComponent } from './cache-console/cache-console.component';
+import { MainHealthComponent } from './Health/main-health/main-health.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +106,8 @@ import { CacheConsoleComponent } from './cache-console/cache-console.component';
     TestServerJSComponent,
     UserFunctionsComponent,
     RoutingAppComponent,
-    CacheConsoleComponent
+    CacheConsoleComponent,
+    MainHealthComponent
   ],
   imports: [
     AppRoutingModule,

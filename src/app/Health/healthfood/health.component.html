@@ -4,70 +4,13 @@
 </head> 
 <body>
 
-<div class="skipLine">&nbsp;</div>
-<div id='posTopHealth' [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:240px; margin-left:20px; border:solid 2px blue; ">
-    <div class="skipLine">&nbsp;</div>  
-    <div  >
-        <div class="theRadio" style="margin-left:10px;">Display daily food </div> 
-        <input  (click)='SelRadio("Y-3")'class="theRadioButt" type="radio" name="DisplayAll" formControlName="DisplayAll" id="DisplayAll" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-3")'class="theRadioButt"  style="margin-left:10px;" type="radio" name="DisplayAll" formControlName="DisplayAll" id="DisplayAll" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
-    </div>
-    <div  >
-        <div class="theRadio" style="margin-left:10px;">Copy Master File </div> 
-        <input  (click)='SelRadio("Y-4")' class="theRadioButt" type="radio" name="CopyFile" formControlName="CopyFile" id="CopyFile" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-4")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CopyFile" formControlName="CopyFile" id="CopyFile" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
-    </div>
-    <div  >
-        <div class="theRadio" style="margin-left:10px;">Mgt Calories & Fat </div> 
-        <input    (click)='SelRadio("Y-5")' class="theRadioButt" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
-        <input   (click)='SelRadio("N-5")' class="theRadioButt" style="margin-left:10px;" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
-    </div>
-    <div >
-        <div class="theRadio" style="margin-left:10px;">Calculate Calories & Fat </div> 
-        <input  *ngIf="EventHTTPReceived[2]===true" (click)='SelRadio("Y-6")' class="theRadioButt" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="Y" >  <span *ngIf="EventHTTPReceived[2]===true" class="YesNo">&nbsp;&nbsp;Yes</span>
-        <input  *ngIf="EventHTTPReceived[2]===true" (click)='SelRadio("N-6")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="N" >  <span  *ngIf="EventHTTPReceived[2]===true"sclass="YesNo">&nbsp;&nbsp;No</span>
-    </div>
-     <div >
-        <div class="theRadio" style="margin-left:10px;">Display the charts </div> 
-        <input  (click)='SelRadio("Y-7")' class="theRadioButt" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-7")' class="theRadioButt" style="margin-left:10px;" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
-    </div>
-    <div >
-        <div class="theRadio" style="margin-left:10px;">Re-load HTML configuration file </div> 
-        <input  (click)='SelRadio("Y-8")' class="theRadioButt" type="radio" name="ReloadHTML"  id="ReloadHTML" formControlName="ReloadHTML" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-8")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadHTML" formControlName="ReloadHTML" id="ReloadHTML" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
-    </div>
-    <div >
-         <div class="theRadio" style="margin-left:10px;">Re-load Chart configuration file </div> 
-        <input  (click)='SelRadio("Y-9")' class="theRadioButt" type="radio" name="ReloadChart"  id="ReloadChart" formControlName="ReloadChart"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-9")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadChart"  formControlName="ReloadChart"  id="ReloadChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
-    </div>
-    <div class="skipLine">&nbsp;</div>   
-</div>
-
-<div id='posTopAppCalFat' *ngIf="isMgtCaloriesFat===true && EventHTTPReceived[1]===true && EventHTTPReceived[6]===true  && tabLock[1].lock!==3">  
-    <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [saveCalFatMsg]="saveCalFatMsg"
-        [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock[1]" (myEmit)="SaveCaloriesFat($event)"
-        (myEmitRecipe)="SaveRecipeFile($event)" (reportCheckLockLimit)="reportCheckLockLimit($event)" (cancelSaveOther)="CancelSaveOthers($event)">
-    </app-calories-fat>
-    <div class="skipLine">&nbsp;</div>
-</div>
-
-<div id='posTopAppReportHealth' *ngIf="isDisplayChart===true && EventHTTPReceived[4]===true && EventHTTPReceived[0]===true && EventHTTPReceived[5]===true && tabLock[5].lock!==3">
-    
-    <app-report-health [identification]="identification"  [configServer]="configServer"  [INFileParamChart]="fileParamChart" [tabLock]="tabLock[5]"
-    [ConfigChartHealth]="ConfigChart.chartHealth"  [HealthAllData]="HealthAllData" (returnFile)="saveParamChart($event)" (reportCheckLockLimit)="reportCheckLockLimit($event)"  (cancelSaveOther)="CancelSaveOthers($event)">
-    </app-report-health>
-    <div class="skipLine">&nbsp;</div>
-</div>
 
 
-
-<div *ngIf="theResetServer===true && error_msg!=='' ">
+<div *ngIf="errorMsg!==''&& errorFn==='' ">
     <div class="skipLine">&nbsp;</div>
     <div  style="color:red; margin-left:20px; font-weight: bold; width:500px; display:inline-block; background: lightgrey;"  > 
         <div class="skipLine">&nbsp;</div>
-        {{error_msg}}
+        {{errorMsg}}
         <div class="skipLine">&nbsp;</div>
     </div>
     <div class="skipLine">&nbsp;</div>
@@ -82,19 +25,19 @@
     </div>
 </div>
 
-<div *ngIf="(theResetServer===false && ((isDeleteConfirmed===false && error_msg!=='' && errorFn==='delDate') || 
-        (IsSaveConfirmedAll===false && error_msg!=='' && errorFn==='All')))">
+<div *ngIf="((isDeleteConfirmed===false && errorMsg!=='' && errorFn==='delDate') || 
+        (IsSaveConfirmedAll===false && errorMsg!=='' && errorFn==='All'))">
     <div class="skipLine">&nbsp;</div>
     <div  style="margin-top:8px; margin-left:20px; color:red; font-weight: bold; width:480px; display:inline-block; background: lightgrey;"  > 
         <div class="skipLine">&nbsp;</div>
-        {{error_msg}}
+        {{errorMsg}}
         <div class="skipLine">&nbsp;</div>
     </div>
     <div class="skipLine">&nbsp;</div>
 </div>
 
 <!--    Create COPY OF HealthAllData file -->
-<div *ngIf="EventHTTPReceived[0]===true && isCopyFile===true" style="margin-left:20px; border: blue 2px double; background-color: silver; width:90%">
+<div *ngIf="isCopyFile===true" style="margin-left:20px; border: blue 2px double; background-color: silver; width:90%">
     <div class="skipLine">&nbsp;</div>
     <form  [formGroup]="SpecificForm" >
         <div class="msg"  >
@@ -109,30 +52,41 @@
     <div class="skipLine">&nbsp;</div>
 </div>
 
-<div *ngIf="EventHTTPReceived[0]===true && tabLock[0].lock === 2">
+<div *ngIf="tabLock[0].lock === 2">
     <div style="font-size:16px; color:red; margin-left:20px; display:inline-block; width:100%; margin-top:5px;">
        <span >
             Sorry, this file is locked by another user - updates are not possible
        </span> 
     </div>
 </div>
-
-<!--------------- DISPLAY ALL -->
-<div *ngIf="EventHTTPReceived[0]===false ||  EventHTTPReceived[3]===false " style="margin-left:20px; width:500px; display:block; height:35px; 
-            text-align:center; background-color: lightyellow; font-size:16px;">
-    File is being retrieved and processed
+<div *ngIf="errorTimeOut!==''" style="font-size:16px; color:red; margin-left:20px; display:inline-block; width:100%; margin-top:5px;">
+    {{errorTimeOut}}
 </div>
 
+<!--------------- DISPLAY ALL -->
+<!--
+<div *ngIf="EventHTTPReceived[0]===false ||  EventHTTPReceived[3]===false " style="margin-left:20px; width:500px; display:block; height:35px; 
+            text-align:center; background-color: lightyellow; font-size:16px;">
+    <div *ngIf="this.EventStopWaitHTTP[0]===true">
+        {{errorMsg}}
+        <br>
+        restart
+    </div>
+    <div *ngIf="this.EventStopWaitHTTP[0]===false">
+        File is being retrieved and processed
+    </div>
+</div>
+-->
 <div class="skipLine">&nbsp;</div>
-<div *ngIf="EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true" style="margin-left:20px;">
+<div style="margin-left:20px;">
     <div style="font-size:16px; color:blue; background-color:cyan; border:2px solid darkcyan; display:inline-block; 
             height:46px; text-align:center; padding-top:10px; margin-top:15px;" [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width}">
             HEALTH DATA MANAGEMENT
     </div>
     <div id="ListAll">&nbsp;</div> 
     <div *ngIf="isDeleteConfirmed===true">
-        <div *ngIf="error_msg!==''" class="skipLine">&nbsp;</div>
-        <div *ngIf="error_msg!==''" class="error" >{{error_msg}}</div>
+        <div *ngIf="errorMsg!==''" class="skipLine">&nbsp;</div>
+        <div *ngIf="errorMsg!==''" class="error" >{{errorMsg}}</div>
         <div class="skipLine">&nbsp;</div>
         <div class="posConfirm">
             <button id='Del-1' class="sizeButtons" (click)="ConfirmDelDate()">Confirm</button>
@@ -150,7 +104,7 @@
             <button id='selectAllData' class="sizeButtons" (click)="dateRangeSelection($event)">Submit</button>
             <button id='cleardates' class="sizeButtons" (click)="clearDates()">Clear</button>
     
-            <span class="error" *ngIf="isRangeDateError===true">{{error_msg}}</span>
+            <span class="error" *ngIf="isRangeDateError===true">{{errorMsg}}</span>
             
         </form>
         <div class="skipLine">&nbsp;</div>
@@ -273,7 +227,7 @@
                             <span   class="tReadOnly  widthAction boxAction" 
                                 [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color': i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                 id="openAction-{{i}}-{{k}}-{{j}}" (click)="onAction($event)">
-                                <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" (click)="onNoAction($event)">A</span>
+                                <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" >A</span>
                             </span>
 
                             <input type="date" class="trow widthDate " 
@@ -452,7 +406,7 @@
             <div class="msg"  style="margin-left:10px;">
                     File has been modified
                 <button id='AllConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
-                <button id='AllCancel' class="sizeButtons" style='width:100px;' (click)="CancelUpdateAll($event)"> Cancel changes</button>
+                <button id='AllCancel' class="sizeButtons" style='width:100px;' (click)="cancelUpdateAll($event)"> Cancel changes</button>
             </div>
         </span>
         <span *ngIf="this.isMustSaveFile === true">
@@ -464,12 +418,13 @@
             <form  [formGroup]="SpecificForm" >
                 <div class="msg"   style="margin-left:10px;">
                     Please enter the name of the file to save :
-                    <input type='text' formControlName="FileName" >
+                    <input type='text' style="width:240px;" formControlName="FileName" >
                 </div>
                 <div class="skipLine">&nbsp;</div>
-                <div class="posConfirm">
-                    <button id='All-1' class="sizeButtons" (click)="SaveHealth($event)">Confirm</button>
-                    <button id='All-2' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
+                <div style="width:500px; display:inline-block; margin-left:20px; ">
+                    <span style="width:240px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
+                    <button id='All-1' class="sizeButtons" (click)="SaveHealth($event)">Yes</button>
+                    <button id='All-2' class="sizeButtons" (click)="cancelTheSave()"> No</button>
                 </div>
             </form>        
         </span>

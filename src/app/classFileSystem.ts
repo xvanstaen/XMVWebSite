@@ -50,3 +50,12 @@ export class classAccessFile{
       credentialDate:string="";
   }
 
+  export class classReturnDataFS{
+    onInputAction:string="";
+    reAccessFile:boolean=false;
+    tabLock:Array<classAccessFile>=[];
+    theResetServer:boolean=false;
+    nbRecall:number=0;
+    errorCode:number=0;
+    errorMsg:string="";
+  }  

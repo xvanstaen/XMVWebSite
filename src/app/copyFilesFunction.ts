@@ -26,6 +26,15 @@ export function fillConfig(inFile:configServer){
     outFile.timeoutFileSystem.bufferTO.mn = inFile.timeoutFileSystem.bufferTO.mn;
     outFile.timeoutFileSystem.bufferInput.hh = inFile.timeoutFileSystem.bufferInput.hh;
     outFile.timeoutFileSystem.bufferInput.mn = inFile.timeoutFileSystem.bufferInput.mn;
+    if (inFile.timeoutFileSystem.userTimeOut!==undefined){
+      outFile.timeoutFileSystem.userTimeOut.hh = inFile.timeoutFileSystem.userTimeOut.hh;
+      outFile.timeoutFileSystem.userTimeOut.mn = inFile.timeoutFileSystem.userTimeOut.mn;
+      outFile.timeoutFileSystem.userTimeOut.ss = inFile.timeoutFileSystem.userTimeOut.ss;
+    } else {
+      outFile.timeoutFileSystem.userTimeOut.hh = 0;
+      outFile.timeoutFileSystem.userTimeOut.mn = 8;
+      outFile.timeoutFileSystem.userTimeOut.ss = 45;
+    }
     
     outFile.PointOfRef.bucket = inFile.PointOfRef.bucket;
     outFile.PointOfRef.file = inFile.PointOfRef.file;
@@ -74,4 +83,58 @@ export function fillConfig(inFile:configServer){
     outRecord.creationDate=inRecord.creationDate;
     outRecord.userServerId=inRecord.userServerId;
     return (outRecord);
+  }
+
+  export function FillHealthAllInOut(outFile:any, inFile: any) {
+    var iOut = -1;
+    if (inFile.updatedAt !== undefined) {
+      outFile.updatedAt = inFile.updatedAt;
+    } else { outFile.updatedAt = ''; }
+    for (var i = 0; i < inFile.tabDailyReport.length; i++) {
+      iOut++
+      outFile = fillHealthOneDay(outFile, inFile, i, iOut);
+    }
+    return outFile;
+  }
+  import { ClassItem, DailyReport, ClassMeal, ClassDish } from './Health/ClassHealthCalories';
+  
+  export function fillHealthOneDay(outFile:any, inFile: any, i:number, iOut:number) {
+    const theDaily = new DailyReport;
+    outFile.tabDailyReport.push(theDaily);
+    outFile.tabDailyReport[iOut].burntCalories = inFile.tabDailyReport[i].burntCalories;
+    outFile.tabDailyReport[iOut].date = inFile.tabDailyReport[i].date;
+    outFile.tabDailyReport[iOut].total = inFile.tabDailyReport[i].total;
+    var jOut = -1;
+    for (var j = 0; j < inFile.tabDailyReport[i].meal.length; j++) {
+      if (inFile.tabDailyReport[i].meal[j].dish.length > 0) {
+        const theMeal = new ClassMeal;
+        outFile.tabDailyReport[iOut].meal.push(theMeal);
+        jOut++
+        outFile.tabDailyReport[iOut].meal[jOut].name = inFile.tabDailyReport[i].meal[j].name;
+        outFile.tabDailyReport[iOut].meal[jOut].total = inFile.tabDailyReport[i].meal[j].total;
+        var lOut = -1;
+        for (var k = 0; k < inFile.tabDailyReport[i].meal[j].dish.length; k++) {
+          if (inFile.tabDailyReport[i].meal[j].dish[k].name !== '') {
+            const theIngr = new ClassDish;
+            outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
+            lOut++
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].name = inFile.tabDailyReport[i].meal[j].dish[k].name;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].quantity = inFile.tabDailyReport[i].meal[j].dish[k].quantity;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].unit = inFile.tabDailyReport[i].meal[j].dish[k].unit;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat = inFile.tabDailyReport[i].meal[j].dish[k].calFat;
+          } else {
+            const theIngr = new ClassDish;
+            outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
+            lOut++
+          }
+        }
+      } else {
+        const theMeal = new ClassMeal;
+        outFile.tabDailyReport[iOut].meal.push(theMeal);
+        jOut++
+        const theIngr = new ClassDish;
+        outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
+      }
+    }
+    return outFile;
   }

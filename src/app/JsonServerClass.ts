@@ -270,8 +270,13 @@ export class configServer{
       mn:0
     },
     bufferInput:{
-        hh:0,
-        mn:0
+      hh:0,
+      mn:0
+    },
+    userTimeOut:{
+      hh:0,
+      mn:0,
+      ss:0
     }
   };
   filesToCache:Array<classFilesToCache>=[];
@@ -304,4 +309,19 @@ export class   classCredentials {
 }
 
 export class classTabMetaPerso { key:string=""; value:string=""; }
+
+export class classtheEvent {
+  target={
+    id: '',
+    textContent: '',
+    value: ''
+  };
+  currentTarget={
+    id: '',
+    textContent: '',
+    value: ''
+  };
+  checkLock={iWait:0,isDataModified:false,isSaveFile:false, lastInputAt:''};
+  fileName:string='';;
+}
 

@@ -401,21 +401,21 @@
         </span>
         
         <div class="skipLine">&nbsp;</div>
-        <span *ngIf="error_msg!==''" style="color:red; font-size:14px; width:90%; margin-left:30px;">{{error_msg}}</span>
+        <span *ngIf="errorMsg!==''" style="color:red; font-size:14px; width:90%; margin-left:30px;">{{errorMsg}}</span>
 
         <!-- ************* PROCESS or CANCEL PARAMETERS FOR THIS CHART# ************* -->
         <div *ngIf="tabLock.lock===1">
             <div class="skipLine">&nbsp;</div>
-            <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit'  (click)="SaveCancel('save')" > Save this chart & process it
+            <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit'  (click)="saveFn('save')" > Save this chart & process it
             </button>
-            <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="submit" (click)="fnSelectChart()"> Process this chart
+            <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="fnSelectChart()"> Process this chart
             </button>
-            <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="submit" (click)="SaveCancel('cancelOne')"> Cancel updates for this chart
+            <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="cancelFn('cancelOne')"> Cancel updates for this chart
             </button>
             <div class="skipLine">&nbsp;</div>
-            <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="submit" (click)="SaveCancel('cancelAll')"> Cancel updates for all charts
+            <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="cancelFn('cancelAll')"> Cancel updates for all charts
             </button>
-            <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="submit" (click)="SaveCancel('saveAll')"> Save all charts
+            <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="saveFn('saveAll')"> Save all charts
             </button>
         </div>
         <div class="skipLine">&nbsp;</div>

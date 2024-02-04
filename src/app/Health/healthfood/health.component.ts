@@ -17,7 +17,7 @@ import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 // it is stored in MongoDB and accessed via ManageMongoDBService
 
 import { msginLogConsole } from '../../consoleLog'
-import { configServer, LoginIdentif, msgConsole, classCredentials } from '../../JsonServerClass';
+import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent } from '../../JsonServerClass';
 import { classPosDiv, getPosDiv } from '../../getPosDiv';
 
 import { environment } from 'src/environments/environment';
@@ -36,20 +36,20 @@ import { classConfHTMLFitHealth, classConfTableAll } from '../classConfHTMLTable
 import { CalcFatCalories } from '../CalcFatCalories';
 import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../classChart';
-import { classFileSystem, classAccessFile } from '../../classFileSystem';
+import { classFileSystem, classAccessFile , classReturnDataFS} from '../../classFileSystem';
 
 import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { AccessConfigService } from 'src/app/CloudServices/access-config.service';
-
-import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, findIds } from '../../MyStdFunctions';
+import { fillHealthOneDay } from 'src/app/copyFilesFunction';
+import { fnAddTime, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 
 @Component({
   selector: 'app-health',
   templateUrl: './health.component.html',
   styleUrls: ['./health.component.css']
 })
-export class HealthComponent implements OnInit {
+export class HealthComponent  {
 
   constructor(
     private http: HttpClient,
@@ -61,34 +61,42 @@ export class HealthComponent implements OnInit {
     @Inject(LOCALE_ID) private locale: string,
   ) { }
 
-  @Output() returnFile = new EventEmitter<any>();
-  @Output() resetServer = new EventEmitter<any>();
-  @Output() newCredentials = new EventEmitter<any>();
+  @Output() initTrackRecord = new EventEmitter<any>();
+  @Output() retrieveRecord = new EventEmitter<any>();
+
+  @Output() saveCopy = new EventEmitter<any>();
+
+  @Output() checkLockLimit = new EventEmitter<any>();
+  @Output() cancelUpdates = new EventEmitter<any>();
+  @Output() confirmSave = new EventEmitter<any>();
+  @Output() processSave = new EventEmitter<any>();
 
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
-  @Input() triggerFunction: number = 0;
-  
-  @Input() credentials = new classCredentials;
-  @Input() credentialsMongo = new classCredentials;
-  @Input() credentialsFS = new classCredentials;
-
-  InHealthAllData = new mainDailyReport;
-  InConfigCaloriesFat = new mainClassCaloriesFat;
-  InConvertUnit = new mainClassConv;
-  InConfigHTMLFitHealth = new classConfHTMLFitHealth;
-  InConfigChart = new classConfigChart;
-  InFileParamChart = new classFileParamChart;
+  // @Input() triggerFunction: number = 0;
 
 
-  fileParamChart = new classFileParamChart;
-  ConfigChart = new classConfigChart;
-  ConvertUnit = new mainClassConv;
+  @Input() HealthAllData = new mainDailyReport;
+  @Input() ConfigCaloriesFat = new mainClassCaloriesFat;
 
-  HealthAllData = new mainDailyReport; // contain the full object
+  @Input() confTableAll = new classConfTableAll;
+  @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
 
-  ConfigCaloriesFat = new mainClassCaloriesFat;
-  fileRecipe = new mainClassCaloriesFat;
+  //@Input() resultFileSystemHealth:number=0;
+  @Input() tabNewRecordAll: Array<any> = [
+    {
+      nb: 0,
+      meal: [{
+        nb: 0,
+        food: [{ nb: 0}]
+      }]
+    }
+  ];
+
+  @Input() returnDataFS = new classReturnDataFS;
+  @Input() actionHealth:number=0;
+  @Input() createDropDownCalFat:number=0;
+
 
   myLogConsole: boolean = false;
   myConsole: Array<msgConsole> = [];
@@ -96,43 +104,19 @@ export class HealthComponent implements OnInit {
   SaveConsoleFinished: boolean = false;
   type: string = '';
 
-  HTTP_Address: string = '';
-  HTTP_AddressPOST: string = '';
-  Google_Bucket_Access_Root: string = 'https://storage.googleapis.com/storage/v1/b/';
-  Google_Bucket_Access_RootPOST: string = 'https://storage.googleapis.com/upload/storage/v1/b/';
-
-  Google_Object_Health: string = 'HealthTracking';
-  Google_Object_Console: string = 'LogConsole';
-  Google_Object_Calories: string = 'ConfigCaloriesFat';
-  bucket_data: string = '';
-  myListOfObjects = new Bucket_List_Info;
-  DisplayListOfObjects: boolean = false;
-  Error_Access_Server: string = '';
-  message: string = '';
-  error_msg: string = '';
-
-  EventHTTPReceived: Array<boolean> = [];
-  EventStopWaitHTTP: Array<boolean> = [];
-  maxEventHTTPrequest: number = 20;
-  id_Animation: Array<number> = [];
-  TabLoop: Array<number> = [];
-  NbWaitHTTP: number = 0;
-
+  errorMsg: string = '';
 
   SpecificForm = new FormGroup({
     FileName: new FormControl('', { nonNullable: true }),
   })
 
-
-  isDisplayAll: boolean = false;
+  isConfirmSaveA:boolean=false;
   isCopyFile: boolean = false;
-  isMgtCaloriesFat: boolean = false;
-
   isDeleteConfirmed: boolean = false;
   isAllDataModified: boolean = false;
   IsSaveConfirmedAll: boolean = false;
-  IsCalculateCalories: boolean = false;
-  isDisplayChart: boolean = false;
+  isDeleteItem: boolean = false;
+
   isInputFood: boolean = false;
   strInputFood: string = "";
 
@@ -142,61 +126,11 @@ export class HealthComponent implements OnInit {
 
   recordToDelete: number = 0;
 
-  TheSelectDisplays: FormGroup = new FormGroup({
-
-    DisplayAll: new FormControl('N', { nonNullable: true }),
-    CopyFile: new FormControl('N', { nonNullable: true }),
-    MgtCalories: new FormControl('N', { nonNullable: true }),
-    CalculCalories: new FormControl('N', { nonNullable: true }),
-    SelectedDate: new FormControl(Date(), { nonNullable: true }),
-    theAction: new FormControl('Action', { nonNullable: true }),
-    DisplayChart: new FormControl('N', { nonNullable: true }),
-    ReloadHTML: new FormControl('N', { nonNullable: true }),
-    ReloadChart: new FormControl('N', { nonNullable: true }),
-    searchString: new FormControl('', { nonNullable: true }),
-    startRange: new FormControl('', [
-      Validators.required,
-      // validates date format yyyy-mm-dd with regular expression
-      Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
-    ]),
-    endRange: new FormControl('', [
-      Validators.required,
-      // validates date format yyyy-mm-dd with regular expression
-      Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
-    ]),
-
-  })
-
-
+ 
   TabAction: Array<any> = [{ name: '' }];
   NewTabAction: Array<any> = [{ type: '', name: '' }];
 
-  // CONVERSION OF UNITS IF NEEDED
-
-  ConvToDisplay: Array<ConvItem> = []
-  theTabOfUnits: Array<ClassUnit> = [];
-
-  ValuesToConvert = {
-    valueFromTo: 0,
-    From: '',
-    To: '',
-    valueFrom: 0,
-    valueTo: 0,
-    type: '',
-  }
-
-  theEvent = {
-    target: {
-      id: '',
-      textContent: '',
-      value: ''
-    },
-    currentTarget: {
-      id: '',
-      textContent: '',
-      value: ''
-    }
-  }
+  theEvent = new classtheEvent;
 
   TabOfId: Array<any> = [];
 
@@ -209,18 +143,12 @@ export class HealthComponent implements OnInit {
   getScreenHeight: any;
   device_type: string = '';
 
-  /****  CONFIGURATION PARAMETERS FOR HTML *****/
-  confTableAll = new classConfTableAll;
-  ConfigHTMLFitHealth = new classConfHTMLFitHealth;
-
   filterCalc: boolean = false;
   filterHealth: boolean = false;
 
   searchOneDate: number = 0;
   searchOneDateHealth: number = 0;
   isRangeDateError: boolean = false;
-
-  isDeleteItem: boolean = false;
 
   prevDialogue: number = 0;
   dialogue: Array<boolean> = [false, false, false, false, false, false, false]; // CREdate=0; CREmeal=1; CREingr=2; SELdate=3; SELmeal=4; SELingr=5; allData=6
@@ -229,20 +157,6 @@ export class HealthComponent implements OnInit {
   myAction: string = '';
   myType: string = '';
 
-  tabNewRecordAll: Array<any> = [
-    {
-      nb: 0,
-      meal: [{
-        nb: 0,
-        food: [{ nb: 0, }]
-      }]
-    }
-  ];
-
-  returnData = {
-    error: 0,
-    outHealthData: new DailyReport
-  }
 
   tabMeal: Array<any> = [{ name: '' }];
   tabFood: Array<any> = [{ name: '' }];
@@ -289,51 +203,48 @@ export class HealthComponent implements OnInit {
   posDivReportHealth = new classPosDiv;
   posDivAfterTitle = new classPosDiv;
 
-  inData = new classAccessFile;
-  tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-
   titleHeight: number = 0;
   foodPos: number = 0;
   posItem: number = 0;
   eventClientY: number = 0;
 
-  saveServer={
-    google:"",
-    mongo:"",
-    FS:""
-  }
-
   lastInputAt: string = '';
 
-  isConfirmSaveA: boolean = false;
-
-  isSaveRecipeFile: boolean = false;
-  recipeNameFile: string = '';
 
   isMustSaveFile: boolean = false;
-  isSaveCaloriesFat: boolean = false;
   isSaveHealth: boolean = false;
-  isSaveParamChart: boolean = false;
 
-  saveEvent: any;
   errCalcCalFat: string = '';
-  saveCalFatMsg: string = "";
-  calfatNameFile: string = '';
  
   nbRecall: number = 0;
-  theResetServer: boolean = false;
 
-  msgCredentials: string = '';
-  nbCallCredentials: number = 0;
-
-  processDestroy: boolean = false;
-  passDestroy: number = 0;
+  //msgCredentials: string = '';
+  //nbCallCredentials: number = 0;
 
   maxItemsPerPage:number=30;
   numPage:number=1;
   displayHealthAllData = new mainDailyReport;
   minNum:number=0;
   maxNum:number=0;
+
+  errorTimeOut:string="";
+  userActivity:string= "";
+
+  TheSelectDisplays: FormGroup = new FormGroup({
+
+    searchString: new FormControl('', { nonNullable: true }),
+    startRange: new FormControl('', [
+      Validators.required,
+      // validates date format yyyy-mm-dd with regular expression
+      Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
+    ]),
+    endRange: new FormControl('', [
+      Validators.required,
+      // validates date format yyyy-mm-dd with regular expression
+      Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
+    ]),
+
+  })
 
   /*
   @HostListener('window:mouseup', ['$event'])
@@ -367,7 +278,7 @@ export class HealthComponent implements OnInit {
     var iOut = -1;
     for (var i= (this.numPage-1) * this.maxItemsPerPage; i< this.HealthAllData.tabDailyReport.length; i++){
         iOut++
-        this.fillHealthOneDay(this.displayHealthAllData, this.HealthAllData, i, iOut);
+        this.displayHealthAllData = fillHealthOneDay(this.displayHealthAllData, this.HealthAllData, i, iOut);
     }
 
   }
@@ -390,48 +301,9 @@ export class HealthComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // used to open files in parallel using the google and mongo servers
-    this.saveServer.google=this.configServer.googleServer;
-    this.saveServer.mongo=this.configServer.mongoServer;
-    this.saveServer.FS=this.configServer.fileSystemServer;
-
     this.minNum = 0 ;
     this.maxNum = this.maxItemsPerPage;
-
-    for (var i = 0; i < 7; i++) {
-      const thePush = new classAccessFile;
-      this.tabLock.push(thePush);
-      if (this.identification.triggerFileSystem === "No") {
-        this.tabLock[i].lock = 1;
-      } else {
-        this.tabLock[i].lock = 3;
-      }
-      this.tabLock[i].user = this.identification.UserId;
-      this.tabLock[i].iWait = i;
-      this.tabLock[i].timeoutFileSystem.hh = this.configServer.timeoutFileSystem.hh;
-      this.tabLock[i].timeoutFileSystem.mn = this.configServer.timeoutFileSystem.mn;
-      this.tabLock[i].IpAddress = this.configServer.IpAddress;
-      
-      // this.tabLock[i].credentialDate = this.identification.credentialDate;
-
-      // to be used to access FileSystem
-      this.tabLock[i].userServerId = this.credentialsFS.userServerId;
-      this.tabLock[i].credentialDate = this.credentialsFS.creationDate;
-    }
-    this.tabLock[0].objectName = this.identification.fitness.files.fileHealth; // + this.identification.UserId;
-    this.tabLock[1].objectName = this.identification.configFitness.files.calories;
-    this.tabLock[5].objectName = this.identification.fitness.files.myChartConfig; //  + this.identification.UserId;
     
-    for (var i = 0; i < this.maxEventHTTPrequest; i++) {
-      this.EventHTTPReceived[i] = false;
-      this.EventStopWaitHTTP[i] = false;
-      this.TabLoop[i]=0;
-    }
-
-    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
-
-    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confHTML, 3);
-
     this.posDivCalFat = getPosDiv("posTopAppCalFat");
     this.posDivAfterTitle = getPosDiv("posTopAppReportHealth");
     this.posDivAfterTitle = getPosDiv("posAfterTitle");
@@ -486,58 +358,39 @@ export class HealthComponent implements OnInit {
     this.theEvent.target.id = 'New';
     this.CreateDay(this.theEvent);
 
-    this.tabLock[0].bucket = this.identification.fitness.bucket;
-    this.tabLock[0].object = this.identification.fitness.files.fileHealth;
-
-
-    this.tabLock[1].bucket = this.identification.configFitness.bucket;
-    this.tabLock[1].object = this.identification.configFitness.files.calories;
-
-    this.tabLock[2].bucket = this.identification.configFitness.bucket;
-    this.tabLock[2].object = this.identification.configFitness.files.convertUnit;
-
-    this.tabLock[4].bucket = this.identification.configFitness.bucket;
-    this.tabLock[4].object = this.identification.configFitness.files.confChart;
-
-    this.tabLock[5].bucket = this.identification.configFitness.bucket;
-    this.tabLock[5].object = this.identification.fitness.files.myChartConfig;
-
-
-    this.tabLock[6].bucket = this.identification.configFitness.bucket;
-    this.tabLock[6].object = this.identification.fitness.files.recipe;
-
-    this.tabLock[3].bucket = this.identification.configFitness.bucket;
-    this.tabLock[3].object = this.identification.configFitness.files.confHTML;
-
 
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
     this.device_type = navigator.userAgent;
     this.device_type = this.device_type.substring(10, 48);
-    this.HTTP_Address = this.Google_Bucket_Access_RootPOST + "logconsole/o?name=";
-    this.SelectDisplay();
-    const theDate = new Date;
+
     this.TheSelectDisplays.controls['startRange'].setValue('');
     this.TheSelectDisplays.controls['endRange'].setValue('');
 
-    if (this.triggerFunction !== 0) {
-      if (this.triggerFunction === 3) {
-        this.TheSelectDisplays.controls['DisplayAll'].setValue('Y');
-      } else if (this.triggerFunction === 5) {
-        this.TheSelectDisplays.controls['MgtCalories'].setValue('Y');
-      } else if (this.triggerFunction === 7) {
-        this.TheSelectDisplays.controls['DisplayChart'].setValue('Y');
-      }
-      const theSelection = 'Y-' + this.triggerFunction;
-      this.SelRadio(theSelection.trim());
-    }
+    this.userActivity = defineMyDate();
+
   }
 
-  accessAllOtherFiles() {
-    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.calories, 1);
-    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.recipe, 6);
-    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.convertUnit, 2);
+  timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean){
+    if (fnCheckTimeOut(this.userActivity,this.configServer.timeoutFileSystem.userTimeOut)===true){
+      // there has been no activity for quite a while and timeOut has been reached
+      // must reinitialize the environment and updates are lost as files may have been updated through other sessions
+
+        //this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
+        this.retrieveRecord.emit(0);
+        this.isForceReset === true;
+        this.resetBooleans();
+        this.isAllDataModified = false;
+        this.errorTimeOut = 'there has been no activity for at least ' + this.configServer.timeoutFileSystem.userTimeOut.mn + ' all inputs are lost; data is restored from the cloud'
+    }
+    this.userActivity = defineMyDate();
+    console.log('userActivity=' + this.userActivity);
+    //this.checkLockLimit(iWait, isDataModified, isSaveFile);
+    this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt});
+
   }
+
+
 
 
   resetBooleans() {
@@ -547,6 +400,7 @@ export class HealthComponent implements OnInit {
     this.dialogue[this.prevDialogue] = false;
     this.tabInputMeal.splice(0, this.tabInputMeal.length);
     this.isInputFood = false;
+    this.errorTimeOut="";
     //this.tabInputFood.splice(0,this.tabInputFood.length);
     if (this.tabLock[0].lock !== 1 || this.isForceReset === true) {
       this.isDeleteConfirmed = false;
@@ -554,7 +408,8 @@ export class HealthComponent implements OnInit {
       this.IsSaveConfirmedAll = false;
       this.isAllDataModified = false;
       this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-      this.initTrackRecord();
+      //this.initTrackRecord();
+      this.initTrackRecord.emit();
 
       this.isMustSaveFile = false;
       this.isSaveHealth = false;
@@ -571,6 +426,7 @@ export class HealthComponent implements OnInit {
 
   checkText: string = '';
   SearchText(event: any) {
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
     this.resetBooleans();
     if (event.currentTarget.id === 'search' && event.currentTarget.value !== '') {
       this.checkText = event.currentTarget.value.toLowerCase().trim();
@@ -580,6 +436,7 @@ export class HealthComponent implements OnInit {
   }
 
   actionSearchText(event: any) {
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
     this.resetBooleans();
     if (event.target.id === 'submit'){
       this.checkText = this.TheSelectDisplays.controls['searchString'].value;
@@ -589,59 +446,11 @@ export class HealthComponent implements OnInit {
     }
   }
 
-  reportCheckLockLimit(event: any) {
-    this.checkLockLimit(event.iWait, event.isDataModified, event.isSaveFile);
-  }
-
-  checkLockLimit(iWait: number, isDataModified: boolean, isSaveFile: boolean) {
-
-    var valueCheck = { action: '', lockValue: 0, lockAction: '' };
-    if (this.identification.triggerFileSystem === "No") { //"No"
-      valueCheck.action = "noAction";
-    } else {
-      valueCheck = fnCheckLockLimit(this.configServer, this.tabLock, iWait, this.lastInputAt, isDataModified, isSaveFile);
-      if (iWait === 0 && this.tabLock[iWait].lock === 2) {
-        this.isAllDataModified = false;
-      }
-    }
-    if (valueCheck.action !== 'noAction') {
-      if (valueCheck.action === 'updateSystemFile') {
-        this.tabLock[iWait].action = valueCheck.lockAction;
-        // this.updateSystemFile(iWait);
-        this.onFileSystem(iWait);
-      } else if (valueCheck.action === 'checkFile') {
-        if ((iWait === 0 && this.isSaveHealth === false) || (iWait === 1 && this.isSaveCaloriesFat === false) || (iWait === 5 && this.isSaveParamChart === false)) {
-          this.checkUpdateFile(iWait)
-        } else {
-          this.checkFile(iWait);
-        }
-      } else if (valueCheck.action === 'changeTabLock') {
-        this.tabLock[iWait].lock = valueCheck.lockValue;
-      } else if (iWait === 0 && valueCheck.action === 'ProcessSave') {
-        this.ProcessSaveHealth(this.theEvent);
-      } else if (iWait === 5 && valueCheck.action === 'ProcessSave') {
-        this.processSaveParamChart();
-      } else if (iWait === 1 && valueCheck.action === 'ProcessSave') {
-        this.processSaveCaloriesFat(this.saveEvent);
-      } else if (iWait === 0 && valueCheck.action === 'ConfirmSave') {
-        this.isMustSaveFile = true;
-        this.theEvent.target.id = 'All'; // ===== change value of target.id if created record or if selRecord  
-        this.ConfirmSave(this.theEvent);
-      }
-    } else if (this.isConfirmSaveA === true) {
-      this.ConfirmSave(this.theEvent);
-    } else if (this.onInputAction === "onInputDailyAll") {
-      this.onInputAction = "";
-      this.onInputDailyAllA(this.theEvent);
-    } else if (this.onInputAction === "onAction") {
-      this.onInputAction = "";
-      this.onActionA(this.theEvent);
-    } 
-  }
 
   dateRangeSelection(event: any) {
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
     this.resetBooleans();
-    this.error_msg = '';
+    this.errorMsg = '';
     this.isRangeDateError = false;
     var startD = new Date();
     var endD = new Date();
@@ -660,11 +469,11 @@ export class HealthComponent implements OnInit {
       if (this.TheSelectDisplays.controls['startRange'].value !== '' && this.TheSelectDisplays.controls['endRange'].value !== '') {
         if (startD > endD) {
           this.isRangeDateError = true;
-          this.error_msg = 'end date must be after startDate';
+          this.errorMsg = 'end date must be after startDate';
         } else { search = 2; } // range date selected  
       }
 
-    if (this.error_msg === '') {
+    if (this.errorMsg === '') {
       if (event.target.id === 'selectCacCal') {
         this.dateRangeStart = startD;
         this.dateRangeEnd = endD;
@@ -688,10 +497,11 @@ export class HealthComponent implements OnInit {
   }
 
   clearDates(){
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
     this.TheSelectDisplays.controls['startRange'].setValue('');
     this.TheSelectDisplays.controls['endRange'].setValue('');
     this.resetBooleans();
-    this.error_msg = '';
+    this.errorMsg = '';
     this.isRangeDateError = false;
     this.searchOneDateHealth = 0;
     this.numPage=1;
@@ -699,9 +509,7 @@ export class HealthComponent implements OnInit {
     this.maxNum = this.minNum + this.maxItemsPerPage;
   }
 
-  CreateDropDownCalFat() {
-
-    //this.tabType.splice(0,this.tabType.length);
+  createDropDownCalFatFn() {
     this.tabFood.splice(0, this.tabFood.length);
     var i = 0;
     var j = 0;
@@ -719,6 +527,7 @@ export class HealthComponent implements OnInit {
   }
 
   cancelRange(event: any) {
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
     if (event.target.id === 'selectCacCal') {
       this.filterCalc = false;
 
@@ -727,13 +536,7 @@ export class HealthComponent implements OnInit {
     }
   }
 
-  SelectDisplay() {
-    if (this.TheSelectDisplays.controls['DisplayAll'].value === 'Y') {
-      this.isDisplayAll = true;
-    } else {
-      this.isDisplayAll = false;
-    }
-  }
+
 
 
   CheckDupeDate(theDate: Date) {
@@ -741,7 +544,7 @@ export class HealthComponent implements OnInit {
     if (this.HealthAllData.tabDailyReport.length > 0) {
       for (i = 0; i < this.HealthAllData.tabDailyReport.length && this.HealthAllData.tabDailyReport[i].date !== theDate; i++) { }
       if (i < this.HealthAllData.tabDailyReport.length) {
-        this.error_msg = 'This date already exists - please modify';
+        this.errorMsg = 'This date already exists - please modify';
       }
     }
   }
@@ -750,7 +553,7 @@ export class HealthComponent implements OnInit {
   CreateTabFood(item: any, value: any) {
 
     var iTab: number = -1;
-    this.error_msg = '';
+    this.errorMsg = '';
     var nbDelItem = 0;
     if (item === 'Food') {
       if (this.tabInputFood.length > 0 && value.substring(0, this.strInputFood.length).toLowerCase() === this.strInputFood.toLowerCase().trim()) {
@@ -820,8 +623,8 @@ export class HealthComponent implements OnInit {
   }
 
   onSelMealFood(event: any) {
-    //this.resetBooleans();
-    this.error_msg = '';
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.errorMsg = '';
     this.manageIds(event.target.id);
     if (event.currentTarget.id.substring(0, 7) === 'selFood') {
       //this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name =event.target.textContent.toLowerCase().trim();
@@ -843,18 +646,19 @@ export class HealthComponent implements OnInit {
     this.offsetLeft = event.currentTarget.offsetLeft;
     this.offsetWidth = event.currentTarget.offsetWidth;
     this.lastInputAt = strDateTime();
-    if (event.target.value.length===1){
-      this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
-    } else {
-      this.onInputDailyAllA(event);
-    }
+    //if (event.target.value.length===1){
+      //this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
+      this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    //} else {
+    //  this.onInputDailyAllA(event);
+    //}
   }
 
   onInputDailyAllA(event: any) {
     if (this.tabLock[0].lock !== 2) {
       this.resetBooleans();
       this.isAllDataModified = true;
-      this.error_msg = '';
+      this.errorMsg = '';
       var i = 0;
       const fieldName = event.target.id.substring(0, 7);
       this.manageIds(event.target.id);
@@ -893,7 +697,7 @@ export class HealthComponent implements OnInit {
   }
 
   findAction(idString: string) {
-    this.error_msg = '';
+    this.errorMsg = '';
     var j = -1;
     for (var i = 1; i < idString.length && idString.substring(i, i + 1) !== ':'; i++) {
     }
@@ -902,6 +706,7 @@ export class HealthComponent implements OnInit {
   }
 
   onDropDownAll(event: any) {
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
     this.theEvent.target.id = 'selAction-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
     this.theEvent.target.textContent = event.target.textContent;
     this.onAction(this.theEvent);
@@ -909,6 +714,7 @@ export class HealthComponent implements OnInit {
 
 
   DelAfterConfirm(event: any) {
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
     this.resetBooleans();
     this.isDeleteItem = false;
     if (event.currentTarget.id.substring(0, 13) === 'YesDelConfirm') {
@@ -939,7 +745,8 @@ export class HealthComponent implements OnInit {
     this.theEvent.target.textContent = event.target.textContent;
     this.onInputAction = 'onAction';
     this.lastInputAt = strDateTime();
-    this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
+    //this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
   }
 
   onActionA(event: any) {
@@ -949,7 +756,8 @@ export class HealthComponent implements OnInit {
       this.dialogue[this.prevDialogue] = false;
       if (this.tabLock[0].lock === 0 && event.target.id.substring(0, 10) !== 'openAction') {
         this.isAllDataModified = true;
-        this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
+        //this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
+        this.checkLockLimit.emit({iWait:0,isDataModified:this.isAllDataModified,isSaveFile:this.isSaveHealth, lastInputAt:this.lastInputAt});
       }
       else {
         if (event.target.id.substring(0, 10) === 'openAction') {
@@ -957,11 +765,11 @@ export class HealthComponent implements OnInit {
           this.dialogue[this.prevDialogue] = true;
           this.sizeBox.heightOptions = this.sizeBox.heightItem * (this.NewTabAction.length) + 10;
           this.sizeBox.heightContent = this.sizeBox.heightOptions;
-          this.findPosItem(this.sizeBox.heightOptions);
+          //this.findPosItem(this.sizeBox.heightOptions);
 
           this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
           // this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - 279, this.sizeBox.scrollY);
-          this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 60, this.posItem, this.sizeBox.scrollY);
+          this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 60, 20, this.sizeBox.scrollY);
 
         } else if (event.target.id.substring(0, 9) === 'selAction') {
           if (event.target.textContent.indexOf('cancel') !== -1) {
@@ -1044,6 +852,7 @@ export class HealthComponent implements OnInit {
   }
 
   DeleteIngredient(event: any) {
+    
     this.manageIds(event.target.id);
     if (event.target.id.substring(0, 6) === 'DelAll') {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 1);
@@ -1129,59 +938,10 @@ export class HealthComponent implements OnInit {
     } 
   }
 
-  FillHealthAllInOut(outFile: any, inFile: any) {
-    var iOut = -1;
-    if (inFile.updatedAt !== undefined) {
-      outFile.updatedAt = inFile.updatedAt;
-    } else { outFile.updatedAt = ''; }
-    for (var i = 0; i < inFile.tabDailyReport.length; i++) {
-      iOut++
-      this.fillHealthOneDay(outFile, inFile, i, iOut);
-    }
-  }
-
-  fillHealthOneDay(outFile: any, inFile: any, i:number, iOut:number) {
-    const theDaily = new DailyReport;
-    outFile.tabDailyReport.push(theDaily);
-    outFile.tabDailyReport[iOut].burntCalories = inFile.tabDailyReport[i].burntCalories;
-    outFile.tabDailyReport[iOut].date = inFile.tabDailyReport[i].date;
-    outFile.tabDailyReport[iOut].total = inFile.tabDailyReport[i].total;
-    var jOut = -1;
-    for (var j = 0; j < inFile.tabDailyReport[i].meal.length; j++) {
-      if (inFile.tabDailyReport[i].meal[j].dish.length > 0) {
-        const theMeal = new ClassMeal;
-        outFile.tabDailyReport[iOut].meal.push(theMeal);
-        jOut++
-        outFile.tabDailyReport[iOut].meal[jOut].name = inFile.tabDailyReport[i].meal[j].name;
-        outFile.tabDailyReport[iOut].meal[jOut].total = inFile.tabDailyReport[i].meal[j].total;
-        var lOut = -1;
-        for (var k = 0; k < inFile.tabDailyReport[i].meal[j].dish.length; k++) {
-          if (inFile.tabDailyReport[i].meal[j].dish[k].name !== '') {
-            const theIngr = new ClassDish;
-            outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
-            lOut++
-            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].name = inFile.tabDailyReport[i].meal[j].dish[k].name;
-            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].quantity = inFile.tabDailyReport[i].meal[j].dish[k].quantity;
-            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].unit = inFile.tabDailyReport[i].meal[j].dish[k].unit;
-            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat = inFile.tabDailyReport[i].meal[j].dish[k].calFat;
-          } else {
-            const theIngr = new ClassDish;
-            outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
-            lOut++
-          }
-        }
-      } else {
-        const theMeal = new ClassMeal;
-        outFile.tabDailyReport[iOut].meal.push(theMeal);
-        jOut++
-        const theIngr = new ClassDish;
-        outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
-      }
-    }
-  }
+  
 
   manageIds(theId: string) {
-    this.error_msg = '';
+    this.errorMsg = '';
     this.TabOfId.splice(0, this.TabOfId.length);
     const theValue = findIds(theId, "-");
 
@@ -1190,27 +950,7 @@ export class HealthComponent implements OnInit {
     }
   }
 
-  initTrackRecord() {
-    for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
-      if (this.tabNewRecordAll.length === 0 || i !== 0) {
-        const trackNew = { nb: 0, meal: [{ nb: 0, food: [{ nb: 0 }] }] };
-        this.tabNewRecordAll.push(trackNew);
-      }
-
-      for (var j = 0; j < this.HealthAllData.tabDailyReport[i].meal.length; j++) {
-        if (this.tabNewRecordAll[i].meal.length === 0 || j !== 0) {
-          const trackNew = { nb: 0, food: [{ nb: 0 }] };
-          this.tabNewRecordAll[i].meal.push(trackNew);
-        }
-        for (var k = 0; k < this.HealthAllData.tabDailyReport[i].meal[j].dish.length; k++) {
-          if (this.tabNewRecordAll[i].meal[j].food.length === 0 || k !== 0) {
-            const trackNew = { nb: 0 };
-            this.tabNewRecordAll[i].meal[j].food.push(trackNew);
-          }
-        }
-      }
-    }
-  }
+  
   cleanFile() {
     for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
       var trouve = false;
@@ -1240,216 +980,12 @@ export class HealthComponent implements OnInit {
       }
     }
     this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-    this.initTrackRecord();
+    //this.initTrackRecord();
+    this.initTrackRecord.emit();
     this.isAllDataModified = true;
   }
 
-  GetRecord(Bucket: string, GoogleObject: string, iWait: number) {
-    console.log('GetRecord - iWait='+iWait);
-    this.EventHTTPReceived[iWait] = false;
-    this.EventStopWaitHTTP[iWait]=false;
-    this.NbWaitHTTP++;
-    if (iWait===0 || iWait===4){
-      this.configServer.googleServer=this.saveServer.FS;
-    }
-    this.waitHTTP(this.TabLoop[iWait], 3000, iWait);
-    this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject)
-      .subscribe((data) => {
-        console.log('GetRecord - data received for iWait='+iWait);
-        this.EventStopWaitHTTP[iWait]=true;
-        var noPb=true;
-        if (data.status!==undefined && data.status!==200){
-          this.error_msg = data.msg;
-          noPb=false;
-        } else
-        //JSON.stringify(data)
-        if (iWait === 0) {
-          console.log('file HealthAllData received');
-          this.configServer.googleServer=this.saveServer.google;
-
-          this.FillHealthAllInOut(this.HealthAllData,data);
-  
-          //this.HealthAllData=data;
-          this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
-          if (this.HealthAllData.fileType === '') {
-            this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
-          }
-          if (this.InHealthAllData.fileType === '') {
-            this.FillHealthAllInOut(this.InHealthAllData, this.HealthAllData);
-          }
-          this.resetBooleans();
-          if (this.tabLock[0].lock === 1) {
-            this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-            this.initTrackRecord();
-          }
-
-          this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-
-        } else if (iWait === 1) {
-
-          if (data.fileType !== '') {
-            this.ConfigCaloriesFat.fileType = data.fileType;
-          } else {
-            this.ConfigCaloriesFat.fileType = this.identification.fitness.fileType.FitnessMyConfig;
-          }
-          if (data.updatedAt !== undefined) {
-            this.ConfigCaloriesFat.updatedAt = data.updatedAt;
-          } else {
-            this.ConfigCaloriesFat.updatedAt = '';
-          }
-          this.ConfigCaloriesFat.tabCaloriesFat = data.tabCaloriesFat;
-          this.CreateDropDownCalFat();
-        } else if (iWait === 2) {
-
-          this.ConvertUnit = data;
-          if (data.fileType !== '') {
-            this.ConvertUnit.fileType = data.fileType
-          } else {
-            this.ConvertUnit.fileType = this.identification.configFitness.fileType.convertUnit;
-          }
-          if (data.updatedAt !== undefined) {
-            this.ConvertUnit.updatedAt = data.updatedAt;
-          } else {
-            this.ConvertUnit.updatedAt = '';
-          }
-          this.ConvertUnit.tabConv = data.tabConv;
-        }
-        else if (iWait === 3) {
-          //this.ConfigHTMLFitHealth=data;
-          this.ConfigHTMLFitHealth.fileType == data.fileType;
-          this.ConfigHTMLFitHealth.debugPhone == data.debugPhone;
-          this.ConfigHTMLFitHealth.ConfigHealth.fileType == data.ConfigHealth.fileType;
-          if (data.ConfigHealth.updatedAt !== undefined) {
-            this.ConfigHTMLFitHealth.ConfigHealth.updatedAt == data.ConfigHealth.updatedAt;
-          } else {
-            this.ConfigHTMLFitHealth.ConfigHealth.updatedAt = '';
-          }
-          this.ConfigHTMLFitHealth.ConfigHealth.confTableAll = data.ConfigHealth.confTableAll;
-
-          this.ConfigHTMLFitHealth.ConfigCalFat.fileType == data.ConfigCalFat.fileType;
-          if (data.ConfigCalFat.updatedAt !== undefined) {
-            this.ConfigHTMLFitHealth.ConfigCalFat.updatedAt == data.ConfigCalFat.updatedAt;
-          } else {
-            this.ConfigHTMLFitHealth.ConfigCalFat.updatedAt = '';
-          }
-          this.ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat = data.ConfigCalFat.confCaloriesFat;
-
-          this.confTableAll = this.ConfigHTMLFitHealth.ConfigHealth.confTableAll;
-          this.calculateHeight();
-        }
-        else if (iWait === 4) {
-          this.configServer.googleServer=this.saveServer.google;
-
-          this.ConfigChart.fileType = data.fileType;
-          if (data.updatedAt !== undefined) {
-            this.ConfigChart.updatedAt = data.updatedAt;
-          } else {
-            this.ConfigChart.updatedAt = '';
-          }
-          this.ConfigChart.chartHealth = data.chartHealth;
-        }
-        else if (iWait === 5) {
-          this.fileParamChart.fileType = data.fileType;
-          if (data.updatedAt !== undefined) {
-            this.fileParamChart.updatedAt = data.updatedAt;
-          } else {
-            this.fileParamChart.updatedAt = '';
-          }
-          this.fileParamChart.data = data.data;
-
-
-        } else if (iWait === 6) {
-          this.fileRecipe.fileType = data.fileType;
-          if (data.updatedAt !== undefined) {
-            this.fileRecipe.updatedAt = data.updatedAt;
-          } else {
-            this.fileRecipe.updatedAt = '';
-          }
-          this.fileRecipe.tabCaloriesFat = data.tabCaloriesFat;
-        } else if (iWait === 7) {
-          if (this.tabLock[0].updatedAt >= data.updatedAt) {
-            // file has not been updated by another user
-            if (this.isMustSaveFile === true) {
-              this.theEvent.target.id = 'All'; // ===== change value of target.id if created record or if selRecord
-              this.ConfirmSave(this.theEvent);
-            } else if (this.isSaveHealth === true) {
-              this.ProcessSaveHealth(this.theEvent);
-            } else if (this.tabLock[0].lock === 1 && this.isAllDataModified === true) {
-              this.updateLockFile(0); // extend the timeout as no modification has been made by any other user after timeout
-            }
-          } else { // updates made by another user after timeout
-            this.HealthAllData.tabDailyReport.splice(0, this.HealthAllData.tabDailyReport.length);
-            this.FillHealthAllInOut(this.HealthAllData, data);
-            this.tabLock[0].lock = 0;
-            this.error_msg = 'TIMEOUT - Your updates are lost as in the meantime the file was updated by another user ';
-            this.resetBooleans();
-          }
-        } else if (iWait === 8) {
-          if (this.tabLock[5].updatedAt >= data.updatedAt) {
-            // file has not been updated by another user
-            if (this.isSaveParamChart === true) {
-              this.ProcessSaveHealth(this.theEvent);
-            } else if (this.tabLock[5].lock === 1) {
-              this.updateLockFile(5); // extend the timeout as no modification has been made by any other user after timeout
-            }
-          } else { // updates made by another user after timeout
-            this.fileParamChart.data.splice(0, this.fileParamChart.data.length);
-            this.fileParamChart.data = data.data;
-            this.tabLock[5].lock = 0;
-
-          }
-        } else if (iWait === 9) {
-          if (this.tabLock[1].updatedAt >= data.updatedAt) {
-            // file has not been updated by another user
-            if (this.isSaveCaloriesFat === true) {
-              this.processSaveCaloriesFat(this.saveEvent);
-            } else if (this.tabLock[1].lock === 1) {
-              this.updateLockFile(1); // extend the timeout as no modification has been made by any other user after timeout
-            }
-          } else { // updates made by another user after timeout
-            this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length);
-            this.ConfigCaloriesFat.tabCaloriesFat = data.tabCaloriesFat;
-            this.tabLock[1].lock = 0;
-
-          }
-        }
-        if (noPb===true){
-         
-       
-        if (iWait !== 7 && iWait !== 8 && iWait !== 9) {
-          // this.returnFile.emit(data); // not needed as files are stored in cache of backend server
-        }
-        console.log('GetRecord - data processed for iWait='+iWait + '  EventHTTPReceived=true');
-        this.EventHTTPReceived[iWait] = true;
-        if (iWait===0){
-          this.accessAllOtherFiles();
-        }
-        } 
-      },
-        err => {
-          this.EventStopWaitHTTP[iWait]=true;
-          if (iWait === 0) {
-            this.error_msg = 'Problem to retrieve file ' + this.identification.fitness.files.fileHealth ;
-
-          } else if (iWait === 1) {
-            this.error_msg = 'Problem to retrieve file ' + this.identification.configFitness.files.calories ;
-
-          }
-          console.log('get record '+this.error_msg + " error="+JSON.stringify(err));
-        }
-      )
-  }
-
-
-  calculateHealth(selRecord: DailyReport) {
-    this.returnData = CalcFatCalories(this.ConfigCaloriesFat, selRecord, this.ConvertUnit);
-    if (this.returnData.error > 0) {
-      this.error_msg = this.returnData.error + ' nb of errors detected';
-    }
-  }
-
-
-  fillAllData(inRecord: any, outRecord: any) {
+  fillAllData(inRecord: any, outRecord: any) { // TO BE DELETED
     var i = 0;
     var j = 0;
 
@@ -1478,14 +1014,14 @@ export class HealthComponent implements OnInit {
 
     this.recordToDelete = this.TabOfId[0];
     const theDate = this.HealthAllData.tabDailyReport[this.recordToDelete].date;
-    this.error_msg = 'confirm record#' + this.recordToDelete + ' with date=' + theDate + 'to be deleted';
+    this.errorMsg = 'confirm record#' + this.recordToDelete + ' with date=' + theDate + 'to be deleted';
     this.scroller.scrollToAnchor('ListAll');
   }
 
   ConfirmDelDate() {
     const theDate = this.HealthAllData.tabDailyReport[this.recordToDelete].date;
     this.HealthAllData.tabDailyReport.splice(this.recordToDelete, 1);
-    this.error_msg = 'record#' + this.recordToDelete + ' with date=' + theDate + 'is deleted but file is not saved';
+    this.errorMsg = 'record#' + this.recordToDelete + ' with date=' + theDate + 'is deleted but file is not saved';
     this.errorFn = 'delDate';
     this.isDeleteConfirmed = false;
     this.isAllDataModified = true;
@@ -1496,143 +1032,80 @@ export class HealthComponent implements OnInit {
     this.isDeleteConfirmed = false;
   }
 
-  CancelUpdateAll(event: any) {
-    this.CancelSave()
-
-  }
-  
-  saveParamChart(event: any) {
-    this.isSaveParamChart = true;
-    this.fileParamChart.data = event;
-
-    if (this.identification.triggerFileSystem === "No") {
-      this.processSaveParamChart();
-    } else {
-      this.checkLockLimit(5, true, true);
-    }
-  }
-
-  processSaveParamChart() {
-    this.fileParamChart.fileType = this.identification.fitness.fileType.myChart;
-    this.fileParamChart.updatedAt = strDateTime();
-    // this.fileParamChart.data=event;
-    this.SaveNewRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, this.fileParamChart, 5);
-  }
-
-
-  SaveCaloriesFat(event: any) {
-    this.isSaveCaloriesFat = true;
-    this.saveEvent = event;
-    if (event.fileType === undefined) {
-      this.calfatNameFile = event;
-    }
-    if (this.identification.triggerFileSystem === "No") {
-      this.processSaveCaloriesFat(event);
-    } else {
-      this.checkLockLimit(1, true, true);
-    }
-  }
-
-  processSaveCaloriesFat(event: any) {
-    if (event.fileType === undefined) {
-      //this.SpecificForm.controls['FileName'].setValue(event);
-    } else if (event.tabCaloriesFat.length !== 0) {
-
-      this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length);
-      for (var i = 0; i < event.tabCaloriesFat.length; i++) {
-        const CalFatClass = new ClassCaloriesFat;
-        this.ConfigCaloriesFat.tabCaloriesFat.push(CalFatClass);
-        this.ConfigCaloriesFat.tabCaloriesFat[i].Type = this.saveEvent.tabCaloriesFat[i].Type;
-        for (var j = 0; j < this.saveEvent.tabCaloriesFat[i].Content.length; j++) {
-          const itemClass = new ClassItem;
-          this.ConfigCaloriesFat.tabCaloriesFat[this.ConfigCaloriesFat.tabCaloriesFat.length - 1].Content.push(itemClass);
-          this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j] = event.tabCaloriesFat[i].Content[j];
-        }
-      }
-
-      if (this.ConfigCaloriesFat.fileType === '') {
-        this.ConfigCaloriesFat.fileType = this.identification.configFitness.fileType.calories;
-      }
-      this.ConfigCaloriesFat.updatedAt = strDateTime();
-      this.SaveNewRecord(this.identification.configFitness.bucket, this.calfatNameFile, this.ConfigCaloriesFat, 1);
-
-      this.CreateDropDownCalFat();
-
-    }
-  }
-
-  SaveRecipeFile(event: any) {
-    // save this file
-    // if (Array.isArray(event)===false){
-    if (event.fileType === undefined) {
-      //this.SpecificForm.controls['FileName'].setValue(event);
-      this.recipeNameFile = event;
-    } else if (event.tabCaloriesFat.length !== 0) {
-      this.fileRecipe.tabCaloriesFat.splice(0, this.fileRecipe.tabCaloriesFat.length);
-      for (var i = 0; i < event.tabCaloriesFat.length; i++) {
-        const CalFatClass = new ClassCaloriesFat;
-        this.fileRecipe.tabCaloriesFat.push(CalFatClass);
-        this.fileRecipe.tabCaloriesFat[i].Type = event.tabCaloriesFat[i].Type;
-        this.fileRecipe.tabCaloriesFat[i].Total = event.tabCaloriesFat[i].Total;
-        for (var j = 0; j < event.tabCaloriesFat[i].Content.length; j++) {
-          const itemClass = new ClassItem;
-          this.fileRecipe.tabCaloriesFat[this.fileRecipe.tabCaloriesFat.length - 1].Content.push(itemClass);
-          this.fileRecipe.tabCaloriesFat[i].Content[j] = event.tabCaloriesFat[i].Content[j];
-        }
-      }
-
-      if (this.fileRecipe.fileType === '') {
-        this.fileRecipe.fileType = this.identification.fitness.fileType.recipe;
-      }
-      this.fileRecipe.updatedAt = strDateTime();
-      // this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.fileRecipe, 6);
-      this.SaveNewRecord(this.identification.fitness.bucket, this.recipeNameFile, this.fileRecipe, 6);
-
-    }
-  }
-
   ConfirmSaveA(event: any) {
-    this.error_msg = '';
+    this.errorMsg = '';
     this.resetBooleans();
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.value = event.target.value;
     this.theEvent.target.textContent = event.target.textContent;
+    this.theEvent.checkLock.iWait=0;
+    this.theEvent.checkLock.isDataModified=true;
+    this.theEvent.checkLock.isSaveFile=false;
+    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
+    this.theEvent.fileName=this.SpecificForm.controls['FileName'].value;
+    this.onInputAction = "confirmSave";
+    this.confirmSave.emit(this.theEvent);
+    /*
     if (this.identification.triggerFileSystem === "No") {
-      this.ConfirmSave(event);
+      //this.ConfirmSave(event);
+      this.confirmSave.emit(event);
     } else {
       if (this.isMustSaveFile === false) {
         this.isConfirmSaveA = true;
-        this.checkLockLimit(0, true, false);
+        //this.checkLockLimit(0, true, false, this.lastInputAt);
+        this.checkLockLimit.emit({iWait:0,isDataModified:true,isSaveFile:false, lastInputAt:this.lastInputAt});
       } else if (this.tabLock[0].lock === 1) {
-        this.ConfirmSave(event);
+        //this.ConfirmSave(event);
+        this.confirmSave.emit(event);
       }
     }
-
+    */
   }
 
-  ConfirmSave(event: any) {
-    this.error_msg = '';
-    this.theResetServer = false;
-    if (this.tabLock[0].lock === 1) {
-      this.isConfirmSaveA = false;
-      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-      this.error_msg = '';
-      if (event.target.id.substring(0, 3) === 'All') {
-        this.IsSaveConfirmedAll = true;
-        this.errorFn = 'All';
-      }
-      this.theEvent.target.id = 'All';
+  SaveHealth(event: any) {
+    this.errorMsg = '';
+    this.isSaveHealth = true;
+    this.IsSaveConfirmedAll = false;
+    this.theEvent.target.id = event.target.id;
+    this.theEvent.checkLock.iWait=0;
+    this.theEvent.checkLock.isDataModified=true;
+    this.theEvent.checkLock.isSaveFile=true;
+    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
+    this.theEvent.fileName = this.SpecificForm.controls['FileName'].value;
+    this.onInputAction = "saveHealth";
+    this.processSave.emit(this.theEvent);
+    /*
+    if (this.identification.triggerFileSystem === "Yes") {
+      //this.checkLockLimit(0, true, true, this.lastInputAt);
+      this.checkLockLimit.emit({iWait:0,isDataModified:true,isSaveFile:true, lastInputAt:this.lastInputAt});
+
+    } else {
+      //this.ProcessSaveHealth(event);
+      this.processSaveHealth.emit(event);
     }
-
+    */
   }
+
+  cancelUpdateAll(event: any) {
+    this.cancelUpdates.emit(0);
+    this.isMustSaveFile = false;
+    this.tabInputMeal.splice(0, this.tabInputMeal.length);
+    this.tabInputFood.splice(0, this.tabInputFood.length);
+    this.IsSaveConfirmedAll = false;
+    this.isAllDataModified = false;
+    this.errorMsg = '';
+    this.errorFn = '';
+  }
+  
+  cancelTheSave(){
+
+    this.IsSaveConfirmedAll = false;
+    this.isMustSaveFile = false;
+  }
+  
 
   SaveCopy() {
-    this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
-    if (this.HealthAllData.fileType !== '') {
-      this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
-    }
-    this.HealthAllData.updatedAt = strDateTime();
-    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData, -1);
+    this.saveCopy.emit(0);
     this.isCopyFile = false;
     this.TheSelectDisplays.controls['CopyFile'].setValue('N');
     this.errorFn = 'Copy';
@@ -1643,728 +1116,53 @@ export class HealthComponent implements OnInit {
     this.TheSelectDisplays.controls['CopyFile'].setValue('N');
     this.errorFn = '';
   }
-
-
-  CancelSaveOthers(iWait: number) {
-    if (iWait === 1) {
-      this.isSaveCaloriesFat = false;
-    } else if (iWait === 5) {
-      this.isSaveParamChart = false;
-    } else if (iWait === 6) {
-      this.isSaveRecipeFile = false;
-    }
-  }
-
-  CancelSave() {
-    this.isMustSaveFile = false;
-    this.tabInputMeal.splice(0, this.tabInputMeal.length);
-    this.tabInputFood.splice(0, this.tabInputFood.length)
-    this.HealthAllData.tabDailyReport.splice(0, this.HealthAllData.tabDailyReport.length)
-    this.FillHealthAllInOut(this.HealthAllData, this.InHealthAllData);
-    this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-    this.initTrackRecord();
-
-    this.IsSaveConfirmedAll = false;
-    this.isAllDataModified = false;
-    this.error_msg = '';
-    this.errorFn = '';
-  }
-
-  SaveHealth(event: any) {
-    this.error_msg = '';
-    this.isSaveHealth = true;
-    this.theEvent.target.id = event.target.id;
-    if (this.identification.triggerFileSystem === "Yes") {
-      this.checkLockLimit(0, true, true);
-    } else {
-      this.ProcessSaveHealth(event);
-    }
-
-  }
-
-  ProcessSaveHealth(event: any) {
-    this.error_msg = '';
-    this.isSaveHealth = false;
-    this.isMustSaveFile = false;
-    this.errCalcCalFat = '';
-    var trouve = false;
-    var i = 0
-
-    this.isAllDataModified = false;
-    if (event.target.id.substring(0, 3) === 'All') {
-      this.IsSaveConfirmedAll = false;
-      for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
-        trouve = false;
-        if (this.tabNewRecordAll[i].nb === 1) {
-          trouve = true;
-        } else {
-          for (var j = 0; j < this.HealthAllData.tabDailyReport[i].meal.length && trouve === false; j++) {
-            if (this.tabNewRecordAll[i].meal[j].nb === 1) {
-              trouve = true;
-            }
-            for (var k = 0; k < this.HealthAllData.tabDailyReport[i].meal[j].dish.length && trouve === false; k++) {
-              if (this.tabNewRecordAll[i].meal[j].food[k].nb === 1) {
-                trouve = true;
-              }
-            }
-
-          }
-        }
-        if (trouve === true) {
-          this.calculateHealth(this.HealthAllData.tabDailyReport[i]);
-          if (this.error_msg !== '') {
-            this.errCalcCalFat = 'errors found while caculating calories and fat';
-            this.error_msg = "";
-          }
-          this.HealthAllData.tabDailyReport[i].total = this.returnData.outHealthData.total;
-          this.HealthAllData.tabDailyReport[i].meal = this.returnData.outHealthData.meal;
-        }
-      }
-    }
-
-    this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
-    if (this.HealthAllData.fileType !== '') {
-      this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
-    }
-
-    this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-    this.initTrackRecord();
-
-    this.HealthAllData.updatedAt = strDateTime();
-    this.SaveNewRecord(this.identification.fitness.bucket, this.SpecificForm.controls['FileName'].value, this.HealthAllData, 0);
-    this.updateLockFile(0);
-  }
-
-
-  SaveNewRecord(GoogleBucket: string, GoogleObject: string, record: any, iWait: number) {
-    this.error_msg = '';
-    //var file=new File ([JSON.stringify(this.HealthAllData)],GoogleObject, {type: 'application/json'});
-    var file = new File([JSON.stringify(record)], GoogleObject, { type: 'application/json' });
-    if (GoogleObject === 'ConsoleLog.json') {
-      const myTime = new Date();
-      GoogleObject = 'ConsoleLog.json-' + myTime.toString().substring(4, 21);
-      file = new File([JSON.stringify(this.myConsole)], GoogleObject, { type: 'application/json' });
-    }
-    this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file, GoogleObject)
-      .subscribe(res => {
-
-        if (res.type === 4) {
-
-          if (iWait === 0) {
-            this.isAllDataModified = false;
-          } else if (iWait === 1) {
-            this.isSaveCaloriesFat = false;
-          } else if (iWait === 5) {
-            this.isSaveParamChart = false;
-          } else if (iWait === 6) {
-            this.isSaveRecipeFile = false;
-          }
-          //this.isAllDataModified=false;
-
-          if (( iWait === 1 || iWait === 5 || iWait === 6) && this.identification.triggerFileSystem !== "No") {
-            // update field 'updatedAt' in file system 
-            this.updateLockFile(iWait);
-          }
-          this.isForceReset = true;
-          this.tabLock[iWait].status = 0;
-          if (iWait === 1 || iWait === 6) {
-            this.saveCalFatMsg = 'File "' + GoogleObject + '" is successfully stored in the cloud';
-          } else {
-            this.error_msg = 'File "' + GoogleObject + '" is successfully stored in the cloud';
-            // this.returnFile.emit(record); // not needed as files are stored in cache of backend server
-          }
-        }
-      },
-        error_handler => {
-          //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
-          if (iWait === 0){
-            this.isAllDataModified = true;
-          }
-          if (iWait === 1) {
-            this.saveCalFatMsg = 'File "' + GoogleObject + '" *** Save action failed - status is ' + error_handler.status;
-          } else {
-            this.error_msg = 'File' + GoogleObject + '" *** Save action failed - status is ' + error_handler.status;
-          }
-        }
-      )
-  }
-
-  waitHTTP(loop: number, max_loop: number, eventNb: number) {
-    const pas = 500;
-    if (loop % pas === 0) {
-      console.log(eventNb + ' waitHTTP fn  ==> loop=' + loop + ' max_loop=' + max_loop);
-    }
-    loop++
-    this.TabLoop[eventNb]++
-
-    this.id_Animation[eventNb] = window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
-    if (loop > max_loop || this.EventHTTPReceived[eventNb] === true || this.EventStopWaitHTTP[eventNb] === true) {
-      
-      console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
-        this.EventHTTPReceived[eventNb]);
-      window.cancelAnimationFrame(this.id_Animation[eventNb]);
-    }
-  }
-
-  LogMsgConsole(msg: string) {
-    if (this.myConsole.length > 40) {
-      this.SaveNewRecord('logconsole', 'ConsoleLog.json', this.myLogConsole, -1);
-      this.message = 'Saving of LogConsole';
-    }
-    this.SaveConsoleFinished = false;
-
-    this.myLogConsole = true;
-    msginLogConsole(msg, this.myConsole, this.myLogConsole, this.SaveConsoleFinished, this.HTTP_Address, this.type);
-
-  }
-
-  SelRadio(event: any) {
-    // this.checkLockLimit(0);
-    this.theResetServer = false;
-    const i = event.substring(2);
-    this.error_msg = '';
-    const NoYes = event.substring(0, 1);
-   if (i === '3') {
-      if (NoYes === 'Y') {
-        this.dialogue[this.prevDialogue] = false;
-        this.isDisplayAll = true;
-        if (this.tabLock[0].lock !== 1) {
-          this.lockFile(0);
-        }
-      } else {
-        if (this.tabLock[0].lock === 1) {
-          this.unlockFile(0);
-        }
-        this.isDisplayAll = false;
-      }
-    } else if (i === '4') {
-      if (NoYes === 'Y') {
-        this.isCopyFile = true;
-        const fileName = 'COPY ' + this.SpecificForm.controls['FileName'].value;
-        this.SpecificForm.controls['FileName'].setValue(fileName);
-
-      } else {
-        this.isCopyFile = false;
-      }
-    } else if (i === '5') {
-      if (NoYes === 'Y') {
-
-        this.isMgtCaloriesFat = true;
-        if (this.tabLock[1].lock !== 1) {
-          this.lockFile(1);
-        }
-      } else {
-        this.isMgtCaloriesFat = false;
-        if (this.tabLock[1].lock === 1) {
-          this.unlockFile(1);
-        }
-
-      }
-    } else if (i === '6') {
-      if (NoYes === 'Y') {
-        if (this.tabLock[0].lock !== 1) {
-          this.lockFile(0);
-        }
-        this.errCalcCalFat = '';
-        for (var j = 0; j < this.HealthAllData.tabDailyReport.length; j++) {
-          this.calculateHealth(this.HealthAllData.tabDailyReport[j]);
-          if (this.error_msg !== '') {
-            this.errCalcCalFat = 'errors found while caculating calories and fat';
-          }
-          this.HealthAllData.tabDailyReport[j].total = this.returnData.outHealthData.total;
-          this.HealthAllData.tabDailyReport[j].meal = this.returnData.outHealthData.meal;
-        }
-        this.IsCalculateCalories = true;
-        this.isAllDataModified = true;
-        //this.tabNewRecordAll.splice(0,this.tabNewRecordAll.length);
-        //this.initTrackRecord();
-      }
-    } else if (i === '8') {
-      if (NoYes === 'Y') { // HTML file reload file
-        this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confHTML, 3);
-      }
-    } else if (i === '7') {
-      if (NoYes === 'Y') {
-        if (this.EventHTTPReceived[4] === false) {
-          this.getChartFiles();
-        }
-        this.isDisplayChart = true;
-        if (this.tabLock[5].lock !== 1) {
-          this.lockFile(5);
-        }
-      }
-      else {
-        this.isDisplayChart = false;
-        if (this.tabLock[5].lock === 1) {
-          this.unlockFile(5);
-        }
-      }
-    } else if (i === '9') {
-      if (NoYes === 'Y') { // reload confirguration chart
-        this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confChart, 4);
-        if (this.tabLock[4].lock !== 1) {
-          this.lockFile(4);
-        }
-      }
-      else {
-        if (this.tabLock[4].lock === 1) {
-          this.unlockFile(4);
-        }
-      }
-    }
-  }
-
-  @HostListener('window:unload', ['$event'])
-  unloadHandler(event: any) {
-    this.ngOnDestroy();
-  }
-
-  @HostListener('window:beforeunload', ['$event'])
-  beforeUnloadHandler(event: any) {
-    this.ngOnDestroy();
-  }
   
-  ngOnDestroy() {
-    this.theResetServer = false;
-    this.passDestroy++
-    console.log('trigger ngOnDestroy  === pass=' + this.passDestroy);
-    if (this.processDestroy === false) {
-      this.processDestroy = true;
-      var trouve = false;
-      for (var i = 0; i < this.tabLock.length && trouve === false; i++) {
-        if (this.tabLock[i].lock === 1) {
-          trouve = true;
-          this.tabLock[0].action = 'onDestroy';
-          this.onFileSystem(0);
-        }
-      }
-    }
-  }
-
-  unlockFile(iWait: number) {
-    this.tabLock[iWait].action = 'unlock';
-    // this.updateSystemFile(iWait);
-    this.onFileSystem(iWait);
-  }
-
-  lockFile(iWait: number) {
-    console.log('=== lockFile ' + this.tabLock[iWait].objectName)
-    this.tabLock[iWait].action = 'lock';
-    // this.updateSystemFile(iWait);
-    this.onFileSystem(iWait);
-  }
-  checkFile(iWait: number) {
-    this.tabLock[iWait].action = 'check';
-    // this.updateSystemFile(iWait);
-    this.onFileSystem(iWait);
-  }
-
-  async checkUpdateFile(iWait: number) {
-    this.tabLock[iWait].action = 'check&update';
-    // this.updateSystemFile(iWait);
-    this.onFileSystem(iWait);
-  }
-
-  updateLockFile(iWait: number) {
-    this.tabLock[iWait].action = 'updatedAt';
-    // this.updateSystemFile(iWait);
-    this.onFileSystem(iWait);
-  }
-
-  iWaitSave: number = 0;
-  onFileSystem(iWait: number) {
-    var theAction = this.tabLock[iWait].action;
-    this.iWaitSave = iWait;
-    this.tabLock[iWait].status = 0;
-    if (this.identification.triggerFileSystem === "No") {
-      this.tabLock[iWait].lock = 1;
-      this.tabLock[iWait].action = "";
-    } else {
-
-        this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString())
-        .subscribe(
-          data => {
-            if (theAction === 'onDestroy') {
-              this.tabLock[iWait].status = 0;
-            } else {
-              this.returnOnFileSystem(data, iWait);
-            }
-
-          },
-          err => {
-            if (theAction === 'onDestroy') {
-              if (err.status === 900) {
-                // destroy is fine
-              } else {
-                console.log('Google updateFileSystem general error=' + err.status + '  specific error= ' + err.error.error + ' & message= ' + err.error.message);
-                this.error_msg = this.error_msg + '   update FileSystem =' + err.status ;
-              }
-            } else {
-              this.returnOnFileSystem(err, iWait);
-            }
-          })
-    }
-  }
-
-  returnOnFileSystem(data: any, iWait: number) {
-
-    
-    if (data.status !== undefined && data.status === 200 && data.tabLock !== undefined) { // tabLock is returned
-      console.log('server response: ' + data.tabLock[iWait].object + ' createdAt=' + data.tabLock[iWait].createdAt + '  & updatedAt=' + data.tabLock[iWait].updatedAt + '  & lock value =' + data.tabLock[iWait].lock);
-      if (data.tabLock[iWait].credentialDate !== this.credentialsFS.creationDate) { // server was reinitialised
-        this.tabLock[iWait] = data.tabLock[iWait];
-      }
-      // record is locked by another user; no actions can take place for this user so reset
-      this.nbCallCredentials = 0;
-      if (data.tabLock[iWait].createdAt !== undefined) {
-        this.error_msg = this.error_msg + " data returned on file " + data.tabLock[iWait].objectName + " ==> action = " + data.tabLock[iWait].action + '  lock = ' + data.tabLock[iWait].lock + "  & status = " + data.tabLock[iWait].status;
-        console.log(this.error_msg);
-        if (this.tabLock[iWait].action === 'unlock') {
-          this.tabLock[iWait].lock = 3;
-          this.onInputAction = "";
-          this.tabLock[iWait].createdAt = "";
-          this.tabLock[iWait].updatedAt = "";
-
-        }
-        else if (data.tabLock[iWait].lock === 1 && this.tabLock[iWait].lock === 2) {
-          // file is now locked for this user; need to retrieve the file to ensure we have the latest version
-          this.tabLock[iWait] = data.tabLock[iWait];
-          this.onInputAction = "";
-          if (iWait === 0) {
-            this.reAccessHealthFile();
-          } else if (iWait === 1) {
-            this.reAccessConfigCal();
-          } else if (iWait === 5) {
-            this.tabLock[iWait].status = data.status.tabLockItem;
-            this.reAccessChartFile();
-          }
-
-
-        } else if (data.tabLock[iWait].lock === 2 && this.tabLock[iWait].lock === 1) {
-          // file is now locked by another user
-          this.tabLock[iWait].lock = data.tabLock[iWait];;
-          if (iWait === 0) {
-            this.reAccessHealthFile();
-          } else {
-            this.tabLock[iWait].status = 300;
-            if (iWait === 5) {
-              this.reAccessChartFile();
-            } else if (iWait === 1) {
-              this.reAccessConfigCal();
-            }
-          }
-
-        } else {
-          this.tabLock[iWait] = data.tabLock[iWait];
-          if (data.tabLock[iWait].lock === 1 && this.onInputAction === "onInputDailyAll") {
-            this.onInputAction = "";
-            this.onInputDailyAllA(this.theEvent);
-          } else if (data.tabLock[iWait].lock === 1 && this.onInputAction === "onAction") {
-            this.onInputAction = "";
-            this.onActionA(this.theEvent);
-          } else if (this.tabLock[iWait].action === 'check&update' && data.tabLock[iWait].status === 0 && this.isMustSaveFile === true) {
-            this.ConfirmSave(this.theEvent);
-          } else {
-            console.log('File is locked; no specific action; process continues');
-            this.onInputAction = "";
-          }
-        }
-      }
-
-    } else if (data.status !== undefined && data.status.tabLockItem !== undefined && (this.tabLock[iWait].action === 'check' || this.tabLock[iWait].action === 'check&update') && data.status.tabLockItem.createdAt !== undefined) { // tabLock[iWait] is returned
-
-      if (data.status.tabLockItem.status === 810 || data.status.tabLockItem.status === 800) { // record found and belongs to same user or record not found or file empty
-        this.nbCallCredentials = 0;
-        if (data.status.tabLockItem.status === 800) { // no file system or no record then lock this user
-          this.lockFile(iWait); // ====> the process below has to be reviewed 
-        }
-        this.tabLock[iWait].status = data.status.tabLockItem;
-        if (this.onInputAction === "onAction") {
-          this.onInputAction = "";
-          this.onActionA(this.theEvent);
-        } else if (this.onInputAction === "onInputDailyAll") {
-          this.onInputAction = "";
-          this.onInputDailyAllA(this.theEvent);
-        } 
-        if (iWait === 0) {
-          if (this.isSaveHealth === true) {
-            this.ProcessSaveHealth(this.theEvent);
-          } else if (this.isMustSaveFile === true) {
-            this.ConfirmSave(this.theEvent);
-          } else if (data.status === 810) {
-            this.updateLockFile(iWait);
-          }
-        } else if (iWait === 1) {
-          if (this.isSaveCaloriesFat === true) {
-            this.processSaveCaloriesFat(this.saveEvent);
-          } else if (data.status === 810) {
-            this.updateLockFile(iWait);
-          }
-        } else if (iWait === 5) {
-          if (this.isSaveParamChart === true) {
-            this.processSaveParamChart();
-          } else if (data.status === 810) {
-            this.updateLockFile(iWait);
-          }
-        }
-
-      } else if (data.status.tabLockItem.status === 820) { // record found and belongs to other user
-        this.nbCallCredentials = 0;
-        this.tabLock[iWait].lock = 2;
-        this.onInputAction = "";
-        if (iWait === 0) {
-          this.reAccessHealthFile();
-        } else if (iWait === 1) {
-          this.reAccessConfigCal();
-        } else if (iWait === 5) {
-          this.tabLock[iWait].status = data.status.tabLockItem;
-          this.reAccessChartFile();
-        }
-
-      }
-
-    } else if (data.status !== undefined) {
-
-      if (data.status === 300 || data.status === 720) { // 300 record already locked; 720 updatedAt on record locked by another user
-        this.nbCallCredentials = 0;
-        this.tabLock[iWait].lock = 2;
-        this.onInputAction = "";
-        if (data.status === 720) {
-          this.tabLock[iWait].status = 720;
-          if (iWait === 0) {
-            this.reAccessHealthFile();
-          } else if (iWait === 1) {
-            this.reAccessConfigCal();
-          } else if (iWait === 5) {
-            this.reAccessChartFile();
-          }
-        } else {
-          this.tabLock[iWait].status = 300;
-        }
-      } else if (data.status === 700 || data.status === 712 || data.status === 710) { // requested to unlock record which does not exist or is locked by another user
-        this.nbCallCredentials = 0;
-        this.nbCallCredentials = 0;
-        this.tabLock[iWait].lock = 0;
-        this.tabLock[iWait].status = data.status;
-        this.onInputAction = "";
-        if (data.status === 712){
-          this.error_msg="Access to get credentials is forbidden, updates are not possible";
-        } else if (data.status === 700){
-          this.error_msg="System failure, updates are not possible";
-        } else {
-          this.error_msg="Record cannot be unlocked, updates are not possible";
-        }
-
-      } else if (data.status === 666) {
-        console.log("server cannot process file system because is processed by another user; try once more in 2 seconds");
-        this.nbRecall++;
-        this.nbCallCredentials = 0;
-        var theDate = new Date();
-        var seconds = theDate.getUTCSeconds();
-        var myRefTime = seconds + 2; // wait 2 seconds
-        if (myRefTime > 60) {
-          myRefTime = myRefTime - 60;
-        }
-        while (seconds < myRefTime) {
-          theDate = new Date();
-          seconds = theDate.getUTCSeconds();
-        }
-        console.log('try again onFileSystem');
-        if (this.nbRecall < 5) {
-          this.onFileSystem(iWait);
-        } else {
-          this.nbRecall = 0;
-          if (this.tabLock[iWait].action === 'lock') {
-            this.tabLock[iWait].lock = 2;
-          }
-        }
-      } else if (data.status === 955) {
-        this.error_msg = this.error_msg + 'status error=' + data.status;
-        this.theResetServer = true;
-        this.tabLock[iWait].lock = 3;
-
-      } else if (data.status === 956) {  // record is locked by another user
-        this.error_msg = "status " + data.status + " " + data.msg;
-        this.theResetServer = true;
-        this.tabLock[iWait].lock = 3;
-        this.onInputAction = "";
-        this.tabLock[iWait].status = 720;
-        if (iWait === 0) {
-          this.reAccessHealthFile();
-        } else if (iWait === 1) {
-          this.reAccessConfigCal();
-        } else if (iWait === 5) {
-          this.reAccessChartFile();
-        }
-
-      } else {
-
-        this.nbCallCredentials = 0;
-
-        this.onInputAction = "";
-
-        if (this.tabLock[iWait].action === 'lock' || this.tabLock[iWait].action === "unlock") {
-
-          this.tabLock[iWait].status = 0;
-          if (this.tabLock[iWait].action === 'lock') {
-            this.tabLock[iWait].lock = 2;
-            console.log('which type of data is it????' + JSON.stringify(data) + '  on action ' + + this.tabLock[iWait].action);
-            this.error_msg= "status " + data.status + " - record is locked ";
-          } else {
-            this.tabLock[iWait].lock = 3;
-          }
-        } else {
-          this.tabLock[iWait].status = 999;
-          this.error_msg= "status " + data.status + " - unknown error "
-          console.log('which type of data is it????' + JSON.stringify(data) + '  on action ' + + this.tabLock[iWait].action);
-        }
-
-      }
-
-    } else {
-      console.log('which type of data is it???? : ' + JSON.stringify(data));
-      this.tabLock[iWait].status = 999;
-      if (this.tabLock[iWait].action === 'lock') {
-        this.error_msg= "status  999 - record is locked ";
-        this.tabLock[iWait].lock = 2;
-      }
-    }
-  }
-
-
-  getChartFiles() {
-    if (this.InConfigChart.fileType === '') {
-      this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confChart, 4);
-    } else {
-      this.ConfigChart = this.InConfigChart;
-      this.EventHTTPReceived[4] = true;
-    }
-
-    if (this.fileParamChart.fileType === '') {
-      this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, 5);
-    } else {
-      this.fileParamChart = this.InFileParamChart;
-      this.EventHTTPReceived[5] = true;
-    }
-
-  }
-
-  reAccessHealthFile() {
-    console.log('reAccessHealthFile');
-    this.HealthAllData.tabDailyReport.splice(0, this.HealthAllData.tabDailyReport.length);
-    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
-  }
-
-  reAccessChartFile() {
-    this.fileParamChart.data.splice(this.fileParamChart.data.length);
-    this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, 5);
-  }
-
-  reAccessConfigCal() {
-    this.ConfigCaloriesFat.tabCaloriesFat.splice(this.ConfigCaloriesFat.tabCaloriesFat.length);
-    this.GetRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.calories, 1);
-  }
-
-/*
   ngOnChanges(changes: SimpleChanges) {
     for (const propName in changes) {
       const j = changes[propName];
       
-        if (propName === 'credentials' && changes['credentials'].firstChange === false) {
-          console.log('health component : credentials related to Google server have been updated');
-        } else if (propName === 'credentialsMongo' && changes['credentialsMongo'].firstChange === false) {
-          console.log('health component : credentials related to Mongo server have been updated');
-        } else if (propName === 'credentialsFS' && changes['credentialsFS'].firstChange === false) {
-          console.log('health component : credentials related toFile System server have been updated');
+        if (propName === 'calculateHeight') {
+          this.calculateHeight();
+        } else if (propName === 'resetBooleans' && changes[propName].firstChange === false) {
+          this.resetBooleans();
+        } else if (propName === 'createDropDownCalFat') {
+          this.createDropDownCalFatFn();
+        } else if (propName === 'actionHealth' && changes[propName].firstChange === false) {
+          if (this.onInputAction === "onInputDailyAll") {
+            this.onInputDailyAllA(this.theEvent);
+          } else if (this.onInputAction === "onAction") {
+            this.onActionA(this.theEvent);
+          } else if (this.onInputAction === "confirmSave"){
+            this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+            this.IsSaveConfirmedAll = true;
+          } else if (this.onInputAction === "saveHealth"){
+            if (this.actionHealth>0){
+              this.isAllDataModified = false;
+            }
+            this.isMustSaveFile = false;
+            this.isSaveHealth = false;
+          } 
+          this.onInputAction="";
+        } else if (propName==='returnDataFS' && changes[propName].firstChange === false) {
+            this.errorMsg = this.returnDataFS.errorMsg;
+            if (this.returnDataFS.tabLock[0].lock === 1 && this.onInputAction === "onInputDailyAll") {
+              this.onInputDailyAllA(this.theEvent);
+            } else if (this.returnDataFS.tabLock[0].lock===1 && this.onInputAction === "onAction") {
+              this.onActionA(this.theEvent);
+            } else if (this.tabLock[0].action === 'check&update' && this.returnDataFS.tabLock[0].status === 0 && this.isMustSaveFile === true) {
+              this.confirmSave.emit(this.theEvent); 
+            } else if (this.returnDataFS.tabLock[0].lock !== 1 && (this.onInputAction === "saveHealth" || this.onInputAction === "confirmSave")){
+              this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFS.errorMsg + ")" + " status=" + this.returnDataFS.tabLock[0].status;
+              this.isAllDataModified = false;
+            } else if (this.returnDataFS.tabLock[0].lock === 2) {
+                  this.isAllDataModified = false; // is envionment reinitialised
+            } else {
+              console.log('File is locked; no specific action; process continues');
+            }
+            this.onInputAction="";
         }
-      
-    }
-  }
-*/
-
-/*
-
-  getDefaultCredentials(iWait: number, checkFile: boolean) { // NOT USED ANYMORE!!!!!
-    console.log('getDefaultCredentials()');
-    var newCredentials = new classCredentials;
-    this.ManageGoogleService.getDefaultCredentials(this.configServer)
-      .subscribe(
-        (data) => {
-          newCredentials.access_token = data.credentials.access_token;
-          newCredentials.id_token = data.credentials.id_token
-          newCredentials.refresh_token = data.credentials.refresh_token
-          newCredentials.token_type = data.credentials.token_type;
-          newCredentials.userServerId = this.tabLock[iWait].userServerId;
-          newCredentials.creationDate = data.credentials.creationDate;
-          this.identification.userServerId = this.tabLock[iWait].userServerId;
-          this.identification.credentialDate = data.credentials.creationDate;
-          // this.getInfoToken(); // this is a test
-          this.error_msg = this.error_msg + " Server has been reinitialised and credentials updated";
-          this.newCredentials.emit(newCredentials);
-          for (var i = 0; i < 7; i++) {
-            this.tabLock[i].userServerId = this.identification.userServerId;
-            this.tabLock[i].credentialDate = this.identification.credentialDate;
-            //this.tabLock[i].createdAt='';
-            //this.tabLock[i].updatedAt='';
-          }
-          this.theResetServer = true;
-          //this.msgCredentials='';
-          if (checkFile === true) {
-            // check whether the last update was performed by the same user
-            this.ManageGoogleService.getContentObject(this.configServer, this.tabLock[iWait].bucket, this.tabLock[iWait].object)
-              .subscribe((data) => {
-
-                if ((iWait === 0 && this.HealthAllData.updatedAt === data.updatedAt) || (iWait === 1 && this.ConfigCaloriesFat.updatedAt === data.updatedAt)
-                  || (iWait === 1 && this.fileParamChart.updatedAt === data.updatedAt)) {
-                  // this means that current user was the one who updated the file
-                  if (this.nbCallCredentials === 0) {
-                    this.nbCallCredentials++
-                    this.onFileSystem(iWait);
-                  } else {
-                    this.nbCallCredentials = 0;
-                    this.msgCredentials = 'Server has been reinitialised - file is retrieved';
-                    this.error_msg = this.error_msg + this.msgCredentials;
-                    console.log(this.msgCredentials);
-                    if (iWait === 0) {
-                      this.reAccessHealthFile();
-                    } else if (iWait === 1) {
-                      this.reAccessConfigCal();
-                    } else if (iWait === 5) {
-                      this.reAccessChartFile();
-                    }
-                  }
-                } else {
-                  this.msgCredentials = 'Server has been reinitialised - file is retrieved';
-                  console.log(this.msgCredentials);
-                  this.error_msg = this.error_msg + this.msgCredentials;
-                  if (iWait === 0) {
-                    this.reAccessHealthFile();
-                  } else if (iWait === 1) {
-                    this.reAccessConfigCal();
-                  } else if (iWait === 5) {
-                    this.reAccessChartFile();
-                  }
-                }
-              },
-                err => {
-                  this.msgCredentials = 'PB with Server which was reinitialised - relaunch the application';
-                  console.log(this.msgCredentials);
-                  this.error_msg = this.error_msg + this.msgCredentials;
-                  this.resetServer.emit('Google');
-                }
-              )
-
-          }
-        },
-        err => {
-          console.log('return from requestToken() with error = ' + JSON.stringify(err));
-          this.msgCredentials = 'problem to retrieve credentials data ==>   ' + JSON.stringify(err);
-          this.error_msg = this.error_msg + this.msgCredentials;
-          //this.resetServer.emit('Google');
-        });
+      }
   }
 
-
-*/
 
 }

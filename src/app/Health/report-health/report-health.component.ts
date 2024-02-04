@@ -16,7 +16,6 @@ import { Router } from '@angular/router';
 import { FormGroup, FormControl, UntypedFormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MongoDB and accessed via ManageMongoDBService
@@ -25,7 +24,6 @@ import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 import { environment } from 'src/environments/environment';
 
 import { classPosDiv, getPosDiv } from '../../getPosDiv';
-import { strDateTime } from '../../MyStdFunctions';
 
 import { manage_input } from '../../manageinput';
 import { eventoutput, thedateformat } from '../../apt_code_name';
@@ -36,14 +34,14 @@ import { mainConvItem, mainRecordConvert, mainClassUnit, mainClassConv } from '.
 import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classPosSlider } from '../../JsonServerClass';
 
-import { configServer, LoginIdentif, msgConsole } from '../../JsonServerClass';
+import { configServer, LoginIdentif, msgConsole, classtheEvent } from '../../JsonServerClass';
 import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { AccessConfigService } from 'src/app/CloudServices/access-config.service';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart, classReturnColor } from '../classChart';
-import { classFileSystem, classAccessFile } from '../../classFileSystem';
+import { classFileSystem, classAccessFile, classReturnDataFS } from '../../classFileSystem';
+import { fnAddTime, addMonthDay, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 
-import { addMonthDay } from '../../MyStdFunctions';
 @Component({
   selector: 'app-report-health',
   templateUrl: './report-health.component.html',
@@ -87,22 +85,26 @@ export class ReportHealthComponent implements OnInit {
 
   //inData=new classAccessFile;
   @Input() tabLock = new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
+  @Input() returnDataFS = new classReturnDataFS;
+  @Input() actionParamChart:number = 0;
 
   posSlider = new classPosSlider;
   posPalette = new classPosSlider;
   paramChange: number = 0; // used to trigger the change on slider position
-  @Output() returnFile = new EventEmitter<any>();
-  @Output() reportCheckLockLimit = new EventEmitter<any>();
-  @Output() cancelSaveOther = new EventEmitter<any>();
+
+  @Output() checkLockLimit = new EventEmitter<any>();
+  @Output() processSave = new EventEmitter<any>();
+  @Output() retrieveRecord = new EventEmitter<any>();
 
   @ViewChild('baseChart', { static: true })
+
+
 
   // DEBUG
   debugPhone: boolean = false;
 
   current_Chart: number = 0;
-  tabParamChart: Array<classTabFormChart> = [];
-  initTabParamChart: Array<classTabFormChart> = [];
+  tabParamChart: Array<classTabFormChart> = []; // working table
 
   tabCtx: Array<any> = [];
   tabChart: Array<any> = [];
@@ -372,6 +374,17 @@ export class ReportHealthComponent implements OnInit {
 
   eventClientY: number = 0;
   eventPageY: number = 0;
+
+  onInputAction:string="";
+
+  lastInputAt:string="";
+
+  theEvent = new classtheEvent;
+
+  errorTimeOut:string="";
+  userActivity:string= "";
+
+
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
     //this.selectedPosition = { x: event.pageX, y: event.pageY };
@@ -455,7 +468,7 @@ export class ReportHealthComponent implements OnInit {
     }
 
     this.tabParamChart.splice(0, this.tabParamChart.length);
-    this.initTabParamChart.splice(0, this.initTabParamChart.length);
+
     if (this.INFileParamChart.fileType !== undefined && this.INFileParamChart.fileType !== '') {
       for (i = 0; i < 4; i++) {
         const classParam = new classTabFormChart;
@@ -475,9 +488,6 @@ export class ReportHealthComponent implements OnInit {
             this.tabParamChart[i].labelsColor[j] = this.ConfigChartHealth.barDefault.datasets.borderColor[j];
           }
         }
-        const initParam = new classTabFormChart;
-        this.initTabParamChart.push(initParam);
-        this.fillInCharts(this.INFileParamChart.data[i], this.initTabParamChart[i]);
 
         this.fillInFormFromTab(i);
         this.canvas.push({ width: '', height: '', background: 0, marginLeft: '' });
@@ -487,10 +497,7 @@ export class ReportHealthComponent implements OnInit {
       for (i = 0; i < 4; i++) {
         const classParam = new classTabFormChart;
         this.tabParamChart.push(classParam);
-        const initParam = new classTabFormChart;
-        this.initTabParamChart.push(initParam);
         this.tabParamChart[this.tabParamChart.length - 1].chartType = 'line';
-        this.initTabParamChart[this.tabParamChart.length - 1].chartType = 'line';
 
         this.tabParamChart[this.tabParamChart.length - 1].chartTitle.display = this.ConfigChartHealth.barDefault.options.plugins.title.display;
         this.tabParamChart[this.tabParamChart.length - 1].chartTitle.text = this.ConfigChartHealth.barDefault.options.plugins.title.text;
@@ -601,14 +608,40 @@ export class ReportHealthComponent implements OnInit {
         this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.rgba = "";
         this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.xPos = 0;
         this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.yPos = 0;
-        this.fillInCharts(this.tabParamChart[this.tabParamChart.length - 1], this.initTabParamChart[this.tabParamChart.length - 1]);
-        //this.fillInFormFromTab(i);
+
         this.canvas.push({ width: '', height: '', background: 0, marginLeft: '' });
         this.changeCanvas(i);
       }
+  
     }
+    this.lastInputAt = strDateTime();
+    this.userActivity = defineMyDate();
 
   }
+
+  isSaveFile:boolean=false;
+  isDataModified:boolean=false;
+  timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean){
+    if (fnCheckTimeOut(this.userActivity,this.configServer.timeoutFileSystem.userTimeOut)===true){
+      // there has been no activity for quite a while and timeOut has been reached
+      // must reinitialize the environment and updates are lost as files may have been updated through other sessions
+
+        //this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
+        this.retrieveRecord.emit(5);
+        this.isSaveFile=false;
+        this.isDataModified=false;
+        this.resetBooleans();
+
+        this.errorTimeOut = 'there has been no activity for at least ' + this.configServer.timeoutFileSystem.userTimeOut.mn + ' all inputs are lost; data is restored from the cloud'
+    }
+    this.userActivity = defineMyDate();
+    console.log('userActivity=' + this.userActivity);
+    //this.checkLockLimit(iWait, isDataModified, isSaveFile);
+    this.checkLockLimit.emit({iWait:iWait,isDataModified:this.isDataModified,isSaveFile:this.isSaveFile, lastInputAt:this.lastInputAt});
+
+  }
+
+
 
   enableForm() {
     this.selectChart.get('chartType')?.enable();
@@ -771,15 +804,12 @@ export class ReportHealthComponent implements OnInit {
         this.fillInFormFromTab(nb);
         this.buildChart(nb);
       }
-
-
     }
-
   }
 
   selectedChart: number = 0;
   SelChart(event: any) {
-    this.reportCheckLockLimit.emit({ iWait: 5, isDataModified: true, isSaveFile: false });
+    this.timeOutactivity(5, true, false);
 
     if (this.selectedChart !== 0) {
 
@@ -805,10 +835,10 @@ export class ReportHealthComponent implements OnInit {
       this.posDivPosSlider = getPosDiv("posDivSlider");
       //this.getPosDivPosSlider();
     }
-
   }
 
   cancelChartParam(event: any) {
+    this.timeOutactivity(5, true, false);
     if (event.target.id === "allChartParam") {
       this.selectedChart = 0;
       this.isParamTitle = false;
@@ -825,10 +855,10 @@ export class ReportHealthComponent implements OnInit {
     } else if (event.target.id === "axis") {
       this.isParamAxis = false;
     }
-
   }
 
   processAxis(event: any) {
+    this.timeOutactivity(5, true, false);
     this.isParamAxis = false;
     if (this.selectAxisX.controls['stacked'].value === 'false') {
       this.tabParamChart[this.selectedChart - 1].axisX.stacked = false;
@@ -840,7 +870,6 @@ export class ReportHealthComponent implements OnInit {
     } else {
       this.tabParamChart[this.selectedChart - 1].axisY.stacked = true;
     }
-
 
     this.selectChart.controls['stackedX'].setValue(this.tabParamChart[this.selectedChart - 1].axisX.stacked);
     this.selectChart.controls['stackedY'].setValue(this.tabParamChart[this.selectedChart - 1].axisY.stacked);
@@ -916,7 +945,6 @@ export class ReportHealthComponent implements OnInit {
 
   }
 
-
   fillInCharts(inFile: any, outFile: any) {
 
     outFile.chartType = inFile.chartType.toLowerCase().trim();
@@ -955,8 +983,6 @@ export class ReportHealthComponent implements OnInit {
     outFile.canvasBackground = inFile.canvasBackground;
     outFile.canvasMarginLeft = inFile.canvasMarginLeft;
     this.fillRgba(inFile.rgbaCanvas, outFile.rgbaCanvas);
-
-
 
     outFile.axisX.stacked = inFile.axisX.stacked;
     outFile.axisX.border.color = inFile.axisX.border.color;
@@ -1171,14 +1197,11 @@ export class ReportHealthComponent implements OnInit {
       outFile.padding.left = this.selectTitle.controls['paddingLeft'].value;
       this.selectChart.controls['chartTitle'].setValue(outFile.text);
       this.selectChart.controls['colorChartTitle'].setValue(outFile.color);
-
-
     }
-
-
   }
 
   selectType(event: any) {
+    this.timeOutactivity(5, true, false);
     this.resetBooleans();
     if (event.target.id === 'selType') {
       this.isTypeSelected = true;
@@ -1220,6 +1243,7 @@ export class ReportHealthComponent implements OnInit {
   }
 
   selectPeriod(event: any) {
+    this.timeOutactivity(5, true, false);
     this.resetBooleans();
     if (event.target.id === 'selPeriod') {
       this.isPeriodSelected = true;
@@ -1230,6 +1254,7 @@ export class ReportHealthComponent implements OnInit {
   }
 
   selectPeriodAll(event: any) {
+    this.timeOutactivity(5, true, false);
     this.resetBooleans();
     if (event.target.id === 'selPeriod') {
       this.isPeriodSelected = true;
@@ -1268,6 +1293,7 @@ export class ReportHealthComponent implements OnInit {
 
   selectColorAxis(event: any) {
     if (this.tabLock.lock !== 2) {
+      this.timeOutactivity(5, true, false);
       this.resetBooleans();
       this.mainWindow.top = 120;
       this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
@@ -1309,7 +1335,7 @@ export class ReportHealthComponent implements OnInit {
   selectColor(event: any) {
     if (this.tabLock.lock !== 2) {
       this.resetBooleans();
-
+      this.timeOutactivity(5, true, false);
       this.mainWindow.top = 120;
       this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
       if (event === 'canvasColor') {
@@ -1424,7 +1450,9 @@ export class ReportHealthComponent implements OnInit {
 
 
   fnExitPalette(event: any) {
+   
     if (this.tabLock.lock !== 2) {
+      this.timeOutactivity(5, true, false);
       if (event === 'Cancel') {
         this.resetBooleans();
       } else if (event === 'Save') {
@@ -1515,84 +1543,82 @@ export class ReportHealthComponent implements OnInit {
 
 
 
-  error_msg: string = '';
+  errorMsg: string = '';
   fnSelectChart() {
-    this.error_msg = '';
-
+    this.errorMsg = '';
+    this.timeOutactivity(5, true, false);
     // check that all parameters are correct
     if (this.selectChart.controls['chartType'].value !== '') {
       for (var i = 0; i < this.lineChartType.length && this.selectChart.controls['chartType'].value.toLowerCase().trim() !== this.lineChartType[i].toLowerCase().trim(); i++) {
       }
       if (i === this.lineChartType.length) {
-        this.error_msg = 'Field TYPE is unknown; please update it';
+        this.errorMsg = 'Field TYPE is unknown; please update it';
       }
     }
-    if (this.error_msg === '' && this.selectChart.controls['period'].value !== '') {
+    if (this.errorMsg === '' && this.selectChart.controls['period'].value !== '') {
       for (var i = 0; i < this.tabPeriod.length && this.selectChart.controls['period'].value.toLowerCase().trim() !== this.tabPeriod[i].toLowerCase().trim(); i++) {
       }
       if (i === this.tabPeriod.length) {
-        this.error_msg = 'Field PERIOD is unknown; please update it';
+        this.errorMsg = 'Field PERIOD is unknown; please update it';
       }
     }
-    if (this.error_msg === '' && this.selectChart.controls['startRange'].value !== '' && this.selectChart.controls['endRange'].value !== '' && this.selectChart.controls['endRange'].value < this.selectChart.controls['startRange'].value) {
-      this.error_msg = 'end date cannot be before start date; please update';
+    if (this.errorMsg === '' && this.selectChart.controls['startRange'].value !== '' && this.selectChart.controls['endRange'].value !== '' && this.selectChart.controls['endRange'].value < this.selectChart.controls['startRange'].value) {
+      this.errorMsg = 'end date cannot be before start date; please update';
     }
 
-    if (this.error_msg === '' && isNaN(this.selectChart.controls['canvasWidth'].value)) {
-      this.error_msg = 'Field CANVAS WIDTH is not a numeric';
+    if (this.errorMsg === '' && isNaN(this.selectChart.controls['canvasWidth'].value)) {
+      this.errorMsg = 'Field CANVAS WIDTH is not a numeric';
     }
-    if (this.error_msg === '' && isNaN(this.selectChart.controls['canvasHeight'].value)) {
-      this.error_msg = 'Field CANVAS HEIGHT is not a numeric';
+    if (this.errorMsg === '' && isNaN(this.selectChart.controls['canvasHeight'].value)) {
+      this.errorMsg = 'Field CANVAS HEIGHT is not a numeric';
     }
-    if (this.error_msg === '' && isNaN(this.selectChart.controls['ratio'].value)) {
-      this.error_msg = 'Field RATIO is not a numeric';
+    if (this.errorMsg === '' && isNaN(this.selectChart.controls['ratio'].value)) {
+      this.errorMsg = 'Field RATIO is not a numeric';
     }
-    if (this.error_msg === '') {
+    if (this.errorMsg === '') {
       this.fillInTabOfCharts(this.selectedChart - 1);
       this.buildChart(this.selectedChart - 1);
     }
 
   }
 
-  returnEmit = {
-    saveAction: '',
-    saveCode: ''
+  saveFn(event: string) {
+    this.errorMsg = '';
+    this.fillInTabOfCharts(this.selectedChart - 1);
+    if (this.errorMsg === '') {
+      if (event === 'save') {
+          this.fillInCharts(this.tabParamChart[this.selectedChart - 1], this.INFileParamChart.data[this.selectedChart - 1]);
+          this.buildChart(this.selectedChart - 1);
+      } else {
+          for (var i = 0; i < this.tabParamChart.length; i++) {
+            this.fillInCharts(this.tabParamChart[i], this.INFileParamChart.data[i]);
+            this.buildChart(this.selectedChart - 1);
+          }
+      }
+
+      this.theEvent.target.id = event;
+      this.theEvent.checkLock.iWait=5;
+      this.theEvent.checkLock.isDataModified=true;
+      this.theEvent.checkLock.isSaveFile=true;
+      this.theEvent.checkLock.lastInputAt=this.lastInputAt;
+      this.theEvent.fileName = "";
+      this.onInputAction = "saveChart";
+      this.processSave.emit(this.theEvent);
+      //this.returnFile.emit(this.tabParamChart);
+    }
   }
 
-
-  SaveCancel(event: string) {
-    this.error_msg = '';
-    if (event === 'save') {
-      this.fillInTabOfCharts(this.selectedChart - 1);
-      if (this.error_msg === '') {
-        this.fillInCharts(this.tabParamChart[this.selectedChart - 1], this.initTabParamChart[this.selectedChart - 1]);
-        this.returnEmit.saveAction = 'save';
-        this.returnFile.emit(this.initTabParamChart);
-
-      }
-
-    } else if (event === 'saveAll') {
-      this.fillInTabOfCharts(this.selectedChart - 1);
-      if (this.error_msg === '') {
-        for (var i = 0; i < this.tabParamChart.length; i++) {
-          this.fillInCharts(this.tabParamChart[i], this.initTabParamChart[i]);
-        }
-        this.returnEmit.saveAction = 'saveAll';
-        this.returnFile.emit(this.tabParamChart);
-
-      }
-    } else if (event === 'cancelAll') {
-      this.cancelSaveOther.emit(5);
-      this.resetBooleans();
+  cancelFn(event: string) {
+    this.resetBooleans();
+    this.timeOutactivity(5, true, false);
+     if (event === 'cancelAll') {
       for (var i = 0; i < this.tabParamChart.length; i++) {
-        this.fillInCharts(this.initTabParamChart[i], this.tabParamChart[i]);
+        this.fillInCharts(this.INFileParamChart.data[i], this.tabParamChart[i]);
         this.fillInFormFromTab(i);
         this.buildChart(i);
       }
     } else if (event === 'cancelOne') {
-      this.cancelSaveOther.emit(5);
-      this.resetBooleans();
-      this.fillInCharts(this.initTabParamChart[this.selectedChart - 1], this.tabParamChart[this.selectedChart - 1]);
+      this.fillInCharts(this.INFileParamChart.data[this.selectedChart - 1], this.tabParamChart[this.selectedChart - 1]);
       this.fillInFormFromTab(this.selectedChart - 1);
       this.buildChart(this.selectedChart - 1);
     }
@@ -1613,6 +1639,7 @@ export class ReportHealthComponent implements OnInit {
 
   selectLabelColor(event: any) {
     if (this.tabLock.lock !== 2) {
+      this.timeOutactivity(5, true, false);
       const i = event.target.id.indexOf('-');
       this.dialogLabColor[this.currentLabColor] = false;
       this.dialogLimitLabColor[this.currentLabColor] = false;
@@ -1648,7 +1675,7 @@ export class ReportHealthComponent implements OnInit {
     const i = event.target.id.indexOf('-');
     const item = Number(event.target.id.substring(i + 1));
     if (this.tabLock.lock !== 2) {
-
+      this.timeOutactivity(5, true, false);
 
       if (event.target.id === 'submit') {
 
@@ -2556,42 +2583,36 @@ export class ReportHealthComponent implements OnInit {
     var i = 0;
     for (const propName in changes) {
       const j = changes[propName];
-      if (propName === 'INFileParamChart') {
-        const b = this.INFileParamChart.data;
-      } else if (propName === 'tabLock') {
-        if (changes['tabLock'].firstChange === true) {
-          console.log('report chart ==> ngOnChange firstChange===true   current value of tabLock[5]=' + changes[propName].currentValue.lock +
-            '  & previous value initTabLock5 was=' + this.initTabLock5 + '  & input() TabLock[5]=' + this.tabLock.lock);
-        } else {
-          console.log('report chart ==> ngOnChange firstChange===false   current tabLock[5]=' + changes[propName].currentValue.lock +
-            '  & previous value initTabLock5 was=' + this.initTabLock5 + '  & input() TabLock[5]=' + this.tabLock.lock);
-
-          if (this.returnEmit.saveAction.substring(0, 4) === 'save') {
-            if (this.tabLock.lock === 1 && (this.tabLock.status === 0 || this.tabLock.status === 300)) {
-              if (this.returnEmit.saveAction === 'save') {
-                this.error_msg = 'parameters for chart#' + this.selectedChart + ' have been saved';
-              } else if (this.returnEmit.saveAction === 'saveAll') {
-                this.error_msg = 'for all charts, parameters have been saved';
-                for (var i = 0; i < this.tabParamChart.length; i++) {
-                  this.buildChart(i);
-                }
-              }
-            } else {
-              this.error_msg = 'Parameters cannot be saved - error=' + this.tabLock.status;
-
-            }
-            this.returnEmit.saveAction = '';
-          } else if (this.initTabLock5 !== changes[propName].currentValue.lock) {
-            this.buildChart(this.selectedChart - 1);
-          }
-        }
-        this.initTabLock5 = changes[propName].currentValue.lock;
-        if (this.initTabLock5 === 1) {
+      if (propName === 'tabLock'){
+        if (this.tabLock.lock===1){
           this.enableForm();
         } else {
           this.disableForm();
         }
-
+      }
+      if (propName === 'actionParamChart' && changes[propName].firstChange === false) {
+          if ( this.onInputAction === "saveChart") {
+            if (this.tabLock.lock === 1 && (this.tabLock.status === 0 || this.tabLock.status === 300)) {
+              if (this.theEvent.target.id === 'save') {
+                this.errorMsg = 'parameters for chart#' + this.selectedChart + ' have been saved';
+              } else if (this.theEvent.target.id === 'saveAll') {
+                this.errorMsg = 'for all charts, parameters have been saved';
+              }
+            } else {
+              this.errorMsg = 'Parameters cannot be saved - error=' + this.tabLock.status;
+            }
+            this.onInputAction = "";
+        } 
+     } else if (propName==='returnDataFS' && changes[propName].firstChange === false) {
+        if (this.returnDataFS.tabLock[5].lock !== 1 && this.onInputAction === "saveChart"){
+          this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFS.errorMsg + ")" + " status=" + this.returnDataFS.tabLock[0].status;
+        } 
+        if (this.returnDataFS.tabLock[5].lock === 1) {
+            this.enableForm();
+        } else {
+            this.disableForm();
+        }
+        this.onInputAction = "";
       }
     }
     // //this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j)); 
