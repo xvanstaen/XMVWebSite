@@ -1,4 +1,8 @@
 @import "../FitnessHealthGeneral.css";
+body{
+  margin-left:20px;
+}
+
 div{
     --bufferW:60%;
 }

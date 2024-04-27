@@ -112,7 +112,7 @@ export class LoginComponent {
     }
 
   ngOnInit(){
-
+      //console.log('Login init --- configServer.google='+this.configServer.googleServer);
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
       this.device_type = navigator.userAgent;
@@ -191,14 +191,17 @@ checkLogin(){
     // this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject )
     this.ManageGoogleService.checkLogin(this.configServer )
         .subscribe((data ) => {    
-         
-            this.getUserAccessLevel();
-            this.identification=data;
-            this.routing_code=1;
-            this.identification.userServerId=this.credentialsFS.userServerId;
-            this.identification.credentialDate=this.credentialsFS.creationDate;
-            this.identification.IpAddress=this.configServer.IpAddress;
-            this.my_output2.emit(this.routing_code.toString());
+            if (data.status===undefined){              
+              this.getUserAccessLevel();
+              this.identification=data;
+              this.routing_code=1;
+              this.identification.userServerId=this.credentialsFS.userServerId;
+              this.identification.credentialDate=this.credentialsFS.creationDate;
+              this.identification.IpAddress=this.configServer.IpAddress;
+              this.my_output2.emit(this.routing_code.toString());
+            } else {
+              this.error='invalid user-id/password';
+            }
       },
         err=> {
           if (err.error.status!==undefined && err.error.status==520){
@@ -270,6 +273,7 @@ changeServerName(event:any){
   if (event==='FS'){
     this.serverChange.emit('FS');
   } else  if (event==='Google'){
+    //console.log('Login - ChangeServerName fn --- configServer.google='+this.configServer.googleServer);
     this.serverChange.emit('Google');
   } else  if (event==='Mongo'){
     this.serverChange.emit('Mongo');

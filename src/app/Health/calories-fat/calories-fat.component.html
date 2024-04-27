@@ -2,29 +2,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
-
-
     <!--
         =========================================================================
         ================  Display and Manage special dishes/recipes  ============
         =========================================================================
      -->
 <div class="skipLine">&nbsp;</div>  
+<div *ngIf="isUserTimeOut===true" style="margin-left:6px;">
+    <div style="font-size:16px; color:blue; display:inline-block; 
+             text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width}">
+            You have been inactive for too long so your updates are lost. Re-access the application Health 
+    </div>
+</div>
 
-
-<div *ngIf="isInitComplete===true">
+<div *ngIf="isInitComplete===true && isUserTimeOut===false">
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
  
-
-        <div *ngIf="tabLock.lock!==1" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
+        <div *ngIf="tabLock.lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
+        <div *ngIf="tabLock.lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
 
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+13}">
         MANAGE RECIPE
+        <app-running-clock [posSizeClock]="posSizeClock">
+        </app-running-clock>
+        Time out will occur in 
+        <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+
         </div>
 
-
         <div style="margin-left:5px; display:inline-block; overflow-y:scroll;" [ngStyle]="{'height':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth, 'width.px': HTMLCaloriesFat.width }" >
-        
             <div class="tHeader" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.action}" >Action</div>
             <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.type }"  >Recipe
                 <button class="theArrow"   id='Recipe'    (click)="onFilter($event)">
@@ -100,7 +106,7 @@
             
                     <li *ngFor="let tabFood of tabInputRecipeFood; let m=index;" 
                             class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0, 'yesScroll':tabInputRecipeFood.length > 9, 'noScroll':tabInputRecipeFood.length < 10}" 
-                                (click)="onSelRecipeFood($event)" id="selRecipeFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{tabFood.name}}">
+                                (click)="onSelRecipeFood($event)" id="selRecipeFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{tabFood.name}}">
                             {{tabFood.name}}
                     </li>
                 </div>            
@@ -119,7 +125,7 @@
             </div>
         </div>
 
-        <div id="posRecipeTable" [ngStyle]="{'height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth -15, 'width.px': HTMLCaloriesFat.width -15, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background }" 
+        <div id="posStartTable" [ngStyle]="{'height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background , 'margin-left.px':5}" 
                     style="overflow-y:scroll; margin-top:-5px; margin-left:5px;">
         <!-- ================== display of the table =============== -->
             <div *ngFor="let tab of outFileRecipe.tabCaloriesFat; let i=index ">
@@ -247,9 +253,15 @@
  
 
         <div *ngIf="tabLock.lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
+        <div *ngIf="tabLock.lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
 
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
         MANAGE CALORIES & FAT
+        <app-running-clock [posSizeClock]="posSizeClock">
+        </app-running-clock>
+        Time out will occur in 
+        <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+
         </div>
         <div class="skipLine">&nbsp;</div> 
             <!-- =======================================================

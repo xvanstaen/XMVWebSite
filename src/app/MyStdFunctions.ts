@@ -561,15 +561,7 @@ export function validateLock(fileSystem:Array<classFileSystem>, inData:classAcce
     TabOfId.splice(0,TabOfId.length);
 
     var j=-1;
-    /*
-    for (var i=0; i<theId.length; i++){
-      if (specChar.indexOf(theId.substring(i,i+1))!==-1){
-          j++;
-          TabDash[j]=i+1;
-          TabDash.push(0);
-      }
-    }
-    */
+
     TabDash.push(0);
     for (var i=0; i<theId.length; i++){
       const k=theId.substring(i).indexOf(specChar);
@@ -587,10 +579,7 @@ export function validateLock(fileSystem:Array<classFileSystem>, inData:classAcce
         i=theId.length;
       }
     }
-
-
     TabDash[j+1]=theId.length+1;
-  
     i=0;
     for (j=0; j<TabDash.length-1; j++){
       TabOfId[i]=parseInt(theId.substring(TabDash[j]+1,TabDash[j+1]));

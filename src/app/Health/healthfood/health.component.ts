@@ -36,13 +36,14 @@ import { classConfHTMLFitHealth, classConfTableAll } from '../classConfHTMLTable
 import { CalcFatCalories } from '../CalcFatCalories';
 import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../classChart';
-import { classFileSystem, classAccessFile , classReturnDataFS} from '../../classFileSystem';
+import { classFileSystem, classAccessFile , classReturnDataFS, classHeaderReturnDataFS} from '../../classFileSystem';
 
 import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { AccessConfigService } from 'src/app/CloudServices/access-config.service';
 import { fillHealthOneDay } from 'src/app/copyFilesFunction';
 import { fnAddTime, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
+import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../../clockFunctions'
 
 @Component({
   selector: 'app-health',
@@ -64,25 +65,26 @@ export class HealthComponent  {
   @Output() initTrackRecord = new EventEmitter<any>();
   @Output() retrieveRecord = new EventEmitter<any>();
 
-  @Output() saveCopy = new EventEmitter<any>();
-
   @Output() checkLockLimit = new EventEmitter<any>();
   @Output() cancelUpdates = new EventEmitter<any>();
-  @Output() confirmSave = new EventEmitter<any>();
-  @Output() processSave = new EventEmitter<any>();
+  @Output() processSaveHealth = new EventEmitter<any>();
+  @Output() unlockFile = new EventEmitter<any>();
 
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
-  // @Input() triggerFunction: number = 0;
 
+  @Input() returnDataFSHealth = new classHeaderReturnDataFS;
+  @Input() resultCheckLimitHealth:number =0;
+  @Input() callSaveFunction:number =0;
+  @Input() statusSaveFn:any;
 
   @Input() HealthAllData = new mainDailyReport;
   @Input() ConfigCaloriesFat = new mainClassCaloriesFat;
 
   @Input() confTableAll = new classConfTableAll;
   @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-
-  //@Input() resultFileSystemHealth:number=0;
+  
+ 
   @Input() tabNewRecordAll: Array<any> = [
     {
       nb: 0,
@@ -93,10 +95,8 @@ export class HealthComponent  {
     }
   ];
 
-  @Input() returnDataFS = new classReturnDataFS;
   @Input() actionHealth:number=0;
   @Input() createDropDownCalFat:number=0;
-
 
   myLogConsole: boolean = false;
   myConsole: Array<msgConsole> = [];
@@ -125,7 +125,6 @@ export class HealthComponent  {
   errorFn: string = '';
 
   recordToDelete: number = 0;
-
  
   TabAction: Array<any> = [{ name: '' }];
   NewTabAction: Array<any> = [{ type: '', name: '' }];
@@ -143,7 +142,6 @@ export class HealthComponent  {
   getScreenHeight: any;
   device_type: string = '';
 
-  filterCalc: boolean = false;
   filterHealth: boolean = false;
 
   searchOneDate: number = 0;
@@ -157,24 +155,19 @@ export class HealthComponent  {
   myAction: string = '';
   myType: string = '';
 
-
   tabMeal: Array<any> = [{ name: '' }];
   tabFood: Array<any> = [{ name: '' }];
   tabInputMeal: Array<any> = [];
   tabInputFood: Array<any> = [];
 
-
   // Dropdown box dimension
-
   sizeBox = new classDropDown;
-
   styleBox: any;
   styleBoxOption: any;
   styleBoxMeal: any;
   styleBoxOptionMeal: any;
   styleBoxFood: any;
   styleBoxOptionFood: any;
-
   sizeBoxContentMeal: number = 0;
   sizeBoxMeal: number = 0;
   sizeBoxContentFood: number = 0;
@@ -210,16 +203,12 @@ export class HealthComponent  {
 
   lastInputAt: string = '';
 
-
   isMustSaveFile: boolean = false;
   isSaveHealth: boolean = false;
 
   errCalcCalFat: string = '';
- 
-  nbRecall: number = 0;
 
-  //msgCredentials: string = '';
-  //nbCallCredentials: number = 0;
+  posSizeClock=new classPosSizeClock;
 
   maxItemsPerPage:number=30;
   numPage:number=1;
@@ -227,7 +216,6 @@ export class HealthComponent  {
   minNum:number=0;
   maxNum:number=0;
 
-  errorTimeOut:string="";
   userActivity:string= "";
 
   TheSelectDisplays: FormGroup = new FormGroup({
@@ -273,21 +261,11 @@ export class HealthComponent  {
     this.getScreenHeight = window.innerHeight;
   }
 
-
-  manageDisplayAll(){
-    var iOut = -1;
-    for (var i= (this.numPage-1) * this.maxItemsPerPage; i< this.HealthAllData.tabDailyReport.length; i++){
-        iOut++
-        this.displayHealthAllData = fillHealthOneDay(this.displayHealthAllData, this.HealthAllData, i, iOut);
-    }
-
-  }
-
   pageNext(){
     if (this.maxItemsPerPage * this.numPage < this.HealthAllData.tabDailyReport.length){
       this.numPage ++
     }
-    this.minNum = (this.numPage-1) * this.maxItemsPerPage + 1;
+    this.minNum = (this.numPage-1) * this.maxItemsPerPage;
     this.maxNum = this.minNum + this.maxItemsPerPage;
   }
 
@@ -367,55 +345,90 @@ export class HealthComponent  {
     this.TheSelectDisplays.controls['startRange'].setValue('');
     this.TheSelectDisplays.controls['endRange'].setValue('');
 
-    this.userActivity = defineMyDate();
+    this.posSizeClock.margLeft = 840;
+    this.posSizeClock.margTop = -20;
+    this.posSizeClock.width = 60;
+    this.posSizeClock.height = 60;
+    this.posSizeClock.displayAnalog = false;
+    this.posSizeClock.displayDigital = true;
 
+
+    //this.configServer.timeoutFileSystem.userTimeOut.mn=2;
+    console.log('ngInit() calls this.timeToGo() => userActivity=' + this.userActivity.substring(0,14));
+    //this.userActivity = defineMyDate();
+    this.lastInputAt = strDateTime();
+    this.refDate=new Date();
+    this.callTimeToGo();
   }
+
+  isUserTimeOut:boolean=false;
 
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean){
-    if (fnCheckTimeOut(this.userActivity,this.configServer.timeoutFileSystem.userTimeOut)===true){
-      // there has been no activity for quite a while and timeOut has been reached
-      // must reinitialize the environment and updates are lost as files may have been updated through other sessions
-
-        //this.GetRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
-        this.retrieveRecord.emit(0);
-        this.isForceReset === true;
-        this.resetBooleans();
-        this.isAllDataModified = false;
-        this.errorTimeOut = 'there has been no activity for at least ' + this.configServer.timeoutFileSystem.userTimeOut.mn + ' all inputs are lost; data is restored from the cloud'
+      
+      window.cancelAnimationFrame(this.idAnimation);
+      this.callTimeToGo();
+      this.refDate=new Date();
+      this.lastInputAt = strDateTime();
+      this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt, iCheck:true,nbCalls:0});
     }
-    this.userActivity = defineMyDate();
-    console.log('userActivity=' + this.userActivity);
-    //this.checkLockLimit(iWait, isDataModified, isSaveFile);
-    this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt});
 
+  refDate=new Date();
+  displaySec:number=0;
+  displayMin:number=0;
+  displayHour:number=0;
+  idAnimation:any;
+
+
+  callTimeToGo(){
+    const currSeconds=this.refDate.getSeconds() ;
+    const currMinutes=this.refDate.getMinutes();
+    const currHour=this.refDate.getHours();
+    const currentDateSec = currHour*3600+currMinutes*60+currSeconds;
+    this.timeToGo(currentDateSec,this.configServer.timeoutFileSystem.userTimeOut.hh * 3600 +this.configServer.timeoutFileSystem.userTimeOut.mn * 60 + this.configServer.timeoutFileSystem.userTimeOut.ss);
+    
   }
 
-
-
+  timeToGo(refDateSec:any, timeOutSec:any){
+    // nb of seconds before timeout is reached
+    const theDate=new Date();
+    const currentDateSec = theDate.getHours()*3600+theDate.getMinutes()*60+theDate.getSeconds();
+    const timeSpent = Number(currentDateSec) - Number(refDateSec);
+    const timeLeft= timeOutSec - timeSpent;
+    if (timeLeft <= 0 && this.isAllDataModified===true){
+        this.errorMsg = "your modifications are going to be lost if you don't save them";
+        /*
+        window.cancelAnimationFrame(this.idAnimation);
+        this.isUserTimeOut=true;
+        this.unlockFile.emit(0);
+        this.isForceReset === true;
+        this.resetBooleans();
+        */
+    } else {
+        this.displayHour = Math.floor(timeLeft / 3600);
+        const minSec = timeLeft % 3600 ;
+        this.displayMin = Math.floor(minSec / 60);
+        this.displaySec = minSec % 60 ;
+        this.idAnimation=window.requestAnimationFrame(() => this.timeToGo(refDateSec,timeOutSec));
+    }
+  }
 
   resetBooleans() {
-    //this.isCopyFile=false;
-    //this.isSelectedDateFound=false;
     this.isDeleteItem = false;
     this.dialogue[this.prevDialogue] = false;
     this.tabInputMeal.splice(0, this.tabInputMeal.length);
     this.isInputFood = false;
-    this.errorTimeOut="";
-    //this.tabInputFood.splice(0,this.tabInputFood.length);
     if (this.tabLock[0].lock !== 1 || this.isForceReset === true) {
       this.isDeleteConfirmed = false;
-
       this.IsSaveConfirmedAll = false;
       this.isAllDataModified = false;
-      this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-      //this.initTrackRecord();
-      this.initTrackRecord.emit();
-
+      if (this.isUserTimeOut===false){
+        this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
+        this.initTrackRecord.emit();
+      }
       this.isMustSaveFile = false;
       this.isSaveHealth = false;
       this.isForceReset = false;
     }
-
   }
 
   calculateHeight() {
@@ -474,13 +487,7 @@ export class HealthComponent  {
       }
 
     if (this.errorMsg === '') {
-      if (event.target.id === 'selectCacCal') {
-        this.dateRangeStart = startD;
-        this.dateRangeEnd = endD;
-        this.filterCalc = true;
-        this.searchOneDate = search;
-
-      } else if (event.target.id === 'selectAllData') {
+       if (event.target.id === 'selectAllData') {
         this.filterHealth = true;
         this.dateRangeStartHealth = startD;
         this.dateRangeEndHealth = endD;
@@ -490,7 +497,7 @@ export class HealthComponent  {
       for (var i=0; i<this.HealthAllData.tabDailyReport.length && this.HealthAllData.tabDailyReport[i].date!==this.dateRangeStartHealth; i++){};
       if (i<this.HealthAllData.tabDailyReport.length){
         this.numPage = Math.trunc(i / this.maxItemsPerPage) + 1;
-        this.minNum = (this.numPage-1) * this.maxItemsPerPage + 1;
+        this.minNum = (this.numPage-1) * this.maxItemsPerPage;
         this.maxNum = this.minNum + this.maxItemsPerPage;
       } 
     }
@@ -503,9 +510,10 @@ export class HealthComponent  {
     this.resetBooleans();
     this.errorMsg = '';
     this.isRangeDateError = false;
+    this.filterHealth = false;
     this.searchOneDateHealth = 0;
     this.numPage=1;
-    this.minNum=1;
+    this.minNum=0;
     this.maxNum = this.minNum + this.maxItemsPerPage;
   }
 
@@ -526,19 +534,6 @@ export class HealthComponent  {
 
   }
 
-  cancelRange(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
-    if (event.target.id === 'selectCacCal') {
-      this.filterCalc = false;
-
-    } else if (event.target.id === 'selectAllData') {
-      this.filterHealth = false;
-    }
-  }
-
-
-
-
   CheckDupeDate(theDate: Date) {
     var i = 0;
     if (this.HealthAllData.tabDailyReport.length > 0) {
@@ -549,15 +544,12 @@ export class HealthComponent  {
     }
   }
 
-
   CreateTabFood(item: any, value: any) {
-
     var iTab: number = -1;
     this.errorMsg = '';
     var nbDelItem = 0;
     if (item === 'Food') {
       if (this.tabInputFood.length > 0 && value.substring(0, this.strInputFood.length).toLowerCase() === this.strInputFood.toLowerCase().trim()) {
-
         for (var i = this.tabInputFood.length - 1; i > -1; i--) {
           if (this.tabInputFood[i].name.toLowerCase().trim().indexOf(value.toLowerCase().trim()) === -1) {
             this.tabInputFood.splice(i, 1);
@@ -590,14 +582,11 @@ export class HealthComponent  {
         this.sizeBox.scrollY = "hidden";
       }
       this.findPosItem(this.sizeBoxFood);
-
       this.styleBoxFood = getStyleDropDownContent(this.sizeBoxContentFood, this.sizeBox.widthContent);
       this.styleBoxOptionFood = getStyleDropDownBox(this.sizeBoxFood, this.sizeBox.widthOptions, this.offsetLeft + 100, this.posItem, this.sizeBox.scrollY); // this.offsetLeft - 25   this.posItem +40
-
     }
     else if (item === 'Meal') {
       this.tabInputMeal.splice(0, this.tabInputMeal.length);
-
       for (var i = 0; i < this.tabMeal.length; i++) {
         if (this.tabMeal[i].name.substr(0, value.trim().length).toLowerCase().trim() === value.toLowerCase().trim()) {
           iTab++;
@@ -614,12 +603,10 @@ export class HealthComponent  {
       }
       this.findPosItem(this.sizeBoxMeal);
       this.sizeBox.scrollY = "hidden";
-
       this.styleBoxMeal = getStyleDropDownContent(this.sizeBoxContentMeal, this.sizeBox.widthContent - 50);
       //this.styleBoxOptionMeal=getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 20,  this.selectedPosition.y - this.posDivAfterTitle.Client.Top  - 255, this.sizeBox.scrollY);
-      this.styleBoxOptionMeal = getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 25, this.posItem+30, this.sizeBox.scrollY);
+      this.styleBoxOptionMeal = getStyleDropDownBox(this.sizeBoxMeal, this.sizeBox.widthOptions - 50, this.offsetLeft - 25, this.posItem, this.sizeBox.scrollY);
     }
-
   }
 
   onSelMealFood(event: any) {
@@ -627,7 +614,6 @@ export class HealthComponent  {
     this.errorMsg = '';
     this.manageIds(event.target.id);
     if (event.currentTarget.id.substring(0, 7) === 'selFood') {
-      //this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name =event.target.textContent.toLowerCase().trim();
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name = this.tabInputFood[this.TabOfId[3]].name;
       this.tabInputFood.splice(0, this.tabInputFood.length);
     } else if (event.currentTarget.id.substring(0, 7) === 'selMeal') {
@@ -636,8 +622,6 @@ export class HealthComponent  {
     }
   }
 
- 
-
   onInputDailyAll(event: any) {
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.textContent = event.target.textContent;
@@ -645,13 +629,7 @@ export class HealthComponent  {
     this.onInputAction = 'onInputDailyAll';
     this.offsetLeft = event.currentTarget.offsetLeft;
     this.offsetWidth = event.currentTarget.offsetWidth;
-    this.lastInputAt = strDateTime();
-    //if (event.target.value.length===1){
-      //this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
-      this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
-    //} else {
-    //  this.onInputDailyAllA(event);
-    //}
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
   }
 
   onInputDailyAllA(event: any) {
@@ -665,12 +643,9 @@ export class HealthComponent  {
       if (fieldName === 'ingrAll') {
         this.isInputFood = true;
         this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
-
         this.CreateTabFood('Food', event.target.value);
-
         if (this.tabInputFood.length === 1 && event.target.value.length > this.strInputFood.length) {
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name = this.tabInputFood[0].name;
-          //this.tabInputFood.splice(0, this.tabInputFood.length)
         } else {
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name = event.target.value;
         }
@@ -699,8 +674,7 @@ export class HealthComponent  {
   findAction(idString: string) {
     this.errorMsg = '';
     var j = -1;
-    for (var i = 1; i < idString.length && idString.substring(i, i + 1) !== ':'; i++) {
-    }
+    for (var i = 1; i < idString.length && idString.substring(i, i + 1) !== ':'; i++) {}
     this.myType = idString.substring(0, i).trim();
     this.myAction = idString.substring(i + 1).trim();
   }
@@ -712,7 +686,6 @@ export class HealthComponent  {
     this.onAction(this.theEvent);
   }
 
-
   DelAfterConfirm(event: any) {
     this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
     this.resetBooleans();
@@ -720,7 +693,6 @@ export class HealthComponent  {
     if (event.currentTarget.id.substring(0, 13) === 'YesDelConfirm') {
       if (this.theEvent.target.id.substring(0, 10) === 'DelAllDate') {
         this.theEvent.target.id = 'DelAllDate-' + this.TabOfId[0];
-
         this.DeleteDay(this.theEvent);
       }
       else
@@ -736,16 +708,10 @@ export class HealthComponent  {
     }
   }
 
-  onNoAction(event: any) {
-    console.log('no action ');
-  }
-
   onAction(event: any) {
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.textContent = event.target.textContent;
     this.onInputAction = 'onAction';
-    this.lastInputAt = strDateTime();
-    //this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
     this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
   }
 
@@ -756,8 +722,7 @@ export class HealthComponent  {
       this.dialogue[this.prevDialogue] = false;
       if (this.tabLock[0].lock === 0 && event.target.id.substring(0, 10) !== 'openAction') {
         this.isAllDataModified = true;
-        //this.checkLockLimit(0, this.isAllDataModified, this.isSaveHealth);
-        this.checkLockLimit.emit({iWait:0,isDataModified:this.isAllDataModified,isSaveFile:this.isSaveHealth, lastInputAt:this.lastInputAt});
+        this.checkLockLimit.emit({iWait:0,isDataModified:this.isAllDataModified,isSaveFile:this.isSaveHealth, lastInputAt:this.lastInputAt,nbCalls:0});
       }
       else {
         if (event.target.id.substring(0, 10) === 'openAction') {
@@ -765,17 +730,12 @@ export class HealthComponent  {
           this.dialogue[this.prevDialogue] = true;
           this.sizeBox.heightOptions = this.sizeBox.heightItem * (this.NewTabAction.length) + 10;
           this.sizeBox.heightContent = this.sizeBox.heightOptions;
-          //this.findPosItem(this.sizeBox.heightOptions);
-
           this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
-          // this.styleBoxOption=getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions,  60, this.selectedPosition.y - this.posDivAfterTitle.Client.Top - 279, this.sizeBox.scrollY);
           this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 60, 20, this.sizeBox.scrollY);
-
         } else if (event.target.id.substring(0, 9) === 'selAction') {
           if (event.target.textContent.indexOf('cancel') !== -1) {
           } else {
             this.isAllDataModified = true;
-
             this.findAction(event.target.textContent);
             if (this.myType.trim() === "date") {
               if (this.myAction === "insert after") {
@@ -794,11 +754,9 @@ export class HealthComponent  {
               if (this.myAction === "insert after") {
                 this.theEvent.target.id = 'AllMealA-' + this.TabOfId[0] + '-' + this.TabOfId[1];
                 this.CreateMeal(this.theEvent);
-
               } else if (this.myAction === "insert before") {
                 this.theEvent.target.id = 'AllMealB-' + this.TabOfId[0] + '-' + this.TabOfId[1];
                 this.CreateMeal(this.theEvent);
-
               } else if (this.myAction === "delete") {
                 this.theEvent.target.id = 'DelAllMeal-' + this.TabOfId[0] + '-' + this.TabOfId[1];
                 this.delMsg = ' meal=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;
@@ -809,11 +767,9 @@ export class HealthComponent  {
               if (this.myAction === "insert before") {
                 this.theEvent.target.id = 'AllIngrB-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
                 this.CreateIngredient(this.theEvent);
-
               } else if (this.myAction === "insert after") {
                 this.theEvent.target.id = 'AllIngrA-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
                 this.CreateIngredient(this.theEvent);
-
               } else if (this.myAction === "delete") {
                 this.theEvent.target.id = 'DelAll-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
                 this.isDeleteItem = true;
@@ -852,7 +808,6 @@ export class HealthComponent  {
   }
 
   DeleteIngredient(event: any) {
-    
     this.manageIds(event.target.id);
     if (event.target.id.substring(0, 6) === 'DelAll') {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 1);
@@ -929,7 +884,6 @@ export class HealthComponent  {
       const trackNew = { nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
       this.tabNewRecordAll.splice(this.TabOfId[0], 0, trackNew);
     }
-
     if (event.target.id.substring(0, 7) === 'AllDate') {
       const theMeal = new ClassMeal;
       this.HealthAllData.tabDailyReport[iDate].meal.push(theMeal);
@@ -938,19 +892,13 @@ export class HealthComponent  {
     } 
   }
 
-  
-
   manageIds(theId: string) {
     this.errorMsg = '';
     this.TabOfId.splice(0, this.TabOfId.length);
     const theValue = findIds(theId, "-");
-
-    for (var i = 0; i < theValue.tabOfId.length; i++) {
-      this.TabOfId[i] = theValue.tabOfId[i];
-    }
+    this.TabOfId = theValue.tabOfId;
   }
 
-  
   cleanFile() {
     for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
       var trouve = false;
@@ -963,7 +911,6 @@ export class HealthComponent  {
           this.TheSelectDisplays.controls['SelectedDate'].setValue(this.HealthAllData.tabDailyReport[i].date.toString().substring(0, 10));
           this.HealthAllData.tabDailyReport[i].date = this.TheSelectDisplays.controls['SelectedDate'].value;
         }
-
       }
       for (var j = 0; j < this.HealthAllData.tabDailyReport[i].meal.length && trouve === false; j++) {
         if (this.HealthAllData.tabDailyReport[i].meal[j].dish.length === 0 && this.HealthAllData.tabDailyReport[i].meal[j].name === "") {
@@ -980,7 +927,6 @@ export class HealthComponent  {
       }
     }
     this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-    //this.initTrackRecord();
     this.initTrackRecord.emit();
     this.isAllDataModified = true;
   }
@@ -988,7 +934,6 @@ export class HealthComponent  {
   fillAllData(inRecord: any, outRecord: any) { // TO BE DELETED
     var i = 0;
     var j = 0;
-
     outRecord.date = inRecord.date;
     outRecord.burntCalories = inRecord.burntCalories;
     outRecord.total = inRecord.total;
@@ -1000,10 +945,8 @@ export class HealthComponent  {
       for (j = 0; j < inRecord.meal[i].dish.length; j++) {
         const theIngredient = new ClassDish;
         outRecord.meal[outRecord.meal.length - 1].dish.push(theIngredient);
-
         const iMeal = outRecord.meal.length - 1;
         outRecord.meal[iMeal].dish[outRecord.meal[iMeal].dish.length - 1] = inRecord.meal[i].dish[j];
-
       }
     }
   }
@@ -1011,7 +954,6 @@ export class HealthComponent  {
   delDate(event: any) {
     this.isDeleteConfirmed = true;
     this.manageIds(event.target.id);
-
     this.recordToDelete = this.TabOfId[0];
     const theDate = this.HealthAllData.tabDailyReport[this.recordToDelete].date;
     this.errorMsg = 'confirm record#' + this.recordToDelete + ' with date=' + theDate + 'to be deleted';
@@ -1025,7 +967,6 @@ export class HealthComponent  {
     this.errorFn = 'delDate';
     this.isDeleteConfirmed = false;
     this.isAllDataModified = true;
-
   }
 
   cancelDelDate() {
@@ -1044,22 +985,7 @@ export class HealthComponent  {
     this.theEvent.checkLock.lastInputAt=this.lastInputAt;
     this.theEvent.fileName=this.SpecificForm.controls['FileName'].value;
     this.onInputAction = "confirmSave";
-    this.confirmSave.emit(this.theEvent);
-    /*
-    if (this.identification.triggerFileSystem === "No") {
-      //this.ConfirmSave(event);
-      this.confirmSave.emit(event);
-    } else {
-      if (this.isMustSaveFile === false) {
-        this.isConfirmSaveA = true;
-        //this.checkLockLimit(0, true, false, this.lastInputAt);
-        this.checkLockLimit.emit({iWait:0,isDataModified:true,isSaveFile:false, lastInputAt:this.lastInputAt});
-      } else if (this.tabLock[0].lock === 1) {
-        //this.ConfirmSave(event);
-        this.confirmSave.emit(event);
-      }
-    }
-    */
+    this.timeOutactivity(0, true, false);
   }
 
   SaveHealth(event: any) {
@@ -1073,20 +999,17 @@ export class HealthComponent  {
     this.theEvent.checkLock.lastInputAt=this.lastInputAt;
     this.theEvent.fileName = this.SpecificForm.controls['FileName'].value;
     this.onInputAction = "saveHealth";
-    this.processSave.emit(this.theEvent);
-    /*
-    if (this.identification.triggerFileSystem === "Yes") {
-      //this.checkLockLimit(0, true, true, this.lastInputAt);
-      this.checkLockLimit.emit({iWait:0,isDataModified:true,isSaveFile:true, lastInputAt:this.lastInputAt});
+    this.timeOutactivity(0, true, true);
+  }
 
-    } else {
-      //this.ProcessSaveHealth(event);
-      this.processSaveHealth.emit(event);
-    }
-    */
+  saveHealthAfterCheckToLimit(){
+    this.theEvent.checkLock.isSaveFile=false;
+    this.theEvent.checkLock.isDataModified=false;
+    this.processSaveHealth.emit(this.theEvent);
   }
 
   cancelUpdateAll(event: any) {
+    this.onInputAction="cancelUpdateAll";
     this.cancelUpdates.emit(0);
     this.isMustSaveFile = false;
     this.tabInputMeal.splice(0, this.tabInputMeal.length);
@@ -1098,36 +1021,62 @@ export class HealthComponent  {
   }
   
   cancelTheSave(){
-
     this.IsSaveConfirmedAll = false;
     this.isMustSaveFile = false;
   }
-  
 
-  SaveCopy() {
-    this.saveCopy.emit(0);
-    this.isCopyFile = false;
-    this.TheSelectDisplays.controls['CopyFile'].setValue('N');
-    this.errorFn = 'Copy';
+  afterCheckFS(){
+    if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){
+      this.errorMsg = this.returnDataFSHealth.errorMsg;
+    } 
+    else  if (this.tabLock[0].lock === 1 && this.onInputAction === "onInputDailyAll") {
+      this.onInputDailyAllA(this.theEvent);
+      this.onInputAction="";
+    } else if (this.tabLock[0].lock===1 && this.onInputAction === "onAction") {
+      this.onActionA(this.theEvent);
+      this.onInputAction="";
+    } else if (this.onInputAction === "confirmSave"){
+      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+      this.IsSaveConfirmedAll = true;
+    } else if (this.onInputAction === "saveHealth"){
+      this.saveHealthAfterCheckToLimit();
+      this.onInputAction='';
+    } else if (this.tabLock[0].action === 'check&update' && this.tabLock[0].status === 0 && this.isMustSaveFile === true) {
+      this.ConfirmSaveA(this.theEvent); 
+    } else if (this.tabLock[0].lock !== 1 && (this.onInputAction === "saveHealth" || this.onInputAction === "confirmSave")){
+      this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFSHealth.errorMsg + ")" + " status=" + this.tabLock[0].status;
+      this.isMustSaveFile = false;
+      this.isSaveHealth = false;
+    } else if (this.tabLock[0].lock === 2) {
+          this.isAllDataModified = false; // is envionment reinitialised
+          this.isSaveHealth = false;
+    } else {
+      console.log('File is locked by this user; no specific action needed; user can update the data');
+    }
   }
 
-  CancelCopy() {
-    this.isCopyFile = false;
-    this.TheSelectDisplays.controls['CopyFile'].setValue('N');
-    this.errorFn = '';
-  }
-  
+  firstLoop:boolean=true;
   ngOnChanges(changes: SimpleChanges) {
-    for (const propName in changes) {
-      const j = changes[propName];
-      
-        if (propName === 'calculateHeight') {
-          this.calculateHeight();
-        } else if (propName === 'resetBooleans' && changes[propName].firstChange === false) {
-          this.resetBooleans();
-        } else if (propName === 'createDropDownCalFat') {
+    var callAfterCheck=0;
+    if (this.firstLoop===true){
+      this.firstLoop=false;
+      for (const propName in changes) {
+        const j = changes[propName];
+        if (propName==='ConfigCaloriesFat') {
           this.createDropDownCalFatFn();
+        }
+      }
+    }
+    else {
+      for (const propName in changes) {
+        const j = changes[propName];
+        if (propName === 'resultCheckLimitHealth' && changes[propName].firstChange === false) {
+          if (callAfterCheck===0){
+            callAfterCheck++
+            this.afterCheckFS();
+          }
         } else if (propName === 'actionHealth' && changes[propName].firstChange === false) {
+  console.log("**** health component - ngOnChange - propName === 'actionHealth");
           if (this.onInputAction === "onInputDailyAll") {
             this.onInputDailyAllA(this.theEvent);
           } else if (this.onInputAction === "onAction") {
@@ -1136,32 +1085,43 @@ export class HealthComponent  {
             this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
             this.IsSaveConfirmedAll = true;
           } else if (this.onInputAction === "saveHealth"){
-            if (this.actionHealth>0){
-              this.isAllDataModified = false;
+console.log("**** health component - ngOnChange - this.onInputAction === saveHealth");
+          } else if (this.onInputAction==="cancelUpdateAll"){
+            if (this.filterHealth = true && (this.  TheSelectDisplays.controls['startRange'].value !== '' || this.TheSelectDisplays.controls['endRange'].value !== '')) {
+              this.theEvent.target.id === 'selectAllData';
+              this.dateRangeSelection(this.theEvent);
+            } else {
+              this.maxNum = this.maxItemsPerPage;
+              this.minNum = 0;
+              this.numPage = 1;
             }
+          } else if (this.onInputAction==="userTimeOut"){ // the corresponding feature has been removed
+              this.errorMsg='Application has been reinitialised';
+              this.isUserTimeOut=false;
+          }
+          this.onInputAction="";
+        } else if (propName==='returnDataFSHealth' && changes[propName].firstChange === false) {
+          if (callAfterCheck===0){
+            callAfterCheck++  
+            this.afterCheckFS();
+          }
+        } else if (propName === 'calculateHeight') {
+  console.log("**** health component - ngOnChange - propName === 'calculateHeight");
+            this.calculateHeight();
+        }  else if (propName === 'ConfigCaloriesFat') {
+            this.createDropDownCalFatFn();
+        } else if (propName === 'callSaveFunction') {
             this.isMustSaveFile = false;
             this.isSaveHealth = false;
-          } 
-          this.onInputAction="";
-        } else if (propName==='returnDataFS' && changes[propName].firstChange === false) {
-            this.errorMsg = this.returnDataFS.errorMsg;
-            if (this.returnDataFS.tabLock[0].lock === 1 && this.onInputAction === "onInputDailyAll") {
-              this.onInputDailyAllA(this.theEvent);
-            } else if (this.returnDataFS.tabLock[0].lock===1 && this.onInputAction === "onAction") {
-              this.onActionA(this.theEvent);
-            } else if (this.tabLock[0].action === 'check&update' && this.returnDataFS.tabLock[0].status === 0 && this.isMustSaveFile === true) {
-              this.confirmSave.emit(this.theEvent); 
-            } else if (this.returnDataFS.tabLock[0].lock !== 1 && (this.onInputAction === "saveHealth" || this.onInputAction === "confirmSave")){
-              this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFS.errorMsg + ")" + " status=" + this.returnDataFS.tabLock[0].status;
+            if (this.statusSaveFn.status===200 || this.statusSaveFn.status===0){
+              this.errorMsg='File has been successfully saved';
               this.isAllDataModified = false;
-            } else if (this.returnDataFS.tabLock[0].lock === 2) {
-                  this.isAllDataModified = false; // is envionment reinitialised
             } else {
-              console.log('File is locked; no specific action; process continues');
+              this.errorMsg=this.statusSaveFn.err;
             }
-            this.onInputAction="";
-        }
-      }
+        } 
+      }  
+    }
   }
 
 

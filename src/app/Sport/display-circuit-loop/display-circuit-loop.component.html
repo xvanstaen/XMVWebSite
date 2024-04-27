@@ -15,7 +15,12 @@
             <div class="aLabel " style="padding-left:15px;  width:300px;"> reinitialise the performance file?</div>
             <button class="sizeButtons" style="margin-top:8px;" id="reInitPerf"(click)="reInitialisePerf()">Yes</button>
             <div class="skipLine"></div> 
+            <div class="aLabel " style="padding-left:15px; width:300px;"> Display the charts</div>
+            <button class="sizeButtons" style="margin-top:8px;" id="displayCharts"(click)="displayCharts()">Yes</button>
+            <button class="sizeButtons" style="margin-top:8px;" id="noDisplayCharts"(click)="noDisplayCharts()">No</button>
+            <div class="skipLine"></div> 
         </div>
+
         <div class="quest"  style="width:96%; margin-top:5px; margin-left:0px; background-color: rgb(245, 101, 101)" *ngIf="isSaveFileRequested===true">
             <div class="skipLine"></div> 
             <div class="aLabel " style="padding-left:15px;"> Updates of file {{headerPerf.name}} to be saved  </div>

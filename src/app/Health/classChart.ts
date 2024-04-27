@@ -175,6 +175,7 @@ export class classTabFormChart{
         };
 
         period:string='';
+         nbWeeks:number=0; // if 'weekly' is selected then define number of weeks
         startRange:string='';
         endRange:string='';
         labels:Array<any>=[];

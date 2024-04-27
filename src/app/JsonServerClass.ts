@@ -41,6 +41,15 @@ export class BioData{
       performanceSport={
         bucket:"xmv-sport-performance",
         file:"",
+        configSport:{
+          bucket:"config-xmvit",
+          files:{
+            confChart:"configChartSport.json"
+          },
+          fileType:{
+            confChart:"configChart"
+          }
+        }
         };
       circuits={
           bucket:"xmv-sport-performance",
@@ -96,7 +105,8 @@ export class BioData{
         },
         Calories:0,
         Carbs:0,
-        Protein:0
+        Protein:0,
+        Sugar:0
       };
       recipe={
         bucket:'',
@@ -322,6 +332,11 @@ export class classtheEvent {
     value: ''
   };
   checkLock={iWait:0,isDataModified:false,isSaveFile:false, lastInputAt:''};
-  fileName:string='';;
+  fileName:string='';
+  bucket:string='';
+  object:string='';
+  fileContent:any;
+  iWait:number=0;
+  saveCalls:number=0;
 }
 

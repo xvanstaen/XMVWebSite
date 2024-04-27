@@ -116,6 +116,8 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
         this.identification.UserId="";
         this.identification.phone="";
     }
+    //console.log('xmv-company - init --- configServer.google='+this.configServer.googleServer);
+
   }
 
   @HostListener('window:resize', ['$event'])
@@ -188,6 +190,8 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
   ngOnChanges(){
    // console.log('on changes');
+   //console.log('xmv-company - ngOnChanges --- configServer.google='+this.configServer.googleServer);
+
   }
 
   ngAfterViewChecked(){
@@ -253,6 +257,8 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     if (event==='FS'){
       this.serverChange.emit('FS');
     } else  if (event==='Google'){
+      //console.log('xmv-company - getServerName --- configServer.google='+this.configServer.googleServer);
+
       this.serverChange.emit('Google');
     } else  if (event==='Mongo'){
       this.serverChange.emit('Mongo');

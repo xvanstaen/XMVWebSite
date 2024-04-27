@@ -1,31 +1,25 @@
 @import "../FitnessHealthGeneral.css";
 
 
-
-
 ::placeholder{
   font-size:12px;
   color:red;
   font-weight: bold;
 }
 
-.boxAction{
-  background-color: white;
-}
-
-.boxAction:hover{
+.boxHover{
   background-color: cyan;
 }
 
+.boxHover:hover{
+  background-color: cyan !important;
+  color:blue  !important;
+  border:0px green solid  !important;
+}
 
 table {
-
     border-collapse: separate;
     margin-left:10px;
-    /*
-    width:var(--tableW);
-    max-width:var(--tableMaxW); 
-    */
     overflow-y: scroll;
     table-layout: fixed;
     background-color: black;
@@ -49,59 +43,31 @@ td {
   }
   
 .subTotal {
-    /*
-    height:var(--sTheight);
-    font-size:var(--sTfontW);
-    color:var(--sTcol);
-    */
     display:inline-block;
     font-weight:bold;
     margin-top:10px;
   }
 
 .Total {
-  /*
-  height:var(--Theight);
-  font-size:var(--TfontW);
-  color:var(--Tcol);
-  */
   display:inline-block;
-  
   font-weight:bold;
-  
   border: solid 0px white;
   margin-top:10px;
-
   }
 
 
 .trow {
   display:inline-block;
-  /*
-  height:var(--rowHeight); 
-  color:var(--rowColor);
-  background-color:var(--rowBackG);
-  */
   border: solid 0px blue;
-  /*
-  pointer-events: none; ==> field is read only and data cannot be copied
-  background-color:var(--rEven);
-  */
   }
 
 .trow:hover{
     color:blue;
     background-color: white;
-    
   }
 
 .tReadOnly{
   display:inline-block;
-  /*
-  height:var(--rowHeight); 
-  color:var(--rowColor);
-  background-color:var(--rowBackG);
-  */
   border: solid 0px blue;
 }
 
@@ -109,63 +75,29 @@ td {
   border:0px solid blue;
 }
 
-/*
-.rowEven{
-  background-color: var(--rEven);
-}
-    
-.rowOdd {
-  background-color: var(--rOdd);
-  }
-
-.rowNew {
-  background-color: var(--rNewbackG);
-    color:var(--rNewcol);
-  }
-*/
 .Colth {
   display:inline-block;
   text-align: center; 
-  /*
-  height:var(--thHeight);
-  color:var(--thColor);
-  background-color:var(--thBackGround);
-  */
-    /*pointer-events: none;*/
   }
 
 .Colth:read-only{ 
     border:0px solid blue;
   }
 
-.widthDate{
-  
+.widthDate {
   text-align: left; 
   padding-left:10px;
 }
-.widthAction{
-  
+
+.alignLeft{
   text-align: center; 
 }
-.widthCalBurnt{
-  
-  text-align: center; 
-}
-.widthMeal{
-  
+
+.alignMealIngr{
   text-align: left;
   padding-left:10px;
 }
-.widthIngr{
-  
-  text-align: left;
-  padding-left:10px;
-  
-}
-.widthOther{
-  
-  text-align: center; 
-}
+
 
 .tableCol {
     border-bottom:solid 0.3px white;
@@ -211,7 +143,6 @@ td {
     color:blue;
     background-color: rgb(198, 157, 157);
 }
-
 
 .page{
   width:80px; 
@@ -259,16 +190,12 @@ td {
   width:80%;
 }
 
-
-
-
 /*** ====================================== ***/
 /*** ============== @media 1010 ================ ***/
 /*** ====================================== ***/
 @media only screen and (max-width:830px) {
   body{
     max-width: 620px;
-
   }
 
   div{

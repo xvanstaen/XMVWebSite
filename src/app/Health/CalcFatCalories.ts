@@ -47,7 +47,7 @@ for (j=0; j< dayHealth.meal.length ; j++){
 
     returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].name=dayHealth.meal[j].name.toLowerCase().trim();
 
-    for (k=0; k< dayHealth.meal[j].dish.length && error===0; k++){
+    for (k=0; k< dayHealth.meal[j].dish.length; k++){  // && error===0
         const dish=new ClassDish;
         returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish.push(dish);
         returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].unit =dayHealth.meal[j].dish[k].unit.toLowerCase().trim();
@@ -76,23 +76,21 @@ for (j=0; j< dayHealth.meal.length ; j++){
                     //
                     // Find the From Unit
                 for  ( l=0; l<tabConvert.tabConv.length  && trouve===false; l++) { // tabConvert.tabConv[l].fromUnit.toLowerCase()!== dayHealth.meal[j].dish[k].unit.toLowerCase()
-                    if ( tabConvert.tabConv[l].fromUnit.toLowerCase()=== dayHealth.meal[j].dish[k].unit.toLowerCase() ) {
-                        for (kLoop=0; kLoop<tabConvert.tabConv[l].convert.length && tabConvert.tabConv[l].convert[kLoop].toUnit.toLowerCase() !== tabCalFat.tabCaloriesFat[iType].Content[iFood].ServingUnit.toLowerCase().trim(); kLoop++){};
+                    if ( tabConvert.tabConv[l].fromUnit.toLowerCase().trim()=== dayHealth.meal[j].dish[k].unit.toLowerCase().trim() ) {
+                        for (kLoop=0; kLoop<tabConvert.tabConv[l].convert.length && tabConvert.tabConv[l].convert[kLoop].toUnit.toLowerCase().trim() !== tabCalFat.tabCaloriesFat[iType].Content[iFood].ServingUnit.toLowerCase().trim(); kLoop++){};
                         if (kLoop<tabConvert.tabConv[l].convert.length){
                             trouve=true;
                             theQuantity=dayHealth.meal[j].dish[k].quantity*tabConvert.tabConv[l].convert[kLoop].value;
                         }
                     }
-                    
                 }    
                    
                 if (trouve===false){
                     error=1;
                     if (dayHealth.meal[j].dish[k].unit.toLowerCase().trim()!==''){
                         returnData.error++
-                    console.log('CalcFatCalories - conversion From-To not found for '+ dayHealth.meal[j].dish[k].unit.toLowerCase().trim());
+                        console.log('CalcFatCalories - conversion From-To not found for '+ dayHealth.meal[j].dish[k].unit.toLowerCase().trim());
                     }
-                    
                 }
             }
         if (iLoop===true && error===0){
@@ -121,7 +119,6 @@ for (j=0; j< dayHealth.meal.length ; j++){
                 console.log('CalcFatCalories: no information found for '+ dayHealth.meal[j].dish[k].name.toLowerCase().trim()) ;
             }
         }
-              
     }
     returnData.outHealthData.total.Calories = returnData.outHealthData.total.Calories + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Calories;
     returnData.outHealthData.total.Sugar = returnData.outHealthData.total.Sugar + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Sugar;
@@ -130,7 +127,6 @@ for (j=0; j< dayHealth.meal.length ; j++){
     returnData.outHealthData.total.Fat.Total = returnData.outHealthData.total.Fat.Total + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Total;
     returnData.outHealthData.total.Carbs = returnData.outHealthData.total.Carbs + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Carbs;
     returnData.outHealthData.total.Protein = returnData.outHealthData.total.Protein + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Protein;
-
 }
 
 return(returnData);

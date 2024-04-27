@@ -43,6 +43,9 @@ export class DisplayCircuitLoopComponent {
   @Output() savePerf= new EventEmitter<any>();
   @Output() uploadPerfCircuit= new EventEmitter<any>();
 
+  @Output() displaySportChart = new EventEmitter<any>();
+
+
   tabIdScroll:Array<string>=[];
 
   theFile= new classFileSport;
@@ -213,6 +216,13 @@ export class DisplayCircuitLoopComponent {
     if (this.displayTab===2){
       this.uploadPerfCircuit.emit(this.perfCircuit);
     }
+  }
+
+  displayCharts(){
+    this.displaySportChart.emit({filePerf:this.perfCircuit,fileTotal:this.perfTotalCircuit, display:true});
+  }
+  noDisplayCharts(){
+    this.displaySportChart.emit({filePerf:this.perfCircuit,fileTotal:this.perfTotalCircuit, display:false});
   }
 
   onSaveFile(event:any){

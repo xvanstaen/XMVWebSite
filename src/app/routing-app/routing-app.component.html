@@ -232,6 +232,64 @@
     <br><br>
 </div> 
 
+    <!-- ========= TEST ENCRYPTION -->
+
+    <div *ngIf="isDisplayEncrypt===true" style='background-color:lightgrey; border:grey solid 2px; margin-top:10px; margin-left:20px; width:450px; display:inline-block;'>
+
+        <span style='display:inline-block; border:solid 0px red; width:100%; height:30px; padding-top:5px; color:blue; font-size:16px; text-align: center;' >ENCRYPTION</span>
+    
+        <div style="width:80%; display:inline-block;padding-left:20px; color:red; font-size:14px;" >{{Crypto_Error}}</div>
+        
+        <label class="myLabel" >Decrypt is </label>
+        <input  class="myInput" type='text' [(ngModel)]="Decrypt" placeholder={{Decrypt}} >
+        <div class="skipLine" style="height:1px;">&nbsp;</div>
+        <label class="myLabel" >Encrypt is </label>
+        <input class="myInput" placeholder={{Encrypt}} type='text'[(ngModel)]="Encrypt">
+        <div class="skipLine" style="height:1px;">&nbsp;</div>
+        <label class="myLabel" >Crypto record </label>
+        <input class="myInput" style="width:60px;" placeholder={{Crypto_Record}} type='number'[(ngModel)]="Crypto_Record">
+        <label class="myLabel" style="width:100px;">Encrypt key is </label>
+        <input class="myInput" style="width:60px;" placeholder={{Crypto_Key}} type='number'[(ngModel)]="Crypto_Key">
+        <div style="width:95%; margin-top:-15px;">
+            <div style="width:50%; float:left; border:solid blue 0px;">
+                <div class="myLabel" style="width:80px; padding-top:10px;"> AES</div>
+                <input class="radioButton" style="padding-top:-10px;" name='crypto' type='radio' [(ngModel)]="Crypto_Method" value='AES'>
+            </div>
+            <div style="width:50%; border:solid red 0px; float:left;">
+                <div class="myLabel" style="width:80px; padding-top:10px;"> DES</div>
+                <input class="radioButton" style="margin-left:-20px; padding-top:-10px;" name='crypto'type='radio' [(ngModel)]="Crypto_Method" value='DES'>
+            </div>
+        </div>
+        <div style="width:95%">
+            <div style="width:50%; float:left; border:solid blue 0px;">
+                <div class="myLabel" style="width:80px; padding-top:10px;"> Json db</div>
+                <input class="radioButton" style="padding-top:-10px;" name='server' type='radio' [(ngModel)]="Server_Type" value='Json' >
+            </div>
+            <div style="width:50%; border:solid red 0px; float:left;">
+                <div class="myLabel" style="width:100px; padding-top:10px;"> Google Storage</div>
+                <input class="radioButton" style="margin-left:-20px; padding-top:-10px;" name='server'type='radio' [(ngModel)]="Server_Type" value='Google'>
+            </div>
+        </div>
+            
+        <div class="skipLine" style="height:8px;">&nbsp;</div>
+        <label class="myLabel" >Bucket name </label><input class="myInput" placeholder={{Bucket_Name}} type='text'[(ngModel)]="Bucket_Name">
+        <label class="myLabel" >User Id </label> <input class="myInput" placeholder={{Object_Name}} type='text'[(ngModel)]="Object_Name">
+    
+    
+        <div style=' width:90%; border:0px solid red; height:50px; margin-left:10px;'>
+            <div style='margin-top:0px;  margin-left:10px; width:100%; border:0px solid blue; display:inline-flex;'>
+                <button class="sizeButtons" id='1' style='display:inline-block; margin-left:30px;width:80px; height:45px; font-size:14px;'  (click)="onCrypt('Encrypt')">Encrypt</button>
+                <button class="sizeButtons" id='2' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'   (click)="onCrypt('Decrypt')">Decrypt</button>
+                <!--
+                <button class="sizeButtons" id='3' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px; '  (click)="onSave('Encrypt')">Save Encrypt</button>
+                <button class="sizeButtons" id='4' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'  (click)="onRead()">Read record</button>
+                -->
+                <button class="sizeButtons" id='5' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'  (click)="onClear()">Clear</button>
+            
+            </div>
+        </div>
+    
+    </div>
 
 
 </section>

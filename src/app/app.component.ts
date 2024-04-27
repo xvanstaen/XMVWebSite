@@ -5,6 +5,7 @@ import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.servic
 import { configServer, classCredentials } from './JsonServerClass';
 import { environment } from 'src/environments/environment';
 import { fillConfig, fillCredentials } from './copyFilesFunction';
+import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from './clockFunctions'
 
 @Component({
   selector: 'app-root',
@@ -75,6 +76,13 @@ export class AppComponent {
           this.isRetrievedConfig=true;
           if (Array.isArray(data) === false){
             this.configServer = fillConfig(data);
+
+// TO BE DELETED
+//this.configServer.timeoutFileSystem.mn=5;
+//this.configServer.timeoutFileSystem.bufferTO.mn=3;
+//this.configServer.timeoutFileSystem.bufferInput.mn=3;
+
+
             //this.configServer = data;
           } else {
             for (let i=0; i<data.length; i++){
@@ -86,7 +94,6 @@ export class AppComponent {
           }
           this.configServer.IpAddress=this.IpAddress;
           this.configServer.project="XMVWebSite";
-          this.saveGoogleServer = this.configServer.googleServer;
           console.log('configServer is retrieved');
               //this.getTokenOAuth2();
           if (this.credentials.access_token===""){
@@ -114,19 +121,20 @@ export class AppComponent {
   }
 
   getServerUsrId(serverType:any){
-    console.log('getCredentials()');
-    
+    console.log('app.component - getServerUsrId  --- configServer.google='+this.configServer.googleServer);
+    const saveGoogleServer = this.configServer.googleServer;
+   
     if (serverType==='Mongo'){
         this.configServer.googleServer = this.configServer.mongoServer;
     } else if (serverType==='FS'){
-      this.configServer.googleServer = this.configServer.fileSystemServer
+      this.configServer.googleServer = this.configServer.fileSystemServer;
     }
     //this.ManageGoogleService.getCredentials(this.configServer  )
     this.ManageGoogleService.getNewServerUsrId (this.configServer  )
     .subscribe(
         (data ) => {
+          this.configServer.googleServer = saveGoogleServer;
           if (serverType==='Google'){
-            this.configServer.googleServer = this.saveGoogleServer;
             this.credentials = fillCredentials(data.credentials);
           } else if (serverType==='Mongo'){
               this.credentialsMongo = fillCredentials(data.credentials);
@@ -137,6 +145,7 @@ export class AppComponent {
 
         },
         err => {
+          this.configServer.googleServer = saveGoogleServer;
           console.log('return from requestToken() with error = '+ JSON.stringify(err));
           });
   }

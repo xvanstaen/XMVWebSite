@@ -66,6 +66,7 @@ export class classNutrition{
   calories:number=0;
   proteins:number=0;
   carbs:number=0;
+  sugar:number=0;
   cholesterol:number=0;
   satFat:number=0;
   totalSat:number=0;
@@ -820,7 +821,8 @@ calculateNutrition(type:string){
     theTotal=0;
     this.processNutrition(this.recipeFile.recipe[this.recordRecipe].data);
     this.recipeFile.recipe[this.recordRecipe].nutrition.calories=this.returnData.outHealthData.total.Calories;
-    this.recipeFile.recipe[this.recordRecipe].nutrition.carbs=this.returnData.outHealthData.total.Carbs + this.returnData.outHealthData.total.Sugar;
+    this.recipeFile.recipe[this.recordRecipe].nutrition.carbs=this.returnData.outHealthData.total.Carbs;
+    this.recipeFile.recipe[this.recordRecipe].nutrition.sugar=this.returnData.outHealthData.total.Sugar;
     this.recipeFile.recipe[this.recordRecipe].nutrition.proteins=this.returnData.outHealthData.total.Protein;
     this.recipeFile.recipe[this.recordRecipe].nutrition.cholesterol=this.returnData.outHealthData.total.Cholesterol;
     this.recipeFile.recipe[this.recordRecipe].nutrition.satFat=this.returnData.outHealthData.total.Fat.Saturated;
@@ -845,7 +847,8 @@ calculateNutrition(type:string){
     this.processNutrition(this.recipeFile.recipe[this.recordRecipe].dataPerso);
     theTotal=0;
     this.recipeFile.recipe[this.recordRecipe].nutritionPerso.calories=this.returnData.outHealthData.total.Calories;
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.carbs=this.returnData.outHealthData.total.Carbs + this.returnData.outHealthData.total.Sugar;
+    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.carbs=this.returnData.outHealthData.total.Carbs;
+    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.sugar=this.returnData.outHealthData.total.Sugar;
     this.recipeFile.recipe[this.recordRecipe].nutritionPerso.proteins=this.returnData.outHealthData.total.Protein;
     this.recipeFile.recipe[this.recordRecipe].nutritionPerso.cholesterol=this.returnData.outHealthData.total.Cholesterol;
     this.recipeFile.recipe[this.recordRecipe].nutritionPerso.satFat=this.returnData.outHealthData.total.Fat.Saturated;
@@ -1719,6 +1722,7 @@ fillInRecord(inRecord:any,outRecord:any){
   outRecord.nutrition.calories=inRecord.nutrition.calories;
   outRecord.nutrition.proteins=inRecord.nutrition.proteins;
   outRecord.nutrition.carbs=inRecord.nutrition.carbs;
+  outRecord.nutrition.sugar=inRecord.nutrition.sugar;
   outRecord.nutrition.cholesterol=inRecord.nutrition.cholesterol;
   outRecord.nutrition.satFat=inRecord.nutrition.satFat;
   outRecord.nutrition.totalSat=inRecord.nutrition.totalSat;
@@ -1726,6 +1730,7 @@ fillInRecord(inRecord:any,outRecord:any){
   outRecord.nutritionPerso.calories=inRecord.nutritionPerso.calories;
   outRecord.nutritionPerso.proteins=inRecord.nutritionPerso.proteins;
   outRecord.nutritionPerso.carbs=inRecord.nutritionPerso.carbs;
+  outRecord.nutritionPerso.sugar=inRecord.nutritionPerso.sugar;
   outRecord.nutritionPerso.cholesterol=inRecord.nutritionPerso.cholesterol;
   outRecord.nutritionPerso.satFat=inRecord.nutritionPerso.satFat;
   outRecord.nutritionPerso.totalSat=inRecord.nutritionPerso.totalSat;
@@ -1890,6 +1895,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                     this.initialRecipeFile.recipe[i].nutrition.calories=data.recipe[i].nutrition.calories;
                     this.initialRecipeFile.recipe[i].nutrition.proteins=data.recipe[i].nutrition.proteins;
                     this.initialRecipeFile.recipe[i].nutrition.carbs=data.recipe[i].nutrition.carbs;
+                    this.initialRecipeFile.recipe[i].nutrition.sugar=data.recipe[i].nutrition.sugar;
                     this.initialRecipeFile.recipe[i].nutrition.cholesterol=data.recipe[i].nutrition.cholesterol;
                     this.initialRecipeFile.recipe[i].nutrition.satFat=data.recipe[i].nutrition.satFat;
                     this.initialRecipeFile.recipe[i].nutrition.totalSat=data.recipe[i].nutrition.totalSat;
@@ -1898,6 +1904,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                     this.initialRecipeFile.recipe[i].nutritionPerso.calories=data.recipe[i].nutritionPerso.calories;
                     this.initialRecipeFile.recipe[i].nutritionPerso.proteins=data.recipe[i].nutritionPerso.proteins;
                     this.initialRecipeFile.recipe[i].nutritionPerso.carbs=data.recipe[i].nutritionPerso.carbs;
+                    this.initialRecipeFile.recipe[i].nutritionPerso.sugar=data.recipe[i].nutritionPerso.sugar;
                     this.initialRecipeFile.recipe[i].nutritionPerso.cholesterol=data.recipe[i].nutritionPerso.cholesterol;
                     this.initialRecipeFile.recipe[i].nutritionPerso.satFat=data.recipe[i].nutritionPerso.satFat;
                     this.initialRecipeFile.recipe[i].nutritionPerso.totalSat=data.recipe[i].nutritionPerso.totalSat;
@@ -1989,8 +1996,9 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
       this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Calories=this.recipeFile.recipe[this.recordRecipe].nutrition.calories ;
       this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Protein=this.recipeFile.recipe[this.recordRecipe].nutrition.proteins ;
       this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Carbs=this.recipeFile.recipe[this.recordRecipe].nutrition.carbs ;
+      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Sugar=this.recipeFile.recipe[this.recordRecipe].nutrition.sugar ;
       this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Cholesterol=this.recipeFile.recipe[this.recordRecipe].nutrition.cholesterol ;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Sugar=0;
+      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Sugar=this.recipeFile.recipe[this.recordRecipe].nutrition.sugar;
       this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].GlyIndex=0;
       this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Fat.Saturated=this.recipeFile.recipe[this.recordRecipe].nutrition.satFat;
       this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Fat.Total=this.recipeFile.recipe[this.recordRecipe].nutrition.totalSat;

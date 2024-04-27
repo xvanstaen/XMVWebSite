@@ -49,6 +49,9 @@ export class UserFunctionsComponent {
 
     @Output() serverChange=  new EventEmitter<any>();
 
+    tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
+    maxEventHTTPrequest: number = 12;
+
     convertOnly:boolean=true;
 
     selectApps:number=0;
@@ -64,12 +67,78 @@ export class UserFunctionsComponent {
     isCredentials:boolean=true;
 
 ngOnInit(){
-  console.log('test');
+  //console.log('user-functions - init --- configServer.google='+this.configServer.googleServer);
+  this.initTabLock();
+  
+
 }
 
+initTabLock(){
+  if (this.tabLock.length===0){
+    for (var i = 0; i <this.maxEventHTTPrequest; i++) {
+      const thePush = new classAccessFile;
+      this.tabLock.push(thePush);
+      if (this.identification.triggerFileSystem === "No") {
+      this.tabLock[i].lock = 1;
+      } else {
+      this.tabLock[i].lock = 3;
+      }
+      this.tabLock[i].user = this.identification.UserId;
+      this.tabLock[i].iWait = i;
+      this.tabLock[i].timeoutFileSystem.hh = this.configServer.timeoutFileSystem.hh;
+      this.tabLock[i].timeoutFileSystem.mn = this.configServer.timeoutFileSystem.mn;
+      this.tabLock[i].IpAddress = this.configServer.IpAddress;
+  
+      this.tabLock[i].userServerId = this.credentialsFS.userServerId;
+      this.tabLock[i].credentialDate = this.credentialsFS.creationDate;
+    }
+  
+    this.tabLock[0].bucket = this.identification.fitness.bucket;
+    this.tabLock[0].object = this.identification.fitness.files.fileHealth;
+    this.tabLock[0].objectName = this.identification.fitness.files.fileHealth; 
+  
+    this.tabLock[1].bucket = this.identification.configFitness.bucket;
+    this.tabLock[1].object = this.identification.configFitness.files.calories;
+    this.tabLock[1].objectName = this.identification.configFitness.files.calories;
+  
+    this.tabLock[2].bucket = this.identification.configFitness.bucket;
+    this.tabLock[2].object = this.identification.configFitness.files.convertUnit;
+    this.tabLock[2].objectName = this.identification.configFitness.files.convertUnit;
+  
+    this.tabLock[3].bucket = this.identification.configFitness.bucket;
+    this.tabLock[3].object = this.identification.configFitness.files.confHTML;
+    this.tabLock[3].objectName = this.identification.configFitness.files.confHTML;
+  
+    this.tabLock[4].bucket = this.identification.configFitness.bucket;
+    this.tabLock[4].object = this.identification.configFitness.files.confChart;
+    this.tabLock[4].objectName = this.identification.configFitness.files.confChart;
+  
+    this.tabLock[5].bucket = this.identification.configFitness.bucket;
+    this.tabLock[5].object = this.identification.fitness.files.myChartConfig;
+    this.tabLock[5].objectName = this.identification.fitness.files.myChartConfig; 
+  
+    this.tabLock[6].bucket = this.identification.configFitness.bucket;
+    this.tabLock[6].object = this.identification.fitness.files.recipe;
+    this.tabLock[6].objectName = this.identification.fitness.files.recipe;
+  
+    this.tabLock[10].bucket = this.identification.configFitness.bucket;
+    this.tabLock[10].object = this.identification.configFitness.files.convToDisplay;
+    this.tabLock[10].objectName = this.identification.configFitness.files.convToDisplay;
+  } else {
+    for (var i = 0; i <this.maxEventHTTPrequest; i++) {
+      if (this.identification.triggerFileSystem === "No") {
+        this.tabLock[i].lock = 1;
+        } else {
+        this.tabLock[i].lock = 3;
+        }
+    }
+  }
+  
+}
 
 onInput(event:any){
   this.inputSelect=Number(event.target.value);
+  this.initTabLock();
   this.selectApps=0;
   this.selHealthFunction=0;
   this.dictionaryOnly=false;
@@ -100,7 +169,8 @@ onSelectApps(){
 getServerNames(event:any){
   if (this.configServer.googleServer!==event.google){
     this.configServer.googleServer=event.google;
-    this.serverChange.emit('Google');
+    //console.log('user-functions - getServerNames --- configServer.google='+this.configServer.googleServer);
+    this. serverChange.emit('Google');
   }
   
   if (this.configServer.mongoServer!==event.mongo){

@@ -115,6 +115,8 @@ export class RoutingAppComponent implements OnInit {
   isDisplayUploadFile:boolean=false;
   isDisplaySaveDownload:boolean=false;
 
+  isDisplayEncrypt:boolean=false;
+
   TheSelectDisplays: FormGroup = new FormGroup({ 
     Logos: new FormControl('N', { nonNullable: true }),
     Telephone: new FormControl('N', { nonNullable: true }),
@@ -125,6 +127,23 @@ export class RoutingAppComponent implements OnInit {
     SaveDownload: new FormControl('N', { nonNullable: true }),
     KEHP: new FormControl('N', { nonNullable: true }),
 })
+
+Encrypt:string='';
+Decrypt:string='LIM!12monica#Chin';
+Crypto_Method:string='AES';
+Crypto_Error:string='';
+Crypto_Key:number=2;
+Crypto_Record:number=0;
+Server_Type:string='Google';
+Bucket_Name:string='manage-login';
+Object_Name:string='XMVIT-Admin';
+Encrypt_Data={
+  id: 3,
+  encrypted:'',
+  decrypted:'',
+  key:0,
+  method:''
+}
 
 
   constructor(
@@ -155,6 +174,8 @@ export class RoutingAppComponent implements OnInit {
 
 ngOnInit() {
    this.getPosDiv();
+   //console.log('routing-app - init --- configServer.google='+this.configServer.googleServer);
+
     // console.log('ngOnInit of routing-test.ts')
     this.my_input_child1='red';
     this.my_input_child2='red';
@@ -230,9 +251,9 @@ displayCSSTable(){
         }
       } else if (i==='5'){
         if (NoYes==='Y'){
-          
+          this.isDisplayEncrypt=true;
         } else {
-          
+          this.isDisplayEncrypt=false;
         }
       } 
       else if (i==='6'){
@@ -428,6 +449,86 @@ ClearDiv(){
       // this.myForm.patchValue({ fileSource: file});
     }
   }
+
+  auth={
+    userId:"Fitness",
+    psw:"A",
+    crypto:true
+  };
+  
+  //auth="";
+  
+  onCrypt(event:any){
+  
+    this.Crypto_Error='';
+   
+    if (event==='Encrypt'){
+  
+        if (this.Decrypt===''){
+          this.Crypto_Error="Decrypt field is empty";
+        } else if (this.Crypto_Method==='AES' || this.Crypto_Method==='DES'){
+          this.Encrypt="";
+          this.ManageGoogleService.encryptAllFn(this.configServer,this.Decrypt,this.Crypto_Key,this.Crypto_Method, JSON.stringify(this.auth) )
+          .subscribe((data ) => {
+    
+              if (data.response !== 'Key invalid'){
+                this.Encrypt=data.response;
+                console.log(this.Decrypt, " , ", this.Encrypt);
+              } else {
+                this.Crypto_Error='encrypt request failed; invalid key';
+              }
+            }, 
+            err => {
+              console.log(JSON.stringify(err));
+              this.Crypto_Error='encrypt request failed; error code=' + err.status; 
+            })
+        }
+  
+     
+          else { 
+            this.Crypto_Error="Wrong method for crypto. Must be either 'AES' or 'DES'" 
+        } 
+  
+    } else { // event = Decrypt
+      
+        if (this.Encrypt===''){
+          this.Crypto_Error="Encrypt field is empty";
+        } else
+        if (this.Crypto_Method==='AES' || this.Crypto_Method==='DES'){
+          this.Decrypt="";
+          this.ManageGoogleService.decryptAllFn(this.configServer,this.Encrypt,this.Crypto_Key,this.Crypto_Method, JSON.stringify(this.auth))
+          .subscribe((data ) => {
+            console.log(data);
+            if (data.response !== 'Key invalid' && data.response !== ''){
+              this.Decrypt=data.response;
+              console.log(this.Decrypt, " , ", this.Encrypt);
+            } else  {
+              if (data.response === 'Key invalid'){
+                this.Crypto_Error='decrypt request failed; invalid key';
+              } else {
+                this.Crypto_Error='encrypted data could not be decrypted';
+              }
+            }
+          }, 
+          err => {
+              console.log(JSON.stringify(err));
+              this.Crypto_Error='decrypt request failed; error code=' + err.status; 
+          } )
+        
+        
+        } else { 
+          this.Crypto_Error="Wrong method for crypto. Must be either 'AES' or 'DES'"
+        } 
+        
+      }
+  
+  
+  }
+  onClear(){
+    this.Decrypt='';
+    this.Encrypt='';
+  }
+  
      
   
 
@@ -463,9 +564,9 @@ requestPromise() {
 }
 
 ngOnChanges(changes: SimpleChanges) { 
-
-  
-   }
+  //console.log(changes);
+  //console.log('routing-app - ngOnChanges --- configServer.google='+this.configServer.googleServer);
+  }
 
 
 GetRecord(Bucket:string,GoogleObject:string, iWait:number){

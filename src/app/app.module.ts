@@ -60,6 +60,11 @@ import { UserFunctionsComponent } from './user-functions/user-functions.componen
 import { RoutingAppComponent } from './routing-app/routing-app.component';
 import { CacheConsoleComponent } from './cache-console/cache-console.component';
 import { MainHealthComponent } from './Health/main-health/main-health.component';
+import { RunningClockComponent } from './Health/running-clock/running-clock.component';
+import { MyCanvasComponent } from './my-canvas/my-canvas.component'
+import { SportChartsComponent } from './Sport/sport-charts/sport-charts.component';
+import { ManageDisplayChartsComponent } from './manage-display-charts/manage-display-charts.component'
+import { MainManageFileComponent } from './fileAccessMgt/file-access.component'
 
 @NgModule({
   declarations: [
@@ -99,6 +104,7 @@ import { MainHealthComponent } from './Health/main-health/main-health.component'
     SportAnalysisComponent,
     SportPerfRawDataMgtComponent,
     SportPerformanceComponent,
+    SportChartsComponent,
     DisplayCircuitLoopComponent,
     BuildLoopFromPerfComponent ,
     TutorialsComponent,
@@ -107,7 +113,12 @@ import { MainHealthComponent } from './Health/main-health/main-health.component'
     UserFunctionsComponent,
     RoutingAppComponent,
     CacheConsoleComponent,
-    MainHealthComponent
+    MainHealthComponent,
+    RunningClockComponent,
+    MyCanvasComponent,
+    
+    ManageDisplayChartsComponent,
+    MainManageFileComponent
   ],
   imports: [
     AppRoutingModule,

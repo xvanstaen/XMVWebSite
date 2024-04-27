@@ -54,8 +54,27 @@ export class classAccessFile{
     onInputAction:string="";
     reAccessFile:boolean=false;
     tabLock:Array<classAccessFile>=[];
+    iWait:number=0;
+    checkToLimit:number=0;
     theResetServer:boolean=false;
     nbRecall:number=0;
     errorCode:number=0;
     errorMsg:string="";
+    processSave:boolean=false;
   }  
+  export class classHeaderReturnDataFS{
+    onInputAction:string="";
+    reAccessFile:boolean=false;
+    iWait:number=0;
+    checkToLimit:number=0;
+    theResetServer:boolean=false;
+    nbRecall:number=0;
+    errorCode:number=0;
+    errorMsg:string="";
+    processSave:boolean=false;
+  }  
+
+  export class classRetrieveFile{
+    iWait:number=0;
+    accessFS:boolean=false;
+  }
