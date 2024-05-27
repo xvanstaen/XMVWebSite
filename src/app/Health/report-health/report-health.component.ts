@@ -1182,8 +1182,16 @@ isMustSaveFile:boolean=false;
     outFile.palette.xPos = inFile.palette.xPos;
     outFile.palette.yPos = inFile.palette.yPos;
     outFile.slider.rgba = inFile.slider.rgba;
-    outFile.slider.xPos = inFile.slider.xPos;
-    outFile.slider.yPos = inFile.slider.xPoy;
+    if (inFile.slider.xPos!==undefined){
+      outFile.slider.xPos = inFile.slider.xPos;
+    } else {
+      outFile.slider.xPos = 0;
+    }
+    if (inFile.slider.yPos!==undefined){
+      outFile.slider.yPos = inFile.slider.yPos;
+    } else {
+      outFile.slider.yPos = 0;
+    }
   }
 
 
@@ -1661,6 +1669,9 @@ isMustSaveFile:boolean=false;
     }
   }
   selectLabelColor(event: any) {
+    if (this.isSelectLabColor === true){
+      this.resetBooleans();
+    }
     if (this.tabLock[5].lock !== 2) {
       this.timeOutactivity(5, true, false,"only");
       const i = event.target.id.indexOf('-');
@@ -1669,12 +1680,15 @@ isMustSaveFile:boolean=false;
       this.currentLabColor = Number(event.target.id.substring(i + 1));
       if (event.target.id.substring(0, i) === "labelLimitColor") {
         this.dialogLimitLabColor[this.currentLabColor] = true;
+        this.returnPalette = this.tabLimitLabelRgba[this.currentLabColor].palette;
+        this.returnSlider = this.tabLimitLabelRgba[this.currentLabColor].slider;
       } else {
         this.dialogLabColor[this.currentLabColor] = true;
+        this.returnPalette = this.tabLabelRgba[this.currentLabColor].palette;
+        this.returnSlider = this.tabLabelRgba[this.currentLabColor].slider;
       }
       this.isSelectLabColor = true;
-      this.returnPalette = this.tabLabelRgba[this.currentLabColor].palette;
-      this.returnSlider = this.tabLabelRgba[this.currentLabColor].slider;
+
       if (this.returnSlider.rgba !== '') {
         this.my_input_child2 = this.returnSlider.rgba;
       }
