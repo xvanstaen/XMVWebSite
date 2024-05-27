@@ -87,11 +87,7 @@ export class classConfTableAll{
         color:'black',
         background:'rgb(75, 159, 103)',
     };
-
   }
-
-
-
 
   export class classTitle{
     height:string='40px';

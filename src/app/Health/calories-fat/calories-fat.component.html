@@ -2,6 +2,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
+    <div *ngIf="openFileAccess===true">
+        <app-file-access 
+            [configServer]="configServer" [identification]="identification" 
+            [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit"
+            [secondaryLevelFn]="secondaryLevelFn"
+            (resultFileSystem)="resultAccessFile($event)"
+        >
+    
+        </app-file-access>
+    </div>
     <!--
         =========================================================================
         ================  Display and Manage special dishes/recipes  ============
@@ -18,8 +28,8 @@
 <div *ngIf="isInitComplete===true && isUserTimeOut===false">
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
  
-        <div *ngIf="tabLock.lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
-        <div *ngIf="tabLock.lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
+        <div *ngIf="tabLock[1].lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
+        <div *ngIf="tabLock[1].lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
 
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+13}">
         MANAGE RECIPE
@@ -102,7 +112,7 @@
         <div class="dropdown " *ngIf="isRecipeFoodInput===true && tabInputRecipeFood.length>0">
 
             <div class="Straight-content"  > <!-- slectPosition.y - 560-->
-                <div  class="StraightDropDown StraightDropDownOverflow" [ngClass]="{'yesScroll':tabInputRecipeFood.length > 9, 'noScroll':tabInputRecipeFood.length < 10}" [ngStyle]="{  'margin-top.px': titleHeight + 10  ,'margin-left.px':260, 'width':130, 'height':sizeBoxRecipeFood}" >
+                <div  class="StraightDropDown-Cal" [ngClass]="{'yesScroll':tabInputRecipeFood.length > 9, 'noScroll':tabInputRecipeFood.length < 10}" [ngStyle]="{  'margin-top.px': titleHeight + 10  ,'margin-left.px':260, 'width.px':200, 'height.px':sizeBoxRecipeFood}" >
             
                     <li *ngFor="let tabFood of tabInputRecipeFood; let m=index;" 
                             class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0, 'yesScroll':tabInputRecipeFood.length > 9, 'noScroll':tabInputRecipeFood.length < 10}" 
@@ -225,7 +235,7 @@
                 </span>
                 <div *ngIf="errorMsg!=='' && returnEmit.saveAction==='RecipeSave'">
                     <div class="skipLine">&nbsp;</div>  
-                    <span class="error" >error:&nbsp;{{errorMsg}}</span>
+                    <span style="color:red; margin-left:20px; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  >{{errorMsg}}</span>
                     <div class="skipLine">&nbsp;</div> 
                 </div> 
             </div>
@@ -252,8 +262,8 @@
     <div style="border:solid 2px blue; background-color: lightskyblue;display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+13}">
  
 
-        <div *ngIf="tabLock.lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
-        <div *ngIf="tabLock.lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
+        <div *ngIf="tabLock[1].lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
+        <div *ngIf="tabLock[1].lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
 
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
         MANAGE CALORIES & FAT
@@ -412,7 +422,7 @@
 
         </div>
 
-        <div *ngIf="tabLock.lock===1">
+        <div *ngIf="tabLock[1].lock===1">
             <div class="skipLine">&nbsp;</div> 
             <div class="posConfirm">
                 <span *ngIf="isSaveConfirmed===false && isCalFatModified===true" >

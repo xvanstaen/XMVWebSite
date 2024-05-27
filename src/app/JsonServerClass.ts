@@ -331,12 +331,22 @@ export class classtheEvent {
     textContent: '',
     value: ''
   };
-  checkLock={iWait:0,isDataModified:false,isSaveFile:false, lastInputAt:''};
+  checkLock=new classCheckLock;
   fileName:string='';
   bucket:string='';
   object:string='';
   fileContent:any;
   iWait:number=0;
   saveCalls:number=0;
+  nbCalls:number=0;
+}
+export class classCheckLock{
+  iWait:number=0;
+  isDataModified:boolean=false;
+  isSaveFile:boolean=false;
+  lastInputAt:string='';
+  iCheck:boolean=false;
+  nbCalls:number=0;
+  action:string='';
 }
 

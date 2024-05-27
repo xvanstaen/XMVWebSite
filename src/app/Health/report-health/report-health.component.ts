@@ -39,7 +39,7 @@ import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.servic
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
 import { AccessConfigService } from 'src/app/CloudServices/access-config.service';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart, classReturnColor } from '../classChart';
-import { classFileSystem, classAccessFile, classReturnDataFS } from '../../classFileSystem';
+import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS } from '../../classFileSystem';
 import { fnAddTime, addMonthDay, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../../clockFunctions'
 
@@ -86,10 +86,16 @@ export class ReportHealthComponent implements OnInit {
   @Input() inFileParamChart = new classFileParamChart;
   @Input() configServer = new configServer;
 
+  @Input() triggerCheckToLimit:number=9000;
+
   //inData=new classAccessFile;
-  @Input() tabLock = new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-  @Input() returnDataFS = new classReturnDataFS;
+  //@Input() tabLock = new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
+  @Input() tabLock: Array<classAccessFile> = [];
+  @Input() returnDataFSParamChart = new classHeaderReturnDataFS;
   @Input() actionParamChart:number = 0;
+  @Input() resultCheckLimitParamChart:number = 0;
+  @Input() statusSaveFn:any;
+  //@Input() callSaveFn:any;
 
   posSlider = new classPosSlider;
   posPalette = new classPosSlider;
@@ -99,9 +105,14 @@ export class ReportHealthComponent implements OnInit {
   @Output() processSave = new EventEmitter<any>();
   @Output() retrieveRecord = new EventEmitter<any>();
   @Output() unlockFile = new EventEmitter<any>();
+  @Output() cancelUpdates = new EventEmitter<any>();
 
   @ViewChild('baseChart', { static: true })
 
+  secondaryLevelFn:boolean=true;
+
+isSaveParamChart:boolean=false;
+isMustSaveFile:boolean=false;
 
 
   // DEBUG
@@ -393,6 +404,14 @@ export class ReportHealthComponent implements OnInit {
   posSizeClock=new classPosSizeClock;
   maxCanvas:number=5;
 
+  SpecificForm = new FormGroup({
+    FileName: new FormControl('', { nonNullable: true }),
+  })
+
+  isConfirmSaveA:boolean=false;
+  IsSaveConfirmed: boolean = false;
+
+  lockValueBeforeCheck:number=0;
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
     //this.selectedPosition = { x: event.pageX, y: event.pageY };
@@ -512,7 +531,7 @@ export class ReportHealthComponent implements OnInit {
         
       }
 
-
+      this.lockValueBeforeCheck=this.tabLock[5].lock;
   
     }
 
@@ -539,7 +558,11 @@ export class ReportHealthComponent implements OnInit {
     this.lastInputAt = strDateTime();
     this.refDate=new Date();
     this.callTimeToGo();
-
+    if (this.tabLock[5].lock===1){
+      this.enableForm();
+    } else {
+      this.disableForm();
+    }
     
 
   }
@@ -563,127 +586,7 @@ export class ReportHealthComponent implements OnInit {
 
 */
 
-  initTabParamCanvas(i:number){
-    const classParam = new classTabFormChart;
-    this.tabParamChart.push(classParam);
-    this.tabParamChart[this.tabParamChart.length - 1].chartType = 'line';
-
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.display = this.ConfigChartHealth.barDefault.options.plugins.title.display;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.text = this.ConfigChartHealth.barDefault.options.plugins.title.text;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.position = this.ConfigChartHealth.barDefault.options.plugins.title.position;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.padding.top = this.ConfigChartHealth.barDefault.options.plugins.title.padding.top;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.padding.bottom = this.ConfigChartHealth.barDefault.options.plugins.title.padding.bottom;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.align = this.ConfigChartHealth.barDefault.options.plugins.title.align;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.color = this.ConfigChartHealth.barDefault.options.plugins.title.color;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.size = this.ConfigChartHealth.barDefault.options.plugins.title.font.size;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.weight = this.ConfigChartHealth.barDefault.options.plugins.title.font.weight;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.family = this.ConfigChartHealth.barDefault.options.plugins.title.font.family;
-
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.display = this.ConfigChartHealth.barDefault.options.plugins.legend.title.display;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.text = this.ConfigChartHealth.barDefault.options.plugins.legend.title.text;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.position = this.ConfigChartHealth.barDefault.options.plugins.legend.title.position;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.top = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.top;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.bottom = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.bottom;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.left = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.left;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.align = this.ConfigChartHealth.barDefault.options.plugins.legend.title.align;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.color = this.ConfigChartHealth.barDefault.options.plugins.legend.title.color;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.size = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.size;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.weight = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.weight;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.family = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.family;
-
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.boxWidth = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxWidth;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.boxHeight = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxHeight;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.usePointStyle = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.usePointStyle;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.pointStyle = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.pointStyle;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.borderRadius = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.borderRadius;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.color = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.color;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.size = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.size;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.weight = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.weight;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.family = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.family;
-
-    this.tabParamChart[this.tabParamChart.length - 1].bar = this.ConfigChartHealth.barChart.datasets;
-    this.tabParamChart[this.tabParamChart.length - 1].line = this.ConfigChartHealth.lineChart.datasetsDefault;
-
-    this.tabParamChart[this.tabParamChart.length - 1].canvasBackground = this.ConfigChartHealth.barDefault.canvas.backgroundcolor;
-    this.tabParamChart[this.tabParamChart.length - 1].canvasHeight = this.ConfigChartHealth.barDefault.canvas.height
-    this.tabParamChart[this.tabParamChart.length - 1].canvasMarginLeft = this.ConfigChartHealth.barDefault.canvas.marginleft;
-    this.tabParamChart[this.tabParamChart.length - 1].canvasWidth = this.ConfigChartHealth.barDefault.canvas.width;
-
-
-    for (var l = 0; l < this.ConfigChartHealth.barDefault.datasets.labelsLimits.length; l++) {
-      if (this.ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[l] === true) {
-        this.tabParamChart[this.tabParamChart.length - 1].limitLabels[l] = "Y";
-        this.selectedLimitFields[l] = "Y";
-      } else {
-        this.tabParamChart[this.tabParamChart.length - 1].limitLabels[l] = "N";
-        this.selectedLimitFields[l] = "N";
-      }
-      if (l > 0) {
-        const myLimitRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels.push(myLimitRgba);
-      }
-
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.rgba = "";
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.xPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.yPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.rgba = "";
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.xPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.yPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].limitLabelsColor[l] = this.ConfigChartHealth.barDefault.datasets.borderColorLimits[l];
-    }
-
-    for (var l = 0; l < this.ConfigChartHealth.barDefault.datasets.fieldsToSelect.length; l++) {
-      if (this.ConfigChartHealth.barDefault.datasets.fieldsToSelect[l] === true) {
-        this.tabParamChart[this.tabParamChart.length - 1].labels[l] = "Y";
-        this.selectedFields[l] = "Y";
-
-      } else {
-        this.tabParamChart[this.tabParamChart.length - 1].labels[l] = "N";
-        this.selectedFields[l] = "N";
-      }
-
-      this.tabParamChart[this.tabParamChart.length - 1].labelsColor[l] = this.ConfigChartHealth.barDefault.datasets.borderColor[l];
-      if (l > 0) {
-        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels.push(myRgba);
-      }
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.rgba = "";
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.xPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.yPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.rgba = "";
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.xPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.yPos = 0;
-    }
-
-    this.tabParamChart[this.tabParamChart.length - 1].period = 'daily';
-    this.tabParamChart[this.tabParamChart.length - 1].nbWeeks = 0;
-    this.tabParamChart[this.tabParamChart.length - 1].ratio = 2;
-
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.border.color = this.ConfigChartHealth.barDefault.options.scales.axisX.border.color;
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.border.width = this.ConfigChartHealth.barDefault.options.scales.axisX.border.width;
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.position = this.ConfigChartHealth.barDefault.options.scales.axisX.position;
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.stacked = this.ConfigChartHealth.barDefault.options.scales.axisX.stacked;
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.ticks = this.ConfigChartHealth.barDefault.options.scales.axisX.ticks;
-
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.border.color = this.ConfigChartHealth.barDefault.options.scales.axisY.border.color;
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.border.width = this.ConfigChartHealth.barDefault.options.scales.axisY.border.width;
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.position = this.ConfigChartHealth.barDefault.options.scales.axisY.position;
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.stacked = this.ConfigChartHealth.barDefault.options.scales.axisY.stacked;
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.ticks = this.ConfigChartHealth.barDefault.options.scales.axisY.ticks;
-
-
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.rgba = "";
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.xPos = 0;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.yPos = 0;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.rgba = "";
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.xPos = 0;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.yPos = 0;
-
-    this.canvas.push({ width: '', height: '', background: 0, marginLeft: '' });
-    this.changeCanvas(i);
-  }
-
-  isSaveFile:boolean=false;
+  //isSaveFile:boolean=false;
   isDataModified:boolean=false;
   isUserTimeOut:boolean=false;
   refDate=new Date();
@@ -692,13 +595,27 @@ export class ReportHealthComponent implements OnInit {
   displayHour:number=0;
   idAnimation:any;
 
-  timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean){
+  openFileAccess:boolean=false;
+
+  timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
       window.cancelAnimationFrame(this.idAnimation);
       this.callTimeToGo();
       this.refDate=new Date();
       this.lastInputAt = strDateTime();
-      this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt});
-  }
+      if (theAction==="only"){
+        this.openFileAccess=true;
+        this.theEvent.checkLock.action='checkTO';
+        this.theEvent.checkLock.iWait=iWait;
+        this.theEvent.checkLock.isDataModified=isDataModified;
+        this.theEvent.checkLock.isSaveFile=isSaveFile;
+        this.theEvent.checkLock.iCheck=true;
+        this.theEvent.checkLock.lastInputAt=this.lastInputAt;
+        this.theEvent.checkLock.nbCalls++;
+        this.triggerCheckToLimit++
+        this.lockValueBeforeCheck=this.tabLock[5].lock;
+        //this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt, iCheck:true,nbCalls:0,action:theAction});
+      }
+    }
 
   callTimeToGo(){
     const currSeconds=this.refDate.getSeconds() ;
@@ -720,7 +637,7 @@ export class ReportHealthComponent implements OnInit {
         window.cancelAnimationFrame(this.idAnimation);
         this.isUserTimeOut=true;
         this.unlockFile.emit(5);
-        this.isSaveFile=false;
+        //this.isSaveFile=false;
         this.isDataModified=false;
         this.resetBooleans();
     } else {
@@ -901,7 +818,7 @@ export class ReportHealthComponent implements OnInit {
 
   selectedChart: number = 0;
   SelChart(event: any) {
-    this.timeOutactivity(5, true, false);
+    this.timeOutactivity(5, true, false,"only");
 
     if (this.selectedChart !== 0) {
 
@@ -932,7 +849,7 @@ export class ReportHealthComponent implements OnInit {
   }
 
   cancelChartParam(event: any) {
-    this.timeOutactivity(5, true, false);
+    this.timeOutactivity(5, true, false,"only");
     if (event.target.id === "allChartParam") {
       this.selectedChart = 0;
       this.isParamTitle = false;
@@ -952,7 +869,7 @@ export class ReportHealthComponent implements OnInit {
   }
 
   processAxis(event: any) {
-    this.timeOutactivity(5, true, false);
+    this.timeOutactivity(5, true, false,"only");
     this.isParamAxis = false;
     if (this.selectAxisX.controls['stacked'].value === 'false') {
       this.tabParamChart[this.selectedChart - 1].axisX.stacked = false;
@@ -968,6 +885,128 @@ export class ReportHealthComponent implements OnInit {
     this.selectChart.controls['stackedX'].setValue(this.tabParamChart[this.selectedChart - 1].axisX.stacked);
     this.selectChart.controls['stackedY'].setValue(this.tabParamChart[this.selectedChart - 1].axisY.stacked);
   }
+
+
+  initTabParamCanvas(i:number){
+    const classParam = new classTabFormChart;
+    this.tabParamChart.push(classParam);
+    this.tabParamChart[this.tabParamChart.length - 1].chartType = 'line';
+
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.display = this.ConfigChartHealth.barDefault.options.plugins.title.display;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.text = this.ConfigChartHealth.barDefault.options.plugins.title.text;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.position = this.ConfigChartHealth.barDefault.options.plugins.title.position;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.padding.top = this.ConfigChartHealth.barDefault.options.plugins.title.padding.top;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.padding.bottom = this.ConfigChartHealth.barDefault.options.plugins.title.padding.bottom;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.align = this.ConfigChartHealth.barDefault.options.plugins.title.align;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.color = this.ConfigChartHealth.barDefault.options.plugins.title.color;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.size = this.ConfigChartHealth.barDefault.options.plugins.title.font.size;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.weight = this.ConfigChartHealth.barDefault.options.plugins.title.font.weight;
+    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.family = this.ConfigChartHealth.barDefault.options.plugins.title.font.family;
+
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.display = this.ConfigChartHealth.barDefault.options.plugins.legend.title.display;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.text = this.ConfigChartHealth.barDefault.options.plugins.legend.title.text;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.position = this.ConfigChartHealth.barDefault.options.plugins.legend.title.position;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.top = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.top;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.bottom = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.bottom;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.left = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.left;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.align = this.ConfigChartHealth.barDefault.options.plugins.legend.title.align;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.color = this.ConfigChartHealth.barDefault.options.plugins.legend.title.color;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.size = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.size;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.weight = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.weight;
+    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.family = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.family;
+
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.boxWidth = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxWidth;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.boxHeight = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxHeight;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.usePointStyle = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.usePointStyle;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.pointStyle = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.pointStyle;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.borderRadius = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.borderRadius;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.color = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.color;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.size = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.size;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.weight = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.weight;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.family = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.family;
+
+    this.tabParamChart[this.tabParamChart.length - 1].bar = this.ConfigChartHealth.barChart.datasets;
+    this.tabParamChart[this.tabParamChart.length - 1].line = this.ConfigChartHealth.lineChart.datasetsDefault;
+
+    this.tabParamChart[this.tabParamChart.length - 1].canvasBackground = this.ConfigChartHealth.barDefault.canvas.backgroundcolor;
+    this.tabParamChart[this.tabParamChart.length - 1].canvasHeight = this.ConfigChartHealth.barDefault.canvas.height
+    this.tabParamChart[this.tabParamChart.length - 1].canvasMarginLeft = this.ConfigChartHealth.barDefault.canvas.marginleft;
+    this.tabParamChart[this.tabParamChart.length - 1].canvasWidth = this.ConfigChartHealth.barDefault.canvas.width;
+
+
+    for (var l = 0; l < this.ConfigChartHealth.barDefault.datasets.labelsLimits.length; l++) {
+      if (this.ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[l] === true) {
+        this.tabParamChart[this.tabParamChart.length - 1].limitLabels[l] = "Y";
+        this.selectedLimitFields[l] = "Y";
+      } else {
+        this.tabParamChart[this.tabParamChart.length - 1].limitLabels[l] = "N";
+        this.selectedLimitFields[l] = "N";
+      }
+      if (l > 0) {
+        const myLimitRgba = { slider: new classReturnColor, palette: new classReturnColor }
+        this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels.push(myLimitRgba);
+      }
+
+      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.rgba = "";
+      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.xPos = 0;
+      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.yPos = 0;
+      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.rgba = "";
+      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.xPos = 0;
+      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.yPos = 0;
+      this.tabParamChart[this.tabParamChart.length - 1].limitLabelsColor[l] = this.ConfigChartHealth.barDefault.datasets.borderColorLimits[l];
+    }
+
+    for (var l = 0; l < this.ConfigChartHealth.barDefault.datasets.fieldsToSelect.length; l++) {
+      if (this.ConfigChartHealth.barDefault.datasets.fieldsToSelect[l] === true) {
+        this.tabParamChart[this.tabParamChart.length - 1].labels[l] = "Y";
+        this.selectedFields[l] = "Y";
+
+      } else {
+        this.tabParamChart[this.tabParamChart.length - 1].labels[l] = "N";
+        this.selectedFields[l] = "N";
+      }
+
+      this.tabParamChart[this.tabParamChart.length - 1].labelsColor[l] = this.ConfigChartHealth.barDefault.datasets.borderColor[l];
+      if (l > 0) {
+        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
+        this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels.push(myRgba);
+      }
+      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.rgba = "";
+      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.xPos = 0;
+      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.yPos = 0;
+      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.rgba = "";
+      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.xPos = 0;
+      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.yPos = 0;
+    }
+
+    this.tabParamChart[this.tabParamChart.length - 1].period = 'daily';
+    this.tabParamChart[this.tabParamChart.length - 1].nbWeeks = 0;
+    this.tabParamChart[this.tabParamChart.length - 1].ratio = 2;
+
+    this.tabParamChart[this.tabParamChart.length - 1].axisX.border.color = this.ConfigChartHealth.barDefault.options.scales.axisX.border.color;
+    this.tabParamChart[this.tabParamChart.length - 1].axisX.border.width = this.ConfigChartHealth.barDefault.options.scales.axisX.border.width;
+    this.tabParamChart[this.tabParamChart.length - 1].axisX.position = this.ConfigChartHealth.barDefault.options.scales.axisX.position;
+    this.tabParamChart[this.tabParamChart.length - 1].axisX.stacked = this.ConfigChartHealth.barDefault.options.scales.axisX.stacked;
+    this.tabParamChart[this.tabParamChart.length - 1].axisX.ticks = this.ConfigChartHealth.barDefault.options.scales.axisX.ticks;
+
+    this.tabParamChart[this.tabParamChart.length - 1].axisY.border.color = this.ConfigChartHealth.barDefault.options.scales.axisY.border.color;
+    this.tabParamChart[this.tabParamChart.length - 1].axisY.border.width = this.ConfigChartHealth.barDefault.options.scales.axisY.border.width;
+    this.tabParamChart[this.tabParamChart.length - 1].axisY.position = this.ConfigChartHealth.barDefault.options.scales.axisY.position;
+    this.tabParamChart[this.tabParamChart.length - 1].axisY.stacked = this.ConfigChartHealth.barDefault.options.scales.axisY.stacked;
+    this.tabParamChart[this.tabParamChart.length - 1].axisY.ticks = this.ConfigChartHealth.barDefault.options.scales.axisY.ticks;
+
+
+    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.rgba = "";
+    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.xPos = 0;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.yPos = 0;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.rgba = "";
+    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.xPos = 0;
+    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.yPos = 0;
+
+    this.canvas.push({ width: '', height: '', background: 0, marginLeft: '' });
+    this.changeCanvas(i);
+  }
+
 
   fillInTabOfCharts(nb: number) {
 
@@ -1143,7 +1182,7 @@ export class ReportHealthComponent implements OnInit {
     outFile.palette.xPos = inFile.palette.xPos;
     outFile.palette.yPos = inFile.palette.yPos;
     outFile.slider.rgba = inFile.slider.rgba;
-    outFile.slider.xPosa = inFile.slider.xPos;
+    outFile.slider.xPos = inFile.slider.xPos;
     outFile.slider.yPos = inFile.slider.xPoy;
   }
 
@@ -1311,7 +1350,7 @@ export class ReportHealthComponent implements OnInit {
   }
 
   selectType(event: any) {
-    this.timeOutactivity(5, true, false);
+    this.timeOutactivity(5, true, false,"only");
     this.resetBooleans();
     if (event.target.id === 'selType') {
       this.isTypeSelected = true;
@@ -1353,7 +1392,7 @@ export class ReportHealthComponent implements OnInit {
   }
 
   selectPeriod(event: any) {
-    this.timeOutactivity(5, true, false);
+    this.timeOutactivity(5, true, false,"only");
     this.resetBooleans();
     if (event.target.id === 'selPeriod') {
       this.isPeriodSelected = true;
@@ -1364,7 +1403,7 @@ export class ReportHealthComponent implements OnInit {
   }
 
   selectPeriodAll(event: any) {
-    this.timeOutactivity(5, true, false);
+    this.timeOutactivity(5, true, false,"only");
     this.resetBooleans();
     if (event.target.id === 'selPeriod') {
       this.isPeriodSelected = true;
@@ -1374,36 +1413,9 @@ export class ReportHealthComponent implements OnInit {
     }
   }
 
-  resetBooleans() {
-    this.isTypeSelected = false;
-    this.isPeriodSelected = false;
-    this.isSelectLegendColor = false;
-    this.isSelectBoxColor = false;
-    this.isSelectCanvasColor = false;
-    this.isSelectLChartTitleColor = false;
-    this.isSelectChartTitleColor = false;
-    this.isSelectLabColor = false;
-    this.dialogLabColor[this.currentLabColor] = false;
-
-    this.isSliderSelected = false;
-    //this.selectedChart=0;
-
-    this.isFontWeight = false;
-    this.isTextAlign = false;
-    this.isTitlePosition = false;
-    this.isTitleDisplay = false;
-
-    this.isSelectXBorderColor = false;
-    this.isSelectXTicksColor = false;
-    this.isSelectYBorderColor = false;
-    this.isSelectYTicksColor = false;
-    this.isPosDivSliderTrue = false;
-  }
-
-
   selectColorAxis(event: any) {
-    if (this.tabLock.lock !== 2) {
-      this.timeOutactivity(5, true, false);
+    if (this.tabLock[5].lock !== 2) {
+      this.timeOutactivity(5, true, false,"only");
       this.resetBooleans();
       this.mainWindow.top = 120;
       this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
@@ -1440,12 +1452,10 @@ export class ReportHealthComponent implements OnInit {
     }
   }
 
-
-
   selectColor(event: any) {
-    if (this.tabLock.lock !== 2) {
+    if (this.tabLock[5].lock !== 2) {
       this.resetBooleans();
-      this.timeOutactivity(5, true, false);
+      this.timeOutactivity(5, true, false,"only");
       this.mainWindow.top = 120;
       this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
       if (event === 'canvasColor') {
@@ -1561,8 +1571,8 @@ export class ReportHealthComponent implements OnInit {
 
   fnExitPalette(event: any) {
    
-    if (this.tabLock.lock !== 2) {
-      this.timeOutactivity(5, true, false);
+    if (this.tabLock[5].lock !== 2) {
+      this.timeOutactivity(5, true, false,"only");
       if (event === 'Cancel') {
         this.resetBooleans();
       } else if (event === 'Save') {
@@ -1650,13 +1660,71 @@ export class ReportHealthComponent implements OnInit {
       this.isSliderSelected = false;
     }
   }
+  selectLabelColor(event: any) {
+    if (this.tabLock[5].lock !== 2) {
+      this.timeOutactivity(5, true, false,"only");
+      const i = event.target.id.indexOf('-');
+      this.dialogLabColor[this.currentLabColor] = false;
+      this.dialogLimitLabColor[this.currentLabColor] = false;
+      this.currentLabColor = Number(event.target.id.substring(i + 1));
+      if (event.target.id.substring(0, i) === "labelLimitColor") {
+        this.dialogLimitLabColor[this.currentLabColor] = true;
+      } else {
+        this.dialogLabColor[this.currentLabColor] = true;
+      }
+      this.isSelectLabColor = true;
+      this.returnPalette = this.tabLabelRgba[this.currentLabColor].palette;
+      this.returnSlider = this.tabLabelRgba[this.currentLabColor].slider;
+      if (this.returnSlider.rgba !== '') {
+        this.my_input_child2 = this.returnSlider.rgba;
+      }
+      if (this.returnPalette.rgba !== '') {
+        this.my_input_child1 = this.returnPalette.rgba;
+        this.temporaryColor = this.returnPalette.rgba;
+      }
+      this.isSliderSelected = true;
+      this.mainWindow.top = 370;
+      this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
+    }
+  }
 
+  SelRadio(event: any) {
+    //console.log('event.target.id='+event.target.id+ "  event.currentTarget.id=" + event.currentTarget.id );
+    if (this.tabLock[5].lock !== 2) {
+      this.timeOutactivity(5, true, false,"only");
+      const i = event.target.id.indexOf('-');
+      const item = Number(event.target.id.substring(i + 1));
+      if (event.target.id === 'submit') {
+
+      } else if (event.target.id.substring(0, 1) === 'A') {
+        if (this.selectedFields[item] === 'Y') {
+          this.FillSelected.selected = 'N';
+          this.ListChart.controls[item].setValue(this.FillSelected);
+          this.selectedFields[item] = 'N';
+        } else if (this.selectedFields[item] === 'N') {
+          this.FillSelected.selected = 'Y';
+          this.ListChart.controls[item].setValue(this.FillSelected);
+          this.selectedFields[item] = 'Y';
+        }
+      } else if (event.target.id.substring(0, 1) === 'L') {
+        if (this.selectedLimitFields[item] === 'Y') {
+          this.FillSelected.selected = 'N';
+          this.ListChart.controls[item + this.ConfigChartHealth.barDefault.datasets.labels.length - 1].setValue(this.FillSelected);
+          this.selectedLimitFields[item] = 'N';
+        } else if (this.selectedLimitFields[item] === 'N') {
+          this.FillSelected.selected = 'Y';
+          this.ListChart.controls[item + this.ConfigChartHealth.barDefault.datasets.labels.length - 1].setValue(this.FillSelected);
+          this.selectedLimitFields[item] = 'Y';
+        }
+      }
+    }
+  }
 
 
   errorMsg: string = '';
   fnSelectChart() {
     this.errorMsg = '';
-    this.timeOutactivity(5, true, false);
+    this.timeOutactivity(5, true, false,"only");
     // check that all parameters are correct
     if (this.selectChart.controls['chartType'].value !== '') {
       for (var i = 0; i < this.lineChartType.length && this.selectChart.controls['chartType'].value.toLowerCase().trim() !== this.lineChartType[i].toLowerCase().trim(); i++) {
@@ -1692,127 +1760,16 @@ export class ReportHealthComponent implements OnInit {
 
   }
 
-  saveFn(event: string) {
-    this.errorMsg = '';
-    this.fillInTabOfCharts(this.selectedChart - 1);
-    if (this.errorMsg === '') {
-      if (event === 'save') {
-          this.fillInCharts(this.tabParamChart[this.selectedChart - 1], this.inFileParamChart.data[this.selectedChart - 1]);
-          this.buildChart(this.selectedChart - 1);
-      } else {
-          for (var i = 0; i < this.tabParamChart.length; i++) {
-            this.fillInCharts(this.tabParamChart[i], this.inFileParamChart.data[i]);
-            this.buildChart(this.selectedChart - 1);
-          }
-      }
-
-      this.theEvent.target.id = event;
-      this.theEvent.checkLock.iWait=5;
-      this.theEvent.checkLock.isDataModified=true;
-      this.theEvent.checkLock.isSaveFile=true;
-      this.theEvent.checkLock.lastInputAt=this.lastInputAt;
-      this.theEvent.fileName = "";
-      this.onInputAction = "saveChart";
-      this.processSave.emit(this.theEvent);
-      //this.returnFile.emit(this.tabParamChart);
-    }
-  }
-
-  cancelFn(event: string) {
-    this.resetBooleans();
-    this.timeOutactivity(5, true, false);
-     if (event === 'cancelAll') {
-      for (var i = 0; i < this.tabParamChart.length; i++) {
-        this.fillInCharts(this.inFileParamChart.data[i], this.tabParamChart[i]);
-        this.fillInFormFromTab(i);
-        this.buildChart(i);
-      }
-    } else if (event === 'cancelOne') {
-      this.fillInCharts(this.inFileParamChart.data[this.selectedChart - 1], this.tabParamChart[this.selectedChart - 1]);
-      this.fillInFormFromTab(this.selectedChart - 1);
-      this.buildChart(this.selectedChart - 1);
-    }
-  }
-//nbPass:number=0;
+  //nbPass:number=0;
   buildChart(nb: number) {
-
     this.changeCanvas(nb);
-
-   // if (nb < this.tabChart.length && this.nbPass>4){
     if (this.tabChart[nb]){
       this.tabChart[nb].destroy();
     }
-   // }
-    //this.nbPass++;
     this.collectSpecialData(nb, this.overallTab[nb].datasetBar, this.overallTab[nb].labelBar, this.overallTabLimit[nb].dataset, this.overallTabLimit[nb].label);
-  
   }
 
-
-  selectLabelColor(event: any) {
-    if (this.tabLock.lock !== 2) {
-      this.timeOutactivity(5, true, false);
-      const i = event.target.id.indexOf('-');
-      this.dialogLabColor[this.currentLabColor] = false;
-      this.dialogLimitLabColor[this.currentLabColor] = false;
-      this.currentLabColor = Number(event.target.id.substring(i + 1));
-      if (event.target.id.substring(0, i) === "labelLimitColor") {
-        this.dialogLimitLabColor[this.currentLabColor] = true;
-      } else {
-        this.dialogLabColor[this.currentLabColor] = true;
-      }
-
-      this.isSelectLabColor = true;
-
-
-      this.returnPalette = this.tabLabelRgba[this.currentLabColor].palette;
-      this.returnSlider = this.tabLabelRgba[this.currentLabColor].slider;
-
-      if (this.returnSlider.rgba !== '') {
-        this.my_input_child2 = this.returnSlider.rgba;
-      }
-      if (this.returnPalette.rgba !== '') {
-        this.my_input_child1 = this.returnPalette.rgba;
-        this.temporaryColor = this.returnPalette.rgba;
-      }
-      this.isSliderSelected = true;
-      this.mainWindow.top = 370;
-      this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
-    }
-  }
-
-
-  SelRadio(event: any) {
-    //console.log('event.target.id='+event.target.id+ "  event.currentTarget.id=" + event.currentTarget.id );
-    if (this.tabLock.lock !== 2) {
-      this.timeOutactivity(5, true, false);
-      const i = event.target.id.indexOf('-');
-      const item = Number(event.target.id.substring(i + 1));
-      if (event.target.id === 'submit') {
-
-      } else if (event.target.id.substring(0, 1) === 'A') {
-        if (this.selectedFields[item] === 'Y') {
-          this.FillSelected.selected = 'N';
-          this.ListChart.controls[item].setValue(this.FillSelected);
-          this.selectedFields[item] = 'N';
-        } else if (this.selectedFields[item] === 'N') {
-          this.FillSelected.selected = 'Y';
-          this.ListChart.controls[item].setValue(this.FillSelected);
-          this.selectedFields[item] = 'Y';
-        }
-      } else if (event.target.id.substring(0, 1) === 'L') {
-        if (this.selectedLimitFields[item] === 'Y') {
-          this.FillSelected.selected = 'N';
-          this.ListChart.controls[item + this.ConfigChartHealth.barDefault.datasets.labels.length - 1].setValue(this.FillSelected);
-          this.selectedLimitFields[item] = 'N';
-        } else if (this.selectedLimitFields[item] === 'N') {
-          this.FillSelected.selected = 'Y';
-          this.ListChart.controls[item + this.ConfigChartHealth.barDefault.datasets.labels.length - 1].setValue(this.FillSelected);
-          this.selectedLimitFields[item] = 'Y';
-        }
-      }
-    }
-  }
+ 
 
   //********************** */
   collectSpecialData(nb: number, datasetsSpecialBar: Array<any>, dateLabelSpecial: Array<any>, datasetsLimit: Array<any>, dateLabelLimit: Array<any>) {
@@ -1822,9 +1779,13 @@ export class ReportHealthComponent implements OnInit {
    
     const returnData = fillHealthDataSet(dateLabelSpecial, datasetsSpecialBar, this.HealthAllData,this.tabParamChart[nb], this.ConfigChartHealth, addWeekly, this.identification);
     var refDailySaturated: Array<number> = [];
+    var refDailySugar: Array<number> = [];
+    var refDailyCarbs: Array<number> = [];
     if (returnData!==undefined) {
         datasetsSpecialBar = returnData.datasets;
         refDailySaturated = returnData.refSaturated;
+        refDailySugar = returnData.refSugar;
+        refDailyCarbs = returnData.refCarbs;
     }
     
   
@@ -1844,22 +1805,22 @@ export class ReportHealthComponent implements OnInit {
       if (datasetsSpecialBar[i].label === 'Cholesterol') {
         dataValue = Number(this.identification.health.Cholesterol.myLimit);
         labelName = 'Chol. limit';
-        labLimit = 0;// 2
+        labLimit = 0;
+      } else if (datasetsSpecialBar[i].label === 'Saturated Fat') {
+        labelName = 'Sat. limit';
+        labLimit = 1;
+        dataValue = Number(this.identification.health.SaturatedFat);
       } else if (datasetsSpecialBar[i].label === 'Proteins') {
         dataValue = Number(this.identification.health.Protein);
         labelName = 'Prot. limit';
-        labLimit = 2;//5
+        labLimit = 2;
       } else if (datasetsSpecialBar[i].label === 'Carbs') {
         dataValue = Number(this.identification.health.Carbs);
         labelName = 'Carbs limit';
-        labLimit = 3;//6
-      } else if (datasetsSpecialBar[i].label === 'Saturated Fat') {
-        labelName = 'Sat. limit';
-        labLimit = 1;//3
-        dataValue = Number(this.identification.health.SaturatedFat);
+        labLimit = 3;
       } else if (datasetsSpecialBar[i].label === 'Sugar') {
         labelName = 'Sugar limit';
-        labLimit = 5;//3
+        labLimit = 4;
         dataValue = Number(this.identification.health.Sugar);
       }
       if (dataValue > 0) {
@@ -1879,6 +1840,15 @@ export class ReportHealthComponent implements OnInit {
           //tension:0.2,
           pointStyle: false,
         });
+        if (datasetsSpecialBar[i].label === 'Sugar') {
+          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
+            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailySugar[j];
+          }
+        } else if (datasetsSpecialBar[i].label === 'Carbs') {
+          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
+            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailyCarbs[j];
+          }
+        } else
         if (datasetsSpecialBar[i].label === 'Saturated Fat') {
           for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
             datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailySaturated[j];
@@ -1906,44 +1876,171 @@ export class ReportHealthComponent implements OnInit {
     this.tabChart[nb]= newChart;
   }
 
-  initTabLock5: number = 0;
+
+  resetBooleans() {
+    this.isTypeSelected = false;
+    this.isPeriodSelected = false;
+    this.isSelectLegendColor = false;
+    this.isSelectBoxColor = false;
+    this.isSelectCanvasColor = false;
+    this.isSelectLChartTitleColor = false;
+    this.isSelectChartTitleColor = false;
+    this.isSelectLabColor = false;
+    this.dialogLabColor[this.currentLabColor] = false;
+
+    this.isSliderSelected = false;
+    //this.selectedChart=0;
+
+    this.isFontWeight = false;
+    this.isTextAlign = false;
+    this.isTitlePosition = false;
+    this.isTitleDisplay = false;
+
+    this.isSelectXBorderColor = false;
+    this.isSelectXTicksColor = false;
+    this.isSelectYBorderColor = false;
+    this.isSelectYTicksColor = false;
+    this.isPosDivSliderTrue = false;
+  }
+
+
+  ConfirmSave(event: any) {
+    this.errorMsg = '';
+    this.resetBooleans();
+    this.theEvent.target.id = event.target.id;
+    this.theEvent.target.value = event.target.value;
+    this.theEvent.target.textContent = event.target.textContent;
+    this.theEvent.checkLock.iWait=0;
+    this.theEvent.checkLock.isDataModified=true;
+    this.theEvent.checkLock.isSaveFile=false;
+    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
+    this.theEvent.fileName=this.SpecificForm.controls['FileName'].value;
+    this.onInputAction = "confirmSave";
+    this.timeOutactivity(0, true, false,"only");
+  }
+
+  cancelTheSave(){
+    this.IsSaveConfirmed = false;
+    this.isMustSaveFile = false;
+  }
+
+
+  saveFn() {
+    this.errorMsg = '';
+    this.IsSaveConfirmed = false;
+    this.fillInTabOfCharts(this.selectedChart - 1);
+    if (this.errorMsg === '') {
+      if (this.theEvent.target.id === 'save') {
+          this.fillInCharts(this.tabParamChart[this.selectedChart - 1], this.inFileParamChart.data[this.selectedChart - 1]);
+          this.buildChart(this.selectedChart - 1);
+      } else {
+          for (var i = 0; i < this.tabParamChart.length; i++) {
+            this.fillInCharts(this.tabParamChart[i], this.inFileParamChart.data[i]);
+            this.buildChart(this.selectedChart - 1);
+          }
+      }
+    }
+    //this.isSaveFile = true;
+    this.theEvent.checkLock.iWait=5;
+    this.theEvent.iWait=5;
+    this.theEvent.checkLock.isDataModified=true;
+    this.theEvent.checkLock.isSaveFile=true;
+    this.theEvent.checkLock.iCheck=true;
+    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
+    this.theEvent.checkLock.action="saveParamChart";
+    this.theEvent.fileName = this.SpecificForm.controls['FileName'].value;
+    this.onInputAction = "saveParamChart";
+    this.timeOutactivity(5, true, true,"saveParamChart");
+    this.processSave.emit(this.theEvent);
+  }
+
+  cancelFn(event: string) {
+    this.resetBooleans();
+    this.timeOutactivity(5, true, false,"only");
+     if (event === 'cancelAll') {
+      for (var i = 0; i < this.tabParamChart.length; i++) {
+        this.fillInCharts(this.inFileParamChart.data[i], this.tabParamChart[i]);
+        this.fillInFormFromTab(i);
+        this.buildChart(i);
+      }
+    } else if (event === 'cancelOne') {
+      this.fillInCharts(this.inFileParamChart.data[this.selectedChart - 1], this.tabParamChart[this.selectedChart - 1]);
+      this.fillInFormFromTab(this.selectedChart - 1);
+      this.buildChart(this.selectedChart - 1);
+    }
+  }
+
+
+  resultAccessFile(theEvent:any){
+    //this.openFileAccess=false;
+    if (this.lockValueBeforeCheck!==this.tabLock[5].lock){
+      if (this.tabLock[5].lock===1){
+        this.enableForm();
+        this.errorMsg = "You can now update the file";
+      } else {
+        this.errorMsg = "File is locked by another user";
+        this.disableForm();
+      }
+    }
+    if (this.onInputAction === "confirmSave"){
+      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.myChartConfig);
+      this.IsSaveConfirmed = true;
+    }
+    console.log(theEvent);
+  }
 
   ngOnChanges(changes: SimpleChanges) {
 
-    var i = 0;
     for (const propName in changes) {
-      const j = changes[propName];
+      console.log('onChange report-Health propName='+propName);
       if (propName === 'tabLock'){
-        if (this.tabLock.lock===1){
+        if (this.tabLock[5].lock===1){
+          if (changes[propName].previousValue !==undefined && changes[propName].previousValue.lock!==1){
+            this.errorMsg = "You can now update the file";
+          }
           this.enableForm();
         } else {
+          if (changes[propName].previousValue !==undefined && changes[propName].previousValue.lock===1){
+            this.errorMsg = "File is locked by another user";
+          }
           this.disableForm();
         }
-      }
-      if (propName === 'actionParamChart' && changes[propName].firstChange === false) {
-          if ( this.onInputAction === "saveChart") {
-            if (this.tabLock.lock === 1 && (this.tabLock.status === 0 || this.tabLock.status === 300)) {
+      } else if (propName === 'actionParamChart' && changes[propName].firstChange === false) {
+          if ( this.onInputAction === "saveParamChart") {
+            if (this.tabLock[5].lock === 1 && (this.tabLock[5].status === 0 || this.tabLock[5].status === 300)) {
               if (this.theEvent.target.id === 'save') {
                 this.errorMsg = 'parameters for chart#' + this.selectedChart + ' have been saved';
               } else if (this.theEvent.target.id === 'saveAll') {
                 this.errorMsg = 'for all charts, parameters have been saved';
               }
             } else {
-              this.errorMsg = 'Parameters cannot be saved - error=' + this.tabLock.status;
+              this.errorMsg = 'Parameters cannot be saved - error=' + this.tabLock[5].status;
             }
             this.onInputAction = "";
         } 
-     } else if (propName==='returnDataFS' && changes[propName].firstChange === false) {
-        if (this.returnDataFS.tabLock[5].lock !== 1 && this.onInputAction === "saveChart"){
-          this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFS.errorMsg + ")" + " status=" + this.returnDataFS.tabLock[0].status;
+      } else if (propName==='returnDataFSParamChart' && changes[propName].firstChange === false) {
+        // is it needed
+        if (this.tabLock[5].lock !== 1 && this.onInputAction === "saveParamChart"){
+          this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFSParamChart.errorMsg + ")" + " status=" + this.tabLock[5].status;
         } 
-        if (this.returnDataFS.tabLock[5].lock === 1) {
+        if (this.tabLock[5].lock === 1) {
             this.enableForm();
         } else {
             this.disableForm();
         }
         this.onInputAction = "";
-      }
+      } else if ( propName==='statusSaveFn' && changes[propName].firstChange === false) {  //propName === 'callSaveFunction' ||
+        this.onInputAction = "";
+        this.theEvent.checkLock.action="";
+        this.isMustSaveFile = false;
+        this.isSaveParamChart = false;
+        if (this.statusSaveFn.status===200 || this.statusSaveFn.status===0){
+          this.errorMsg='File has been successfully saved';
+          this.isDataModified = false;
+        } else {
+          this.errorMsg=this.statusSaveFn.err;
+        }
+      } 
     }
     // //this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j)); 
   }

@@ -67,10 +67,7 @@ export class FileSystemServiceComponent {
   returnDataFS=new classHeaderReturnDataFS;
 
 ngOnInit(){
-
-  
-
-           
+       
 }
 
 onFileSystem(iWait: number) {
@@ -344,16 +341,17 @@ checkClock(refSecond:number){
 
 
 ngOnChanges(changes: SimpleChanges) { // TO BE REVIEWED 
-  
-  for (const propName in changes){
+  // var nbCall=0;
+  for (const  propName in changes){
     const j=changes[propName];
-    if (propName==='callUpdateSystemFile' && changes[propName].firstChange===false){
+    if ((propName==='callUpdateSystemFile')  && changes[propName].firstChange===false){
         console.log('ngOnChanges callUpdateSystemFile iWait=' + this.iWait);
         this.returnDataFS.onInputAction=this.onInputAction;
         this.returnDataFS.iWait = this.iWait;
+        //nbCall++;
         this.onFileSystem(this.iWait);
       }
-      if (propName==='nbCallFileSystem'){
+      else if (propName==='nbCallFileSystem'){
           this.returnDataFS.onInputAction=this.onInputAction; 
             for (var i=0; i< this.iWaitToRetrieve.length; i++){
               if (this.iWaitToRetrieve[i].accessFS===true){

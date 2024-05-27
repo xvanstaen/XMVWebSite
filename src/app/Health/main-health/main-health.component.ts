@@ -17,7 +17,7 @@ import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 // it is stored in MongoDB and accessed via ManageMongoDBService
 
 import { msginLogConsole } from '../../consoleLog'
-import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent } from '../../JsonServerClass';
+import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock } from '../../JsonServerClass';
 import { classPosDiv, getPosDiv } from '../../getPosDiv';
 
 import { getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
@@ -66,13 +66,15 @@ export class MainHealthComponent {
   @Input() credentials = new classCredentials;
   @Input() credentialsMongo = new classCredentials;
   @Input() credentialsFS = new classCredentials;
+  @Output()  onTriggerSave = new EventEmitter<any>();
+  openFileAccess:boolean=true;
 
   isRetrieveFile :boolean=false;
   iWaitToRetrieve:Array<classRetrieveFile>=[];
 
   resultCheckLimitHealth:number =0;
   resultCheckLimitCalFat:number=0;
-  resultCheckLimitHParamChart:number=0;
+  resultCheckLimitParamChart:number=0;
   resultCheckLimitRecipe:number=0;
 
   //returnGetRecord:any;
@@ -177,17 +179,8 @@ export class MainHealthComponent {
   triggerReadFile:number=0;
   triggerSaveFile:number=0;
 
-  theEvent = new classtheEvent;
-  saveEvent=new classtheEvent;
-
-  eventLockLimit={
-    iWait:0,
-    isDataModified:false,
-    isSaveFile:false,
-    lastInputAt:"",
-    iCheck:false,
-    nbCalls:0,
-  }
+  //eventLockLimit= new classCheckLock;
+  eventLockLimit= new classtheEvent;
 
   // used by ngChange on selected component
   healthFileRetrieved:number=0;
@@ -255,6 +248,7 @@ export class MainHealthComponent {
       this.EventStopWaitHTTP[i] = false;
       this.TabLoop[i]=0;
     }
+    this.eventLockLimit.checkLock.action="firstLoop";
     if (this.triggerFunction !== 0) {
       if (this.triggerFunction === 3) {
         this.TheSelectDisplays.controls['DisplayAll'].setValue('Y');
@@ -271,7 +265,7 @@ export class MainHealthComponent {
 
   resultFileSystemFn(event:any){
     console.log('mainHealth - return from file-access/fileSystem event.iWait='+event.iWait);
-    this.eventLockLimit.iCheck=false;
+    this.eventLockLimit.checkLock.iCheck=false;
     this.errorMsg="";
     event.nbRecall++
     if (event.iWait===0){
@@ -282,7 +276,7 @@ export class MainHealthComponent {
       this.resultCheckLimitCalFat++
     } else if (event.iWait===5){
       this.returnDataFSParamChart = event;
-      this.resultCheckLimitHParamChart++
+      this.resultCheckLimitParamChart++
     }  else if (event.iWait===6){
       this.returnDataFSRecipe = event;
       //this.resultCheckLimitRecipe++
@@ -295,12 +289,13 @@ export class MainHealthComponent {
   statusSaveFnHealth:any;
   callSaveFunctionCalFat:number=0;
   statusSaveFnCalFat:any;
-  callSaveFunctionParamChart:number=0;
+  //callSaveFunctionParamChart:number=0;
   statusSaveFnParamChart:any;
-  callSaveFunctionRecipe:number=0;
+  //callSaveFunctionRecipe:number=0;
   statusSaveFnRecipe:any;
 
   resultSaveRecord(event:any){
+    this.openFileAccess=false;
     if (event.iWait===0){
       if (this.actionSave==='saveCopy'){
         // reinitialise
@@ -324,7 +319,7 @@ export class MainHealthComponent {
       this.callSaveFunctionCalFat++;
     } else if (event.iWait===5){
       this.statusSaveFnParamChart=event;
-      this.callSaveFunctionParamChart++;
+      //this.callSaveFunctionParamChart++;
     } 
   }
 
@@ -489,6 +484,9 @@ export class MainHealthComponent {
   SelRadio(event: any) {
     // this.checkLockLimit(0);
     var iK=0;
+    if (this.openFileAccess===false){
+      this.openFileAccess=true;
+    }
     this.callFileSystem=false;
     this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
     this.errorMsg="";
@@ -685,10 +683,10 @@ export class MainHealthComponent {
           this.triggerReadFile++;
         }
       } 
-    } else if (i === '7') {
+    } else if (i === '7') { // Display chart
       if (NoYes === 'Y') {
         this.isDisplayChart = true;
-        if (this.tabLock[5].lock !== 1) {
+        if (this.tabLock[5].lock !== 1|| this.fileParamChart.data.length===0) {
           this.EventHTTPReceived[5]=false;
           this.tabLock[5].action='lock';
           this.iWait=5;
@@ -755,12 +753,21 @@ export class MainHealthComponent {
   }
 
   checkLockLimitFn(event:any) {
-    this.eventLockLimit = event;
-    this.eventLockLimit.nbCalls++
+    this.openFileAccess=true;
+    const saveNbCalls=this.eventLockLimit.nbCalls;
+    if (event.bucket===undefined){
+      this.eventLockLimit.checkLock = event;
+
+    } else {
+      this.eventLockLimit = event;
+    }
+    this.eventLockLimit.iWait=this.eventLockLimit.checkLock.iWait;
+    this.eventLockLimit.nbCalls=saveNbCalls+1;
     this.isRetrieveFile=true;
   }
 
   retrieveRecord(event:any){
+    this.openFileAccess=true;
     this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
     const theClass=new classRetrieveFile;
     this.iWaitToRetrieve.push(theClass);
@@ -799,42 +806,40 @@ export class MainHealthComponent {
     }
   }
 
-  processSaveParamChart() {
+  saveParamChart(event:any){
+    
+    this.openFileAccess=true;
     this.errorMsg="";
     this.fileParamChart.fileType = this.identification.fitness.fileType.myChart;
     this.fileParamChart.updatedAt = strDateTime();
-    this.saveEvent.bucket=this.identification.fitness.bucket;
-    this.saveEvent.object=this.identification.fitness.files.myChartConfig;
-    this.saveEvent.fileContent=this.fileParamChart;
-    this.saveEvent.iWait=5;
+    event.iWait=5;
+    event.bucket=this.identification.fitness.bucket;
+    if (event.fileName!==""){
+      event.object=event.fileName;
+    } else {
+      event.object=this.identification.fitness.files.myChartConfig;
+    }
+    event.fileContent=this.fileParamChart;
+    event.checkLock.iCheck=true;
+    event.saveCalls++
+    this.checkLockLimitFn(event);
   }
 
   SaveCaloriesFat(event: any) {
+    this.openFileAccess=true;
+    this.errorMsg="";
     this.isSaveCaloriesFat = true;
-    if (event.fileType === undefined) {
-      this.calfatNameFile = event;
-    }
-    if (this.identification.triggerFileSystem === "No") {
-      this.processSaveCaloriesFat(event);
-    } else {
-      this.eventLockLimit.iWait=1;
-      this.eventLockLimit.isDataModified=true;
-      this.eventLockLimit.isSaveFile=true;
-      this.eventLockLimit.lastInputAt=event.lastInput;
-      this.eventLockLimit.iCheck=true;
-      this.isCheckToLimit=true;
-      event.checkLock.iCheck=true;
-    }
-  }
-
-  processSaveCalFatRecipe(event:any){
+    //if (event.fileType === undefined) {
+    //  this.calfatNameFile = event;
+    //}
     if (event.target.id==='RecipeSave'){
       this.processSaveRecipe(event);
     } else {
       this.processSaveCaloriesFat(event);
     }
-    this.saveEvent.saveCalls++
-    this.triggerSaveFile++
+    event.checkLock.iCheck=true;
+    event.saveCalls++
+    this.checkLockLimitFn(event);
   }
 
   processSaveCaloriesFat(event: any) {
@@ -842,11 +847,10 @@ export class MainHealthComponent {
         this.ConfigCaloriesFat.fileType = this.identification.configFitness.fileType.calories;
       }
       this.ConfigCaloriesFat.updatedAt = strDateTime();
-      this.saveEvent.bucket=this.identification.configFitness.bucket;
-      this.saveEvent.object=event.fileName;
-      this.saveEvent.fileContent=this.ConfigCaloriesFat;
-      this.saveEvent.iWait=1;
-      event.checkLock.iCheck=true;
+      event.bucket=this.identification.configFitness.bucket;
+      event.object=event.fileName;
+      event.fileContent=this.ConfigCaloriesFat;
+      event.iWait=1;
   }
 
   processSaveRecipe(event: any) {
@@ -854,12 +858,10 @@ export class MainHealthComponent {
         this.fileRecipe.fileType = this.identification.fitness.fileType.recipe;
       }
       this.fileRecipe.updatedAt = strDateTime();
-      //this.ConfigCaloriesFat.updatedAt = strDateTime();
-      this.saveEvent.bucket=this.identification.fitness.bucket;
-      this.saveEvent.object=event.fileName;
-      this.saveEvent.fileContent=this.fileRecipe;
-      this.saveEvent.iWait=6;
-      event.checkLock.iCheck=true;
+      event.bucket=this.identification.fitness.bucket;
+      event.object=event.fileName;
+      event.fileContent=this.fileRecipe;
+      event.iWait=6;
   }
 
   confirmSaveAction:boolean=false;
@@ -867,11 +869,11 @@ export class MainHealthComponent {
   confirmSave(event: any) {
     if (this.tabLock[event.checkLock.iWait].lock === 1) {
       this.confirmSaveAction = true;
-      this.eventLockLimit.iWait=event.checkLock.iWait;
-      this.eventLockLimit.isDataModified=event.checkLock.isDataModified;
-      this.eventLockLimit.isSaveFile=event.checkLock.isSaveFile;
-      this.eventLockLimit.lastInputAt=event.lastInput;
-      this.eventLockLimit.iCheck=true;
+      this.eventLockLimit.checkLock.iWait=event.checkLock.iWait;
+      this.eventLockLimit.checkLock.isDataModified=event.checkLock.isDataModified;
+      this.eventLockLimit.checkLock.isSaveFile=event.checkLock.isSaveFile;
+      this.eventLockLimit.checkLock.lastInputAt=event.lastInput;
+      this.eventLockLimit.checkLock.iCheck=true;
       this.eventLockLimit.nbCalls++
       this.isCheckToLimit=true;
       this.confirmSaveAction = false;
@@ -886,10 +888,10 @@ export class MainHealthComponent {
       this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
     }
     this.HealthAllData.updatedAt = strDateTime();
-    this.saveEvent.bucket=this.identification.fitness.bucket;
-    this.saveEvent.object=this.SpecificForm.controls["FileName"].value;
-    this.saveEvent.fileContent=this.HealthAllData;
-    this.saveEvent.iWait=0;
+    this.eventLockLimit.bucket=this.identification.fitness.bucket;
+    this.eventLockLimit.object=this.SpecificForm.controls["FileName"].value;
+    this.eventLockLimit.fileContent=this.HealthAllData;
+    this.eventLockLimit.iWait=0;
     this.triggerSaveFile++
   }
 
@@ -948,13 +950,14 @@ export class MainHealthComponent {
       this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
     }
     this.HealthAllData.updatedAt = strDateTime();
-    this.saveEvent.bucket=this.identification.fitness.bucket;
-    this.saveEvent.object=event.fileName;
-    this.saveEvent.fileContent=this.HealthAllData;
-    this.saveEvent.iWait=0;
+    event.bucket=this.identification.fitness.bucket;
+    event.object=event.fileName;
+    event.fileContent=this.HealthAllData;
+    event.iWait=0;
 
-    this.saveEvent.saveCalls++
+    event.saveCalls++
     this.triggerSaveFile++
+    this.checkLockLimitFn(event);
   }
 
   @HostListener('window:unload', ['$event'])
@@ -1010,17 +1013,18 @@ export class MainHealthComponent {
     msginLogConsole(msg, this.myConsole, this.myLogConsole, this.SaveConsoleFinished, this.HTTP_Address, this.type);
   }
 
-  /*
+
   ngOnChanges(changes: SimpleChanges) {
     console.log('ngOnChange main-health');
     for (const propName in changes) {
       const j = changes[propName];
-      if (propName === 'xxx' && changes[propName].firstChange === false) {
+      if (propName === 'theTriggerSaveFile' && changes[propName].firstChange === false) {
         console.log('xxx');
+        this.saveParamChart(this.eventLockLimit);
 
       } 
     }
   }
-  */
+
 
 }

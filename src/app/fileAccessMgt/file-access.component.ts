@@ -61,20 +61,21 @@ export class MainManageFileComponent {
 
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
-  @Input() triggerFunction: number = 0;
   
   @Input() credentials = new classCredentials;
   @Input() credentialsMongo = new classCredentials;
   @Input() credentialsFS = new classCredentials;
 
   @Input() iWaitToRetrieve:Array<classRetrieveFile>=[];
-  @Input() eventCheckToLimit:any;
+  @Input() eventCheckToLimit=new classtheEvent;
   @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-  @Input() triggerCheckToLimit:any;
+  @Input() triggerCheckToLimit:number=0;
   @Input() triggerReadFile:number=0;
   @Input() triggerSaveFile:number=0;
   @Input() triggerFileSystem:number=0;
-  @Input() eventSaveRecord=new classtheEvent;
+  @Input() triggerFunction: number = 0;
+
+  @Input() secondaryLevelFn:boolean=false;
 
   @Output() returnFile = new EventEmitter<any>();
   @Output() returnSaveFn = new EventEmitter<any>();
@@ -145,22 +146,27 @@ export class MainManageFileComponent {
 
 
   ngOnInit(): void {
+    console.log('file-access - ngOnInit');
     // used to open files in parallel using the google and mongo servers
-    for (var i=0; i<this.maxEventHTTPrequest; i++){
-      this.EventHTTPReceived[i] = false;
-      this.EventStopWaitHTTP[i] = false;
-      this.TabLoop[i]=0;
+    if (this.secondaryLevelFn===false){
+      for (var i=0; i<this.maxEventHTTPrequest; i++){
+        this.EventHTTPReceived[i] = false;
+        this.EventStopWaitHTTP[i] = false;
+        this.TabLoop[i]=0;
+      }
+    } else {
+      this.nbCallFileSystem=2;
     }
-
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    
+    console.log('file-access - ngOnChanges');
     var callSaveProcess=0;
+    var isChecked=false;
     for (const propName in changes) {
-      const j = changes[propName];
-      if (propName === 'eventCheckToLimit' && changes[propName].firstChange === false) {
-        if (this.eventCheckToLimit.iCheck===true){
+      if ((propName === 'eventCheckToLimit' || propName === 'triggerCheckToLimit') &&  isChecked===false && this.eventCheckToLimit.checkLock.action!=="firstLoop") {  
+        if (this.eventCheckToLimit.checkLock.iCheck===true){
+          isChecked=true;
           this.nbRecallFS=0;
           console.log('ngOnChanges file-access eventCheckToLimit iWait=' + this.eventCheckToLimit.iWait);
           this.checkLockLimit(this.eventCheckToLimit);
@@ -178,10 +184,10 @@ export class MainManageFileComponent {
         if (this.iWaitToRetrieve.length>0){
           this.nbCallFileSystem++
         }
-      } else if ((propName === 'eventSaveRecord' || propName==='triggerSaveFile')&& changes[propName].firstChange === false) {
+      } else if ((propName === 'eventSaveRecord' || propName==='triggerSaveFile' || propName==='theTriggerSaveFile')&& changes[propName].firstChange === false) {
           if (callSaveProcess===0){
-            console.log('ngOnChanges file-access eventSaveRecord iWait=' + this.eventSaveRecord.iWait);
-            this.mainSaveProcess(this.eventSaveRecord);
+            console.log('ngOnChanges file-access eventSaveRecord iWait=' + this.eventCheckToLimit.iWait);
+            this.mainSaveProcess(this.eventCheckToLimit);
             callSaveProcess++
           }
       }
@@ -200,7 +206,7 @@ export class MainManageFileComponent {
       }
     } else {
       this.returnDataFS = event;
-      console.log(' fileAccess end process resultFS; emit returnDataFS to calling apps (mainHealth) event.iWait=' + event.iWait +  '   returnDataFS=' + this.returnDataFS.iWait);
+      console.log(' fileAccess end process resultFS; emit returnDataFS to calling apps (mainHealth) event.checkLock.iWait=' + event.iWait +  '   returnDataFS=' + this.returnDataFS.iWait);
       this.resultFileSystem.emit(this.returnDataFS);
     }
   }
@@ -213,36 +219,40 @@ export class MainManageFileComponent {
   
   errCalcCalFat:string="";
   checkLockLimit(event:any) {
+    console.log('file-access - start checkLockLimit - this.nbCallFileSystem='+this.nbCallFileSystem+'  this.returnDataFS.nbRecall='+this.returnDataFS.nbRecall);
     var valueCheck = { action: '', lockValue: 0, lockAction: '' };
     this.errCalcCalFat="";
     if (this.identification.triggerFileSystem === "No") { //"No"
       valueCheck.action = "noAction";
     } else {
-      valueCheck = fnCheckLockLimit(this.configServer, this.tabLock, event.iWait, event.lastInputAt, event.isDataModified, event.isSaveFile);
+      valueCheck = fnCheckLockLimit(this.configServer, this.tabLock, event.checkLock.iWait, event.checkLock.lastInputAt, event.checkLock.isDataModified, event.checkLock.isSaveFile);
     }
     if (valueCheck.action !== 'noAction') {
       if (valueCheck.action === 'changeTabLock') {
-        this.tabLock[event.iWait].lock = valueCheck.lockValue;
+        this.tabLock[event.checkLock.iWait].lock = valueCheck.lockValue;
       } else if (valueCheck.action === 'ProcessSave') {
-        this.returnDataFS.iWait=event.iWait;
+        this.mainSaveProcess(this.eventCheckToLimit);
+        /*
+        this.returnDataFS.iWait=event.checkLock.iWait;
         this.returnDataFS.processSave=true;
         this.resultFileSystem.emit(this.returnDataFS);
+        */
         // this.nbCallFileSystem++;
       } else {
         this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
         const theClass=new classRetrieveFile;
         this.iWaitToRetrieve.push(theClass);
-        this.iWaitToRetrieve[0].iWait=event.iWait;
+        this.iWaitToRetrieve[0].iWait=event.checkLock.iWait;
         this.iWaitToRetrieve[0].accessFS=true;
         this.callFileSystem=true; 
         this.nbCallFileSystem++;
         if (valueCheck.action === 'updateSystemFile') {
-          this.tabLock[event.iWait].action = valueCheck.lockAction;
+          this.tabLock[event.checkLock.iWait].action = valueCheck.lockAction;
         } else if (valueCheck.action === 'checkFile') {
           if (event.isSaveFile === false) {
-            this.tabLock[event.iWait].action = 'check&update';
+            this.tabLock[event.checkLock.iWait].action = 'check&update';
           } else {
-            this.tabLock[event.iWait].action = 'check';
+            this.tabLock[event.checkLock.iWait].action = 'check';
           }
         } 
       }
@@ -250,12 +260,14 @@ export class MainManageFileComponent {
       this.counterActions++
       this.returnActionFile=this.counterActions;
       this.returnDataFS.nbRecall++
-      this.returnDataFS.iWait=event.iWait;
+      this.returnDataFS.iWait=event.checkLock.iWait;
       this.returnDataFS.errorCode=0;
       this.returnDataFS.errorMsg="";
       this.returnDataFS.checkToLimit=0; // no action needed; process should continue
       this.resultFileSystem.emit(this.returnDataFS);
     }
+
+    console.log('file-access - end checkLockLimit - this.nbCallFileSystem='+this.nbCallFileSystem+'  this.returnDataFS.nbRecall='+this.returnDataFS.nbRecall);
   }
   
   retrieveRecord(event:any){
@@ -297,7 +309,7 @@ export class MainManageFileComponent {
     this.waitHTTP(this.TabLoop[iWait], 3000, iWait);
     this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject)
       .subscribe((data) => {
-          console.log('getRecord - data received for iWait='+iWait);
+            console.log('getRecord - data received for iWait='+iWait);
           this.EventStopWaitHTTP[iWait]=true;
           this.returnGetRecord.iWait = iWait;
           var noPb=true;
@@ -348,6 +360,7 @@ export class MainManageFileComponent {
   SaveNewRecord(GoogleBucket: string, GoogleObject: string, record: any, iWait: number) {
     //var file=new File ([JSON.stringify(this.HealthAllData)],GoogleObject, {type: 'application/json'});
     var file = new File([JSON.stringify(record)], GoogleObject, { type: 'application/json' });
+    const iWaitSave=iWait;
     if (GoogleObject === 'ConsoleLog.json') {
       const myTime = new Date();
       GoogleObject = 'ConsoleLog.json-' + myTime.toString().substring(4, 21);
@@ -369,7 +382,7 @@ export class MainManageFileComponent {
           this.returnActionFile=this.counterActions;
           this.tabLock[iWait].status = 0;
           this.returnGetRecord.status=200;
-          this.returnGetRecord.iWait=iWait;
+          this.returnGetRecord.iWait=iWaitSave;
           this.returnSaveFn.emit(this.returnGetRecord);
           //this.errorMsg = 'File "' + GoogleObject + '" is successfully stored in the cloud';
         }

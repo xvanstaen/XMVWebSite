@@ -98,6 +98,14 @@ export class HealthComponent  {
   @Input() actionHealth:number=0;
   @Input() createDropDownCalFat:number=0;
 
+  @Input() triggerCheckToLimit:number=8000;
+
+  secondaryLevelFn:boolean=true;
+
+  lockValueBeforeCheck:number=0;
+
+  openFileAccess:boolean=false;
+
   myLogConsole: boolean = false;
   myConsole: Array<msgConsole> = [];
   returnConsole: Array<msgConsole> = [];
@@ -363,14 +371,26 @@ export class HealthComponent  {
 
   isUserTimeOut:boolean=false;
 
-  timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean){
-      
-      window.cancelAnimationFrame(this.idAnimation);
-      this.callTimeToGo();
-      this.refDate=new Date();
-      this.lastInputAt = strDateTime();
-      this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt, iCheck:true,nbCalls:0});
+
+  timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
+    window.cancelAnimationFrame(this.idAnimation);
+    this.callTimeToGo();
+    this.refDate=new Date();
+    this.lastInputAt = strDateTime();
+    if (theAction==="only"){
+      this.openFileAccess=true;
+      this.theEvent.checkLock.action='checkTO';
+      this.theEvent.checkLock.iWait=iWait;
+      this.theEvent.checkLock.isDataModified=isDataModified;
+      this.theEvent.checkLock.isSaveFile=isSaveFile;
+      this.theEvent.checkLock.iCheck=true;
+      this.theEvent.checkLock.lastInputAt=this.lastInputAt;
+      this.theEvent.checkLock.nbCalls++;
+      this.triggerCheckToLimit++
+      this.lockValueBeforeCheck=this.tabLock[0].lock;
+      //this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt, iCheck:true,nbCalls:0,action:theAction});
     }
+  }
 
   refDate=new Date();
   displaySec:number=0;
@@ -412,6 +432,30 @@ export class HealthComponent  {
     }
   }
 
+  resultAccessFile(event:any){
+    if (this.lockValueBeforeCheck!==this.tabLock[0].lock){
+      if (this.tabLock[0].lock===1){
+        this.errorMsg = "You can now update the file";
+      } else {
+        this.errorMsg = "File is locked by another user";
+      }
+    }
+    if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){
+      this.errorMsg = this.returnDataFSHealth.errorMsg;
+    } 
+    else  if (this.tabLock[0].lock === 1 && this.onInputAction === "onInputDailyAll") {
+      this.onInputDailyAllA(this.theEvent);
+      this.onInputAction="";
+    } else if (this.tabLock[0].lock===1 && this.onInputAction === "onAction") {
+      this.onActionA(this.theEvent);
+      this.onInputAction="";
+    } else if (this.onInputAction === "confirmSave"){
+      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+      this.IsSaveConfirmedAll = true;
+    }
+    console.log(event);
+  }
+
   resetBooleans() {
     this.isDeleteItem = false;
     this.dialogue[this.prevDialogue] = false;
@@ -439,7 +483,7 @@ export class HealthComponent  {
 
   checkText: string = '';
   SearchText(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.resetBooleans();
     if (event.currentTarget.id === 'search' && event.currentTarget.value !== '') {
       this.checkText = event.currentTarget.value.toLowerCase().trim();
@@ -449,7 +493,7 @@ export class HealthComponent  {
   }
 
   actionSearchText(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.resetBooleans();
     if (event.target.id === 'submit'){
       this.checkText = this.TheSelectDisplays.controls['searchString'].value;
@@ -461,7 +505,7 @@ export class HealthComponent  {
 
 
   dateRangeSelection(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.resetBooleans();
     this.errorMsg = '';
     this.isRangeDateError = false;
@@ -504,7 +548,7 @@ export class HealthComponent  {
   }
 
   clearDates(){
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.TheSelectDisplays.controls['startRange'].setValue('');
     this.TheSelectDisplays.controls['endRange'].setValue('');
     this.resetBooleans();
@@ -549,6 +593,9 @@ export class HealthComponent  {
     this.errorMsg = '';
     var nbDelItem = 0;
     if (item === 'Food') {
+      if (this.tabFood.length===0){
+        this.createDropDownCalFatFn();
+      }
       if (this.tabInputFood.length > 0 && value.substring(0, this.strInputFood.length).toLowerCase() === this.strInputFood.toLowerCase().trim()) {
         for (var i = this.tabInputFood.length - 1; i > -1; i--) {
           if (this.tabInputFood[i].name.toLowerCase().trim().indexOf(value.toLowerCase().trim()) === -1) {
@@ -610,7 +657,7 @@ export class HealthComponent  {
   }
 
   onSelMealFood(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.errorMsg = '';
     this.manageIds(event.target.id);
     if (event.currentTarget.id.substring(0, 7) === 'selFood') {
@@ -629,7 +676,7 @@ export class HealthComponent  {
     this.onInputAction = 'onInputDailyAll';
     this.offsetLeft = event.currentTarget.offsetLeft;
     this.offsetWidth = event.currentTarget.offsetWidth;
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
   }
 
   onInputDailyAllA(event: any) {
@@ -680,14 +727,14 @@ export class HealthComponent  {
   }
 
   onDropDownAll(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.theEvent.target.id = 'selAction-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
     this.theEvent.target.textContent = event.target.textContent;
     this.onAction(this.theEvent);
   }
 
   DelAfterConfirm(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.resetBooleans();
     this.isDeleteItem = false;
     if (event.currentTarget.id.substring(0, 13) === 'YesDelConfirm') {
@@ -712,7 +759,7 @@ export class HealthComponent  {
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.textContent = event.target.textContent;
     this.onInputAction = 'onAction';
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
   }
 
   onActionA(event: any) {
@@ -985,7 +1032,7 @@ export class HealthComponent  {
     this.theEvent.checkLock.lastInputAt=this.lastInputAt;
     this.theEvent.fileName=this.SpecificForm.controls['FileName'].value;
     this.onInputAction = "confirmSave";
-    this.timeOutactivity(0, true, false);
+    this.timeOutactivity(0, true, false,"only");
   }
 
   SaveHealth(event: any) {
@@ -998,14 +1045,17 @@ export class HealthComponent  {
     this.theEvent.checkLock.isSaveFile=true;
     this.theEvent.checkLock.lastInputAt=this.lastInputAt;
     this.theEvent.fileName = this.SpecificForm.controls['FileName'].value;
+    this.theEvent.object = this.SpecificForm.controls['FileName'].value;
+    this.theEvent.checkLock.action="saveHealth";
     this.onInputAction = "saveHealth";
-    this.timeOutactivity(0, true, true);
+    this.timeOutactivity(0, true, true,"saveHealth");
+    this.processSaveHealth.emit(this.theEvent);
   }
 
   saveHealthAfterCheckToLimit(){
-    this.theEvent.checkLock.isSaveFile=false;
-    this.theEvent.checkLock.isDataModified=false;
-    this.processSaveHealth.emit(this.theEvent);
+    //this.theEvent.checkLock.isSaveFile=false;
+    //this.theEvent.checkLock.isDataModified=false;
+    //this.processSaveHealth.emit(this.theEvent);
   }
 
   cancelUpdateAll(event: any) {
@@ -1033,7 +1083,7 @@ export class HealthComponent  {
       this.onInputDailyAllA(this.theEvent);
       this.onInputAction="";
     } else if (this.tabLock[0].lock===1 && this.onInputAction === "onAction") {
-      this.onActionA(this.theEvent);
+      //this.onActionA(this.theEvent);
       this.onInputAction="";
     } else if (this.onInputAction === "confirmSave"){
       this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
@@ -1080,7 +1130,7 @@ export class HealthComponent  {
           if (this.onInputAction === "onInputDailyAll") {
             this.onInputDailyAllA(this.theEvent);
           } else if (this.onInputAction === "onAction") {
-            this.onActionA(this.theEvent);
+//            this.onActionA(this.theEvent);
           } else if (this.onInputAction === "confirmSave"){
             this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
             this.IsSaveConfirmedAll = true;
@@ -1113,6 +1163,12 @@ console.log("**** health component - ngOnChange - this.onInputAction === saveHea
         } else if (propName === 'callSaveFunction') {
             this.isMustSaveFile = false;
             this.isSaveHealth = false;
+            this.IsSaveConfirmedAll = false;
+            this.theEvent.checkLock.isDataModified = false;
+            this.theEvent.checkLock.isSaveFile = false;
+            this.theEvent.checkLock.iCheck = true;
+            this.resetBooleans();
+
             if (this.statusSaveFn.status===200 || this.statusSaveFn.status===0){
               this.errorMsg='File has been successfully saved';
               this.isAllDataModified = false;

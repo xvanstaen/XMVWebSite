@@ -50,6 +50,8 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
     var j=0;
     var cal= 0;
     var refDailySaturated: Array<number> = [];
+    var refDailySugar: Array<number> = [];
+    var refDailyCarbs: Array<number> = [];
 
     var iDataset = -1;
     var nbLabel = 0;
@@ -66,7 +68,9 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
     var strMonth = "";
     
 
-    refDailySaturated.splice(0, refDailySaturated.length);
+    //refDailySaturated.splice(0, refDailySaturated.length);
+    //refDailySugar.splice(0, refDailySugar.length);
+    //refDailyCarbs.splice(0, refDailyCarbs.length);
     datasetsSpecialBar.splice(0, datasetsSpecialBar.length);
     dateLabelSpecial.splice(0, dateLabelSpecial.length);
 
@@ -168,8 +172,12 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Protein;
               } else if (constLab[j] === "Carbs") {
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Carbs;
+                if (refDailyCarbs[iDataset] === undefined) { refDailyCarbs[iDataset] = 0; }
+                  refDailyCarbs[iDataset] = refDailyCarbs[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.125;
               } else if (constLab[j] === "Sugar") {
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Sugar;
+                if (refDailySugar[iDataset] === undefined) { refDailySugar[iDataset] = 0; }
+                  refDailySugar[iDataset] = refDailySugar[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.025;
               } else if (constLab[j] === "Total Fat") {
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Fat.Total;
               } else if (constLab[j] === "Cholesterol") {
@@ -177,7 +185,7 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
               } else if (constLab[j] === "Saturated Fat") {
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Fat.Saturated;
                 if (refDailySaturated[iDataset] === undefined) { refDailySaturated[iDataset] = 0; }
-                refDailySaturated[iDataset] = refDailySaturated[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * identification.health.SaturatedFat / 9;
+                  refDailySaturated[iDataset] = refDailySaturated[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * identification.health.SaturatedFat / 9;
               } else if (constLab[j] === "Calories burnt") {
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories;
     
@@ -199,27 +207,31 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
               //refDailySaturated[iDataset] = returnData.refSaturated;
     
               if (configChart[j] === "Proteins") {
-                datasetsSpecialBar[j].data[iDataset] == addWeekly + healthData.tabDailyReport[i].total.Protein;
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Protein;
               } else if (configChart[j] === "Carbs") {
-                datasetsSpecialBar[j].data[iDataset] == addWeekly + healthData.tabDailyReport[i].total.Carbs;
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Carbs;
+                if (refDailyCarbs[iDataset] === undefined) { refDailyCarbs[iDataset] = 0; }
+                  refDailyCarbs[iDataset] = refDailyCarbs[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.125;
               } else if (configChart[j] === "Sugar") {
-                datasetsSpecialBar[j].data[iDataset] == addWeekly + healthData.tabDailyReport[i].total.Sugar;
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Sugar;
+                if (refDailySugar[iDataset] === undefined) { refDailySugar[iDataset] = 0; }
+                  refDailySugar[iDataset] =  refDailySugar[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.025;
               } else if (configChart[j] === "Total Fat") {
-                datasetsSpecialBar[j].data[iDataset] == addWeekly + healthData.tabDailyReport[i].total.Fat.Total;
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Fat.Total;
               } else if (configChart[j] === "Cholesterol") {
-                datasetsSpecialBar[j].data[iDataset] == addWeekly + healthData.tabDailyReport[i].total.Cholesterol;
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Cholesterol;
               } else if (configChart[j] === "Saturated Fat") {
-                datasetsSpecialBar[j].data[iDataset] == addWeekly + healthData.tabDailyReport[i].total.Fat.Saturated;
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Fat.Saturated;
                 if (refDailySaturated[iDataset] === undefined) { refDailySaturated[iDataset] = 0; }
-                refDailySaturated[iDataset] = refDailySaturated[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * identification.health.SaturatedFat / 9;
+                  refDailySaturated[iDataset] = refDailySaturated[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * identification.health.SaturatedFat / 9;
               } else if (configChart[j] === "Calories burnt") {
-                datasetsSpecialBar[j].data[iDataset] == addWeekly + Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories;
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories;
               } else if (configChart[j] === "Calories intake") {
-                datasetsSpecialBar[j].data[iDataset] == addWeekly + healthData.tabDailyReport[i].total.Calories;
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Calories;
               }
             }
           }
         }
       }
-      return ({datasets:datasetsSpecialBar,refSaturated:refDailySaturated})
+      return ({datasets:datasetsSpecialBar, refSaturated:refDailySaturated, refSugar:refDailySugar, refCarbs:refDailyCarbs})
 }

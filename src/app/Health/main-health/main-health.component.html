@@ -1,17 +1,14 @@
 
-
-
+<div *ngIf="openFileAccess===true">
     <app-file-access 
-    [configServer]="configServer" [identification]="identification" [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
-    [iWaitToRetrieve]="iWaitToRetrieve" [tabLock]="tabLock" [eventCheckToLimit]="eventLockLimit"
-    [eventSaveRecord]="saveEvent"
-    [triggerFileSystem]="triggerFileSystem" [triggerReadFile]="triggerReadFile" [triggerSaveFile]="triggerSaveFile"
-    (returnFile)="resultGetRecord($event)" (returnSaveFn)="resultSaveRecord($event)" (resultFileSystem)="resultFileSystemFn($event)"
-   
+        [configServer]="configServer" [identification]="identification" [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
+        [iWaitToRetrieve]="iWaitToRetrieve" [tabLock]="tabLock" [eventCheckToLimit]="eventLockLimit"
+        [triggerFileSystem]="triggerFileSystem" [triggerReadFile]="triggerReadFile" [triggerSaveFile]="triggerSaveFile"
+        (returnFile)="resultGetRecord($event)" (returnSaveFn)="resultSaveRecord($event)" (resultFileSystem)="resultFileSystemFn($event)"
     >
 
     </app-file-access>
-
+</div>
 
     <div id='posTopHealth' [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:240px; margin-left:20px; border:solid 2px blue; ">
         <div class="skipLine">&nbsp;</div>  
@@ -91,7 +88,7 @@
             [callSaveFunction]="callSaveFunctionHealth" [statusSaveFn]="statusSaveFnHealth"
             (initTrackRecord)="initTrackRecord()" (retrieveRecord)="retrieveRecord($event)"
             (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
-            (cancelUpdates)="cancelUpdates($event)"  (processSaveHealth)="processSaveHealth($event)"
+            (cancelUpdates)="cancelUpdates($event)" (processSaveHealth)="processSaveHealth($event)"
             (saveCopy)="saveCopy()" (unlockFile)="unlockFile($event)"
         >
         </app-health>
@@ -101,10 +98,10 @@
     <div id='posTopAppCalFat' *ngIf="isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true">   <!--    && tabLock[1].lock!==3 -->
         <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay" 
             [actionCalFat]="actionCalFat" [actionRecipe]="actionRecipe" [calFatFileRetrieved]="calFatFileRetrieved" [recipeFileRetrieved]="recipeFileRetrieved"
-            [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock[1]" 
+            [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock" 
             [returnDataFSRecipe]="returnDataFSRecipe" [returnDataFSCalFat]="returnDataFSCalFat" [resultCheckLimitCalFat]="resultCheckLimitCalFat"
-            [callSaveFunction]="callSaveFunctionCalFat" [statusSaveFn]="statusSaveFnCalFat"
-            (checkLockLimit)="checkLockLimitFn($event)"  (processSaveCalFatRecipe)="processSaveCalFatRecipe($event)"
+            [statusSaveFn]="statusSaveFnCalFat" [callSaveFunctionCalFat]="callSaveFunctionCalFat"
+            (processSave)="SaveCaloriesFat($event)" (checkLockLimit)="checkLockLimitFn($event)" 
           >
         </app-calories-fat>
         <div class="skipLine">&nbsp;</div>
@@ -114,9 +111,11 @@
 
     <div id='posTopAppReportHealth' *ngIf="isDisplayChart===true && EventHTTPReceived[4]===true && EventHTTPReceived[0]===true && EventHTTPReceived[5]===true"> <!--  && tabLock[5].lock!==3 -->
         
-        <app-report-health [identification]="identification"  [configServer]="configServer"  [inFileParamChart]="fileParamChart" [tabLock]="tabLock[5]"
+        <app-report-health [identification]="identification"  [configServer]="configServer"  [inFileParamChart]="fileParamChart" [tabLock]="tabLock"
             [ConfigChartHealth]="ConfigChart.chartHealth"  [HealthAllData]="HealthAllData"  [actionParamChart]="actionParamChart" 
-             (processSaveHealth)="processSaveHealth($event)" (retrieveRecord)="retrieveRecord($event)"  (unlockFile)="unlockFile($event)"
+            [resultCheckLimitParamChart]="resultCheckLimitParamChart" [returnDataFSParamChart]="returnDataFSParamChart"
+            [statusSaveFn]="statusSaveFnParamChart" 
+            (processSave)="saveParamChart($event)" (retrieveRecord)="retrieveRecord($event)"  (unlockFile)="unlockFile($event)"
              (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
              >
            

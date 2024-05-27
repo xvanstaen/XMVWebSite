@@ -3,6 +3,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
+    <div *ngIf="openFileAccess===true">
+        <app-file-access 
+            [configServer]="configServer" [identification]="identification" 
+            [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit"
+            [secondaryLevelFn]="secondaryLevelFn"
+            (resultFileSystem)="resultAccessFile($event)"
+        >
+    
+        </app-file-access>
+    </div>
     <div style="border:solid green 2px; display:inline-block;margin-top:8px; margin-left:20px; background-color: lightskyblue;">
         <div *ngIf="errorMsg!==''&& errorFn==='' ">
             <div class="skipLine">&nbsp;</div>
@@ -386,7 +396,7 @@
             <div class="skipLine">&nbsp;</div>
             <div *ngIf="isAllDataModified===true && tabLock[0].lock !==2">
             
-                <span *ngIf="IsSaveConfirmedAll===false">
+                <span *ngIf="IsSaveConfirmedAll===false && isSaveHealth===false">
                     <div class="msg"  style="margin-left:10px;">
                             File has been modified
                         <button id='AllConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
