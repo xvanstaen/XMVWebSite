@@ -104,7 +104,7 @@ export class HealthComponent  {
 
   lockValueBeforeCheck:number=0;
 
-  openFileAccess:boolean=false;
+  //openFileAccess:boolean=false;
 
   myLogConsole: boolean = false;
   myConsole: Array<msgConsole> = [];
@@ -373,12 +373,14 @@ export class HealthComponent  {
 
 
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
+    console.log('Health component - timeOutactivity');
     window.cancelAnimationFrame(this.idAnimation);
     this.callTimeToGo();
     this.refDate=new Date();
     this.lastInputAt = strDateTime();
+
     if (theAction==="only"){
-      this.openFileAccess=true;
+      //this.openFileAccess=true;
       this.theEvent.checkLock.action='checkTO';
       this.theEvent.checkLock.iWait=iWait;
       this.theEvent.checkLock.isDataModified=isDataModified;
@@ -433,6 +435,7 @@ export class HealthComponent  {
   }
 
   resultAccessFile(event:any){
+    console.log('Health component - resultAccessFile');
     if (this.lockValueBeforeCheck!==this.tabLock[0].lock){
       if (this.tabLock[0].lock===1){
         this.errorMsg = "You can now update the file";
@@ -457,6 +460,7 @@ export class HealthComponent  {
   }
 
   resetBooleans() {
+    console.log('Health component - resetBooleans');
     this.isDeleteItem = false;
     this.dialogue[this.prevDialogue] = false;
     this.tabInputMeal.splice(0, this.tabInputMeal.length);
@@ -1075,7 +1079,10 @@ export class HealthComponent  {
     this.isMustSaveFile = false;
   }
 
+//  checkTimeOut:boolean=true;
+
   afterCheckFS(){
+    console.log('Health component - afterCheckFS - this.onInputAction='+this.onInputAction);
     if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){
       this.errorMsg = this.returnDataFSHealth.errorMsg;
     } 
@@ -1097,6 +1104,7 @@ export class HealthComponent  {
       this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFSHealth.errorMsg + ")" + " status=" + this.tabLock[0].status;
       this.isMustSaveFile = false;
       this.isSaveHealth = false;
+  //    this.checkTimeOut = false;
     } else if (this.tabLock[0].lock === 2) {
           this.isAllDataModified = false; // is envionment reinitialised
           this.isSaveHealth = false;
@@ -1107,6 +1115,7 @@ export class HealthComponent  {
 
   firstLoop:boolean=true;
   ngOnChanges(changes: SimpleChanges) {
+    console.log('Health component - ngOnChanges - this.onInputAction='+this.onInputAction);
     var callAfterCheck=0;
     if (this.firstLoop===true){
       this.firstLoop=false;

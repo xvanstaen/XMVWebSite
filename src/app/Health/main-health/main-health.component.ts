@@ -40,6 +40,7 @@ import { AccessConfigService } from 'src/app/CloudServices/access-config.service
 
 import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 import { FillHealthAllInOut } from 'src/app/copyFilesFunction';
+import { TheMonths } from 'src/app/apt_code_name';
 
 @Component({
   selector: 'app-main-health',
@@ -451,18 +452,24 @@ export class MainHealthComponent {
   }
 
   processCalculateCalFat(){
-    this.errCalcCalFat = '';
+    var nbErrors=0;
     this.triggerCalculateCalFat=false;
+
     for (var j = 0; j < this.HealthAllData.tabDailyReport.length; j++) {
       this.calculateHealth(this.HealthAllData.tabDailyReport[j]);
-      if (this.errorMsg !== '') {
-        this.errCalcCalFat = 'errors found while caculating calories and fat';
+      if (this.returnData.error !== 0) {
+        nbErrors=nbErrors+this.returnData.error;
       }
       this.HealthAllData.tabDailyReport[j].total = this.returnData.outHealthData.total;
       this.HealthAllData.tabDailyReport[j].meal = this.returnData.outHealthData.meal;
     }
     this.initTrackRecord();
-    this.errorMsg = "calculatoin of calories and fat is completed; " + this.errorMsg;
+    this.errorMsg = "  *** Calculation of calories and fat is completed"
+    if (nbErrors>0) {
+      this.errCalcCalFat =  '  ***  ' + nbErrors + ' errors found while caculating calories and fat';
+    } else {
+      this.errCalcCalFat="";
+    }
     this.TheSelectDisplays.controls['CalculCalories'].setValue('N');
   }
 
@@ -916,7 +923,6 @@ export class MainHealthComponent {
 
   processSaveHealth(event: any) {
     this.errorMsg = '';
-    this.errCalcCalFat = '';
     var trouve = false;
     var i = 0
     for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
@@ -938,8 +944,8 @@ export class MainHealthComponent {
       if (trouve === true) {
           this.calculateHealth(this.HealthAllData.tabDailyReport[i]);
           if (this.errorMsg !== '') {
-            this.errCalcCalFat = 'errors found while caculating calories and fat (' + this.errorMsg + ')';
-            this.errorMsg = "";
+            //this.errCalcCalFat = 'errors found while caculating calories and fat (' + this.errorMsg + ')';
+            //this.errorMsg = "";
           }
           this.HealthAllData.tabDailyReport[i].total = this.returnData.outHealthData.total;
           this.HealthAllData.tabDailyReport[i].meal = this.returnData.outHealthData.meal;
@@ -1013,7 +1019,7 @@ export class MainHealthComponent {
     msginLogConsole(msg, this.myConsole, this.myLogConsole, this.SaveConsoleFinished, this.HTTP_Address, this.type);
   }
 
-
+/*
   ngOnChanges(changes: SimpleChanges) {
     console.log('ngOnChange main-health');
     for (const propName in changes) {
@@ -1025,6 +1031,6 @@ export class MainHealthComponent {
       } 
     }
   }
-
+*/
 
 }

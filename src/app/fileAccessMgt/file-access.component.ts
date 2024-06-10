@@ -221,6 +221,8 @@ export class MainManageFileComponent {
   checkLockLimit(event:any) {
     console.log('file-access - start checkLockLimit - this.nbCallFileSystem='+this.nbCallFileSystem+'  this.returnDataFS.nbRecall='+this.returnDataFS.nbRecall);
     var valueCheck = { action: '', lockValue: 0, lockAction: '' };
+    var eventToCheck=new classtheEvent;
+    eventToCheck=this.eventCheckToLimit;
     this.errCalcCalFat="";
     if (this.identification.triggerFileSystem === "No") { //"No"
       valueCheck.action = "noAction";
