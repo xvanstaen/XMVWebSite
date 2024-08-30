@@ -143,7 +143,7 @@ export class TestServerJSComponent {
   });
 
   tabAction: Array<string> = ['cancel', 'list all buckets', 'list all objects', 'get file content', 'get list metadata for all objects', 'get metadata for one object', 'create & save metadata' , 'update metadata for one object',  'save object', 'save object with meta perso' , 'rename object', 
-  'copy object', 'move object', 'delete object','get server version', 'get cache console', 'get memory File System', 'get credentials','get cache file', 'manage config','reset memory File System','reset memory all FS', 'reset cache console','reset cache file', 'reload cache file'];
+  'copy object', 'move object', 'delete object','get server version', 'get cache console', 'get memory File System', 'get credentials','get cache file', 'manage config','reset memory File System','reset memory all FS', 'reset cache console','enable cache console', 'disable cache console', 'reset cache file', 'reload cache file'];
   
   tabConfig:Array<string>=['find cache config', 'reset cache config','find config by criteria', 'find all config', "update config by id", "upload config", "delete config by Id", "create config"];
 
@@ -502,11 +502,19 @@ storeTitle(event:any){
        
       } else if (event.target.textContent.trim() === 'get cache console') {
         this.isDisplayAction=false;
-        this.getCacheConsole();
+        this.getCacheConsole(); 
 
       } else if (event.target.textContent.trim() === 'reset cache console') {
         this.isDisplayAction=false;
         this.resetCacheConsole();
+
+      } else if (event.target.textContent.trim() === 'enable cache console') {
+        this.isDisplayAction=false;
+        this.enableCacheConsole();
+
+      } else if (event.target.textContent.trim() === 'disable cache console') {
+        this.isDisplayAction=false;
+        this.disableCacheConsole();
 
       }  else if (event.target.textContent.trim() === 'get memory File System') {
         this.isDisplayAction=false;
@@ -1486,6 +1494,31 @@ listConfig(){
           this.manageErrorMsg(err);
         })
   }
+
+  enableCacheConsole() {
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.enableCacheConsole(this.newConfigServer)
+      .subscribe(
+        (data) => {
+          this.error="cache control is enabled";
+        },
+        err => {
+          this.error="could not enable cache control";
+        })
+      }
+    
+  disableCacheConsole() {
+    this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
+    this.ManageSecuredGoogleService.disableCacheConsole(this.newConfigServer)
+      .subscribe(
+        (data) => {
+          this.error="cache control is enabled";
+        },
+        err => {
+          this.error="could not enable cache control";
+        })
+  }
+
   /* =================== FILE SYSTEM & MEMORY FS  =============*/
 
   manageErrorMsg(err:any){
@@ -1494,9 +1527,7 @@ listConfig(){
     } else if (err.err.msg!==undefined){
       this.error = err.msg;
     }
-
   }
-
 
   getMemoryFS() {
     this.error="";
