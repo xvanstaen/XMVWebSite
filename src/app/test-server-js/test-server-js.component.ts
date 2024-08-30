@@ -1512,10 +1512,10 @@ listConfig(){
     this.ManageSecuredGoogleService.disableCacheConsole(this.newConfigServer)
       .subscribe(
         (data) => {
-          this.error="cache control is enabled";
+          this.error="cache control is disabled";
         },
         err => {
-          this.error="could not enable cache control";
+          this.error="could not disable cache control";
         })
   }
 
