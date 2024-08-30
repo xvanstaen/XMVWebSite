@@ -36,7 +36,7 @@ import { classConfHTMLFitHealth, classConfTableAll } from '../classConfHTMLTable
 import { CalcFatCalories } from '../CalcFatCalories';
 import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../classChart';
-import { classFileSystem, classAccessFile , classReturnDataFS, classHeaderReturnDataFS} from '../../classFileSystem';
+import { classFileSystem, classAccessFile , classReturnDataFS, classHeaderReturnDataFS , classRetrieveFile} from '../../classFileSystem';
 
 import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
@@ -84,7 +84,7 @@ export class HealthComponent  {
   @Input() confTableAll = new classConfTableAll;
   @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
   
- 
+  iWaitToRetrieve:Array<classRetrieveFile>=[];
   @Input() tabNewRecordAll: Array<any> = [
     {
       nb: 0,
@@ -227,7 +227,7 @@ export class HealthComponent  {
   userActivity:string= "";
 
   TheSelectDisplays: FormGroup = new FormGroup({
-
+    SelectedDate: new FormControl(Date(), { nonNullable: true }),
     searchString: new FormControl('', { nonNullable: true }),
     startRange: new FormControl('', [
       Validators.required,
@@ -465,6 +465,7 @@ export class HealthComponent  {
     this.dialogue[this.prevDialogue] = false;
     this.tabInputMeal.splice(0, this.tabInputMeal.length);
     this.isInputFood = false;
+    this.isSaveHealth=false;
     if (this.tabLock[0].lock !== 1 || this.isForceReset === true) {
       this.isDeleteConfirmed = false;
       this.IsSaveConfirmedAll = false;
@@ -474,7 +475,7 @@ export class HealthComponent  {
         this.initTrackRecord.emit();
       }
       this.isMustSaveFile = false;
-      this.isSaveHealth = false;
+      //this.isSaveHealth = false;
       this.isForceReset = false;
     }
   }
@@ -680,6 +681,7 @@ export class HealthComponent  {
     this.onInputAction = 'onInputDailyAll';
     this.offsetLeft = event.currentTarget.offsetLeft;
     this.offsetWidth = event.currentTarget.offsetWidth;
+    this.isSaveHealth=false;
     this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
   }
 
@@ -687,6 +689,7 @@ export class HealthComponent  {
     if (this.tabLock[0].lock !== 2) {
       this.resetBooleans();
       this.isAllDataModified = true;
+      this.IsSaveConfirmedAll = false;
       this.errorMsg = '';
       var i = 0;
       const fieldName = event.target.id.substring(0, 7);
@@ -734,6 +737,7 @@ export class HealthComponent  {
     this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.theEvent.target.id = 'selAction-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
     this.theEvent.target.textContent = event.target.textContent;
+    this.isSaveHealth=false;
     this.onAction(this.theEvent);
   }
 
@@ -787,6 +791,7 @@ export class HealthComponent  {
           if (event.target.textContent.indexOf('cancel') !== -1) {
           } else {
             this.isAllDataModified = true;
+            this.IsSaveConfirmedAll = false;
             this.findAction(event.target.textContent);
             if (this.myType.trim() === "date") {
               if (this.myAction === "insert after") {
@@ -936,6 +941,9 @@ export class HealthComponent  {
       this.tabNewRecordAll.splice(this.TabOfId[0], 0, trackNew);
     }
     if (event.target.id.substring(0, 7) === 'AllDate') {
+      const theDate=convertDate(new(Date),"yyyy-mm-dd");
+      this.TheSelectDisplays.controls['SelectedDate'].setValue(theDate);
+      this.HealthAllData.tabDailyReport[iDate].date=this.TheSelectDisplays.controls['SelectedDate'].value;
       const theMeal = new ClassMeal;
       this.HealthAllData.tabDailyReport[iDate].meal.push(theMeal);
       const theIngredient = new ClassDish;
@@ -1092,12 +1100,12 @@ export class HealthComponent  {
     } else if (this.tabLock[0].lock===1 && this.onInputAction === "onAction") {
       //this.onActionA(this.theEvent);
       this.onInputAction="";
-    } else if (this.onInputAction === "confirmSave"){
-      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-      this.IsSaveConfirmedAll = true;
-    } else if (this.onInputAction === "saveHealth"){
-      this.saveHealthAfterCheckToLimit();
-      this.onInputAction='';
+    //} else if (this.onInputAction === "confirmSave"){
+    //  this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+    //  this.IsSaveConfirmedAll = true;
+    //} else if (this.onInputAction === "saveHealth"){
+    //  this.saveHealthAfterCheckToLimit();
+    //  this.onInputAction='';
     } else if (this.tabLock[0].action === 'check&update' && this.tabLock[0].status === 0 && this.isMustSaveFile === true) {
       this.ConfirmSaveA(this.theEvent); 
     } else if (this.tabLock[0].lock !== 1 && (this.onInputAction === "saveHealth" || this.onInputAction === "confirmSave")){
@@ -1135,7 +1143,7 @@ export class HealthComponent  {
             this.afterCheckFS();
           }
         } else if (propName === 'actionHealth' && changes[propName].firstChange === false) {
-  console.log("**** health component - ngOnChange - propName === 'actionHealth");
+          console.log("**** health component - ngOnChange - propName === 'actionHealth");
           if (this.onInputAction === "onInputDailyAll") {
             this.onInputDailyAllA(this.theEvent);
           } else if (this.onInputAction === "onAction") {
@@ -1144,7 +1152,7 @@ export class HealthComponent  {
             this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
             this.IsSaveConfirmedAll = true;
           } else if (this.onInputAction === "saveHealth"){
-console.log("**** health component - ngOnChange - this.onInputAction === saveHealth");
+              console.log("**** health component - ngOnChange - this.onInputAction === saveHealth");
           } else if (this.onInputAction==="cancelUpdateAll"){
             if (this.filterHealth = true && (this.  TheSelectDisplays.controls['startRange'].value !== '' || this.TheSelectDisplays.controls['endRange'].value !== '')) {
               this.theEvent.target.id === 'selectAllData';
@@ -1165,7 +1173,7 @@ console.log("**** health component - ngOnChange - this.onInputAction === saveHea
             this.afterCheckFS();
           }
         } else if (propName === 'calculateHeight') {
-  console.log("**** health component - ngOnChange - propName === 'calculateHeight");
+            console.log("**** health component - ngOnChange - propName === 'calculateHeight");
             this.calculateHeight();
         }  else if (propName === 'ConfigCaloriesFat') {
             this.createDropDownCalFatFn();

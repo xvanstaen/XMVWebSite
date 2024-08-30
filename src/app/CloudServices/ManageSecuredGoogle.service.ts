@@ -97,5 +97,13 @@ export class ManageSecuredGoogleService {
         return this.http.get<any>(http_get);                       
     }
 
+    enableCacheConsole(config:configServer): Observable<any> {
+        const http_get=config.googleServer+'/enableCacheConsole/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod;
+        return this.http.get<any>(http_get);                       
+    }
     
+    disableCacheConsole(config:configServer): Observable<any> {
+        const http_get=config.googleServer+'/disableCacheConsole/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod;
+        return this.http.get<any>(http_get);                       
+    }
 }

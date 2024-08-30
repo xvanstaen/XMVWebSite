@@ -169,6 +169,7 @@ export class MainManageFileComponent {
           isChecked=true;
           this.nbRecallFS=0;
           console.log('ngOnChanges file-access eventCheckToLimit iWait=' + this.eventCheckToLimit.iWait);
+          callSaveProcess++
           this.checkLockLimit(this.eventCheckToLimit);
         }
       } else if (propName === 'triggerReadFile' ) {
@@ -184,7 +185,7 @@ export class MainManageFileComponent {
         if (this.iWaitToRetrieve.length>0){
           this.nbCallFileSystem++
         }
-      } else if ((propName === 'eventSaveRecord' || propName==='triggerSaveFile' || propName==='theTriggerSaveFile')&& changes[propName].firstChange === false) {
+      } else if ((propName === 'eventSaveRecord' || propName==='triggerSaveFile' || propName==='theTriggerSaveFile') && changes[propName].firstChange === false) {
           if (callSaveProcess===0){
             console.log('ngOnChanges file-access eventSaveRecord iWait=' + this.eventCheckToLimit.iWait);
             this.mainSaveProcess(this.eventCheckToLimit);

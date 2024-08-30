@@ -1,3 +1,17 @@
+export class classHealthHistoryIndex{
+  fileType:string='';
+  updatedAt:string='';
+  indexRecord:Array<classIndexRecord>=[];
+}
+
+export class classIndexRecord{
+  fileName={
+    root:"",
+    indexNb:0
+  };
+  tabYYMM:Array<string>=[]; // YYYY-MM
+}
+
 
 
 export class mainClassCaloriesFat{

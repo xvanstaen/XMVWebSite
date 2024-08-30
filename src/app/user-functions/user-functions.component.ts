@@ -184,6 +184,7 @@ getServerNames(event:any){
   }
 
   this.configServerChanges++;
+  this.selectApps=0;
 }
 fnResetServer(event:any){
   /*

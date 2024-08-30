@@ -221,6 +221,7 @@ export class MainHealthComponent {
     DisplayChart: new FormControl('N', { nonNullable: true }),
     ReloadHTML: new FormControl('N', { nonNullable: true }),
     ReloadChart: new FormControl('N', { nonNullable: true }),
+    CreateNewHealthCheckFile: new FormControl('N', { nonNullable: true }),
     searchString: new FormControl('', { nonNullable: true }),
     startRange: new FormControl('', [
       Validators.required,
@@ -249,6 +250,11 @@ export class MainHealthComponent {
       this.EventStopWaitHTTP[i] = false;
       this.TabLoop[i]=0;
     }
+
+    for (i=0; i<20; i++){
+      this.tabSelRadio[i]="N";
+    }
+
     this.eventLockLimit.checkLock.action="firstLoop";
     if (this.triggerFunction !== 0) {
       if (this.triggerFunction === 3) {
@@ -302,10 +308,18 @@ export class MainHealthComponent {
         // reinitialise
         if (event.status===200 || event.status===0){
           this.cancelCopy();
-          this.errorMsg="copy of the file has been successfully saved"
+          this.errorMsg="copy of the file has been successfully saved";
         } else {
           this.errorMsg = event.err;
         }
+      } else if (this.actionSave==='createNewHealth'){
+        if (event.status===200 || event.status===0){
+          this.errorMsg="Creation of the new Health File is successful";
+        } else {
+          this.errorMsg = event.err;
+          this.createNewHealth=true;
+        }
+        this.actionSave='';
       } else {
         this.statusSaveFnHealth=event;
         if (this.statusSaveFnHealth.status===200 || this.statusSaveFnHealth.status===0){
@@ -488,6 +502,7 @@ export class MainHealthComponent {
   }
 
   triggerCalculateCalFat:boolean=false;
+  tabSelRadio:Array<string>=[];
   SelRadio(event: any) {
     // this.checkLockLimit(0);
     var iK=0;
@@ -499,6 +514,7 @@ export class MainHealthComponent {
     this.errorMsg="";
     const i = event.substring(2);
     const NoYes = event.substring(0, 1);
+    this.tabSelRadio[i]=NoYes;
     if (i === '3') {
       if (NoYes === 'Y') {
         this.isDisplayAll = true;
@@ -609,33 +625,24 @@ export class MainHealthComponent {
 
       } else {
         this.isMgtCaloriesFat = false;
+   
         if (this.tabLock[1].lock === 1) {
           this.tabLock[1].action='unlock';
+          this.iWaitToRetrieveFn(1);
+        }
+        if (this.tabLock[6].lock === 1) {
           this.tabLock[6].action='unlock';
-          this.iWait=1;
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=1;
-          this.iWaitToRetrieve[0].accessFS=true;
-          iK=+1;
-        } else {
-          iK=+0;
+          this.iWaitToRetrieveFn(6);
         }
-        for (var iJ=iK; iJ<3; iJ++){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
+        if (this.tabLock[0].lock === 1 && this.tabSelRadio[i]==="N"){
+          this.tabLock[0].action='unlock';
+          this.iWaitToRetrieveFn(0);
         }
-        iK--  
-        if (this.EventHTTPReceived[6]===false){
-            iK++;
-            this.iWaitToRetrieve[iK].iWait=6;
-            this.iWaitToRetrieve[iK].accessFS=false;
-        } else {
-            this.iWaitToRetrieve.splice(iK+1,1);
-        }
+
         if (this.iWaitToRetrieve.length>0){
-            this.triggerReadFile++;
+            this.triggerFileSystem++;
         }
+
       }
     } else if (i === '6') { // Calculate Calories & Fat
       if (NoYes === 'Y') {
@@ -749,7 +756,49 @@ export class MainHealthComponent {
           this.iWaitToRetrieve[0].accessFS=false;
           this.triggerReadFile++;
       }
+    } else if (i === '10') {
+      if (NoYes === 'Y') { // reload configuration chart
+        this.createNewHealth=true;
+      }
     }
+    //CreateNewHealthCheckFile
+  }
+
+  createNewHealth:boolean=false;
+
+  iWaitToRetrieveFn(iWait:number){
+    const theClass=new classRetrieveFile;
+          this.iWaitToRetrieve.push(theClass);
+          this.iWaitToRetrieve[0].iWait=iWait;
+          this.iWaitToRetrieve[0].accessFS=true;
+  }
+
+  confirmCreateNewHealthFile(event:any){
+    var myEvent=new classtheEvent;
+    this.createNewHealth=false;
+    this.HealthAllData.tabDailyReport.splice(0,this.HealthAllData.tabDailyReport.length);
+
+    const theDaily = new DailyReport;
+    this.HealthAllData.tabDailyReport.splice(0, 0, theDaily);
+    const theDate=convertDate(new(Date),"yyyy-mm-dd");
+    this.TheSelectDisplays.controls['SelectedDate'].setValue(theDate);
+    this.HealthAllData.tabDailyReport[0].date=this.TheSelectDisplays.controls['SelectedDate'].value;
+    const theMeal = new ClassMeal;
+    this.HealthAllData.tabDailyReport[0].meal.push(theMeal);
+    this.HealthAllData.tabDailyReport[0].meal[0].name="Breakfast";
+    const theIngredient = new ClassDish;
+    this.HealthAllData.tabDailyReport[0].meal[0].dish.push(theIngredient);
+    this.HealthAllData.tabDailyReport[0].meal[0].dish[0].name="A";
+    this.initTrackRecord();
+    this.actionSave='createNewHealth';
+    myEvent.checkLock.iWait=0;
+    myEvent.checkLock.isDataModified=true;
+    myEvent.checkLock.isSaveFile=true;
+    myEvent.checkLock.iCheck=true;
+    myEvent.fileName=this.SpecificForm.controls['FileName'].value;
+    myEvent.object=myEvent.fileName;
+    this.processSaveHealth(myEvent);
+
   }
 
   calculateHealth(selRecord: DailyReport) {
@@ -922,6 +971,7 @@ export class MainHealthComponent {
   }
 
   processSaveHealth(event: any) {
+    this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
     this.errorMsg = '';
     var trouve = false;
     var i = 0

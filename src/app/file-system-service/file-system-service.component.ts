@@ -198,6 +198,7 @@ onFileSystem(iWait: number) {
         this.tabLock[iWait].lock = 2;
         dataFromFS.onInputAction = "";
         dataFromFS.reAccessFile =  true;
+      
       }
     } else if (data.status !== undefined) {
       if (data.status === 300 || data.status === 720) { // 300 record already locked; 720 updatedAt on record locked by another user
@@ -210,6 +211,7 @@ onFileSystem(iWait: number) {
           dataFromFS.reAccessFile =  true;
         } else {
           this.tabLock[iWait].status = 300;
+          dataFromFS.errorCode=300;
         }
       } else if (data.status === 700 || data.status === 712 || data.status === 710) { // requested to unlock record which does not exist or is locked by another user
         //this.nbCallCredentials = 0;
@@ -223,6 +225,7 @@ onFileSystem(iWait: number) {
         } else {
           dataFromFS.errorMsg="Record cannot be unlocked, updates are not possible";
         }
+        dataFromFS.errorCode=data.status;
       } else if (data.status === 666) {
         dataFromFS.errorMsg="server cannot process file system because is processed by another user; apps retries once more after 2 seconds";
         console.log(dataFromFS.errorMsg);
@@ -258,6 +261,7 @@ onFileSystem(iWait: number) {
       } else if (data.status === 955) {
         dataFromFS.errorMsg = dataFromFS.errorMsg + 'status error=' + data.status;
         dataFromFS.theResetServer = true;
+        dataFromFS.errorCode=955;
         this.tabLock[iWait].lock = 3;
 
       } else if (data.status === 956) {  // record is locked by another user
@@ -266,6 +270,7 @@ onFileSystem(iWait: number) {
         this.tabLock[iWait].lock = 3;
         dataFromFS.onInputAction = "";
         this.tabLock[iWait].status = 720;
+        dataFromFS.errorCode=720;
 
         dataFromFS.reAccessFile=true;
       }  else if (data.status === 'err-0') {  
@@ -282,15 +287,18 @@ onFileSystem(iWait: number) {
           } else {
             this.tabLock[iWait].lock = 3;
           }
+         
         } else {
           this.tabLock[iWait].status = 999;
           dataFromFS.errorMsg= "status " + data.status + " - unknown error "
           console.log('which type of data is it????' + JSON.stringify(data) + '  on action ' + this.tabLock[iWait].action);
         }
+        dataFromFS.errorCode=999;
       }
     } else {
       console.log('which type of data is it???? : ' + JSON.stringify(data));
       this.tabLock[iWait].status = 999;
+      dataFromFS.errorCode=999;
       if (this.tabLock[iWait].action === 'lock') {
         dataFromFS.errorMsg= "status  999 - record is locked ";
         this.tabLock[iWait].lock = 2;
