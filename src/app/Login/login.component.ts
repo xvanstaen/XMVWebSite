@@ -178,6 +178,7 @@ getLogin(){
       },
       err => {
         this.error = err.msg;
+        this.isValidateData=false;
       })
   } else {
     this.routing_code=1;
@@ -201,6 +202,7 @@ checkLogin(){
               this.my_output2.emit(this.routing_code.toString());
             } else {
               this.error='invalid user-id/password';
+              this.isValidateData=false;
             }
       },
         err=> {
@@ -210,6 +212,7 @@ checkLogin(){
             this.error=err.msg;
             console.log('error to checkLogin - error status=' + err.status + ' '+ err.message );
           }
+          this.isValidateData=false;
         })
   }
 
@@ -228,6 +231,7 @@ checkLogin(){
           this.error="Server problem. Lower level of access has been assigned"
       });
   }
+isValidateData:boolean=false;
 
 ValidateData(){
   //console.log('validateData()');
@@ -240,6 +244,7 @@ ValidateData(){
   }
   else
   {
+    this.isValidateData=true;
     this.error='';
     this.getLogin();
   }

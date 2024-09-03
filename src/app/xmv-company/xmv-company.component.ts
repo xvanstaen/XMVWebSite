@@ -71,6 +71,8 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
   Events_nb:string='';
 
+  emailXMV:string="xvanstaen@xmv-it.com";
+
   i_Profile:number=0;
   i_Offer:number=1;
   i_Contact:number=2;

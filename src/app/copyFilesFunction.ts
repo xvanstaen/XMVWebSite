@@ -103,7 +103,12 @@ export function fillConfig(inFile:configServer){
     outFile.tabDailyReport.push(theDaily);
     outFile.tabDailyReport[iOut].burntCalories = inFile.tabDailyReport[i].burntCalories;
     outFile.tabDailyReport[iOut].date = inFile.tabDailyReport[i].date;
-    outFile.tabDailyReport[iOut].total = inFile.tabDailyReport[i].total;
+    if (inFile.tabDailyReport[i].total.naturalSugar===undefined){
+      fillTotal(outFile.tabDailyReport[iOut].total, inFile.tabDailyReport[iOut].total);
+    } else {
+      outFile.tabDailyReport[iOut].total = inFile.tabDailyReport[i].total;
+    }
+    
     var jOut = -1;
     for (var j = 0; j < inFile.tabDailyReport[i].meal.length; j++) {
       if (inFile.tabDailyReport[i].meal[j].dish.length > 0) {
@@ -111,7 +116,12 @@ export function fillConfig(inFile:configServer){
         outFile.tabDailyReport[iOut].meal.push(theMeal);
         jOut++
         outFile.tabDailyReport[iOut].meal[jOut].name = inFile.tabDailyReport[i].meal[j].name;
-        outFile.tabDailyReport[iOut].meal[jOut].total = inFile.tabDailyReport[i].meal[j].total;
+        if (inFile.tabDailyReport[i].meal[j].total.naturalSugar===undefined){
+          fillTotal(outFile.tabDailyReport[iOut].total, inFile.tabDailyReport[i].meal[j].total);
+        } else {
+          outFile.tabDailyReport[iOut].meal[jOut].total = inFile.tabDailyReport[i].meal[j].total;
+        }
+        
         var lOut = -1;
         for (var k = 0; k < inFile.tabDailyReport[i].meal[j].dish.length; k++) {
           if (inFile.tabDailyReport[i].meal[j].dish[k].name !== '') {
@@ -137,4 +147,24 @@ export function fillConfig(inFile:configServer){
       }
     }
     return outFile;
+  }
+
+  function fillTotal(outReport:any,inReport:any){
+    outReport.Sugar = inReport.Sugar;
+    if (inReport.naturalSugar===undefined){
+      outReport.naturalSugar = 0;
+    } else {
+      outReport.naturalSugar = inReport.naturalSugar;
+    }
+    if (inReport.addedSugar===undefined){
+      outReport.addedSugar = 0;
+    } else {
+      outReport.addedSugar = inReport.addedSugar;
+    }
+    outReport.Calories = inReport.Calories;
+    outReport.Protein = inReport.Protein;
+    outReport.Carbs = inReport.Carbs;
+    outReport.Fat.Saturated = inReport.Fat.Saturated;
+    outReport.Fat.Total = inReport.Fat.Total;
+
   }

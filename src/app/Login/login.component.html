@@ -46,7 +46,7 @@
           <div class="filler"><br> </div>
         </div>
       
-        <div >
+        <div *ngIf="isValidateData===false">
             <button id='but_1' class="sizeButtons first-button"  (click)="ValidateData()">Send</button>
             <button id='but_2' class="sizeButtons" (click)="onClear()">Clear</button>
         </div>

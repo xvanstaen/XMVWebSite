@@ -634,7 +634,7 @@ export class MainHealthComponent {
           this.tabLock[6].action='unlock';
           this.iWaitToRetrieveFn(6);
         }
-        if (this.tabLock[0].lock === 1 && this.tabSelRadio[i]==="N"){
+        if (this.tabLock[0].lock === 1 && this.tabSelRadio[3]==="N"){
           this.tabLock[0].action='unlock';
           this.iWaitToRetrieveFn(0);
         }

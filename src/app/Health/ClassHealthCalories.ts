@@ -33,6 +33,8 @@ export class ClassCaloriesFat{
     Calories:number=0;
     GlyIndex:number=0;
     Sugar:number=0;
+    naturalSugar:number=0;
+    addedSugar:number=0;
     Cholesterol:number=0;
     Fat={
         Saturated:0,

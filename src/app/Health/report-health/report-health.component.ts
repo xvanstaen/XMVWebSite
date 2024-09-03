@@ -1084,7 +1084,7 @@ isMustSaveFile:boolean=false;
   }
 
   fillInCharts(inFile: any, outFile: any) {
-
+    var i=0;
     outFile.chartType = inFile.chartType.toLowerCase().trim();
     outFile.chartTitle.display = inFile.chartTitle.display;
     outFile.chartTitle.text = inFile.chartTitle.text;
@@ -1156,7 +1156,7 @@ isMustSaveFile:boolean=false;
     outFile.legendBoxRgba.palette.rgba = inFile.legendBoxRgba.palette.rgba;
     this.fillRgba(inFile.legendBoxRgba, outFile.legendBoxRgba);
 
-    for (var i = 0; i < inFile.labels.length; i++) {
+    for (i = 0; i < inFile.labels.length; i++) {
       outFile.labels[i] = inFile.labels[i];
       outFile.labelsColor[i] = inFile.labelsColor[i];
       if (outFile.rgbaLabels[i] === undefined) {
@@ -1165,7 +1165,20 @@ isMustSaveFile:boolean=false;
       }
       this.fillRgba(inFile.rgbaLabels[i], outFile.rgbaLabels[i]);
     }
-    for (var i = 0; i < inFile.limitLabels.length; i++) {
+    var j=i-1;
+    for (var i=i; i<this.ConfigChartHealth.barDefault.datasets.fieldsToSelect.length; i++){
+      j=j+1;
+      //if (this.ConfigChartHealth.barDefault.datasets.fieldsToSelect[i]===true){
+    
+        outFile.labels[j] = "N";
+        outFile.labelsColor[j]= this.ConfigChartHealth.barDefault.datasets.backgroundColor[i];
+      //}
+      if (outFile.rgbaLabels[i] === undefined) {
+        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
+        outFile.rgbaLabels.push(myRgba);
+      }
+    }
+    for (i = 0; i < inFile.limitLabels.length; i++) {
       outFile.limitLabels[i] = inFile.limitLabels[i];
       outFile.limitLabelsColor[i] = inFile.limitLabelsColor[i];
       if (outFile.limitRgbaLabels[i] === undefined) {
@@ -1174,7 +1187,18 @@ isMustSaveFile:boolean=false;
       }
       this.fillRgba(inFile.limitRgbaLabels[i], outFile.limitRgbaLabels[i]);
     }
-
+    j=i-1;
+    for (var i=i; i<this.ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect.length; i++){
+      //if (this.ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[i]===true){
+        j=j+1;
+        outFile.limitLabels[j] = "N";// this.ConfigChartHealth.barDefault.datasets.labels[i];
+        outFile.limitLabelsColor[j]= this.ConfigChartHealth.barDefault.datasets.backgroundColor[i];
+        if (outFile.limitRgbaLabels[i] === undefined) {
+          const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
+          outFile.limitRgbaLabels.push(myRgba);
+        }
+      //}
+    }
   }
 
   fillRgba(inFile: any, outFile: any) {
@@ -1738,7 +1762,8 @@ isMustSaveFile:boolean=false;
   errorMsg: string = '';
   fnSelectChart() {
     this.errorMsg = '';
-    this.timeOutactivity(5, true, false,"only");
+    //this.timeOutactivity(5, true, false,"only");
+    
     // check that all parameters are correct
     if (this.selectChart.controls['chartType'].value !== '') {
       for (var i = 0; i < this.lineChartType.length && this.selectChart.controls['chartType'].value.toLowerCase().trim() !== this.lineChartType[i].toLowerCase().trim(); i++) {
@@ -1794,11 +1819,15 @@ isMustSaveFile:boolean=false;
     const returnData = fillHealthDataSet(dateLabelSpecial, datasetsSpecialBar, this.HealthAllData,this.tabParamChart[nb], this.ConfigChartHealth, addWeekly, this.identification);
     var refDailySaturated: Array<number> = [];
     var refDailySugar: Array<number> = [];
+    var refDailyNaturalSugar: Array<number> = [];
+    var refDailyAddedSugar: Array<number> = [];
     var refDailyCarbs: Array<number> = [];
     if (returnData!==undefined) {
         datasetsSpecialBar = returnData.datasets;
         refDailySaturated = returnData.refSaturated;
         refDailySugar = returnData.refSugar;
+        refDailyNaturalSugar = returnData.refNaturalSugar;
+        refDailyAddedSugar = returnData.refAddedSugar;
         refDailyCarbs = returnData.refCarbs;
     }
     
@@ -1837,6 +1866,17 @@ isMustSaveFile:boolean=false;
         labLimit = 4;
         dataValue = Number(this.identification.health.Sugar);
       }
+      /* 
+      else if (datasetsSpecialBar[i].label === 'natural Sugar') {
+        labelName = 'natural Sugar';
+        labLimit = 4;
+        dataValue = Number(this.identification.health.Sugar);
+      } else if (datasetsSpecialBar[i].label === 'added Sugar') {
+        labelName = 'added Sugar';
+        labLimit = 4;
+        dataValue = Number(this.identification.health.Sugar);
+      }
+        */
       if (dataValue > 0) {
         datasetsSpecialBar.push({
           type: "line",
@@ -1857,6 +1897,14 @@ isMustSaveFile:boolean=false;
         if (datasetsSpecialBar[i].label === 'Sugar') {
           for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
             datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailySugar[j];
+          }
+        } else if (datasetsSpecialBar[i].label === 'natural Sugar') {
+          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
+            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailyNaturalSugar[j];
+          }
+        } else if (datasetsSpecialBar[i].label === 'added Sugar') {
+          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
+            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailyAddedSugar[j];
           }
         } else if (datasetsSpecialBar[i].label === 'Carbs') {
           for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {

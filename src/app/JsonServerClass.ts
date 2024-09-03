@@ -106,7 +106,9 @@ export class BioData{
         Calories:0,
         Carbs:0,
         Protein:0,
-        Sugar:0
+        Sugar:0,
+        naturalSugar:0,
+        addedSugar:0
       };
       recipe={
         bucket:'',

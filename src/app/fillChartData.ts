@@ -51,6 +51,8 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
     var cal= 0;
     var refDailySaturated: Array<number> = [];
     var refDailySugar: Array<number> = [];
+    var refDailyNaturalSugar: Array<number> = [];
+    var refDailyAddedSugar: Array<number> = [];
     var refDailyCarbs: Array<number> = [];
 
     var iDataset = -1;
@@ -178,7 +180,15 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Sugar;
                 if (refDailySugar[iDataset] === undefined) { refDailySugar[iDataset] = 0; }
                   refDailySugar[iDataset] = refDailySugar[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.025;
-              } else if (constLab[j] === "Total Fat") {
+              } else if (constLab[j] === "natural Sugar") {
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.naturalSugar;
+                if (refDailyNaturalSugar[iDataset] === undefined) { refDailyNaturalSugar[iDataset] = 0; }
+                  refDailyNaturalSugar[iDataset] = refDailyNaturalSugar[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.025;
+              } else if (constLab[j] === "added Sugar") {
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.addedSugar;
+                if (refDailyAddedSugar[iDataset] === undefined) { refDailyAddedSugar[iDataset] = 0; }
+                  refDailyAddedSugar[iDataset] = refDailyAddedSugar[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.025;
+              }else if (constLab[j] === "Total Fat") {
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Fat.Total;
               } else if (constLab[j] === "Cholesterol") {
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Cholesterol;
@@ -216,6 +226,14 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Sugar;
                 if (refDailySugar[iDataset] === undefined) { refDailySugar[iDataset] = 0; }
                   refDailySugar[iDataset] =  refDailySugar[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.025;
+              } else if (configChart[j] === "natural Sugar") {
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.naturalSugar;
+                if (refDailyNaturalSugar[iDataset] === undefined) { refDailyNaturalSugar[iDataset] = 0; }
+                  refDailyNaturalSugar[iDataset] =  refDailyNaturalSugar[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.025;
+              } else if (configChart[j] === "added Sugar") {
+                datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.addedSugar;
+                if (refDailyAddedSugar[iDataset] === undefined) { refDailyAddedSugar[iDataset] = 0; }
+                  refDailyAddedSugar[iDataset] =  refDailyAddedSugar[iDataset] + (Number(healthData.tabDailyReport[i].burntCalories) + identification.health.Calories) * 0.025;
               } else if (configChart[j] === "Total Fat") {
                 datasetsSpecialBar[j].data[iDataset] = addWeekly + healthData.tabDailyReport[i].total.Fat.Total;
               } else if (configChart[j] === "Cholesterol") {
@@ -233,5 +251,5 @@ export function fillHealthDataSet(dateLabelSpecial:any, datasetsSpecialBar:any, 
           }
         }
       }
-      return ({datasets:datasetsSpecialBar, refSaturated:refDailySaturated, refSugar:refDailySugar, refCarbs:refDailyCarbs})
+      return ({datasets:datasetsSpecialBar, refSaturated:refDailySaturated, refSugar:refDailySugar, refNaturalSugar:refDailyNaturalSugar, refAddedSugar:refDailyAddedSugar, refCarbs:refDailyCarbs})
 }

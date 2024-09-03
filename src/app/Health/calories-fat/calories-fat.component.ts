@@ -295,9 +295,11 @@ onMouseUp(event: MouseEvent) {
     const myActionRec1={name:'Recipe',action:'Transfer'};
     this.TabActionRecipe.push(myActionRec1);
 
+    const myActionRec2={name:'AllRecipe',action:'reCalculate'};
+    this.TabActionRecipe.push(myActionRec2);
+    
     this.initialiseFiles('calFat');
     this.initialiseFiles('recipe');
-
     this.SpecificForm.controls['FileName'].setValue(this.identification.configFitness.files.calories);
 
     this.posSizeClock.margLeft = 840;
@@ -589,9 +591,11 @@ onActionA(event:any){
             this.isDeleteRecipeFood=true;
           }
         }
-        } 
+      } else  if (this.TabActionRecipe[iAction].name==='AllRecipe' && this.TabActionRecipe[iAction].action==='reCalculate'){
+          this.reCalculateValues();
       }
-    } // calFat
+    }
+  } // calFat
     
     else if (this.theEvent.target.id.substring(0,10)==='openAction'){
       this.dialogueCalFat[0]=true;
@@ -749,12 +753,27 @@ onInputA(event:any){
     this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].GlyIndex=Number(event.target.value);
   } else if (event.target.id.substring(0,4)==='suga'){
     this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Sugar=Number(event.target.value);
+  } else if (event.target.id.substring(0,11)==='naturalSuga'){
+    this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].naturalSugar=Number(event.target.value);
+  } else if (event.target.id.substring(0,9)==='addedSuga'){
+    this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].addedSugar=Number(event.target.value);
   } else if (event.target.id.substring(0,4)==='chol'){
     this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Cholesterol=Number(event.target.value);
   } else if (event.target.id.substring(0,4)==='satu'){
     this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Fat.Saturated=Number(event.target.value);
   } else if (event.target.id.substring(0,4)==='tota'){
     this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Fat.Total=Number(event.target.value);
+  }
+}
+
+reCalculateValues(){
+  for (var iRecipe=0; iRecipe<this.outFileRecipe.tabCaloriesFat.length; iRecipe++){
+    for (var jRecipe=0; jRecipe<this.outFileRecipe.tabCaloriesFat[iRecipe].Content.length; jRecipe++){
+      this.searchFoodCalories(this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Name,iRecipe,jRecipe);
+    }
+    this.calculateTotal(iRecipe);
+    this.iRecipeSave=iRecipe;
+    this.transferToCalFatA();
   }
 }
 
@@ -774,6 +793,8 @@ searchFoodCalories(foodName:string, iRecipe:number, jRecipe:number){
               this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Carbs=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].Carbs * quantity;
               this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Cholesterol=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].Cholesterol * quantity;
               this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Sugar=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].Sugar * quantity;
+              this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].naturalSugar=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].naturalSugar * quantity;
+              this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].addedSugar=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].addedSugar * quantity;
               this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].GlyIndex=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].GlyIndex * quantity;
               this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Fat.Saturated=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].Fat.Saturated * quantity;
               this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Fat.Total=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].Fat.Total * quantity;
@@ -792,6 +813,13 @@ copyContent(outRecord:any,inRecord:any){
   outRecord.Carbs=inRecord.Carbs ;
   outRecord.Cholesterol=inRecord.Cholesterol ;
   outRecord.Sugar=inRecord.Sugar ;
+  if (inRecord.naturalSugar!==undefined){
+    outRecord.naturalSugar=inRecord.naturalSugar ;
+    outRecord.addedSugar=inRecord.addedSugar ;
+  } else {
+    outRecord.naturalSugar=0 ;
+    outRecord.addedSugar=0 ;
+  }
   outRecord.GlyIndex=inRecord.GlyIndex ;
   outRecord.Fat.Saturated=inRecord.Fat.Saturated;
   outRecord.Fat.Total=inRecord.Fat.Total;
@@ -806,6 +834,8 @@ calculateTotal( iRecipe:number){
   this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Carbs=0;
   this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Cholesterol=0;
   this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Sugar=0;
+  this.outFileRecipe.tabCaloriesFat[iRecipe].Total.naturalSugar=0;
+  this.outFileRecipe.tabCaloriesFat[iRecipe].Total.addedSugar=0;
   this.outFileRecipe.tabCaloriesFat[iRecipe].Total.GlyIndex=0;
   this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Fat.Saturated=0;
   this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Fat.Total=0;
@@ -831,6 +861,10 @@ calculateTotal( iRecipe:number){
       this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Cholesterol;
       this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Sugar=this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Sugar +
       this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Sugar;
+      this.outFileRecipe.tabCaloriesFat[iRecipe].Total.naturalSugar=this.outFileRecipe.tabCaloriesFat[iRecipe].Total.naturalSugar +
+      this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].naturalSugar;
+      this.outFileRecipe.tabCaloriesFat[iRecipe].Total.addedSugar=this.outFileRecipe.tabCaloriesFat[iRecipe].Total.addedSugar +
+      this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].addedSugar;
       this.outFileRecipe.tabCaloriesFat[iRecipe].Total.GlyIndex=this.outFileRecipe.tabCaloriesFat[iRecipe].Total.GlyIndex +
       this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].GlyIndex;
       this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Fat.Saturated=this.outFileRecipe.tabCaloriesFat[iRecipe].Total.Fat.Saturated +
@@ -841,7 +875,6 @@ calculateTotal( iRecipe:number){
 }
 
   convertUnits(from:string,to:string){
-    
     for (var i=0; i<this.convToDisplay.tabConvItem.length && ( 
               this.convToDisplay.tabConvItem[i].from!==from || this.convToDisplay.tabConvItem[i].to!==to ); i++){
     }
@@ -855,9 +888,7 @@ calculateTotal( iRecipe:number){
           this.conversion=1/this.convToDisplay.tabConvItem[i].valueFromTo;
         }
     }
-
   }
-
 
   onSelRecipeFood(event:any){ 
     this.errorMsg=''; 
@@ -956,6 +987,10 @@ calculateTotal( iRecipe:number){
       this.outFileRecipe.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].GlyIndex=Number(event.target.value);
     } else if (event.target.id.substring(0,4)==='suga'){
       this.outFileRecipe.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Sugar=Number(event.target.value);
+    } else if (event.target.id.substring(0,11)==='naturalSuga'){
+      this.outFileRecipe.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].naturalSugar=Number(event.target.value);
+    } else if (event.target.id.substring(0,9)==='addedSuga'){
+      this.outFileRecipe.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].addedSugar=Number(event.target.value);
     } else if (event.target.id.substring(0,4)==='chol'){
       this.outFileRecipe.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Cholesterol=Number(event.target.value);
     } else if (event.target.id.substring(0,4)==='satu'){

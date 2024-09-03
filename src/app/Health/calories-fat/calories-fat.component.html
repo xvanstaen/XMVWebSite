@@ -63,19 +63,21 @@
             <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Carbs</div>
             <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Glycemic Index</div>
             <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Sugar</div>
+            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Natural Sugar</div>
+            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Added Sugar</div>
             <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Choles terol</div>
             <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Saturated fat</div>
             <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Total fat</div>
             <!--
             <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;  border-right:2px solid darkcyan;">Lock </div>
             -->
-        </div>
+        </div>  
     <!-- ================== DROPDOWN LIST : action =============== -->
         <div class="dropdown" *ngIf="dialogueCalFat[1]===true && isDeleteRecipe===false && isDeleteRecipeFood===false">
             <div class="Straight-content"  > <!-- selectedPosition.y - 560  -->
-                <div  class="StraightDropDown "  style="height:240px; width:140px; overflow-y:hidden;" [ngStyle]="{ 'margin-top.px': titleHeight + 10 ,'margin-left.px': 50}"  >
+                <div  class="StraightDropDown "  style="height:250px; width:160px; overflow-y:hidden;" [ngStyle]="{ 'margin-top.px': titleHeight - 20 ,'margin-left.px': 50}"  >
                     <li *ngFor="let theTab of TabActionRecipe; let m=index;" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                            class="Straight-options "   style=" width:140px; "
+                            class="Straight-options "   style=" width:155px; "
                                 (click)="onAction($event)" id="RecipeSelAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{m}}">
                                 <span *ngIf="m>0">&nbsp;&nbsp;{{theTab.name}}-{{theTab.action}}</span>
                                 <span *ngIf="m===0">&nbsp;&nbsp;{{theTab.name}}</span>
@@ -171,6 +173,10 @@
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="glyi-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.GlyIndex | number:'1.1-1'}}" >
 
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Sugar | number:'1.1-1'}}" >                     
+
+                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="naturalSuga-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.naturalSugar | number:'1.1-1'}}" >                     
+
+                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="addedSuga-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.addedSugar | number:'1.1-1'}}" >                     
                             
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Cholesterol | number:'1.1-1'}}" >
                         
@@ -209,7 +215,11 @@
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.GlyIndex  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
 
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Sugar  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >                     
-                                
+       
+                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.naturalSugar  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >                     
+
+                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.addedSugar  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >                     
+                         
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Cholesterol  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
                             
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}"  [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
@@ -318,6 +328,8 @@
                 <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Carbs</div>
                 <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Glycemic Index</div>
                 <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Sugar</div>
+                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Natural Sugar</div>                
+                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Added Sugar</div>                
                 <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Choles terol</div>
                 <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Saturated fat</div>
                 <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Total fat</div>
@@ -407,6 +419,10 @@
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="glyi-{{i}}-{{j}}" class="text alignLeft" value="{{content.GlyIndex}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
 
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}" class="text alignLeft" value="{{content.Sugar}}" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">                     
+
+                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="naturalSuga-{{i}}-{{j}}" class="text alignLeft" value="{{content.naturalSugar}}" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">                     
+
+                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="addedSuga-{{i}}-{{j}}" class="text alignLeft" value="{{content.addedSugar}}" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">                     
                                 
                                 <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}" class="text alignLeft" value="{{content.Cholesterol}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
                             
