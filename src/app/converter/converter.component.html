@@ -1,0 +1,306 @@
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head> 
+<body>
+     <!-- =========================================================
+          ================ Conversion of two units ================ 
+          =========================================================
+     -->
+<div style="margin-left:10px; margin-top:15px;" *ngIf="(EventHTTPReceived[1]===true || (EventHTTPReceived[2]===true && EventHTTPReceived[3]===true))">
+   
+    <!-- CONVERSION OF TWO UNITS -->
+     <div style="border: blue solid 2px; width: var(--tableW); max-width: var(--tableMaxW); margin-left:10px; height:150px; font-size:18px; float:none; ">
+         <div style="color:blue; font-size:18px; padding-top:8px; float:none; text-align: center;">Convert your units</div>  
+        
+        <span style="width:99%; display:inline-block; color:red; font-size:12px; margin-left:15px;">{{messageConvert}}</span>
+        <div *ngIf="message!==''" class="skipLine">&nbsp;</div>
+        
+         <input type="text"  placeholder='From' class="inputText overrideInput" style=" margin-top:3px;"  id="From-{{0}}" (input)="ConvertValues($event)" (click)="ConvertValues($event)" [value]="ValuesToConvert.From">
+         <!--
+         <datalist id="l1">
+             <option *ngFor="let unit of DisplayTabOfUnitsFrom;" value=' {{unit.name}}-{{unit.type}}'  >
+                </option>
+         </datalist>
+         -->
+         <div class="dropdown" *ngIf="dialogueFromTo[0]===true">
+            <div  [ngStyle]="styleDataListFromContent" >
+                <div  [ngStyle]="styleDataListFromOptions" >
+
+                    <li *ngFor="let unit of DisplayTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="From-{{m}}" (click)="onAction($event)"
+                            class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                            {{unit.name}}-{{unit.type}}
+                    </li>
+
+                </div>
+            </div>
+        </div>
+
+         <input type="text" placeholder='Value ' class="inputText overrideInput" style=" margin-top:3px; "  id="ValueFrom-{{0}}" (input)="ConvertValues($event)"  [value]="ValuesToConvert.valueFrom">
+         <input type="text"  placeholder='to' class="inputText overrideInput"  id="To-{{1}}" (input)="ConvertValues($event)"  (click)="ConvertValues($event)" [value]="ValuesToConvert.To">
+         <!-- 
+         <datalist id="l2" >
+         <option *ngFor="let unit of DisplayTabOfUnitsTo;" value='{{unit.name}}-{{unit.type}}' >
+            </option>
+         </datalist>
+        -->
+        <div class="dropdown" *ngIf="dialogueFromTo[1]===true">
+            <div  [ngStyle]="styleDataListToContent" >
+                <div  [ngStyle]="styleDataListToOptions" >
+
+                    <li *ngFor="let unit of DisplayTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="To-{{m}}" (click)="onAction($event)"
+                            class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                            {{unit.name}}-{{unit.type}}
+                    </li>
+
+                </div>
+            </div>
+        </div>
+
+
+         <input type="text" placeholder='Value to convert' class="inputText overrideInput" style=" margin-top:3px; ;"  id="ValueTo-{{0}}" (input)="ConvertValues($event)" [value]="ValuesToConvert.valueTo">
+        
+             <!--
+         <input type="text"  placeholder='unit 3' class="inputText overrideInput"  name="inField" id="Filter-{{2}}" (input)="onFilter($event)" [value]="TabFilter[2]">
+         -->
+        <div style="width:100%; display:inline-block;">
+            <button class="sizeButtons sizeButtonsOverride" style="margin-left:120px; margin-top:5px;" id='Convert' (click)="ConvertValues($event)">Select</button>
+            <button class="sizeButtons sizeButtonsOverride"  id='CancelConvert' (click)="CancelConvertValues()">Cancel</button>
+        </div>
+     </div>
+
+    <!-- =============================================================================
+         ================ DISPLAY & MANAGE TABLE OF ALL CONVERSIONS  ================= 
+         =============================================================================
+     -->
+ <div *ngIf="convertOnly===false">
+     <!-- -->
+     <div class="skipLine">&nbsp;</div>
+     <table style="float:none;">
+         <thead>
+             <tr>
+                 <th class="tableCol" style="width:40px;"> Action </th> 
+                 <th class="tableCol" style="width:40px;"> Type </th> 
+                 <th class="tableCol"> Conversion </th>
+                 <th class="tableCol" style="width:35%"   > From &nbsp;
+                     <input type="text"  list='ff1' class="inputText" style="width:60px; height:15px; margin-left:10px;" placeholder='Filter' id="FilterFrom"  (click)="onFilter($event)"  (input)="onFilter($event)" value="{{TabFilter[0]}}" >
+                     
+                     <div class="dropdown" *ngIf="dialogueFromTo[4]===true">
+                        <div  [ngStyle]="styleDataListFromContent" >
+                            <div  [ngStyle]="styleDataListFromOptions"  style="margin-left:0px; margin-top:10px;">
+            
+                                <li *ngFor="let unit of FilterTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FilterFrom-{{m}}" (click)="onAction($event)"
+                                        class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                        {{unit.name}}-{{unit.type}}
+                                </li>
+            
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!--
+                     <datalist id='ff1' style="margin-left:15px;" >
+                         <option *ngFor="let unit of FilterTabOfUnitsFrom;"  value="{{unit.name}}-{{unit.type}}">{{unit.name}}-({{unit.type}})</option>
+                     </datalist>
+                    -->
+                 </th>
+                 <th class="tableCol" style="width:35%"  > to &nbsp;
+                     <input type="text"  list='ff2' class="inputText" style="width:60px; height:15px; margin-left:10px;" placeholder='Filter' id="FilterTo"  (click)="onFilter($event)" (input)="onFilter($event)" value="{{TabFilter[1]}}" >
+                     <div class="dropdown" *ngIf="dialogueFromTo[5]===true">
+                        <div  [ngStyle]="styleDataListToContent" >
+                            <div  [ngStyle]="styleDataListToOptions" >
+            
+                                <li *ngFor="let unit of FilterTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FilterTo-{{m}}" (click)="onAction($event)"
+                                        class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                        {{unit.name}}-{{unit.type}}
+                                </li>
+            
+                            </div>
+                        </div>
+                    </div>
+                     <!--
+                     <datalist id='ff2' style="margin-left:15px;"   >
+                         <option *ngFor="let unit of FilterTabOfUnitsTo;" value="{{unit.name}}-{{unit.type}}">{{unit.name}}-({{unit.type}})</option>
+                     </datalist>
+                    -->
+                 </th>    
+           
+ 
+             </tr>
+         </thead>
+         <tbody>
+             <tr *ngFor="let display of PageToDisplay; let i=index">
+                 <td class="tableCol" >
+                 <mat-icon class="material-symbols-rounded backGround "    >
+                     <span class="arrow_down_size" [ngClass]="{'arrowEven': i % 2 ===0, 'arrowOdd': i % 2 ===0}" (click)="arrowAction($event)"  id="Item-{{i}}">
+                         expand_circle_down
+                     </span>
+                 </mat-icon>
+                 <div  *ngIf="TabDialogue[i]===true && displayToModify===false && displayToDelete===false" class="dropdown" >
+                     <div [ngStyle]="styleActionBoxContent" >
+                         <div  [ngStyle]="styleActionBoxOptions"  >
+          
+                             <li *ngFor="let action of TabAction; let m=index;" [value]='action' (click)="DelModAction($event)" id="Item-{{i}}" 
+                                     class='Straight-options'   [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                             {{action}}
+                             </li>
+ 
+                         </div>
+                     </div>
+                 </div>  
+                 </td>   
+                 <td class="tableCol" > <span style="width:45px; display:inline-block; font-size:14px;"  >{{ display.type.trim() }}</span></td>      
+                 <td class="tableCol" > <input type="text"  class="inputText" style="width:95%" id="valueFromTo-{{i}}" name="valueFromTo" (input)="inputValue($event)" [value]="display.valueFromToDisplay"></td>
+                 <td class="tableCol" > <input type="text"  class="inputText" id="valueFrom-{{i}}" name="valueFrom" (input)="inputValue($event)" [value]="display.firstValueDisplay "><span style='font-size:14px'>&nbsp;{{display.from }}</span></td>
+                 <td class="tableCol" > <input type="text" class="inputText" id="valueTo-{{i}}" name="valueTo" (input)="inputValue($event)" [value]="display.secondValueDisplay "><span style='font-size:14px'>&nbsp;{{display.to }}</span></td>
+             </tr>    
+         </tbody>
+ 
+    </table>
+    <div class="skipLine">&nbsp;</div>
+       <span  class=" arrow_down divPage" *ngIf="PageToDisplay.length===itemPerPage && displayNewRow===false && displayToModify===false  && displayToDelete===false">
+         <button class="page prevPage" (click)="prevPage()" *ngIf="PageToDisplay[0].refMainTable!==0"> Prev page</button>
+         <span style="margin-left:10px; width:80px; display:inline-block" *ngIf="PageToDisplay[0].refMainTable===0"> &nbsp;</span>
+    </span>
+    
+    <button *ngIf="displayNewRow===false" class="page prevPage" style="margin-left:80px; " (click)="addRow()" >Add a row</button>
+   
+    <span  class=" arrow_down " *ngIf="PageToDisplay.length===itemPerPage && displayNewRow===false && displayToModify===false  && displayToDelete===false">
+         <button class="page " style="margin-left:80px; " (click)="nextPage()" *ngIf="PageToDisplay[itemPerPage-1].refMainTable<ConvToDisplay.tabConvItem.length-1" > Next page</button>
+    </span>
+ 
+
+    <div class="skipLine">&nbsp;</div>
+     <!-- =============================================================================
+          ================ Create new record or Modify existing record ================ 
+          =============================================================================
+     -->
+ <div id='ChangeNewRow'>
+     <div  *ngIf="displayNewRow===true || displayToModify===true || displayToDelete===true" >
+         <div class="skipLine">&nbsp;</div>
+ 
+         <th class="tableCol" style="margin-left:10px; font-size:14px; width:var(--tableW); max-width:var(--tableMaxW); color:blue; background-color:rgb(174, 174, 242); display:inline-block;"> {{tableTitle}} </th>
+ 
+ 
+         <table >
+             <thead>
+  
+                 <tr>
+                     <th class="tableCol" style="width:70px;" colspan="2"> Type </th>
+                     <th class="tableCol" > Conversion </th>
+                     <th class="tableCol" style="width:25%"> From </th>
+                     <th class="tableCol" style="width:25%"> to </th>                
+                 </tr>
+             </thead>
+             <tbody>
+                 <tr >
+                     <td class="tableCol" style="text-align: center; font-size:14px; font-weight:bold;">{{newRecord.type}}</td>
+                     <td class="tableCol " > 
+ 
+                             <mat-icon class="material-symbols-rounded backGround "    >
+                                     <span class="arrow_down_size" (click)="arrowAction($event)" id="UnitType">
+                                         expand_circle_down
+                                     </span>
+                             </mat-icon>
+                        
+                         <div  *ngIf="displayUnitType===true" class="dropdown" >
+                            <div [ngStyle]="styleBoxContent">
+                                <div  [ngStyle]="styleBoxOptions"  >        
+                                     <li *ngFor="let action of TabUnitType; let m=index;" [value]='action' (click)="inputNewRow($event)" id="UnitType-{{m}}" 
+                                             class='Straight-options'   [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                     {{action}}
+                                     </li>
+
+                                 </div>
+                             </div>
+                         </div>  
+                     </td>
+                     <td class="tableCol" > <input type="text"  class="inputText" style="width:95%" id="FromTo" name="valueFromTo" (input)="inputNewRow($event)" [value]="newRecord.valueFromTo"></td>
+                     <td class="tableCol" > <input list='l3' type="text"  class="inputText" style="width:95%" id="From" name="From" (input)="inputNewRow($event)" (click)="inputNewRow($event)" [value]="newRecord.From">
+                     
+                        <div class="dropdown" *ngIf="dialogueFromTo[2]===true">
+                            <div  [ngStyle]="styleDataListFromContent" >
+                                <div  [ngStyle]="styleDataListFromOptions" >
+                
+                                    <li *ngFor="let unit of NewRowTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FromNewRow-{{m}}" (click)="onAction($event)"
+                                            class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                            {{unit.name}}-{{unit.type}}
+                                    </li>
+                
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!--
+                        <datalist id="l3">
+                            <option *ngFor="let unit of NewRowTabOfUnitsFrom;" [value]='unit.name' style="width:40px; height:15px;">
+                                {{unit.name}}-({{unit.type}})</option>
+                        </datalist>
+                        -->
+                    </td>
+                     <td class="tableCol" > <input list='l4' type="text" class="inputText" style="width:95%" id="To" name="To" (input)="inputNewRow($event)"  (click)="inputNewRow($event)" [value]="newRecord.To">
+                     
+                        <div class="dropdown" *ngIf="dialogueFromTo[3]===true">
+                            <div  [ngStyle]="styleDataListToContent" >
+                                <div  [ngStyle]="styleDataListToOptions" >
+                
+                                    <li *ngFor="let unit of NewRowTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="ToNewRow-{{m}}" (click)="onAction($event)"
+                                            class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                            {{unit.name}}-{{unit.type}}
+                                    </li>
+                
+                                </div>
+                            </div>
+                        </div>
+                        <!--
+                        <datalist id="l4">
+                            <option *ngFor="let unit of NewRowTabOfUnitsTo;" [value]='unit.name' style="width:40px; height:15px;">
+                                {{unit.name}}-({{unit.type}})</option>
+                        </datalist>
+                        
+                        -->
+                    </td>
+                 </tr>
+                 <tr >
+            
+                 </tr>
+             </tbody>
+         </table>
+         <span style="margin-left:15px; color:red; font-size:12px;">{{error_msg}}</span>
+         <div class="skipLine">&nbsp;</div>
+         <div *ngIf="displayNewRow===true ">
+             <button class="sizeButtons sizeButtonsOverride" style="margin-left:150px; float:left;" id='SaveNewRow' (click)="inputNewRow($event)">Save new row</button>
+             <button class="sizeButtons sizeButtonsOverride" id='CancelNewRow' (click)="CancelNewRow()">Cancel</button>
+         </div>
+         <div *ngIf="displayToModify===true">
+             <button class="sizeButtons sizeButtonsOverride" style="margin-left:150px; float:left;" id='UpdateChanges' (click)="DelModAction($event)">Confirm Changes</button>
+             <button class="sizeButtons sizeButtonsOverride" id='CancelNewRow' (click)="CancelAction()">Cancel</button>
+         </div>
+         <div *ngIf="displayToDelete===true">
+             <button class="sizeButtons sizeButtonsOverride" style="margin-left:150px; float:left;" id='YesDelete' (click)="DelModAction($event)">Confirm Delete</button>
+             <button class="sizeButtons sizeButtonsOverride" id='CancelNewRow' (click)="CancelAction()">Cancel</button>
+         </div>
+ 
+     </div>
+ </div>
+      <!-- =======================================================
+          ================ Save or Cancel updates ================ 
+          ========================================================
+     -->
+     <div *ngIf="displayNewRow===false && displayToModify===false && displayToDelete===false" >
+         <div class="skipLine">&nbsp;</div>
+         <div style='width:100%; height:30px; display:inline-block; color:blue; font-size:14px;' >Reinitialise the table
+             <button class="sizeButtons sizeButtonsOverride" id='CancelConvert' (click)="CancelConvert()">Init</button>
+         </div>
+         <div class="skipLine">&nbsp;</div>
+         <div style='width:100%; height:30px; display:inline-block; color:blue; font-size:14px;' >Update the conversion configuration file
+                 <button class="sizeButtons sizeButtonsOverride" id='SaveConvert' (click)="SaveConvert()">Save</button> 
+         </div>
+         <div class="skipLine">&nbsp;</div>
+         <span style='color:red; font-size:12px; width:100%' >{{message}}</span>
+     </div>      
+ </div>
+</div>
+
+
+</body>

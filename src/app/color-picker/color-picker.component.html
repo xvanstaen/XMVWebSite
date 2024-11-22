@@ -1,0 +1,48 @@
+
+<div class="skipLine">&nbsp;</div>
+<div style="width:430px; margin-left:10px; display:inline-block; background-color:lightgrey; border:solid 2px grey">
+    <span style="width:100%; color:blue; height: 40px; padding-top:10px; font-size:16px; background-color:cyan; display:inline-block; text-align: center;">
+      Format & Position of Slider
+    </span>
+    <form [formGroup]="myForm" >
+      <div class="skipLine" style="height:2px;">&nbsp;</div>
+      <span style="width:80px; color:blue; display:inline-block; margin-left:30px">Hori-Vert</span> <input type="'text" formControlName="VerHor" value="VerHor"  class="theInput">
+      
+      <div class="skipLine" style="height:2px;">&nbsp;</div>
+      <span style="width:80px; color:blue; display:inline-block; margin-left:30px">Margin-top</span> <input type="'text" formControlName="top" value="top"  class="theInput">
+      <span style="width:80px; color:blue; display:inline-block; margin-left:10px">Margin-left</span> <input type="'text" formControlName="left" value="left"  class="theInput">
+      <div class="skipLine">&nbsp;</div>
+      <span style="width:80px; color:blue; display:inline-block; margin-left:30px">Rgba</span> <input type="'text" formControlName="rgba1" value="rgba1"  class="theInput" style="width:60px;">
+      <span style="width:5px;  display:inline-block; margin-left:5px">&nbsp;</span> <input type="'text" formControlName="rgba2" value="rgba2"  class="theInput" style="width:60px;">
+      <span style="width:5px;  display:inline-block; margin-left:5px">&nbsp;</span> <input type="'text" formControlName="rgba3" value="rgba3"  class="theInput" style="width:60px;">
+      <span style="width:5px;  display:inline-block; margin-left:5px">&nbsp;</span> <input type="'text" formControlName="rgba4" value="rgba4"  class="theInput" style="width:40px;">
+      <span style="width:100%; color:red; display:inline-block; margin-left:30px; font-size:16px;"> Palette</span>
+      <span style="width:80px; color:blue; display:inline-block; margin-left:30px"> Margin-top</span> <input type="'text" formControlName="palTop" value="palTop"  class="theInput">
+      <span style="width:80px; color:blue; display:inline-block; margin-left:10px">Margin-left</span> <input type="'text" formControlName="palLeft" value="palLeft"  class="theInput">
+      <div class="skipLine">&nbsp;</div>
+      <button class="sizeButtons"  style="margin-left:180px; width:80px; height:30px; font-size:14px;" (click)="onSubmit()">submit</button>
+      <div class="skipLine">&nbsp;</div>
+    </form>
+</div>
+<div class="skipLine">&nbsp;</div>
+
+  <div *ngIf="isDisplaySlider===true">
+      <div class='color-wrapper' >
+        <app-color-palette  [my_input1]="my_input_child1" [posPalette]="posPalette"[INreturnField]="returnPalette" [paramChange]="paramChange" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+        </app-color-palette>
+        <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+        </app-color-slider>
+      </div>
+
+      <div class='input-wrapper'>
+          <span class="text"> slider: {{my_input_child2}} </span>
+          <div class="color-div" [ngStyle]="{'background-color': my_input_child2 || 'white'}"></div>
+      </div>
+      <div class='input-wrapper'>
+          <span class="text" > palette: {{temporaryColor}} </span>
+          <div class="color-div" [ngStyle]="{'background-color': temporaryColor || 'white'}"><br><br></div>
+      </div>
+</div>
+
+
+ 

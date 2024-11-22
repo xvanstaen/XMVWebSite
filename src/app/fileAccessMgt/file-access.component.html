@@ -1,0 +1,18 @@
+
+<!--
+<div *ngIf="callFileSystem===true" >
+-->
+
+<app-file-system-service
+        [iWait]="iWait" [tabLock]="tabLock" [nbCallFileSystem]="nbCallFileSystem"
+        [iWaitToRetrieve]="iWaitToRetrieve"
+        [configServer]="configServer" [identification]="identification" [credentialsFS]="credentialsFS"
+        (resultFileSystem)="resultFileSystemFn($event)"
+        >
+</app-file-system-service>
+<!--
+</div>
+-->
+
+
+

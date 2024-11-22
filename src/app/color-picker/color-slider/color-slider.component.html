@@ -1,0 +1,58 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head> 
+<div id="posDivCanvas"></div>
+<div  *ngIf="posSlider.VerHor==='H'" style="max-width:257px; max-height:50px; position:absolute; border:0px red solid;" [ngStyle]="{'margin-top.px':posSlider.top , 'margin-left.px':posSlider.left}">
+      <canvas 
+        #THECanvas
+        width="257"
+        height="50"
+        id='canvasIDSliderH'
+        style="border:0px solid black;"
+        (touchstart)="onTouchStart($event)" 
+        (touchmove)="onTouchStart($event)"
+        class="color-slider" 
+        (mousedown)="onMouseDown($event)"
+        (mousemove)="onMouseMove($event)" 
+      >
+      </canvas>
+      
+  </div>
+  <div  *ngIf="posSlider.VerHor==='V'" style="max-width:50px; max-height:257px; position:absolute; border:0px red solid;" [ngStyle]="{'margin-top.px':posSlider.top , 'margin-left.px':posSlider.left}">
+    <canvas 
+      #THECanvas
+      width="50"
+      height="257"
+      id='canvasIDSliderV'
+      style="border:0px solid black;"
+      (touchstart)="onTouchStart($event)" 
+      (touchmove)="onTouchStart($event)"
+      class="color-slider" 
+      (mousedown)="onMouseDown($event)"
+      (mousemove)="onMouseMove($event)"
+    > 
+    </canvas>
+</div>
+
+ <!--
+  <div *ngIf="posSlider.VerHor==='H'" style="width:260px; display:inline-block; margin-left:20px; margin-top:0px; position:absolute;  z-index:1; ">
+   
+    <input type="range" value={{selectedPos.x}} min=1 max=255 class="horizontalOthers"  id="myRange"     
+           >
+  </div>
+  <div *ngIf="posSlider.VerHor==='V'" >
+    <div *ngIf="browserType==='Firefox'">
+        <input type="range" value={{selectNb}} min=1 max=255 class="verticalFirefox" id="myRange" (input)='returnValue($event)'>
+    </div> 
+    <div *ngIf="browserType==='Others'">
+      <input type="range" value={{selectNb}} min=1 max=255 class="verticalOthers" id="myRange"       >
+  </div>
+
+  </div>
+  -->
+<!--
+  <div style="margin-top:50px; margin-left:90px;">
+    {{msg}} + slectNb={{selectNb}} - Pos.X{{selectedPos.x}} - Pos.Y{{selectedPos.y}} +  posSlider.left={{posSlider.left}} + posDiv.Left{{posDiv.Left}} + posSlider.top={{posSlider.top}} posDiv.Top{{posDiv.Top}}
+    <div *ngIf="msg!==''"> client.Y{{myTouch.clientY}} client.X{{myTouch.clientX}} page.Y{{myTouch.pageY}} page.X{{myTouch.pageX}}</div>
+  </div>
+-->

@@ -1,0 +1,22 @@
+@import "../app.component.css";
+
+.theLine{
+    width:100%; color:blue; font-size:12px; display:inline-block;  margin-top:5px;
+}
+
+.theTitle{
+    font-size:20px; font-weight: bolder; width:100%; display:inline-block; padding-top:15px; text-align: center;
+}
+
+.theBox{
+    width:100%; margin-top:4px; display:inline-block; border: solid 2px blue;  max-height:300px; overflow-y:scroll; 
+}
+
+.theContent{
+    width:60%; color:blue; font-size:14px; display:inline-block; 
+    padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;
+}
+
+.element{
+    width:100px; display:inline-block; color:blue; font-weight:bolder;
+}

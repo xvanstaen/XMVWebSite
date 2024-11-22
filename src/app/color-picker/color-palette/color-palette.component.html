@@ -1,0 +1,18 @@
+
+<div id="posDivCanvasP"></div>
+<canvas #myCanvas id='canvasElPalette' 
+class="color-palette position" 
+[ngStyle]="{'margin-left.px':margLeft, 'margin-top.px':margTop}"
+width="255" 
+height="255" 
+(mousedown)="onMouseDown($event)"
+(mousemove)="onMouseMove($event)" 
+(touchstart)="onTouchStart($event)" 
+(touchmove)="onTouchStart($event)"
+>
+
+<!--
+width="270" 
+height="270" 
+-->
+

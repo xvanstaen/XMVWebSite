@@ -1,0 +1,66 @@
+@import "../app.component.css";
+
+.FrEven{
+    background-color: lightgreen;
+}
+.FrOdd{
+    background-color: rgb(28, 240, 28);
+}
+.EnEven{
+    background-color: lightblue;
+}
+.EnOdd{
+    background-color: rgb(14, 183, 240);
+}
+
+.Straight-options{
+    width:var(--DropBoxContentWidth,150px);
+    font-size:12px;
+    height:var(--DropBoxItemHeight,25px);
+    color:black;
+    text-align: left;
+    padding-left:5px;
+    padding-top:4px;
+    border:0px; 
+    display:inline-block;
+    float:none;
+  }
+
+.Straight-options:hover{
+    background-color:lightyellow;
+  }
+
+
+  .circle{
+    border-radius: 50% 50%;
+    color:blue;
+
+    border: solid 1px rgb(4, 4, 124);
+
+    font-size:14px;
+    font-weight:bold;
+    background-color: lightgreen;
+    text-align: center;
+    padding-top:-5px;
+    display:block;
+    float:left;
+  }
+  
+  .circle:hover{
+    color:red;
+    background-color:cyan;
+    width:22px;
+    height:22px;
+    border: solid 2px rgb(4, 4, 124);
+  }
+
+  .input{
+    margin-left:8px; width:45%; display:inline-block; overflow-y:auto; 
+  }
+
+  .input:hover{
+    background-color:cyan;
+  }
+
+
+

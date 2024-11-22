@@ -1,0 +1,30 @@
+
+
+.color-palette {
+    width: 255px;
+    height: 255px;
+    display: block;
+    border: 1px solid rgb(173, 106, 29);
+}
+
+.color-palette:hover {
+    cursor: pointer;
+  }
+  
+/*
+  :host {
+    width: 250px;
+    height: 250px;
+    display: block;
+    border: 3px solid rgb(173, 106, 29);
+  }
+  */
+  .position{
+    color:black;
+    /*
+    margin-top: -500px;
+    margin-left: 150px;
+    position:absolute;
+   */
+  }
+

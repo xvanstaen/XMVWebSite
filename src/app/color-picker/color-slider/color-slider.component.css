@@ -1,0 +1,172 @@
+
+  
+  .color-slider{
+    color:black;
+    border:solid 4px blue;
+    display:block;
+  }
+
+  .color-slider:hover {
+    cursor: pointer;
+  }
+
+
+
+  .verticalFirefox{
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    height:257px; 
+    width:20px;
+    writing-mode:vertical-lr;
+    margin-top:-255px;
+    margin-left:80px;
+  
+    opacity: 0.7;
+    background: cyan;
+    outline: none;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+     /*
+    cursor: pointer; 
+    transform: rotate(30deg);
+    */
+  
+  }
+
+.horizontalOthers{
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width:257px;  height:50px;
+  opacity: 0.6;
+  background: none;
+  outline: none;
+}
+
+.verticalOthers{
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  height:20px; 
+  width:209px;
+
+  opacity: 0.7;
+  background: none;
+  outline: none;
+
+}
+/*
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+
+*/
+
+/* Mouse-over effects */
+.verticalFirefox:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+  cursor: pointer; /* Cursor on hover */
+}
+.verticalOthers:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+  cursor: pointer; /* Cursor on hover */
+}
+.horizontalOthers:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+  cursor: pointer; /* Cursor on hover */
+}
+
+/* Track: webkit browsers 
+
+
+*/
+
+
+
+.horizontalOthers::-webkit-slider-runnable-track {
+  -webkit-appearance: none; /* Override default look */
+  
+  
+  background-color: cyan;
+  border-radius: 0px;
+
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.horizontallOthers::-webkit-slider-thumb {
+  
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 4px; /* Set a specific slider handle width */
+  height: 40px; /* Slider handle height */
+  background: red;
+ 
+  border-radius:10%;
+}
+
+.verticalOthers::-webkit-slider-runnable-track {
+  -webkit-appearance: none; /* Override default look */
+  cursor: pointer;
+  appearance: none;
+  margin-top:-280px; 
+  margin-left:-45px; 
+  background-color: cyan;
+  border-radius: 0px;
+  transform:rotate(270deg);
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.verticalOthers::-webkit-slider-thumb {
+  
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 16px; /* Set a specific slider handle width */
+  height: 16px; /* Slider handle height */
+  background: red;
+  background-size: cover;
+  border-radius:50%;
+}
+
+
+
+/* Track: Mozilla Firefox */
+/*
+.verticalSlider::-moz-range-track {
+  width:10px;
+  height: 257px;
+  background: #7ee873;
+  border-radius: 16px;
+  writing-mode:vertical-rl;
+
+}
+*/
+.verticalFirefox::-moz-range-thumb {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none; 
+  width: 20px; /* Set a specific slider handle width */
+  height: 20px; /* Slider handle height */
+  background: #de1226; /* Green background */
+
+  background-size: cover;
+  border-radius: 50%;
+  transition: .2s ease-in-out;
+}
+
+
+/*
+position:absolute;
+    margin-left:20px;
+     margin-top: 0px;
+*/
+
+
+.myVertical{
+  height:50px; 
+  width:257px;
+  margin-top:-257px;
+  margin-left:80px;
+  opacity: 0.7;
+    -webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -o-transform:rotate(90deg);
+    transform:rotate(270deg);
+
+}
+  

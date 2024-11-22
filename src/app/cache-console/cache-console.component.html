@@ -1,0 +1,57 @@
+
+
+<div *ngIf="this.EventHTTPReceived[0]===true " style="margin-left:20px; width:500px; display:block; ">
+    <div class="theTitle" > Cache Console</div> 
+    <div class="theTitle" > server: {{configServer.googleServer}}</div> 
+    <div class="theBox">
+        <div *ngFor="let tab of memoryCacheConsole; let i=index " >
+            <div style=' width:100%;  display:inline-block; border: solid 2px red; '>
+                {{error}}
+                <span class="theLine"> <span class='label'>Date &nbsp;&nbsp; {{tab.theDate}}</span></span>
+                <div *ngIf="tab.msg!==''" >
+                    <span class="theLine"><span class='label'>Message</span><span class='theContent'>{{tab.msg}}</span></span>
+                </div>
+                <div *ngIf="tab.content!==undefined && tab.content!==''" >
+                    <span class="theLine"><span class='label'>Content</span></span>
+                    <span class='theContent'  >{{tab.content}}</span>
+                </div>
+                
+                <div *ngIf="tab.credentials.creationDate!==''">
+                    <span class="theLine"><span class='label'>Credentials</span></span>
+                    <span class='theContent'  ><span class="element">creationDate</span> {{tab.credentials.creationDate}}</span>
+                    <span class='theContent'  ><span class="element">userServerId </span>{{tab.credentials.userServerId}}</span>
+                    <span class='theContent'  ><span class="element">on server</span> {{tab.credentials.server}}</span>
+                </div>                
+                <div *ngIf="tab.tabLock.user!==''" >
+                    <span class="theLine"><span class='label'>Tablock</span></span>
+                    <span *ngIf="tab.tabLock.createdAt!==''" class='theContent'  ><span class="element">createdAt</span> <span >{{tab.tabLock.createdAt}}</span></span> 
+                    <span *ngIf="tab.tabLock.updatedAt!==''"class='theContent'  ><span class="element">updatedAt</span> <span >{{tab.tabLock.updatedAt}}</span></span> 
+                    <span class='theContent'  ><span class="element">userServerId</span> {{tab.tabLock.userServerId}}</span>
+                    <span class='theContent'  ><span class="element">by user </span>{{tab.tabLock.user}}</span>
+                    <span class='theContent'  ><span class="element">on server </span>{{tab.tabLock.server}}</span>
+                </div>
+                
+                <div *ngIf="tab.otherUser.updatedAt!==undefined && tab.otherUser.updatedAt!==''" >
+                    <span class="theLine"><span class='label'>Was timeout reached?</span></span>
+                    <span class='theContent'  ><span class="element">updatedAt</span> {{tab.otherUser.updatedAt}}</span>
+                    <span class='theContent'  ><span class="element">timeOut</span> {{tab.otherUser.timeOut}}</span>
+                    <span class='theContent'  ><span class="element">currentTime</span> {{tab.otherUser.currentTime}}</span>
+                    <span class='theContent'  ><span class="element">status</span> {{tab.otherUser.status}}</span>
+                </div>
+
+                 
+                <div *ngIf="tab.FS.updatedAt!==undefined && tab.FS.updatedAt!==''" >
+                    <span class="theLine"><span class='label'>File system</span></span>
+                    <span class='theContent'  ><span class="element">createdAt</span> {{tab.FS.createdAt}}</span>
+                    <span class='theContent'  ><span class="element">updatedAt</span> {{tab.FS.updatedAt}}</span>
+                    <span class='theContent'  ><span class="element">byUser </span>{{tab.FS.byUser}}</span>
+                    <span class='theContent'  ><span class="element">userServerId </span>{{tab.FS.userServerId}}</span>
+                    <span class='theContent'  ><span class="element">file</span> {{tab.FS.object}}</span>
+                    <span class='theContent'  ><span class="element">credentialDate</span> {{tab.FS.credentialDate}}</span>
+                </div>
+                
+                <div class="skipLine"></div>
+            </div>
+        </div>
+    </div>
+</div>
