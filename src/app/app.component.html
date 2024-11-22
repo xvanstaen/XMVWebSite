@@ -1,0 +1,68 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+<body>
+
+
+
+<!--
+<app-select-server [initConfigServer]="initConfigServer" 
+                    (returnServer)="getServerNames($event)">
+</app-select-server>
+-->
+<!--
+<div *ngIf="myParams.code!==undefined">
+    <span style="width:94%; background-color: cyan; margin-left:10px; border:solid 2px red; display:inline-block; ">Parameter CODE = {{myParams.code}}</span>
+    <span style="width:94%; background-color: lightgrey; margin-left:10px; border:solid 2px blue; display:inline-block; ">Parameter SCOPE = {{myParams.scope}}</span>
+</div>
+-->
+
+<div *ngIf="isConfigServerRetrieved===true && devMode!=='local'" style="margin-left:30px; margin-top:40px; width:300px;">
+    <form [formGroup]="theForm" >
+        <div style="display:inline-block; height:15px; width:100%; color:red; font-size: 14px;">userServerId==>{{credentials.userServerId}}   {{errorMsg}}</div>
+        <label class="label">User Id</label> <input type="text" class="theInput" formControlName="userId">
+        <div style="display:inline-block; height:4px; width:100%;"></div>
+        <label class="label">Password</label> <input type="password" class="theInput" formControlName="psw">
+        <div *ngIf="isConfigServerRetrieved && this.isValidateId===false" style="margin-top:8px;">
+            <button class="sizeButtons" id="2" (click)="validateIdentification()">Submit</button> 
+            <button class="sizeButtons" id="1" (click)="clearForm()">Clear</button> 
+        </div>
+        <div style="display:inline-block; height:4px; width:100%;"></div>
+    </form>
+</div>
+<div  *ngIf="isIdRetrieved===true && isConfigServerRetrieved===true" style="margin-top:20px; border:0px red solid;">
+    <app-user-functions
+            [identification]="identification"  [configServer]="configServer"  [devMode]="devMode"
+            [configServerChanges]="configServerChanges" [credentials]="credentials"
+            [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
+            (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)"
+    >
+    </app-user-functions>
+</div>
+<div *ngIf="isConfigServerRetrieved===false && devMode!=='local'" style="margin-top:10px; display:inline-block; font-size:14px; color:blue;  width:500px; margin-left:20px; background-color: lightskyblue;">
+    Configuration is being retrieved
+</div>
+
+<div *ngIf="errConfig!==''" style="margin-top:10px; font-weight:bolder; display:inline-block; font-size:14px; color:white;  width:500px; margin-left:20px; background-color: red;">
+    {{errConfig}}
+</div>
+
+<div *ngIf="devMode==='local' && currentFunction!==''" style=" margin-top:40px; width:500px;">
+    <div style="margin-left:20px; color:blue; font-size:14px; margin-top:12px;display:block; float:left; min-width: 200px; border:blue solid 0px;">
+        Open the file for function {{currentFunction}}
+    </div>
+    <div style=" margin-left:300px; border:red 0px solid; width:180px; margin-top:40px">
+        <label  >
+            <input style=" display:none;" type="file" (change)="open($event)">
+            <a class="buttons" style="padding-left:30px; " id="50"> {{theFn}} </a>
+        </label>
+    </div>
+</div>
+
+
+
+</body>
+
+
+
+<router-outlet />

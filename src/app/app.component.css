@@ -1,0 +1,202 @@
+
+
+.radioButton{
+    appearance: none;
+  
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+  
+    border: 2px solid  grey;
+    transition: 0.2s all linear;
+    margin-top: 14px;
+    margin-left: 45px;
+    float:left;
+  }
+  
+  .radioConfig{
+    margin-left:10px; width:60%; display:block; background-color:cyan; float:left;
+  } 
+  
+  .radioButton:checked {
+    width: 12px;
+    height: 12px;
+    background-color: rgb(32, 128, 237);
+    border: 2px solid white;
+    box-shadow:0px 0px 0px 2px rgb(32, 128, 237);
+    /*
+    box-shadow: 0 0 0 5px red, 0 0 0 10px white, 0 0 0 15px red;
+    box-shadow: inset 0 0 0 5px white;
+    */
+  
+  }
+  
+  .YesNo{
+    font-size:14px;
+  }
+
+  .sizeButtons{
+    width:60px;
+    height:22px;
+    font-size:10px;
+    margin-left:10px;
+    background-color:cyan;
+    border-radius: 5px;
+    background-image: linear-gradient(cyan, lightcyan);
+    box-shadow: 2px 2px blue;
+    border: solid 1px blue;
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.sizeButtons:hover{
+    background-color:rgb(48, 89, 159);
+    background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+  }
+
+.skipLine{
+    margin-left:5px;
+    width:95%;
+    height:4px;
+    display:inline-block;
+    border:solid red 0px;
+   
+  }
+
+
+.dropdown {
+    position: relative;
+    display: contents; 
+  }
+  
+
+.Straight-content{
+    position: absolute;
+    z-index: 1;
+  }
+
+.StraightDropDown{
+    margin-top:20px;
+    width:305px;
+    height: 260px;
+    border: 0px solid green;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-color: lightgrey;
+    margin-left:40px;
+  }
+
+
+.Straight-options{
+    width:100%;
+    font-size:12px;
+    height:25px;
+    color:black;
+    text-align: left;
+    padding-left:5px;
+    padding-top:4px;
+    border:0px; 
+    display:inline-block;
+    float:none;
+  }
+
+.Straight-options:hover{
+    background-color:rgb(36, 199, 85);
+  }
+
+.error{
+    color:red;
+    font-size:14px;
+    background-color:cyan;
+    display:contents;
+  }
+
+.options{
+  width:40%; display:inline-block; margin-left:8%;
+}
+
+.labelLong{
+  width:200px; color:blue; font-size:14px; display:inline-block; text-align: left; padding-left:10px;
+}
+
+.label{
+  width:150px; color:blue; font-size:14px; display:inline-block; text-align: left; padding-left:10px;
+}
+
+.labelMid{
+width:110px; color:blue; font-size:14px; display:inline-block; text-align: left; padding-left:10px; font-weight: bold;
+}
+
+.labelShort{
+width:80px; color:blue; font-size:14px; display:inline-block; text-align: left; padding-left:10px; font-weight: bold;
+}
+
+.theInput{
+  width:300px; color:blue; font-size:14px; display:inline-block; background-color: lightgrey; padding-left:8px;
+}
+
+.theInput:hover {
+  background-color: cyan;
+}
+
+.theInputMid{
+  width:200px; color:blue; font-size:14px; display:inline-block; background-color: lightgrey;
+  padding-left:8px;
+}
+
+.theInputMid:hover {
+  background-color: cyan;
+}
+
+.theInputShort{
+  width:100px; color:blue; font-size:14px; display:inline-block; background-color: lightgrey;
+  padding-left:8px;
+}
+
+.theInputShort:hover {
+  background-color: cyan;
+}
+
+.odd{
+  background-color: cyan;
+}
+
+.even{
+  background-color: rgb(47, 226, 226);
+}
+
+.odd:hover{
+background-color: lightgreen;
+}
+
+.even:hover{
+background-color: lightgreen;
+}
+
+.forHover{
+  border:solid 0px blue;
+}
+
+.forHover:hover{
+  background-color: rgb(34, 187, 34);
+}
+
+
+.buttons{
+  width:100px;
+  height:40px;
+  font-size:16px;
+  margin-left:10px;
+  background-color:cyan;
+  border-radius: 5px;
+  background-image: linear-gradient(cyan, lightcyan);
+  box-shadow: 2px 2px blue;
+  border: solid 1px blue;
+  display:table-cell;
+  vertical-align:middle;
+}
+
+.buttons:hover{
+  background-color:rgb(48, 89, 159);
+  background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+}
