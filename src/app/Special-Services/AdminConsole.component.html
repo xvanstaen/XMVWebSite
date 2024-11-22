@@ -1,0 +1,24 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+
+<div id='targetTop' ></div>
+
+<h2 style="margin-top:2px;"><br></h2>
+<div id='SelectedFile' ></div>
+<h1>Administration of Console messages</h1>
+
+
+<div *ngIf="ContentTodisplay===true">
+  <div style="margin-top:30px;">
+    <li style="list-style-type: none;" *ngFor="let msg of  theReceivedData; let i=index">  
+        <span  *ngIf="i % 2 === 0" class="message evenmsg">{{i+1}} - {{msg.msg}} === {{msg.timestamp}}</span>
+        <span  *ngIf="i % 2 !== 0" class="message oddmsg">{{i+1}} - {{msg.msg}} === {{msg.timestamp}}</span>
+  </li>
+</div>
+</div>
+
+<br><br>
+</body>

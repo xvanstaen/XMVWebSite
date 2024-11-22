@@ -1,0 +1,137 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+ <div class="myparameters"> <!-- mainbody -->
+   
+        <div >
+            <img  class='sizeMap ImageContactPos'  src="./assets/Singapore.jpg" >
+        </div>
+        <div class='contactPos ContactPos_One'>       
+              <span class="Contact_One"> Contact us</span>
+        </div>
+            <!--
+            <div class='contactPos ContactPos_Two'>   
+              <span class="Contact_Two">We will reply to you <br>very quickly!</span>
+            </div>
+            -->
+        <form class='contactBox ' [formGroup]="myContactForm"  (ngSubmit)="onSubmit('submit')">
+          <div >
+                <div>
+                    <label  class='field-name first-field-name'  for="name" > Name</label>
+                    <input formControlName="name" id="name" type="text" class="input-text first_text-name" (input)="onSubmit('name')" >
+                    <div class="errorbox"> {{name_error}}</div>
+                </div>
+  
+                <div >
+                  <label  class="field-name" for="email" > email</label>
+                  <input formControlName="email" id="email" type="email" class="input-text other_text_fields" (input)="onSubmit('email')"  >
+                  <div class="errorbox">{{email_error}}</div>
+                </div>
+                <!--
+                <div class="wrapper">
+                      <label class="field-name " for="mobile" > Mobile</label>
+      
+                      <ngx-intl-tel-input 
+      
+                        
+                            [cssClass]="'custom'"
+                            [preferredCountries]="preferredCountries"
+                            [enableAutoCountrySelect]="false"
+                            [enablePlaceholder]="true"
+                            [searchCountryFlag]="true"
+                            [searchCountryField]="[
+                              SearchCountryField.Iso2,
+                              SearchCountryField.Name
+                            ]"
+                            [selectFirstCountry]="false"
+                            [selectedCountryISO]="CountryISO.Singapore"
+                            [maxLength]="'15'"
+                            [phoneValidation]="true"
+                            [separateDialCode]="separateDialCode" 
+                            [numberFormat]="PhoneNumberFormat.International"
+                            name="phone"
+                            formControlName="phone" 
+                          >
+                      </ngx-intl-tel-input>
+                      <div class="errorbox"> {{mobile_error}}</div>
+                </div>
+      
+                -->
+                <div >
+                  <label  for="subject" class='field-name'> Subject</label>
+                  <input formControlName="subject" id="subject" type="text" class="input-text other_text_fields" (input)="onSubmit('subject')" >
+                  <div class="errorbox"> {{subject_error}}</div>            
+                </div>
+      
+  
+            <div> <!-- block message -->
+                <label class='field-name field-message'> Message</label>
+                
+                <textarea formControlName="text" id="text" type="text" class='input-msg'  (input)="onSubmit('message')" >
+                </textarea>
+                <div class="error-message errorbox "> {{text_error}}</div>
+              
+                <!--
+                <div *ngIf=" ((myContactForm.controls['text'].touched || myContactForm.controls['text'].dirty) && myContactForm.controls['text'].invalid)"  class="alert alert-danger">
+                    <div *ngIf="myContactForm.controls['text'].errors?.['required']">Text is required </div>
+                    <div *ngIf="myContactForm.controls['text'].errors?.['minlength']">Text should be 10 characters minimum</div>
+                </div>
+              -->
+                  
+            </div> <!--  == end block message ==  -->
+  
+  
+            <div >
+              <!-- 
+                  ============ ATTENTION ======================================================
+                    first button is not displayed because we want that (click) on input fields 
+                    does not trigger the Clear('Clear') process 
+                  SO DON'T REMOVE THIS LINE OF CODE
+                  However, this is not needed if an id is added to <button>
+                  ==============================================================================
+                
+                <button  style='display:none' (click)="onSubmit(current_event)">Click</button>
+                -->
+                <button  id='but_1' class="first-button"  (click)="Clear('Clear')">Clear</button>
+            
+                <button id='but_2' class="first-button second-button" style='-webkit-appearance: none;' type="submit">Submit</button>
+                  <br><br><br>
+            </div>
+  
+          </div> <!-- == end first-inputs == -->
+
+
+   </form>
+
+ 
+
+ <!--
+          <span style='float:right; margin-right:150px; margin-top:-570px; display:bloc; color:white; font-size:45px;'>
+            <span style='float:right;margin-right:130px;'> Contact us</span><br><br><br><br>
+            <span style='margin-right:30px;  '>We will reply to you</span> <br><br>
+            <span style='float:right; margin-right:120px;'>very quickly!</span>
+          </span>
+-->
+
+    <!-- ======== FOOTER ======== -->
+    <div class='myfooter'>
+        <!--
+        <div class="text-footer">email: xmv@gmail.com</div>
+        <div class="text-footer"> Address: 6 SIMS DRIVE #11-24 Singapore 387388</div>
+        -->
+        <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
+          <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
+          <br> <div class='copyright'>No rights intended or owned in them </div>
+
+          <br>
+        </div>
+        <!--
+        <button [routerLink]="['/myRouting']" > 
+            <mat-icon style='display:none;' class='material-icons-outlined'> arrow_back_ios</mat-icon> 
+        </button>   
+        -->
+    </div>
+
+</div><!-- class mainbody  -->
+</body>

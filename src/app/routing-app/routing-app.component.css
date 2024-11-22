@@ -1,0 +1,440 @@
+
+@import "../app.component.css";
+/* 
+    background-image: radial-gradient(farthest-corner at 70px 60px, 
+        rgb(51, 146, 255) 20%, rgb(68, 51, 238) 80%);
+    background: linear-gradient(180deg,
+        rgb(51, 146, 255) 30%, rgb(68, 51, 238) 100% );
+
+     box-shadow: inset 15px 10px 5px 0px rgb(68, 51, 238);
+
+       box-shadow: 0px 0px 0px 10px red, 0px 0px 0px 20px green, 0px 0px 0px 30px yellow, 0px 0px 0px 40px blue, 0px 0px 0px 50px skyblue, 0px 0px 0px 60px pink;
+  width: 100px;
+    */
+
+
+.example_one{
+    background: conic-gradient(at 10% 30%, rgb(89, 76, 240) 10%,
+    rgb(107, 146, 190) 30%, rgb(89, 76, 240) 50% ) ;
+}
+
+
+
+.example_three{
+    background: radial-gradient(farthest-corner at 70px 60px, 
+        rgb(51, 146, 255) 20%, rgb(68, 51, 238) 80%);
+}
+
+.mylogo {   
+  margin-top: 2px;
+  margin-left: 10px;
+  float:left;
+  align-items:center;
+  justify-content:center ;
+  letter-spacing:6%;
+  border: 2px solid blue;  
+  color:white;
+  border-radius: 50%;
+  font-weight: bold;
+  display:grid;
+
+}
+.example_two{
+  background: linear-gradient(180deg,
+      rgb(51, 146, 255) 30%, rgb(68, 51, 238) 100% );
+}
+.smXMV{
+    margin-left: 7px;
+    margin-top: 8px;
+    font-size: 18px;
+    position:absolute;
+}
+
+.smITConsulting{
+    margin-left: 4px;
+    margin-top: 32px;
+    font-size: 8px;
+    position:absolute;
+}
+
+.smcirclesize{
+    width: 78px;
+    height:78px;
+}
+
+
+.smwhitecircle{
+    /* offset-x | offset-y | blur-radius | spread-radius | color */
+    box-shadow:  0px 0px 0px 3px rgb(252, 249, 249);
+
+    border-radius: 50%;
+    width: 64px;
+    height:64px;
+    padding:5px;
+    margin-left: -0.5px;
+    margin-top: 0px;
+}
+
+/* ============= large size ============= */
+
+.xlcirclesize{
+    width: 178px;
+    height:178px;
+}
+.xlwhitecircle{
+    /* offset-x | offset-y | blur-radius | spread-radius | color */
+    box-shadow:  inset 0px 0px 0px 5px rgb(247, 244, 244);
+    border-radius: 50%;
+    width: 170px;
+    height:170px;
+    margin-top:2px;
+}
+
+.xlXMV{
+    margin-left: 22px;
+    margin-top: 30px;
+    font-size: 50px;
+    position:absolute;
+    font-family:  Verdana, Geneva, Tahoma, sans-serif;
+    font-style: normal;
+    font-weight: bolder;
+}
+
+.xlITConsulting{
+    margin-left: 40px;
+    margin-top: 99px;
+    font-size: 12px;
+    position:absolute;
+    font-family:  Georgia, Times, 'Times New Roman', serif;
+    font-style: italic;
+}
+
+.icons {
+  width: 30px;
+  height:15px;
+  border-radius: 30%;
+  text-align: center;
+  display:inline-block;
+}
+
+/* ============= SLIDER ============= */
+.sliderposition{
+  margin-top:80px;
+  margin-left:50px;
+  
+}
+.sliderdefault {
+    width: 160px;
+    height: 20px;
+
+    border-radius: 10%;  
+    background: yellow;
+    color:blue;
+    outline: none;
+    opacity: 0.2;
+    -webkit-transition: .5s;
+    transition: opacity .5s;
+  }
+
+.slider {
+    width: 260px;
+    height: 20px;
+    border-radius: 5px;  
+    background: yellow;
+    color:red;
+    outline:none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  
+  .slider:hover {
+    opacity: 10;
+  }
+
+  .sliderdefault:hover {
+    opacity: 10;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    appearance: none;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%; 
+    background: red;
+    cursor: pointer;
+  }
+  
+  /* ???? */
+  .slider::-moz-range-thumb {
+    width: 55px;
+    height: 25px;
+    border-radius: 80%;
+    background: #aa5404;
+    cursor: pointer;
+  }
+
+  .color-wrapper {
+    display: flex;
+    height: 280px;
+    width:400px;
+    margin-top:20px;
+    border: solid 0px rgb(201, 14, 45);
+    /* margin-top:-600px;
+    */
+
+  }
+
+  .input-wrapper {
+    margin-left:450px;
+    margin-top: 10px;
+    display: flex;
+    border-radius: 1px;
+    border: 3px solid rgb(85, 29, 173);
+    padding: 8px;
+    height: 38px;
+    justify-content: center;
+    max-width: 380px;
+    width:500px;
+  }
+  
+  .color-div {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgb(128, 11, 11);
+    margin-top: -8px;
+  }
+  
+  .text {
+    flex: 1;
+    font-family: 'Helvetica';
+    line-height: 32px;
+    margin-top: -10px;
+    margin-right:150px;
+    min-width: 150px;;
+  }
+  /* ======================= */
+  .tableTopicURL {
+    padding: left 0%;
+    box-sizing: border-box;
+    background-color: white ;
+    outline:rgb(68, 51, 238) solid 2px;
+    display: grid;
+    grid-gap:0px;
+    grid-auto-rows: 60px;
+    vertical-align: middle;
+    grid-template-columns:  400px 500px ;
+    margin-top: 0px;
+    float:left;
+  }
+
+  .boxTopic{
+    margin-left:20px;
+    font-size: 14px;
+    font-family: 'Times New Roman', Times, serif;
+    display: flex;
+  }
+
+  .boxURL{
+    float:left; 
+    font-size: 16px;
+    font-family: 'Times New Roman', Times, serif;
+    display: flex;
+  }
+
+  /* =============================================== */
+  .BlockTable{
+    display: block;
+    width:1250px;
+    height:400px;
+    padding:10px;
+    border: solid 0px blue;
+    overflow: scroll;
+    margin-top:20px;
+    margin-left:20px;
+  }
+
+  .myWebSites {
+    width: 1200px;
+    border-collapse: collapse;
+    border: solid 0px blue;
+    table-layout: fixed;
+    height:60px;
+    margin-left:10px;
+  }
+
+  .myWebSites th {
+    color: white;
+    text-align: center;
+    height:50px;
+    background: mediumpurple;
+    border: solid 2px rgb(17, 10, 119);
+  }
+
+  .myWebSites th:nth-child(1) {
+    width: 40%;
+    }
+
+  .myWebSites th:nth-child(2) {
+    width: 60%;
+    }
+
+  .myWebSites td {
+    border-left: solid 2px rgb(3, 10, 4);
+    border-right: solid 2px rgb(3, 10, 4);
+    border-bottom: solid 2px #030a04;
+    border-collapse: collapse;
+    
+    
+  }
+
+  .myWebSites td:hover  {
+    background: rgb(236, 238, 105);
+  }  
+  /*
+    .myWebSites td:nth-child(n+3):nth-child(odd) {
+      background: rgb(117, 39, 82);
+      width: 60%;
+      }
+  */
+
+  .myWebSites td:nth-child(1) {
+    background: rgb(207, 188, 188);
+    width: 40%;
+    }
+
+  .myWebSites td:nth-child(2) {
+    background: rgb(207, 188, 188);
+    width: 60%;
+    }
+
+  .myWebSites .even td:nth-child(1) {
+    background: rgb(198, 212, 202);
+    width: 40%;
+    }
+
+  .myWebSites .even td:nth-child(2) {
+    background: rgb(198, 212, 202);
+    width: 60%;
+    }
+
+  .myWebSites td:nth-child(1):hover  {
+    background: rgb(236, 238, 105);
+    }
+
+  .myWebSites .even td:nth-child(1):hover {
+    background: rgb(236, 238, 105);
+    }
+
+  .TableText{
+    display: block;
+    margin-left:20px;
+    color:rgb(31, 24, 24);
+    border: solid 0px black;
+  }
+
+  .BlockSizeSubject{
+    width:420px;
+    height:30px;
+  }
+
+  .BlockSizeURL{
+    width:660px;
+    height:30px;
+  }
+
+
+.file-input {
+    display: none;
+}
+
+.PPP {
+  width:120px;
+  margin-left:30px;
+}
+ 
+.division{
+  margin-top:40px; 
+  width:800px;
+  height:20px; 
+  margin-left:20px;
+}
+
+
+.divisiontwo{
+  margin-top:70px; 
+  width:800px;
+  height:20px; 
+  margin-left:20px;
+}
+
+.NameFile{
+
+  color:red;
+}
+
+
+.Name_input{
+
+  color: red;
+}
+
+.button_position{
+    margin-top:30px;
+    margin-left:50px;
+}
+
+.alert {
+  background: rgb(107, 105, 238);
+}
+
+.alert-danger {
+  background: rgb(238, 158, 105);
+}
+
+
+.BlockFileContent{
+  display: block;
+  max-width:50px;
+  width:50px;
+  height:200px;
+  padding:10px;
+  border: solid 2px blue;
+  overflow: scroll;
+  
+  float:left;
+}
+
+.myLabel{
+  color:blue; 
+  font-size:14px;
+  height:30px; 
+  width:120px; 
+  display:inline-block;
+  margin-left:15px;
+}
+
+.myInput{
+  margin-top:5px; 
+  margin-left:20px; 
+  width:200px; 
+  height:30px;
+}
+
+.myInput:hover{
+  color:blue; 
+  background-color:cyan;
+}
+/*
+.ng-valid
+.ng-invalid
+.ng-pending
+.ng-pristine
+.ng-dirty
+.ng-untouched
+.ng-touched
+.ng-submitted (enclosing form element only)
+*/
+

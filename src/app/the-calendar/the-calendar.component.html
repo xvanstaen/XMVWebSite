@@ -1,0 +1,113 @@
+<p>CALENDAR FUNCTION</p>
+
+
+<!-- DATEPICKER
+        https://material.angularjs.org/latest/demo/datepicker
+        https://stackblitz.com/run?file=src%2Fapp%2Fdatepicker-range.ts
+        https://www.angularjswiki.com/material/datepicker/
+        https://ng-bootstrap.github.io/#/components/datepicker/examples
+        https://material.angular.io/components/datepicker/overview
+-->
+
+<div [formGroup]="TheCalendarform">
+    <button class="cancelbutton" (click)="OnCancel()">
+        X
+    </button>
+
+        <div class="field_oneway">Departure date</div>
+        <input   class = "form-control inputsize" formControlName="oneway_boarding_date" id="oneway" name="oneway"
+                  defaultValue={{oneway_date}} min={{StringtodayDate}} max={{max_date}} type="date" 
+                   pattern="\d{4}-\d{2}-\d{2}" required  /> 
+        <span *ngIf='theplaceholderO!=="dd/mm/yyyy"'>previous date selection was {{theplaceholderO}}</span>
+       
+        <div class="errormsg" *ngIf="type_error===1 || type_error===4" >
+                        {{error_msg}}  
+        </div>
+        
+        <div class="field_return">Return date</div>
+        <input  class = "form-control inputsize" formControlName="return_boarding_date" id="return" name="return"
+        value={{return_date_string}} min={{StringtodayDate}} max={{max_date}}  type="date" />   
+                {{theplaceholderR}}
+
+        <span class="errormsg" *ngIf="type_error===2 || type_error===6 || type_error===5" >
+                {{error_msg}}  
+        </span>
+
+        <div  style="margin-top:50px;">
+                <input   type="radio" formControlName="travel_type" value="O"> one-way 
+                <input   type="radio" formControlName="travel_type" value="R"> return
+               <input id='but1' type="submit" value="Click" (click)="OnSubmit()">
+               
+        </div>  
+        <div> <input id='but2' type="submit" value="Clear" (click)="clear()"></div>
+         <div class="errormsg" *ngIf="type_error===3"  >
+                {{error_msg}}
+         </div>
+
+         <!--
+                                        REFER TO 
+
+                https://material.angular.io/components/datepicker/overview
+
+
+        date = new FormControl(new Date());
+        serializedDate = new FormControl(new Date().toISOString());
+
+        <mat-form-field appearance="fill">
+        <mat-label>Angular forms</mat-label>
+        <input matInput [matDatepicker]="picker1" [formControl]="date">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+
+        
+        <mat-form-field appearance="fill">
+        <mat-label>Angular forms (w/ deserialization)</mat-label>
+        <input matInput [matDatepicker]="picker2"
+                [formControl]="serializedDate">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+        <mat-label>Value binding</mat-label>
+        <input matInput [matDatepicker]="picker3" [value]="date.value">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+        <mat-datepicker #picker3></mat-datepicker>
+        </mat-form-field>
+
+        ==================
+
+        const today = new Date();
+        const month = today.getMonth();
+        const year = today.getFullYear();
+
+        this.campaignOne = new FormGroup({
+                start: new FormControl(new Date(year, month, 13)),
+                end: new FormControl(new Date(year, month, 16)),
+        });
+
+        <mat-form-field class="example-form-field" appearance="fill">
+        <mat-label>First campaign</mat-label>
+        <mat-date-range-input
+        [formGroup]="campaignOne"
+        [rangePicker]="campaignOnePicker"
+        [comparisonStart]="campaignTwo.value.start"
+        [comparisonEnd]="campaignTwo.value.end">
+        <input matStartDate placeholder="Start date" formControlName="start">
+        <input matEndDate placeholder="End date" formControlName="end">
+        </mat-date-range-input>
+        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+        <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+        </mat-form-field>
+
+
+
+
+         -->
+        
+</div>

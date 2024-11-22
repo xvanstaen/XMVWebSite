@@ -1,0 +1,67 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+
+    <!--
+    <br> Device type is {{device_type}}
+    <br> Screen width = {{getScreenWidth}}
+    <br> Screen height = {{getScreenHeight}}
+    <br><br>
+    </div>
+    --> 
+
+<div style='float:left; margin-top:30px;'>
+    <h1 class="text_title"> REPLY TO MESSAGES SENT THROUGH XMV IT CONSULTING WEB SITE</h1>
+    <br>
+
+    <h2 class="text_title">List of messages stored in xmv_messages bucket in Google Cloud Storage</h2>
+    <br>
+    <div class="mainstyle">
+        <li  *ngFor = "let theList of Bucket_Info_Array; let i=index"
+        
+          [class.selected]="theList.name === MyVar"
+          (click)="onSubmit(theList)">
+
+          <span *ngIf="i % 2 === 0" style="color:grey; font-weight:bold;">
+            {{i+1}} -- time created: {{theList.items.timeCreated}} -- name: {{theList.items.name}} 
+          </span>
+          <span *ngIf="i % 2 !== 0" style="color:green; font-weight:bold;">
+            {{i+1}} -- time created: {{theList.items.timeCreated}} -- name: {{theList.items.name}} 
+          </span>
+        </li>
+    </div>
+
+    <div class='theMessage'>
+        <span  *ngIf="display_message===true">
+          Object is {{Google_Object_Name}}
+          <br><br>
+          Name: {{Mydata.name}}
+          <br><br>
+          email: {{Mydata.email}}
+          <br><br>
+          Phone: {{Mydata.phone}}
+          <br><br>
+          Subject: {{Mydata.subject}}
+          <br><br>
+          Text: {{Mydata.text}}
+
+        </span>
+    </div>
+
+
+    <div class="theResponse">
+      <label >My response</label> <label style="color:red; margin-left:5px; ">  {{text_error}}</label>
+    </div>
+    <form  [formGroup]="myForm" >
+        <textarea  formControlName="text" id="mytext" type="text" class="theText" > 
+        </textarea>
+    </form>
+    <div class="theButtons">
+        <button id='but_1' class="sizeButtons" (click)="onSendMsg()">Send</button>
+        <button id='but_2' class="sizeButtons" (click)="onClear()">Clear</button>
+    </div>
+
+  </div>
+
+
+

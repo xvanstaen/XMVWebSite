@@ -1,0 +1,107 @@
+
+.theDiv{
+min-width:560px;
+max-width:560px;
+display:inline-block; 
+border:red 0px solid;
+margin-left:20px;
+}
+
+.title{
+
+display:block; 
+border:rgb(62, 57, 57) 0px solid;
+margin-left:25px;
+font-size:16px;
+text-align: center;
+background-color: aqua;
+
+}
+
+.label{
+
+/*
+background-color: rgb(122, 150, 160);
+border-radius: 5px;
+border: blue 0px solid;
+*/
+
+color:blue;
+
+min-width:200px;
+max-width:200px;
+height:25px;
+margin-left:5px;
+padding-top: 6px;
+font-size:14px;
+display:inline-block;
+text-align: left;
+word-wrap: break-word;
+
+
+}
+
+.input{
+color:blue;
+background-color: lightblue;
+border: darkgreen 2px solid;
+min-width:300px;
+max-width:300px;
+height:25px;
+border-radius: 5px;
+display:inline-block;
+margin-bottom: 0px;
+margin-left:6px;
+}
+
+.error{
+width:400px;
+display:inline-block; 
+border:red 0px solid;
+margin-left:25px;
+color:red;
+background-color: lightgrey;
+}
+
+.buttons{
+    width:100px;
+    height:40px;
+    font-size:16px;
+    margin-left:10px;
+    background-color:cyan;
+    border-radius: 5px;
+    background-image: linear-gradient(cyan, lightcyan);
+    box-shadow: 2px 2px blue;
+    border: solid 1px blue;
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.buttons:hover{
+    background-color:rgb(48, 89, 159);
+    background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+  }
+
+.theScript{
+    font-size:14px;
+    margin-left:8px;
+    min-width:90%;
+    display:inline-block;
+    color:rgb(214, 35, 35);
+    text-align: left;;
+    
+}
+
+.even{
+    background-color:rgb(129, 160, 214);
+    
+}
+
+.odd{
+    background-color:rgb(142, 216, 183);
+}
+
+.theScript:hover{
+    background-color:rgb(9, 47, 112);
+    color:white;
+}

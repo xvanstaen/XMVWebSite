@@ -1,0 +1,325 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+
+<div id='targetTop' ></div>
+
+<div style="margin-top:2px;"><br></div>
+
+<div style="margin-top:90px;"><br></div> 
+<div *ngIf="this.ActionMessage!==''">
+
+  <h1 style="color:blue; background-color:cyan"> Administration of &nbsp;&nbsp; JSON&nbsp;&nbsp; objects</h1>
+  <br><br>
+</div>
+<div *ngIf="Error_Access_Server!==''">
+  <span style='margin-top:20px; color:red; font-size:16px;'> {{Error_Access_Server}}</span>
+</div>
+<div style="display:inline-flex; width:90%; height:60px; margin-left:20px;">
+    <span  *ngIf="TabAppsAutho[0]==='Y'" (click)="Process('Bucket')" class="dropdown-options dropdown-text">Bucket List</span>
+    <span  *ngIf="TabAppsAutho[3]==='Y'"(click)="Process('Contact')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Contact</span>
+    <span  *ngIf="TabAppsAutho[2]==='Y'"(click)="Process('27Aug')" class="dropdown-options dropdown-text"></span>
+    <span  *ngIf="TabAppsAutho[6]==='Y'"(click)="Process('Config')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Config</span>
+    <span  *ngIf="TabAppsAutho[5]==='Y'"(click)="Process('Console')" class="dropdown-options dropdown-text">Log console</span>
+    <span  *ngIf="TabAppsAutho[7]==='Y'"(click)="Process('Fitness')" class="dropdown-options dropdown-text">Fitness</span>
+    <span  *ngIf="TabAppsAutho[8]==='Y'"(click)="Process('Health')" class="dropdown-options dropdown-text">Health food</span>
+    <span  *ngIf="TabAppsAutho[11]==='Y'"(click)="Process('Recipe')" class="dropdown-options dropdown-text">Recipe</span>
+    <span  *ngIf="TabAppsAutho[12]==='Y'"(click)="Process('Dictionary')" class="dropdown-options dropdown-text">Dictionary</span>
+    <span  *ngIf="TabAppsAutho[9]==='Y'"(click)="Process('ConvMgt')" class="dropdown-options dropdown-text">Conv Mgt</span>
+    <span  *ngIf="TabAppsAutho[10]==='Y'"(click)="Process('ConvFn')" class="dropdown-options dropdown-text">Conv Fn</span>
+    <span  *ngIf="TabAppsAutho[4]==='Y'"(click)="Process('UserInfo')" class="dropdown-options dropdown-text">User info</span>
+    <span  *ngIf="TabAppsAutho[13]==='Y'"(click)="Process('PerfCircuit')" class="dropdown-options dropdown-text">Perf. Circuit</span>
+
+    <!--
+    <span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
+    -->
+    <a  *ngIf="TabAppsAutho[1]='Y'" href = "https://xvanstaen.github.io/WeddingPhoto" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</a>
+    <div style="display:inline-flex; width:90%; height:60px; margin-left:20px;"></div>
+    
+</div>
+
+
+
+<div *ngIf="  this.ActionMessage!==''" style="margin-top:10px;">
+  <h2>{{ActionMessage}} </h2>
+</div> 
+
+<div *ngIf="GoToComponent===0 " >
+  
+      <div style="margin-left:20px;">
+
+      <div *ngFor="let bucketList of TabBuckets; let i=index" style="margin-left:20px; ">
+        <span class='bucket even'>{{i}} - {{bucketList.name}}</span>
+      
+      </div> 
+     
+      </div>
+
+</div>
+ 
+<div *ngIf="EventHTTPReceived[0]===true && Google_Bucket_Name!=='' && GoToComponent===6">
+      <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="Google_Bucket_Name"  
+            (Return_Data)="ReceivedDataConfig($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
+   
+
+      <div id='SelectedFile' ></div>
+      <div *ngIf="SpecificConfigFormat!==''">
+        <span style="color:blue; font-size:20px; width:80%; margin-left:20px; display:inline-flex;"> File {{SelectedBucketInfo.name}} is specific</span>
+        <div  class='labelbucket odd'>{{SpecificConfigFormat}}</div>
+      </div>
+
+      <div *ngIf="ContentTodisplay===true">
+        
+          <h2> Current configuration parameters of file  </h2>
+          <h2>{{SelectedBucketInfo.name}}</h2>
+          <div style="margin-left:20px;">
+                <span class='labelbucket odd'>BucketUser</span> <span class='bucket odd'>  xmv-user-info</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  xx</textarea>
+
+                <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  logConsole</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field02' (input)='TextInput($event)' class='FieldText '>  xx</textarea>
+                
+                <span class='labelbucket odd'>BucketContact</span> <span class='bucket odd'> xmv-messages</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field03' (input)='TextInput($event)' class='FieldText '> xx</textarea>
+<!--
+                <span class='labelbucket odd'>SourceJson_Google_Mongo</span> <span class='bucket odd'>  {{configServer.SourceJson_Google_Mongo}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field04' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigServer.SourceJson_Google_Mongo}}</textarea>
+-->
+                <span class='labelbucket even'>Max_Nb_Bucket_Wedding</span> <span class='bucket even'>  {{SelectedconfigPhoto.Max_Nb_Bucket_Wedding}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field05' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.Max_Nb_Bucket_Wedding}}</textarea>
+
+                <span class='labelbucket odd'>GetOneBucketOnly</span> <span class='bucket odd'>  {{SelectedconfigPhoto.GetOneBucketOnly}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field06' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.GetOneBucketOnly}}</textarea>
+
+                <span class='labelbucket even'>nb_photo_per_page</span> <span class='bucket even'>  {{SelectedconfigPhoto.nb_photo_per_page}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field07' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.nb_photo_per_page}}</textarea>
+
+                <span class='labelbucket odd'>process_display_canvas</span> <span class='bucket odd'> {{SelectedconfigPhoto.process_display_canvas}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field08' (input)='TextInput($event)' class='FieldText '> {{ModifconfigPhoto.process_display_canvas}}</textarea>
+
+                <span class='labelbucket even'>padding</span> <span class='bucket even'>  {{SelectedconfigPhoto.padding}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field09' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.padding}}</textarea>
+
+                <span class='labelbucket odd'>width500</span> <span class='bucket odd'>  {{SelectedconfigPhoto.width500}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field10' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.width500}}</textarea>
+
+                <span class='labelbucket even'>maxPhotosWidth500</span> <span class='bucket even'>  {{SelectedconfigPhoto.maxPhotosWidth500}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field11' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.maxPhotosWidth500}}</textarea>
+
+                <span class='labelbucket odd'>width900</span> <span class='bucket odd'>  {{SelectedconfigPhoto.width900}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field012' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.width900}}</textarea>
+
+                <span class='labelbucket even'>maxPhotosWidth900</span> <span class='bucket even'>  {{SelectedconfigPhoto.maxPhotosWidth900}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field013' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.maxPhotosWidth900}}</textarea>
+
+                <span class='labelbucket odd'>maxWidth</span> <span class='bucket odd'>  {{SelectedconfigPhoto.maxWidth}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field014' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.maxWidth}}</textarea>
+
+                <span class='labelbucket even'>maxPhotosmaxWidth</span> <span class='bucket even'>  {{SelectedconfigPhoto.maxPhotosmaxWidth}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field015' (input)='TextInput($event)' class='FieldText '>  {{ModifconfigPhoto.maxPhotosmaxWidth}}</textarea>
+
+               
+                <div *ngFor='let TabBucket of SelectedconfigPhoto.TabBucketPhoto let i=index' >
+                      <span *ngIf='i===0'>
+                          <span class='labelbucket even'>TabBucketPhoto</span> 
+                      </span>
+                      <span *ngIf='i>0 '>
+                          <span class='labelbucket even'> &nbsp; </span>   
+                      </span>
+
+                      <span class='bucket even'> {{TabBucket}} </span>  
+                      <span class='labelbucket even'> &nbsp; </span>      
+                      <textarea id='field{{16+i}}' (input)='TextInput($event)'  value=[ModifconfigPhoto.TabBucketPhoto[i]] class='FieldText '> {{ModifconfigPhoto.TabBucketPhoto[i]}} </textarea>  
+                </div>
+           
+
+
+                <div *ngFor='let UsrSpec of configServer.UserSpecific let i=index' >
+                    <span *ngIf="i%2===0">
+                        <span class='labelbucket odd'>UserSpecific  </span>
+                    </span>   
+                    <span *ngIf="i%2!==0">
+                      <span style=" height:5px; margin-left:20px; margin-bottom:5px; width:83%;  display:block; background-color:blue; max-width:800px;">&nbsp;</span>
+                        <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    </span> 
+                    
+                    <span class='bucketA  odd'>id</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].theId}}  </span>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span class='bucketA  even'> &nbsp;</span>
+                    <textarea id='field{{i+(2*i)+ModifconfigPhoto.TabBucketPhoto.length+16}}' 
+                                (input)='TextInput($event)' class='FieldTextA '>  {{configServer.UserSpecific[i].theId}}  </textarea>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span class='bucketA  odd'>type</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].theType}}  </span>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span class='bucketA  even'> &nbsp;</span>
+                    <textarea id='field{{i+1+(2*i)+ModifconfigPhoto.TabBucketPhoto.length+16}}' 
+                                  (input)='TextInput($event)' class='FieldTextA '>  {{configServer.UserSpecific[i].theType}}</textarea>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    
+                    <span class='bucketA  odd'>log</span> <span class='FieldTextA  odd'> {{configServer.UserSpecific[i].log}}  </span>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span class='bucketA  even'> &nbsp;</span>
+                    <textarea id='field{{i+2+(2*i)+ModifconfigPhoto.TabBucketPhoto.length+16}}' 
+                              (input)='TextInput($event)' class='FieldTextA '> {{configServer.UserSpecific[i].log}} </textarea>
+                    
+                </div>
+  
+          </div>
+          <div *ngIf="ModifyText===true">
+            <app-ChangeSaveFileName [configServer]="configServer" [SelectedBucketInfo]="SelectedBucketInfo" [DataToHttpPost]="ModifconfigPhoto" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
+ 
+<!--
+            <h3>
+              <span  style='margin-top:30px;'>Do you want to save your modifications?</span>
+            </h3>
+              <button id="butt1" class="butt" (click)="SaveRecord('YES')">YES</button> 
+              <button id="butt2" class="butt" (click)="SaveRecord('NO')">NO</button> 
+-->
+            
+          </div>
+    </div>
+</div> 
+
+<div *ngIf="GoToComponent===13" >
+  <span style="width:400px; background-color: cyan;margin-top:20px; margin-left:50px; border:solid 2px red; display:inline-block; ">
+      <span style="width:100%; color:#0000ff; font-size:22px; display:inline-block; text-align: center; padding-top:10px; height:50px;"> Select the apps 
+      </span>
+      <br>
+      <span class="options" >1. Performance sport</span>
+      <span class="options" >2. Manage PointOfRef</span>
+      <span class="options" >3. Manage Circuits</span>
+      <span class="options" >4. Sport report</span>
+      <span class="options" >5. Sport analysis</span>
+      <br><br>
+  </span>
+  <div style="width:100%; display:inline-block; height:2px;">
+      <input style="width:80px; height:30px; margin-left:150px; margin-top:20px; "  placeholder="selection#" type="text" (input)="onInput($event)">
+  </div>
+</div>
+
+<div *ngIf="GoToComponent===13 && selectApps===1">
+  <app-performance-sport   [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-performance-sport>
+</div>  
+<div *ngIf="GoToComponent===13 && selectApps===2">
+  <app-manage-point-of-ref   [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-manage-point-of-ref>
+</div>  
+<div *ngIf="GoToComponent===13 && selectApps===3">
+  <app-manage-circuits [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-manage-circuits>
+</div>  
+<div *ngIf="GoToComponent===13 && selectApps===4">
+  <app-sport-reports [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-sport-reports>
+</div>  
+<div *ngIf="GoToComponent===13 && selectApps===5">
+  <app-sport-analysis [configServer]="configServer" [identification]="identification" [credentials]="credentials">
+  </app-sport-analysis>
+</div> 
+
+<div *ngIf="(GoToComponent===4 || GoToComponent===5 || NbRefresh_Bucket>0) && EventHTTPReceived[0]===true && Google_Bucket_Name!=='' ">
+      <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="Google_Bucket_Name"  [NbRefresh_Bucket]="NbRefresh_Bucket"
+            (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
+</div>
+
+
+    <div *ngIf="GoToComponent===1; else CompoTwo ">
+        <app-GetImages [identification]="identification" [LoginTable_User_Data]="LoginTable_User_Data" [configServer]="configServer"
+            [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
+        </app-GetImages>
+    </div>
+
+  
+  <ng-template #CompoTwo>
+    <div *ngIf="GoToComponent===2 else CompoThree ">
+      <app-Event-27AUG2022 [identification]="identification"  [configServer]="configServer" [LoginTable_User_Data]="LoginTable_User_Data" 
+          [LoginTable_DecryptPSW]="LoginTable_DecryptPSW"
+          > <!--  (returnDATA)="GetUpdatedTable($event)" -->
+      </app-Event-27AUG2022>
+  </div>
+  </ng-template>
+  
+  <ng-template #CompoThree>
+    <div *ngIf="GoToComponent===3; else CompoFour ">
+      <app-Respond-Contact [configServer]="configServer"></app-Respond-Contact>
+    </div>
+  </ng-template>  
+  
+
+  <ng-template #CompoFour>
+    <div *ngIf="GoToComponent===4; else CompoFive ">
+      <div *ngIf="isDataReceived===true">
+        <app-AdminUserInfo  [configServer]="configServer" 
+            [theReceivedData]="theReceivedData" (process_userInfo)="Process('Refresh_UserInfo')" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminUserInfo>
+      </div>
+    </div>
+  </ng-template>
+
+
+  <ng-template #CompoFive>
+    <div *ngIf="GoToComponent===5 ; else CompoSeven">
+      <div *ngIf="isDataReceived===true">
+        <app-AdminConsole 
+        [theReceivedData]="theReceivedData" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminConsole>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #CompoSeven>
+    <div *ngIf="GoToComponent===7; else CompoEight">
+
+    <app-fitness-stat  [identification]="identification"  [configServer]="configServer" 
+         [InMyConfigFitness]="MyConfigFitness" (returnFile)="ReceiveFiles($event)">
+    </app-fitness-stat>
+   
+    </div> 
+  </ng-template>
+  <ng-template #CompoEight>
+    <div *ngIf="GoToComponent===8; else CompoNine">
+
+    <app-health [credentials]="credentials" [identification]="identification"  [configServer]="configServer" [ConfigChart]="ConfigChart"
+    [InHealthAllData]="HealthAllData" [InConfigHTMLFitHealth]='ConfigHTMLFitHealth' [InConfigCaloriesFat]="ConfigCaloriesFat" [InConvertUnit]="ConvertUnit" 
+     (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)">
+    
+  </app-health> <!-- (returnFile)="ReceiveFiles($event)" -->
+   
+    </div>
+  </ng-template>
+  <ng-template #CompoNine>
+    <div *ngIf="GoToComponent===9; else CompoTen">
+
+    <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly" 
+    [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [IntheTabOfUnits]="theTabOfUnits"  [InWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"     
+    >
+    </app-converter>
+   
+    </div>
+  </ng-template>
+  <ng-template #CompoTen>
+    <div *ngIf="GoToComponent===10; else CompoEleven">
+
+    <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly" 
+     [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [intheTabOfUnits]="theTabOfUnits"  [inWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"
+         >
+    </app-converter>
+   
+    </div>
+  </ng-template>
+  <ng-template #CompoEleven>
+    <div *ngIf="GoToComponent===11">
+
+      <app-recipe  [identification]="identification"  [configServer]="configServer"  
+      [InConvToDisplay]="ConvToDisplay"     [dictionaryOnly]="dictionaryOnly"
+     >
+     </app-recipe>
+   
+    </div>
+  </ng-template>
+
+ 
+  
+<br><br>
+</body>

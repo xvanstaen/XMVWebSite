@@ -1,0 +1,35 @@
+@import "./AdminGeneral.component.css";
+body{
+  max-width: 1200px;
+}
+
+.message{
+  font-family: 'Roboto';
+  height:100px;
+  width:90%;
+  margin-left:30px;
+  font-size:16px;  
+  display:block;
+  border:solid 1px blue;
+  overflow:scroll;
+}
+
+.oddmsg{
+  background-color: rgb(221, 183, 183);
+  color:black;
+}
+
+.evenmsg{
+  background-color: rgb(204, 216, 185);
+  color:black; 
+  font-weight:bold
+}
+
+
+
+/*** ====================================== ***/
+/*** ============== @media1000 ================ ***/
+/*** ====================================== ***/
+ @media only screen and (max-width:1000px) {
+
+ }

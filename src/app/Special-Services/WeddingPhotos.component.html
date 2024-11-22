@@ -1,0 +1,186 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+  <!--
+  <br> Device type is {{device_type}}
+  <br> Screen width = {{getScreenWidth}}
+  <br> Screen height = {{getScreenHeight}}
+  <br><br>
+
+        <audio  controls autoplay loop height="" width="">
+        <source src="./It's A Beautiful Day.mp3" type="audio/mpeg">
+      </audio>
+
+  --> 
+  <div id='targetTop' ></div>
+  <span style="margin-top:2px;"><br></span>
+ <h2 style="margin-top:60px;">Pictures of our wedding</h2>
+ <h3 >Total number of photos: {{WeddingPhotos.length}}</h3>
+ <h3 *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding" > ... and more will be loaded</h3>
+
+ <br><br>
+
+    <div *ngFor="let slowDisplay of slow_table let i=index" style="margin-left:20px;">
+      <span *ngIf="slowDisplay!=='' && PhotoToDisplay[i].wait===true">
+
+              <span style="width:80%; display:block; font-size:14px; color:blue">  {{WeddingPhotos[PhotoNumber[i]-1].name}}
+                <br>Photo nb:  <label style="color:red; font-size:18px;"> {{PhotoNumber[i]}} </label></span>
+              
+              <span *ngIf="WeddingPhotos[PhotoNumber[i]-1].vertical===false && slowDisplay!=='' ">
+                    <img  (mouseover)="onZoomPhoto(i)" (load)='NextImage(i)' class="photo" [ngStyle]="{'width.px':theWidthH, 'height.px':theHeightH}" 
+                        src={{slowDisplay}} >
+                        <!-- onload="Redisplay('loaded')" onerror="Redisplay('failed')"-->
+              </span>
+              <span *ngIf="WeddingPhotos[PhotoNumber[i]-1].vertical===true && slowDisplay!==''">
+                <img  (mouseover)="onZoomPhoto(i)" class="photoVertical" (load)='NextImage(i)' [ngStyle]="{'width.px':theWidthV, 'height.px':theHeightV}" src={{slowDisplay}}>
+              </span>
+              <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onDownloadFile(i)">
+                            download
+                      </span>
+              </button> 
+              <br><br>
+
+
+              <br><br>  
+          </span>
+
+    </div>
+
+ <br><br>
+
+
+  <span *ngIf="imagesToDisplay>0" >
+   <h3> Still {{imagesToDisplay}} photo(s) to display</h3>
+  </span>
+
+
+ <span *ngIf="DisplayPageRange===true">
+    <span *ngIf="nb_current_page>1">
+        <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
+    </span>
+    <span style="margin-left:20px; font-size:6px;">&nbsp;</span>
+    <!-- TenPageRange replaced pages_to_display -->
+    <span *ngFor="let tab_pages of TenPageRange; let i=index">
+
+        <span *ngIf="tab_pages===nb_current_page && tab_pages!==-1" class="highlight_page"  >
+            {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
+        </span> 
+        <span *ngIf="tab_pages!==nb_current_page && tab_pages!==-1" class="lowlight_page" (click)="display_page(tab_pages)">
+            {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
+        </span>
+        
+    </span>
+    <span *ngIf="nb_current_page!==nb_total_page || this.bucketMgt.Max_Nb_Bucket_Wedding>=this.bucketMgt.Nb_Buckets_processed">
+        <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
+       <br>
+        <span *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding">  <h3>&ensp; ... more pictures to be loaded</h3></span>
+    </span>
+  </span>
+<!--
+Regular space: &nbsp;
+Two spaces gap: &ensp;
+Four spaces gap: &emsp;
+
+in CSS
+.tab {
+      tab-size: 2;
+    }
+-->
+<div *ngIf="myLogConsole===true">
+  <h2 style="margin-left:20px;">Log console is activated</h2>
+  <h3 style="margin-left:20px;">number of non archived msgs = {{myConsole.length+1}}</h3>
+  <div [formGroup]="PhotoNbForm" class="position-parameters">
+    <span ><label class="posParamPhoto">Force save console log </label>
+      <select id="log"  class="position-field"  formControlName="ForceSaveLog">
+        <option  value="y">yes</option>
+        <option selected value="n">no</option>
+      </select>  
+      <button class="butt" id="but7" (click)="ForceSaveLog()">Submit</button>
+    </span>
+</div>
+
+</div>
+
+<div *ngIf="configPhoto.process_display_canvas===true ">
+    <div *ngIf="first_canvas_displayed===true">
+        <h2 style="margin-left:20px;">Display a specific picture</h2>
+        <br>
+        <div [formGroup]="PhotoNbForm" class="position-parameters">
+                <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" >
+                    <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
+                </span>
+        </div>
+        <br>
+        <span *ngIf="error_canvas!==''" style="color:red; font-size:18px; margin-left:40px;">{{error_canvas}}</span>
+        <span *ngIf="message_canvas!==''" style="color:blue; font-size:18px; margin-left:40px;">{{message_canvas}}</span>
+    </div>
+    <br><br>
+    <canvas 
+      #ImageCanvas
+      id='canvasElem' 
+      class="position" 
+      width="0" 
+      height="0" 
+    >
+    </canvas>
+  </div>
+
+
+  <div *ngIf="first_canvas_displayed===true">
+     <!--
+    <app-DiapoCanvas [ConfigXMV]="ConfigXMV" [WeddingPhotos]="WeddingPhotos"></app-DiapoCanvas>
+    -->
+    <div id='TopSelectedPhoto' ></div>
+    <div *ngIf="SelectedPhoto!==0">
+      <h2 style="color:blue;"> Selected photo :  {{SelectedPhoto}} </h2>
+      <span style="width:80%; display:block; font-size:14px; color:blue; margin-left:20px;">  {{WeddingPhotos[SelectedPhoto-1].name}}
+       </span>
+        <img  class="photo" style="margin-left:20px;"[ngStyle]="{'width.px':SelectedPhotoW, 'height.px':SelectedPhotoH}" 
+                                                            src={{WeddingPhotos[SelectedPhoto-1].mediaLink}} >      
+       <br>
+       <button class='butt' id="but9" style='margin-top:30px; margin-left:80px;'(click)="PrevDiapo()"  > <span style='font-size:16px;'>Prev</span> </button>
+       <button class='butt' id="but10" style='margin-left:20px;'(click)="NextDiapo()"  > <span style='font-size:16px;'>Next</span> </button>
+       <button class='butt' id="but11" style='margin-left:80px; color:blue;' (click)="onDownloadFile(SelectedPhoto-1)"  > <span style='font-size:15px;'>Download</span> </button>
+    </div>
+
+
+    <br><br>
+      <h2 style="margin-left:20px;">Range of pictures</h2>
+      <h3>Click on a picture to display it</h3>
+      <br><br>
+      <div [formGroup]="DiapoForm" class="position-parameters">
+        <label class="posParamPhoto">Start photo nb </label><input formControlName="StartDiapoNb" type="number" class="position-field" >
+        <br> <label class="posParamPhoto">End photo nb </label><input formControlName="EndDiapoNb" type="number" class="position-field" >
+        <br> <br>   <button class="butt" style="margin-left:40px;"id="but5" (click)="drawDiapoCanvas()"><span style='font-size:16px;'>Submit</span> </button>
+          <br>
+            
+            <span *ngIf="error_Diapo!==''" style="color:red; font-size:18px; margin-left:40px;">{{error_Diapo}}</span>
+            <span *ngIf="message_Diapo!==''" style="color:blue; font-size:18px; margin-left:40px;">{{message_Diapo}}</span>
+      </div>
+     <br><br>
+  </div>
+ 
+  <canvas  
+      #DiapoCanvas 
+      id='canvasElemTwo' 
+      class="position" 
+      width="0" 
+      height="0" 
+      (click)="OnClickCanvas($event)" 
+
+    >
+  </canvas>
+  <h3 >Total number of photos loaded: {{WeddingPhotos.length}}</h3>
+  <h3 style="color:blue; font-size:18px; font-family: ROBOTO;" *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding" >
+
+    Click <button class='butt' id="but8" (click)="MorePagesFromCanvas()" style='margin-left:0px;' > <span style='font-size:20px;'>here</span> </button> to load more pages
+  </h3>
+<!--
+      (mousedown)="OnClickCanvas($event)" 
+      (mousemove)="OnClickCanvas($event)"
+-->
+
+
+</body>

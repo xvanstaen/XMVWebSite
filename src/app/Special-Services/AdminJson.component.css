@@ -1,0 +1,177 @@
+@import "./AdminGeneral.component.css";
+
+
+.dropdown-options{
+    font-family: 'Roboto';
+    margin-top:5px;
+    background-color: #dedcdc;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    height:60px; 
+    width:100px;
+    margin-left:20px;;
+    float:left;
+    align-items: center;
+    display:inline-flex;
+    vertical-align: middle;
+
+  }
+  
+  .dropdown-options:hover{
+    background-color:cyan;
+    color:black;
+    font-weight:bold;
+  }
+  
+  .dropdown-text{
+    font-family: 'Roboto';
+    margin-top:0px; 
+    font-size:18px;
+    color:black;
+    align-items: center;
+    padding-left: 2px;
+    vertical-align: middle;
+    display:inline-flex;
+  }
+
+ .labelbucket{
+    font-family: 'Roboto';
+    width:35%;
+    height:40px;
+    font-size:16px;
+    color:red;
+    display:block;
+    float:left;
+    padding-top:10px;
+    padding-left:10px;
+    margin-left:30px;
+    
+ }
+
+ .bucket{
+    font-family: 'Roboto';
+    width:50%;
+    height:40px;
+    color:blue;
+    font-size:16px;  
+    display:inline-flex;
+    padding-left:15px;
+    padding-top:10px;
+ }
+
+ .FieldText{
+  font-family: 'Roboto';
+  width:50%;
+  height:40px;
+  color:blue;
+  font-size:16px;  
+  margin-left:  0px;
+  display:inline-flex;
+  padding-left:10px;
+  padding-top:5px;
+  border:solid 0px black;
+  background-color: lightskyblue;
+}
+
+.bucketA{
+  font-family: 'Roboto';
+  width:15%;
+  height:40px;
+  color:red;
+  display:block;
+  float:left;
+  font-size:16px;  
+  padding-top:10px;
+  padding-left:10px;  
+}
+
+.FieldTextA{
+  font-family: 'Roboto';
+  width:35%;
+  height:40px;
+  color:blue;
+  font-size:14px;  
+  margin-left:  0px;
+  display:inline-flex;
+  padding-left:10px;
+  padding-top:5px;
+  border:solid 0px black;
+  background-color: lightskyblue;
+}
+
+.FieldTextA:hover{
+  color:blue;
+  background-color: cyan;
+  
+}
+.FieldText:hover{
+  color:blue;
+  background-color: cyan;
+}
+
+.even{
+    color:blue;
+    background-color: lightgrey;
+}
+
+.odd{
+    color:black;
+    background-color: lightcyan;
+}
+
+
+.options{
+  width:40%; display:inline-block; margin-left:8%;
+}
+
+
+.label{
+  width:150px; color:blue; font-size:14px; display:inline-block; text-align: left; padding-left:10px;
+}
+
+.theInput{
+  width:300px; color:blue; font-size:14px; display:inline-block; background-color: lightgrey;
+}
+
+.theInput:hover {
+  background-color: cyan;
+}
+
+
+.sizeButtons{
+  width:60px;
+  height:22px;
+  font-size:10px;
+  margin-left:10px;
+  background-color:cyan;
+  border-radius: 5px;
+  background-image: linear-gradient(cyan, lightcyan);
+  box-shadow: 2px 2px blue;
+  border: solid 1px blue;
+}
+
+.sizeButtons:hover{
+  background-color:rgb(48, 89, 159);
+  background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+}
+
+
+/*** ====================================== ***/
+/*** ============== @media 600 ================ ***/
+/*** ====================================== ***/
+ @media only screen and (max-width: 790px) {
+  .dropdown-text{
+    font-size:12px;   
+  }
+  .dropdown-options{
+    height:40px; 
+    width:700px;
+    margin-left:10px;
+  }
+
+.labelbucket{
+  margin-left:10px;
+  font-size:12px;  
+  width:35%;
+ }
+
+}

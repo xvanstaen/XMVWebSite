@@ -1,0 +1,292 @@
+@import "../xmv-company.component.css";
+
+
+
+
+.ImageContactPos{
+    margin-top:35px;
+    }
+    
+.contactPos{
+    position:absolute;
+    display:flex;
+    border: 0px solid rgb(142, 23, 146);
+    color:blue;
+    float:left;
+    font-weight: bold;
+    }
+    
+.ContactPos_One{
+    margin-top:-605px;
+    width: 70%;
+    height:240px;
+    margin-left:70px;
+    }
+    
+    
+.Contact_One{
+    border: 0px solid rgb(53, 22, 194);
+    margin-left:45%; 
+    font-size:36px;
+    float:left;
+    width:80%;
+    height:80px;
+ 
+    }
+    
+.contactBox{
+    background:white;
+    border: 0px solid black;
+    display: block;
+    opacity: 0.7;
+    font-weight:bolder;
+    float: left;
+    margin-top:-540px;
+    margin-left:7%;
+    width: 80%;
+    height:510px; 
+    }
+    
+    
+.field-name{
+    display: block;
+    font-weight: bold; 
+    width: 20%;
+    height: 30px;
+    margin-left: 10%;
+    margin-top: 25px;
+    font-size: 22px;
+    color:red;
+    float:left;
+    border:solid 0px blue;
+    }
+    
+    
+.input-text{ 
+    width:60%;
+    font-size: 20px;
+    margin-top:10px;
+    height: 30px;
+    font-weight:bolder;
+    background-color:rgb(150, 193, 248);
+    border:solid 2px rgb(15, 14, 14);
+    }
+    
+.first_text-name{ 
+    margin-top: 25px;
+    }
+    
+.first-field-name{
+    margin-top: 25px;
+    }
+    
+.other_text_fields{
+    margin-top: 25px;
+    }
+    
+.field-message{
+    margin-top:70px; 
+    }
+    
+.input-msg{
+    width:60%;
+    font-size: 20px;
+    margin-top:30px;
+    height:120px; 
+    overflow:auto;
+    font-weight:bolder;
+    background-color:rgb(150, 193, 248);
+    border:solid 2px rgb(15, 14, 14);
+    }
+.input-text:hover{ 
+    background-color: white;
+    font-weight:bolder;
+    }
+    
+.input-msg:hover{
+    background-color: white;
+    font-weight:bolder;
+    }
+    
+.errorbox{
+    width: 50%;
+    height: 25px;
+    font-size: 14px;
+    margin-top: 0px;
+    margin-left: 30%;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    color: rgb(224, 36, 22);
+    border: solid 0px rgb(48, 14, 173);
+    }
+    
+    
+.error-message{
+    float:left;
+    }
+
+.button {
+    background-color: rgb(167, 218, 177);
+    }
+    
+.first-button{
+    height: 30px;
+    width: 80px;
+    margin-top: 15px;
+    border:solid 2px rgb(15, 14, 14);
+    /****
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    ****/
+    margin-left:40%;
+    }
+    
+.second-button{
+    margin-left:30px;
+    }
+    
+.first-button:hover{
+    background-color: rgb(80, 211, 108);
+    }
+    
+.second-button:hover{
+    background-color: rgb(80, 211, 108);
+    }
+    
+    
+    
+    ngx-intl-tel-input {
+    height: 40px;
+    max-width:250px;
+    width:250px;
+    margin-bottom: 20px;
+    padding: 0px;
+    border-style: solid;
+    border-width: 0px;
+    border-color: #c7cace;
+    border-radius: 0px;
+    font-size: 16.5px;
+    }
+    
+    ngx-intl-tel-input:hover{ 
+    /*
+    background-color: rgb(13, 13, 156);
+    */
+    background-color: rgb(180, 197, 149);
+    }
+    
+    ngx-intl-tel-input input:hover {
+    /*
+    box-shadow: 0 2px 0 0 rgba(161, 12, 12, 0.24);
+    */
+    background-color: rgb(180, 197, 149);
+    }
+    
+    
+    /*** ====================================== ***/
+    /*** ============== @media 1250 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 1250px) {
+
+    .ImageContactPos{
+    margin-top:40px;
+    }
+
+    }
+    
+    /*** ====================================== ***/
+    /*** ============== @media 768 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 768px) {
+
+    .sizeMap{
+    height:680px;
+    }
+
+    .Contact_One{
+        margin-left:40%; 
+    }
+    .ContactPos_One{
+    width:75%;
+    margin-top:-655px;
+    margin-left:1%;
+    }
+
+    .contactBox{
+    margin-top:-580px;
+    width: 80%;
+    height:530px; 
+    }
+    
+    .field-name{
+    margin-left:calc((5% + 3px));
+    font-size: 18px;
+    margin-top: 0px;
+    width: 90%;
+    }
+    
+    .first-field-name{
+    margin-top:20px;
+    margin-left:calc((5% + 3px));
+    }
+    
+    .first_text-name{ 
+    margin-top: 0px;
+    margin-left: 5%;
+    }
+    
+    .other_text_fields{
+    margin-top: 0px;
+    margin-left: 5%;
+    }
+    
+    .field-message{
+    margin-top: 0px;
+    margin-left:calc((5% + 3px));
+    width: 90%;
+    }
+    
+    .input-text{ 
+    font-size: 18px;
+    margin-left: 5%;
+    width: 90%;
+    }
+    
+    .input-msg{
+    margin-top: 0px;
+    margin-left: 5%;
+    width: 90%;
+    }
+    
+    .errorbox{
+    width: 90%;
+    margin-left:calc(5% + 3px);
+    }
+    
+    .error-message{
+    width: 90%;
+    margin-left:calc(5% + 3px);
+    }
+    
+    .first-button{
+    margin-left:25px;
+    margin-top: 0px;
+    }
+    
+    .second-button{
+    margin-top: 0px;
+    }
+    }
+    
+    
+    /*** ====================================== ***/
+    /*** ============== @media 420 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 420px) {
+        .Contact_One{
+            margin-left:30%; 
+            font-size:30px;
+        }
+
+    }

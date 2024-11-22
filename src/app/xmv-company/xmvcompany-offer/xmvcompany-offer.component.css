@@ -1,0 +1,230 @@
+@import "../xmv-company.component.css";
+
+
+.sizeMap{
+    margin-left: 2%;
+    margin-top:45px;
+    width: 96%;
+    height:560px;
+    float:left;
+    }
+    
+.Main_Page_Size{
+    float:left; 
+    margin-left:7%; 
+    margin-top:-530px;
+    width:92%;
+    height:500px;
+    opacity: 0.65;
+    padding-left:10px;
+    padding-right:10px;
+    text-align: center;
+    background-color:rgb(46, 78, 221);
+    }
+    
+    
+.Main_Page_Text{
+    font-size:24px; 
+    margin-left:0px;
+    color:white;
+    font-weight:bold;
+    }
+    
+    
+.selectOffer{
+    margin-left:2%; 
+    background-color:black;
+    color:white;
+    display:block;
+
+    height:25px;
+    background-color: #f1f1f1;
+    color:black;
+    border:solid 0px red;
+    font-size:14px;
+    float:left;
+    }
+
+.selectFieldOne{
+    width:30%;
+    max-width:35%;
+    }
+.selectFieldTwo{
+    width:22%;
+    max-width:26%;
+    }
+            
+.selectOffer:hover{
+    background:yellow;
+    background-color: rgb(198, 196, 196);
+    
+    border-bottom: solid 3px red;;
+    }
+    
+/* main text */
+h1{
+    color:blue;
+    font-size:32;
+    font-weight:bold;
+    }
+h2{
+    color:rgb(35, 35, 209);
+    font-size:22;
+    }
+    
+.el_contact{
+    font-style:italic;
+    cursor:pointer;
+    /*
+    color:rgb(0, 255, 94);
+    */
+    color:rgb(7, 6, 6);
+    background-color: white;
+    font-family: 'Tangerine', 'cursive';
+    border: 24px;
+    font-size: 24px;
+    font-weight: bold;
+    }
+    
+    .el_contact:hover{
+    color:red;
+    border-bottom: solid 2px red;
+    background:yellow;
+    }
+    
+    .el_offer{
+    font-style:italic;
+    font-size:18px;
+    cursor:pointer;
+    font-weight:bolder;
+    }
+    
+    .el_offer:hover{
+    color:red;
+    border-bottom: solid 2px red; 
+    }
+    
+    .myOffer{
+    width: 90%;
+    margin-left: 2%;
+    margin-top:0px;
+    
+    color:rgb(94, 77, 77);
+    font-size: 18px;
+    letter-spacing: 0.3px;
+    line-height: 30px;
+    
+    padding-right:10px;
+    background-color:white;
+    float:left;
+    }
+    
+    .text_myOffer{
+    margin-left:30px;
+    }
+    
+    .text_highlight{
+    color:blue; 
+    font-style:italic;
+    font-size:18px;
+    }
+    
+    .button-size{
+    background:rgb(147, 209, 209);
+    width:30px;
+    height:18px;
+    font-size:8px;
+    text-align: center;
+    display:flex;
+    }
+    
+    .Top_class{
+    margin-top:-9px;
+    }
+    
+    /*** ====================================== ***/
+    /*** ============== @media 1200 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 1200px) {
+
+    .el_offer{
+    font-size:18px;
+    }
+    
+    .Main_Page_Text{
+    font-size:22px; 
+    }
+    }
+    
+    
+    /*** ====================================== ***/
+    /*** ============== @media 768 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 768px) {
+
+    .Main_Page_Size{
+        width:96%;
+    }
+
+    .el_offer{
+    font-size:14px;
+    }
+
+    .sizeMap{
+        margin-top: 35px;
+        }
+
+    .Main_Page_Text{
+    font-size:20px; 
+    }
+    }
+    
+    /*** ====================================== ***/
+    /*** ============== @media 650 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 650px) {
+
+   
+    .selectOffer{
+        height:22px;
+        font-size:11px;
+            }
+        
+
+    .sizeMap{
+    height:560px;
+    margin-top:50px;
+    }
+    
+    .Main_Page_Size{
+    margin-left:2%;
+    line-height:25px;
+    height:560px;
+    margin-top:-560px;
+    }
+    
+    .Main_Page_Text{
+    font-size:18px; 
+    }
+    }
+    
+    /*** ====================================== ***/
+    /*** ============== @media 420 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 420px) {
+    .sizeMap{
+    height:730px;
+    margin-top:30px;
+    } 
+    
+    .Main_Page_Size{ 
+    margin-top:-730px;
+    height:730px;
+    }
+
+
+    .Main_Page_Text{
+        font-size:14px; 
+    }
+
+    }

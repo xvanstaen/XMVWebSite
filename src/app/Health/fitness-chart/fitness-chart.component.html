@@ -1,0 +1,115 @@
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+  </head>
+
+<body>
+<div class="skipLine" ></div>
+
+<form [formGroup]="FieldSelForm">
+
+        <div class="textCriteria">Sorting criteria</div>  
+        <input class="inputCriteria"   type="text" placeholder="field 1"  formControlName="SortOne" value="SortOne">
+        <div class=" arrow_down">
+            <mat-icon class="material-symbols-outlined arrow_down_size"   style="float:left" id="SortOne" (click)="ArrowSort($event)" >
+                arrow_drop_down
+            </mat-icon>   
+        </div>
+   
+        <input class="inputCriteria"  type="text" placeholder="field 2" formControlName="SortTwo" value="SortTwo">
+        <div class=" arrow_down">
+            <mat-icon class="material-symbols-outlined arrow_down_size" style="float:left" id="SortTwo" (click)="ArrowSort($event)" >
+                    arrow_drop_down
+            </mat-icon>   
+        </div>
+     
+        <input class="inputCriteria"  type="text" placeholder="field 3" formControlName="SortThree" value="SortThree">
+        <div class="arrow_down">
+            <mat-icon class="material-symbols-outlined arrow_down_size" style="float:left" id="SortThree" (click)="ArrowSort($event)" >
+                arrow_drop_down
+            </mat-icon>   
+        </div> 
+
+        
+   
+
+    <div class="skipLine" ></div>
+    <div>
+
+        <div class="textCriteria" >Filtering criteria</div>
+        <input class="inputCriteria"  type="text" placeholder="filter 1" formControlName="FilterOne" value="FilterOne">
+        <div class="arrow_down">
+            <mat-icon class="material-symbols-outlined arrow_down_size"  id="FilterOne" (click)="ArrowSort($event)" >
+                    arrow_drop_down
+            </mat-icon>   
+        </div>
+
+        <input class="inputCriteria"  type="text" placeholder="filter 2" formControlName="FilterTwo" value="FilterTwo">
+        <div class="arrow_down">
+            <mat-icon class="material-symbols-outlined arrow_down_size"  id="FilterTwo" (click)="ArrowSort($event)" >
+                    arrow_drop_down
+            </mat-icon>   
+        </div>
+
+        <input class="inputCriteria"  type="text" placeholder="filter 3" formControlName="FilterThree" value="FilterThree">
+        <div class="arrow_down">
+            <mat-icon class="material-symbols-outlined arrow_down_size"  id="FilterThree" (click)="ArrowSort($event)" >
+                arrow_drop_down
+            </mat-icon>   
+        </div>
+    </div>   
+    <div *ngIf="OpenDialogue[prev_Dialogue]===true " >
+        <app-my-drop-down [ListSortFields]="ListSortFields" [ListFilter]="ListFilter" [OpenDialogue]="OpenDialogue"
+        [callingComponent]="callingComponent" (selectedCriteria)="DropDownData($event)">
+        </app-my-drop-down>
+    </div>
+    <div class="skipLine" ></div> 
+    <button id='but_1' class="sizeButtons" (click)="Confirm()"> Confirm</button>
+    <button id='but_2' class="sizeButtons" (click)="CancelCriteria()"> Cancel</button>
+    <div class="margin-top:20px; float:left; height:60px; width:900px; display:block;">&nbsp;</div>    
+</form>
+
+
+<table >
+    <thead>
+        <tr >
+            <th class="tableCol" >Sport</th>
+            <th class="tableCol" >Date</th>
+            <th class="tableCol" >Activity</th>
+            <th class="tableCol" >Exercise</th>
+            <th class="tableSeance"> Seance</th>
+            <th class="tableSeance">Result</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngFor="let DataChart of TabToDisplay; let i=index" [ngClass]="{'rowEven':  i % 2 ===0, 'rowOdd':  i % 2 !==0}" >
+            <td class="tableCol" ><span *ngIf="i===0 || (i>0 && TabToDisplay[i].sport!==TabToDisplay[i-1].sport)">{{DataChart.sport}}</span></td>
+            <td class="tableCol"  ><span *ngIf="i===0 || (i>0 && TabToDisplay[i].thedate!==TabToDisplay[i-1].thedate)">{{DataChart.thedate}}</span></td>
+            <td  class="tableCol" ><span *ngIf="i===0 || (i>0 && TabToDisplay[i].activity!==TabToDisplay[i-1].activity)">{{DataChart.activity}}</span></td>
+            <td  class="tableCol" >{{DataChart.exercise}}  &nbsp; {{DataChart.unit}} </td>
+            <td  class="tableSeance" [ngClass]="{'alignTop':  TabToDisplay[i].seance.length > nbSeanceDisplay, 'alignMiddle':  TabToDisplay[i].seance.length <= nbSeanceDisplay}">
+                <span *ngIf="TabToDisplay[i].seance.length>0 && TabToDisplay[i].seance[0].nb!==0">
+                    <span *ngFor="let Seance of TabToDisplay[i].seance; let j=index">
+                        <span class='seance' [ngClass]="{'seanceEven':  j % 2 ===0, 'seanceOdd':  j % 2 !==0}" > {{Seance.nb}}  </span>
+                        <span style="width:2px;">&nbsp;</span>
+                    </span>
+                    <span style="width:2px; height:35px; color:pink;">&nbsp;</span>
+                </span>
+            </td>
+            <td  class="tableSeance" *ngIf="TabToDisplay[i].result.perf_type!==undefined">
+                {{TabToDisplay[i].result.perf_type}} &nbsp;  {{TabToDisplay[i].result.perf}}  &nbsp; {{TabToDisplay[i].result.unit}}
+  <!--
+                    <span style='width:200px; display:inline-block;'> 
+                            {{TabToDisplay[i].result.perf_type}} &nbsp;  {{TabToDisplay[i].result.perf}}  &nbsp; {{TabToDisplay[i].result.unit}}
+                    </span> 
+-->
+            </td>
+         </tr>
+    </tbody>
+</table>
+<div class="skipLine">&nbsp;</div>
+<div class="skipLine">&nbsp;</div>
+
+</body>

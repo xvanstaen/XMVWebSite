@@ -1,0 +1,173 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+  </head>
+<body>
+    <!--
+    <br> Device type is {{device_type}}
+    <br> Screen width = {{getScreenWidth}}
+    <br> Screen height = {{getScreenHeight}}
+    <br><br>
+    </div>
+
+            <audio  controls autoplay loop height="" width="">
+          <source src="./It's A Beautiful Day.mp3" type="audio/mpeg">
+        </audio>
+
+
+         <div *ngIf="pagePhotos===false; else processPhotos">
+    --> 
+    
+  <div *ngIf="pagePhotos===false; else processPhotos">
+    <div *ngIf="getScreenWidth>9; else smallscreen">
+        <div >
+            <img   class='sizeMap'  src="./assets/TimberX.png" >
+        </div>
+        
+        <span class="emoji  anim-name-slidedown" style="margin-left:2%; animation-duration: 18s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:12%; animation-direction: alternate;animation-duration: 10s;">🍾</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:15%; animation-duration: 8s;animation-delay:3s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:24%; animation-duration: 4s; animation-delay:2s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:36%; animation-direction: alternate;animation-duration: 4s;">🍾</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:48%; animation-duration: 4s; animation-delay:4s">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:58%; animation-direction: alternate;animation-duration: 14s;">🍾</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:68%; animation-duration: 14s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:78%; animation-duration: 8s; animation-delay:5s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:88%; animation-direction: alternate;animation-duration: 8s;">🍾</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:92%; animation-duration: 18s;">🥂</span>
+
+        <span class="emoji  anim-name-slidedown" style="margin-left:2%;  animation-direction: alternate;animation-duration: 16s;">🍾</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:12%; animation-duration: 7s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:24%; animation-duration: 11s; animation-delay:5s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:27%; animation-duration: 13s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:36%; animation-duration: 9s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:48%; animation-duration: 6s; animation-delay:2s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:58%; animation-duration: 18s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:68%; animation-duration: 7s; animation-delay:5s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:78%; animation-duration: 10s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:88%; animation-duration: 16s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:92%; animation-direction: alternate;animation-duration: 12s;">🍾</span>
+
+
+        <span class="emoji  anim-name-slidedown" style="margin-left:2%;  animation-duration: 12s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:12%; animation-duration: 8s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:24%; animation-duration: 16s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:28%; animation-direction: alternate;animation-duration: 8s;">🍾</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:36%; animation-duration: 12s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:48%; animation-duration: 8s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:58%; animation-direction: alternate;animation-duration: 12s;">🍾</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:68%; animation-duration: 8s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:78%; animation-duration: 16s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:88%; animation-duration: 8s;">🥂</span>
+        <span class="emoji  anim-name-slidedown" style="margin-left:92%; animation-duration: 12s;">🥂</span>
+        
+          <div class="overlap_image">
+            <div class="dropdown-options" (click)="goDown('targetRules')"><span class="dropdown-text"  >Guidelines</span></div>
+            <div class="dropdown-options" (click)="goDown('targetDirection')"><span class="dropdown-text"  >Address</span></div>
+            <div class="dropdown-options" (click)="displayWedPhotos()">  <span class="dropdown-text">Photos</span></div>
+            <br> 
+          
+          <div class="main_box">
+           
+           
+            <!--
+               <span class="em em-champagne animicon  anim-name-normal">🥂</span>
+            <span class="em em-champagne animicon  anim-name-normal">🍾</span>
+            <i class="em em-champagne animicon dir-reverse anim-name-slidein" aria-role="presentation" aria-label="CLINKING GLASSES"></i>
+            <i class="em em-champagne animicon dir-alternate anim-name-normal" aria-role="presentation" aria-label="BOTTLE WITH POPPING CORK"></i>
+            <i class="em em-champagne animicon alternate-reverse anim-name-slidein" aria-role="presentation" aria-label="Clinking Glasses"></i>
+           -->
+          
+            <h1> Monica & Xavier </h1> <h1>are delighted</h1>  <h1>to welcome you </h1>
+            
+            
+              <!--
+              <i class="em em-champagne" style="font-size:32px;" aria-role="presentation" aria-label="BOTTLE WITH POPPING CORK"></i>
+              -->
+              <h2 >on 2 Jul 2022 </h2>
+              
+               <h2 >from 6:30pm to 1:00am </h2>
+               <!-- <span style='font-size:40px;'>🍾  🥂 </span> -->
+              <h2>at </h2><h1>Timbre X S.E.A </h1>
+              
+             
+
+          </div>
+        </div>
+    </div>
+  </div>
+    <ng-template #smallscreen>
+      
+      <div >
+          <img  class='sizeMap '  src="./assets/TimberX.png" >
+      </div>
+      <div >
+        <div class="overlap_image">
+          <img  class='sizeMap '  style='max-width:600px;margin-left:4%;margin-top:0px;'src="./assets/TextInvite2JUL2022-C.png" >
+        </div>
+   
+      </div>
+     
+
+
+
+
+    </ng-template>
+
+    <div *ngIf="pagePhotos===false">
+    <div class="myText">
+      <span id='targetRules'></span>
+      
+      <span style='font-weight:bold;'><br>Guidelines</span>
+      <br><br>
+      Dress code by the restaurant : no singlet, no slippers, and no shorts for men (Bermudas are allowed); we include another request - <span style="font-weight:bold">no plain white attire please</span>.
+        <br><br>
+        Free flow of all food and drinks.
+        <br><br>
+        Please prepare your favourite list of songs that you would like to hear or dedicate. On the day of the event, you can send them to the live Band via WhatsApp or SMS at 85873409 (Timbre X SEA). The Band will play until midnight, while the restaurant is open until 1:00am.
+        <br><br>
+        We hope that you are as excited as us both, to have a lot of fun during our celebration 🍾 🎉 🎊 on 2 Jul.
+        <br><br>
+        <h2>See you very soon!</h2>
+        <br><br>
+
+      <span id='targetDirection'></span>
+      <span style='font-weight:bold;'>Address</span>
+      <br>
+        <br>  1 Old Parliament Lane, #01-04 The Arts House, 179429
+
+        <br><br>
+        <span style='font-weight:bold;'>By MRT:</span> Alight at Raffles Place MRT Station and cross the bridge by Fullerton Hotel. Turn left. Walk past Asian Civilisations Museum. Look out for the statue of Sir Stamford Raffles – are you just next to him? The you're arrived!
+        <br><br>
+        <span style='font-weight:bold;'>By car:</span> If you are driving, there are plenty of car park spaces at New Parliament House (opposite Supreme Court). Entrance to the car park is along Parliament Place.
+        <br><br>
+        More information available on their website <a href="https://timbregroup.asia/venues/timbre-x-s-e-a/" target="_blank">
+        <h3>https://timbregroup.asia/venues/timbre-x-s-e-a/</h3>
+        </a>
+        <br><br>
+    </div>
+  </div>
+
+    <ng-template #processPhotos>
+  <!--
+      <div   style="margin-left: 2%; width: 96%; height:10px; float:left; margin-top:60px;"> 
+         
+      
+        <div class="dropdown-options" (click)="displayWedPhotos()">  <span class="dropdown-text">Photos</span></div>
+        
+        <span class="dropdown-options dropdown-text" (click)="goDown('targetRules')">Guidelines</span>
+        <span class="dropdown-options dropdown-text" (click)="goDown('targetRules')">Address</span>
+     
+      </div>
+    
+       <br><br><br><br>
+    --> 
+
+      <app-GetImages [EventLogConsole]="myConsole" [myLogConsole]="myLogConsole" [ConfigXMV]="ConfigXMV" [nextBucketOnChange]="nextBucketOnChange" >
+      </app-GetImages>
+      <div *ngIf="bucketMgt.bucket_is_processed===true">
+      
+      </div>
+    <br><br><br>
+    </ng-template>
+  </body>

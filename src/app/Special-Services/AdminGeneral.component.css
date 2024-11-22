@@ -1,0 +1,106 @@
+h1{
+    font-weight: bold;
+    font-size:45px;
+    width:90%;  
+    text-align:center;
+    margin-top:40px;
+    font-family: 'Tangerine';
+    letter-spacing: 4px;
+    margin-left:20px;
+    height:65px;
+    padding-top:12px;
+  }
+
+h2{
+  margin-top:20px;
+  width:90%;
+  font-size:36px;
+  font-weight: bold;
+  font-family: 'Tangerine';
+  letter-spacing: 2px;
+  text-align:center;
+  margin-left:20px;
+  height:46px;
+  }
+
+h3{
+  margin-left:70px;
+  font-family: 'Roboto';
+  font-weight:bold;
+  font-size:22px;
+  letter-spacing: 3px;
+  display:block;
+  
+  color:blue;
+  
+}
+
+h4{
+   margin-left:20px;
+  font-family: 'Roboto serif';
+  font-weight:bold;
+  font-size:14px;
+  letter-spacing: 2px;
+  background-color: rgb(194, 201, 201);
+  color:black;
+  width:90%;
+  text-align:center;
+
+  
+}
+
+.bucket{
+    font-family: 'Roboto';
+    width:50%;
+    height:40px;
+    color:blue;
+    font-size:16px;  
+    
+    display:inline-flex;
+    padding-left:15px;
+    padding-top:10px;
+    
+ }
+ 
+.butt{
+    font-family: 'Tangerine';
+    margin-left:80px;
+    /** box-shadow: left top blur around ; can have multiple***/
+    box-shadow: 0px 0px 4px 0px rgba(0,128,255,0.2);
+    background-color: rgb(201, 227, 212);
+    color:blue;
+    font-size:28px;
+    border-radius: 30%;
+    width:90px;
+    height:40px;
+    align-items: center;
+    border:solid 0px black;
+  }
+  .butt:hover{
+    color:blue;
+    background-color:cyan;
+  }
+
+
+
+/*** ====================================== ***/
+/*** ============== @media1000 ================ ***/
+/*** ====================================== ***/
+@media only screen and (max-width:10000px) {
+    h1{
+      font-size:30px;
+      height:85px;
+    }
+    h3{
+      margin-left:30px;
+      font-size:16px;
+      letter-spacing: 1px;
+    }
+    .butt{
+        margin-left:30px;
+        font-size:22px;
+        height:30px;
+        width:80px;
+      }
+
+}

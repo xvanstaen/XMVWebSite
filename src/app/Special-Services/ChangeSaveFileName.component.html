@@ -1,0 +1,17 @@
+<div *ngIf="ConfirmSave===true">
+    <h3>Do you want to save your modifications?</h3>
+    <button id="butt12" (click)="SaveModif('YES')" class="butt">Yes</button>
+    <button id="butt12" (click)="SaveModif('NO')" class="butt">No</button>
+</div>
+<div *ngIf="isObjectToSave===true">
+    <h3> Confirm or change the name of the file to save </h3>
+            <div>
+                <textarea id="saveFile" class="inputSave" (input)="InputFile($event)" >{{FileName}}</textarea>
+            </div>
+            <button id="butt24" (click)="SaveFile()" class="butt">Confirm</button>
+            <button id="butt25 " (click)="SaveModif('NO')"class="butt">Cancel save</button>
+   
+
+</div>
+
+

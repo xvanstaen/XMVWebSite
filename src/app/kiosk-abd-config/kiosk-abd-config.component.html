@@ -1,0 +1,234 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head> 
+<body>
+<div style="margin-left:20px; margin-top:15px; font-size:16px; display:block; margin-top:5px; width:450px; height:100px; color:blue; border:3px blue solid; background-color: lightsteelblue;">
+    <div style="font-size:16px; display:block; text-align: center; margin-top:5px; font-weight:bolder; width:100%; ">
+            Select the configuration file to process 
+    </div>
+
+    <div style="margin-top:5px; display:inline-block; width:100%;  font-weight:normal;">
+        <label style="display:block; float:left; font-weight:normal;">
+            <span style="margin-left:15px;  ">from your </span>
+            <input id="mainFile" style=" display:none;" type="file"  (change)="open($event)">
+            <a class="buttons" style="padding-left:30px;padding-top:6px; margin-top:10px; display:inline-block;" id="mainFile"> Folder </a>
+        </label>
+
+        <div *ngIf="devMode!=='local'" style="margin-top:10px;  margin-left:15px;  "> 
+            <label style="margin-left:10px; font-weight:normal;">or from the</label>
+            <button id="10"  class="buttons"  style="padding-left:15px; " (click)='onSelectServer()'>Server</button> 
+        </div>  
+    </div>
+</div>
+
+<div *ngIf="isSelectServer===true"  >
+    <app-select-server [initConfigServer]="configServer" [selectOneServer]="selectOneServer"
+            (returnOneServer)="getOneServerName($event)">
+    </app-select-server>
+    <div style="margin-top:20px; width:100%; display:block; height:170px;"></div>
+</div>
+
+<div class="error">{{error}} </div>
+
+<div *ngIf="processFile===true" style="margin-left:20px; ">
+    <div  style=" display:inline-block;  margin-top:2px; background-color: cyan;">&nbsp;&nbsp;&nbsp;File is being processed&nbsp;&nbsp;&nbsp;</div>
+
+</div>
+<div [formGroup]="myForm" style="margin-top:20px; width:570px; display:block; margin-left:20px; ">
+    <div *ngIf="isFileLocal===false && isFileServer===true && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')"
+            style="border:1px solid blue; background-color: cyan;">
+        <div class="title">File to retrieve from Google Server</div>
+        <div class="theDiv" style="margin-top:15px;">
+            <span class="label">Bucket</span><input class="input" type="text" formControlName="bucket" value="GoogleBucket" >
+           
+            <span class="label" style="margin-top:4px;">File name</span><input class="input" type="text" formControlName="object" value="GoogleObject" >
+            
+        </div>
+        <button class="buttons" style="margin-top:10px; margin-left:200px;" id="11" (click)='readFileServer()'>Read</button>
+        <div style="margin-top:7px;">&nbsp;</div>
+    </div>
+<!--
+    <div *ngIf="isMainJson===true" style="border:1px solid blue; background-color: cyan;">
+        <div class="title" style="margin-top: 18px;">Filters</div>
+        <div class="theDiv">
+            <span class="label">ABDDomainConfig Location=</span><input class="input" type="text" formControlName="searchDomain" value="searchDomain" >
+        </div>
+    
+        <div class="theDiv" >
+            <span class="label">Tag</span><input class="input" type="text" formControlName="searchField" value="searchField" >
+        </div>
+        <div class="theDiv" style="margin-top:7px;">
+            <span class="label">Fields</span><input class="input" type="text" formControlName="searchStartValue" value="searchStartValue" >
+            <span style="font-size:11px; color:blue; display:block; float:left; margin-left:5px;"> Note: if no End Field is specified, it will then search all the items wich field contains the specified value.  <br>  Both fields are mandatory if at least one of them is filled-in</span>
+        </div>
+        <div *ngIf="noSubmit===false && selectedServer!==''" class="theDiv">
+            <button id="1"  class="buttons" style="margin-top:10px; margin-left:200px;" (click)='processFilters()'>Filter</button>
+        </div>
+    </div>
+-->
+
+    <div *ngIf="isMainJson===true" style=" margin-top:10px;"> <!--     Retrieve script file -->
+        <div style="display:block; float:left; max-width:100px; margin-top:20px;">
+            <label >
+                <input id="retrieveScript" style=" display:none;" type="file" (change)="open($event)">
+                <a class="buttons" style="padding-left:20px; margin-top:60px; " id="41"> Script to retrieve </a>
+            </label>
+        </div>
+        <div style="overflow-y:scroll; display:inline-block; margin-left:20px; height:100px; width:300px; border:2px green solid; background-color:lightgray; text-align: center;">List of scripts retrieved<br>
+            <li style="list-style-type: none;" *ngFor="let tab of scriptFileName; let i=index;"  (click)="onSelectedScript(i)">
+                <span class="theScript even" *ngIf="i % 2 === 0" > {{i+1}} - {{tab}} </span>
+                <span class="theScript odd"  *ngIf="i % 2 === 1" > {{i+1}} - {{tab}} </span>
+            </li>
+        </div>
+        <div > <!-- *ngIf="scriptFileName.length>0" -->
+            <div style="margin-top:10px; display:inline-block; max-height:100px; width:900px; border:blue solid 1px; background-color: lightblue;">
+                <div style=" margin-top:20px; max-width:900px;">Content of script : {{scriptFileName[currentScript]}}</div>
+                <textarea style="width:900px; height:100px; overflow-y: scroll;" (input)="onInputScript($event)" type="text" value="{{modifiedScriptContent}}">
+                </textarea>
+            </div>
+            <div class="error">{{scriptError}}</div>
+            <div *ngIf="isConfirmSaveScript===false" style="margin-top:10px; display:block;">
+
+                <button id="61"  class="buttons" style="width:140px;  font-size:13px;" (click)='onProcessScript()'>Process Script</button>
+                <button id="62"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; " (click)='confirmSaveScript()'>Save Script</button>
+                <button id="63"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; "(click)='onCancelScript()' >Cancel updates</button>
+            </div>
+            <div *ngIf="isConfirmSaveScript===true" style="margin-top:10px; display:block;">
+                
+                <span style="width:250px; border:blue solid 1px;background-color:white; ">Enter the name of the file </span><input type="text" formControlName="fileScriptName" value="fileScriptName" style="margin-left:20px; width:250px; height:30px; font-size:14px; color:blue; background-color:white;" >
+               
+                <button id="62"  class="buttons" style="width:140px;  font-size:13px;" (click)='onSaveScript("server")'>Save on server</button>
+                <button id="62"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; " (click)='onSaveScript("local")'>Download locally</button>
+                <button id="62"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; " (click)='onSaveScript("cancel")'>Cancel Save</button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="isMainJson===true" style="display:block; margin-left:70px; margin-top:12px;">
+        <button id="44"  class="buttons" style="width:140px;  font-size:13px;" (click)='onConvertJsonToXML("All")'>Convert JSON to XML</button>
+        <button id="44"  class="buttons" style="width:140px;  font-size:13px; margin-left:40px;" (click)='onConvertJsonToXML("Partial")'>For selected Domain, convert JSON to XML</button>
+    </div>
+
+    <div *ngIf="isXMLRetrieved===true" style="margin-top:10px;">
+        <div *ngIf="isDisplayXML===false">
+            <button id="41"  class="buttons" style="width:140px;  font-size:13px;" (click)='onDisplayXML("Yes")'>Display native XML</button>
+        </div> 
+
+        <div *ngIf="isDisplayXML===true">
+            <div *ngIf="isConfirmSaveXML===false" style="margin-top:20px; margin-left:20px; display:inline-block; width:900px;">
+                <div [formGroup]="myForm">
+                    <input type="text" formControlName="fileNameXML" value="fileNameXML" style="margin-left:20px; width:250px; height:30px; font-size:14px; color:blue; background-color:white;" >
+                    <button id="40" class="buttons" style="font-size:13px;"  (click)='onDisplayXML("No")'>Hide native XML</button>
+                    <button id="2"  class="buttons" style="font-size:13px;"  (click)='confirmSaveFileXML()'>Confirm save XML</button>
+                </div>
+            </div>
+            <div *ngIf="isConfirmSaveXML===true" style="margin-top:30px; margin-left:20px; display:inline-block; width:900px;">
+    
+                <div  style=" height:30px; font-size:14px; color:blue; " >
+                    <span style="width:250px; border:blue solid 1px;background-color:white; "> {{myForm.controls['fileNameXML'].value}} </span>
+                <button id="41"  class="buttons"   style="font-size:13px;"  (click)='onDisplayXML("No")'>Hide native XML</button>
+                <button id="33"  class="buttons"   style="font-size:13px; margin-left:15px;"  (click)='saveFileHTTP("serverXML")'>Save on server</button>
+                <button id="34"  class="buttons"   style="font-size:13px; margin-left:15px;"  (click)='saveFileHTTP("localXML")'>Download locally</button>
+                <button id="35"  class="buttons"   style="font-size:13px; margin-left:15px;"  (click)='saveFileHTTP("cancel")'>Cancel</button>
+            </div>
+        </div>
+        <div  id="inp1"  style=" display:block; margin-top:20px; overflow-y:scroll; background-color:lightgrey; width:1035px;  height:400px; margin-left:20px; border:solid 2px blue; ">
+            <textarea  style="width:1000px; height:400px; overflow-y:scroll; margin-left:10px;"   type="text" name="dataXML" formControlName="dataXML" value="dataXML" id="theChange"  > 
+            </textarea>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div *ngIf="isMainJson===true">
+    <div *ngIf="isConfirmSave===false" style="margin-top:30px; margin-left:20px; display:inline-block; width:800px;">
+        <div [formGroup]="myForm">
+            <input type="text" formControlName="fileName" value="fileName" style="width:250px; height:30px; font-size:14px; color:blue; background-color:white;" >
+            <button id="2"  class="buttons"  style="font-size:13px;"   (click)='confirmSaveFile()'>Confirm save JSON</button>
+            <button id="2"  class="buttons"  style="font-size:13px;"   (click)='reinitOutFile()'>Cancel Updates</button>
+        </div>
+    </div>
+    <div *ngIf="isConfirmSave===true" style="margin-top:30px; margin-left:20px; display:inline-block; width:800px;">
+
+            <div  style="margin-left:10px;  width:500px; height:30px; font-size:14px; color:blue; " >
+                <span style="width:250px; border:blue solid 1px;background-color:white; "> {{myForm.controls['fileName'].value}} </span>
+            <button id="43"  class="buttons"   style="font-size:13px;"  (click)='saveFileHTTP("serverJSON")'>Save on server</button>
+            <button id="44"  class="buttons"   style="font-size:13px;"  (click)='saveFileHTTP("localJSON")'>Download locally</button>
+            <button id="45"  class="buttons"   style="font-size:13px;"  (click)='saveFileHTTP("cancel")'>Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isMainJson===true" style="margin-top:20px; margin-left:10px;  overflow-y:scroll; display:block; height:500px; min-width:1035px;">
+    <div style="min-width:1000px; margin-left:10px; background-color: rgb(143, 136, 136); color:white; display:inline-block; overflow-x:hidden; overflow-y: scroll;">
+        <div style="margin-left:10px;display:inline-block;">{{mainOutJSON.Body.level.name}}&nbsp;&nbsp;&nbsp;
+            <span style="display:inline-block;" *ngFor="let tab of mainOutJSON.Body.level.details; let m=index;">
+                <span style="color:rgb(55, 55, 186)" >{{tab.F}}</span>=<span style="color:darkorange" >"{{tab.V}}"</span>&nbsp;&nbsp;&nbsp;
+            </span>
+        </div>
+        <br>
+        <div style="margin-left:20px;display:block;" *ngFor="let tab0 of mainOutJSON.Body.level.tab; let i=index;">    
+            <div *ngIf="tab0.display===true">
+                {{tab0.name}}
+                <span style="display:inline-block;" *ngFor="let det0 of tab0.details; let m0=index;">
+                    <span *ngIf="det0.display===true">
+                        <span style="color:rgb(55, 55, 186)" > &nbsp;&nbsp;&nbsp;{{det0.F}}</span>=<span style="color:darkorange" >"{{det0.V}}" </span>
+                    </span>
+                    <span *ngIf="mainOutJSON.Body.level.tab[i].details.length-1===m0 ">&nbsp;></span>
+                </span>
+                <div style="margin-left:27px;display:block;"*ngFor="let tab1 of mainOutJSON.Body.level.tab[i].tab; let j=index;">
+                    <div *ngIf="tab1.display===true">
+                            {{tab1.name}} 
+                        <span style="display:inline-block;" *ngFor="let det1 of tab1.details; let m1=index;">
+                            <span *ngIf="det1.display===true">
+                                <span style="color:rgb(55, 55, 186)" >&nbsp;&nbsp;&nbsp;{{det1.F}}</span>=<span style="color:darkorange" >"{{det1.V}}"</span>
+                            </span>
+                        </span>
+            <br>
+                        <div style="margin-left:34px;display:block;" *ngFor="let tab2 of mainOutJSON.Body.level.tab[i].tab[j].tab; let k=index;">
+                            <div *ngIf="tab2.display===true">    
+                                {{tab2.name}} 
+                                <span style="display:inline-block;" *ngFor="let det2 of tab2.details; let m2=index;">
+                                    <span *ngIf="det2.display===true">
+                                        <span style="color:rgb(55, 55, 186)" >&nbsp;&nbsp;&nbsp;{{det2.F}}</span>=<span style="color:darkorange" >"{{det2.V}}"</span>
+                                    </span>
+                                    <span *ngIf="mainOutJSON.Body.level.tab[i].tab[j].tab[k].details.length-1===m2 ">&nbsp;></span>
+                                </span>        
+                    <br>
+                                <div style="margin-left:41px;display:block;" *ngFor="let tab3 of mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab; let l=index;">
+                                   
+                                    <div *ngIf="tab3.display===true">   
+                                        {{tab3.name}} 
+                                        <span style="display:inline-block;" *ngFor="let det3 of tab3.details; let m3=index;">
+                                            <span *ngIf="det3.display===true">
+                                                <span style="color:rgb(55, 55, 186)" >&nbsp;&nbsp;&nbsp;{{det3.F}}</span>=<span style="color:darkorange" >"{{det3.V}}"</span>
+                                            </span>
+                                            <span *ngIf="mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].details.length-1===m3 && tab3.type!=='T' && tab3.type!=='F'  && tab3.type!=='C'">&nbsp;{{tab3.type}}</span>
+                                        </span>
+                                        
+                        <br>
+                                        <div style="margin-left:49px;display:block;" *ngFor="let tab4 of tab3.tab; let o=index;">
+                                            <div *ngIf="tab4.display===true">  
+                                                    {{tab4.name}} 
+                                                <div style="display:inline-block;" *ngFor="let det4 of tab4.details; let m4=index;">
+                                                        <span *ngIf="det4.display===true">
+                                                            <span style="color:rgb(55, 55, 186)" >&nbsp;&nbsp;&nbsp;{{det4.F}}</span>=
+                                                            <span *ngIf="det4.V.indexOf(specQuote)===-1" style="color:darkorange" >"{{det4.V}}"</span>
+                                                            <span *ngIf="det4.V.indexOf(specQuote)>-1" style="color:darkorange" >' {{det4.V}} '</span>
+                                                        </span>
+                                                    <span *ngIf="mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[o].details.length-1===m4">&nbsp;{{tab4.type}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="margin-top:30px;">&nbsp;</div>
+
+</body>

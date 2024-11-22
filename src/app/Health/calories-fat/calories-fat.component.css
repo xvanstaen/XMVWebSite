@@ -1,0 +1,167 @@
+@import "../FitnessHealthGeneral.css";
+body{
+  margin-left:20px;
+}
+
+div{
+    --bufferW:60%;
+}
+
+.yesScroll{
+  overflow-y:scroll;
+  overflow-x:hidden;
+}
+
+.noScroll{
+  overflow:hidden;
+}
+
+.circle{
+    border-radius: 50% 50%;
+    color:white;
+    width:18px;
+    height:18px;
+    border: solid 0px rgb(182, 42, 42);
+    font-weight:bold;
+    background-color: #b87451;
+    display:inline-block;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  
+.circle:hover{
+    color:black;
+    background-color:cyan;
+  }
+  /***
+  .sizeButtons{
+    width:40px;
+    height:22px;
+    font-size:10px;
+    margin-left:10px;
+}
+***/
+.tHeader{
+  text-align: center; 
+  display:block;
+  float:left;
+  font-size:13px;
+  word-wrap:normal;
+  word-break: keep-all;
+  border-top:2px grey solid; 
+  border-left:2px grey solid; 
+  border-right:2px rgb(251, 249, 249) solid; 
+  border-bottom:2px rgb(251, 249, 249) solid; 
+  padding-top:10px;
+}
+
+.alignLeft{
+  text-align: left; 
+  padding-left:10px;
+}
+
+
+.theArrow{
+  font-size:12px; 
+  color:blue;
+  width:50px;
+  height:15px;
+  background:cyan;
+  margin-left:8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theArrow:hover{
+  color:red;
+
+}
+
+.text{
+    font-size:14px;
+    display:inline-block;
+    }
+
+.totalRecipe{
+  font-size:16px;
+  font-weight:bold;
+  color:green;
+  display:inline-block;
+  height:var(--rowHeight,28px);
+  pointer-events: none;
+}
+
+.totalRecipe:read-only{
+  border:0px solid blue;
+  
+}
+.text:hover{
+  color:red;
+  font-weight: bold;
+  background-color:white;
+}
+
+.rowEven{
+    background-color: var(--rEven,#9edb9c);
+}
+    
+.rowOdd {
+    background-color: var(--rOdd,#8a97e8);
+}
+
+.rowNew {
+  background-color: var(--rOdd,#ef81a0);
+}
+
+
+.theRadio{
+    margin-left:10px; margin-top:10px; color:blue; font-size:12px; 
+    width:90%; display:block; height:30px; background-color:lightgrey; 
+    border:solid 2px black;
+  }
+
+.theRadio:hover{
+    color:red;
+}
+
+.RadioDropDown{
+    font-size:10px;
+    width:200px;
+    text-align: center;
+    border: 2px solid green;
+    height: 100px;
+    background: cyan;
+    color: blue;
+  }
+
+.disableRow{
+  border:0px solid blue;
+}
+
+.disableRow:read-only{
+  border:0px solid blue;
+}
+
+.StraightDropDown-Cal{
+  border: 0px solid green;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background-color: lightgrey;
+}
+
+.Straight-options{
+  width:200px;
+  font-size:12px;
+  height:25px;
+  color:black;
+  text-align: left;
+  padding-left:5px;
+  padding-top:4px;
+  border:0px; 
+  display:inline-block;
+  float:none;
+}
+

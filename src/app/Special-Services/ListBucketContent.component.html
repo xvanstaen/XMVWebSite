@@ -1,0 +1,39 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+
+
+
+
+<div id='targetTopObjects' ></div>
+    <!-- ================ -->
+<div >
+      <span style="margin-top:30px;"><br></span>
+
+
+      <div *ngIf="Error_Access_Server!==''">
+        <span style='margin-top:30px; color:red; font-size:14px;'> Error access to the server : {{Error_Access_Server}}
+        </span>
+      </div>
+      <span style='margin-top:30px; color:blue; font-size:14px;'>{{Message}}</span>
+      <div *ngIf="DisplayListOfObjects===true">
+        
+            <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
+                  (click)="RetrieveSelectedFile(ListObject)">  
+                <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
+                <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
+          </li>
+       
+      </div>
+      <div *ngIf="DisplayListOfObjects===false">
+
+            <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>
+            {{HTTP_Address}}
+      </div>
+
+      <div id='SelectedObjectsFile' ></div>
+<br><br>
+</div>
+</body>

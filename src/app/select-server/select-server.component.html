@@ -1,0 +1,27 @@
+<div *ngIf="selectOneServer===false">
+    <form [formGroup]="theForm" class="mainBlock"  style=" margin-top:15px; ">
+        
+        <div class="label labelOverr"  style="margin-top:15px;">Google</div> 
+        <input type="text" class="theInput" style="margin-top:15px;" id="google" formControlName="googleServer" (click)="onActionServer($event)">
+        <div class="label labelOverr">MongoDB</div>     
+        <input type="text" class="theInput" id="mongo" formControlName="mongoServer" (click)="onActionServer($event)">
+        <div class="label labelOverr">File System</div>     
+        <input type="text" class="theInput" id="fileSystem" formControlName="fileSystemServer" (click)="onActionServer($event)">
+        <!--
+        <button class="sizeButtons" style='margin-top:4px;margin-left:160px; width:100px; height:35px; font-size:15px; font-weight: bolder;' id="clearAll" (click)="submitValues()">Submit</button> 
+        -->
+        <div class="skipLine"></div>
+    </form>
+</div>
+
+<div *ngIf="isSelectServer===true" class="dropdown" >
+<div  class="Straight-content" style="margin-left:15px; width:400px; height:178px; background-color: white; margin-top:5px;">
+    <div  class="StraightDropDown StraightDropDownOverride"  style="width:300px; height:150px; background-color: cyan; margin-top:10px;">
+        <span style="text-align: center; font-size:16px; width:100%; display:inline-block; height:35px;">Select the server</span>
+        <li *ngFor="let server of tabServers; let m=index;" 
+                class="Straight-options "  [ngClass]=" {'even': m % 2 ===0, 'odd': m % 2 !==0}" 
+                    (click)="selectServer($event)" id="selectedServer" [value]="server" >{{server}}
+        </li>
+    </div>
+</div>
+</div>  

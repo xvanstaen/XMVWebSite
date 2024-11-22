@@ -1,0 +1,93 @@
+
+
+h1{
+    font-weight: bold;
+    font-size:45px;
+    width:90%;  
+    text-align:center;
+    font-family: 'Tangerine';
+    letter-spacing: 2px;
+    line-height: 50px;
+  }
+
+h2{
+  margin-top:20px;
+  margin-left:30px;
+  width:90%;
+  font-size:24px;
+  font-weight: bold;
+  font-family: 'Tangerine';
+  letter-spacing: 2px;
+  text-align:center;
+}
+
+h3{
+font-family: 'Roboto';
+  font-weight:bold;
+  font-size:20px;
+  letter-spacing: 2px;
+}
+
+
+.even{
+    color:blue;
+    background-color: lightgrey;
+}
+
+.odd{
+    color:black;
+    background-color: lightcyan;
+}
+
+
+.object{
+  font-family: 'Roboto';
+  height:26px;
+  margin-left:30px;
+  font-size:14px;  
+  width:85%;
+  font-weight: bold;
+  display:block;
+  border:solid 2px blue;
+  padding-top:1px;
+  padding-left:6px;
+}
+
+
+.object li {
+cursor: pointer;
+border-radius: 4px;
+display: block;
+border: solid 0px black;
+}
+
+.object li.selected:hover {
+background-color: #0b9db1 !important;
+border: solid 1px blue(0, 255, 42);
+}
+
+.object li:hover {
+color: #607D8B;
+background-color: rgb(30, 216, 200);
+left: .1em;
+border: solid 1px black;
+}
+
+
+.object:hover{
+background-color: cyan;
+font-size:14px;  
+}
+
+
+/*** ====================================== ***/
+/*** ============== @media 600 ================ ***/
+/*** ====================================== ***/
+ @media only screen and (max-width: 790px) {
+
+.bucket{
+  width:90%;
+  font-size:12px;  
+ }
+
+}

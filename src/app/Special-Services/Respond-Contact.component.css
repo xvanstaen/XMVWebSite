@@ -1,0 +1,157 @@
+.selected {
+    background-color: rgb(101, 199, 214) !important;
+    border: solid 1px black(0, 255, 42);
+    color: black;
+  }
+
+  .text_title{
+    margin-left:10px;
+    padding-left:5px; 
+    padding-right:5px; 
+    width:90%; 
+    display:block; 
+    text-align:center;
+  }
+
+  h1{
+    color:blue;
+    font-weight: bold;
+  }
+
+  h2{
+    color:blue;
+  }
+
+  .mainstyle {
+   
+    list-style-type: none;
+    width:45%;
+    height:520px;
+    display: block;
+    overflow: scroll;
+    border: solid 0px black;
+    float:left;
+    margin-left:5px; 
+}
+  .mainstyle li {
+    cursor: pointer;
+    margin-left: 5%;
+    border-radius: 4px;
+    width: 90%;
+    height:20px;
+   
+    list-style-type: none;
+    display: block;
+    border: solid 0px black;
+  }
+  .mainstyle li.selected:hover {
+    background-color: #0b9db1 !important;
+    border: solid 0px blue(0, 255, 42);
+  }
+  .mainstyle li:hover {
+    color: #607D8B;
+    background-color: rgb(30, 216, 200);
+    left: .1em;
+    border: solid 0px blue(0, 255, 42);
+  }
+
+  .theMessage {
+    margin-left:50%;
+    border-radius: 4px;
+    width: 40%;
+    height:250px;
+    position:absolute;
+    margin-top:0px;
+    list-style-type: none;
+    display: block;
+    border: solid 1px rgb(20, 78, 203);
+    overflow: scroll;
+  }
+
+
+  .theResponse {
+    position:absolute;
+    margin-left:50%;
+    width: 40%;
+    height:25px;
+    margin-top:270px;
+  }
+  .theText{
+    position:absolute;
+    margin-left:50%;
+    border-radius: 4px;
+    width: 40%;
+    height:170px;
+    margin-top:290px;
+    font-size: 16px;
+    display: block;
+    border: solid 2px rgb(139, 12, 12);
+    overflow: scroll;
+  }
+
+  .theButtons{
+    position:absolute;
+    margin-left:50%;
+    height:20px;
+    margin-top:490px;
+
+  }
+
+  .sizeButtons{
+    width:80px;
+    height:30px;
+    margin-left:20px;
+  }
+
+   /*** ====================================== ***/
+    /*** ============== @media 1425 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 1425px) {
+    
+      .mainstyle li {
+        height:50px;
+      }
+  
+  
+      }
+
+      /*** ====================================== ***/
+    /*** ============== @media 790 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 790px) {
+    
+      .mainstyle li {
+        height:60px;
+        font-size: 14px;
+      }
+      .theMessage {
+        font-size: 14px;
+      }
+
+      .theText {
+        font-size: 14px;
+      }
+  
+      }
+
+            /*** ====================================== ***/
+    /*** ============== @media 545 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 545px) {
+    
+      .mainstyle li {
+        height:80px;
+        font-size: 12px;
+      }
+
+      .theMessage {
+        font-size: 12px;
+      }
+
+      .theText {
+        font-size: 12px;
+      }
+
+
+      }
+  

@@ -1,0 +1,590 @@
+
+
+<div class="skipLine">&nbsp;</div>
+
+<div *ngIf="theActions.manageParam===true">
+
+    <div *ngIf="isParamAxis===true && isSliderSelected===false ">
+        <div class="dropdown" >
+            <div class="Straight-content" style="margin-top:120px;">
+                <div  class="StraightDropDown " style="width:98%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
+                    <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">
+                        Chart # {{selectedChart}} - Parameters of axis X & Y
+                        <div class="cancelCross" id="axis" (click)="cancelChartParam($event)">
+                            <div style="font-size:16px; color:black; font-weight:bold; margin-top: -2px;" id="axis" (click)="cancelChartParam($event)">x</div>
+                        </div>
+                    </div>
+                    <form  [formGroup]="selectAxisX" style="margin-left:20px;">
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">Axis X</div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Stacked</span><input  class='inputText' type="text" style="width:30%;"  formControlName="stacked" placeholder="false/true" > 
+                        </div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Position</span><input  class='inputText' type="text" style="width:30%;"  formControlName="position" placeholder="right/left" > 
+                        </div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Border width</span><input  class='inputText' type="text" style="width:30%;"  formControlName="borderWidth" > 
+                        </div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Border color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldXColorBorder')" formControlName="borderColor"  > 
+                            <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_XBorderColor}" class="trow myColor" (click)="selectColorAxis('xBorderColor')" >&nbsp;</span>
+                        </div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Ticks color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldXTicksColor')" formControlName="ticksColor"  > 
+                            <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_XTicksColor}" class="trow myColor" (click)="selectColorAxis('xTicksColor')" >&nbsp;</span>
+                        </div>
+                    </form>
+                    <form  [formGroup]="selectAxisY" style="margin-left:20px;">
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">Axis Y</div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Stacked</span><input  class='inputText' type="text" style="width:30%;"  formControlName="stacked" placeholder="false/true" > 
+                        </div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">    
+                            <span class="trow" style="width:25%;"> Position</span><input  class='inputText' type="text" style="width:30%;"  formControlName="position" placeholder="right/left" > 
+                        </div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Border width</span><input  class='inputText' type="text" style="width:30%;"  formControlName="borderWidth" > 
+                        </div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Border color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldYColorBorder')" formControlName="borderColor"  > 
+                            <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_YBorderColor}" class="trow myColor" (click)="selectColorAxis('yBorderColor')" >&nbsp;</span>
+                        </div>
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Ticks color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldYTicksColor')" formControlName="ticksColor"  > 
+                            <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_YTicksColor}" class="trow myColor" (click)="selectColorAxis('yTicksColor')" >&nbsp;</span>
+                        </div>
+                    </form>
+                    <div class="skipLine">&nbsp;</div>
+                    <button id='axis' *ngIf="tabLock.lock===1" style="margin-left:40px;" (click)="processAxis($event)" > Save</button>
+                    <div class="skipLine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="(isParamTitle===true || isParamLegend===true) && isSelectLChartTitleColor===false &&  isSliderSelected===false" >
+    <div class="dropdown" >
+            <div class="Straight-content" style="margin-top:120px;">
+                <div  class="StraightDropDown " style="width:98%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
+                    <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">
+                        Chart # {{selectedChart}} - Parameters of <span *ngIf="isParamTitle===true"> Title  </span>
+                            <span *ngIf="isParamLegend===true"> Legend </span>
+                        <div class="cancelCross" id="chartTitle" (click)="cancelChartParam($event)">
+                            <div style="font-size:16px; color:black; font-weight:bold; margin-top: -2px;" id="chartTitle" (click)="cancelChartParam($event)">x</div>
+                        </div>
+                    </div>
+                    <form  [formGroup]="selectTitle" style="margin-left:20px;">
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Display</span><input  class='inputText' type="text" style="width:30%;"  formControlName="display" placeholder="false/true" > 
+                            <span id="selTitleDisplay" class="circle" *ngIf="tabLock.lock===1" style='margin-left:20px;' (click)="selectType($event)">A</span>
+                            <div *ngIf="isTitleDisplay===true && tabLock.lock===1 ">
+
+                                <div class="dropdown " >
+                                    <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
+                                        <div  class="StraightDropDown "  [ngStyle]="{'height.px':tabDisplay.length * 26, 'width.px':80}">
+                                            <li *ngFor="let action of tabDisplay; let m=index;" 
+                                                    class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                        (click)="selectType($event)" id="selectedTitleDisplay" [value]="action" >{{action}}
+                                            </li>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Text</span><input  class='inputText' type="text" style="width:70%;"  formControlName="text"  > 
+                        </div> 
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span   class="trow" style="width:15%;"> Padding </span>
+                            <span   class="trow" style="width:10%;"> Top</span><input  class='inputText' type="text" style="width:10%;"  formControlName="paddingTop"  > 
+                            <span   class="trow" style="margin-left:20px; width:15%;"> Bottom</span>
+                            <input  class='inputText' type="text" style="width:10%;"  formControlName="paddingBottom"  > 
+                            <span   *ngIf="isParamLegend===true" class="trow" style="margin-left:20px; width:10%;"> Left</span>
+                            <input  *ngIf="isParamLegend===true" class='inputText' type="text" style="width:10%;"  formControlName="paddingLeft"  > 
+
+                        </div> 
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Position</span><input  class='inputText' type="text" style="width:30%;"  formControlName="position"  > 
+                            <span id="selTitlePosition" class="circle" *ngIf="tabLock.lock===1" style='margin-left:20px;' (click)="selectType($event)">A</span>
+                            <div *ngIf="isTitlePosition===true">
+
+                                <div class="dropdown " >
+                                    <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
+                                        <div  class="StraightDropDown "  [ngStyle]="{'height.px':tabTitlePosition.length * 26, 'width.px':80}">
+                                            <li  *ngFor="let action of tabTitlePosition; let m=index;" 
+                                                    class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                        (click)="selectType($event)" id="selectedTitlePosition" [value]="action" >{{action}}
+                                            </li>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Align</span><input  class='inputText' type="text" style="width:30%;"  formControlName="align"  > 
+                            <span id="selTextAlign" class="circle" style='margin-left:20px;'  *ngIf="tabLock.lock===1"  (click)="selectType($event)">A</span>
+                            <div *ngIf="isTextAlign===true">
+
+                                <div class="dropdown " >
+                                    <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
+                                        <div  class="StraightDropDown "  [ngStyle]="{'height.px':tabTextAlign.length * 26, 'width.px':80}">
+                                            <li *ngFor="let action of tabTextAlign; let m=index;" 
+                                                    class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                        (click)="selectType($event)" id="selectedTextAlign" [value]="action" >{{action}}
+                                            </li>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldColorTitle')" formControlName="color"  > 
+                            <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_colorTitle}" class="trow myColor" (click)="selectColor('colorTitle')" >&nbsp;</span>
+
+                        </div>  
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Font Size</span><input  class='inputText' type="text" style="width:30%;"  formControlName="fontSize"  > 
+                        </div> 
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Font Weight</span><input  class='inputText' type="text" style="width:30%;"  formControlName="fontWeight"  > 
+                            <span id="selFontWeight" class="circle" style='margin-left:20px;' *ngIf="tabLock.lock===1" (click)="selectType($event)">A</span>
+                            <div *ngIf="isFontWeight===true">
+
+                                <div class="dropdown " >
+                                    <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
+                                        <div  class="StraightDropDown "  [ngStyle]="{'height.px':150, 'width.px':80}" style="overflow-x:hidden; overflow-y:scroll">
+                                            <li *ngFor="let action of tabFontWeight; let m=index;" 
+                                                    class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" style="overflow-x:hidden; overflow-y:scroll"
+                                                        (click)="selectType($event)" id="selectedFontWeight" [value]="action" >{{action}}
+                                            </li>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        
+                        </div> 
+                        <div style="width:100%; display:inline-block;  margin-top:5px;">
+                            <span class="trow" style="width:25%;"> Family</span><input  class='inputText' type="text" style="width:30%;"  formControlName="family"  > 
+                        </div> 
+                        <div class="skipLine">&nbsp;</div>
+                                <button *ngIf="tabLock.lock===1" (click)="processTitle()" > Save</button>
+                        <div class="skipLine">&nbsp;</div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="posDivSlider"  ></div>
+    <div *ngIf="isSliderSelected===true  && tabLock.lock===1">
+    <div  class="dropdown" >
+        <div id="posDivSliderTrue"  ></div>
+        <div class="Straight-content" style="margin-top:120px; width:90%;">
+    <!-- <div  style="position:absolute; z-index:1; margin-left:10px; margin-top:120px; width:400px;">  -->
+            <div  class="StraightDropDown " style="width:100%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
+    <!--
+    <div *ngIf="isSliderSelected===true " style="position:absolute; margin-left:20px;height:520px;width:410px; z-index: 1; background-color: lightgrey; border: solid 2px blue;"
+            [ngStyle]="{'margin-top.px':mainWindow.top}">
+        <div style=" margin-top:10px; margin-left:10px;height:495px;width:380px; z-index: 1; background-color: white; border: solid 2px blue;">  
+    -->
+                <div class="skipline">&nbsp;</div>
+                <span style='margin-left:30px; width:90%; display:inline-block;' > SliderA {{my_input_child2}} </span>
+                <span style='margin-left:30px; width:90%; display:inline-block;' > Palette: {{temporaryColor}} </span>
+                <div class="skipline">&nbsp;</div>
+                <app-color-palette  [my_input1]="my_input_child1" [posPalette]="posPalette"[INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+                </app-color-palette>
+                <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                </app-color-slider>
+                <div style="margin-top:80px;">
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:55px;" [ngStyle]="{'background-color':my_input_child2}"></span>
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [ngStyle]="{'background-color':temporaryColor}"></span>
+                    <div style="margin-left:200px; margin-top:-40px;">
+                        <button (click)="fnExitPalette('Save')" > Save</button>
+                        <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
+                    </div>
+                    <div class="skipline">&nbsp;</div>
+                </div>  
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="skipLine">&nbsp;</div>
+    <div *ngIf="tabLock.lock===2">
+        <div class="msg">File is locked by another user; you cannot update the parameters</div>
+    </div>
+    <div style="width:95%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block;">
+    
+    
+        <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">CREATE/CHANGE PARAMETERS FOR 
+            <div class="cancelCross"  id="allChartParam" (click)="cancelChartParam($event)">
+                <div style="font-size:16px; color:black; font-weight:bold; margin-top: -2px;"  id="allChartParam" (click)="cancelChartParam($event)">x</div>
+            </div>
+        </div>
+        <app-running-clock [posSizeClock]="posSizeClock">
+        </app-running-clock>
+        Time out will occur in 
+        <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+
+        <span style="margin-left:25px;"> Chart 1</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart1"   >  
+        <span style="margin-left:20px;"> Chart 2</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart2"   >  
+        <span style="margin-left:20px;"> Chart 3</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart3"   >  
+        <span style="margin-left:20px;"> Chart 4</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart4"   >  
+        <div class="skipLine">&nbsp;</div>
+
+        <!--   **************************** SELECTION PARAMETERS **************************** -->
+        <div *ngIf="selectedChart!==0 ">
+            <form  [formGroup]="selectChart" style="margin-left:20px;">
+                <div style="width:100%; display:inline-block;">
+                    <div class="skipLine">&nbsp;</div>
+                    
+                    <span class="trow" style="text-align:center; width:90%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:5px;"> CHART </span>
+                    
+                    <span class="trow" style="width:25%;"> Type</span><input   class='inputText' type="text"  style="width:30%;"  formControlName="chartType"  > 
+                    <span id="selType" class="circle" *ngIf="tabLock.lock===1" style='margin-left:20px;' (click)="selectType($event)">A</span>
+                    <div *ngIf="isTypeSelected===true ">
+                        <div class="dropdown " >
+                            <div class="Straight-content" style="margin-left:50px;">
+                                <div  class="StraightDropDown "  [ngStyle]="{'height.px':lineChartType.length * 30, 'width.px':80}">
+                                    <li *ngFor="let action of lineChartType; let m=index;" 
+                                            class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                (click)="selectType($event)" id="selectedType" [value]="action" >{{action}}
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Title</span><input   class='inputText' type="text" style="width:40%;"  formControlName="chartTitle"  > 
+                    <span class="trow" style="margin-left:40px;width:30px;"> view</span><span id="viewChartTitle" class="circle" style='margin-left:10px;' (click)="selectType($event)">A</span>
+                    
+                    <div style="width:100%; display:inline-block;  margin-top:5px;">
+                        <span class="trow" style="width:25%;"> Color</span><input   class='inputText' type="text" style="width:40%;"   (input)="selectColor('fieldColorChartTitle')" formControlName="colorChartTitle"  > 
+                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_chartTitleColor}" class="trow myColor" (click)="selectColor('colorChartTitle')" >&nbsp;</span>
+                    </div>
+                    
+                </div> 
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> bar thickness</span><input  class='inputText' type="text" style="width:22%;"  formControlName="barThickness"  > 
+                </div> 
+
+                <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> CANVAS </span>
+
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Width </span><input   class='inputText' type="text" style="width:22%;"   formControlName="canvasWidth"  > 
+                    <span class="trow" style="width:18%; margin-left:10px;"> Height</span><input   class='inputText' type="text" style="width:25%;"   formControlName="canvasHeight"  > 
+                </div> 
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                <span class="trow" style="width:25%;"> Margin left</span><input   class='inputText' type="text" style="width:22%;"  formControlName="canvasMarginLeft"  > 
+                </div>
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Background</span>
+                    <input  class='inputText' type="text"  style="width:40%;" formControlName="canvasBackground" (input)="selectColor('fieldCanvasColor')" > 
+                    <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_canvasColor}" class="trow myColor" (click)="selectColor('canvasColor')" >&nbsp;</span>
+                    
+                </div> 
+
+                <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> LEGEND </span>
+
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Title </span><input  class='inputText' type="text" style="width:40%;"   formControlName="legendTitle"  > 
+                    <span class="trow" style="margin-left:40px;width:30px;"> view</span><span  id="viewLegendTitle" class="circle" style='margin-left:10px;' (click)="selectType($event)">A</span>
+                </div>
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Color</span><input class='inputText' type="text" style="width:40%;"   (input)="selectColor('fieldLegendColor')" formControlName="colorLegendTitle"  > 
+                    <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_legendColor}" class="trow myColor" (click)="selectColor('legendColor')" >&nbsp;</span>
+                    
+                </div> 
+
+                <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> BOX FOR LABELS </span>
+            
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Width</span><input   class='inputText' type="text" style="width:22%;"  formControlName="boxwidth"  > 
+                    <span class="trow" style="width:25%; margin-left:10px;"> Height</span><input   class='inputText' type="text" style="width:22%;"  formControlName="boxheight"  > 
+                </div>
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Shape</span><input   class='inputText' type="text" style="width:22%;"  formControlName="boxpointStyle"  > 
+                    <span class="trow" style="width:25%; margin-left:10px;"> Display shape</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxusePointStyle"  > 
+                </div>
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:22%;"  (input)="selectColor('fieldBoxColor')" formControlName="boxcolor"  > 
+                    <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_boxColor}" class="trow myColor" (click)="selectColor('boxColor')" >&nbsp;</span>
+                    
+
+                </div>
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Font size</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxfontSize"  > 
+                    <span class="trow" style="width:25%; margin-left:10px;"> Radius</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxradius"  > 
+                </div>
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> Font weight</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxfontWeight"  > 
+                    <span class="trow" style="width:25%; margin-left:10px;"> Font family</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxfontFamily"  > 
+                </div>
+
+                <div style="width:100%; display:inline-block;  margin-top:15px;">
+                        <span class="trow" style="width:100px;"> view axis X & Y</span><span id="viewAxis" class="circle" style='margin-left:10px;' (click)="selectType($event)">A</span>
+                </div>
+                <div style="width:100%; display:inline-block;  margin-top:15px;">
+                    <span class="trow" style="width:25%;" > stackedX</span><input  class='inputText' type="text" style="width:22%;"   formControlName="stackedX" placeholder="true/false" > 
+                    <span class="trow" style="width:25%; margin-left:10px;"> stackedY</span><input  class='inputText' type="text" style="width:22%;"   formControlName="stackedY" placeholder="true/false" > 
+
+                </div> 
+                <div style="width:100%; display:inline-block;  margin-top:5px;">
+                    <span class="trow" style="width:25%;"> ratio</span><input  type="text" class='inputText' style="width:22%;" formControlName="ratio"  > 
+                </div>
+                <div style="width:100%; display:inline-block;  margin-top:5px;">    
+                    <span class="trow" style="width:25%; "> period</span><input  type="text"   class='inputText' style="width:30%;" formControlName="period" placeholder="daily/weekly/monthly" > 
+                    <span id="selPeriod" class="circle" *ngIf="tabLock.lock===1" style='margin-left:5px;' (click)="selectPeriod($event)">A</span>
+                    <div *ngIf="isPeriodSelected===true  && tabLock.lock===1">
+                        <div class="dropdown" >
+                            <div class="Straight-content" style="margin-left:90px;">
+                                <div  class="StraightDropDown " [ngStyle]="{'height.px':tabPeriod.length * 30}" >
+                                    <li *ngFor="let action of tabPeriod; let m=index;" 
+                                            class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                (click)="selectPeriod($event)" id="selectedPeriod" [value]="action" >{{action}}
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div> 
+                <div style="width:100%; display:inline-block; margin-top:5px;" *ngIf="selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'">
+                    <span class="trow" style="width:25%; "> start date</span>
+                    <input  type="date"  class='inputText' style="width:36%;" formControlName="startRange"  > 
+                </div>
+                <div style="width:100%; display:inline-block; margin-top:5px;"  *ngIf="selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'">
+                    <span class="trow" style="width:25%; "> end date</span>
+                    <input  type="date"   class='inputText' style="width:36%;" formControlName="endRange"  > 
+                </div>
+            
+            </form>
+
+            <!-- ************* SELECTION OF LABELS FOR THIS CHART ************* -->
+            <div class="skipLine">&nbsp;</div>
+            <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the items to consider for this chart</div>
+            <span *ngFor="let tab of configChart.barDefault.datasets.labels; let i=index;">
+
+                <span *ngIf="configChart.barDefault.datasets.fieldsToSelect[i]===true" style="width:47%; display:inline-block; margin-left:10px;">
+                    <span *ngIf="selectedFields[i]==='N'" style="width:5%;">
+                        <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock.lock!==1"  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y"  >  
+                    </span>
+                    <span *ngIf="selectedFields[i]==='Y'" style="width:5%;">
+                        <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock.lock!==1"  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y" checked="checked" >
+                    </span>
+                
+                    <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
+                    <span *ngIf="selectedFields[i]==='Y'" style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelColor-{{i}}" [ngStyle]="{'background-color':tabOfLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
+
+                </span>
+                
+            </span>
+
+            <!-- ************* SELECTION OF LIMIT LABELS FOR THIS CHART ************* -->
+            <div class="skipLine">&nbsp;</div>
+            <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the 'LIMIT' items to consider for this chart</div>
+            <span *ngFor="let tab of configChart.barDefault.datasets.labelsLimits; let i=index;">
+                <span *ngIf="configChart.barDefault.datasets.fieldsLimitsToSelect[i]===true" style="width:47%; display:inline-block; margin-left:10px;">
+                
+                    <span *ngIf="selectedLimitFields[i]==='N'" style="width:5%;">
+                        <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock.lock!==1"   class="theRadioButt" type="radio"  id="L-{{i}}"  value="Y"  >  
+                    </span>
+                    <span *ngIf="selectedLimitFields[i]==='Y'" style="width:5%;">
+                        <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock.lock!==1"  class="theRadioButt" type="radio"  id="L-{{i}}"  value="Y" checked="checked" >
+                    </span>
+                
+                    <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
+                    <span *ngIf="selectedLimitFields[i]==='Y'" style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelLimitColor-{{i}}" [ngStyle]="{'background-color':tabOfLimitLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
+
+
+
+
+                </span>
+                
+            </span>
+            
+            <div class="skipLine">&nbsp;</div>
+            <span *ngIf="errorMsg!==''" style="color:red; font-size:14px; width:90%; margin-left:30px;">{{errorMsg}}</span>
+
+            <!-- ************* PROCESS or CANCEL PARAMETERS FOR THIS CHART# ************* -->
+            <div *ngIf="tabLock.lock===1">
+                <div class="skipLine">&nbsp;</div>
+                <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit'  (click)="saveFn('save')" > Save this chart & process it
+                </button>
+                <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="fnSelectChart()"> Process this chart
+                </button>
+                <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="cancelFn('cancelOne')"> Cancel updates for this chart
+                </button>
+                <div class="skipLine">&nbsp;</div>
+                <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="cancelFn('cancelAll')"> Cancel updates for all charts
+                </button>
+                <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="saveFn('saveAll')"> Save all charts
+                </button>
+            </div>
+            <div class="skipLine">&nbsp;</div>
+        </div>
+    </div>
+
+
+    <div class="skipLine">&nbsp;</div>
+    <div style="width:95%; max-width:410px; margin-left:20px; border:solid 2px blue; display:block;">
+        <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">CHANGE PARAMETERS FOR ALL CHARTS
+        </div>
+
+        <form  [formGroup]="paramAllCharts" style="margin-left:20px;">
+            <div style="width:100%; display:inline-block;">
+                <div class="skipLine">&nbsp;</div>
+                <div style="width:100%; display:inline-block;  margin-top:5px;">    
+                    <span class="trow" style="width:25%; "> period</span>
+                    <input  type="text"   class='inputText' style="width:46%;" formControlName="period" placeholder="daily/weekly/monthly" value="period"> 
+                    <span id="selPeriod" class="circle" *ngIf="tabLock.lock===1" style='margin-left:5px;' (click)="selectPeriodAll($event)">A</span>
+                    <div *ngIf="isPeriodSelected===true  && tabLock.lock===1">
+                        <div class="dropdown" >
+                            <div class="Straight-content" style="margin-left:90px;">
+                                <div  class="StraightDropDown " [ngStyle]="{'height.px':tabPeriod.length * 30}" >
+                                    <li *ngFor="let action of tabPeriod; let m=index;" 
+                                            class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                (click)="selectPeriodAll($event)" id="selectedPeriod" [value]="action" >{{action}}
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div> 
+                <div style="width:100%; display:inline-block; margin-top:5px;" >
+                    <span class="trow" style="width:25%; "> start date</span>
+                    <input  type="date"  class='inputText' style="width:46%;" formControlName="startRange" value="startRange" > 
+                </div>
+                <div style="width:100%; display:inline-block; margin-top:5px;" >
+                    <span class="trow" style="width:25%; "> end date</span>
+                    <input  type="date"   class='inputText' style="width:46%;" formControlName="endRange"  value="endRange">             
+                </div>
+            </div>
+        </form>
+        <div class="skipLine">&nbsp;</div>
+        <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="clear" (click)="forAllCharts($event)"> Clear fields
+        </button>
+        <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="apply" (click)="forAllCharts($event)"> Process
+        </button>
+        <div class="skipLine">&nbsp;</div>
+    </div>
+</div>
+<div class="skipLine">&nbsp;</div>
+
+<!--   **************************** CANVAS **************************** -->
+
+<div *ngIf="theActions.displayCanvas===true">
+
+    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+        <div style=" border:1px blue solid; padding-top:50px;" 
+                [ngStyle]="{'background-color': canvas[0].background, 'margin-left.px':canvas[0].marginLeft,
+                'width.px': canvas[0].width, 'height.px ': canvas[0].height}">
+            <canvas #baseChart id="{{tabCanvasId[0]}}"
+        
+            >
+            </canvas>
+        </div>
+    </div>
+
+    <div class="skipLine">&nbsp;</div>
+    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+        <div style=" border:1px blue solid; padding-top:50px;" 
+                [ngStyle]="{'background-color': canvas[1].background, 'margin-left.px':canvas[1].marginLeft,
+                'width.px': canvas[1].width, 'height.px ': canvas[1].height}">
+            <canvas #baseChart id="{{tabCanvasId[1]}}"
+        
+            >
+            </canvas>
+        </div>
+    </div>
+
+    <div class="skipLine">&nbsp;</div>
+    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+        <div style=" border:1px blue solid; padding-top:50px;" 
+                [ngStyle]="{'background-color': canvas[2].background, 'margin-left.px':canvas[2].marginLeft,
+                'width.px': canvas[2].width, 'height.px ': canvas[2].height}">
+            <canvas #baseChart id="{{tabCanvasId[2]}}"
+        
+            >
+            </canvas>
+        </div>
+    </div>
+    <div class="skipLine">&nbsp;</div>
+    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+        <div style=" border:1px blue solid; padding-top:50px;" 
+                [ngStyle]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
+                'width.px': canvas[3].width, 'height.px ': canvas[3].height}">
+            <canvas #baseChart id="{{tabCanvasId[3]}}"
+        
+            >
+            </canvas>
+        </div>
+    </div>
+    <div class="skipLine">&nbsp;</div>
+    <div *ngIf="isTestLineChart===true" style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+        <div style=" border:1px blue solid; padding-top:50px;" 
+                [ngStyle]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
+                'width.px': canvas[3].width, 'height.px ': canvas[3].height}">
+            <canvas #baseChart id="myLineCanvas"
+        
+            >
+            </canvas>
+        </div>
+    </div>
+</div>
+
+<!-- check data value when debugging iPhone -->
+    <div *ngIf="isPosDivSlider===true " style="width:90%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
+        <ul   style="list-style-type: none" >
+            <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
+                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.Height}}</span>
+                    <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Height}}</span>
+            <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
+                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.Top}}</span>
+                    <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Top}}</span>
+            <span style="width:55%; display:inline-block; margin-top:5px; ">offsetLeft: </span>
+                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.Left}}</span>
+                    <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Left}}</span>
+            <span style="width:100%; display:inline-block; margin-top:5px; ">parentElement </span>    
+                <ul>
+                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.parentElement.offsetHeight}} </span>
+                        <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetHeight}} </span>
+                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.parentElement.offsetTop}}</span>
+                        <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetTop}}</span>
+                </ul>
+            <span style="width:100%; display:inline-block; margin-top:5px; ">offsetParent</span>
+                <ul>
+                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
+                        <span  *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
+                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
+                        <span  *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
+                </ul>
+<!--
+            <span style="width:55%; display:inline-block; margin-top:5px; ">scrollTop: </span>
+            <span style="width:55%; display:inline-block; margin-top:5px; ">scrollTopMax: </span>
+            <span style="width:55%; display:inline-block; margin-top:5px; ">scrollHeight: </span>
+-->
+            <span style="width:100%; display:inline-block; margin-top:5px; ">docDivRecipeTable.getBoundingClientRect()</span>
+                <ul>
+                    <span style="width:55%; display:inline-block; margin-top:5px;">Height: </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Height}}</span>
+                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Height}} </span>
+                    <span style="width:55%; display:inline-block; margin-top:5px; ">Top: </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
+                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
+                    <span style="width:55%; display:inline-block; margin-top:5px; ">Bottom: </span>
+                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Bottom}}</span>
+                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Bottom}}</span>
+                    
+                </ul>
+            <span style="width:55%; display:inline-block; margin-top:5px; ">clientY: </span><span style="width:45%; display:inline-block;">{{eventClientY}}</span>
+            <span style="width:55%; display:inline-block; margin-top:5px; ">pageY: </span><span style="width:45%; display:inline-block;">{{eventPageY}} </span>
+        </ul>
+    </div>
+

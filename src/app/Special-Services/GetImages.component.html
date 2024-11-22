@@ -1,0 +1,14 @@
+
+  
+  <div *ngIf="bucketMgt.bucket_is_processed===true">
+    <app-WeddingPhotos [EventLogConsole]="myConsole" [myLogConsole]="myLogConsole" [configPhoto]="configPhoto" 
+    [nextBucketOnChange]="nextBucketOnChange" [configServer]="configServer"
+    [bucketMgt]="bucketMgt"  [WeddingPhotos]="WeddingPhotos" (AddBucket)="process_next_bucket($event)" > 
+    </app-WeddingPhotos>
+  </div>
+  
+  <div *ngIf="bucketMgt.bucket_is_processed===false" > 
+      <span style="margin-top:2px;"><br></span>
+      <h1 style="margin-top:20px; margin-left:90px; color:red; font-weight:bold;"><br>LOADING PHOTOS</h1>
+    <br><br> <br><br> <br><br>  
+  </div>

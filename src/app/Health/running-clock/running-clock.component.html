@@ -1,0 +1,15 @@
+
+<div *ngIf="posSizeClock.displayAnalog===true || posSizeClock.displayDigital===true" 
+                [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.height, 'margin-top.px':posSizeClock.margTop, 'margin-left.px':posSizeClock.margLeft}">
+    <div *ngIf="posSizeClock.displayAnalog===true" >   
+        <canvas 
+            #clockCanvas 
+            id='canvasElem' 
+            class="position" 
+            [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.height}" 
+        >
+        </canvas>
+    </div>
+    <div *ngIf="posSizeClock.displayDigital===true" style="width:100%; display:inline-block; text-align: center; margin-top:2px; ">{{theHours | number:'2.0-0'}}:{{theMinutes | number:'2.0-0'}}:{{theSeconds | number:'2.0-0'}}</div>
+</div>
+

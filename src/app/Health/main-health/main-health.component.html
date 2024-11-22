@@ -1,0 +1,151 @@
+
+<div *ngIf="openFileAccess===true">
+    <app-file-access 
+        [configServer]="configServer" [identification]="identification" [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
+        [iWaitToRetrieve]="iWaitToRetrieve" [tabLock]="tabLock" [eventCheckToLimit]="eventLockLimit"
+        [triggerFileSystem]="triggerFileSystem" [triggerReadFile]="triggerReadFile" [triggerSaveFile]="triggerSaveFile"
+        (returnFile)="resultGetRecord($event)" (returnSaveFn)="resultSaveRecord($event)" (resultFileSystem)="resultFileSystemFn($event)"
+    >
+
+    </app-file-access>
+</div>
+
+    <div id='posTopHealth' [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:240px; margin-left:20px; border:solid 2px blue; ">
+        <div class="skipLine">&nbsp;</div>  
+        <div  >
+            <div class="theRadio" style="margin-left:10px;">Display daily food </div> 
+            <input  (click)='SelRadio("Y-3")'class="theRadioButt" type="radio" name="DisplayAll" formControlName="DisplayAll" id="DisplayAll" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-3")'class="theRadioButt"  style="margin-left:10px;" type="radio" name="DisplayAll" formControlName="DisplayAll" id="DisplayAll" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
+        </div>
+        <div  >
+            <div class="theRadio" style="margin-left:10px;">Copy Master File </div> 
+            <input  (click)='SelRadio("Y-4")' class="theRadioButt" type="radio" name="CopyFile" formControlName="CopyFile" id="CopyFile" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-4")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CopyFile" formControlName="CopyFile" id="CopyFile" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
+        </div>
+        <div  >
+            <div class="theRadio" style="margin-left:10px;">Mgt Calories & Fat </div> 
+            <input    (click)='SelRadio("Y-5")' class="theRadioButt" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
+            <input   (click)='SelRadio("N-5")' class="theRadioButt" style="margin-left:10px;" type="radio" name="MgtCalories" formControlName="MgtCalories" id="MgtCalories" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
+        </div>
+        <div >
+            <div class="theRadio" style="margin-left:10px;">Calculate Calories & Fat </div> 
+            <input  (click)='SelRadio("Y-6")' class="theRadioButt" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="Y" >  <span class="YesNo">&nbsp;&nbsp;Yes</span>
+            <input  (click)='SelRadio("N-6")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CalculCalories" formControlName="CalculCalories" id="CalculCalories" value="N" >  <span class="YesNo">&nbsp;&nbsp;No</span>
+        </div>
+        <div >
+            <div class="theRadio" style="margin-left:10px;">Display the charts </div> 
+            <input  (click)='SelRadio("Y-7")' class="theRadioButt" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-7")' class="theRadioButt" style="margin-left:10px;" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
+        </div>
+        <div >
+            <div class="theRadio" style="margin-left:10px;">Re-load HTML configuration file </div> 
+            <input  (click)='SelRadio("Y-8")' class="theRadioButt" type="radio" name="ReloadHTML"  id="ReloadHTML" formControlName="ReloadHTML" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-8")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadHTML" formControlName="ReloadHTML" id="ReloadHTML" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
+        </div>
+        <div >
+            <div class="theRadio" style="margin-left:10px;">Re-load Chart configuration file </div> 
+            <input  (click)='SelRadio("Y-9")' class="theRadioButt" type="radio" name="ReloadChart"  id="ReloadChart" formControlName="ReloadChart"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-9")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadChart"  formControlName="ReloadChart"  id="ReloadChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
+        </div>
+        <div >
+            <div class="theRadio" style="margin-left:10px;">Create new Health Check file </div> 
+            <input  (click)='SelRadio("Y-10")' class="theRadioButt" type="radio" name="CreateNewHealthCheckFile"  id="CreateNewHealthCheckFile" formControlName="CreateNewHealthCheckFile"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-10")' class="theRadioButt" style="margin-left:10px;" type="radio" name="CreateNewHealthCheckFile"  formControlName="CreateNewHealthCheckFile"  id="CreateNewHealthCheckFile" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
+        </div>
+        <div class="skipLine">&nbsp;</div>
+    </div>
+
+    <div *ngIf="createNewHealth===true" style="margin-left:20px; margin-top:10px; border: blue 2px double; background-color: silver;width:90%; max-width:500px;">
+        <div class="skipLine">&nbsp;</div>
+        <form  [formGroup]="SpecificForm" >
+            <div class="msg"  >
+                Please enter the name of the new Health file   
+            <input type='text' style="width:240px;" formControlName="FileName" >
+            </div>
+            <div class="skipLine">&nbsp;</div>
+            <div style="width:500px; display:inline-block; margin-left:20px; ">
+                <span style="width:230px; display:inline-block; color:blue; font-weight:bolder;">Confirm the file can be created </span> 
+                <button id='Copy-3' class="sizeButtons" style="margin-left:20px;" (click)="confirmCreateNewHealthFile('Save')">Yes</button>
+                <button id='Copy-4' class="sizeButtons" (click)="confirmCreateNewHealthFile('Cancel')"> No</button>
+            </div>
+        </form>
+        <div class="skipLine">&nbsp;</div>
+    </div>
+
+    <!--    Create COPY OF HealthAllData file -->
+    <div *ngIf="isCopyFile===true" style="margin-left:20px; margin-top:10px; border: blue 2px double; background-color: silver;width:90%; max-width:500px;">
+        <div class="skipLine">&nbsp;</div>
+        <form  [formGroup]="SpecificForm" >
+            <div class="msg"  >
+                Please enter the name of the new file   
+            <input type='text' style="width:240px;" formControlName="FileName" >
+            </div>
+            <div class="skipLine">&nbsp;</div>
+            <div style="width:500px; display:inline-block; margin-left:20px; ">
+                <span style="width:230px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be copied </span> 
+                <button id='Copy-3' class="sizeButtons" style="margin-left:20px;" (click)="saveCopy()">Yes</button>
+                <button id='Copy-4' class="sizeButtons" (click)="cancelCopy()"> No</button>
+            </div>
+        </form>
+        <div class="skipLine">&nbsp;</div>
+    </div>
+
+    <div *ngIf="iWait===0 && errorMsg!==''" style="display:block;">
+        <span style="margin-top:10px; padding-top:5px; padding-left:20px; margin-left:20px; width:500px;  background-color: cyan; color:blue; font-size:14px; display:inline-block; text-align: left; min-height:30px;">
+            {{errorMsg}}
+            <span *ngIf="errCalcCalFat!==''">
+                <br>{{errCalcCalFat}}
+            </span>
+        </span>
+    </div>
+
+    <div *ngIf="EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false">
+        <!--
+        <div *ngIf="iWait===0 && errorMsg!==''" 
+                style="padding-top:5px; margin-left:20px; width:500px; background-color: cyan; color:red; font-size:14px; display:inline-block; text-align: center; height:30px;">
+                {{errorMsg}}
+        </div>
+        -->
+        <app-health
+            [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
+            [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
+            [tabNewRecordAll]="tabNewRecordAll"  [createDropDownCalFat]="createDropDownCalFat"
+            [returnDataFSHealth]="returnDataFSHealth" [resultCheckLimitHealth]="resultCheckLimitHealth" [actionHealth]="actionHealth"
+            [callSaveFunction]="callSaveFunctionHealth" [statusSaveFn]="statusSaveFnHealth"
+            (initTrackRecord)="initTrackRecord()" (retrieveRecord)="retrieveRecord($event)"
+            (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
+            (cancelUpdates)="cancelUpdates($event)" (processSaveHealth)="processSaveHealth($event)"
+            (saveCopy)="saveCopy()" (unlockFile)="unlockFile($event)"
+        >
+        </app-health>
+<!--  (confirmSave)="confirmSave($event)" -->
+    </div>
+
+    <div id='posTopAppCalFat' *ngIf="isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true">   <!--    && tabLock[1].lock!==3 -->
+        <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay" 
+            [actionCalFat]="actionCalFat" [actionRecipe]="actionRecipe" [calFatFileRetrieved]="calFatFileRetrieved" [recipeFileRetrieved]="recipeFileRetrieved"
+            [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock" 
+            [returnDataFSRecipe]="returnDataFSRecipe" [returnDataFSCalFat]="returnDataFSCalFat" [resultCheckLimitCalFat]="resultCheckLimitCalFat"
+            [statusSaveFn]="statusSaveFnCalFat" [callSaveFunctionCalFat]="callSaveFunctionCalFat"
+            (processSave)="SaveCaloriesFat($event)" (checkLockLimit)="checkLockLimitFn($event)" 
+          >
+        </app-calories-fat>
+        <div class="skipLine">&nbsp;</div>
+        <!--   (myEmitRecipe)="SaveRecipeFile($event)" (checkLockLimit)="checkLockLimit($event)" (processSave)="processSave($event)" (retrieveRecord)="retrieveRecord($event)"
+            (unlockFile)="unlockFile($event)"-->
+    </div>
+
+    <div id='posTopAppReportHealth' *ngIf="isDisplayChart===true && EventHTTPReceived[4]===true && EventHTTPReceived[0]===true && EventHTTPReceived[5]===true"> <!--  && tabLock[5].lock!==3 -->
+        
+        <app-report-health [identification]="identification"  [configServer]="configServer"  [inFileParamChart]="fileParamChart" [tabLock]="tabLock"
+            [ConfigChartHealth]="ConfigChart.chartHealth"  [HealthAllData]="HealthAllData"  [actionParamChart]="actionParamChart" 
+            [resultCheckLimitParamChart]="resultCheckLimitParamChart" [returnDataFSParamChart]="returnDataFSParamChart"
+            [statusSaveFn]="statusSaveFnParamChart" 
+            (processSave)="saveParamChart($event)" (retrieveRecord)="retrieveRecord($event)"  (unlockFile)="unlockFile($event)"
+             (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
+             >
+           
+        </app-report-health>
+        <!-- (checkLockLimit)="checkLockLimit($event)"-->
+        <div class="skipLine">&nbsp;</div>
+    </div>

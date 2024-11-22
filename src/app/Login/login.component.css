@@ -1,0 +1,165 @@
+@import "../xmv-company/xmv-company.component.css";
+
+div{
+
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+
+  /*
+  font-family:"Parisienne", Arial, Helvetica, sans-serif;
+  font-family:'LucidaCalligraphy'; 
+  font-family: 'Tangerine', cursive;
+  */
+}
+.title{
+  margin-top:20px; 
+  margin-left:5%; 
+  
+  font-weight:bold;
+  text-align:center;
+  font-size:40px;
+  letter-spacing:3px;
+}
+
+h3{
+  margin-top:20px; 
+  margin-left:15%; 
+  width:80%; 
+  text-align:center; 
+  color:blue;
+  font-weight:bold;
+  font-size:30px;
+  letter-spacing: 2px;
+  line-height: 40px;
+}
+.sizeMap{
+  height:620px;
+  float:left; 
+  margin-left:2%;
+  margin-top:40px;
+  width:96%;
+}
+.main_box{
+  float:left; 
+  border:solid 0px red;
+  width:90%;
+  height:400px;
+  max-width:800px;
+  margin-left:4%;
+  margin-top:-500px;
+  background:rgb(16, 146, 211);
+  opacity: 0.8;
+  
+}
+
+.form_box{
+  width:96%;
+  max-width:700px;
+  margin-left:2%;
+  border:solid 0px blue;
+  height:310px; 
+  float: left;
+  display: block;
+  margin-top:-20px;
+}
+
+.error_msg{
+    color:rgb(17, 14, 14); 
+    margin-left:5px;
+    font-size:16px;
+    width:99%;
+    border:solid 0px red;
+    height:30px;
+    float:left;
+  }
+
+.field-name{
+    display:block;
+    height:30px;
+    margin-left:5px; 
+    width:25%;
+    /*
+    color:rgb(10, 10, 180);
+    */
+    color:black;
+    font-weight:bold;
+    border: solid 0px red;
+    text-align:left;
+    padding-top:0px;
+    float:left;
+    font-size:30px;
+}
+
+.filler{
+  width:90%;
+  max-height:5px;
+  max-width:90%;
+}
+
+.second-label{
+  margin-top:15px;
+}
+
+.input_field{
+    width:70%;
+    height:40px;
+    font-size:16px;
+    font-weight:bold;
+  }
+
+.input_field:hover{
+    background-color:white;
+  }
+  
+.sizeButtons{
+  font-family: 'Tangerine', cursive;
+  width:85px;
+  height:40px;
+  margin-left:20px;
+  font-size:25px;
+  }
+
+.sizeButtons:hover{
+  background-color:aqua;
+}
+
+.first-button{
+  margin-top:20px;
+  margin-left:30%;
+}
+
+
+
+      /*** ====================================== ***/
+    /*** ============== @media 790 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 790px) {
+
+
+      .main_box{
+
+        margin-top:-500px;
+        height:420px;
+        
+      }
+
+      .title{
+        font-size:34px;
+        margin-top:30px; 
+      }
+      h3{
+
+        font-size:25px;
+        line-height: 30px;
+      }
+
+      .field-name{
+        font-size:14px;
+        width:20%;
+        height:30px;
+        padding-top:5px;
+      }
+      .input_field{
+        height:30px;
+      }
+      
+    }

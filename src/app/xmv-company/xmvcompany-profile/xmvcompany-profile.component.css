@@ -1,0 +1,144 @@
+@import "../xmv-company.component.css";
+
+/*
+    --headerbox-background-color: rgb(169, 169, 226);
+    --headerbox-border: 0px solid blue; 
+*/
+ 
+div {
+    margin-top: 0px;
+    }
+    
+    .heightMap{
+    height:320px;
+    }
+    
+    .size_myPicture{
+    width:180px; 
+    height:240px;
+    }
+    
+    
+    .myPicture{
+    position:absolute;
+    margin-left:100px;
+    margin-top:-280px;
+    width: 50px;
+    height:60px;; 
+    }
+    
+    .perso-intro-text{ 
+    background-color:rgb(46, 78, 221);
+    margin-left:390px;
+    margin-top:-200px;
+    width: 500px;
+    height:180px;
+    list-style-type: none;
+    opacity: 0.65;
+    float:left;
+    line-height:60px;
+    }
+    
+    .char_intro_text{
+    margin-left:30px;
+    font-style: italic;
+    font-size:18px;
+    color:white;
+    font-weight:bolder;
+    }
+    
+    
+    .perso-text{
+    /* position:absolute; */
+    width: 90%;
+    margin-left: 2%;
+    margin-top:-15px;
+    float:left;
+    
+    color:rgb(94, 77, 77);
+    font-size: 18px;
+    letter-spacing: 0.3px;
+    line-height: 30px;
+    padding-left:30px;
+    padding-right:30px;
+    background-color:white;
+    
+    float:left;
+    }
+    
+    
+    .LearnOffer{
+    font-style: italic; 
+    font-weight:bold;
+    color:blue;
+    }
+    
+    .LearnOffer:hover{
+    color:red;
+    }
+    
+    
+    /*** ====================================== ***/
+    /*** ============== @media 1200 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 1200px) {
+  
+    
+    .perso-intro-text{ 
+    margin-left:230px;
+    width: 380px;
+    height:160px;
+    margin-top:-200px;
+    line-height: 26px;;
+    }
+    .myPicture{
+    margin-left:50px;
+    }
+    }
+    
+    /*** ====================================== ***/
+    /*** ============== @media 768 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 768px) {
+    .sizeMap{
+    height:220px;
+    margin-top:30px;
+    }
+    .size_myPicture{
+    width:90px; 
+    height:120px;
+    }
+    
+    
+    .myPicture{
+    margin-left:30px;
+    margin-top:-170px;
+    }
+    
+    .perso-intro-text{ 
+    margin-left:100px;
+    margin-top:-115px;
+    width: 250px;
+    height:120px;
+    line-height: 20px;
+    }
+    
+    .char_intro_text{
+    margin-left:10px;
+    font-size:14px;
+    }
+    
+    .perso-text{
+    font-size:16px;
+    }
+    }
+    
+    /*** ====================================== ***/
+    /*** ============== @media 420 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 420px) {
+        .char_intro_text{
+            margin-left:10px;
+            font-size:12px;
+            }
+    }

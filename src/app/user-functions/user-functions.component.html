@@ -1,0 +1,177 @@
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+<body>
+
+<div *ngIf="devMode!=='local' && configServer.userLogin.accessLevel!=='low'" style="margin-top:10px; width:100%; display:inline-block;">
+    <app-select-server [initConfigServer]="configServer" 
+                    (returnServer)="getServerNames($event)">
+    </app-select-server>
+</div>
+<div  *ngIf="isInitTabLock===false">
+    isInitTabLock is FALSE
+</div>
+
+<div *ngIf="errMsg!==''" style="margin-left:10px; background-color:red; color:white; font-weight:bolder; display:inline-block; width:150px;">
+    {{errMsg}}
+</div>
+
+<div  *ngIf="isInitTabLock===true && nbAppsToDisplay>0" style=" width:450px; max-width: 450px; margin-top:8px; ">
+    <span style="width:100%; background-color: cyan; margin-left:20px; border:solid 2px red; display:inline-block; ">
+        <span style="width:100%; color:#0000ff; font-size:22px; display:inline-block; text-align: center; padding-top:10px; height:50px;"> Select the apps </span>
+        <br>
+        <span *ngIf="tabApps[0].display===true" class="options" >1. XMV Company</span>
+        <span *ngIf="tabApps[0].display===true" class="options" >2. Logos</span>
+        <span *ngIf="tabApps[0].display===true" class="options" >3. Telephone</span>
+        <span *ngIf="tabApps[0].display===true" class="options" >4. Slider</span>
+        <span *ngIf="tabApps[0].display===true" class="options" >5. ColorPicker</span>
+        <span *ngIf="tabApps[1].display===true && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')" class="options" >6.Encrypt/Decrypt </span>
+        <span *ngIf="tabApps[1].display===true && (configServer.userLogin.accessLevel!=='High' && configServer.userLogin.accessLevel!=='Very High')" class="options" > &nbsp;</span>
+        <span *ngIf="tabApps[0].display===true" class="options" >7. CSSTable</span>
+        <span *ngIf="tabApps[12].display===true && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')" class="options" >8. Upload File</span>
+        <span *ngIf="tabApps[12].display===true && (configServer.userLogin.accessLevel!=='High' && configServer.userLogin.accessLevel!=='Very High')" class="options" > &nbsp;</span>
+        <span *ngIf="tabApps[12].display===true && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')" class="options" >9. Save & Download</span>
+        <span *ngIf="tabApps[12].display===true && (configServer.userLogin.accessLevel!=='High' && configServer.userLogin.accessLevel!=='Very High')" class="options" > &nbsp;</span>
+        <span *ngIf="tabApps[7].display===true" class="options" >10. Converter</span>
+        <span *ngIf="tabApps[13].display===true" class="options" >11. Calories & Fat</span>
+        <span *ngIf="tabApps[3].display===true" class="options" >12. Health data</span>
+        <span *ngIf="tabApps[3].display===true" class="options" >13. Health Chart</span>
+        <span *ngIf="tabApps[4].display===true" class="options" >14. Recipe</span>
+        <span *ngIf="tabApps[5].display===true" class="options" >15. Dico for recipe</span>
+        <span *ngIf="tabApps[14].display===true && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')" class="options" >16. Manage servers</span>
+        <span *ngIf="tabApps[14].display===true && (configServer.userLogin.accessLevel!=='High' && configServer.userLogin.accessLevel!=='Very High')" class="options" > &nbsp;</span>
+        <span *ngIf="tabApps[15].display===true && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')" class="options" >17. Test Tutorials</span>
+        <span *ngIf="tabApps[15].display===true && (configServer.userLogin.accessLevel!=='High' && configServer.userLogin.accessLevel!=='Very High')" class="options" > &nbsp;</span>
+        <span *ngIf="tabApps[11].display===true" class="options" >18. Performance sport</span>
+        <span *ngIf="tabApps[11].display===true" class="options" >19. Manage PointOfRef</span>
+        <span *ngIf="tabApps[11].display===true" class="options" >20. Manage Circuits</span>
+        <span *ngIf="tabApps[11].display===true" class="options" >21. Sport report</span>
+        <span *ngIf="tabApps[11].display===true" class="options" >22. Sport analysis</span>
+        <span *ngIf="tabApps[11].display===true" class="options" >23. Sport Raw Data Mgt</span>
+        <span *ngIf="tabApps[2].display===true"  class="options" >24. Fitness</span>
+        <span *ngIf="tabApps[10].display===true" class="options" >25. Photos</span>
+        <span *ngIf="tabApps[16].display===true" class="options" >26. 27AUG2022</span>
+        <span *ngIf="tabApps[6].display===true" class="options" >27. Canvas</span>
+        <span *ngIf="tabApps[0].display===true" class="options" >28. Clock</span>
+        <span *ngIf="tabApps[17].display===true" class="options" >29. XML Test</span>
+
+        <br><br>
+    </span>
+    <input style="width:80px; height:30px; margin-left:150px; margin-top:10px;"  placeholder="selection#" type="text" (input)="onInput($event)">
+    <button class="sizeButtons"  style="margin-left:30px;" (click)="onSelectApps()">Submit</button>
+    <div class="skipLine"></div>
+</div>
+<div id="posTopMain" ></div>
+<div *ngIf="isResetServer===true" >
+    <div style="display:inline-block; height:4px; width:100%;"></div>
+    <span style="width:350px; background-color: cyan; margin-left:30px; border:solid 2px red; display:inline-block; ">
+        Server has been reinitialised
+    </span>
+    <div style="display:inline-block; height:4px; width:100%;"></div>
+</div>
+
+<div *ngIf="isAppsSelected===true && isIdRetrieved===true && isConfigServerRetrieved===true && isCredentials===true">
+    <div *ngIf="selectApps===1 ">
+        <app-xmv-company [configServer]="configServer" [identification]="identification"  [isConfigServerRetrieved]="isConfigServerRetrieved"
+            [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)">
+        </app-xmv-company>
+    </div>
+    <div *ngIf="(selectApps>1 && selectApps<6) || selectApps===7" style="float:none;">       
+        <app-routing-app [selectApps]="selectApps"  [configServer]="configServer" > </app-routing-app>
+    </div>
+    <div *ngIf="(selectApps===6 || selectApps===8 || selectApps===9) && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')  " style="float:none;">
+        <app-routing-app [selectApps]="selectApps"  [configServer]="configServer" > </app-routing-app>
+    </div>
+    <div *ngIf="(selectApps===6 || selectApps===8 || selectApps===9 || selectApps===16) && (configServer.userLogin.accessLevel!=='High' && configServer.userLogin.accessLevel!=='Very High')  " style="float:none;">
+        <div style="margin-top:8px; padding-top:4px;display:inline-block; height:30px; margin-left:20px; text-align:center; width:400px; background-color:blue; color:white; font-weight: bolder; ">
+            You don't have the permission to access this feature
+        </div>
+    </div>
+    <div *ngIf="selectApps===10">
+        <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly"                  
+        >
+        </app-converter>
+    </div>  
+    
+    <div *ngIf="selectApps>10  &&  selectApps<14">
+        <app-main-health  [identification]="identification"  [configServer]="configServer"  [triggerFunction]="selHealthFunction" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
+             [tabLock]="tabLock"  (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)"
+             >
+        </app-main-health>
+    </div>  
+
+    <div *ngIf="selectApps===14 || selectApps===15">
+        <app-recipe  [identification]="identification"  [configServer]="configServer"  
+         [InConvToDisplay]="ConvToDisplay"     [dictionaryOnly]="dictionaryOnly" [tabLock]="tabLock"
+        >
+        </app-recipe>
+    </div>  
+    <div *ngIf="(selectApps===16 || selectApps===17) && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High') ">
+        <app-test-server-js   [serverTest]="serverTest" [configServer]="configServer" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges" >
+        </app-test-server-js>
+    </div>  
+    <div *ngIf="selectApps===18">
+        <app-performance-sport   [configServer]="configServer" [identification]="identification" [credentials]="credentials"  
+        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        </app-performance-sport>
+    </div>  
+    <div *ngIf="selectApps===19">
+        <app-manage-point-of-ref   [configServer]="configServer" [identification]="identification" [credentials]="credentials"  
+        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        </app-manage-point-of-ref>
+    </div>  
+    <div *ngIf="selectApps===20">
+        <app-manage-circuits [configServer]="configServer" [identification]="identification" [credentials]="credentials"  
+        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        </app-manage-circuits>
+    </div>  
+    <div *ngIf="selectApps===21">
+        <app-sport-reports [configServer]="configServer" [identification]="identification" [credentials]="credentials" 
+        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        </app-sport-reports>
+    </div>  
+    <div *ngIf="selectApps===22">
+        <app-sport-analysis [configServer]="configServer" [identification]="identification" [credentials]="credentials" 
+        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        </app-sport-analysis>
+    </div> 
+    <div *ngIf="selectApps===23">
+        <app-sport-perf-raw-data-mgt [configServer]="configServer" [identification]="identification" [credentials]="credentials"  
+        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        </app-sport-perf-raw-data-mgt>
+    </div> 
+    <div *ngIf="selectApps===24">
+        <app-fitness-stat  [identification]="identification"  [configServer]="configServer" 
+        >
+        </app-fitness-stat>
+    </div> 
+    <div *ngIf="selectApps===25">
+        <app-GetImages [identification]="identification" [LoginTable_User_Data]="LoginTable_User_Data" [configServer]="configServer"
+        [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
+        </app-GetImages>
+    </div> 
+
+    <div *ngIf="selectApps===26">
+        <app-Event-27AUG2022 [identification]="identification"  [configServer]="configServer" [LoginTable_User_Data]="LoginTable_User_Data" 
+        [LoginTable_DecryptPSW]="LoginTable_DecryptPSW"
+        > <!--  (returnDATA)="GetUpdatedTable($event)" -->
+        </app-Event-27AUG2022>
+    </div>
+    <div *ngIf="selectApps===27">
+        <app-my-canvas> </app-my-canvas>
+    </div> 
+    <div *ngIf="selectApps===28">
+        <app-running-clock> </app-running-clock>
+    </div> 
+    <div *ngIf="selectApps===29">
+     
+        <app-kiosk-abd-config [identification]="identification"  [configServer]="configServer" 
+                [credentials]="credentials" [devMode]="devMode"> 
+        </app-kiosk-abd-config>
+    </div> 
+</div>
+  
+
+
+</body>

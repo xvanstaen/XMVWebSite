@@ -1,0 +1,63 @@
+ /* ======================= */
+ 
+ 
+  /* =============================================== */
+  .BlockTable{
+    display: block;
+    width:1250px;
+    height:500px;
+    padding:10px;
+    border: solid 0px blue;
+    overflow: scroll;
+    margin-top:20px;
+    margin-left:20px;
+  }
+
+ .tableTopicURL {
+    padding: left 0%;
+    box-sizing: border-box;
+    background-color: white ;
+    outline:rgb(68, 51, 238) solid 2px;
+    display: grid;
+    grid-gap:0px;
+    grid-auto-rows: 45px;
+    vertical-align: middle;
+    grid-template-columns:  50px 500px 600px ;
+    margin-top: 0px;
+    padding-left:10px;
+    float:left;
+  }
+
+  .boxTopic{
+    margin-left:20px;
+    font-size: 14px;
+    font-family: 'Times New Roman', Times, serif;
+    display: flex;
+  }
+
+  .boxURL{
+    float:left; 
+    font-size: 16px;
+    font-family: 'Times New Roman', Times, serif;
+    display: flex;
+  }
+
+
+.button_position{
+  float:left;
+  margin-top:10px;
+  margin-left:160px;
+  padding-left:20px;
+}
+
+
+.buttonCreate {
+  background-color: #3a37e0;
+  color: rgb(202, 146, 146);
+  border: 2px solid  #4CAF50;
+}
+
+.buttonCreate:hover {
+  background-color: #4CAF50;
+  color: white;
+}

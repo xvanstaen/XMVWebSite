@@ -1,0 +1,454 @@
+@import "./Event-02JUL2022.component.css";
+
+div{
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+   
+}
+
+h2{
+    display:block;
+    width:90%;
+    font-size:48px;
+    font-weight: bold;
+    font-family: 'Tangerine', cursive;
+    letter-spacing: 2px;
+    margin-top:50px;
+  
+    }
+h3{
+    display:block;
+    width:90%;
+    font-size:28px;
+    font-weight: bold;
+    font-family: 'Tangerine', cursive;
+    letter-spacing: 2px;
+    margin-top:50px;
+    text-align:center;
+}
+.flag{
+    position:absolute; 
+    margin-top:-30px; 
+    margin-left:90%;
+}
+
+.flagone{
+    margin-left:80%;
+}
+
+.flagtwo{
+    margin-left:85%;
+}
+
+.posOptions{
+    position:relative; 
+    margin-top:10px; 
+    margin-left:30%; 
+    float:left;
+}
+
+.dropdown-options{
+
+    background-color: #dedcdc;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    height:20px; 
+    width:140px;
+    max-width:18%;
+    margin-left:2%;
+  }
+  
+.dropdown-options:hover{
+    background-color:rgb(68, 115, 189);
+    font-weight:bold;
+  
+  }
+  
+.dropdown-text{
+    margin-top:0px; 
+    font-size:14px;
+    color:black;
+    display:block;
+    text-align: center;
+  }
+
+
+.field-name{
+    font-size:18px;
+    color:blue;
+    margin-left:20px;
+    width:50%;
+
+    margin-top:10px;
+    height:40px;
+
+}
+
+.input_field{
+    font-size:16px;
+    background-color:rgb(162, 158, 158);
+    padding-left:5px;
+    width:30%;
+ 
+    height:40px;
+    color:black;
+    
+}
+
+.input_fieldTwo{
+    font-size:16px;
+    background-color:rgb(185, 183, 183);
+    padding-left:5px;
+    max-width:55px;
+    color:black;
+}
+
+.input_select{
+    font-size:16px;
+    background-color:rgb(185, 183, 183);
+    padding-left:5px;
+    width:90px;
+    margin-left:0px;
+
+}
+.images{
+    width:80%;
+    margin-left:20px; 
+    height:400px;
+}
+.smallimages{
+    width:40%;
+    margin-left:20px; 
+    height:200px;
+}
+
+.input_field:hover{
+    background-color:rgb(68, 115, 189);
+}
+.input_fieldTwo:hover{
+    background-color:rgb(68, 115, 189);
+}
+
+.input_select:hover{
+    background-color:rgb(124, 122, 209);
+    color:white;;
+    font-weight:bold;
+}
+
+img:hover{
+    color:white;
+}
+
+.sizeButtons{
+    font-size:18px;
+    color:black;
+    font-weight:black;
+    background-color:grey;
+    margin-left:20px;
+    width:80px;
+    margin-top:20px;
+    height:60px;
+}
+
+.sizeButtons:hover{
+    font-size:18px;
+    background-color:green;
+    width:100px;
+
+}
+
+.field-col{
+    font-size:14px;
+    color:blue;
+    text-align: center;
+    margin-left:10px;
+    width:140px;
+    max-width:140px;
+    margin-top:10px;
+    height:40px;
+}
+.field-colTwo{
+    font-size:14px;
+    color:blue;
+    text-align: center;
+    margin-left:10px;
+    width:40px;
+    margin-top:10px;
+    height:40px;
+}
+
+.field-row{
+    display:inline-block;
+    font-size:14px;
+    color:black;
+    margin-left:10px;
+    max-width:140px;
+    width:140px;
+    margin-top:5px;
+    height:40px;
+}
+
+.field-rowTwo{
+    display:inline-block;
+    font-size:18px;
+    color:black;
+    margin-left:10px;
+    max-width:40px;
+    width:40px;
+    margin-top:5px;
+    height:40px;
+}
+
+.yourComment{
+    display: block; overflow-y:scroll; margin-left:20px; width:80%; height:100px;
+    background-color:rgb(185, 183, 183);
+}
+
+.yourComment:hover{
+    background-color:rgb(124, 122, 209);
+    color:white;;
+    font-weight:bold;
+}
+
+.summary{
+    margin-left:20px;
+    color:blue;
+    width:250px;
+    display:block;
+    font-size:16px;
+    float:left;
+   
+}
+
+.summaryB{
+    margin-left:40px;
+    color:rgb(174, 36, 59);
+    width:230px;
+    display:block;
+    font-size:16px;
+    float:left;
+   
+}
+
+.photo{
+    width:400px; 
+    height:300px;
+}
+
+.photo:hover{
+    width:550px; 
+    height:400px;
+}
+
+.photoVertical{
+    width:400px; 
+    height:600px;
+}
+
+.photoVertical:hover{
+    width:550px; 
+    height:750px;
+}
+
+.butt{
+    margin-left:30px;
+    font-size:12px;
+    width:80px;
+    height:40px;
+    border-radius: 20%;
+}
+
+.butt:hover{
+    background-color: rgb(116, 134, 216);
+    font-size:14px;
+    font-weight: bold;
+    color:white;
+}
+
+.GOdownload{
+    width:40px; 
+    height:40px; 
+    background-color:rgb(84, 153, 188);
+    margin-left:15px;
+}
+
+.myIcon{
+    font-size:40px;
+    margin-top:-5px;
+    margin-left:-8px;
+   
+}
+
+.GOdownload:hover{
+    color:white;
+    background-color: blue;
+}
+
+.highlight_page{
+    font-size:16px;
+    font-weight:bold;
+    color:red;    
+}
+
+.lowlight_page{
+    font-size:16px;
+    font-weight: bold;
+    color:blue;
+    margin-top:20px;
+}
+
+
+.lowlight_page:hover{
+    background-color: cyan;
+    color:rgb(42, 36, 36);
+}
+
+.position{
+    margin-left:20px;
+    border: 2px blue solid;
+}
+
+.posParamPhoto{
+    margin-left:20px;
+    width:30%;
+    max-width:300px;
+    color:blue;
+    font-size:16px;
+    padding-left:10px;
+
+}
+
+.position-field{
+    width:60px;
+    font-size:16px;
+
+
+}
+
+
+
+
+    /*** ====================================== ***/
+    /*** ============== @media 800 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width:800px) {
+        .posOptions{
+            margin-top:10px; 
+            margin-left:22%; 
+        }
+        
+        .dropdown-options{
+            width:70px;
+          }
+      
+h2{
+    font-size:38px;
+    margin-top:30px;
+ }
+
+ .sizeMap{
+    height:710px;
+    margin-top:30px;
+}
+
+.overlap_image{
+
+    margin-top:-710px;
+    height:710px;
+
+  }
+
+ .flagone{
+    margin-left:82%;
+}
+
+.flagtwo{
+    margin-left:90%;
+}
+
+.field-name{
+    font-size:13px;
+    width:60%;
+}
+
+.input_fieldTwo{
+    font-size:13px;
+    width:37px; 
+}
+.images{
+    height:200px;
+}
+
+.smallimages{
+    height:100px;
+}
+
+.sizeButtons{
+    font-size:14px;
+    font-weight: bold;
+}
+
+.input_select{
+        font-size:13px;
+}
+
+.photo{
+    width:300px; 
+    height:200px;
+}
+
+.photo:hover{
+    width:380px; 
+    height:250px;
+}
+
+.photoVertical{
+    width:200px; 
+    height:300px;
+}
+
+.photoVertical:hover{
+    width:350px; 
+    height:550px;
+}
+
+.GOdownload{
+    width:20px; 
+    height:20px; 
+}
+
+.myIcon{
+    font-size:20px;
+    margin-top:-4px;
+    margin-left:-8px;
+    
+}
+
+.highlight_page{
+    font-size:14px;
+}
+
+.lowlight_page{
+    font-size:14px;
+}
+
+.butt{
+    margin-left:20px;
+    font-size:10px;
+    width:50px;
+
+}
+.butt:hover{
+    background-color: rgb(116, 134, 216);
+    font-size:10px;
+    font-weight: bold;
+    color:white;
+}
+
+}
+      /*** ====================================== ***/
+    /*** ============== @media 490 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width:490px) {
+
+
+ 
+      }

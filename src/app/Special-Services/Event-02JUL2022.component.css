@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=Tangerine:wght@700&display=swap');
+body{
+  max-width:1100px;
+  /*
+  font-family:"Parisienne", Arial, Helvetica, sans-serif;
+  font-family:"LucidaCalligraphy", Arial, Helvetica, sans-serif;
+  */
+  
+  font-family: 'Tangerine', cursive;
+ 
+}
+.posOptions{
+  position:relative; 
+  margin-top:10px; 
+  margin-left:30%; 
+  float:left;
+}
+.dropdown-options{
+  margin-top:5px;
+  background-color: #dedcdc;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  height:32px; 
+  width:43%;
+  margin-left:5%;
+  float:left;
+
+}
+
+.dropdown-options:hover{
+  background-color:rgb(197, 201, 217);
+  color:white;
+  font-weight:bold;
+
+}
+
+.dropdown-text{
+  margin-top:0px; 
+  font-size:24px;
+  color:black;
+  display:block;
+  text-align: center;
+}
+
+.sizeMap{
+  margin-left: 2%;
+  width: 96%;
+  height:680px;
+  float:left;
+  margin-top:40px;
+  }
+
+.overlap_image{
+  position:relative;
+  background-color: rgb(34, 7, 242);
+  opacity:0.7;
+  margin-top:-680px;
+  height:680px;
+  border:solid 0px blue;
+  width: 96%;
+  float:left;
+  margin-left: 2%;
+  color:white;
+}
+h1{
+    font-weight: bold;
+    font-size:60px;
+    width:90%;  
+    text-align:center;
+    margin-top:40px;
+    font-family: 'Tangerine', cursive;
+    padding-left:15px;
+    letter-spacing: 2px;
+  }
+
+h2{
+  display:block;
+  width:90%;
+  font-size:48px;
+  font-weight: bold;
+  font-family: 'Tangerine', cursive;
+  letter-spacing: 2px;
+
+  }
+
+h3{
+  font-weight:bold;
+  font-size:16px;
+  letter-spacing: 0.7px;
+  
+}
+
+    
+    
+.main_box{
+  border:solid 0px red;
+  width:95%;
+  font-weight: bold;
+  font-size:30px;
+  text-align: center;
+  margin-left:5%;
+  padding-top:5px;
+
+ 
+}
+
+.myText{
+  margin-left:5%;
+  font-size:20px;
+  color:green;
+  float:left;
+  margin-left:5%;
+  width:80%;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.5px;
+  line-height: 30px;
+}
+
+
+.anim-name-normal{
+  animation-name: normal;
+}
+.anim-name-slidein{
+  animation-name: slidein;
+  animation-duration: 4s;
+}
+.anim-name-slidedown{
+  animation-name: slidedown;
+  animation-duration: 4s;
+}
+.animicon{
+  margin-top:30px;
+  margin-left:10%;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  animation-duration:6s;
+  animation-iteration-count: 200;
+}
+
+.emoji{
+  
+  margin-top:30px;
+  margin-left:10%;
+  font-size:40px;
+  position: absolute;
+  animation-duration:6s;
+  animation-iteration-count: 200;
+}
+
+
+.dir-reverse{
+  margin-top:30px; 
+  margin-left:0%;
+  animation-duration: 2s;
+  animation-direction: reverse;
+  animation-iteration-count: 200;
+}
+
+.dir-alternate{
+  margin-top:180px; 
+  margin-left:50%;
+  animation-duration: 3s;
+  animation-direction: alternate;
+  animation-iteration-count: 200;
+}
+
+.dir-alternate-reverse{
+  margin-top:150px; 
+  margin-left:40%;
+  animation-duration: 4s;
+  animation-direction: alternate-reverse;
+  animation-iteration-count: 200;
+}
+
+
+@keyframes slidein {
+  from {
+    margin-left: 1%;
+    width: 3%;
+  }
+  to {
+    margin-left: 1%;
+    width: 190%;
+  }
+}
+
+@keyframes slidedown {
+  from {
+   
+    top: 0px;
+  }
+  to {
+    
+    top: 670px; 
+  }
+}
+
+@keyframes normal {
+  0%   { left:40px; top:140px;}
+  25%  {left:100px; top:150px;}
+  50%  {left:100px; top:190px;}
+  75%  {left:70px; top:190px;}
+  100% {left:40px; top:150px;}
+}
+
+
+      /*** ====================================== ***/
+    /*** ============== @media 900 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width:900px) {
+
+      h1{
+        font-weight:bolder;
+        font-size:50px;
+      }
+      h2{
+        font-weight:bolder;
+        font-size:40px;
+      }
+      h3{
+        font-size:18px;
+      }
+      body{
+        max-width:850px;
+       
+      }
+
+      .myText{
+        font-size:18px;
+      }
+  
+    }
+
+
+      /*** ====================================== ***/
+    /*** ============== @media 600 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width:600px) {
+      .sizeMap{
+      
+        margin-top:30px;
+      }
+    }

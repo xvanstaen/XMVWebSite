@@ -1,0 +1,66 @@
+/* position of the cancel button */
+.cancelbutton {
+    width: 30px;
+    float:right;
+    margin-top: -20px;
+    position: relative;
+
+    
+}
+
+.field_oneway{
+  margin-top:60px;
+  color:blue;
+
+}
+
+.field_return{
+  margin-top:30px;
+  color:blue;
+}
+
+.inputsize {
+    max-width: 400px;
+    display: block;
+    box-sizing: content-box;
+    overflow: 0;
+    border-radius: 6px;
+    padding: 24px;
+    border: solid 2px blue;
+    min-width: inherit;
+    margin-top:5px;
+    height: 10px;
+    
+   
+}
+
+.okbutton {
+    float: right;
+    margin-right: 40px;
+    margin-top: -55px;
+    font-size: 20px;
+    block-size: 45px;
+}
+
+.errormsg{
+    font-size: medium;
+    font-style: bolder red !important;
+}
+
+
+/*** ====================================== ***/
+    /*** ============== @media 768 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 768px) {
+
+      /* position of the cancel button */
+
+
+.inputsize {
+  max-width: 80%;
+ 
+}
+
+
+    }
+        

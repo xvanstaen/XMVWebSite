@@ -1,0 +1,438 @@
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head> 
+<body>
+    <div >
+        <app-file-access 
+            [configServer]="configServer" [identification]="identification" 
+            [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit"
+            [secondaryLevelFn]="secondaryLevelFn"
+            (resultFileSystem)="resultAccessFile($event)"
+        >
+    
+        </app-file-access>
+    </div>
+    <div style="border:solid green 2px; display:inline-block;margin-top:8px; margin-left:20px; background-color: lightskyblue;">
+        <div *ngIf="errorMsg!==''&& errorFn==='' ">
+            <div class="skipLine">&nbsp;</div>
+            <div  style="color:red; font-size:12px; margin-left:20px; font-weight: bold; width:500px; display:inline-block; background: lightgrey;"  > 
+                <div class="skipLine">&nbsp;</div>
+                {{errorMsg}}
+                <div class="skipLine">&nbsp;</div>
+            </div>
+            <div class="skipLine">&nbsp;</div>
+        </div>
+
+        <div  *ngIf="errCalcCalFat!==''" >
+            <div class="skipLine">&nbsp;</div>
+            <div style="margin-top:8px; margin-left:8px; color:red; font-weight: bold; width:400px; display:inline-block; background: rgb(241, 229, 229);"  >
+                <div class="skipLine">&nbsp;</div>
+                    {{errCalcCalFat}}
+                <div class="skipLine">&nbsp;</div>
+            </div>
+        </div>
+
+        <div *ngIf="((isDeleteConfirmed===false && errorMsg!=='' && errorFn==='delDate') || 
+                (IsSaveConfirmedAll===false && errorMsg!=='' && errorFn==='All'))">
+            <div class="skipLine">&nbsp;</div>
+            <div  style="margin-top:8px; margin-left:20px; color:red; font-weight: bold; width:480px; display:inline-block; background: lightgrey;"  > 
+                <div class="skipLine">&nbsp;</div>
+                {{errorMsg}}
+                <div class="skipLine">&nbsp;</div>
+            </div>
+            <div class="skipLine">&nbsp;</div>
+        </div>
+
+        <div *ngIf="tabLock[0].lock === 2">
+            <div style="font-size:16px; color:red; margin-left:20px; height:40px; padding-top:12px; display:inline-block; width:500px; background-color:lightskyblue; margin-top:10px;">
+            <span >
+                    Sorry, this file is locked by another user - updates are not possible
+            </span> 
+            </div>
+        </div>
+
+        <div *ngIf="tabLock[0].lock === 3">
+            <div style="font-size:16px; color:red; margin-left:20px; height:40px; padding-top:12px; display:inline-block; width:500px; background-color:lightskyblue; margin-top:10px;">
+            <span >
+                    Checking if this file is locked by another user 
+            </span> 
+            </div>
+        </div>
+       
+
+        <!--------------- DISPLAY ALL -->
+        <div *ngIf="isUserTimeOut===true" style="margin-left:6px;">
+            <div style="font-size:16px; color:blue; display:inline-block; 
+                     text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width}">
+                    You have been inactive for too long so your updates are lost. Re-access the application Health 
+            </div>
+        </div>
+
+        <div *ngIf="isUserTimeOut===false" style="margin-left:6px;">
+            <div style="font-size:16px; color:blue; display:inline-block; 
+                     text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width}">
+                    HEALTH DATA MANAGEMENT
+                    <app-running-clock [posSizeClock]="posSizeClock">
+                    </app-running-clock>
+                    Time out will occur in 
+                    <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+            </div>
+
+            <div id="ListAll">&nbsp;</div> 
+            <div *ngIf="isDeleteConfirmed===true">
+                <div *ngIf="errorMsg!==''" class="skipLine">&nbsp;</div>
+                <div *ngIf="errorMsg!==''" class="error" >{{errorMsg}}</div>
+                <div class="skipLine">&nbsp;</div>
+                <div class="posConfirm">
+                    <button id='Del-1' class="sizeButtons" (click)="ConfirmDelDate()">Confirm</button>
+                    <button id='Del-2' class="sizeButtons" (click)="cancelDelDate()"> Cancel</button>
+                </div>
+            </div>
+        
+            <div>
+                <form  [formGroup]="TheSelectDisplays"  >
+                    <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Filter </span>
+                    <input type="date" formControlName="startRange" placeholder="start date" 
+                        style="margin-left:10px; width:120px; height:25px; color:blue; ">
+                    <input  type="date" formControlName="endRange" placeholder="end date" 
+                        style="margin-left:10px;width:120px; height:25px; color:blue; ">
+                    <button id='selectAllData' class="sizeButtons" (click)="dateRangeSelection($event)">Submit</button>
+                    <button id='cleardates' class="sizeButtons" (click)="clearDates()">Clear</button>
+            
+                    <span class="error" *ngIf="isRangeDateError===true">{{errorMsg}}</span>
+                    
+                </form>
+                <div class="skipLine">&nbsp;</div>
+            </div>
+
+            <form  [formGroup]="TheSelectDisplays"  >
+                <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Search ingredient </span>
+                <input type="text" formControlName="searchString"  
+                    style="margin-left:10px; width:170px; height:25px; color:blue; ">
+                <button id='submit' class="sizeButtons" style="margin-left:10px;" (click)="actionSearchText($event)">Submit</button>
+                <button id='clear' class="sizeButtons" style="margin-left:10px;" (click)="actionSearchText($event)">Clear</button>
+            </form>
+            <div class="skipLine">&nbsp;</div>
+            <div style="margin-top:1px; width:98%; min-width:98%;"></div>
+            <div   id="posAfterTitle"  [ngStyle]="{'min-width.px': confTableAll.minwidth-30 , 'width.px': confTableAll.width-30, 'color':confTableAll.color, 'background-color':confTableAll.background }" >
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Action">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center; padding-left:10px;' type="text" value="Date">
+                <input class="Colth"  [ngStyle]="{'width':confTableAll.colWidth.calBurnt, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Calories Burnt">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.meal, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center; padding-left:10px;' type="text" value="Meal">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.ingr, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center; padding-left:10px;'  type="text" value="Ingredient">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Quantity">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Unit">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.calBurnt, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Cal.">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Chol.">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Gly. Index">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Sugar">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Sat.">
+                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Tot.fat">
+                <input class="Colth " [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Protein">
+                <input class="Colth " [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
+                            style='text-align:center' type="text" value="Carbs">
+            </div>
+
+            <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
+            <div id="posAfterTitleB" style="margin-top:1px; width:98%; min-width:98%;"></div>
+
+            <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
+            <div class="dropdown " *ngIf=" dialogue[6]===true">
+                <div  [ngStyle]="styleBox" >
+                    <div  [ngStyle]="styleBoxOption">       
+                        <li *ngFor="let action of NewTabAction; let m=index;" 
+                                class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    (click)="onDropDownAll($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{action.type}}-{{action.name}}">
+                                    <span *ngIf="m>0">&nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}</span>
+                                    <span *ngIf="m===0">&nbsp;&nbsp;{{action.name}}</span>
+                        </li>
+                    </div>                   
+                </div>
+            </div>
+            <div [ngStyle]="styleBox"  *ngIf="isDeleteItem===true">
+                <div [ngStyle]="styleBoxOption" style="  background: cyan; ">
+                    <div style="width:100%; color:blue; font-size:14px; text-align: center; ">Confirm the deletion of {{delMsg}}</div> 
+                        <div  class="theRadio" style='margin-left:40px; margin-top:8px;'>
+                            <input   style='margin-left:18px;'(click)='DelAfterConfirm($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="Y" > &nbsp;&nbsp;Yes 
+                            <input  style='margin-left:10px;' (click)='DelAfterConfirm($event)' type="radio"   id="NoDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="N">  &nbsp;&nbsp; No 
+                            <div class="skipLine">&nbsp; </div>  
+                        </div>
+                </div>
+            </div>
+
+            <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH MEALS STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputMeal-->
+            <div class="dropdown " *ngIf="tabInputMeal.length>0 ">
+                <div  [ngStyle]="styleBoxMeal" >
+                    <div   [ngStyle]="styleBoxOptionMeal">  
+                        <li *ngFor="let tabMeal of tabInputMeal; let m=index;" 
+                                class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    (click)="onSelMealFood($event)" id="selMeal-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{tabMeal}}">
+                                {{tabMeal}}
+                        </li>
+                    </div>             
+                </div>
+            </div>
+            <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH EXISTING FOOD STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputFood-->
+            <div class="dropdown " *ngIf="isInputFood===true && tabInputFood.length>0">
+                <div [ngStyle]="styleBoxFood" >
+                    <div   [ngStyle]="styleBoxOptionFood">
+                        <li *ngFor="let tabFood of tabInputFood; let m=index;" 
+                                class="Straight-options" [ngStyle]="{'width.px':sizeBox.widthOptions}" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    (click)="onSelMealFood($event)" id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="m">
+                                    {{tabFood.name}} - serving: {{tabFood.serving | number:'1.0-0'}}  {{tabFood.unit}}   
+                        </li>
+                    </div>            
+                </div>
+            </div>
+
+            <!-----   MANAGEMENT OF ALL HEALTH DATA  -->
+            <div [ngStyle]="{ 'min-width.px': confTableAll.minwidth-10 ,  'width.px': confTableAll.width-10, 'color':confTableAll.color, 
+                        'height.px': confTableAll.height, 'background-color':confTableAll.background}"
+                        style="overflow-y:scroll;  " > 
+
+                <div *ngFor="let myDaily of HealthAllData.tabDailyReport; let i=index">
+                    <div *ngIf="(i >= minNum && i<=maxNum) || checkText!==''">
+                    <div *ngFor="let meal of HealthAllData.tabDailyReport[i].meal; let k=index">
+                    
+                        <div *ngFor="let theIngred of HealthAllData.tabDailyReport[i].meal[k].dish; let j=index">
+
+                            <div *ngIf="searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
+                                    (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))">
+                                
+                                <div  *ngIf="checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)"
+                                    [ngStyle]="{'backgroung-color': i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}"  >
+                                    
+                                    <div   
+                                        [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color': i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                            class="tReadOnly  widthAction boxHover"  id="openAction-{{i}}-{{k}}-{{j}}" (click)="onAction($event)">
+                                        <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" >A</span>
+                                    </div>
+
+                                    <input type="date" 
+                                        [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        *ngIf="k===0 && j===0" id="dateAll-{{i}}" class="trow widthDate boxHover"  (input)="onInputDailyAll($event)" value="{{myDaily.date}}" >
+                                    <span  class="trow widthDate " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        style="pointer-events: none;" *ngIf="k!==0 || j!==0"  >&nbsp;
+                                    </span>
+                                    
+                                    <input type="text"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        *ngIf="k===0 && j===0" id="burnAll-{{i}}" class="trow alignLeft boxHover" (input)="onInputDailyAll($event)" 
+                                        value="{{ myDaily.burntCalories }}"   > 
+                                    <span type="text"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        *ngIf="k!==0 || j!==0" id="burnAll-{{i}}" class="trow alignLeft" 
+                                        >&nbsp;
+                                    </span>
+                    
+                                    <input type="text" 
+                                        [ngStyle]="{'width':confTableAll.colWidth.meal, 'border': meal.name==='' ? 'solid 1px ligthgreen ' : 'solid 0px green', 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':meal.name==='' ? 'green' : tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        *ngIf="j===0" id="mealAll-{{i}}-{{k}}" class="trow alignMealIngr boxHover"  (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{meal.name }}"   >
+                                    <span  class="trow alignMealIngr" 
+                                        [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        style="pointer-events: none;" *ngIf="j!==0"   >&nbsp;
+                                    </span>
+
+                                    <input type="text" 
+                                        [ngStyle]="{'width':confTableAll.colWidth.ingr , 'border': theIngred.name==='' ? 'solid 1px green' : 'solid 0px green', 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':theIngred.name==='' ? 'lightgreen' : tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        id="ingrAll-{{i}}-{{k}}-{{j}}"  class="trow alignMealIngr boxHover"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{theIngred.name }}"  >
+
+                                    <input type="text"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.quantity}}" id="quanAll-{{i}}-{{k}}-{{j}}" class="trow alignLeft boxHover"(input)="onInputDailyAll($event)"  >
+                                    
+                                    <input type="text"  class="trow alignLeft boxHover"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.unit }}" id="unitAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)" >
+
+                                    <input type="text"  class="tReadOnly alignLeft"      
+                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.calFat.Calories  | number:'1.0-0'}}"  >
+                                    <input type="text"  class="tReadOnly alignLeft"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.calFat.Cholesterol  | number:'1.1-1'}}"  >
+                                    <input type="text"  class="tReadOnly  alignLeft"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.calFat.GlyIndex  | number:'1.1-1'}}"  >
+                                    <input type="text"  class="tReadOnly  alignLeft"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.calFat.Sugar  | number:'1.1-1'}}" >
+                                    <input type="text"  class="tReadOnly  alignLeft"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.calFat.Fat.Saturated  | number:'1.1-1' }}" >
+                                    <input type="text"  class="tReadOnly  alignLeft"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.calFat.Fat.Total  | number:'1.1-1'}}" >
+                                    <input type="text"  class="tReadOnly  alignLeft"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.calFat.Protein | number:'1.1-1' }}"  >
+                                    <input type="text"  class="tReadOnly  alignLeft"  
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                        value="{{theIngred.calFat.Carbs  | number:'1.1-1'}}"  >
+
+                                </div>
+                                <!-- sub-TOTAL-->
+                                <div *ngIf="HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText==='' " [ngStyle]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}">
+                                    <span class="subTotal widthAction "
+                                        [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>
+                                    <span class="subTotal widthDate"
+                                        [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>
+                                    <span class="subTotal alignLeft"
+                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>
+                                    <span class="subTotal alignMealIngr"
+                                        [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" > &nbsp;</span>                        
+                                    <span class="subTotal alignMealIngr" 
+                                        [ngStyle]="{'width':confTableAll.colWidth.ingr , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        style=" text-align: right; padding-right:5px;">sub-Total</span>
+                                    <span class="subTotal alignLeft"
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>                      
+                                    <span class="subTotal alignLeft"
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>
+                                    <span class="subTotal alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        >{{meal.total.Calories  | number:'1.0-0'}}</span>                                
+                                    <span class="subTotal alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        >{{meal.total.Cholesterol | number:'1.1-1'}}</span>
+                                    <span class="subTotal alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        >{{myDaily.total.GlyIndex | number:'1.1-1'}}</span>
+                                    <span class="subTotal alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        >{{meal.total.Sugar | number:'1.1-1'}} </span> 
+                                    <span class="subTotal alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        >{{meal.total.Fat.Saturated | number:'1.1-1'}}</span>
+                                    <span class="subTotal alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        >{{meal.total.Fat.Total | number:'1.1-1'}}</span>
+                                    <span class="subTotal alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        >{{meal.total.Protein | number:'1.1-1'}}</span>
+                                    <span class="subTotal alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
+                                        >{{meal.total.Carbs | number:'1.1-1'}}</span>
+                                </div>
+                                <!-- TOTAL-->
+                                <!--
+                                    style="--Tcol:{{confTableAll.Total.color}}; --TfontW:{{confTableAll.Total.fontWeight}}; --Theight:{{confTableAll.Total.height}}"
+                                -->
+                                <div *ngIf="HealthAllData.tabDailyReport[i].meal.length-1===k && HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''" [ngStyle]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}">
+                                    <span class="Total widthAction" 
+                                    [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >&nbsp;</span>                           
+                                    <span class="Total widthDate " 
+                                    [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >&nbsp;</span>  
+                                    <span class="Total alignLeft"
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >&nbsp;</span>
+                                    <span class="Total alignMealIngr"
+                                    [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >&nbsp;</span>                        
+                                    <span class="Total alignMealIngr"
+                                    [ngStyle]="{'width':confTableAll.colWidth.ingr , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    style=" text-align: right;  padding-right:5px;">Total </span>
+                                    <span class="Total alignLeft"
+                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >&nbsp;</span>                     
+                                    <span class="Total alignLeft"
+                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >&nbsp;</span>                       
+                                    <span class="Total alignLeft "
+                                    [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >{{myDaily.total.Calories | number:'1.0-0'}}</span>
+                                    <span class="Total alignLeft " 
+                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >{{myDaily.total.Cholesterol | number:'1.1-1'}}</span>
+                                    <span class="Total alignLeft " 
+                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >{{myDaily.total.GlyIndex | number:'1.1-1'}}</span>
+                                    <span class="Total alignLeft " 
+                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >{{myDaily.total.Sugar | number:'1.1-1'}}</span>
+                                    <span class="Total alignLeft " 
+                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span>
+                                    <span class="Total alignLeft " 
+                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                    >{{myDaily.total.Fat.Total | number:'1.1-1'}}</span>
+                                    <span class="Total alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                        >{{myDaily.total.Protein | number:'1.1-1'}}</span>
+                                    <span class="Total alignLeft " 
+                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
+                                        >{{myDaily.total.Carbs | number:'1.1-1'}}</span>
+                                    <div class="skipLine"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+                </div>
+            </div> 
+
+            <div style="width:100%; display:inline-block; margin-top:5px;">
+            <button *ngIf="minNum>1" id='prev' class="sizeButtons"  style="width:80px;" (click)="pagePrev()"> Prev page</button>
+            <button id='next' class="sizeButtons"  style="width:80px; margin-left:20px;" (click)="pageNext()"> Next page</button>
+            <span style="margin-left:80px; width:100px; height:22px; display:inline-block; color:blue; font-size:16px; vertical-align:middle;"> page#&nbsp;{{numPage}} </span>
+            </div>
+            <div class="skipLine">&nbsp;</div>
+            <div *ngIf="isAllDataModified===true && tabLock[0].lock !==2">
+            
+                <span *ngIf="IsSaveConfirmedAll===false && isSaveHealth===false">
+                    <div class="msg"  style="margin-left:10px;">
+                            File has been modified
+                        <button id='AllConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
+                        <button id='AllCancel' class="sizeButtons" style='width:100px;' (click)="cancelUpdateAll($event)"> Cancel changes</button>
+                    </div>
+                </span>
+                <span *ngIf="this.isMustSaveFile === true">
+                    <div class="msg"  style="margin-left:10px;">
+                        Save your modifications before timeout
+                    </div>
+                </span>
+                <span *ngIf="IsSaveConfirmedAll===true">
+                    <form  [formGroup]="SpecificForm" >
+                        <div class="msg"   style="margin-left:10px;">
+                            Please enter the name of the file to save :
+                            <input type='text' style="width:240px;" formControlName="FileName" >
+                        </div>
+                        <div class="skipLine">&nbsp;</div>
+                        <div style="width:500px; display:inline-block; margin-left:20px; ">
+                            <span style="width:240px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
+                            <button id='All-1' class="sizeButtons" (click)="SaveHealth($event)">Yes</button>
+                            <button id='All-2' class="sizeButtons" (click)="cancelTheSave()"> No</button>
+                        </div>
+                    </form>        
+                </span>
+                <div class="skipLine">&nbsp;</div>
+            </div>
+            <div class="skipLine">&nbsp;</div>
+            <div *ngIf="tabLock[0].lock !==2" class="msg"  style="margin-left:10px;">
+                    Do you want to clean your Health file?
+                    <button id='cleanFile' class="sizeButtons" (click)="cleanFile()"> Yes</button>
+            </div>
+
+        </div>
+        <div class="skipLine">&nbsp;</div>
+    </div>
+
+</body>
+

@@ -1,0 +1,286 @@
+body{
+    max-width: 1000px;
+  }
+  
+  div{
+    --tableW: 95%;
+    --tableMaxW: 600px;
+    --iconWidth: 22px;
+    --margLeft: 20px;
+    --LabWidth: 200px;
+    --textWidth: 160px;
+    --textMarLeft:16px;
+    --labWidthSean:80px;
+    --fieldHeight:30px;
+    --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+    --DropLeftPerf:calc( var(--margLeft) + var(--labWidthSean) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+    --CriteriaOneDropLeft:250px;
+    --CriteriaTwoDropLeft:450px;
+    --CriteriaThreeDropLeft:700px;
+    --DropBoxContentWidth:210px;
+    --DropBoxContentHeight:270px;
+    --DropBoxWidth:205px;
+    --DropBoxHeight:260px;
+    --DropBoxItemHeight:26px;
+  }
+
+.arrow_down{
+    cursor: pointer;
+    color:blue;
+  }
+  
+.arrow_down_size{
+    margin-top:3px;
+    font-size:28px;
+    margin-left:1px;
+    float:left;
+  } 
+
+.arrow_down_size:hover{
+    color:red;
+    background-color: bisque;
+  } 
+
+.posBin{
+    float:right; 
+    margin-right:100px; 
+    margin-top:0px;
+  }
+
+.iconBuffer{
+    width:22px; 
+    height:22px; 
+    font-size:16px;
+    margin-left:10px;
+    display:inline-block;
+    float:none;
+  }
+  
+.iconAdd{
+    width:22px; 
+    height:22px; 
+    font-size:16px;
+    background-color: cyan;
+    color:blue;
+    padding-left:3px;
+    padding-top:3px;
+    float:left;
+    margin-left:10px;
+    margin-top:2px;
+  }
+.iconBin{
+    width:22px; 
+    height:22px; 
+    font-size:16px;
+    background-color: cyan;
+    color:red;
+    padding-left:3px;
+    padding-top:3px;
+    margin-left:10px;
+  }
+  
+.iconBinMrgLeft{
+    margin-left:18px;
+  }
+  
+.iconBin:hover{
+    color:blue; 
+  }
+  
+.iconAdd:hover{
+    background-color:grey; 
+  }
+  
+.even{
+    color:blue;
+    background-color: lightgrey;
+  }
+  
+.odd{
+    color:black;
+    background-color: lightcyan;
+  }
+
+
+.sizeButtons{
+    width:60px;
+    height:22px;
+    font-size:10px;
+    margin-left:10px;
+    background-color:cyan;
+    border-radius: 5px;
+    background-image: linear-gradient(cyan, lightcyan);
+    box-shadow: 2px 2px blue;
+    border: solid 1px blue;
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.sizeButtons:hover{
+    background-color:rgb(48, 89, 159);
+    background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+  }
+
+.dropdown {
+    position: relative;
+    display: contents; 
+  }
+  
+
+.Straight-content{
+    position: absolute;
+    z-index: 1;
+  }
+
+.StraightDropDown{
+    width:var(--DropBoxContentWidth,205px);
+    height: var(--DropBoxContentHeight,260px);
+    border: 0px solid green;
+    overflow: hidden;
+    background-color: lightgrey;
+  }
+
+.StraightDropDownOverflow{
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+    
+.Straight-options{
+    width:var(--DropBoxContentWidth,205px);
+    font-size:12px;
+    height:var(--DropBoxItemHeight,25px);
+    color:black;
+    text-align: left;
+    padding-left:5px;
+    padding-top:4px;
+    border:0px; 
+    display:inline-block;
+    float:none;
+  }
+
+.Straight-options:hover{
+    background-color:lightyellow;
+  }
+
+.error{
+    color:red;
+    font-size:12px;
+    background-color:cyan;
+    display:contents;
+  }
+  
+.msg{
+    font-size:13px; 
+    color:blue; 
+    width:90%;
+    margin-left:20px
+  }
+
+
+.colorOdd{
+    background-color:rgb(185, 212, 221);
+  }
+  
+.colorEven{
+    background-color:rgb(219, 224, 226);
+  }
+  
+.Buffer{
+    margin-top:0px;
+    padding-left:0px;
+    height:10px;
+    width:90%; 
+    display:inline-block;
+  }
+
+.skipLine{
+  margin-left:5px;
+  width:95%;
+  height:4px;
+  display:inline-block;
+  border:solid red 0px;
+ 
+}
+
+.theRadio{
+
+  width:60%; display:block; 
+  background-color:lightgrey; 
+  float:left; 
+  height:25px;
+}
+
+.theRadioButt{
+  height:18px;
+  width:18px
+}
+
+.YesNo{
+  font-size:14px;
+}
+
+.radioButton{
+  appearance: none;
+
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+
+  border: 2px solid  grey;
+  transition: 0.2s all linear;
+  margin-top: 14px;
+  margin-left: 45px;
+  float:left;
+}
+
+
+.radioButton:checked {
+  width: 12px;
+  height: 12px;
+  background-color: rgb(32, 128, 237);
+  border: 2px solid white;
+  box-shadow:0px 0px 0px 2px rgb(32, 128, 237);
+  /*
+box-shadow: 0 0 0 5px red, 0 0 0 10px white, 0 0 0 15px red;
+box-shadow: inset 0 0 0 5px white;
+  */
+
+}
+
+
+
+.objectHeader{
+  font-family: 'Roboto';
+  height:60px;
+  margin-left:30px;
+  font-size:20px;  
+  width:85%;
+  font-weight: bold;
+  display:block;
+  border:solid 2px blue;
+  padding-top:15px;
+  background-color: cyan;
+  text-align: center;
+  color:red;
+  }
+
+.object{
+  font-family: 'Roboto';
+  margin-left:30px;
+  font-size:16px;  
+  width:85%;
+  font-weight: bold;
+  display:block;
+  border-left:solid 2px blue;
+  border-right:solid 2px blue;
+  border-bottom:solid 2px blue;
+  padding-top:10px;
+  padding-left:40px;
+}
+
+.object:hover{
+background-color: cyan;
+font-size:18px;  
+}
+
+  

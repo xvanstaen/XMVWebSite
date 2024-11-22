@@ -1,0 +1,135 @@
+
+
+
+<span   *ngIf='Zoom_out===false; else ZoomOUT'>
+    <!-- Monica's profile -->
+      <!-- 
+    <div   class='sub-mainbody'>
+      
+      <div class='perso-picture'>
+        <img class='image' src="./assets/XVS photo.png" style='width:120px; height:135px;' >
+      </div>
+      <span class='perso-intro-text'>
+          <li style='padding-top:10px;list-style-type: none;'>20 years experience in Banking and Healthcare</li>
+          <li style='padding-top:7px;list-style-type: none;'> Hold a Master in Business and Administration from Manchester University</li>
+          <li style='padding-top:7px;list-style-type: none;'></li>
+      </span>
+
+      <div class='perso-text'>{{this.MyBio[0].Topic}}
+    
+      </div>
+      
+  </div> Monica's profile -->
+  <!-- < end div Monica's profile> -->
+
+    
+    <!-- Xavier's profile   div class='mainbody-->
+   
+
+    <div>
+      
+          <div class='perso-picture'>
+            <img class='image' src="./assets/XVS Photo 2.png" >
+          </div>
+        
+          <div class='perso-intro-text'> 
+           
+              <li style='padding-top:0px;list-style-type: none;'>37 years of experience in IT Business and Solutions</li>
+              <li style='padding-top:7px;list-style-type: none;'>Spent 30 years in the IT Travel Industry with Amadeus</li>
+              <li style='padding-top:7px;list-style-type: none;'>Hold a Master in IT from Nice University</li>
+
+          </div>
+          
+          <div  class='perso-text'>
+            <br>
+              <div #divprofile>
+              </div>
+              <br><br><br>
+
+
+
+          </div>
+
+
+               <!-- ======== FOOTER ======== -->
+               <div class='myfooter' style="margin-left:50px; max-width:92.5%" >
+                <!--
+                <div class="text-footer">email: xmv@gmail.com</div>
+                <div class="text-footer"> Address: 6 SIMS DRIVE #11-24 Singapore 387388</div>
+                -->
+                <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
+                  <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
+                  <br> <div class='copyright' [routerLink]="['/myRouting']">No rights intended or owned in them </div>
+
+                  <br>
+                </div>
+                <!--
+                <button [routerLink]="['/myRouting']" > 
+                    <mat-icon style='display:none;' class='material-icons-outlined'> arrow_back_ios</mat-icon> 
+                </button>   
+                -->
+            </div>
+
+           <!--  <div   *ngFor="let theList of MyBio; let i=index" >
+            <div class='perso-text'>
+            <li *ngIf='i>1 && theList.Topic!==""'>{{theList.Topic}} <br></li>
+          </div>
+          -->
+
+
+
+
+        </div>  <!-- <end div Xavier's profile --- class='sub-mainbody'> -->
+   <!-- 
+      <button style='margin-top:4px; margin-left:950px; max-width:190px; height:50px;' type='button' (click)='Zoom("out")'>Zoom out</button>
+   -->
+
+    </span>
+    
+
+    <ng-template #ZoomOUT>
+      <div class='mainbody'>
+
+        <div class='perso-picture'>
+          <img class='image' src="./assets/XVS Photo 2.png" style='width:120px; height:135px;' >
+        </div>
+      
+        <span class='perso-intro-text'> 
+         
+            <li style='padding-top:10px;list-style-type: none;'>37 years of experience in IT Business and Solutions</li>
+            <li style='padding-top:7px;list-style-type: none;'>Spent 30 years in the IT Travel Industry with Amadeus</li>
+            <li style='padding-top:7px;list-style-type: none;'>Hold a Master in IT from Nice University</li>
+         
+        </span>
+        <div class='perso-text'>
+            {{this.MyBio[1].Topic}}
+        </div>
+        <button style='margin-top:4px; margin-left:950px; max-width:190px; height:50px;' type='button' (click)='Zoom("in")'>Zoom in</button>
+     
+
+               <!-- ======== FOOTER ======== -->
+
+               <div class='myfooter' >
+                 <!--
+                <div class="text-footer">email: xmv@gmail.com</div>
+                <div class="text-footer"> Address: 6 SIMS DRIVE #11-24 Singapore 387388</div>
+                -->
+                <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
+                  <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
+                  <br> <div class='copyright' [routerLink]="['/myRouting']">No rights intended or owned in them </div>
+
+                  <br>
+                </div>
+                <!--
+                <button [routerLink]="['/myRouting']" > 
+                    <mat-icon style='display:none;' class='material-icons-outlined'> arrow_back_ios</mat-icon> 
+                </button>   
+                -->
+            </div>
+     
+     
+      </div>
+
+    </ng-template>
+  
+  

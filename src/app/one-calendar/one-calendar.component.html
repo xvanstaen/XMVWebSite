@@ -1,0 +1,134 @@
+
+    
+
+<div *ngIf="DisplayCalendarOnly===false"> <!-- the input field must be displayed to allow user to enter manually the date and/or display calendar -->
+    <div class='placeh'> Format ({{placeholderOW}}) </div>
+    <br>
+    <div  >
+            <input   class='maininput' *ngIf='initObj.valid_input_OW!=="Y"; else inputOW'
+             (input)="OnInputOW($event)" [value]="initObj.input_OW"
+             type='text' >        
+    </div>
+    <ng-template  #inputOW> 
+            <input  class='maininput'
+             (input)="OnInputOW($event)" [value]="initObj.input_OW"
+             type='text' >   
+    </ng-template>
+
+    <mat-icon  class="material-icons-outlined posCalendar" (click)="ActionCalendar()" >
+        calendar_month
+    </mat-icon>
+
+                <!-- MUST REVIEW THE MANAGEMENT OF TEH ERRORS AS THE OUTCOME OF THE TESTS ARE THE SAME-->
+    <div class="errorboxOW" *ngIf ='type_error!==3 && type_error<20; else error2' >
+            {{error_msg}}  
+    </div>
+    <ng-template #error2 >   
+        <span class="errorboxOW">  </span>  
+    </ng-template>
+
+    <div class="errorboxOW" *ngIf ='type_error!==3 && type_error>=20; else error3' >
+            {{error_msg}}  
+    </div>
+    <ng-template  #error3 >   
+        <span class="errorboxOW">  </span>    
+    </ng-template>
+    <div class="errorbox">
+        <span  *ngIf="type_error===3"  >
+                {{error_msg}}
+        </span>
+    </div>
+</div>
+
+
+<div *ngIf='DisplayCalendar===true || DisplayCalendarOnly===true'> <!-- display the calendar only - input field is managedd by the calling component -->
+    <div class="bigblock ">  
+       
+        <div   class="theError">
+                {{error_msg}}
+        </div>
+        <button  class="cancelbutton "(click)="OnCancel()"> 
+            X
+        </button>
+   
+        <div *ngIf="IsDateSelected===true">
+            <button class="butt" (click)="OnSubmit()" >
+                Confirm 
+            </button>
+        </div>
+        <br> 
+        <div class="posArrows">
+            <button class=' leftarrow' (click)="OnArrowLeft('L')" >
+                    <mat-icon class="material-icons-outlined">
+                                arrow_back_ios_new 
+                    </mat-icon>
+            </button> <!--button arrow_back_ios_new or chevron_left-->
+                        
+            <span class='arrowtext arrowtextleft'>{{initObj.monthname_c}} {{initObj.display_yearnb}}</span>
+
+            <button class=' rightarrow' (click)="OnArrowRight('R')" >
+                    <mat-icon class="material-icons-outlined">
+                                arrow_forward_ios_new 
+                    </mat-icon>
+            </button> <!--button arrow_back_ios_new or chevron_left-->
+  
+        </div>    
+        <!-- =================== 1st CALENDAR ====================================== -->
+        <div class=" testblock  ">  
+            <div  class="daydiv" *ngFor = "let listdays of StringOfDays;  let i=index">
+                            <span>{{listdays.DoW}} </span>
+            </div>
+                    
+             <div  class="daydiv" *ngFor = "let daysofmonths of initObj.dayspermonth1 | slice:2;  let i=index"
+                            [class.selected]="daysofmonths.DoMonth"
+                                        (click)="onSelectCalendOne(daysofmonths)">
+                    
+
+                <li  *ngIf =' initObj.display_yearnb&lt;initObj.minDate_year || (initObj.display_yearnb===initObj.minDate_year && initObj.display_monthnb&lt;initObj.minDate_month)
+                || (initObj.display_yearnb===initObj.minDate_year && initObj.display_monthnb===initObj.minDate_month && daysofmonths.DoMonth&lt;initObj.minDate_day)
+                || initObj.display_yearnb>initObj.maxDate_year || (initObj.display_yearnb===initObj.maxDate_year && initObj.display_monthnb>initObj.maxDate_month)   
+                || (initObj.display_yearnb===initObj.maxDate_year && initObj.display_monthnb===initObj.maxDate_month && daysofmonths.DoMonth>initObj.maxDate_day)
+                ; else testtoday'> <!-- -->
+                            <span class=" overridecolor"*ngIf='daysofmonths.DoMonth!==0' >{{daysofmonths.DoMonth}} </span>
+                    
+               </li>
+
+               <!-- highlight the return date if part of 1st calendar
+            -->
+               <ng-template #selectret>
+                    <li  *ngIf ='initObj.valid_input_RET==="Y" && initObj.nyearnb===initObj.dayspermonth1[0].DoMonth &&  
+                                            initObj.nmonthnb===initObj.dayspermonth1[1].DoMonth && daysofmonths.DoMonth===initObj.ndaynb
+                            ; else testtoday'>
+                    <span class="selected" >{{daysofmonths.DoMonth}} </span>
+                    </li>
+               </ng-template>
+
+               <ng-template #testtoday > 
+                       <li  *ngIf ='initObj.today_year===initObj.dayspermonth1[0].DoMonth && initObj.today_month===initObj.dayspermonth1[1].DoMonth
+                                     && daysofmonths.DoMonth===initObj.today_day
+                                ; else testSelectedDay'>
+                            <span class='today' >{{daysofmonths.DoMonth}} </span>
+                    </li>
+                </ng-template>
+                <ng-template #testSelectedDay>
+                 
+                    <li *ngIf =' DaySelection.year===initObj.display_yearnb && DaySelection.month===initObj.display_monthnb
+                                && daysofmonths.DoMonth===DaySelection.day
+                                ; else otherdays'>
+                        <span class="selected" >{{daysofmonths.DoMonth}} </span>
+                    </li>
+                </ng-template>
+
+                <ng-template #otherdays>
+                        <li *ngIf='daysofmonths.DoMonth!==0'>{{daysofmonths.DoMonth}} </li>
+                </ng-template>
+            </div>
+        </div>
+        <div style="height:20px;">&nbsp;</div>
+    </div> <!-- end of big block -->
+ 
+ 
+   
+    
+</div>
+

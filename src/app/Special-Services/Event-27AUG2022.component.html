@@ -1,0 +1,883 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+  <!--
+  <br> Device type is {{device_type}}
+  <br> Screen width = {{getScreenWidth}}
+  <br> Screen height = {{getScreenHeight}}
+  <br><br>
+
+        <audio  controls autoplay loop height="" width="">
+            <source src="./It's A Beautiful Day.mp3" type="audio/mpeg">
+        </audio>
+
+  --> 
+  <span id='targetTOP'></span>
+  <div *ngIf="Error_Access_Server!==''">
+      <span style='margin-top:20px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
+      </span>
+  </div>
+
+  <div class="flag flagone" (click)="goDown('FR')"> <span><img   style="width:20px; height:20px;"  src="./assets/FlagFrance.png" ></span></div>
+  <div class="flag flagtwo" (click)="goDown('UK')"> <span><img   style="width:20px; height:20px;"  src="./assets/FlagUK.png" ></span></div>
+  
+  <div *ngIf="invite===true; else manageInvite" >
+    <div  class="posOptions"  >
+              <div *ngIf="yourLanguage==='FR'">
+                 <span  (click)="goDown('targetRules')" class="dropdown-options dropdown-text">Information</span>
+                 <span  (click)="goDown('targetDirection')" class="dropdown-options dropdown-text">Adresse</span>
+                 <span  (click)="goDown('targetForm')" class="dropdown-options dropdown-text">Formulaire</span>
+                 <span  (click)="goDown('targetMenu')" class="dropdown-options dropdown-text">Menus</span>
+                 <span  (click)="displayWedPhotos()" class="dropdown-options dropdown-text">Mariage</span>
+              </div>
+              <span *ngIf="yourLanguage==='UK'">
+                <span  (click)="goDown('targetRules')" class="dropdown-options dropdown-text">Details</span>
+                <span  (click)="goDown('targetDirection')" class="dropdown-options dropdown-text">Address</span>
+                <span  (click)="goDown('targetForm')" class="dropdown-options dropdown-text">Form</span>
+                <span  (click)="goDown('targetMenu')" class="dropdown-options dropdown-text">Menus</span>
+                <span  (click)="displayWedPhotos()" class="dropdown-options dropdown-text">Wedding</span>
+            </span> 
+    </div >
+
+    <div *ngIf="pagePhotos===false; else processPhotos">
+    <div>
+      <div *ngIf="getScreenWidth<800">
+          <img   class='sizeMap'  src="./assets/ChateauBegude3.png" >
+      </div>
+      <div *ngIf="getScreenWidth>799">
+        <img   class='sizeMap'  src="./assets/ChateauBegude1.png" >
+      </div>
+      
+      <span class="emoji  anim-name-slidedown" style="margin-left:2%; animation-duration: 10s;">🥂</span>
+      <span class="emoji  anim-name-slidedown" style="margin-left:12%; animation-direction: alternate;animation-duration: 8s;">🍾</span>
+      <span class="emoji  anim-name-slidedown" style="margin-left:28%; animation-duration: 8s;">🥂</span>
+      
+      <span class="emoji  anim-name-slidedown" style="margin-left:40%; animation-duration: 5s;">🥂</span>
+      <span class="emoji  anim-name-slidedown" style="margin-left:58%; animation-direction: alternate;animation-duration: 6s;">🍾</span>
+      <span class="emoji  anim-name-slidedown" style="margin-left:68%; animation-duration: 8s;">🥂</span>
+      <span class="emoji  anim-name-slidedown" style="margin-left:82%; animation-duration: 12s; ;">🍾</span>
+      
+      <div class="overlap_image">
+        
+        <br> 
+        <div class="main_box">
+            
+          <!--
+             <span class="em em-champagne animicon  anim-name-normal">🥂</span>
+          <span class="em em-champagne animicon  anim-name-normal">🍾</span>
+          <i class="em em-champagne animicon dir-reverse anim-name-slidein" aria-role="presentation" aria-label="CLINKING GLASSES"></i>
+          <i class="em em-champagne animicon dir-alternate anim-name-normal" aria-role="presentation" aria-label="BOTTLE WITH POPPING CORK"></i>
+          <i class="em em-champagne animicon alternate-reverse anim-name-slidein" aria-role="presentation" aria-label="Clinking Glasses"></i>
+         -->
+        <span *ngIf="yourLanguage==='FR'">
+          <h1> Monica & Xavier<br><br> </h1> <h2>ont le grand plaisir</h2> 
+          
+           <h2>
+  
+            <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'>de vous accueillir</span>  
+            <span *ngIf='Table_User_Data[identification.id].nbinvitees!==2'>de t'accueillir</span>  
+             </h2>
+             
+            <h2 >le 27 août 2022 </h2>
+            <h2>au</h2>
+            <h1>Château de la Bégude </h1><br> 
+        </span>
+        <span *ngIf="yourLanguage==='UK'">
+          <h1> We, </h1><h1>Monica & Xavier, </h1> <h2>welcome you</h2><h2> to our </h2><h2>post wedding party</h2>
+          
+            <h2 >on 27 Aug 2022 </h2>
+            <h2>at </h2>
+            <h2>Château de la Bégude </h2>
+        </span>
+           
+
+        </div>
+      </div>
+  </div>
+ 
+ 
+  <div class="myText">
+    <span id='targetRules'></span>
+   
+    <span style='font-weight:bold; margin-left:40%;'><br> 
+        <span *ngIf="yourLanguage==='UK'">Details</span>
+        <span *ngIf="yourLanguage==='FR'">Informations </span>
+    </span>
+    <br><br>
+    <span *ngIf="yourLanguage==='UK'">
+    Dear {{Table_User_Data[identification.id].firstname}}, 
+    <br>
+    <br>
+    We are delighted to invite you on 27 Aug for a post-wedding party to celebrate our civil marriage in Singapore on 22 Jun 2022.
+    <br> As there will not be a 2nd ceremony in France, we seize this opportunity to gather with cherished family and bosom friends,
+     to share the joy of our union in a green, relaxing and warm environment.
+    <br><br>
+    <img   class="images"  src="./assets/Begude  Manoir.JPG" >
+    <br>
+    <br>The event will start on Saturday at 5:00 pm with a photo shoot, followed by appetisers (no drinks until photographs are taken🤣), and dinner and dancing until 2:00am at the latest.
+    <br>Remember to prepare your dance song request list.
+    <br> For dinner orders, please complete the form below, indicating your main course option of either beef or fish.
+    <br>For golf lovers interested to enjoy the fairway on Saturday or Sunday morning, you may play on the course, with the choice of either 9 or 18 holes. We need to know the exact number of players in order to book the slot in advance.
+    <br><br>
+    <img   class="images"   src="./assets/Begude Practice.JPG" >
+    <br><br> 
+    For golf beginners, you will also have the opportunity to practice on Saturday afternoon. We indeed expect to have a lot of laughs together here!
+    <br><br>
+    On Sunday, brunch will be served from 11:00am onwards, followed by the most important activity of the weekend - the pétanque competition! In fact, with enough interested enthusiasts, we could also play pétanque on Saturday afternoon!
+    <br><br>
+    <img   class="images"   src="./assets/Begude  Boule.JPG" >
+    <br><br>
+    Although the hotel can provide boules, it would be better if the professionals (you) bring your own personal set(s)!
+    <br><br>
+      <img   style=" width:80px; margin-left:20px; height:80px;" src="./assets/Begude Boule2.PNG" >
+      <br>
+    <br>   
+    To ensure that everything is well organized in advance, and that we meet your preferences as much as possible, please complete the form below. Kindly do not hesitate to provide additional information, should you have dietary restrictions and/or other specific requests (we regretfully can’t guarantee that we'll meet all your additional requirements, as we’re sure some of you may have peculiar comments/requests 🤣 ).
+    <br>
+    <br> <span style='color:blue;'>Dress code: Casual, however no jeans, t-shirts and no beach attire such as shorts, singlets or slippers. </span>
+    <br><br> For those who arrive early (to enjoy the scenic environment and/or play petanque or play golf), there will be shower facilities.
+    <br><br>
+    <span *ngIf="Table_User_Data[identification.id].night!=='na'">
+      We booked a room for you and check-in will be from 4:00pm on Saturday (check-out Sunday noon latest). 
+      <br><br>
+      <img   class="smallimages"  src="./assets/Begude Room1.PNG" >
+      <img   class="smallimages" src="./assets/Begude Room2.PNG" >
+     <br><br>
+    </span>
+    <br> The most important thing to do at this stage is to fill-up the form below
+    <span style='color:blue; font-size:16px;'>AS SOON AS POSSIBLE!</span>
+      <br><br>
+      We hope that you are as excited as us both, to have a lot of fun, camaraderie, and happiness during our celebration 🍾 🎉 🎊 🥂on 27-28 Aug. 
+      <br>Everything will be prepared for you, with you as our guests. 
+      <br>The only things you need to bring is joy, laughter and energy. <br>It’s Easy, right? 😄😄
+     <br><br>
+    <h2>See you very soon!</h2> <br> <h2>Monica & Xavier</h2>
+    <br><br>
+    
+    </span>
+    
+    <span *ngIf="yourLanguage==='FR'">
+      <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'>
+      Chers {{Table_User_Data[identification.id].firstname}},
+    </span>
+    <span *ngIf='Table_User_Data[identification.id].nbinvitees===1'>
+      Cher {{Table_User_Data[identification.id].firstname}},
+    </span>
+      <br> <br>
+      C'est avec un grand plaisir que nous 
+      <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'>
+        vous accueillerons
+      </span>
+      <span *ngIf='Table_User_Data[identification.id].nbinvitees===1'>
+        t'accueillerons
+      </span>
+  le 27 août pour célébrer notre mariage qui aura eu lieu à Singapour le 22 juin. 
+ <br>Il n'y aura pas de cérémonie en France mais une fête qui va nous permettre à tous de nous retrouver et de partager ensemble un merveilleux moment dans un endroit verdoyant et chaleureux. 
+ <br><br>
+  <img   class="images"   src="./assets/Begude  Manoir.JPG" >
+  <br>
+
+ <br><br>Cet événement commencera le samedi aux alentours de 17:00 avec une séance de photos qui sera suivie d'un apéritif (pas de photo pas d'apéritif 🤣 et oui, JP aura également son Ricard) puis ce sera dîner et danse jusqu'à 2h du matin environ.
+ Ne pas hesiter a préparer une liste de chansons sur lesquelles nous pourrons tous danser. 
+ <br> <br>Pour le dîner,  
+ <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'>vous devez nous indiquer dans le formulaire ci-dessous si vous voulez de la viande (bœuf) ou du poisson pour votre plat principal.</span> 
+ <span *ngIf='Table_User_Data[identification.id].nbinvitees!==2'>tu dois nous indiquer dans le formulaire ci-dessous si tu veux de la viande (bœuf) ou du poisson pour ton plat principal.</span>
+ 
+
+ <br> <br> <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'>Si vous êtes intéressés</span> 
+ <span *ngIf='Table_User_Data[identification.id].nbinvitees!==2'>Si tu es intéressé</span>
+  , il y aura la possibilité de faire un parcours de golf le samedi matin ou le dimanche matin, soit 9 ou 18 trous. On a besoin de connaître le nombre exact de joueurs afin de réserver au plus tôt. 
+ <br><br>
+ <img   class="images" src="./assets/Begude Practice.JPG" >
+ <br> <br>Samedi apres-midi il sera possible de faire un practice (golf). Cette activité est ouverte aux debutants qui seront conseillés par nos meilleurs joueurs. 
+ <br>
+ <br> Dimanche à partir de 11:00 nous aurons un brunch qui sera suivi par l'une des activités les plus importantes du week-end, la compétition de pétanque! 
+ <br> En fait, 
+ <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'>si vous êtes interessés</span> 
+ <span *ngIf='Table_User_Data[identification.id].nbinvitees!==2'>si tu es interessé</span>
+ , il sera également possible de faire une partie de pétanque le samedi après-midi. 
+ <br><br>
+ <img   class="images"  src="./assets/Begude  Boule.JPG" >
+ <br>
+ <br> Bien que l'hôtel fournisse des boules, il est préférable que les professionnels que vous êtes apportent leur propre jeu de boules. 
+ <br><br>
+ <img  style="width:80px; margin-left:20px; height:80px;" src="./assets/Begude Boule2.PNG" >
+ <br>
+ <br>S'il n'a pas les siennes JP aura une excuse toute faite pour les 'carreaux' qu'il aura manqué! 
+ <br><br> Pour s'assurer que tout est bien organisé et que nous répondionsdu mieux possible à vos besoins, remplissez le formulaire ci-dessous et n'hésitez pas à nous préciser dans la rubrique 'Vos commentaires' si vous avez des restrictions au niveau nourriture ou de faire d'autres demandes 
+ (nous ne pouvons garantir que toutes les demandes seront satisfaites car avec certaines personnes on sait à quel type de commentaires/demandes on peut s'attendre 🤣🤣🤣) 
+ <br><br> <span style='color:blue;'>Pour la soirée, tenue vestimentaire décontractée et correcte, bien sûr pas de short, sandales, jeans et t-sirt. </span>
+ <br> <br>Pour ceux qui viendront plus tôt (pour profiter du bel environnement et/ou jouer à la pétanque ou jouer au golf), il y aura la possibilité de prendre une douche et de se changer.
+ 
+ <span *ngIf="Table_User_Data[identification.id].night!=='na'">
+  <br><br>
+ Nous vous avons réservé une chambre qui sera disponible à partir de 16:00 le samedi (check-out dimance midi au plus tard). 
+
+<br><br>
+<img   class="smallimages"  src="./assets/Begude Room1.PNG" >
+<img   class="smallimages" src="./assets/Begude Room2.PNG" >
+<br>
+</span>
+
+ <br><br> Le plus important maintenant est de remplir et valider le formulaire  <span style='color:blue; font-size:16px;'>AUSSI VITE QUE POSSIBLE</span>
+    <br><br>
+    Nous espérons que 
+    <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'> vous êtes </span> 
+    <span *ngIf='Table_User_Data[identification.id].nbinvitees!==2'>tu es </span>
+    aussi impatient que nous deux, pour faire la fête en l'honneur de notre union   🍾 🎉 🎊 le week-end du 27-28Aug.
+    <br><br>
+    Tout est préparé et offert pour 
+      <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'> votre  </span> 
+      <span *ngIf='Table_User_Data[identification.id].nbinvitees!==2'>ton </span>
+    plaisir. Les seules choses que 
+    <span *ngIf='Table_User_Data[identification.id].nbinvitees===2'> vous devez  </span> 
+    <span *ngIf='Table_User_Data[identification.id].nbinvitees!==2'>tu dois </span>
+     apporter sont joie, rires et dynamisme. Facile, non? 😄😄
+    <br><br><h2>A très bientôt! <br><br> Monica et Xavier</h2>
+
+    </span>
+
+<span id='targetForm'></span>
+<br><br>
+</div>
+
+
+<div class="myText" style='color:black; font-size:14px; max-width:900px; background-color:rgb(137, 137, 206);'>
+
+  <h1>{{LanguageLabels[0]}}</h1> 
+<br><br>
+    <form  [formGroup]="myForm" >
+      <div>
+          <label class="field-name" >{{LanguageLabels[1]}} </label> 
+          <span *ngIf="Table_User_Data[identification.id].nbinvitees===2">
+              <select id="nbInvitees" type="number"  class="input_select"  (input)='ClickInvitees($event)' formControlName="nbInvitees">
+                <option value=1>1</option>
+                <option selected  value=2>2</option>
+              </select>
+         </span>
+          <span *ngIf="Table_User_Data[identification.id].nbinvitees===1">
+              <select id="nbInvitees" type="number"  class="input_select"  (input)='ClickInvitees($event)' formControlName="nbInvitees">
+                <option  selected value=1>1</option>
+                <option value=2>2</option>
+              </select>
+        </span>
+
+
+
+
+         
+      <label class="field-name">{{LanguageLabels[2]}} {{MrName}}</label> 
+      <span *ngIf="CommentStructure.dishMr==='B'">
+            <select id="dish1"  class=" input_select" formControlName="dishMr">
+              <option selected value="B">{{LanguageLabels[3]}}</option>
+              <option value="F">{{LanguageLabels[4]}}</option>
+            </select>
+        </span>
+        <span *ngIf="CommentStructure.dishMr==='F'">
+          <select id="dish1"  class=" input_select" formControlName="dishMr">
+            <option value="B">{{LanguageLabels[3]}}</option>
+            <option selected value="F">{{LanguageLabels[4]}}</option>
+          </select>
+      </span>
+
+      <span *ngIf="Table_User_Data[identification.id].nbinvitees===2">
+          <label class="field-name">{{LanguageLabels[2]}} {{MrsName}}</label>
+          <span *ngIf="CommentStructure.dishMrs==='B'">
+                <select id="dish2"  class="input_select" formControlName="dishMrs">
+                <option selected value="B">{{LanguageLabels[3]}}</option>
+                <option value="F">{{LanguageLabels[4]}}</option>
+                </select>
+          </span>
+          <span *ngIf="CommentStructure.dishMrs==='F'">
+            <select id="dish2"  class="input_select" formControlName="dishMrs">
+            <option value="B">{{LanguageLabels[3]}}</option>
+            <option selected  value="F">{{LanguageLabels[4]}}</option>
+            </select>
+      </span>
+
+      </span>
+          <span *ngIf="Table_User_Data[identification.id].night!=='na'">
+          <label class="field-name">{{LanguageLabels[5]}}  </label> 
+
+          <span *ngIf="Table_User_Data[identification.id].night==='y'">
+            <select id="night"  class="input_select "  formControlName="night">
+                <option value="na" >not appl.</option>
+                <option value="y" selected>{{LanguageLabels[6]}}</option>
+                <option value="n" >{{LanguageLabels[7]}}</option>
+              </select>  
+          </span>
+
+          <span *ngIf="Table_User_Data[identification.id].night==='n'">
+            <select id="night"  class="input_select "  formControlName="night">
+                <option value="na" >not appl.</option>
+                <option value="y" >{{LanguageLabels[6]}}</option>
+                <option value="n" selected>{{LanguageLabels[7]}}</option>
+              </select>  
+          </span>
+        </span>
+
+ 
+
+      <label class="field-name">Brunch </label>
+     
+        <span *ngIf="Table_User_Data[identification.id].brunch==='na'">
+          <select id="brunch"  class="input_select "  formControlName="brunch">
+            <option value="na" selected>not appl.</option>
+            <option value="y" >{{LanguageLabels[6]}}</option>
+            <option value="n" >{{LanguageLabels[7]}}</option>
+          </select>
+        </span>
+
+        <span *ngIf="Table_User_Data[identification.id].brunch==='y'">
+          <select id="brunch"  class="input_select "  formControlName="brunch">
+          <option value="na" >not appl.</option>
+          <option value="y" selected>{{LanguageLabels[6]}}</option>
+          <option value="n" >{{LanguageLabels[7]}}</option>
+        </select>
+        </span>
+
+        <span *ngIf="Table_User_Data[identification.id].brunch==='n'">
+          <select id="brunch"  class="input_select "  formControlName="brunch">
+          <option value="na" >not appl.</option>
+          <option value="y" >{{LanguageLabels[6]}}</option>
+          <option value="n" selected>{{LanguageLabels[7]}}</option>
+        </select>
+        </span>
+
+
+
+      <div>
+
+            <label class="field-name" >Practice {{LanguageLabels[10]}}</label>
+            <span *ngIf="CommentStructure.practiceSaturday==='y'">
+                <select id="PSatday"  class="input_select "  formControlName="practiceSaturday">
+                  <option selected value="y">{{LanguageLabels[6]}}</option>
+                  <option value="n">{{LanguageLabels[7]}}</option>
+                </select>  
+            </span>
+            <span *ngIf="CommentStructure.practiceSaturday==='n'">
+              <select id="PSatday"  class="input_select "  formControlName="practiceSaturday">
+                <option  value="y">{{LanguageLabels[6]}}</option>
+                <option selected value="n">{{LanguageLabels[7]}}</option>
+              </select>  
+          </span>
+
+          
+                <label class="field-name" >Pétanque {{LanguageLabels[10]}}</label>
+              <span *ngIf="CommentStructure.bouleSaturday==='y'"> 
+                <select id="BSatday"  class="input_select "  formControlName="bouleSaturday">
+                  <option selected value="y">{{LanguageLabels[6]}}</option>
+                  <option value="n">{{LanguageLabels[7]}}</option>
+                </select>  
+              </span>
+              <span *ngIf="CommentStructure.bouleSaturday==='n'"> 
+                <select id="BSatday"  class="input_select "  formControlName="bouleSaturday">
+                  <option value="y">{{LanguageLabels[6]}}</option>
+                  <option selected value="n">{{LanguageLabels[7]}}</option>
+                </select>  
+              </span>
+
+
+             <span *ngIf="CommentStructure.bouleSunday==='y'"> 
+                <label class="field-name" >Pétanque {{LanguageLabels[11]}}</label>
+                <select id="BSunday"  class="input_select "  formControlName="bouleSunday">
+                  <option selected value="y">{{LanguageLabels[6]}}</option>
+                  <option value="n">{{LanguageLabels[7]}}</option>
+                </select>  
+            </span>
+            <span *ngIf="CommentStructure.bouleSunday==='n'"> 
+              <label class="field-name" >Pétanque {{LanguageLabels[11]}}</label>
+              <select id="BSunday"  class="input_select "  formControlName="bouleSunday">
+                <option value="y">{{LanguageLabels[6]}}</option>
+                <option selected value="n">{{LanguageLabels[7]}}</option>
+              </select>  
+          </span>
+          </div>
+
+          <label class="field-name" style="width:90%;">{{LanguageLabels[8]}}</label>
+
+            
+          <label class="field-name" style="margin-left:40px;  max-width:280px;  ">1) {{LanguageLabels[12]}}</label> 
+          <span *ngIf="CommentStructure.golf!==1 && CommentStructure.golf!==2">
+              <select  class=" input_select" type="number" formControlName="golf" id="golf">
+                <option selected value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+              </select>
+          </span>
+          <span *ngIf="CommentStructure.golf===1">
+            <select  class=" input_select" type="number" formControlName="golf" id="golf">
+              <option  value=0>0</option>
+              <option selected value=1>1</option>
+              <option value=2>2</option>
+            </select>
+        </span>
+
+        <span *ngIf="CommentStructure.golf===2">
+          <select  class=" input_select" type="number" formControlName="golf" id="golf">
+            <option value=0>0</option>
+            <option value=1>1</option>
+            <option selected value=2>2</option>
+          </select>
+      </span>
+
+      <div>
+        <label class="field-name" style="margin-left:40px;  max-width:280px;  ">2) {{LanguageLabels[9]}}</label>
+        <span *ngIf="CommentStructure.day===''">  
+        <select id="day"  class="input_select "  formControlName="day">
+          <option selected value=""></option>
+          <option value="Sat">{{LanguageLabels[10]}}</option>
+          <option value="Sun">{{LanguageLabels[11]}}</option>
+        </select>  
+      </span>
+        <span *ngIf="CommentStructure.day==='Sat'">    
+            <select id="day"  class="input_select "  formControlName="day">
+              <option value=""></option>
+              <option selected value="Sat">{{LanguageLabels[10]}}</option>
+              <option value="Sun">{{LanguageLabels[11]}}</option>
+            </select>  
+          </span>
+          <span *ngIf="CommentStructure.day==='Sun'">    
+            <select id="day"  class="input_select "  formControlName="day">
+              <option value=""></option>
+              <option  value="Sat">{{LanguageLabels[10]}}</option>
+              <option selected value="Sun">{{LanguageLabels[11]}}</option>
+            </select>  
+          </span>
+      </div>
+          <div>
+            <label class="field-name" style="margin-left:40px;  max-width:280px;  ">3) {{LanguageLabels[13]}}</label>
+            <span *ngIf="CommentStructure.holes===0">
+                <select id="holes" type="number" class="input_select "  formControlName="golfHoles">
+                  <option selected value=0>0 </option>
+                  <option  value=9>9 {{LanguageLabels[14]}}</option>
+                  <option value=18>18 {{LanguageLabels[14]}}</option>
+                </select> 
+          </span> 
+            <span *ngIf="CommentStructure.holes===9">
+                  <select id="holes" type="number" class="input_select "  formControlName="golfHoles">
+                    <option value=0>0 </option>
+                    <option selected value=9>9 {{LanguageLabels[14]}}</option>
+                  <option value=18>18 {{LanguageLabels[14]}}</option>
+                  </select> 
+            </span> 
+            <span *ngIf="CommentStructure.holes===18">
+              <select id="holes" type="number" class="input_select "  formControlName="golfHoles">
+                <option value=0>0 </option>
+                <option  value=9>9 {{LanguageLabels[14]}}</option>
+                <option selected value=18>18 {{LanguageLabels[14]}}</option>
+              </select> 
+           </span> 
+          </div>
+
+
+
+
+          <div *ngIf="Table_User_Data[identification.id].myComment!=='' && Table_User_Data[identification.id].myComment!==undefined">
+                <label class="field-name">{{LanguageLabels[15]}}</label>
+                <input   style=" display: block; overflow-y:scroll; margin-left:20px; width:80%; height:100px;" formControlName="myComment" id="mycomment" type="text"  >
+          </div>
+          <div >
+                <label class="field-name"  style="width:90%;">{{LanguageLabels[16]}}</label>
+                <textarea   class="yourComment" formControlName="yourComment" id="yourcomment" type="text"  ></textarea>
+          </div>
+        </div>
+        <button id='but_1' class="sizeButtons" (click)="ConfirmData()"> {{LanguageLabels[17]}}</button>
+        <span *ngIf="updateRecord===1" style="color:black; font-size:14px; margin-left:20px;">{{message}}</span>
+      </form>
+      <br><br>
+</div>
+
+<div class="myText">
+  <br><br>
+    <span id='targetMenu'></span>
+
+      <h2 style="color:blue; font-weight:bold;"> {{LanguageLabels[19]}}</h2>
+      
+Amuse-bouche
+<br>***
+<br>Raviolis de homard, consommé de champignons à la citronnelle
+<br>***
+<br>Terrine de foie gras de canard, chutney de saison
+<br>***
+<br>Filet de bœuf (ou poisson), milles feuille de légumes, pomme Anna et jus au thym
+<br>***
+<br>Plateau de fromages
+<br>***
+<br>Piece montée au chocolat et piece montée mangue, passion, framboise
+
+<br><br>
+
+<h2 style="color:blue; font-weight:bold;">Brunch</h2>
+Pain, beurre, confiture Viennoiseries
+<br>Céréales
+<br>Yogourts et fromage blanc
+<br> ***
+<br>Oeufs brouillés et bacon
+<br>***
+<br>Sélection de charcuterie et de viandes froides
+<br>Poissons froids, terrine de poissons
+<br>***
+<br>Sélection de salades fraîches composées et crudités de saison ***
+<br>Plateau de fromages raffinés
+<br>***
+<br>Mignardises
+<br>***
+<br>Boissons chaudes, Jus de fruit, Eaux minérales et  🍾
+
+</div>
+
+<div class="myText">
+  <br><br>
+    <span id='targetDirection'></span>
+    <span style='font-weight:bold;'>
+      {{LanguageLabels[18]}}
+    </span>
+    <br>
+      <br>  Route de Roquefort les Pins - 06650 OPIO
+      <br><br>
+</div>
+
+
+  </div>
+
+</div> 
+
+<ng-template #processPhotos>
+  <app-GetImages  [ConfigXMV]="configServer" [identification]="identification" [WeddingPhotos]="WeddingPhotos">
+  </app-GetImages>
+</ng-template>
+
+
+<ng-template #manageInvite>
+<div>
+  <span id='targetInvitees'></span>
+  <h1 style="margin-top:2px;"><br></h1>
+  
+  <h1 style="margin-top:100px;">Manage the invitees</h1>
+
+
+
+  <h2 style="margin-top:20px; margin-left:90px;">Summary</h2>
+
+  <br> <br><span class="summary">Brunch</span>
+  <span>{{Total.brunch}}</span>
+  <br>  <br><span  class="summary">Practice Saturday</span>
+  <span>{{Total.practice}}</span>
+
+  <br> <br><span  class="summary">Petanque Saturday</span>
+  <span>{{Total.petanqueS}}</span>
+  <br>  <br><span  class="summary">Petanque Sunday</span>
+  <span>{{Total.petanqueS}}</span>
+
+  <br>  <br><span  class="summary">Golf Saturday</span>
+  <br><br><span  class="summaryB">8 holes</span>
+  <span>{{Total.golfS9}}</span>
+  <br><br><span  class="summaryB">18 holes</span>
+  <span>{{Total.golfS18}}</span>
+ 
+  <br>  <br> <br><span  class="summary">Golf Sunday</span>
+  <br>
+  <br><span  class="summaryB">8 holes</span>
+  <span>{{Total.golfD9}}</span>
+  <br><br><span  class="summaryB">18 holes</span>
+  <span>{{Total.golfD18}}</span>
+
+
+  <form  [formGroup]="myForm">
+      <span style="color:red; font-size:16px; height:30px; margin-left:30px;">{{error_message}}</span>
+      <div>
+      <label class="field-name">Firstname</label>
+      <input  class="input_field first-label" formControlName="firstname" id="firstname" type="text"  >
+      </div><div>
+      <label class="field-name">Surname</label>
+      <input  class="input_field first-label" formControlName="surname" id="surname" type="text"  >
+      </div><div>
+      <label class="field-name">User-id</label>
+      <input  class="input_field first-label" formControlName="userId" id="UserId" type="text"  >
+      </div><div>
+      <label class="field-name">Password</label>
+      <input  class="input_field first-label" formControlName="psw" id="psw" type="text"  >
+      </div><div>
+      <label class="field-name">Nb invitees</label>
+      <input  class="input_fieldTwo first-label" formControlName="nbInvitees" id="nbInvitees" type="number"  >
+
+<!---->
+
+
+      <label class="field-name">{{LanguageLabels[2]}} {{MrName}}</label> 
+      <span *ngIf="CommentStructure.dishMr==='B'">
+            <select id="dish1"  class=" input_select" formControlName="dishMr">
+              <option selected value="B">{{LanguageLabels[3]}}</option>
+              <option value="F">{{LanguageLabels[4]}}</option>
+            </select>
+        </span>
+        <span *ngIf="CommentStructure.dishMr==='F'">
+          <select id="dish1"  class=" input_select" formControlName="dishMr">
+            <option value="B">{{LanguageLabels[3]}}</option>
+            <option selected value="F">{{LanguageLabels[4]}}</option>
+          </select>
+      </span>
+
+      <span *ngIf="Table_User_Data[identification.id].nbinvitees===2">
+          <label class="field-name">{{LanguageLabels[2]}} {{MrsName}}</label>
+          <span *ngIf="CommentStructure.dishMrs==='B'">
+                <select id="dish2"  class="input_select" formControlName="dishMrs">
+                <option selected value="B">{{LanguageLabels[3]}}</option>
+                <option value="F">{{LanguageLabels[4]}}</option>
+                </select>
+          </span>
+          <span *ngIf="CommentStructure.dishMrs==='F'">
+            <select id="dish2"  class="input_select" formControlName="dishMrs">
+            <option value="B">{{LanguageLabels[3]}}</option>
+            <option selected  value="F">{{LanguageLabels[4]}}</option>
+            </select>
+      </span>
+
+      </span>
+
+      <label class="field-name">{{LanguageLabels[5]}}  </label> 
+     
+       <span *ngIf="Table_User_Data[identification.id].night==='na'">
+        <select id="night"  class="input_select "  formControlName="night">
+            <option value="na" selected>not appl.</option>
+            <option value="y" >{{LanguageLabels[6]}}</option>
+            <option value="n" >{{LanguageLabels[7]}}</option>
+          </select>  
+      </span>
+
+      <span *ngIf="Table_User_Data[identification.id].night==='y'">
+        <select id="night"  class="input_select "  formControlName="night">
+            <option value="na" >not appl.</option>
+            <option value="y" selected>{{LanguageLabels[6]}}</option>
+            <option value="n" >{{LanguageLabels[7]}}</option>
+          </select>  
+      </span>
+
+      <span *ngIf="Table_User_Data[identification.id].night==='n'">
+        <select id="night"  class="input_select "  formControlName="night">
+            <option value="na" >not appl.</option>
+            <option value="y" >{{LanguageLabels[6]}}</option>
+            <option value="n" selected>{{LanguageLabels[7]}}</option>
+          </select>  
+      </span>
+
+
+      <label class="field-name">Brunch </label>
+     
+        <span *ngIf="Table_User_Data[identification.id].brunch==='na'">
+          <select id="brunch"  class="input_select "  formControlName="brunch">
+            <option value="na" selected>not appl.</option>
+            <option value="y" >{{LanguageLabels[6]}}</option>
+            <option value="n" >{{LanguageLabels[7]}}</option>
+          </select>
+        </span>
+
+        <span *ngIf="Table_User_Data[identification.id].brunch==='y'">
+          <select id="brunch"  class="input_select "  formControlName="brunch">
+          <option value="na" >not appl.</option>
+          <option value="y" selected>{{LanguageLabels[6]}}</option>
+          <option value="n" >{{LanguageLabels[7]}}</option>
+        </select>
+        </span>
+
+        <span *ngIf="Table_User_Data[identification.id].brunch==='n'">
+          <select id="brunch"  class="input_select "  formControlName="brunch">
+          <option value="na" >not appl.</option>
+          <option value="y" >{{LanguageLabels[6]}}</option>
+          <option value="n" selected>{{LanguageLabels[7]}}</option>
+        </select>
+        </span>
+
+      <div>
+
+            <label class="field-name" >Practice {{LanguageLabels[10]}}</label>
+            <span *ngIf="CommentStructure.practiceSaturday==='y'">
+                <select id="PSatday"  class="input_select "  formControlName="practiceSaturday">
+                  <option selected value="y">{{LanguageLabels[6]}}</option>
+                  <option value="n">{{LanguageLabels[7]}}</option>
+                </select>  
+            </span>
+            <span *ngIf="CommentStructure.practiceSaturday==='n'">
+              <select id="PSatday"  class="input_select "  formControlName="practiceSaturday">
+                <option  value="y">{{LanguageLabels[6]}}</option>
+                <option selected value="n">{{LanguageLabels[7]}}</option>
+              </select>  
+          </span>
+
+          
+                <label class="field-name" >Pétanque {{LanguageLabels[10]}}</label>
+              <span *ngIf="CommentStructure.bouleSaturday==='y'"> 
+                <select id="BSatday"  class="input_select "  formControlName="bouleSaturday">
+                  <option selected value="y">{{LanguageLabels[6]}}</option>
+                  <option value="n">{{LanguageLabels[7]}}</option>
+                </select>  
+              </span>
+              <span *ngIf="CommentStructure.bouleSaturday==='n'"> 
+                <select id="BSatday"  class="input_select "  formControlName="bouleSaturday">
+                  <option value="y">{{LanguageLabels[6]}}</option>
+                  <option selected value="n">{{LanguageLabels[7]}}</option>
+                </select>  
+              </span>
+
+
+            <label class="field-name" >Pétanque {{LanguageLabels[11]}}</label>
+            <span *ngIf="CommentStructure.bouleSunday==='y'"> 
+                <select id="BSunday"  class="input_select "  formControlName="bouleSunday">
+                  <option selected value="y">{{LanguageLabels[6]}}</option>
+                  <option value="n">{{LanguageLabels[7]}}</option>
+                </select>  
+            </span>
+            <span *ngIf="CommentStructure.bouleSunday==='n'"> 
+              <select id="BSunday"  class="input_select "  formControlName="bouleSunday">
+                <option value="y">{{LanguageLabels[6]}}</option>
+                <option selected value="n">{{LanguageLabels[7]}}</option>
+              </select>  
+            </span>
+
+            <label class="field-name" style="width:90%;">{{LanguageLabels[8]}}</label>
+
+            <label class="field-name" style="margin-left:40px;  max-width:280px;  ">1) {{LanguageLabels[12]}}</label>
+            <span *ngIf="CommentStructure.golf!==1 && CommentStructure.golf!==2">
+                <select  class=" input_select" type="number" formControlName="golf" id="golf">
+                  <option selected value=0>0</option>
+                  <option value=1>1</option>
+                  <option value=2>2</option>
+                </select>
+            </span>
+            <span *ngIf="CommentStructure.golf===1">
+              <select  class=" input_select" type="number" formControlName="golf" id="golf">
+                <option  value=0>0</option>
+                <option selected value=1>1</option>
+                <option value=2>2</option>
+              </select>
+          </span>
+
+          <span *ngIf="CommentStructure.golf===2">
+            <select  class=" input_select" type="number" formControlName="golf" id="golf">
+              <option value=0>0</option>
+              <option value=1>1</option>
+              <option selected value=2>2</option>
+            </select>
+        </span>
+
+        <div>
+          <label class="field-name" style="margin-left:40px;  max-width:280px;  ">2) {{LanguageLabels[9]}}</label>
+          <span *ngIf="CommentStructure.day===''"> 
+              <select id="day"  class="input_select "  formControlName="day">
+                <option selected value=""></option>
+                <option value="Sat">{{LanguageLabels[10]}}</option>
+                <option value="Sun">{{LanguageLabels[11]}}</option>
+              </select>  
+          </span>
+          <span *ngIf="CommentStructure.day==='Sat'">    
+              <select id="day"  class="input_select "  formControlName="day">
+                <option value=""></option>
+                <option selected value="Sat">{{LanguageLabels[10]}}</option>
+                <option value="Sun">{{LanguageLabels[11]}}</option>
+              </select>  
+            </span>
+            <span *ngIf="CommentStructure.day==='Sun'">    
+              <select id="day"  class="input_select "  formControlName="day">
+                <option value=""></option>
+                <option  value="Sat">{{LanguageLabels[10]}}</option>
+                <option selected value="Sun">{{LanguageLabels[11]}}</option>
+              </select>  
+            </span>
+        </div>
+            <div>
+              <label class="field-name" style="margin-left:40px;  max-width:280px;  ">3) {{LanguageLabels[13]}}</label>
+              <span *ngIf="CommentStructure.holes===0">
+              <select id="holes" type="number" class="input_select "  formControlName="golfHoles">
+                <option selected value=0>0 </option>
+                <option  value=9>9 {{LanguageLabels[14]}}</option>
+                <option value=18>18 {{LanguageLabels[14]}}</option>
+              </select> 
+              </span> 
+              <span *ngIf="CommentStructure.holes===9">
+                    <select id="holes" type="number" class="input_select "  formControlName="golfHoles">
+                      <option value=0>0 </option>
+                      <option selected value=9>9 {{LanguageLabels[14]}}</option>
+                    <option value=18>18 {{LanguageLabels[14]}}</option>
+                    </select> 
+              </span> 
+              <span *ngIf="CommentStructure.holes===18">
+                <select id="holes" type="number" class="input_select "  formControlName="golfHoles">
+                  <option value=0>0 </option>
+                  <option  value=9>9 {{LanguageLabels[14]}}</option>
+                  <option selected value=18>18 {{LanguageLabels[14]}}</option>
+                </select> 
+             </span> 
+            </div>
+      </div>
+
+
+
+      <label class="field-name">Read record)</label>
+      <input  class="input_fieldTwo first-label" formControlName="readRecord" id="record" type="number"  >
+      <button id='but_0' class="sizeButtons" (click)="ReadRecord()">Read</button>
+      </div>
+      
+      <div >
+        <label class="field-name">{{LanguageLabels[15]}}</label>
+        <textarea style=" display: block; margin-left:20px; overflow-y:scroll;  width:80%;height:100px;" formControlName="myComment" id="text" type="text"  ></textarea>
+      </div>
+      <div >
+        <label class="field-name"  style="width:90%;">{{LanguageLabels[16]}}</label>
+        <textarea   style=" display: block; overflow-y:scroll; margin-left:20px; width:80%; height:100px;" formControlName="yourComment" id="text" type="text"  ></textarea>
+       </div>
+       <div>
+        <label class="field-name">Read access </label>
+        <input  class="input_fieldTwo first-label" formControlName="readAccess" id="readAccess" type="number"  >
+        </div><div>
+        <label class="field-name">Write access</label>
+        <input  class="input_fieldTwo first-label" formControlName="writeAccess" id="writeAccess" type="number"  >
+      </div>
+      
+      <div>
+      <button id='but_1' class="sizeButtons" (click)="ValidateRecord()">Validate</button>
+      <button id='but_2' class="sizeButtons" (click)="clear()">Clear</button>
+      <button id='but_3' class="sizeButtons" (click)="updateAllRecords()">UpdateAll</button>
+      <button id='but_4' class="sizeButtons" (click)="DeleteRecords()">Delete</button>
+      <button id='but_5' class="sizeButtons" (click)="ResetAccess()">Reset Access</button>
+      </div>
+  </form>
+  <br><br>
+  <h2 style="margin-top:30px;"> List of participants:<br></h2>
+  <div>
+  <label class="field-colTwo">Rec</label> 
+  <label class="field-col">Firstname</label> 
+  <label class="field-col">Surname</label>
+  <label class="field-col">User-id</label>
+  <label class="field-colTwo">Nb </label>
+  <label class="field-colTwo">Night</label>
+  <label class="field-colTwo">Brunch</label>
+  <label class="field-col">Password</label>
+  <label class="field-col">My comment</label>
+  <label class="field-col">Your comment</label>
+  </div>
+
+  <div *ngFor="let theList of Table_User_Data; let i=index" style="margin-left:20px; ">
+    <div  *ngIf='i!==0' style="max-width:1000px; display:table; background-color:green; border:solid 1px black; ">
+    <span class="field-rowTwo"> {{i}}</span> 
+    <span class="field-row">{{theList.firstname}} </span> 
+    <span class="field-row"> {{theList.surname}}</span>  
+    <span class="field-row">{{theList.UserId}}</span> 
+    <span class="field-rowTwo">{{theList.nbinvitees}}</span> 
+    <span class="field-rowTwo"> {{theList.night}}</span> 
+    <span class="field-rowTwo"> {{theList.brunch}} </span> 
+    <span class="field-row">{{Table_DecryptPSW[i]}}</span> 
+    <span *ngIf="theList.myComment!=='' && theList.myComment!==undefined" class="field-rowTwo">x </span> 
+    <button id='but_4'  (click)="AccessRecord(i)">Other</button>
+    <br>
+  </div>
+  </div>
+
+  <h2 style="margin-left:20px; margin-top:30px;"><br> Total number of invitees: {{total_invitee}}</h2>
+  <h2 style="margin-left:20px;  margin-top:30px;"><br> Total number of rooms: {{total_rooms}}</h2>
+</div>
+</ng-template>
+
+</body>

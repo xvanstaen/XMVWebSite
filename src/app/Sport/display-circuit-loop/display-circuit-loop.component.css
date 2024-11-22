@@ -1,0 +1,112 @@
+
+@import '../sport.component.css';
+
+body{
+    width:1000px;
+}
+
+
+.quest{
+    display:inline-block;
+    color:blue;
+    font-size:14px;
+    width:100%;
+    margin-left:20px;
+    border: solid 0px red;
+    word-break: break-all;
+}
+
+.aLabel{
+    display:inline-block;
+    color:blue;
+    font-size:14px;
+}
+
+.aLabelW{
+    width:300px;
+}
+
+.backOdd{
+    background-color: cyan;
+}
+
+
+.backEven{
+    background-color: lightGrey;
+}
+
+.backOdd:hover{
+    background-color: lightgreen;
+}
+
+
+.backEven:hover{
+    background-color: lightgreen;
+}
+
+.backSubTot{
+    background-color: rgb(163, 161, 161);
+}
+
+.actionLoop{
+    font-size:14px;
+}
+
+.actionLoop:hover{
+    background-color: lightgreen;
+}
+
+.myScrollBar{
+    scrollbar-color:orange rgb(155, 247, 247);
+    scrollbar-width: thin;
+}
+
+.delLoop{
+    background-color: rgb(153, 210, 229);
+    color: rgb(61, 185, 226);
+    
+}
+
+.okTotalLoop{
+    background-color:blue; color:white;  border:solid 1px white;
+}
+
+.exclude{
+    background-color: rgb(235, 70, 70);
+    color:white;
+}
+
+.mgtExcl{
+    background-color: rgb(153, 210, 229);
+    color: rgb(61, 185, 226);
+    
+}
+
+.exclude:hover{
+    background-color:cyan;
+}
+.mgtExclhover{
+    background-color:cyan;
+}
+
+
+.Straight-content{
+    position: absolute;
+    z-index: 1;
+    width:540px;
+    border: 2px solid green;
+    overflow: hidden;
+    background-color: lightgrey;
+  }
+
+.boxContent{
+
+    width:540px;
+    border: 2px solid green;
+    overflow: hidden;
+    background-color: lightgrey;
+  }
+
+.searchButtons{
+    margin-top:8px; width:80px; height:28px;
+}

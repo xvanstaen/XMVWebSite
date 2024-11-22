@@ -1,0 +1,167 @@
+
+/* position of the canvas */
+.position{
+    position:relative;
+    display:block;
+    border-radius: 100%;
+    /*
+    border:solid 2px green;
+    */
+}
+
+.position-parameters{
+    border: solid 0px rgb(25, 33, 193);
+    }
+
+.position-moveparameters{  
+    border: solid 0px rgb(0, 255, 34);
+}
+
+.block_one_bis{
+    position:absolute;
+    width:170px;
+    height:350px;
+    border: solid 2px rgb(69, 21, 179);
+    margin-left:130px;
+    margin-top:-52px;
+    display:block;
+
+}
+
+
+
+.position-field{
+        margin-top:-10px;
+        width:70px;
+        height:20px;
+        border: solid 0px blue;
+    }
+.input-field{
+    width:60px;
+    height:20px;
+    border: solid 0px blue;
+    margin-top:-20px;
+}
+
+
+
+
+/*****
+.block_one{
+    position:absolute;
+    width:200px;
+    height:500px;
+    border: solid 0px rgb(69, 21, 179);
+    margin-left:480px;
+    margin-top:-500px;
+
+}
+.block_move{
+    width:200px;
+    height:500px;
+    border: solid 0px red;
+    margin-left:750px;
+    margin-top:-500px;
+}
+.position-radio{
+    margin-left:80px; 
+    margin-top:110px;
+  
+    }
+****/
+/* ============ MENU ==========*/
+
+.dropdown {  
+    display: inline-block;  
+    position: absolute;
+    margin-left:0px;
+    margin-top:69px; 
+}  
+
+.param_one_down {  
+    display: block;  
+    position: absolute;
+    margin-left:475px;
+    margin-top:120px; 
+}  
+
+.param_two_down {  
+    display: inline-block;  
+    position: absolute;
+    margin-left:10px;
+    margin-top:210px; 
+   
+}  
+
+.dropmenu {  
+    background-color: rgb(170, 170, 164);  
+    color: black;  
+
+    width:120px;
+    height:53px;
+
+    display:block;
+
+    margin-left:10px;
+    border:solid 0px red;
+}  
+
+.dropbtn {  
+    background-color: rgb(170, 170, 164);  
+    color: black;  
+ 
+    font-size: 14px;  
+    margin-top:40px;
+
+    border:solid 0px blue;
+    height:53px; 
+    width:120px;
+
+    display:block;
+}  
+
+.dropdown-content {  
+    /*
+    position: absolute;  
+    */
+    background-color: lightgrey;  
+    width:300px;
+    display: none;  
+    z-index: 1;  
+
+}  
+.dropdown-content span {  
+    color: black;  
+    padding: 10px 15px;  
+    text-decoration: none;  
+    display: block;  
+    height:35px;
+}  
+.dropdown-content span:hover {  
+    background-color: grey;  
+}  
+.dropdown:hover .dropdown-content {  
+    display: block;  
+    margin-left:10px;
+
+}  
+.dropdown:hover .dropbtn {  
+    background-color: grey;  
+}  
+
+.param_one_down:hover .dropdown-content {  
+    display: block;  
+
+}  
+.param_one_down:hover .dropbtn {  
+    background-color: grey;  
+}  
+
+
+.param_two_down:hover .dropdown-content {  
+    display: block;  
+
+}  
+.param_two_down:hover .dropbtn {  
+    background-color: rgb(192, 186, 186);  
+}  

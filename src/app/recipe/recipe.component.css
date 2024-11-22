@@ -1,0 +1,251 @@
+@import "../Health/FitnessHealthGeneral.css";
+
+
+.listObj:hover{
+  color:white;
+  background-color:rgb(113, 113, 247);
+  font-size:14px;
+  
+}
+
+.fileInput{
+  margin-left:20px; width:150px; background-color:lightgreen;
+}
+
+.fileInput:hover{
+   background-color:cyan;
+}
+
+.fileLabel{
+  width:90px; display:inline-block; color:blue; padding-left:15px;
+}
+
+.theType{
+  margin-left:15px; display:inline-block; color:blue; font-weight:bold; 
+  margin-top:-20px; height:20px; width:180px; font-size:14px; background-color:lightgrey;
+}
+
+.listObjSel{
+  color:white;
+  background-color:rgb(139, 139, 245);
+}
+
+.even1{
+  background-color:rgb(160, 250, 250);
+}
+
+.even2{
+  background-color:rgb(143, 229, 229);
+}
+
+.odd1{
+  background-color:rgb(131, 130, 130);
+}
+.odd2{
+  background-color:rgb(98, 97, 97);
+}
+
+.listObj{
+  width:48%; display:inline-block; height:25px;
+}
+
+.eye {
+  width:50%; padding-left:28px;  vertical-align:text-bottom;
+}
+.eye:hover {
+  color:green;
+}
+.eyeNutrition {
+  width:20%; padding-left:28px;  vertical-align:text-bottom;
+}
+.eyeNutrition:hover {
+  color:green;
+}
+
+.menu{
+  padding-left:10px; vertical-align:text-bottom; color: blue;  font-size:26px;
+}
+
+.menuBox{margin-left:15px; padding-left:6px; width:44px; height:28px; background:cyan; display:inline-block;}
+
+.menuBox:hover {
+  color:darkgreen;
+  font-weight:bold;
+  background:lightgrey;
+}
+.titleName{
+    width:100%; color: white; display:inline-block; border: solid 1px blue;  background-color: cyan;
+    font-size:18px; height:40px; padding-top:5px; 
+}
+
+
+.titleHeader{
+    color:blue; display:inline-block;  border: solid 1px blue; text-align: center; 
+    background-color: lightgrey; height:35px; padding-top:6px;
+}
+
+.theRow{
+    color:blue; display:inline-block; border:blue solid 1px;
+    height:29px; 
+    background-color: lightgrey;
+}
+
+.listRecipes{
+    margin-left:20px; width:120px; background-color: cyan;
+    display:inline-block;
+}
+.listRecipes:hover{
+     background-color: blue;
+     color:white;
+}
+
+.circle{
+    border-radius: 50% 50%;
+    color:blue;
+    width:22px;
+    height:22px;
+    border: solid 1px rgb(4, 4, 124);
+    margin-left:15px;
+    margin-top:2px;
+    font-size:14px;
+    font-weight:bold;
+    background-color: lightgreen;
+    text-align: center;
+    padding-top:-5px;
+    display:inline-block;
+  }
+  
+  .circle:hover{
+    color:red;
+    background-color:cyan;
+    width:22px;
+    height:22px;
+    border: solid 2px rgb(4, 4, 124);
+  }
+
+  .input{
+    height:25px;
+    padding:2px;
+    
+    font-size:14px;
+    background-color: lightgrey;
+  }
+
+  .materiel{
+    height:25px;
+    padding:2px;
+    color:blue;
+    font-size:18px;
+    background-color: lightgrey;
+    text-align: center;
+    padding-top:25px;
+    width:15%; 
+    display:inline-block; 
+    height:80px; 
+    overflow:hidden;
+  }
+
+  .input:hover{
+    background-color: cyan;
+    color:blue;
+  }
+
+  .nutritionName{
+    width:76%; padding:5px; margin-left:2%; display:inline-block;
+  }
+
+  .nutritionNb{
+    width:18%; padding:5px; display:inline-block;
+  }
+
+  .nutritionTotal{
+    margin-left:5px; width:95%; padding:5px; color:white; background-color: blue;
+  }
+
+.typeRecipeSmallBox{
+  overflow:hidden;
+  max-height:115px;
+  height:115px;
+  display:inline-block;
+  width:98%;
+}
+
+.theBox{
+  display:inline-block;
+  border:green solid 1px;
+  width:98%;
+  max-height:115px;
+  margin-left:5px;
+}
+
+.typeRecipeLargeBox{
+  overflow-y:scroll;
+  overflow-x:hidden;
+  max-height:115px;
+  height:115px;
+  display:inline-block;
+  width:98%;
+}
+
+  .recipeStraight-options{
+    width:120px;
+    font-size:12px;
+    height:40px;
+
+    color:black;
+
+    padding:5px;
+    border:0px; 
+    display:block;
+    float:left;
+  }
+  .recipeStraight-options:hover{
+    color:white;
+    background-color:blue;
+  }
+  .changeAllItems{
+    width:100%; color:blue; font-size:16px; margin-left:20px; margin-top:5px;
+  }
+
+  .changeAllCurrentValue{
+    background-color:cyan; width:40px; 
+  }
+
+  .changeAllNewValue{
+    
+    background-color:cyan; width:40px; height:25px;
+  }
+
+  .changeAllNewValue:hover{
+    color:white; background-color:blue;
+  }
+
+  .changeNamelNew{
+    
+    background-color:cyan; width:200px; height:25px;
+  }
+
+  .changeNameNew:hover{
+    color:white; background-color:blue;
+  }
+
+.flag{
+  display:inline-block;
+  width:35px;
+  height:35px;
+  margin-left:20px;
+ 
+}
+.flag:hover{
+  background-color:rgb(75, 194, 234);
+}
+
+.flagone:hover{
+  background-color:cyan;
+}
+
+.flagtwo:hover{
+  background-color:cyan;
+}
+
+

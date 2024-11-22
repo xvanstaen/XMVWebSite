@@ -1,0 +1,227 @@
+
+<div style="width:500px; margin-left:15px; " >
+    <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="bucketName"  [NbRefresh_Bucket]="NbRefresh_Bucket"
+          [tabMetaPerso]="tabMetaPerso" (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)">
+    </app-ListBucketContent>
+</div>
+
+<div class="error" *ngIf="errorMsg!==''">
+    <div class="skipLine"></div>
+    {{errorMsg}}
+    <div class="skipLine"></div>
+</div>
+
+<!-- isPerfRetrieved===true means a component wants to retrieve the perf file only -->
+<div *ngIf="isPerfRetrieved===false && isFileProcessed===true && perf.length>0">
+    
+    <div *ngIf="SelectedBucketInfo.name!==''" style="margin-left:40px; width:380px; display:inline-block; background-color:cyan; border:blue 1px solid;">
+        <span style="color:black; font-size:18px; font-weight: bolder; text-align:center; display:inline-block; width:100%;">Selected file </span>
+            <span style="color:green; font-size:14px; font-weight: bolder; text-align: center; display:inline-block; width:100%;">
+                {{this.SelectedBucketInfo.name}}
+            </span>
+            <div class="skipLine"></div>
+    </div>
+    <form [formGroup]="formOptions" >
+
+        <div style="margin-left:40px; width:380px; display:block; height:140px; border:solid 2px blue;">
+            <div style="margin-left:80px; color:blue; display:block; font-size: 16px; height:35px; ">Display data for every</div>
+
+
+            <input type="text"   class="inputText blockFloat" formControlName="seconds" value="seconds" >
+            <label   class="theLabel blockFloat" >seconds</label>
+                
+            <input type="text"   class="inputText blockFloat" formControlName="meters" value="meters" >
+            <label class="theLabel blockFloat">meters</label>
+
+            <button *ngIf="isFileProcessed===true && perf.length>0" id='selOptions' class="sizeButtons" style="margin-top:10px; margin-left:100px; " (click)="checkOptions()"> Submit</button>
+                
+            
+        </div>
+    </form>
+    <form [formGroup]="formOptions" >
+        <div class="skipLine"></div>
+        <div style="margin-left:40px; width:380px; display:inline-block; border:solid 2px blue;">
+            <div class="skipLine"></div>
+            <label class="theLabel" style="width:35%; display:inline-block;">Sport</label>
+            <input type="text"   class="inputText" style="width:50%; display:inline-block;" formControlName="sport" value="sport" >
+            <label class="theLabel" style="width:35%; display:inline-block;">Date</label>
+            <input type="text"   class="inputText" style="width:50%; display:inline-block;" formControlName="theDate" value="theDate"  placeholder="dd/mm/yyyy">
+            <div class="skipLine"></div>
+        </div>
+    </form>
+   
+    <div *ngIf="isManagePointOfRef===false">
+        <div class="skipLine"></div>
+        <div style="width:300px; display:inline-block; height:30px; padding-top:5px; padding-left:15px; margin-left:40px; background-color: cyan;">Manage Point Of Reference  </div>
+        <button  class="sizeButtons" style="width:80px;" (click)="actionPointOfRef('managePoRef')">Submit</button>
+        <div class="skipLine"></div>
+    </div>
+    <div *ngIf="isManagePointOfRef===true">
+        <div style="width:300px; display:inline-block; height:30px; padding-top:5px; padding-left:15px; margin-left:40px; background-color: cyan;">Manage Point Of Reference </div>
+        <button  class="sizeButtons" style="width:80px;" (click)="actionPointOfRef('cancelPoRef')">Cancel display</button>
+        <div class="skipLine"></div>
+        <app-manage-point-of-ref [configServer]="configServer" [identification]="identification">
+        </app-manage-point-of-ref>
+    </div>
+    <div id="topTable" class="skipLine"></div>
+    <div *ngIf="isPerfProcessCompleted===true">
+
+        <table style="margin-left:40px;">
+            <thead >
+                <tr>
+                    
+                    <th class="tabH"  >TIME (sec) </th>
+                    <th class="tabH"  >DISTANCE (meter) </th>
+                    <th class="tabH">SPEED (km/h)</th>
+                    <th style="width:95px;  background-color: white;border:solid 0px blue;">&nbsp;</th>
+                    <th class="tabH"  >TIME (sec) </th>
+                    <th class="tabH"  >TIME (hh:mm:ss) </th>
+                    <th class="tabH"  >DISTANCE (meter) </th>
+                    <th class="tabH" >SPEED (km/h)</th>
+                </tr>
+            </thead>
+
+            <tbody >
+                <tr *ngFor="let tab of tabSecond; let i=index" >
+                    <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.interval}} </td>
+                    <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
+                    <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
+                    <td style="background-color: white;">&nbsp;</td>
+                    <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.cumulInterval}} </td>
+                    <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulTime}}</td>
+                    <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulDist * 1000 | number:'1.0-0'}}</td>
+                    <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulSpeed  | number:'1.1-2'}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="skipLine"></div>
+
+        <table style="margin-left:40px;">
+            <thead>
+                <tr>
+                    <th class="tabH"  >DISTANCE (meter) </th>
+                    <th class="tabH"  >TIME (sec) </th>
+                    <th class="tabH"  >TIME (hh:mm:ss) </th>
+                    <th class="tabH">SPEED (km/h)</th>
+                    <th style="width:20px; background-color: white;border:solid 0px blue;">&nbsp;</th>
+                    <th class="tabH"  >DISTANCE (meter) </th>
+                    <th class="tabH"  >TIME (sec) </th>
+                    <th class="tabH"  >TIME (hh:mm:ss) </th>
+                    <th class="tabH" >SPEED (km/h)</th>
+                </tr>
+            </thead>
+        </table>
+        <div style="margin-left:40px; height:210px; overflow-y:scroll; width:670px;">
+        <table >    
+            <tbody >
+                
+                    <tr *ngFor="let tab of tabMeter; let i=index" >
+                    
+                        <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
+                        <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.time}} </td>
+                        <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.strTime}}</td>
+                        <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
+                        <td style="width:20px; background-color: white;">&nbsp;</td>
+                        <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulDist * 1000 | number:'1.0-0'}}</td>
+                        <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.cumulTime}} </td>
+                        <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulStrTime}}</td>
+                        <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulSpeed  | number:'1.1-2'}}</td>
+
+                    </tr>
+                
+            </tbody>
+        </table>
+        </div>
+
+
+        <div class="skipLine"></div>
+        <div style="margin-left:100px; color:blue; font-size:18px;">CONTENT OF FILE {{this.SelectedBucketInfo.name}}</div>
+
+        <div style="margin-left:40px; width:300px;">
+            <div class="skipLine"></div>
+            <div style="height:30px;  width:100%; display:inline-block; border:solid 1px blue; background-color: cyan;">
+                Altitude at departing point {{perf[0].alt}} meters
+            </div>
+            <div style="height:30px;  width:100%; display:inline-block; border:solid 1px blue; background-color: cyan;">
+                    Lowest altitude {{alt.lowest}} meters at km {{alt.lDist | number:'1.1-5'}}
+            </div>
+            <div style="height:30px; width:100%; display:inline-block; border:solid 1px blue; background-color: cyan;">
+                Highest altitude {{alt.highest}} at km {{alt.hDist | number:'1.1-5'}}
+            </div>
+            <div class="skipLine"></div>
+            <div style="height:30px; width:100%; display:inline-block; border:solid 1px blue; background-color: rgb(53, 251, 251);">
+                Lowest heart beat {{heart.lowest}} at km {{heart.lDist | number:'1.1-3'}}
+            </div>
+            <div style="height:30px; width:100%; display:inline-block; border:solid 1px blue; background-color: rgb(53, 251, 251);">
+                Highest heart beat {{heart.highest}} at km {{heart.hDist | number:'1.1-3'}}
+            </div>
+            <div class="skipLine"></div>
+            <div style="height:30px; width:100%; display:inline-block; border:solid 1px blue; background-color: cyan;">
+                Highest speed {{speed.highest}} at km {{speed.dist | number:'1.1-3'}}
+            </div>
+            <div class="skipLine"></div>
+        
+            <table >
+                <thead>
+                    <tr>
+                        <th class="tabH"  >TIME (sec) </th>
+                        <th class="tabH"  >DISTANCE (meter) </th>
+                        <th class="tabH"  >SPEED (km/h)</th>
+                        <th class="tabH"  >HEART </th>
+                        <th class="tabH"  >ALTITUDE </th>
+                        <th class="tabH"  >LATITUDE </th>
+                        <th class="tabH"  >LONGITUDE</th>
+                        <th class="tabH"  >SLOPE</th>
+                    </tr>
+                </thead>
+            </table>
+            <div style="height:210px; overflow-y:scroll; width:670px;">
+            <table >    
+                <tbody >
+                        <tr *ngFor="let tab of perf; let i=index" >
+                        
+                            <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.time}} </td>
+                            <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
+                            <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
+                            <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.heart | number:'1.0-0'}}</td>
+                            <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.alt | number:'1.1-4'}} </td>
+                            <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lat | number:'1.1-7'}}</td>
+                            <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lon  | number:'1.1-7'}}</td>
+                            <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.slope  | number:'1.1-5'}}</td>
+
+                        </tr>
+                    
+                </tbody>
+            </table>
+            </div>
+        </div>
+        <div class="skipLine"></div>
+        <div class="skipLine"></div>
+        <div *ngIf="isConfirmSave===false" style="margin-left:40px; width:320px; display:inline-block; border:solid 2px blue; height:80px;  background-color: cyan;"> 
+            <div style="width:95%; display:inline-block; padding-top:5px; height:30px; padding-left:5px; margin-left:5px;">Do you want to save the file in a JSON format </div>
+            <button  class="sizeButtons" style="width:80px; margin-left:110px; height:30px;" (click)="confirmSave('confirmSave')">Confirm</button>
+        </div>
+        <div *ngIf="isConfirmSave===true"> 
+            <div [formGroup]="formOptions" style="margin-left:40px; width:280px; display:inline-block; border:solid 2px blue;  height:120px; background-color: cyan;">
+                <div style="width:90%; display:inline-block; height:30px; padding-top:5px;  margin-left:25px;">Save the file under the name : </div>
+
+                    <input type="text"  class="inputText" style="width:95%; padding-left:5px; margin-left:5px; height:30px;" formControlName="fileName" value="fileName" >
+                
+
+                <div class="skipLine"></div>
+                <button  class="sizeButtons" style="width:80px; margin-left:50px;" (click)="saveFile()">Submit</button>
+                <button  class="sizeButtons" style="width:80px; margin-left:10px;" (click)="cancelFile()">Cancel</button>
+            
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="skipLine"></div>
+    <div  class="skipLine"></div>
+    <div class="skipLine"></div>
+    <div id="bottomPage"></div>
+    <div class="skipLine"></div>
+    <div class="skipLine"></div>
+</div>

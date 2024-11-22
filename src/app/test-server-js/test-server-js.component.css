@@ -1,0 +1,160 @@
+
+@import "../app.component.css";
+
+h3{
+width:100%; display:inline-block; font-size:15px; font-weight: bolder; color:blue;
+text-align: center;
+}
+
+.mainBlock{
+  margin-left:20px; width:450px; max-width:650px; max-height:100px; background-color:skyblue; 
+  display:inline-block;  border:solid 2px green;
+}
+
+.mainBlockOverride{
+  width:800px;
+}
+
+.StraightDropDownOverride{
+  margin-top:30px;
+  width:350px;
+  height: 109px;
+  margin-left:60px;
+  background-color:lightgreen;
+}
+
+.sizeButtonsOverride{
+  width:100px; height:50px;
+  font-size:14px; font-weight: bolder;
+}
+
+h2{
+  text-align: center; width:100%; display:inline-block;
+  font-size:18px; height:20px; color:blue;
+}
+
+.inputA{
+  width:28px; display:inline-block; background-color: green;
+  text-align: center;
+}
+
+.inputA:hover{
+  background-color: cyan;
+}
+
+.spanAction{
+  width:100px; display:inline-block;
+}
+
+
+.theMetadata{
+    width:60%; color:blue; font-size:14px; display:inline-block; 
+}
+
+.theLine{
+    width:100%; color:blue; font-size:12px; display:inline-block;  margin-top:5px;
+}
+
+.configInput{
+  width:120px; color:blue; font-size:14px; display:inline-block; background-color: lightgrey;
+  padding-left:8px;
+}
+
+.configInput:hover {
+  background-color: cyan;
+}
+
+.configInputShort{
+  width:60px; color:blue; font-size:14px; display:inline-block; background-color: lightgrey;
+  padding-left:8px;
+}
+
+.configInputShort:hover {
+  background-color: cyan;
+}
+
+.configInputLong{
+  width:250px; color:blue; font-size:14px; display:inline-block; background-color: lightgrey;
+  padding-left:8px;
+}
+
+.configInputLong:hover {
+  background-color: cyan;
+}
+
+.textCenter{
+  text-align: center;
+}
+
+.theList{
+   width:45%; 
+
+  font-size:16px; height:25px;  padding-top:2px; width:100%; display:inline-block; padding-left:10px;
+}
+
+.theList:hover{
+  background-color: lightgreen;
+}
+
+.response{
+    display:inline-block; width:80%; height:10px; color:blue; margin-left:20px; 
+}
+
+.blockAction{
+  margin-top:4px; text-align: center; font-size:20px; 
+  font-style: italic; width:450px; display:inline-block; margin-left:10px;
+}
+
+.blockScroll{
+  width:450px; display:block; border: solid 2px blue; 
+  overflow-y:scroll; max-height:200px;
+}
+
+.selTitle{
+  background-color: rgb(241, 109, 109);
+  width:200px; margin-left:15px;
+}
+
+.selTitle:hover{
+  background-color: rgb(243, 84, 84);
+}
+
+.blockMgt{
+  width:580px; display:block; background-color: lightskyblue;
+}
+
+.subBlock{
+  width:100%; display:inline-block;
+  margin-top:3px;
+}
+
+
+.oddBis{
+  background-color: rgb(47, 226, 226);
+}
+
+.evenBis{
+  background-color: cyan;
+}
+
+.oddBis:hover{
+background-color: lightgreen;
+}
+
+.evenBis:hover{
+background-color: lightgreen;
+}
+
+/*** ====================================== ***/
+/*** ============== @media 850 ================ ***/
+/*** ====================================== ***/
+@media only screen and (max-width: 800px) {
+  .mainBlock{
+    width:450px; max-width:450px;
+  }
+
+  .mainBlockOverride{
+    width:450px;
+  }
+
+}

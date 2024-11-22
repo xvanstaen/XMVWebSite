@@ -1,0 +1,544 @@
+
+@import "../FitnessHealthGeneral.css";
+div{
+  --fieldHeight:26px;
+  --newTextWidth:130px;
+  --newSeanWidth:35px;
+  --boxActionWidth:36px;
+  --boxActionTitleWidth:38px;
+  --dateWidth:100px;
+  --calendarWidth:30px;
+  --circleWidth:22px;
+  --seanceResultWidth:436px;
+}
+.theDiv{
+  /*
+  background-color:lightyellow;
+  */
+  height:30px;
+  display:block;
+  width:95%;
+  margin-top:0px;
+  float:left;
+  border:solid rgb(2, 2, 13) 0px;
+  margin-left:5px;
+}
+
+/********************* NEW DISPLAY ***********************/
+
+
+.boxAction{
+  width:var(--boxActionWidth,36px);
+  height:26px;
+  float:left;
+  
+}
+
+.theTitle{
+  height:30px;
+  font-size:16px;
+  display:inline-block;
+  text-align:center;
+  background-color: cyan;
+  color:blue;
+  font-weight: bold;
+  border:solid 0px blue;
+}
+
+.sportTitle{
+  width:var(--newTextWidth,130px);
+}
+
+.dateTitle{
+  width:calc(var(--dateWidth) + var(--calendarWidth));
+}
+
+.ActivityTitle{
+  width:calc(var(--newTextWidth) + var(--boxActionWidth));
+}
+
+.ExerciseTitle{
+  width:calc( var(--newSeanWidth) * 2 + var(--boxActionTitleWidth) + 8px);
+}
+
+.resultField{
+  width:calc( (var(--newTextWidth) + calc(var(--newSeanWidth) * 4))  +40px);
+  max-width: calc( (var(--newTextWidth) + calc(var(--newSeanWidth) * 4))  +40px);
+  border:solid 0px blue;
+  height:calc(var(--fieldHeight) + 8px);
+  float:left;
+}
+
+.boxActionTitle{
+  width:var(--boxActionTitleWidth,38px);  
+}
+
+.circle{
+  border-radius: 50% 50%;
+  color:blue;
+  width:var(--circleWidth,22px);
+  height:22px;
+  border: solid 1px rgb(4, 4, 124);
+  font-size:10px;
+  font-weight:bold;
+  background-color: #8e8c8b;
+  text-align: center;
+  padding-top:2px;
+  display:inline-block;
+}
+
+.circle:hover{
+  color:red;
+  background-color:cyan;
+}
+
+.inputNewSean{
+  margin-left: 4px;
+  width:var(--newSeanWidth);
+  height:var(--fieldHeight);
+  font-size:14px;
+  text-align: center;
+  display:inline-block;
+}
+
+.inputNewText{
+  width:var(--newTextWidth,130px);
+  height:var(--fieldHeight);
+  font-size:14px;
+  background-color: lightgrey;
+  text-align: center;
+  float:left;
+  border:solid 0px green;
+}
+
+.emptyInput{
+  width:var(--newTextWidth,130px);
+  height:var(--fieldHeight);
+  float:left;
+  border:solid 0px black;
+  height:30px;
+}
+
+.fieldNewDate{
+
+  width:var(--dateWidth,100px); 
+  height:var(--fieldHeight);
+  float:left;
+  border:solid 0px red;
+}
+
+.inputNewDate{
+  font-size:14px;
+  font-weight: bold;
+  color:blue;
+  text-align: center;
+  background-color: lightcyan;
+}
+
+
+.posCalendarNew{
+  float:none; 
+  width:var(--calendarWidth,30px); 
+  height:25px;
+  font-size:25px;
+  color:blue;
+  border:solid 0px darkgreen;
+  vertical-align: middle;
+}
+
+.inputNewDate:hover{
+  font-size:16px;
+  background-color: lightgrey;
+  color:red;
+}
+
+.posCalendarNew:hover{
+  color:red;
+ }
+
+ .inputNewText:hover{
+  color:darkblue;
+  font-size:16px;
+  background-color: grey;
+}
+/*********************************************************/
+
+.iconAdd{
+  /*
+  padding-left:3px;
+  padding-top:3px;
+  float:left;
+  margin-left:10px;
+  margin-top:2px;
+  */
+  width:22px; 
+  height:22px; 
+  font-size:16px;
+  background-color: cyan;
+  color:blue;
+  
+}
+.iconAdd:hover{
+  background-color:grey; 
+}
+
+.newStraight-content{
+  position: absolute;
+  z-index: 1;
+  width:180px; 
+  margin-left:20px;
+  margin-top:30px;
+  border:solid blue 0px; 
+  background-color:yellow;
+  overflow: hidden;
+}
+
+.newStraightDropDown{
+  background-color: cyan;
+  margin-top:0px; 
+  margin-left:10px; 
+  width:180px;  
+
+  border:solid green 0px;
+  overflow: hidden;
+}
+.Straight-content{
+  position: absolute;
+  z-index: 1;
+  width:400px; 
+  height: 390px; 
+  margin-top:-30px; 
+  border:solid blue 0px; 
+  background-color:white;
+  overflow: hidden;
+}
+
+.StraightDropDown{
+  background-color: cyan;
+  margin-top:0px; 
+  margin-left:10px; 
+  width:380px;  
+  height:355px; 
+  border:solid green 0px;
+  overflow: hidden;
+}
+
+.radioConfig{
+  margin-left:10px; width:60%; display:block; background-color:cyan; float:left;
+}
+
+.GroundCyan{
+  background-color: cyan;
+}
+
+.GroundGrey{
+  background-color: rgb(75, 194, 237);
+}
+
+.topDiv{
+  /*
+  background-color:lightpink;
+  */
+  height:34px;
+  display:block;
+  float:left;
+  border:solid red 0px;
+}
+
+.divItem{
+  display:inline-block; 
+  width:99%; 
+  border:blue solid 0px;
+}
+
+.masterLabel{
+  /*
+  margin-left: calc(var(--margLeft) * 2);
+  */
+  margin-left:5px;
+  width:calc(var(--LabWidth) - var(--margLeft) + 70px);
+  display:block;
+  padding-top:5px;
+  float:left;
+  font-weight:bold;
+  font:14px;
+  border:solid 0px red;
+
+}
+.labelSport{
+  padding-left:0px;
+} 
+
+.labelDate{
+  padding-left:20px;
+}
+
+.labelActiv{
+  padding-left:5px;
+  color:blue;
+}
+
+
+.labelExec{
+  padding-left:10px;
+  color:crimson;
+}
+
+.labelSean{
+  padding-left:10px;
+}
+
+.labelList{
+  margin-left: 15px;
+  width:95%;
+  display:inline-block;
+  border:solid blue 2px;
+  height: 30px;
+  text-align: center;
+  padding-top: 2px;
+  font-size: 16px;
+  background-color: cyan;
+}
+
+.iconSpace{
+  float:left; width:4px;
+}
+
+#TheSports{ /* NOT USED */
+  color: green;
+  background: white;
+  font-size: 30px;
+}
+
+.force-scroll {
+  overflow-y: scroll;
+  }
+
+.BlueBorder{
+  border: solid 2px blue;
+  width:98%;
+}
+
+.RedBorder{
+  border: solid 2px red;
+  width:98%; 
+}
+
+.firstSean{
+  width:1px;
+}
+
+.inputSean{
+  margin-left: 4px;
+  width:35px;
+  height:var(--fieldHeight);
+  font-size:14px;
+  text-align: center;
+  float:left;
+}
+
+.inputSean:hover{
+  background-color: cyan;
+}
+
+.inputText{
+  width:var(--textWidth,160px);
+  height:var(--fieldHeight);
+  font-size:14px;
+  background-color: lightgrey;
+  text-align: center;
+  float:left;
+  display:block;
+  border:solid 1px blueviolet;
+}
+
+.inputText:hover{
+  color:darkblue;
+  font-size:16px;
+  background-color: grey;
+}
+
+.inputDate{
+  font-size:14px;
+  font-weight: bold;
+  background-color: lightcyan;
+  color:blue;
+  width:100px; 
+  height:var(--fieldHeight);
+  /*vertical-align: middle;*/
+  float:left;
+  text-align: center;
+  display:block;
+  border:solid 1px dark;
+}
+
+.theDateBuffer{
+  width:1px;
+  margin-top:10px;
+}
+
+.inputDate:hover{
+  font-size:16px;
+  background-color: lightgrey;
+  color:red;
+}
+
+
+.posCalendar{
+  /*
+   margin-top:-10px;
+     padding-left:10px;
+  padding-top:13px;
+   margin-left: 10px; 
+  */
+ 
+ 
+  float:none; 
+  width:45px; 
+  height:55px;
+  font-size:25px;
+  color:blue;
+
+  vertical-align: middle;
+}
+
+
+.posCalendar:hover{
+ color:red;
+}
+
+
+.specialDiv{
+  position:relative; 
+  margin-top:10px; 
+  margin-left:10px; 
+  float:left;
+  display:block;
+  width:90%;
+  height:10px;
+  border:solid 0px blue;
+}
+
+
+.inputSession{
+  font-size:14px;
+  margin-left:5px; 
+  width:40px;
+  height:30px;
+  font-size:14px; 
+  color:red;
+}
+
+.inputSession:hover{
+  background-color: rgb(22, 92, 162);
+  font-size:16px;
+  color:rgb(45, 5, 5);
+}
+
+.titleManageConf{
+  font-size:18px; 
+  height:40px; 
+  background-color: lightgrey; 
+  color:blue; 
+  font-weight: bold;
+}
+
+.arrow_down_size{
+  margin-top:0px;
+  font-size:28px;
+  margin-left:1px;
+  float:left;
+} 
+
+.oddColor{
+  background-color: cyan;
+}
+
+.evenColor{
+  background-color:lightgreen;
+}
+
+
+
+    /*** ====================================== ***/
+    /*** ============== @media 1010 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 1010px) {
+    body{
+        max-width: 620px;
+        margin-left:var(--margLeft);
+      }
+        
+    div{
+        --margLeft: 10px;
+        --LabWidth: 80px;
+        --textWidth:80px;
+        --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+        --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+        --CriteriaOneDropLeft:100px;
+        --CriteriaTwoDropLeft:200px;
+        --CriteriaThreeDropLeft:300px;
+      }
+          
+    .masterLabel{
+        width:calc(var(--LabWidth) - var(--margLeft) + 40px);
+      }
+
+    .Buffer{
+        margin-top:0px;
+        padding-left:5px;
+        height:5px;
+        width:90%; 
+        display:inline-block;
+        border:solid 0px blue;
+      }
+  
+    .sizeButtons{
+        width:60px;
+        height:32px;
+        font-size:10px;
+        margin-left:10px;
+        display:table-cell;
+        vertical-align:middle;
+      }
+
+    .inputText{
+        width:var(--textWidth,80px);
+        font-size:10px;
+      }
+
+    .inputSean{
+        font-size:10px;
+      }
+
+    .inputSean:hover{
+        font-size:10px;
+      }
+
+    .inputDate{
+        width:80px;
+        font-size:10px;
+      }
+
+    .inputDate:hover{
+        font-size:10px;
+      }
+
+    .objectHeader{
+        font-size:16px;  
+        }
+ 
+    .object{
+      height:40px;
+      font-size:12px;  
+      }
+      
+    .object:hover{
+      font-size:14px;  
+      }
+
+    .inputSession:hover{
+        font-size:12px;
+      }
+
+    }

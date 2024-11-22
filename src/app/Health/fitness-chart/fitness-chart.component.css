@@ -1,0 +1,179 @@
+@import "../FitnessHealthGeneral.css";
+
+.inputCriteria{
+  width:var(--textWidth,160px);
+  height:var(--fieldHeight);
+  font-size:14px;
+  background-color: lightgrey;
+  text-align: center;
+  float:left; 
+  margin-left:10px;
+}
+  
+.textCriteria{
+  margin-left:10px; 
+  color:blue; 
+  font-size:16px; 
+  width:150px; 
+  display:block; 
+  float:left;
+  border:0px solid red;
+  height:30px; 
+  padding-top:5px;
+  margin-top:0px;
+  
+}
+  
+table {
+  /*
+  border-collapse: collapse;
+  table-layout: fixed; 
+  */
+  margin-left:10px;
+  width:100%;
+  overflow: scroll;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+  
+th {
+  text-align: center;
+  background-color: #96D4D4;
+  border-spacing: 5px;
+  border: 1px solid blue;
+}
+  
+td {
+  /*
+  vertical-align: middle;
+  */
+  text-align: left;
+  border-spacing: 0px;
+  height:30px;
+  color:blue;
+  font-size:14px;
+  padding-left:3px;
+  overflow:scroll;
+  word-wrap: break-word;
+}
+
+.rowEven{
+  background-color: #9edb9c;
+}
+  
+.rowOdd {
+  background-color: #8a97e8;
+}
+  
+.seance{
+  text-align: center;
+  width:40px; 
+  height:18px;
+  display:inline-block; 
+}
+  
+.seanceEven{
+  background-color:cyan;
+}
+.seanceOdd{
+  background-color:lightcyan;
+}
+  
+.tableCol {
+  width:125px;
+  border:solid 1px blue;
+}
+  
+.tableSeance{
+  width:230px;
+  border:solid 1px blue;
+}
+  
+.alignTop{
+  vertical-align: top;
+}
+  
+.alignMiddle{
+  vertical-align: middle;
+}  
+
+
+/*** ====================================== ***/
+/*** ============== @media 1010 ================ ***/
+/*** ====================================== ***/
+@media only screen and (max-width: 1010px) {
+  body{
+    max-width: 620px;
+
+  }
+
+  div{
+      --margLeft: 10px;
+      --LabWidth: 80px;
+      --textWidth:80px;
+      --DropLeft:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+      --DropLeftPerf:calc( var(--margLeft) + var(--LabWidth) + calc(var(--textWidth) / 2) + var(--textMarLeft) );
+      --CriteriaOneDropLeft:100px;
+      --CriteriaTwoDropLeft:200px;
+      --CriteriaThreeDropLeft:300px;
+    }
+  
+
+.StraightDropDownOverride{
+      font-size:10px;
+      width:85px;
+      text-align: center;
+      border: 2px solid green;
+    }
+  
+.Straight-optionsOverride{
+      min-width:65px; 
+      width:65px;
+      font-size:10px;
+      height:30px;
+      text-align: center;
+    }
+
+table {
+  width:95%;
+}
+
+td {
+  height:24px;
+  font-size:11px;
+}
+
+
+.tableCol {
+  min-width:55px;
+  max-width:55px;
+}
+
+.tableSeance{
+  min-width:70px;
+  max-width:70px;
+}
+.seance{
+  width:25px; 
+}
+
+.inputCriteria{
+  width:100px;
+  font-size:10px;
+  background-color: cyan;
+  
+}
+
+.textCriteria{
+  float:left; 
+  width:99%;
+  color:blue; 
+  margin-left:10px; 
+  border:0px blue solid; 
+  display:block; 
+  height:23px; 
+  font-size:14px; 
+  padding-top:2px;
+}
+
+}

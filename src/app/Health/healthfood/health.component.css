@@ -1,0 +1,224 @@
+@import "../FitnessHealthGeneral.css";
+
+
+::placeholder{
+  font-size:12px;
+  color:red;
+  font-weight: bold;
+}
+
+.boxHover{
+  background-color: cyan;
+}
+
+.boxHover:hover{
+  background-color: cyan !important;
+  color:blue  !important;
+  border:0px green solid  !important;
+}
+
+table {
+    border-collapse: separate;
+    margin-left:10px;
+    overflow-y: scroll;
+    table-layout: fixed;
+    background-color: black;
+    color:white;
+  }
+    
+th {
+    text-align: center;
+    background-color: black;
+    border-spacing: 0px;
+    font-size:12px;
+    height:25px;
+    word-wrap: break-word;
+  }
+    
+td {
+    border-spacing: 0px;
+    height:25px; 
+    color:white;
+    font-size:12px;
+  }
+  
+.subTotal {
+    display:inline-block;
+    font-weight:bold;
+    margin-top:10px;
+  }
+
+.Total {
+  display:inline-block;
+  font-weight:bold;
+  border: solid 0px white;
+  margin-top:10px;
+  }
+
+
+.trow {
+  display:inline-block;
+  border: solid 0px blue;
+  }
+
+.trow:hover{
+    color:blue;
+    background-color: white;
+  }
+
+.tReadOnly{
+  display:inline-block;
+  border: solid 0px blue;
+}
+
+.trow:read-only{
+  border:0px solid blue;
+}
+
+.Colth {
+  display:inline-block;
+  text-align: center; 
+  }
+
+.Colth:read-only{ 
+    border:0px solid blue;
+  }
+
+.widthDate {
+  text-align: left; 
+  padding-left:10px;
+}
+
+.alignLeft{
+  text-align: center; 
+}
+
+.alignMealIngr{
+  text-align: left;
+  padding-left:10px;
+}
+
+
+.tableCol {
+    border-bottom:solid 0.3px white;
+  }
+
+.circle{
+  border-radius: 50% 50%;
+  color:blue;
+  width:18px;
+  height:18px;
+  border: solid 1px rgb(4, 4, 124);
+  margin-left:8px;
+  font-size:10px;
+  font-weight:bold;
+  background-color: #8e8c8b;
+  text-align: center;
+  padding-top:2px;
+  display:inline-block;
+}
+
+.circle:hover{
+  color:red;
+  background-color:cyan;
+  width:22px;
+  height:22px;
+  border: solid 2px rgb(4, 4, 124);
+}
+
+.theLabel{
+  width:140px;
+  display:inline-block;
+  color:blue;
+}
+
+.inputText{
+  color:blue;
+  background-color: rgb(232, 229, 229);
+  width:var(--textWidth);
+  height:25px;
+  }
+
+.inputText:hover{
+    color:blue;
+    background-color: rgb(198, 157, 157);
+}
+
+.page{
+  width:80px; 
+  height:25px;
+  font-size:10px; 
+  border-radius: 5px;
+  background-image: linear-gradient(rgb(246, 219, 205), rgb(247, 199, 174));
+  box-shadow: 2px 2px rgb(203, 108, 56);
+  border: solid 1px blue;
+}
+
+.theScroll{
+  overflow:scroll;
+}
+
+.mealBlock{
+  width:80%;
+  margin-left:20px; 
+  border:solid blue 2px;
+}
+
+.lMeal{
+  width:110px;
+}
+
+.lDish{
+  width:90px;
+}
+
+.lUnit{
+  width:90px;
+}
+
+.spanUnit{
+  margin-left:40px; 
+  width:90%
+}
+
+.oneRowUnit{
+  margin-left:30px;
+}
+
+.posConfirm{
+  margin-left:10px; 
+  width:80%;
+}
+
+/*** ====================================== ***/
+/*** ============== @media 1010 ================ ***/
+/*** ====================================== ***/
+@media only screen and (max-width:830px) {
+  body{
+    max-width: 620px;
+  }
+
+  div{
+    --margLeft: 10px;
+    --LabWidth: 80px;
+    --textWidth:130px;
+  }
+  
+  td {
+    font-size:10px;
+  }
+  th {
+    font-size:10px;
+  }
+
+  .mealBlock{
+    max-width:420px; 
+  }
+
+  .posConfirm{
+    margin-left:90px; 
+  }
+
+}
+
+    

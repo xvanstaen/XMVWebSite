@@ -1,0 +1,134 @@
+
+<body [ngClass]="{'bodyColor':selectionCircuit===true}">
+   
+    <div *ngIf="selectionCircuit===false" style="width:100%; display:inline-block; margin-top:10px; ">
+        <app-manage-point-of-ref [configServer]="configServer" [identification]="identification"
+        [isCircuitSelected]="isCircuitSelected" 
+        (returnFile)="manageFile($event)" (returnSelection)="onSelectPoR($event)">
+        </app-manage-point-of-ref>
+    </div>
+   
+    <div   style="width:100%; color:blue; font-size:18px; text-align: center; display:inline-block; border:solid 2px red; margin-left:20px; margin-top:10px; background-color: rgb(155, 247, 247);">
+ 
+        <span *ngIf="selectionCircuit===false" style='margin-top:8px;' >Manage Circuits</span>
+        <span *ngIf="selectionCircuit===true" style='margin-top:8px;' >Select a circuit</span>
+        
+        <div *ngIf="isFileCircuitReceived===true" [ngStyle]="{'max-height.px': sizeBox}" style="width:100%; display:inline-block; margin-top:10px;" class="myScrollBar">
+           
+            <label style="width:5%; " class="theTitle">&nbsp;</label>
+            <label style="width:5%;" class="theTitle" > #</label>
+            <label style="width:40%;" class="theTitle" > Circuit</label>
+            <label style="width:22%; " class="theTitle" > Country</label>  
+            <label style="width:22%; " class="theTitle" > City</label>
+
+            <div *ngFor="let tab of fileCircuit; let i=index">
+                <div *ngIf="tabDialog[1]===true && TabOfId[0]===i" style="width:365px; display:block; margin-left:50px; color:blue; height:65px;"> 
+                    <li *ngFor="let tabAH of tabActionH; let k=index" class="Straight-options" style="width:92.5px; font-size:13px; display:inline-block;" [ngClass]='{"evenAction": k % 2 ===0 , "oddAction": k % 2 ===1 }' >
+                        <span  (click)="onInput($event)" id="selActionH-{{TabOfId[0]}}-{{k}}">{{tabAH}} </span>
+                    </li>
+                </div>
+                <div *ngIf="isDeleteCircuit===true && TabOfId[0]===i" style="width:565px; display:block; color:blue; margin-left:5px; background-color: cyan;"> 
+                    <span > Do you confrm the deletion of PoR {{tab.name}}</span>
+                    <div style="display:block; margin-left:50px;">
+                        <button  class="sizeButtons" (click)="onInput($event)" id="delCircuitYES-{{TabOfId[0]}}">YES </button>
+                        <button  class="sizeButtons" (click)="onInput($event)" id="delCircuitNO-{{TabOfId[0]}}">NO </button>
+                    </div>
+                    <div class="skipLine"></div>
+                </div>
+                <div *ngIf="selectionCircuit===false" style="width:100%; display:inline-block; margin-left:12px; height:20px;">
+                    <label  style="width:5%; margin-left:5px; "class="inputText " [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true}"   >
+                        <span  id="actionH-{{i}}" (click)="onInput($event)">A</span>
+                    </label>
+                    <label style="width:5%;"  class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true}" >{{i+1}}</label>
+                    <input style="width:40%;" class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" (input)="onInput($event)" id="name-{{i}}" type="text" value="{{fileCircuit[i].name}}">
+                    <input style="width:22%;" class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" (input)="onInput($event)" id="country-{{i}}" type="text" value="{{fileCircuit[i].country}}">            
+                    <input style="width:22%;"  class="inputText" [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" (input)="onInput($event)" id="city-{{i}}" type="text"  value="{{fileCircuit[i].city}}">
+                </div>
+                <div *ngIf="selectionCircuit===true" style="width:100%; display:inline-block; margin-left:12px; height:20px;" >
+                    <label  style="width:5%; margin-left:5px; "class="inputText " [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true}"  id="returnCircuit-{{i}}" (click)="onInput($event)" >S</label>
+                    <label style="width:5%;"  class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true}"  id="returnCircuit-{{i}}" (click)="onInput($event)">{{i+1}}</label>
+                    <label style="width:40%;" class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" id="returnCircuit-{{i}}" (click)="onInput($event)" >{{fileCircuit[i].name}}</label>
+                    <label style="width:22%;" class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" id="returnCircuit-{{i}}" (click)="onInput($event)" >{{fileCircuit[i].country}}</label>       
+                    <label style="width:22%;"  class="inputText" [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" id="returnCircuit-{{i}}" (click)="onInput($event)" >{{fileCircuit[i].city}}</label>
+                </div>
+                <div style="margin-left:10px; width:100%; display:inline-block; margin-left:5px; " *ngIf="i===expandCircuit && selectionCircuit===false">
+                    
+
+                    <span class="titlePOR" style="margin-left:28px; width:490px; margin-top:5px; font-weight:bolder; text-align: center; float:none;"> Point Of References</span>
+                    <label class="titlePOR " style="width:20px; margin-left:28px; ">&nbsp;</label>
+                    <label class="titlePOR " style="width:20px;"> #</label>
+                    <label class="titlePOR"  style="width:210px" > Reference</label>
+                        <!-- <label class="theLabel theTitle" > Altitude</label> -->
+                    <label class="titlePOR"  style="width:120px"> Latitude</label>
+                    <label class="titlePOR"  style="width:120px"> Longitude</label>
+
+                    <div  style=" width:100%; display:inline-block;" *ngFor="let tabPoR of fileCircuit[i].points; let j=index">
+                        <div *ngIf="this.tabRef.length>0 && TabOfId[0]===i && TabOfId[1]===j"> 
+                            <li *ngFor="let tabR of tabRef; let k=index"  style="width:60%; display:inline-block; color:blue;">
+                                <span class="Straight-options" (click)="onInput($event)" [ngClass]='{"odd": k % 2 ===0, "even": k % 2 ===1}' id="selPoR-{{TabOfId[0]}}-{{TabOfId[1]}}-{{k}}">{{tabR.ref}} </span>
+                            </li>
+                        </div>
+                        <div *ngIf="tabDialog[2]===true && TabOfId[0]===i && TabOfId[1]===j" style="width:365px; display:block; color:blue; margin-left:50px; height:65px;"> 
+                            <li *ngFor="let tabA of tabAction; let k=index" class="Straight-options" style="width:92.5px; font-size:13px; display:inline-block;" [ngClass]='{"odd": k % 2 ===0 , "even": k % 2 ===1 }' >
+                                <span  (click)="onInput($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{k}}">{{tabA}} </span>
+                            </li>
+                        </div>
+                        <div *ngIf="isDeletePoR===true && TabOfId[0]===i && TabOfId[1]===j" style="margin-left:50px; text-align:center; width:365px; display:block; color:blue; border:solid blue 1px;  background-color: white;">
+                            Do you confrm the deletion of PoR
+                            <br>
+                            {{tabPoR.ref}}
+                            <div style="display:inline-block; width:100%; ">
+                                <button  class="sizeButtons"  style="margin-left:15px;" (click)="onInput($event)" id="delPoRYES-{{TabOfId[0]}}-{{TabOfId[1]}}">YES </button>
+                                <button  class="sizeButtons" (click)="onInput($event)" id="delPoRNO-{{TabOfId[0]}}-{{TabOfId[1]}}">NO </button>
+                            </div>
+                            <div class="skipLine"></div>
+                        </div>
+                        <div  style="margin-left:28px;" *ngIf="selectionCircuit===false">
+                            <label class="inputText shortLabel  " [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">A</label>
+                            <label class="inputText shortLabel " [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }"  id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">{{j+1}}</label>
+                        
+                            <input type="text" class="inputText"   style="width:210px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="PoRef-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].points[j].ref}}">
+                            <input type="text" class="inputText"   style="width:210px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="dist-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].dist[j]}}">
+                            <!-- <label  class="inputText" id="PoRalt-{{i}}-{{j}}" >{{fileCircuit[i].points[j].alt}}</label> --> 
+                            <label class="inputText" style="width:120px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lat}}</label>
+                            <label class="inputText" style="width:120px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lon}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         
+        </div>
+        <div *ngIf="isFileModified===true" style="border:solid 1px red; width:450px; display:block; margin-left:20px; background-color: cyan;">
+            
+            <div *ngIf="saveConfirmed===false">
+                <label style="width:100%; text-align: center; display:inline-block; color:blue; font-size:16px;" >File has been modified </label>
+                <label  style="width:40%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Do you want to save it?</label>
+                <button   id='confirmSave' class="sizeButtons" style="width:80px;" (click)="manageUpdates($event)"> YES </button>
+                <!-- 
+                <button   id='cancelSave' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> Cancel </button>
+                -->
+                <div class="skipLine"></div>
+                <label style="width:100%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Do you want to cancel all your updates?</label>
+                <button   id='reinitialize' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> YES </button>
+                <button   id='noReinit' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> NO </button>
+                <div class="skipLine"></div>
+            </div>
+            <div *ngIf="saveConfirmed===true"  [formGroup]="formOptions">
+                <label  style="width:90%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Name of the file to update</label>
+                <input type="text"  class="inputText" style="width:90%; margin-left:15px;" formControlName="fileName" value="fileName" >
+                <button   id='saveFile' class="sizeButtons" style="margin-top:10px; margin-left:80px; width:80px;" (click)="manageUpdates($event)"> Submit </button>
+                <button   id='cancelSave' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> Cancel save</button>
+                <div class="skipLine"></div>
+            </div>
+            
+        </div>
+        <div *ngIf="selectionCircuit===false" style="text-align:left; border:red 0px solid; display:block; width:100%;"> 
+            <span style="width:100%; margin-top:0px; padding-left:30px; display:inline-block; padding-top:5px; border:green 0px solid; font-size:15px; height:35px;">Do you want to update all PoR values?</span>
+            <button  class="sizeButtons" style="margin-left:15px;" (click)="updateAllCircuits($event)" id="updatePoRYES">YES </button>
+            <button  class="sizeButtons" style="margin-left:15px;" (click)="updateAllCircuits($event)" id="updatePoRNO">NO </button>
+        </div>
+    </div>
+    <div *ngIf="selectionCircuit===false"  style="margin-top:10px; display:block;">&nbsp;</div>
+    <div  id="bottomCircuit" style="height:13px; width:100%; display:inline-block;"></div>
+
+</body>

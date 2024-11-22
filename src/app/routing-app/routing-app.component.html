@@ -1,0 +1,298 @@
+<head>
+
+</head>
+
+<body>
+<section>
+
+
+<div *ngIf="isDisplayLogos===true">
+
+    <div class='mylogo smcirclesize example_one'>
+        <div class='smwhitecircle'>
+            <span class='smXMV'>XMV</span >
+            <span  class='smITConsulting'>IT Consulting</span >
+        </div>
+    </div>
+
+    <div class='mylogo smcirclesize example_two'>
+        <div class='smwhitecircle'>
+            <span class='smXMV'>XMV</span >
+            <span  class='smITConsulting'>IT Consulting</span >
+        </div>
+    </div>
+
+    <div class='mylogo smcirclesize example_three'>
+        <div class='smwhitecircle'>
+            <span class='smXMV'>XMV</span >
+            <span  class='smITConsulting'>IT Consulting</span >
+        </div>
+    </div>
+
+            <!-- ========== xl logo =========== -->
+    <br><br>
+    <div class='mylogo xlcirclesize example_one'>
+        <div class='xlwhitecircle'>
+            <span class='xlXMV'>XMV</span >
+            <span  class='xlITConsulting'>IT Consulting</span >
+        </div>
+    </div>
+
+    <div class='mylogo xlcirclesize example_two'>
+        <div class='xlwhitecircle'>
+            <span class='xlXMV'>XMV</span >
+            <span  class='xlITConsulting'>IT Consulting</span >
+        </div>
+    </div>
+
+    <div class='mylogo xlcirclesize example_three'>
+        <div class='xlwhitecircle'>
+            <span class='xlXMV'>XMV</span >
+            <span  class='xlITConsulting'>IT Consulting</span >
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="isDisplayTelephone===true" style="margin-top:200px;">
+    <app-ngx-intl-tel-input></app-ngx-intl-tel-input>
+</div>
+
+<!-- ================== SLIDER ================== -->
+<div *ngIf="isDisplaySlider===true">
+    
+    <div class='sliderposition'>
+        <p style='margin-left:30px;'> Default range slider:</p>
+        <input  class='sliderdefault' id="theSlider" type="range" min="1" max="100" value="50" (click)="onTouchStart($event)" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)" 
+        (touchmove)="onTouchMove($event)">
+        My value={{myValue}} <br>msg={{msg}} <br>{{msgMove}}
+        <br> theEvent= {{myEvent.currentTargetV}} - {{myEvent.targetV}} - {{myEvent.id}}
+    </div>
+    <div class='sliderposition'>
+        <input class="slider" type="range" min="1" max="100" value="50"  id="myRange"   (input)='returnValue($event)' (touchstart)="returnValue($event)" >
+        <p style='margin-left:30px;'> Value: {{otherValue}} & myValue = {{myValue}}</p>
+        <br> {{msgReturnValue}}
+    </div> 
+</div>
+
+  
+<!-- ==== Test @Input and @Output  ======= -->
+
+<div style='margin-left:30px; color:red; font-size: 14px;' *ngIf='Error_Access_Server!==""'>{{Error_Access_Server}}</div>
+<div id="posBeforeColorPicker"></div>
+<div *ngIf="isDisplayColorPicker===true">
+    <div class='color-wrapper'>
+        <app-color-picker ></app-color-picker>
+    </div>
+
+</div> 
+
+
+ <!--   === display websites to learn specific Angular features using TABLE-->
+ <div *ngIf="Error_Access_Server==='' && isDisplayCSSTable===true">
+        <div class='BlockTable'> 
+            <span style='margin-left:40px;'>Use CSS TABLE</span>
+            <table class="myWebSites"  *ngFor = "let theList of AngularWebSite; let i=index">
+                    <tr *ngIf = "i===0 else header">
+                    <!-- don't display anything --> 
+                    </tr>
+                    <ng-template  #header>
+                        <tr *ngIf = "i===1 else OddRow">
+                            <th > {{theList.topic}}</th>
+                            <th > {{theList.url}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template  #OddRow>
+                        <tr *ngIf = "i % 2 ===0; else EvenRow">
+                        <td > <a  class='TableText BlockSizeSubject' href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></td>
+                        <td > <span class='TableText BlockSizeURL'>{{theList.url}}</span></td>
+                        </tr>
+                    </ng-template>
+                    <ng-template  #EvenRow>
+                        <tr class='even'>
+                        <td > <a  class='TableText BlockSizeSubject' href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></td>
+                        <td > <span class='TableText BlockSizeURL'>{{theList.url}}</span></td>
+                        </tr>
+                    </ng-template>
+            </table>
+        </div>
+
+<!--   === display websites to learn specific Angular features using GRID-->
+ 
+    
+    <div class='BlockTable'>
+        <span style='margin-left:40px;'>Use CSS GRID</span>
+        <ul  *ngFor = "let theList of AngularWebSite; let i=index">
+            <span class='tableTopicURL' *ngIf = "i===0; else header">
+            </span>
+            <ng-template  #header>
+                <li class='tableTopicURL' *ngIf = "i===1; else test">
+                    <span class='boxTopic'> {{theList.topic}}</span>
+                    <span class='boxURL'> {{theList.url}}</span>
+                </li>
+            </ng-template>  
+            <ng-template  #test>
+                <li class='tableTopicURL'>
+                    <span class='boxTopic'><a href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></span>
+                    <span class='boxURL'> {{theList.url}}</span>
+                </li>
+                </ng-template>
+        </ul>
+            
+    </div>
+</div>
+<!--   === UPLOAD and SAVE file(s)-->
+
+
+<!--   
+
+ <input #fileUpload [accept]="'.json'" type="file" class="file-input" 
+    (change)="onFileSelected($event)">
+
+--> 
+<div *ngIf="isDisplayUploadFile===true">
+    <div class='division'>      
+    <h1> UPLOAD FILE</h1>
+    </div>
+
+    <input #fileUpload type="file" class="file-input " 
+    (change)="onFileSelected($event)">
+    
+    <button mat-mini-fab color="primary" class='PPP ' style='margin-top:20px;'
+    (click)="fileUpload.click()"> Import file <mat-icon>attach_file</mat-icon>
+    </button> 
+    
+    <p style='margin-left:40px; margin-top:20px; color: blue;'> File name: {{uploadFileName}}</p>
+</div>    
+   
+
+    <!--
+    <p>Open a text file:</p>
+    <input type="file" (change)="open($event)">
+    <p *ngIf="readFileContent">Contents:</p>
+    <pre>{{readFileContent}}</pre>
+    <hr>
+    -->
+<div *ngIf="isDisplaySaveDownload===true">
+    <div class='division'> 
+    <h1>SAVE FILE & DOWNLOAD</h1>
+    </div>
+    
+    <div class='NameFile' style="margin-top:20px;;">
+        <!--
+    <label style="margin-left:20px; width:120px; color:blue; background-color: cyan;">File name</label> <input type="text" style='margin-left:22px;' [(ngModel)]="saveFileName"/> <br/>
+    <label style="margin-left:20px; width:120px; color:blue; background-color: cyan;">File content:</label> <input style='margin-left:22px;' type="text" [(ngModel)]="saveFileContent" /> <br/> 
+    <label style="margin-left:20px; width:120px; color:blue; background-color: cyan;">File extension:</label> <input style='margin-left:22px;' type="text" [(ngModel)]="saveFileExtension" /> <br/>  
+    -->
+    <button class="sizeButtons" style="margin-left:60px; margin-top:15px;" (click)="onSaveFile()"> Save file
+    </button> 
+    
+    </div>
+</div>
+    
+
+<div *ngIf="isDisplaySaveDownload===true">   
+    <div class='divisiontwo'> 
+        <h1>UPLOAD with http method using fake json server or file.io </h1>
+    </div>
+    <div class="skipLine">&nbsp;</div>
+    <form [formGroup]="myForm"  (ngSubmit)="submit($event)">
+      <!-- 
+          *ngIf="myForm.controls['file'].touched && myForm.controls['file'].invalid" 
+          *ngIf="myForm.controls['name'].touched && myForm.controls['file'].invalid" 
+      -->
+        <div style="width:100%; display:inline-block;">
+            <span class='NameFile' style="width:80px; display:inline-block; margin-left:20px;" for="name"> Name</span>
+            <input  formControlName="name" id="name" type="text" class=" Name_input" style="width:120px; ">
+            <div *ngIf=" ((myForm.controls['name'].touched || myForm.controls['name'].dirty) && myForm.controls['file'].invalid)" class="alert alert-danger" style="width:350px; display:inline-block;">
+                <div style="width:350px; display:inline-block;" *ngIf="myForm.controls['file'].errors?.['required']">File name is required</div>
+            </div>
+        </div>
+
+        <div style="width:100%; margin-top:10px; margin-left:20px; display:inline-block;">
+            <label style='width: 80px; display:inline-block; height:50px; color:green'> File </label>
+            <input formControlName="file" id="file" type="file" style='width: 80px; display:inline-block; color:green' (change)="onFileChange($event)">
+            <div *ngIf=" ((myForm.controls['name'].touched || myForm.controls['name'].dirty) && myForm.controls['name'].invalid)"  class="alert alert-danger" style="width:350px; display:inline-block;">
+                <div style="width:340px; display:inline-block;" *ngIf="myForm.controls['name'].errors?.['required']">Name is required on formControls errors</div>
+                <div style="width:340px; display:inline-block;" *ngIf="myForm.controls['name'].errors?.['minlength']">Name should be 3 characters</div>
+            </div>
+        </div>
+        <div style="margin-top:-20px; ">
+            <button class="sizeButtons" style="margin-left:80px;" type="submit">Submit</button>
+        </div>
+    </form>
+
+    <div style="width:100%; display:inline-block;">
+        <div style='margin-top:30px; display:inline-block;margin-left:20px; width:150px; height:30px;color:blue; background-color: cyan;'>File content:</div>
+    </div>
+
+    <div class='BlockTable'style='margin-top:30px; display:inline-block;margin-left:20px; width:400px; color:blue; background-color: cyan; overflow:scroll;' > {{uploadFileContent}} </div>
+    
+    <div class="skipLine">&nbsp;</div>
+    <br><br>
+</div> 
+
+    <!-- ========= TEST ENCRYPTION -->
+
+    <div *ngIf="isDisplayEncrypt===true" style='background-color:lightgrey; border:grey solid 2px; margin-top:10px; margin-left:20px; width:450px; display:inline-block;'>
+
+        <span style='display:inline-block; border:solid 0px red; width:100%; height:30px; padding-top:5px; color:blue; font-size:16px; text-align: center;' >ENCRYPTION</span>
+    
+        <div style="width:80%; display:inline-block;padding-left:20px; color:red; font-size:14px;" >{{Crypto_Error}}</div>
+        
+        <label class="myLabel" >Decrypt is </label>
+        <input  class="myInput" type='text' [(ngModel)]="Decrypt" placeholder={{Decrypt}} >
+        <div class="skipLine" style="height:1px;">&nbsp;</div>
+        <label class="myLabel" >Encrypt is </label>
+        <input class="myInput" placeholder={{Encrypt}} type='text'[(ngModel)]="Encrypt">
+        <div class="skipLine" style="height:1px;">&nbsp;</div>
+        <label class="myLabel" >Crypto record </label>
+        <input class="myInput" style="width:60px;" placeholder={{Crypto_Record}} type='number'[(ngModel)]="Crypto_Record">
+        <label class="myLabel" style="width:100px;">Encrypt key is </label>
+        <input class="myInput" style="width:60px;" placeholder={{Crypto_Key}} type='number'[(ngModel)]="Crypto_Key">
+        <div style="width:95%; margin-top:-15px;">
+            <div style="width:50%; float:left; border:solid blue 0px;">
+                <div class="myLabel" style="width:80px; padding-top:10px;"> AES</div>
+                <input class="radioButton" style="padding-top:-10px;" name='crypto' type='radio' [(ngModel)]="Crypto_Method" value='AES'>
+            </div>
+            <div style="width:50%; border:solid red 0px; float:left;">
+                <div class="myLabel" style="width:80px; padding-top:10px;"> DES</div>
+                <input class="radioButton" style="margin-left:-20px; padding-top:-10px;" name='crypto'type='radio' [(ngModel)]="Crypto_Method" value='DES'>
+            </div>
+        </div>
+        <div style="width:95%">
+            <div style="width:50%; float:left; border:solid blue 0px;">
+                <div class="myLabel" style="width:80px; padding-top:10px;"> Json db</div>
+                <input class="radioButton" style="padding-top:-10px;" name='server' type='radio' [(ngModel)]="Server_Type" value='Json' >
+            </div>
+            <div style="width:50%; border:solid red 0px; float:left;">
+                <div class="myLabel" style="width:100px; padding-top:10px;"> Google Storage</div>
+                <input class="radioButton" style="margin-left:-20px; padding-top:-10px;" name='server'type='radio' [(ngModel)]="Server_Type" value='Google'>
+            </div>
+        </div>
+            
+        <div class="skipLine" style="height:8px;">&nbsp;</div>
+        <label class="myLabel" >Bucket name </label><input class="myInput" placeholder={{Bucket_Name}} type='text'[(ngModel)]="Bucket_Name">
+        <label class="myLabel" >User Id </label> <input class="myInput" placeholder={{Object_Name}} type='text'[(ngModel)]="Object_Name">
+    
+    
+        <div style=' width:90%; border:0px solid red; height:50px; margin-left:10px;'>
+            <div style='margin-top:0px;  margin-left:10px; width:100%; border:0px solid blue; display:inline-flex;'>
+                <button class="sizeButtons" id='1' style='display:inline-block; margin-left:30px;width:80px; height:45px; font-size:14px;'  (click)="onCrypt('Encrypt')">Encrypt</button>
+                <button class="sizeButtons" id='2' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'   (click)="onCrypt('Decrypt')">Decrypt</button>
+                <!--
+                <button class="sizeButtons" id='3' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px; '  (click)="onSave('Encrypt')">Save Encrypt</button>
+                <button class="sizeButtons" id='4' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'  (click)="onRead()">Read record</button>
+                -->
+                <button class="sizeButtons" id='5' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'  (click)="onClear()">Clear</button>
+            
+            </div>
+        </div>
+    
+    </div>
+
+
+</section>
+</body>
+
+

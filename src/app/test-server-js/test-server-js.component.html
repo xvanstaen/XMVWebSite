@@ -1,0 +1,532 @@
+
+
+
+<div style="display:block;" *ngIf="isInitDone===true && serverTest==='tutorials'">
+        <app-tutorials [configServer]="newConfigServer" [configServerChanges]="configServerChanges" > 
+        </app-tutorials>
+</div>
+
+<div *ngIf="serverTest==='server'">
+    <div class="mainBlock"  style=" margin-top:5px; ">
+        <span style="text-align: center; font-size:16px; font-weight:bolder; width:100%; display:inline-block; padding-top:2px; background-color:lightyellow;">Input the parameters</span>
+    </div>
+
+    <div style="display:block">
+        <div class="mainBlock"  style=" height:320px; max-height:320px; border-top:solid 0px green; overflow-y:scroll; ">
+            <form [formGroup]="theForm" >
+                <span class="theLine" style="margin-top:5px;">
+                    <label class="label" style="width:180px; ">Test or Prod</label> <input type="text" class="theInputMid" formControlName="testProd">
+                </span>
+                <span class="theLine"> 
+                    <label class="label" style="width:180px; ">server or HTTP</label> <input type="text" class="theInputMid" formControlName="server">
+                </span>
+                <span class="theLine">
+                    <label class="label" style="width:180px; ">Google</label> <input type="text" class="theInputMid" formControlName="dataBase">
+                </span>
+                <span class="theLine">
+                    <label class="label" style="width:180px; " ><span class="spanAction"> srcBucket </span><input class="inputA" value="P"  id="srcBucket" (click)="pasteAction($event)"> <input class="inputA" value="C"  id="srcBucket" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="srcBucket"  >
+                </span>
+            
+                <span class="theLine">
+                    <label class="label" style="width:180px; " ><span class="spanAction"> srcObject</span><input class="inputA" value="P" id="srcObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="srcObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="srcObject" >
+                </span>
+
+                <span class="theLine" style="margin-top:8px;">
+                    <label class="label" style="width:180px; " ><span class="spanAction"> destBucket</span><input class="inputA" value="P" id="destBucket" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destBucket" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destBucket" >
+                </span>
+                <span class="theLine">
+                    <label class="label" style="width:180px; " ><span class="spanAction"> destObject</span><input class="inputA" value="P" id="destObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destObject" >
+                </span>
+                <span class="theLine" style="margin-top:5px; margin-left:180px;"> (<span style="font-weight: bolder;" >P</span>&nbsp;&nbsp;paste <span style="margin-left:10px;"><span style="font-weight: bolder;" >C</span> &nbsp;&nbsp;clear</span>)</span>
+            
+                <div  *ngIf="theForm.controls['fileContent'].value.length<200" class="theLine" style="margin-top:8px;">
+                    <label class="label" style="width:100%;"><span class="spanAction">content </span><input class="inputA" value="P" id="comment" (click)="pasteAction($event)"><input class="inputA" value="C" id="comment" (click)="clearField($event)">&nbsp;&nbsp;<span class="spanAction" > </span></label>
+                    <textarea type="text" class="theInputMid" style='margin-left:15px; width:90%; height:150px; text-align:left; vertical-align: top;' formControlName="fileContent"></textarea>
+                    <br><br>
+                </div>
+                <div *ngIf="isUserIdForFS===true">
+                    <span class="theLine">
+                        <label class="label" style="width:180px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
+                        <label class="label" style="width:180px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
+                        <button class="button" (click)="manageResetFS()">Submit</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- large text -->
+    <div *ngIf="isGetServerFunction===true" style="display:block; margin-top:5px;">
+        <div *ngFor="let tab of tabServers; let i=index">
+            <span class="theLine" style="margin-top:5px;">
+                <label class="label" style="width:180px; ">{{tab}} - {{tabVersionServer[i]}}</label> 
+            </span>
+        </div>
+    </div>
+    <div *ngIf="theForm.controls['fileContent'].value.length>199"   class="mainBlock mainBlockOverride" style="width:100%; display:inline-block; max-height:350px;">
+        <form [formGroup]="theForm"  >
+            <label class="label" style="margin-left:20px; width:100%; display:inline-block;"><span class="spanAction">content </span><input class="inputA" value="P" id="comment" (click)="pasteAction($event)"><input class="inputA" value="C" id="comment" (click)="clearField($event)">&nbsp;&nbsp;</label>
+            <textarea type="text"  style='word-break: break-all; overflow-y:scroll;  width:100%; display:inline-block; background-color: skyblue; height:300px; max-height:300px; text-align:left; padding-left:6px; padding-right:6px; vertical-align: top;' formControlName="fileContent"></textarea>
+        </form>
+    </div>
+
+    <button class="sizeButtons" style='display:block; margin-left:170px; width:150px; height:35px; font-weight: bolder;' id="clearAll" (click)="reinitialise()">Clear all fields
+    </button> 
+
+    <div style="display:block; width:450px; border:solid 2px green;  margin-top:20px; margin-left:20px; background-color:lightskyblue;">
+        
+        <div style="  width:100%; display:inline-block;  height:30px; padding-top:5px; text-align: center; ">
+            ACTION TO PERFORM
+        </div>
+        <form [formGroup]="theForm"  >
+            <label class="label" style="margin-left:20px; width:100%; display:inline-block;">on server </label>
+            <input type="text"  style='margin-left:20px; width:400px; display:inline-block; background-color: rgb(193, 235, 135); height:25px; text-align:left; padding-left:6px; padding-right:8px; vertical-align: top;' formControlName="serverForAction" 
+            (click)="searchServer()">
+        </form>
+        <div *ngIf="selectOneServer===true">
+            <app-select-server [initConfigServer]="configServer" [selectOneServer]="selectOneServer"
+                            (returnOneServer)="getOneServer($event)">
+            </app-select-server>
+        </div>
+        
+        <div style="width:100%; display:inline-block;  height:200px; margin-top:5px;  max-height:200px; overflow-y:scroll; ">
+            <li *ngFor="let action of tabAction; let m=index;" 
+                            class="Straight-options "  style="width:45%; margin-left:10px; margin-top:2px;" [ngClass]=" {'even': m % 4 ===0, 'odd': m % 4 ===1, 'evenBis': m % 4 ===2, 'oddBis': m % 4 ===3}" 
+                            (click)="selectAction($event)" id="selectedAction" >
+                {{action}}
+            </li>
+        
+        </div>
+    </div>   
+    <div style="display:block" *ngIf="isUserIdForFS===true">
+        <div class="mainBlock" style="border:solid 2px green; margin-top:5px;">
+            <form [formGroup]="theForm"  >
+                <span class="theLine">
+                    <label class="label" style="width:180px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
+                    <label class="label" style="width:180px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
+                    <button class="button" (click)="manageResetFS()">Submit</button>
+                </span>
+            </form>
+        </div>
+    </div>
+    <div style="display:block" *ngIf="error!==''" >
+        <div class="mainBlock" style="border:solid 2px green; margin-top:5px;">
+            <span style=" min-height:25px; font-size:15px; color:white; background-color: blue; width:100%; display:inline-block; word-break:break-all;padding-left:10px; padding-top:5px; padding-bottom:5px; ">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="skipLine"></div>
+    <div *ngIf="isConfirmedSave===true" style=' width:450px; display:inline-block;  margin-left:20px; border: solid 2px blue; background-color: lightblue;'>
+        <div class="skipLine"></div>
+        <div style='font-size:20px; font-style: italic; width:100%; display:inline-block;  text-align: center;'> Do you confirm action to SAVE file  <br> {{theForm.controls['srcObject'].value}}</div>
+        
+        <button class="sizeButtons" style="margin-left:150px; margin-top:10px;" id="Save" (click)="confirmSave($event)">Save</button> 
+        <button class="sizeButtons" style="margin-left:20px; margin-top:10px;" id="Cancel" (click)="confirmSave($event)">Cancel</button> 
+        <div class="skipLine"></div>
+    </div>
+    <div *ngIf="isConfirmedDelete===true" style=' width:450px; display:inline-block;  margin-left:20px; border: solid 2px blue;  background-color: lightblue;'>
+        <div class="skipLine"></div>
+        <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; text-align: center;'> Do you confirm action to DELETE file <br>{{theForm.controls['srcObject'].value}}</div>
+        
+        <button class="sizeButtons"  style="margin-left:150px; ; margin-top:10px;" id="Save" (click)="confirmDelete($event)">Delete</button> 
+        <button class="sizeButtons" style="margin-left:20px; margin-top:10px;" id="Cancel" (click)="confirmDelete($event)">Cancel</button> 
+        <div class="skipLine"></div>
+    </div>
+
+    <!-- currentAction==='list all buckets' &&  -->
+    <div *ngIf="EventHTTPReceived[0]===true" class="response">
+
+        <span class='blockAction'> list all buckets</span> 
+        <div class='blockScroll'>
+            <li style="list-style-type: none;" *ngFor="let listBucket of  TabBuckets; let i=index" id="bucket-{{listBucket.name}}" (click)="copySelection($event)">
+                <span id="bucket-{{listBucket.name}}" class="theList" [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">{{listBucket.name}}</span>
+            </li>
+        </div>
+    </div>
+    <!-- currentAction==='list all objects'  &&  -->
+    <div *ngIf="EventHTTPReceived[1]===true" class="response">
+
+        <span class='blockAction'> List of objects from bucket </span> 
+        <span class='blockAction'> {{theForm.controls['srcBucket'].value}}</span> 
+        <div class='blockScroll'>
+            <li style="list-style-type: none;" *ngFor="let listObject of  myListOfObjects.items; let i=index"  id="object-{{listObject.name}}" (click)="copySelection($event)">
+                <span id="object-{{listObject.name}}" class="theList" [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}" >{{listObject.name}}</span>
+
+            </li>
+        </div>
+    </div>
+    <!-- currentAction==='get metadata for one object'  && -->
+    <div *ngIf=" EventHTTPReceived[4]===true" class="response">
+        <div style=' width:450px; display:inline-block; border: solid 2px blue;'>
+
+            <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; padding-top:15px; text-align: center;'> Metadata for object </span>
+            <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; text-align: center;'>{{theForm.controls['srcObject'].value}}</span> 
+            <div class="skipLine"></div>
+            <span class="theLine"><span class='label'>Bucket</span><span class='theMetadata'>{{oneMetadata.bucket}}</span></span>
+            <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{oneMetadata.name}}</span></span>
+            <span class="theLine"><span class='label'>contentType</span><span class='theMetadata'>{{oneMetadata.contentType}}</span></span>
+            <span class="theLine"><span class='label'>cacheControl</span><span class='theMetadata'>{{oneMetadata.cacheControl}}</span></span>
+            <span class="theLine"> <span class='label'>generation</span><span class='theMetadata'>{{oneMetadata.generation}}</span></span>
+            <span class="theLine"><span class='label'>id</span><span class='theMetadata'>{{oneMetadata.id}}</span></span>
+            <span class="theLine"><span class='label'>mediaLink</span><span class='theMetadata' style=" word-break:break-all;">{{oneMetadata.mediaLink}}</span></span>
+            <span class="theLine"><span class='label'>size</span><span class='theMetadata'>{{oneMetadata.size}}</span></span>
+            <span class="theLine"><span class='label'>metadataPerso</span><span class='theMetadata'>{{strMetaDataPerso}}</span></span>
+            <div class="skipLine"></div>
+
+
+        </div>
+    </div>
+    <!-- currentAction==='get list metadata for all objects'  &&  -->
+    <div *ngIf="EventHTTPReceived[3]===true" class="response">
+        <div style='font-size:20px; font-style: italic; width:450px; display:inline-block; padding-top:15px; margin-left:150px;' > List metadata for all objects</div> 
+        <div class="skipLine"></div>
+        <div style=' width:450px; display:block; border: solid 2px blue;  max-height:300px;  overflow-y:scroll; '>
+
+            <li *ngFor="let Metadata of myListOfObjects.items; let i=index; " >
+            
+                <span style=' width:100%; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
+                    <div class="skipLine"></div>
+                    <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
+                    <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>
+                    <span class="theLine"><span class='label'>contentType</span><span class='theMetadata'>{{Metadata.contentType}}</span></span>
+                    <span class="theLine"><span class='label'>cacheControl</span><span class='theMetadata'>{{Metadata.cacheControl}}</span></span>
+                    <span class="theLine"><span class='label'>generation</span><span class='theMetadata'>{{Metadata.generation}}</span></span>
+                    <span class="theLine"><span class='label'>id</span><span class='theMetadata'>{{Metadata.id}}</span></span>
+                    <span class="theLine"><span class='label'>mediaLink</span><span class='theMetadata'>{{Metadata.mediaLink}}</span></span>
+                    <span class="theLine"><span class='label'>size</span><span class='theMetadata'>{{Metadata.size}}</span></span>
+                    <span class="theLine"><span class='label'>metadataPerso</span><span class='theMetadata'>{{tabListMetaPerso[i]}}</span></span>
+                    <div class="skipLine"></div>
+                </span>
+            </li>
+        </div>
+        
+    </div>
+    <div *ngIf="gotoGetCacheConsole===true">
+        <app-cache-console [configServer]="newConfigServer" [initData]="initData" [reTriggerFn]="reTriggerFn"
+        (returnError)="appReturnError($event)"
+        >
+
+        </app-cache-console>
+    </div>
+
+
+    <div *ngIf="this.EventHTTPReceived[10]===true " style="margin-left:20px; width:450px; display:block; ">
+        <div style='font-size:20px; font-weight: bolder; width:100%; display:inline-block; padding-top:15px; text-align: center;' > Cache Console</div> 
+        <div style='font-size:20px; font-weight: bolder; width:100%; display:inline-block; padding-top:15px; text-align: center;' > server: {{theForm.controls['serverForAction'].value}}</div> 
+        <div style=' width:100%; margin-top:4px; display:inline-block; border: solid 2px blue;  max-height:300px; overflow-y:scroll; '>
+            <div *ngFor="let tab of memoryCacheConsole; let i=index " >
+                <div style=' width:100%;  display:inline-block; border: solid 2px red; '>
+                    {{error}}
+                    <span class="theLine"> <span class='label'>Date</span><span class='theMetadata'>{{tab.theDate}}</span></span>
+            
+                    <span class="theLine"><span class='label'>Message</span><span class='theMetadata'>{{tab.msg}}</span></span>
+                    <span *ngIf="tab.content!==''" class="theLine"><span class='label'>Content</span></span>
+                    <span *ngIf="tab.content!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">{{tab.content}}</span>
+                    <span *ngIf="tab.credentials!==''" class="theLine"><span class='label'>Credentials</span></span>
+                    <span *ngIf="tab.credentials!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">creationDate {{tab.credentials.creationDate.substring(0,4)}}/{{tab.credentials.creationDate.substring(4,6)}}/{{tab.credentials.creationDate.substring(6,8)}}&nbsp;{{tab.credentials.creationDate.substring(8,10)}}:{{tab.credentials.creationDate.substring(10,12)}}:{{tab.credentials.creationDate.substring(12,14)}}&nbsp;{{tab.credentials.creationDate.substring(14)}}</span>
+                    <span *ngIf="tab.credentials!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">userServerId {{tab.credentials.userServerId}}</span>
+                    <span *ngIf="tab.credentials!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">on server {{tab.credentials.server}}</span>
+                    <span *ngIf="tab.tabLock!==''" class="theLine"><span class='label'>Tablock</span></span>
+                    <span *ngIf="tab.tabLock!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">createdAt <span *ngIf="tab.tabLock.createdAt!==''">{{tab.tabLock.createdAt.substring(0,4)}}/{{tab.tabLock.createdAt.substring(4,6)}}/{{tab.tabLock.createdAt.substring(6,8)}}&nbsp;{{tab.tabLock.createdAt.substring(8,10)}}:{{tab.tabLock.createdAt.substring(10,12)}}:{{tab.tabLock.createdAt.substring(12,14)}}&nbsp;{{tab.tabLock.createdAt.substring(14)}}</span></span> 
+                    <span *ngIf="tab.tabLock!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">updatedAt <span *ngIf="tab.tabLock.updatedAt!==''">{{tab.tabLock.updatedAt.substring(0,4)}}/{{tab.tabLock.updatedAt.substring(4,6)}}/{{tab.tabLock.updatedAt.substring(6,8)}}&nbsp;{{tab.tabLock.updatedAt.substring(8,10)}}:{{tab.tabLock.updatedAt.substring(10,12)}}:{{tab.tabLock.updatedAt.substring(12,14)}}&nbsp;{{tab.tabLock.updatedAt.substring(14)}}</span></span> 
+                    <span *ngIf="tab.tabLock!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">userServerId {{tab.tabLock.userServerId}}</span>
+                    <span *ngIf="tab.tabLock!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">by user {{tab.tabLock.byUser}}</span>
+                    <span *ngIf="tab.tabLock!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">on server {{tab.tabLock.server}}</span>
+                    <span *ngIf="tab.otherUser!==''" class="theLine"><span class='label'>File system - timeout?</span></span>
+                    <span *ngIf="tab.otherUser!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">updatedAt {{tab.otherUser.updatedAt.substring(0,4)}} / {{tab.otherUser.updatedAt.substring(4,6)}} / {{tab.otherUser.updatedAt.substring(6,8)}}&nbsp;{{tab.otherUser.updatedAt.substring(8,10)}}:{{tab.otherUser.updatedAt.substring(10,12)}}:{{tab.otherUser.updatedAt.substring(12,14)}}&nbsp;{{tab.otherUser.updatedAt.substring(14)}}</span>
+                    <span *ngIf="tab.otherUser!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">timeOut {{tab.otherUser.timeOut.substring(0,4)}} / {{tab.otherUser.timeOut.substring(4,6)}} / {{tab.otherUser.timeOut.substring(6,8)}}&nbsp;{{tab.otherUser.timeOut.substring(8,10)}}:{{tab.otherUser.timeOut.substring(10,12)}}:{{tab.otherUser.timeOut.substring(12,14)}}&nbsp;{{tab.otherUser.timeOut.substring(14)}}</span>
+                    <span *ngIf="tab.otherUser!==''" class='theMetadata' style="padding-left:10px; padding-right:10px; padding-top:5px;width:95%; word-break: break-all;">currentTime {{tab.otherUser.currentTime.substring(0,4)}} / {{tab.otherUser.currentTime.substring(4,6)}} / {{tab.otherUser.currentTime.substring(6,8)}}&nbsp;{{tab.otherUser.currentTime.substring(8,10)}}:{{tab.otherUser.currentTime.substring(10,12)}}:{{tab.otherUser.currentTime.substring(12,14)}}&nbsp;{{tab.otherUser.currentTime.substring(14)}}</span>
+                    <div class="skipLine"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- FILE SYSTEM-->
+    <div *ngIf="this.EventHTTPReceived[11]===true || this.EventHTTPReceived[12]===true"  style="margin-left:20px; width:450px; display:inline-block; max-height:480px;height:460px; border:green solid 2px;  overflow-y:scroll;">
+        
+        <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:15px; text-align: center;' > Memory File System</div> 
+        <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:15px; text-align: center;' > server: {{theForm.controls['serverForAction'].value}}</div> 
+        <div style=" width:100%; display:inline-block; overflow-y:scroll;">    
+            <div *ngFor="let tab of memoryFS; let i=index ">
+                <div style=' width:100%; display:inline-block;'>
+                    <span style=' width:470px; display:inline-block; border: solid 2px red; text-align: center;'>{{tab.fileName}} </span>
+                </div>
+            
+                <li *ngFor="let record of memoryFS[i].record; let j=index " style=' width:100%; display:inline-block;'>
+                    <div style=' width:470px; display:inline-block; border: solid 2px red; '>
+                        <div class="skipLine"></div>
+                        <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{record.bucket}}</span></span>
+                        <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{record.object}}</span></span>
+                        <span class="theLine"><span class='label'>By user</span><span class='theMetadata'>{{record.byUser}}</span></span>
+                        <span class="theLine"><span class='label'>Created at</span><span class='theMetadata'>{{record.createdAt.substring(0,4)}}/{{record.createdAt.substring(4,6)}}/{{record.createdAt.substring(6,8)}} &nbsp;{{record.createdAt.substring(8,10)}}:{{record.createdAt.substring(10,12)}}:{{record.createdAt.substring(12,14)}}&nbsp;{{record.createdAt.substring(14)}}</span></span>
+                        <span class="theLine"><span class='label'>Updated at</span><span class='theMetadata'>{{record.updatedAt.substring(0,4)}}/{{record.updatedAt.substring(4,6)}}/{{record.updatedAt.substring(6,8)}} &nbsp;{{record.updatedAt.substring(8,10)}}:{{record.updatedAt.substring(10,12)}}:{{record.updatedAt.substring(12,14)}}&nbsp;{{record.updatedAt.substring(14)}}</span></span>
+                        <span class="theLine"><span class='label'>Credential date</span><span class='theMetadata'>{{record.credentialDate.substring(0,4)}}/{{record.credentialDate.substring(4,6)}}/{{record.credentialDate.substring(6,8)}} &nbsp;{{record.credentialDate.substring(8,10)}}:{{record.credentialDate.substring(10,12)}}:{{record.credentialDate.substring(12,14)}}&nbsp;{{record.credentialDate.substring(14)}}</span></span>
+                        <span class="theLine"><span class='label'>User server id</span><span class='theMetadata'>{{record.userServerId}}</span></span>
+                        <span class="theLine"><span class='label'>Lock</span><span class='theMetadata'>{{record.lock}}</span></span>
+                        <span class="theLine"><span class='label'>Timeout hour(s)</span><span *ngIf="record.timeoutFileSystem!==undefined" class='theMetadata'>{{record.timeoutFileSystem.hh}}</span></span>
+                        <span class="theLine"><span class='label'>Timeout minute(s)</span><span *ngIf="record.timeoutFileSystem!==undefined" class='theMetadata'>{{record.timeoutFileSystem.mn}}</span></span>
+                        <div class="skipLine"></div>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="currentAction!=='' && this.isDisplayAction===true" >
+                
+        <div class="mainBlock mainBlockOverride" style="height:330px; max-height:330px; background-color:cyan; ">
+            <div style="height:30px; font-size:18px; text-align:center; width:100%; display:inline-block;"> Response on action {{currentAction}}</div> 
+
+            <div style="width:100%;display:inline-block; "  id="comment" (click)="copySelection($event)">
+                <div *ngIf="returnFileContent!==''" id="comment" style=' word-break:break-all;  font-size:14px; width:100%; height:300px;  overflow-y:scroll; font-style: normal; padding-left:10px; padding-top:5px; padding-right:20px; text-align: left;'>{{returnFileContent}} 
+                    <br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="skipLine"></div>
+    <div *ngIf="isInputMetadata===true" style=' width:450px; display:inline-block;  margin-left:20px; border: solid 2px blue;'> <!--  *ngIf="currentAction==='updateMetadata' -->
+        <h2 >Create metadata & update </h2> 
+        <h3> {{theForm.controls['srcObject'].value}} </h3>
+        <form [formGroup]="theForm" >
+            <div style="margin-top:8px;">
+                <span class="theLine">
+                    <label class="labelShort" >Controls</label> <input type="text" class="theInput" formControlName="metaControl">
+                </span>
+                <span class="theLine">
+                    <label class="labelShort" >Type</label> <input type="text" class="theInput" formControlName="metaType">
+                </span>
+            </div>
+        </form>
+        <div style="max-height:80px; overflow-y:scroll; border:solid 1px green;">
+            <div *ngFor="let tab of tabMetaPerso; let i=index" >
+                <label style="width:60px; padding-left:10px; color:blue; height:25px;">Key {{i}}</label> <input class="input" style="width:150px; background-color:lightgrey; height:25px;" type="text" id="K-{{i}}" (input)="inputMetaPerso($event)" value="{{tab.key}}">
+                <label style="width:60px; padding-left:10px; color:blue; height:25px;">Value {{i}}</label> <input class="input" style="width:150px; background-color:lightgrey; height:25px;" type="text" id="V-{{i}}" (input)="inputMetaPerso($event)"  value="{{tab.value}}">
+                <br>
+            </div>
+        
+        </div>
+        <span *ngIf="strMetaDataPerso!==''">
+            <span class="theLine"><span  class='label'>metadataPerso</span><span class='theMetadata'>{{strMetaDataPerso}}</span></span>
+        </span> 
+        <span *ngIf="metaDataMsg!==''">
+            <span class="theLine"><span  class='label'>Server msg</span><span class='theMetadata'>{{metaDataMsg}}</span></span>
+        </span>
+        <div style=" width:100%; display:inline-block; margin-top:10px;">
+            <button class="sizeButtons" style="width:80px; height:35px; margin-left:120px;" id="submit" (click)="actionUpdateMeta($event)">Submit</button>
+            <button class="sizeButtons" style="width:80px; height:35px; margin-left:20px;" id="cancelUpdates" (click)="actionUpdateMeta($event)">Cancel updates</button>
+        </div>
+        <div class="skipLine" >&nbsp;</div> 
+    </div>
+
+    <div *ngIf="this.EventHTTPReceived[17]===true " class="mainBlock mainBlockOverride"  style=" color:blue; font-size:14px; border:blue solid 2px; word-break: break-all; padding:10px; max-height:200px;">
+        <h2 >Credentials </h2> 
+        <h3 >server: {{theForm.controls['serverForAction'].value}}</h3> 
+        <div style="width:30%; color:red;display:inline-block; margin-left:10px;">userServerId</div><div style="width:65%; display:inline-block;">{{credentials.userServerId}}</div>
+        <div style="width:30%; color:red;display:inline-block; margin-left:10px;">creationDate</div><div style="width:65%; display:inline-block;">{{credentials.creationDate}}</div>
+        <div style="width:30%; color:red;display:inline-block; margin-left:10px;">refresh_token</div><div style="width:65%; display:inline-block;  word-break: break-all;">{{credentials.refresh_token}}</div>
+        <div style="width:30%; color:red;display:inline-block; margin-left:10px;">token_type</div><div style="width:65%; display:inline-block;  word-break: break-all;">{{credentials.token_type}}</div>
+    </div>
+
+    <div *ngIf="this.EventHTTPReceived[16]===true" style="margin-left:20px; margin-top:10px; width:450px; border: solid 2px blue;">
+        <h2 >Cache file(s) </h2> 
+        <h2 >server: {{theForm.controls['serverForAction'].value}}</h2> 
+        <div style="display:inline-block; height:4px; width:100%;"></div>
+
+        <button class="largeButtons"  id="getCache" style="margin-left:15px;" (click)="getCacheFile()">Get cache file</button> 
+        <button class="largeButtons"  id="resetCache" (click)="resetCacheFile()">Reset cache file</button> 
+        <button class="largeButtons"  id="reloadCache" (click)="reloadCacheFile()">Reload cache file</button> 
+        <div style="background-color: cyan; width:90%; display:block; margin-top:4px; margin-left:10px;"> note: Reload of the cache file should occur after a reset of the configuration file
+        </div>
+        <div *ngIf="msgCacheFile.status!==0" style="margin-left:10px; margin-top:10px; width:95%; border: solid 2px blue;">
+            <label class="label">Response on cache File</label> 
+            <div style="display:inline-block; height:4px; width:100%;"></div>
+            <div style="width:30%; display:inline-block; margin-left:10px;">Status</div><div style="width:60%; display:inline-block;">{{msgCacheFile.status}}</div>        
+            <div *ngIf="msgCacheFile.msg!==''">
+                <div style="width:30%; display:inline-block;  margin-left:10px;">Msg</div><div style="width:60%; display:inline-block;">{{msgCacheFile.msg}}</div>
+            </div>
+            <div *ngIf="msgCacheFile.content.length>0">
+                    
+                    <div style="width:100%; display:inline-block;" *ngFor="let list of msgCacheFile.content; let i=index">
+                        <span style="width:40%; display:inline-block;  margin-left:10px;">{{msgCacheFile.content[i].file}}</span>
+                        <span style="width:30%; display:inline-block;  margin-left:10px;">{{msgCacheFile.content[i].bucket}}</span>
+                        <span style="width:10%; display:inline-block;  margin-left:10px;">{{msgCacheFile.content[i].updated}}</span>
+                    </div>
+                    <div class="skipLine">&nbsp;</div>
+            </div>
+        </div>
+        <div class="skipLine">&nbsp;</div>
+    </div>
+
+    <div *ngIf="isManageConfig===true" class="mainBlock" style="height:170px; max-height:200px; background-color: rgb(23, 220, 167); border-bottom:0px;">
+        <h2>Manage config </h2>
+        <div style=" margin-top:4px; width:400px; display:inline-block;  margin-left:25px;">
+                <li *ngFor="let action of tabConfig; let m=index;" 
+                        class="Straight-options "  style="width:45%; display:inline-block; margin-left:5px; margin-top:3px; " [ngClass]=" {'even': m % 4 ===0, 'odd': m % 4 ===1, 'evenBis': m % 4 ===2, 'oddBis': m % 4 ===3}" 
+                        (click)="selectActionConfig($event)" id="selectedAction" >
+                    {{action}}
+                </li>
+        </div>
+    </div>
+    <div *ngIf="isManageConfig===true">
+        <form [formGroup]="theForm" class="mainBlock" style="max-height:200px; background-color: rgb(23, 220, 167); border-top:0px;">
+            <div class="label" style="margin-top:3px; margin-left:10px; width:120px;">Search field</div> 
+            <input type="text" class="theInput" formControlName="searchField" >
+            <div class="label" style="margin-top:3px; margin-left:10px; width:120px;">Search criteria</div> 
+            <input type="text" class="theInput" formControlName="searchCriteria" >
+            <div class="label" style="margin-top:3px; margin-left:10px; width:120px;">Record id</div> 
+            <input type="text" class="theInput" formControlName="idRecord" >
+            <div class="skipLine"></div>
+        </form>
+    </div>
+    <div style="display:block;" *ngIf="isManageConfig===true">
+        <div *ngIf="isConfConfigSave===true || isConfConfigUpdate===true || isConfConfigDelete===true" style=' width:450px; display:inline-block;  margin-left:20px; border: solid 2px blue; background-color: lightblue;'>
+            <div class="skipLine"></div>
+            <div style='font-size:20px; font-style: italic; width:100%; display:inline-block;  text-align: center;'> Do you confirm the action to &nbsp;
+                <span *ngIf="isConfConfigSave===true">SAVE</span>
+                <span *ngIf="isConfConfigUpdate===true">UPDATE</span>
+                <span *ngIf="isConfConfigDelete===true">DELETE</span>
+                
+                &nbsp;the record </div>
+            
+            <button class="sizeButtons" style="margin-left:150px; margin-top:10px;" id="Save" (click)="confActionConfig($event)">Save</button> 
+            <button class="sizeButtons" style="margin-left:20px; margin-top:10px;" id="Cancel" (click)="confActionCancel($event)">Cancel</button> 
+            <div class="skipLine"></div>
+        </div>
+    </div>
+    <div style="display:block">
+        <div class="mainBlock" style="border:solid 0px green; margin-top:5px;">
+            <span *ngIf="errorConfig!==''" style=" font-size:15px; color:white; background-color: blue; width:100%; display:inline-block; word-break:break-all;padding-left:10px; padding-top:5px; padding-bottom:5px; ">{{errorConfig}}</span>
+        </div>
+    </div>
+    <div *ngIf="EventHTTPReceived[18]===true">
+        <div class="mainBlock mainBlockOverride" style="max-height:800px;">
+            <h2> Configuration management</h2>
+            <button class="sizeButtons" style="margin-left:50px; margin-top:10px;" id="copy" (click)="copyConfig()">Copy</button> 
+            <button class="sizeButtons" style="margin-left:20px; margin-top:10px;" id="paste" (click)="pasteConfig()">Paste</button> 
+            <div class="subBlock">
+                <div class="labelMid">collection</div> <input type="text" class="theInputShort" value="configServer" (input)="onInputConfig($event)"  id='collectionConfig'>
+                <div class="labelMid" style="text-align: right; padding-right:5px;">db</div> <input type="text" class="theInputShort" value="configDB" (input)="onInputConfig($event)"  id='dbConfig'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">Project Id</div> <input type="text" class="theInput"  value="{{dataConfigServer.GoogleProjectId}}" (input)="onInputConfig($event)"  id='projectId'>
+                <div class="labelMid">Project </div> <input type="text" class="theInput" value="{{dataConfigServer.project}}" (input)="onInputConfig($event)"  id='project'>
+
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">id</div> <input type="text" class="theInput" style="width:310px;" value="{{idRecordConfig}}" (input)="onInputConfig($event)" id='idConfig'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">Title</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.title}}" (input)="onInputConfig($event)"  id='title'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">Google Url</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.googleServer}}" (input)="onInputConfig($event)"  id='googleUrl'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">Mongo Url</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.mongoServer}}" (input)="onInputConfig($event)"  id='mongoUrl'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">FS Url</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.fileSystemServer}}" (input)="onInputConfig($event)"  id='fileSystemUrl'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">PoR bucket</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.PointOfRef.bucket}}" (input)="onInputConfig($event)"  id='PoRBucket'>
+            </div>
+            <div class="subBlock">       
+                <div class="labelMid">PoR object</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.PointOfRef.file}}" (input)="onInputConfig($event)"  id='PoRBObject'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">FS bucket</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.bucketFileSystem}}" (input)="onInputConfig($event)"  id='bucketFS'>
+            </div>
+            <div class="subBlock">        
+                <div class="labelMid">FS object</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.objectFileSystem}}" (input)="onInputConfig($event)"  id='objectFS'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">Test/Prod</div> <input type="text" class="theInputShort" value="{{dataConfigServer.test_prod}}" (input)="onInputConfig($event)"  id='test_prod'>
+                <div class="labelMid" style="text-align: right; padding-right:5px;">Bucket console</div> <input type="text" class="theInputShort" value="{{dataConfigServer.consoleBucket}}" (input)="onInputConfig($event)"  id='console'>
+            </div>
+
+            <div class="subBlock">
+                <div class="labelMid">Ip Address</div> <input type="text" class="theInputShort" value="{{dataConfigServer.IpAddress}}" (input)="onInputConfig($event)"  id='ipAddress'>
+                <div class="labelMid" style="text-align: right; padding-right:5px;">Credential</div> <input type="text" class="theInputShort" value="{{dataConfigServer.credentialDate}}" (input)="onInputConfig($event)"  id='credential'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">Time Out hh</div> <input type="text" class="theInputShort" value="{{dataConfigServer.timeoutFileSystem.hh}}" (input)="onInputConfig($event)"  id='TOhh'>
+                <div class="labelMid" style="text-align: right; padding-right:5px;">minute(s)</div> <input type="text" class="theInputShort" value="{{dataConfigServer.timeoutFileSystem.mn}}" (input)="onInputConfig($event)"  id='TOmn'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">Buffer TO hh</div> <input type="text" class="theInputShort" value="{{dataConfigServer.timeoutFileSystem.bufferTO.hh}}" (input)="onInputConfig($event)"  id='bufferTOhh'>
+                <div class="labelMid" style="text-align: right; padding-right:5px;">minute(s)</div> <input type="text" class="theInputShort" value="{{dataConfigServer.timeoutFileSystem.bufferTO.mn}}" (input)="onInputConfig($event)"  id='bufferTOmn'>
+            </div>
+            <div class="subBlock">
+                <div class="labelMid">Buffer Input hh</div> <input type="text" class="theInputShort" value="{{dataConfigServer.timeoutFileSystem.bufferInput.hh}}" (input)="onInputConfig($event)"  id='bufferInputhh'>
+                <div class="labelMid" style="text-align: right; padding-right:5px;">minute(s)</div> <input type="text" class="theInputShort" value="{{dataConfigServer.timeoutFileSystem.bufferInput.mn}}" (input)="onInputConfig($event)"  id='bufferInputmn'>
+            </div>
+
+
+            <div class="subBlock"  style="height:15px;"> <span class='label'>User specific</span></div>
+            <div style="max-height:80px; overflow-y:scroll;" >
+                <div *ngFor="let tab of dataConfigServer.UserSpecific; let i=index">
+                    <input class="inputA" value="A" id="usrSpec-{{i}}" (click)="onActionConfig($event)">
+                    <span class='labelShort'  style="margin-left:10px; width:50px;" > Id:</span><input type="text"  class='configInput' style="width:100px;" value={{tab.theId}}  (input)="onInputTabConfig($event)" id="idxx-{{i}}"> 
+                    <span class='labelShort' style="margin-left:1px; width:50px;">Type: </span><input type="text"  class='configInput'  style="width:80px;"  value={{tab.theType}} (input)="onInputTabConfig($event)" id="type-{{i}}"> 
+                    <span class='labelShort' style="margin-left:1px; width:50px;"> Log:</span> <input type="text"  class='configInputShort'    value={{tab.log}} (input)="onInputTabConfig($event)" id="logx-{{i}}"> 
+                </div>
+            </div>
+            <div *ngIf="itemUsrSpec!==-1  && isDisplayTabActionField===true" >
+                <div class="dropdown">
+                    <div class="Straight-content" >
+                        <div style="width:100%; display:inline-block; height:40px; margin-left:5px;">
+                            <div *ngFor="let tab of tabActionField; let i=index"  style="font-size:14px; width:145px; display:inline-block; "
+                                    [ngStyle]="{'background-color': i % 2 ===0 ? 'lightYellow' : 'orange'}" id="xxxSpec-{{i}}"  >
+                                <div  style=" width:145px; display:inline-block; text-align:center; padding-top:4px; " class="forHover" id="xxxSpec-{{i}}" (click)="onActionConfig($event)">
+                                    <span  class="forHover" >{{tab}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="subBlock" style="height:15px;"> <span class='label'>Files to cache</span></div>
+            
+                <div style="margin-left:80px; display:block; min-width:220px;"> Bucket
+                    <div  style="margin-left:150px; width:80px; display:inline-block;"> Object</div>
+                </div>
+                <div style="max-height:80px; overflow-y:scroll;" >
+                    <div *ngFor="let tab of dataConfigServer.filesToCache; let i=index" >
+                        <input class="inputA" value="A" id="fileToCache-{{i}}" (click)="onActionConfig($event)">
+                        <input type="text"  class='configInput'  style='height:25px; margin-left:30px; width:180px;' value={{dataConfigServer.filesToCache[i].bucket}}  (input)="onInputTabConfig($event)" id="buck-{{i}}"> 
+                        <input type="text"  class='configInput'  style='height:25px; margin-left:10px; width:180px;' value={{dataConfigServer.filesToCache[i].object}}  (input)="onInputTabConfig($event)" id="obje-{{i}}"> 
+                        <div *ngIf="itemFileToCache!==-1 && itemFileToCache===i && isDisplayTabActionField===true" >
+                            <div class="dropdown">
+                                <div class="Straight-content" >
+                                    <div style="width:100%; display:inline-block; height:40px; margin-left:5px;">
+                                        <div *ngFor="let tab of tabActionField; let i=index"  style="font-size:14px; width:145px; display:inline-block; "
+                                                [ngStyle]="{'background-color': i % 2 ===0 ? 'lightYellow' : 'orange'}" id="xxxToCache-{{i}}"  >
+                                            <div  style=" width:145px; display:inline-block; text-align:center; padding-top:4px; " class="forHover" id="xxxToCache-{{i}}" (click)="onActionConfig($event)">
+                                                <span  class="forHover" >{{tab}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="mainBlock mainBlockOverride" style="max-height:250px; margin-top:5px;">
+            <div *ngIf="tabOfId.length>1" style="margin-top:8px; width:90%; margin-left:25px; display:inline-block; background-color: lightyellow; ">
+                
+                <h2 class="theTitle"> List of file system records</h2>
+                <div class="listRec" style="max-height:200px; overflow-y:scroll;">
+                        <div *ngFor="let tab of tabOfId; let i=index" style="width:100%; display:inline-block; " (click)="selectId($event)"  id="CON-{{i}}">
+                            <div class="forHover" id="CON-{{i}}" style="margin-left:10px; padding-left:20px; width:95%; display:inline-block; height:26px; " [ngClass]=" {'even': i % 2 ===0, 'odd': i % 2 !==0}" >
+                                {{tab}}
+                            </div>
+                    </div>
+                    <br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="skipLine"></div>
+<div class="skipLine"></div>
