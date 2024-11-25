@@ -14,7 +14,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 #COPY ["package.json", "package-lock.json*", "./"]
 ## 10.8.4
-RUN npm install npm@18.17.0 --only=production 
+RUN npm install npm@18.16.0 --only=production 
 
 
 #RUN npm install --production
