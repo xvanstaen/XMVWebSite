@@ -13,7 +13,8 @@ ENV NODE_ENV=production
 WORKDIR /usr/src/app 
 COPY package.json package-lock.json ./
 #COPY ["package.json", "package-lock.json*", "./"]
-RUN npm install npm@10.8.4 --only=production 
+## 10.8.4
+RUN npm install npm@18.17.0 --only=production 
 
 
 #RUN npm install --production
