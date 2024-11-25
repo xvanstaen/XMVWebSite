@@ -19,11 +19,11 @@ RUN npm install npm@10.9.1 --omit=dev
 
 
 #RUN npm install --production
-RUN npm audit fix
+RUN npm audit fix --force
 COPY . ./
 #COPY . .
-
-RUN  npm run build -prod
+## -prod
+RUN  npm run build --omit=dev
 
 
 FROM nginx:alpine
