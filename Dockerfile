@@ -1,5 +1,5 @@
 
-FROM --platform=linux/amd64 node:22.0.0-alpine3.14 AS my-app-build
+FROM --platform=linux/amd64 node:22.0-alpine3.14 AS my-app-build
 
 # FROM --platform=linux/arm64/v8 node:16.14.2-alpine3.14 AS my-app-build
 # FROM --platform=linux/arm64 node:16.14.2-alpine3.14 AS my-app-build
