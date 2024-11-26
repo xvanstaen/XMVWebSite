@@ -1,28 +1,23 @@
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { Inject,Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 
 import { HttpClient, HttpRequest, HttpEvent,  HttpErrorResponse, HttpHeaders, HttpContext } from '@angular/common/http';
-import { BioData } from '../JsonServerClass';
-import { ThisReceiver } from '@angular/compiler';
+
 import { configServer, classUserLogin } from '../JsonServerClass';
 import { classFileSystem, classAccessFile }  from '../classFileSystem';
 
 @Injectable({
   providedIn: 'root',
 })
+
+  
 export class ManageGoogleService {
     
     constructor(
-        private   http: HttpClient,
-       )
-        {}
+        private   http: HttpClient){}
        
-
-    myHeader=new HttpHeaders({'content-type': 'application/json',
-    'cache-control': 'private, max-age=0',
-    'Authorization': 'Bearer ya29.a0AbVbY6MILZfEfuz2p5TZVpC-H49MRTY1gpL6ooXilb3XX26y_DdKVfBxTNGBlosBpVclb_mfDubxk2vWMOUx3LBoG4SkZj1IXHwpgrU2nRNk3vQq1gsVXmcdaLGUXdPz9EicBXVvFS6F5SLtj8GA6E5KLmAMaCgYKAXYSARASFQFWKvPllv_18IAH9e7Y6c4HRJbQ8w0163'
-    });
 
 checkLogin(config:configServer): Observable<any> {
     const http_get=config.googleServer+'/checkLogin/'+config.GoogleProjectId+'/'+config.test_prod+'/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw); // "/"+myArray+"/"+encodeURIComponent(JSON.stringify(TableCryptKey.theFour))

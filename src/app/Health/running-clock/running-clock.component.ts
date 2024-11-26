@@ -1,40 +1,37 @@
 import { Component,  SimpleChanges, ViewChild, AfterViewInit, OnInit,  OnChanges,
   Output, Input, HostListener, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-  // import {point_circle} from '.././MyStdFunctions'
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../../clockFunctions'
 @Component({
   selector: 'app-running-clock',
   templateUrl: './running-clock.component.html',
-  styleUrls: ['./running-clock.component.css']
+  styleUrls: ['./running-clock.component.css'],
+  standalone:true,
+imports:[CommonModule, FormsModule, ReactiveFormsModule, ]
 })
 export class RunningClockComponent {
   
-    constructor(
-      private fb: FormBuilder,
-    ) { }
-    
-    @Input() posSizeClock= new classPosSizeClock;
-
-    @ViewChild('clockCanvas', { static: false })
+  @Input() posSizeClock= new classPosSizeClock;
+  @ViewChild('clockCanvas', { static: false })
   
-    theCanvas:any;
-    ctx:any;
-    //clock_loop:number=0;
-    //max_clock_loop:number=10000;
-    idAnimation:any;
+  theCanvas:any;
+  ctx:any;
+  //clock_loop:number=0;
+  //max_clock_loop:number=10000;
+  idAnimation:any;
 
-    lenRect:number=0;  // size of the rectangle
-    wLine:number=4; // width of the line
-    theSeconds:number=0;
-    theMinutes:number=0;
-    theHours:number=0;
-    x:number=0;
-    y:number=0;
-    radius:number=0;
+  lenRect:number=0;  // size of the rectangle
+  wLine:number=4; // width of the line
+  theSeconds:number=0;
+  theMinutes:number=0;
+  theHours:number=0;
+  x:number=0;
+  y:number=0;
+  radius:number=0;
   
-    background = new Image();   
+  background = new Image();   
   
   ngAfterViewInit(){ 
      

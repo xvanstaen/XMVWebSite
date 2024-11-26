@@ -1,33 +1,24 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
-  
-import { DatePipe, formatDate } from '@angular/common'; 
 
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
 import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
 import { configServer, LoginIdentif, msgConsole } from '../JsonServerClass';
 import { classFileSystem, classAccessFile }  from '../classFileSystem';
-import { convertDate } from '../MyStdFunctions'
+import { convertDate } from '../MyStdFunctions';
 
 @Component({
   selector: 'app-check-file-update',
   templateUrl: './check-file-update.component.html',
-  styleUrls: ['./check-file-update.component.css']
+  styleUrls: ['./check-file-update.component.css'],
+  standalone:true,
 })
 export class CheckFileUpdateComponent {
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
+
     private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
+
     @Inject(LOCALE_ID) private locale: string,
     ) { }
 

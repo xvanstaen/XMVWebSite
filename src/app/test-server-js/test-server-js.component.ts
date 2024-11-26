@@ -2,49 +2,42 @@ import {
   Component, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
+import { CommonModule, DatePipe, formatDate } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { TutorialsComponent } from '../tutorials/tutorials.component';
+import { SelectServerComponent } from '../select-server/select-server.component';
+import { CacheConsoleComponent } from '../cache-console/cache-console.component';
 
-// angular-google-auth2
-//import {AuthService} from 'angular-google-auth2';
-
-import { Buffer } from 'buffer';
-
-import { DatePipe, formatDate } from '@angular/common';
+import { ManageSecuredGoogleService } from '../CloudServices/ManageSecuredGoogle.service';
+import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
+import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { Observable } from 'rxjs';
 
 import { BucketList, Bucket_List_Info, OneBucketInfo, classCredentials, classTabMetaPerso } from '../JsonServerClass';
 
-// retrievedConfigServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
-
-import { msginLogConsole } from '../consoleLog';
 import { configServer, classFilesToCache,  UserParam, LoginIdentif, msgConsole } from '../JsonServerClass';
 
 import { classAccessFile, classFileSystem } from '../classFileSystem';
-import { ManageSecuredGoogleService } from 'src/app/CloudServices/ManageSecuredGoogle.service';
-import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { TutorialService } from 'src/app/CloudServices/tutorial.service';
+
 import { fillConfig } from '../copyFilesFunction';
 @Component({
   selector: 'app-test-server-js',
   templateUrl: './test-server-js.component.html',
-  styleUrls: ['./test-server-js.component.css']
+  styleUrls: ['./test-server-js.component.css'],
+  standalone: true, 
+  imports:[CommonModule, FormsModule, ReactiveFormsModule , TutorialsComponent, SelectServerComponent, CacheConsoleComponent
+  ],
+
 })
 export class TestServerJSComponent {
 
   constructor(
     private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
     private ManageSecuredGoogleService: ManageSecuredGoogleService,
     private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private ManageTutorialService: TutorialService,
     //public auth: AuthService,
 
     @Inject(LOCALE_ID) private locale: string,
@@ -610,6 +603,7 @@ storeTitle(event:any){
 
   getCacheFile(){
     this.resetObjectCacheFile();
+
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.getCacheFile(this.newConfigServer )
     .subscribe((data ) => {  
@@ -1647,9 +1641,10 @@ listConfig(){
   getDefaultCredentials(){
     this.stringCredentials="";
     this.credentials = new classCredentials;
+    const reset=false;
     this.initBeforeCallAPI(17);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getDefaultCredentials(this.newConfigServer)
+    this.ManageGoogleService.getDefaultCredentials(this.newConfigServer, reset)
           .subscribe(
         (data ) => {
             //this.configServer.googleServer=saveGoogleServer;
@@ -1674,9 +1669,10 @@ listConfig(){
   getCredentials(){
     console.log('getCredentials()');
     this.credentials = new classCredentials;
+    const reset=false;
     this.initBeforeCallAPI(17);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.ManageGoogleService.getCredentials(this.newConfigServer )
+    this.ManageGoogleService.getCredentials(this.newConfigServer, reset )
     .subscribe(
         (data ) => {
           this.EventStopWaitHTTP[17]=true;

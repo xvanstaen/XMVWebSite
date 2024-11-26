@@ -3,13 +3,18 @@ import {
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
-import { DatePipe, formatDate } from '@angular/common';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { MainManageFileComponent } from '../../fileAccessMgt/file-access.component';
+import { HealthComponent } from '../../Health/healthfood/health.component';``
+import { CaloriesFatComponent } from '../../Health/calories-fat/calories-fat.component';
+import { ReportHealthComponent } from '../../Health/report-health/report-health.component';
 
 import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 
@@ -18,9 +23,6 @@ import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 
 import { msginLogConsole } from '../../consoleLog'
 import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock } from '../../JsonServerClass';
-import { classPosDiv, getPosDiv } from '../../getPosDiv';
-
-import { getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
 
 import { ClassSubConv, ClassConv, mainClassConv, mainConvItem, ClassUnit, ConvItem } from '../../ClassConverter'
 
@@ -34,29 +36,24 @@ import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../classChart';
 import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS, classRetrieveFile } from '../../classFileSystem';
 
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
 
 import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 import { FillHealthAllInOut } from '../../copyFilesFunction';
-import { TheMonths } from '../../apt_code_name';
+
 
 @Component({
   selector: 'app-main-health',
   templateUrl: './main-health.component.html',
-  styleUrls: ['./main-health.component.css']
-})
+  styleUrls: ['./main-health.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, 
+    MainManageFileComponent, CaloriesFatComponent, ReportHealthComponent, HealthComponent]
+  })
 export class MainHealthComponent {
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
-    @Inject(LOCALE_ID) private locale: string,
   ) { }
 
   @Input() configServer = new configServer;

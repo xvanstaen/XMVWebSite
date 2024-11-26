@@ -1,15 +1,18 @@
 import { Component,  SimpleChanges, ViewChild, AfterViewInit, OnInit, OnChanges,
   Output, Input, HostListener, EventEmitter } from '@angular/core';
 import {classPosSlider} from '../../JsonServerClass';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-color-palette',
   templateUrl: './color-palette.component.html',
-  styleUrls: ['./color-palette.component.css']
+  styleUrls: ['./color-palette.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
-export class ColorPaletteComponent implements OnInit, OnChanges, AfterViewInit {
 
-  constructor() { }
+export class ColorPaletteComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() my_input1: string='';
   @Input() posPalette = new classPosSlider;

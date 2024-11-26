@@ -1,27 +1,20 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
   
-import { DatePipe, formatDate } from '@angular/common'; 
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+  
+import { MainManageFileComponent } from '../../fileAccessMgt/file-access.component';
+import { RunningClockComponent } from '../../Health/running-clock/running-clock.component';
 
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
 
-import { BucketList, Bucket_List_Info} from '../../JsonServerClass';
-
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
 import { configServer, LoginIdentif, classtheEvent} from '../../JsonServerClass';
 import {classPosDiv, getPosDiv} from '../../getPosDiv';
-
-import {manage_input} from '../../manageinput';
-import {eventoutput, thedateformat} from '../../apt_code_name';
-
-import { msgConsole } from '../../JsonServerClass';
-import {msginLogConsole} from '../../consoleLog'
 
 import {mainClassCaloriesFat, ClassCaloriesFat, ClassItem} from '../ClassHealthCalories'
 
@@ -30,9 +23,6 @@ import {mainClassConv, ClassConv, ClassUnit, ConvItem, recordConvert} from '../.
 import { classFileSystem, classAccessFile , classReturnDataFS, classHeaderReturnDataFS} from '../../classFileSystem';
 import {classConfCaloriesFat} from '../classConfHTMLTableAll';
 
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
 import { fnAddTime, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../../clockFunctions'
 
@@ -40,19 +30,11 @@ import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSize
 @Component({
   selector: 'app-calories-fat',
   templateUrl: './calories-fat.component.html',
-  styleUrls: ['./calories-fat.component.css']
+  styleUrls: ['./calories-fat.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, MainManageFileComponent, RunningClockComponent],
 })
 export class CaloriesFatComponent implements OnInit {
-
-  constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
-    @Inject(LOCALE_ID) private locale: string,
-    ) { }
 
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;

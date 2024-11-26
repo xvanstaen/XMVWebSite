@@ -6,6 +6,7 @@ import { configServer } from '../JsonServerClass';
 @Injectable({
   providedIn: 'root'
 })
+
 export class TutorialService {
    
   constructor(private   http: HttpClient) { }

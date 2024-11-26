@@ -1,7 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { FormGroup, FormControl, UntypedFormControl, Validators} from '@angular/forms';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
 import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
@@ -20,7 +22,9 @@ import { configServer } from '../../JsonServerClass';
 @Component({
   selector: 'app-xmvcompany-contact',
   templateUrl: './xmvcompany-contact.component.html',
-  styleUrls: ['./xmvcompany-contact.component.css']
+  styleUrls: ['./xmvcompany-contact.component.css'],
+  standalone: true, 
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
 })
 export class XMVCompanyContactComponent implements OnInit {
 

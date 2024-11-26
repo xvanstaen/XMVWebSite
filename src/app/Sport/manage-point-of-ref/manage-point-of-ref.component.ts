@@ -1,39 +1,29 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
-  
-import { DatePipe, formatDate } from '@angular/common'; 
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
-
-import {msginLogConsole} from '../../consoleLog'
 import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
 import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
 import { findIds } from '../../MyStdFunctions';
 
-
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
+
 
 @Component({
   selector: 'app-manage-point-of-ref',
   templateUrl: './manage-point-of-ref.component.html',
-  styleUrls: ['./manage-point-of-ref.component.css']
+  styleUrls: ['./manage-point-of-ref.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
 export class ManagePointOfRefComponent {
 
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
     ) { }
 
     @Output() returnFile= new EventEmitter<any>();

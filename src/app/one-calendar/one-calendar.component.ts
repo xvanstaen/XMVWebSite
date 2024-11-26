@@ -1,15 +1,13 @@
 
 import { Component, OnInit, AfterViewInit, Inject,LOCALE_ID, EventEmitter, OnChanges, SimpleChanges} from '@angular/core';
-import { DatePipe, formatDate } from '@angular/common'; 
 import { Output, Input, Pipe, PipeTransform, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatDialog} from '@angular/material/dialog';
-// import {MatDatepicker, MatDateRangePicker, MatDatepickerToggle} from '@angular/material/datepicker';
 
-//import * as moment from 'moment';
-//import 'moment/locale/pt-br';
-// import {MatRadioModule} from '@angular/material/radio';  
-   
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatDialog} from '@angular/material/dialog';
+import { MatIconModule} from '@angular/material/icon';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
 
 
 import {manage_input} from '../manageinput';
@@ -21,7 +19,9 @@ import {eventoutput, fillcalendar, thedateformat, DaysOfMonths } from '../apt_co
 @Component({
   selector: 'app-one-calendar',
   templateUrl: './one-calendar.component.html',
-  styleUrls: ['./one-calendar.component.css']
+  styleUrls: ['./one-calendar.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, ],
 })
 
 export class OneCalendarComponent implements OnInit {

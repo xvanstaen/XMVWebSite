@@ -1,42 +1,38 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
   
-import { DatePipe, formatDate } from '@angular/common'; 
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
+import { ManageCircuitsComponent } from '../manage-circuits/manage-circuits.component';
+import { SportPerformanceComponent } from '../sport-performance/sport-performance.component';
+import { DisplayCircuitLoopComponent } from '../display-circuit-loop/display-circuit-loop.component';
+import { BuildLoopFromPerfComponent } from '../build-loop/build-loop-from-perf.component';
 
-import {msginLogConsole} from '../../consoleLog'
 import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
 import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
 import { fillHeaderFile , reinitTotal, copyInitPerf, copyLegInOut, copyInOut, copyLoopInOut, updateTabPor} from '../commonSportFunctions';
 import { findIds, formatHHMNSS } from '../../MyStdFunctions';
 
-
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
-
 
 @Component({
   selector: 'app-sport-reports',
   templateUrl: './sport-reports.component.html',
-  styleUrls: ['./sport-reports.component.css']
+  styleUrls: ['./sport-reports.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, 
+    BuildLoopFromPerfComponent, SportPerformanceComponent, ManageCircuitsComponent, DisplayCircuitLoopComponent
+   ],
 })
 
 
 export class SportReportsComponent {
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
     ) { }
 
     @Input() configServer = new configServer;

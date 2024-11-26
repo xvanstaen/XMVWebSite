@@ -21,7 +21,7 @@
       <h2 class="title "> Welcome!  </h2>
  
       <h3 >
-        One more step for <br>event's details  
+       <br>Log-in to access your specific features  
 
       </h3>
 
@@ -95,8 +95,7 @@
 <ng-template #AdminJson> 
   <div  *ngIf="routing_code===99">
     <app-AdminJson [identification]="identification"  [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
-          [LoginTable_DecryptPSW]="Table_DecryptPSW" [configServerChanges]="configServerChanges"
-          [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
+          [LoginTable_DecryptPSW]="Table_DecryptPSW" 
           [credentials]="credentials" (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" 
           >
     </app-AdminJson> 

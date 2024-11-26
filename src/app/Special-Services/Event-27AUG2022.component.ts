@@ -2,43 +2,43 @@ import { Component, OnInit , Input, Output, EventEmitter, ViewChild, SimpleChang
   AfterContentInit, HostListener, AfterViewInit} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { ViewportScroller } from "@angular/common";
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+  
+import { GetImagesComponent}  from '../Special-Services/GetImages.component';
 
 //import { encrypt, decrypt} from '../EncryptDecryptServices';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
 
-import { UserParam } from '../JsonServerClass';
 import { EventAug } from '../JsonServerClass';
 import { EventCommentStructure } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 // EventCommentStructure
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
+
 
 @Component({
   selector: 'app-Event-27AUG2022',
   templateUrl: './Event-27AUG2022.component.html',
-  styleUrls: ['./Event-27AUG2022.component.css']
+  styleUrls: ['./Event-27AUG2022.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, GetImagesComponent],
 })
 
 export class Event27AugComponent {
 
   constructor(
-    private router:Router,
-    private http: HttpClient,
     private scroller: ViewportScroller,
+    private http: HttpClient,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
-    private fb: FormBuilder,
     ) {}
-  
+    
+    myHeader=new HttpHeaders();
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
 
@@ -84,14 +84,11 @@ export class Event27AugComponent {
       
     });
 
-    myHeader=new HttpHeaders();
     isDeleted:boolean=false;
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
     yourLanguage:string='FR'; 
-
-
 
     Total={
       brunch:0,
@@ -116,8 +113,6 @@ export class Event27AugComponent {
           'If you want to play golf please indicate','','Saturday', 'Sunday', 'number of people', 'number of holes','holes',
           '','Your feedback (e.g. food requirements, others)','Validate', 'Address',""];
 
-  
-
     myLogConsole:boolean=false;
     myConsole:Array<string>=[];
     SaveConsoleFinished:boolean=true;
@@ -138,7 +133,6 @@ export class Event27AugComponent {
 
     MrName:string='';
     MrsName:string='';
-
     
     Encrypt:string='';
     Decrypt:string='';
@@ -147,7 +141,6 @@ export class Event27AugComponent {
     Crypto_Key:number=2;
 
     // ACCESS TO GOOGLE STORAGE
-  
     Google_Bucket_Access_Root:string='https://storage.googleapis.com/storage/v1/b/';
     Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
   
@@ -157,7 +150,6 @@ export class Event27AugComponent {
     bucketMgt=new BucketExchange;
     nextBucketOnChange:number=0;
 
-
     i_loop:number=0;
     j_loop:number=0;
     max_i_loop:number=20000;
@@ -166,8 +158,6 @@ export class Event27AugComponent {
     i:number=0;
     j:number=0;
    
-    
-
     Bucket_Info_Array:Array<Bucket_List_Info>=[];
     ref_Bucket_List_Info=new Bucket_List_Info;
 
@@ -221,7 +211,6 @@ onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
     }
-
 
 ngOnInit(){
       //**this.LogMsgConsole('ngOnInit Event27AUG2022 ===== Device ' + navigator.userAgent + '======');
@@ -282,12 +271,7 @@ ngOnInit(){
         if (this.invite===false){
               this.scroller.scrollToAnchor('targetTOP');
           }
-
- 
   }    
-
-
-
 
 goDown(event:string){
     this.pagePhotos=false;

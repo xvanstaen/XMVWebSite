@@ -1,34 +1,27 @@
 import { Component, OnInit , Input, Output, HostListener, EventEmitter, SimpleChanges,} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
 
 import { OneBucketInfo } from '../JsonServerClass';
-import { msgConsole } from '../JsonServerClass';
 import { Return_Data } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 
 @Component({
     selector: 'app-ChangeSaveFileName',
     templateUrl: './ChangeSaveFileName.component.html',
-    styleUrls: ['./ChangeSaveFileName.component.css']
+    styleUrls: ['./ChangeSaveFileName.component.css'],
+    standalone:true,
+    imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
+
   })
   
 export class ChangeSaveFileNameComponent {
 
     constructor(
-        private router:Router,
-        private http: HttpClient,
-        private scroller: ViewportScroller,
-        private fb:FormBuilder,
         private ManageGoogleService: ManageGoogleService,
-        private ManageMongoDBService: ManageMongoDBService,
+
         ) {}  
     
     @Input() DataToHttpPost:any;

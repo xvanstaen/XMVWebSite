@@ -1,24 +1,38 @@
 import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
   Output, Input, HostListener, EventEmitter, ElementRef, } from '@angular/core';
-import { FormGroup,UntypedFormControl, FormControl, Validators} from '@angular/forms';
 
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { ActivatedRoute, Router } from "@angular/router";
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
+import { RoutingAppComponent } from '../routing-app/routing-app.component';
+import { SelectServerComponent } from '../select-server/select-server.component';
+import { XmvCompanyComponent } from '../xmv-company/xmv-company.component';
+
+import { FitnessStatComponent } from '../Health/fitness-stat/fitness-stat.component';
+import { MainHealthComponent } from '../Health/main-health/main-health.component';
+import { ConverterComponent } from '../converter/converter.component';
+import { RecipeComponent } from '../recipe/recipe.component';
+import { TestServerJSComponent } from '../test-server-js/test-server-js.component';
+
+import { ManagePointOfRefComponent } from '../Sport/manage-point-of-ref/manage-point-of-ref.component';
+import { ManageCircuitsComponent } from '../Sport/manage-circuits/manage-circuits.component';
+import { SportReportsComponent } from '../Sport/sport-reports/sport-reports.component';
+import { SportAnalysisComponent } from '../Sport/sport-analysis/sport-analysis.component';
+import { SportPerfRawDataMgtComponent } from '../Sport/sport-perf-raw-data-mgt/sport-perf-raw-data-mgt.component';
+import { SportPerformanceComponent } from '../Sport/sport-performance/sport-performance.component';
+import { KioskAbdConfigComponent } from '../kiosk-abd-config/kiosk-abd-config.component';
+import { RunningClockComponent } from '../Health/running-clock/running-clock.component';
+import { MyCanvasComponent } from '../my-canvas/my-canvas.component';
+import { Event27AugComponent}  from '../Special-Services/Event-27AUG2022.component';
+import { GetImagesComponent}  from '../Special-Services/GetImages.component';
+
 import { LoginIdentif , configServer, classUserLogin } from '../JsonServerClass';
 import { EventAug, configPhoto, StructurePhotos } from '../JsonServerClass';
 import { environment } from '../../environments/environment';
 import { classCredentials} from '../JsonServerClass';
 import { mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
 import { classAccessFile } from '../classFileSystem';
-
-import { fillConfig } from '../copyFilesFunction';
-import { fnAddTime } from '../MyStdFunctions';
-
-import { fillCredentials } from '../copyFilesFunction';
  
 export class classTabApps{
   apps:string="";
@@ -29,18 +43,18 @@ export class classTabApps{
 @Component({
   selector: 'app-user-functions',
   templateUrl: './user-functions.component.html',
-  styleUrls: ['./user-functions.component.css']
+  styleUrls: ['./user-functions.component.css'],
+  standalone: true, 
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, RoutingAppComponent, SelectServerComponent,   XmvCompanyComponent, MainHealthComponent, 
+    ConverterComponent, RecipeComponent, TestServerJSComponent, ManageCircuitsComponent, ManagePointOfRefComponent, SportPerformanceComponent,
+    SportReportsComponent, SportAnalysisComponent, SportPerfRawDataMgtComponent, FitnessStatComponent, 
+    KioskAbdConfigComponent, RunningClockComponent, MyCanvasComponent, Event27AugComponent, GetImagesComponent
+  ],
+
 })
 
 export class UserFunctionsComponent {
-  constructor(
-    private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDB: ManageMongoDBService,
-    private elementRef: ElementRef,
-    private http: HttpClient,
-    private route: ActivatedRoute,
-    private router: Router,   
-    ) {}
+
     @Input() identification = new LoginIdentif;
     @Input() configServer = new configServer;
     @Input() credentials = new classCredentials;

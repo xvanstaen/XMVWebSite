@@ -1,28 +1,26 @@
 import { Component, OnInit , Input, Output, HostListener, SimpleChanges,EventEmitter} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
 
 import { msginLogConsole } from '../consoleLog';
-import { LoginIdentif } from '../JsonServerClass';
 
 import { BucketList } from '../JsonServerClass';
-import { Bucket_List_Info } from '../JsonServerClass';
 import { OneBucketInfo } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
 import { Return_Data } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
 
 @Component({
   selector: 'app-AdminUserInfo',
   templateUrl: './AdminUserInfo.component.html',
-  styleUrls: ['./AdminUserInfo.component.css']
+  styleUrls: ['./AdminUserInfo.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
+
 })
 
 export class AdminUserInfoComponent {
@@ -35,12 +33,7 @@ export class AdminUserInfoComponent {
   @Input() theReceivedData:any;
 
   constructor(
-    private router:Router,
-    private http: HttpClient,
     private scroller: ViewportScroller,
-    private fb:FormBuilder,
-    private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
     ) {
     }
 
@@ -54,8 +47,7 @@ export class AdminUserInfoComponent {
     EventHTTPReceived:Array<boolean>=[false,false,false,false,false,false];
     id_Animation:Array<number>=[0,0,0,0,0];
     TabLoop:Array<number>=[0,0,0,0,0];
-
-    myHeader=new HttpHeaders();    
+ 
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
@@ -116,10 +108,7 @@ ngOnInit(){
       this.getScreenHeight = window.innerHeight;
 
       this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + 'logconsole'+ "/o?name="  ;
-      this.myHeader=new HttpHeaders({
-        'content-type': 'application/json',
-        'cache-control': 'private, max-age=0'
-      });
+
 
       this.DataType='Test';
       this.Initialize();

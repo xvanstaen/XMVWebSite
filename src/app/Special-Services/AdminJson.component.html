@@ -198,7 +198,7 @@
       <input style="width:80px; height:30px; margin-left:150px; margin-top:20px; "  placeholder="selection#" type="text" (input)="onInput($event)">
   </div>
 </div>
-
+<!--
 <div *ngIf="GoToComponent===13 && selectApps===1">
   <app-performance-sport   [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-performance-sport>
@@ -219,7 +219,7 @@
   <app-sport-analysis [configServer]="configServer" [identification]="identification" [credentials]="credentials">
   </app-sport-analysis>
 </div> 
-
+-->
 <div *ngIf="(GoToComponent===4 || GoToComponent===5 || NbRefresh_Bucket>0) && EventHTTPReceived[0]===true && Google_Bucket_Name!=='' ">
       <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="Google_Bucket_Name"  [NbRefresh_Bucket]="NbRefresh_Bucket"
             (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
@@ -227,15 +227,16 @@
 
 
     <div *ngIf="GoToComponent===1; else CompoTwo ">
-        <app-GetImages [identification]="identification" [LoginTable_User_Data]="LoginTable_User_Data" [configServer]="configServer"
-            [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
+        <app-GetImages [identification]="identification" [configServer]="configServer"
+           >
         </app-GetImages>
     </div>
 
   
   <ng-template #CompoTwo>
     <div *ngIf="GoToComponent===2 else CompoThree ">
-      <app-Event-27AUG2022 [identification]="identification"  [configServer]="configServer" [LoginTable_User_Data]="LoginTable_User_Data" 
+      <app-Event-27AUG2022 [identification]="identification"  [configServer]="configServer" 
+          [LoginTable_User_Data]="LoginTable_User_Data" 
           [LoginTable_DecryptPSW]="LoginTable_DecryptPSW"
           > <!--  (returnDATA)="GetUpdatedTable($event)" -->
       </app-Event-27AUG2022>
@@ -253,7 +254,8 @@
     <div *ngIf="GoToComponent===4; else CompoFive ">
       <div *ngIf="isDataReceived===true">
         <app-AdminUserInfo  [configServer]="configServer" 
-            [theReceivedData]="theReceivedData" (process_userInfo)="Process('Refresh_UserInfo')" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminUserInfo>
+            [theReceivedData]="theReceivedData" (process_userInfo)="Process('Refresh_UserInfo')" 
+            [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminUserInfo>
       </div>
     </div>
   </ng-template>
@@ -263,7 +265,7 @@
     <div *ngIf="GoToComponent===5 ; else CompoSeven">
       <div *ngIf="isDataReceived===true">
         <app-AdminConsole 
-        [theReceivedData]="theReceivedData" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminConsole>
+        [theReceivedData]="theReceivedData"></app-AdminConsole>
       </div>
     </div>
   </ng-template>
@@ -280,8 +282,8 @@
   <ng-template #CompoEight>
     <div *ngIf="GoToComponent===8; else CompoNine">
 
-    <app-health [credentials]="credentials" [identification]="identification"  [configServer]="configServer" [ConfigChart]="ConfigChart"
-    [InHealthAllData]="HealthAllData" [InConfigHTMLFitHealth]='ConfigHTMLFitHealth' [InConfigCaloriesFat]="ConfigCaloriesFat" [InConvertUnit]="ConvertUnit" 
+    <app-health  [identification]="identification"  [configServer]="configServer" 
+    [HealthAllData]="HealthAllData"  [ConfigCaloriesFat]="ConfigCaloriesFat" 
      (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)">
     
   </app-health> <!-- (returnFile)="ReceiveFiles($event)" -->
@@ -292,7 +294,8 @@
     <div *ngIf="GoToComponent===9; else CompoTen">
 
     <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly" 
-    [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [IntheTabOfUnits]="theTabOfUnits"  [InWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"     
+    [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [IntheTabOfUnits]="theTabOfUnits"  [
+    InWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"     
     >
     </app-converter>
    
@@ -302,7 +305,7 @@
     <div *ngIf="GoToComponent===10; else CompoEleven">
 
     <app-converter  [identification]="identification"  [configServer]="configServer" [convertOnly]="convertOnly" 
-     [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay" [intheTabOfUnits]="theTabOfUnits"  [inWeightRefTable]="WeightRefTable" (returnFile)="ReceiveFiles($event)"
+     [InConvertUnit]="ConvertUnit" [InConvToDisplay]="ConvToDisplay"  (returnFile)="ReceiveFiles($event)"
          >
     </app-converter>
    

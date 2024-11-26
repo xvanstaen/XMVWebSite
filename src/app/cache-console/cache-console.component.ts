@@ -5,15 +5,19 @@ import {
 
 // angular-google-auth2
 //import {AuthService} from 'angular-google-auth2';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
 import { Buffer } from 'buffer';
 
-import { DatePipe, formatDate } from '@angular/common';
-
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
+
 import { Observable } from 'rxjs';
 
 import { BucketList, Bucket_List_Info, OneBucketInfo, classCredentials, classTabMetaPerso } from '../JsonServerClass';
@@ -22,10 +26,10 @@ import { msginLogConsole } from '../consoleLog';
 import { configServer, classFilesToCache,  UserParam, LoginIdentif, msgConsole } from '../JsonServerClass';
 
 import { classAccessFile, classFileSystem } from '../classFileSystem';
-import { ManageSecuredGoogleService } from 'src/app/CloudServices/ManageSecuredGoogle.service';
-import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { TutorialService } from 'src/app/CloudServices/tutorial.service';
+import { ManageSecuredGoogleService } from '../CloudServices/ManageSecuredGoogle.service';
+import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
+import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
+import { TutorialService } from '../CloudServices/tutorial.service';
 import { fillConfig } from '../copyFilesFunction';
 import { convertLongFormatDate } from '../MyStdFunctions';
 
@@ -41,7 +45,10 @@ export class classtimeOutRecord{
 @Component({
   selector: 'app-cache-console',
   templateUrl: './cache-console.component.html',
-  styleUrls: ['./cache-console.component.css']
+  styleUrls: ['./cache-console.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+
 })
 export class CacheConsoleComponent {
 

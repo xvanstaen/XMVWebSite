@@ -3,14 +3,23 @@ import {
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { configServer, classFilesToCache,  LoginIdentif, msgConsole } from '../JsonServerClass';
 
 
 @Component({
   selector: 'app-select-server',
   templateUrl: './select-server.component.html',
-  styleUrls: ['./select-server.component.css']
+  styleUrls: ['./select-server.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+
 })
 export class SelectServerComponent {
 

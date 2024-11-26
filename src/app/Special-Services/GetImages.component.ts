@@ -2,7 +2,11 @@ import { Component, OnInit , Input, HostListener} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { WeddingPhotosComponent}  from '../Special-Services/WeddingPhotos.component';
+
 import { EventAug } from '../JsonServerClass';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { StructurePhotos, configPhoto } from '../JsonServerClass';
@@ -14,7 +18,9 @@ import { msgConsole } from '../JsonServerClass';
 @Component({
   selector: 'app-GetImages',
   templateUrl: './GetImages.component.html',
-  styleUrls: ['./GetImages.component.css']
+  styleUrls: ['./GetImages.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, WeddingPhotosComponent],
 })
 
 export class GetImagesComponent {

@@ -3,7 +3,17 @@ import {
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
-import { DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
+import { ColorPaletteComponent } from '../color-picker/color-palette/color-palette.component';
+import { ColorSliderComponent } from '../color-picker/color-slider/color-slider.component';  
+import { RunningClockComponent } from '../Health/running-clock/running-clock.component';
 
 //import  { Color, Label } from 'ng2-charts';
 import {
@@ -11,34 +21,18 @@ import {
   BarController, BarElement, CategoryScale, ChartData, LinearScale, LineController, LineElement, PointElement,
 } from 'chart.js/auto';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { FormGroup, FormControl, UntypedFormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { Observable } from 'rxjs';
-
-
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
-
-
 import { classPosDiv, getPosDiv } from './../getPosDiv';
 
-import { manage_input } from './../manageinput';
-import { eventoutput, thedateformat } from './../apt_code_name';
-import { msginLogConsole } from './../consoleLog';
 
 import { mainClassCaloriesFat, mainDailyReport } from './../Health/ClassHealthCalories';
 import { classConfigChart, classchartHealth } from './../Health/classConfigChart';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart, classReturnColor } from './../Health/classChart';
 
-import { mainConvItem, mainRecordConvert, mainClassUnit, mainClassConv } from './../ClassConverter';
 
 import { classPosSlider } from './../JsonServerClass';
 
 import { configServer, LoginIdentif, msgConsole, classtheEvent } from './../JsonServerClass';
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
+
 
 import { classFileSystem, classAccessFile, classReturnDataFS } from './../classFileSystem';
 import { fnAddTime, addMonthDay, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from './../MyStdFunctions';
@@ -50,20 +44,17 @@ import { fillHealthDataSet } from './../fillChartData'
 @Component({
   selector: 'app-manage-display-charts',
   templateUrl: './manage-display-charts.component.html',
-  styleUrls: ['./manage-display-charts.component.css']
+  styleUrls: ['./manage-display-charts.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, ColorPaletteComponent, ColorSliderComponent, RunningClockComponent ],
+
 })
 
 export class ManageDisplayChartsComponent implements OnInit {
 
   SelChartForm: FormGroup;
   constructor(
-    private http: HttpClient,
     private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
-    @Inject(LOCALE_ID) private locale: string,
   ) {
     this.SelChartForm = this.fb.group({
       //title: new FormControl(''),

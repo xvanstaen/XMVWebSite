@@ -3,8 +3,15 @@ import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
 import { Router, RouterModule } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 
-import { FormGroup,UntypedFormControl, FormControl, Validators} from '@angular/forms';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
+import { ColorPickerComponent } from '../color-picker/color-picker.component';
 //import * as CryptoJS from 'crypto-js';  
 import { Injectable } from '@angular/core';
 import { interval, lastValueFrom } from 'rxjs';
@@ -15,20 +22,19 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { configServer } from '../JsonServerClass';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
+
 
 @Injectable({
     providedIn: 'root'
-    })
-
-
+})
 
 @Component({
   selector: 'app-routing-app',
   templateUrl: './routing-app.component.html',
-  styleUrls: ['./routing-app.component.css']
+  styleUrls: ['./routing-app.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, ColorPickerComponent],
 })
 export class RoutingAppComponent implements OnInit {
 
@@ -146,16 +152,11 @@ Encrypt_Data={
   method:''
 }
 
-
   constructor(
     private router:Router, 
     private http: HttpClient,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
-    
     ) {}
-
-
 
   docDiv:any;
   posDiv={

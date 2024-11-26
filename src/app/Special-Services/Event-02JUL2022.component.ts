@@ -1,28 +1,26 @@
 import { Component, Input, HostListener, } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
-import { ViewportScroller } from "@angular/common";
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {Bucket_List_Info, configServer} from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
-import { UserParam } from '../JsonServerClass';
+
 import { EventAug } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
 
 @Component({
   selector: 'app-Event-02JUL2022',
   templateUrl: './Event-02JUL2022.component.html',
-  styleUrls: ['./Event-02JUL2022.component.css']
+  styleUrls: ['./Event-02JUL2022.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
 
 export class Event02JULComponent {
 
   constructor(
-    private router:Router,
-    private http: HttpClient,
+
     private scroller: ViewportScroller,
     ) {}
     

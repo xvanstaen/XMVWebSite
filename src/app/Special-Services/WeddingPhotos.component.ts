@@ -1,9 +1,9 @@
 import { Component, OnInit , Input, Output, EventEmitter, ViewChild, SimpleChanges, OnChanges, 
    HostListener, AfterViewInit} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
-import { ViewportScroller } from "@angular/common";
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
 import { StructurePhotos, configPhoto } from '../JsonServerClass';
 
 import { BucketExchange, configServer } from '../JsonServerClass';
@@ -18,14 +18,14 @@ export class push_new_bucket{
 @Component({
   selector: 'app-WeddingPhotos',
   templateUrl: './WeddingPhotos.component.html',
-  styleUrls: ['./WeddingPhotos.component.css']
+  styleUrls: ['./WeddingPhotos.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
 
 export class WeddingPhotosComponent {
 
   constructor(
-    private router:Router,
-    private http: HttpClient,
     private scroller: ViewportScroller,
     ) {}
   

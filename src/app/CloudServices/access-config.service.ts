@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
+
 import { configServer } from '../JsonServerClass';
 import { environment } from '../../environments/environment';
 
 import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

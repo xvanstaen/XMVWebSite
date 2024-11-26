@@ -1,39 +1,28 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
   
-import { DatePipe, formatDate } from '@angular/common'; 
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
-
-import {msginLogConsole} from '../../consoleLog'
 import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
 import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
 import { findIds, formatHHMNSS } from '../../MyStdFunctions';
 
-
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
-
-
+import { ManageCircuitsComponent } from '../../Sport/manage-circuits/manage-circuits.component';
 @Component({
   selector: 'app-sport-analysis',
   templateUrl: './sport-analysis.component.html',
-  styleUrls: ['./sport-analysis.component.css']
+  styleUrls: ['./sport-analysis.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ManageCircuitsComponent ],
 })
 export class SportAnalysisComponent {
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
     ) { }
 
   @Input() configServer = new configServer;

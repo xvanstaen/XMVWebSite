@@ -1,33 +1,21 @@
 import { Component, OnInit , Input, HostListener} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-
-import { msginLogConsole } from '../consoleLog';
-import { LoginIdentif } from '../JsonServerClass';
-
-import { EventAug } from '../JsonServerClass';
-import { EventCommentStructure } from '../JsonServerClass';
-import { TableOfEventLogin } from '../JsonServerClass';
-import { BucketList } from '../JsonServerClass';
-import { Bucket_List_Info } from '../JsonServerClass';
-import { OneBucketInfo } from '../JsonServerClass';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { msgConsole } from '../JsonServerClass';
 
 @Component({
   selector: 'app-AdminConsole',
   templateUrl: './AdminConsole.component.html',
-  styleUrls: ['./AdminConsole.component.css']
+  styleUrls: ['./AdminConsole.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
 
 export class AdminConsoleComponent {
 
   
   constructor(
-    private router:Router,
-    private http: HttpClient,
+
     private scroller: ViewportScroller
 
     ) {}

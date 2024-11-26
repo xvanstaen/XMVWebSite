@@ -1,10 +1,13 @@
 import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
 import { saveAs } from "file-saver";
-
+import { SelectServerComponent } from '../select-server/select-server.component';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Router} from '@angular/router';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
+
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
 import { XMVTestProd, configServer, LoginIdentif , classUserLogin, classCredentials, EventAug, Bucket_List_Info } from '../JsonServerClass';
 import { classMainFile , classStructure, classDetails, classTabLevel0, classTabLevel1, classTabLevel2, classTabLevel3, classTabLevel4} from "./exportClassMasterCONFIG";
@@ -16,7 +19,6 @@ import { processDetails, copyDetails, removeSpecChar, copyData, copyMainOuttoMai
 import { fnExtractParam, fnProcessScript } from "./scriptFns"
 
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 
 export class classParamFiles{
   name:string="";
@@ -33,14 +35,17 @@ export class classFilterParam{
 @Component({
   selector: 'app-kiosk-abd-config',
   templateUrl: './kiosk-abd-config.component.html',
-  styleUrl: './kiosk-abd-config.component.css'
+  styleUrl: './kiosk-abd-config.component.css',
+  standalone: true, 
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, SelectServerComponent,],
+
 })
 export class KioskAbdConfigComponent {
   constructor(
     private router:Router,
     private http: HttpClient,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
+
     ) {}
     @Input() identification=new LoginIdentif; 
     @Input() configServer=new configServer;

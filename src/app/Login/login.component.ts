@@ -1,38 +1,31 @@
 import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
-  
-import { HttpClient,  HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
+
+import { MatIconModule} from '@angular/material/icon';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
+import { UserFunctionsComponent } from '../user-functions/user-functions.component';
+import { AdminJsonComponent}  from '../Special-Services/AdminJson.component';
 
 import { XMVTestProd, configServer, LoginIdentif , classUserLogin, classCredentials, EventAug, Bucket_List_Info } from '../JsonServerClass';
 
-import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
-
-import {classConfHTMLFitHealth} from '../Health/classConfHTMLTableAll';
-
-import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
-import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
-import {ConfigFitness} from '../Health/ClassFitness';
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
-
-import { fillCredentials , fillConfig} from '../copyFilesFunction';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, UserFunctionsComponent, AdminJsonComponent ],
+
 })
 
 export class LoginComponent {
 
   constructor(
-    private router:Router,
-    private http: HttpClient,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
     ) {}
 
     @Input() configServer=new configServer;
@@ -53,14 +46,11 @@ export class LoginComponent {
     j_loop:Array<number>=[];
     max_j_loop:number=20000;
 
-  
     @Output() my_output2= new EventEmitter<string>();
-
     @Output() resetServer= new EventEmitter<any>();
     @Output() newCredentials= new EventEmitter<any>();
     
-    
-    myHeader= new  HttpHeaders();
+
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
@@ -116,11 +106,12 @@ export class LoginComponent {
       this.getScreenHeight = window.innerHeight;
       this.device_type = navigator.userAgent;
       this.device_type = this.device_type.substring(10, 48);
-
+    /*
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
       });
+      */
       for (let i=0; i<10; i++){
         this.EventHTTPReceived.push(false);
         this.id_Animation.push(0);

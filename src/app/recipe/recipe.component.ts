@@ -1,31 +1,25 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
   
-import { DatePipe, formatDate, ViewportScroller } from '@angular/common'; 
-
-import { HttpClient , HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
-
+import { formatDate, ViewportScroller } from '@angular/common'; 
+import { MatIconModule} from '@angular/material/icon';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
 import { BucketList ,Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MongoDB and accessed via ManageMongoDBService
 import { configServer, LoginIdentif} from '../JsonServerClass';
-import { msgConsole } from '../JsonServerClass';
-import {msginLogConsole} from '../consoleLog'
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
+
+import { DictionaryComponent } from '../dictionary/dictionary.component';
 
 import {  getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../DropDownStyle';
 import {classPosDiv, getPosDiv} from '../getPosDiv';
 import {CalcFatCalories} from '../Health/CalcFatCalories';
-import {classConfHTMLFitHealth, classConfTableAll} from '../Health/classConfHTMLTableAll';
 import { strDateTime } from '../MyStdFunctions';
 
 import {ClassCaloriesFat, mainClassCaloriesFat} from '../Health/ClassHealthCalories';
@@ -33,7 +27,6 @@ import {ClassItem, DailyReport, mainDailyReport, ClassMeal, ClassDish} from '../
 
 import {ClassSubConv, mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter'
 import {mainClassConv, ClassConv, ClassUnit, ConvItem, recordConvert} from '../ClassConverter'
-import { BuiltinTypeName } from '@angular/compiler';
 
 export class classRecipe{
   ingr:string='';
@@ -82,20 +75,17 @@ export class classFileRecipe{
 @Component({
   selector: 'app-recipe',
   templateUrl: './recipe.component.html',
-  styleUrls: ['./recipe.component.css']
+  styleUrls: ['./recipe.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, DictionaryComponent],
 })
 
 export class RecipeComponent {
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
     ) { }
-
 
 @Input() configServer = new configServer;
 @Input() identification= new LoginIdentif;

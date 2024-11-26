@@ -1,20 +1,18 @@
 import { Component, OnInit , Input, Output, EventEmitter, ViewChild, SimpleChanges, OnChanges, 
   AfterContentInit, HostListener, AfterViewInit} from '@angular/core';
-  import {classPosSlider} from '../../JsonServerClass';
-
-  import {MatSliderModule} from '@angular/material/slider';
+import {classPosSlider} from '../../JsonServerClass';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-color-slider',
   templateUrl: './color-slider.component.html',
-  styleUrls: ['./color-slider.component.css']
+  styleUrls: ['./color-slider.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
 export class ColorSliderComponent implements OnInit, OnChanges, AfterViewInit {
 
-
-  constructor() { }
-
- 
   @Input() my_input2: string='';
   @Input() paramChange:number=0;
   @Input() posSlider=new classPosSlider; 

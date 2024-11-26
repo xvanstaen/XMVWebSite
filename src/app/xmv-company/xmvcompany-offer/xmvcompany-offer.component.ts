@@ -6,7 +6,8 @@ import { ViewportScroller } from "@angular/common";
 @Component({
   selector: 'app-xmvcompany-offer',
   templateUrl: './xmvcompany-offer.component.html',
-  styleUrls: ['./xmvcompany-offer.component.css']
+  styleUrls: ['./xmvcompany-offer.component.css'],
+  standalone: true, 
 })
 export class XMVCompanyOfferComponent implements OnInit {
 

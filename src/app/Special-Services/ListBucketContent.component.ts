@@ -1,40 +1,31 @@
 
 import { Component, OnInit , Input, Output, EventEmitter,HostListener, OnChanges, SimpleChanges} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { EventAug } from '../JsonServerClass';
+
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { classTabMetaPerso , Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
-import { StructurePhotos } from '../JsonServerClass';
-import { BucketExchange } from '../JsonServerClass';
 
 import { msginLogConsole } from '../consoleLog';
-import { LoginIdentif } from '../JsonServerClass';
-import { BucketList } from '../JsonServerClass';
 
 import { msgConsole } from '../JsonServerClass';
 import { configServer } from '../JsonServerClass';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
 
 @Component({
   selector: 'app-ListBucketContent',
   templateUrl: './ListBucketContent.component.html',
-  styleUrls: ['./ListBucketContent.component.css']
+  styleUrls: ['./ListBucketContent.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
 
 export class ListBucketContentComponent {
 
   constructor(
-    private router:Router,
-    private http: HttpClient,
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
     ) {}
   
     @Input() configServer=new configServer;
@@ -47,8 +38,7 @@ export class ListBucketContentComponent {
     
     @Output() Return_Data= new EventEmitter<any>();
 
-    SelectedBucketInfo=new OneBucketInfo;
-    myHeader=new HttpHeaders();    
+    SelectedBucketInfo=new OneBucketInfo;   
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
@@ -96,24 +86,15 @@ onWindowResize() {
       this.getScreenHeight = window.innerHeight;
     }
 
-
 ngOnInit(){
       //this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
-
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
-
       this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + 'logconsole' + "/o?name="  ;
-      this.myHeader=new HttpHeaders({
-        'content-type': 'application/json',
-        'cache-control': 'private, max-age=0'
-      });
       this.Error_Access_Server='';
       this.IsngInitDone=true;
       this.RetrieveAllObjects();
   }   
-
-
 
 RetrieveAllObjects(){
   // bucket name is ListOfObject.config
@@ -159,12 +140,7 @@ RetrieveAllObjects(){
   RetrieveSelectedFile(event:any){
     this.Message='';
     const saveEvent=event;
-    //this.FileMedialink=event.mediaLink;
-    //this.FileName=event.name;
-      
-
-     // this.http.get<any>(event.mediaLink )
-      this.ManageGoogleService.getContentObject(this.configServer, event.bucket,event.name )
+    this.ManageGoogleService.getContentObject(this.configServer, event.bucket,event.name )
       .subscribe((data ) => {
         console.log('ListBucket - RetrieveSelectedFile= '+event.mediaLink);
         this.Return_SelectedBucketInfo.emit(saveEvent);
@@ -173,8 +149,7 @@ RetrieveAllObjects(){
         } else {
           
         }
-        //const v=JSON.stringify(data);
-        //const v2=JSON.parse(data);
+
         this.scroller.scrollToAnchor('SelectedObjectsFile');
         this.Return_Data.emit(data);
         //
@@ -204,8 +179,6 @@ RetrieveAllObjects(){
          // }
         }
       }
-       
-        
         // //this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j));
       }
      
@@ -217,6 +190,6 @@ LogMsgConsole(msg:string){
 
   msginLogConsole(msg, this.myConsole,this.myLogConsole, this.SaveConsoleFinished,this.HTTP_AddressLog, this.type);
   
-  }
+}
 
 }

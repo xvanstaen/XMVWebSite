@@ -3,62 +3,42 @@ import {
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
-import { DatePipe, formatDate } from '@angular/common';
+import { MatIconModule} from '@angular/material/icon';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { MainManageFileComponent } from '../../fileAccessMgt/file-access.component';
+import { RunningClockComponent } from '../../Health/running-clock/running-clock.component';
 
-import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
-
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
-
-import { msginLogConsole } from '../../consoleLog'
 import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent } from '../../JsonServerClass';
 import { classPosDiv, getPosDiv } from '../../getPosDiv';
 
 
-import { manage_input } from '../../manageinput';
-import { eventoutput, thedateformat } from '../../apt_code_name';
-
 import { getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
-
-import { ClassSubConv, ClassConv, mainClassConv, ClassUnit, ConvItem } from '../../ClassConverter'
 
 import { ClassCaloriesFat, mainClassCaloriesFat } from '../ClassHealthCalories'
 import { ClassItem, DailyReport, mainDailyReport, ClassMeal, ClassDish } from '../ClassHealthCalories'
 
 import { classConfHTMLFitHealth, classConfTableAll } from '../classConfHTMLTableAll';
 
-import { CalcFatCalories } from '../CalcFatCalories';
-import { classConfigChart, classchartHealth } from '../classConfigChart';
-import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../classChart';
 import { classFileSystem, classAccessFile , classReturnDataFS, classHeaderReturnDataFS , classRetrieveFile} from '../../classFileSystem';
 
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
-import { fillHealthOneDay } from '../../copyFilesFunction';
 import { fnAddTime, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../../clockFunctions'
 
 @Component({
   selector: 'app-health',
   templateUrl: './health.component.html',
-  styleUrls: ['./health.component.css']
+  styleUrls: ['./health.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,  MainManageFileComponent, RunningClockComponent ],
+
 })
 export class HealthComponent  {
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
   ) { }
 

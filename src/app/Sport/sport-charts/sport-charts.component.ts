@@ -3,45 +3,26 @@ import {
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
-import { DatePipe, formatDate, ViewportScroller } from '@angular/common';
-
-//import  { Color, Label } from 'ng2-charts';
-import {
-  Chart, ChartOptions, ChartType, ChartConfiguration, PluginChartOptions, ScaleChartOptions, ChartDataset,
-  BarController, BarElement, CategoryScale, ChartData, LinearScale, LineController, LineElement, PointElement,
-} from 'chart.js/auto';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { FormGroup, FormControl, UntypedFormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { classConfigChart, classchartHealth } from './../../Health/classConfigChart';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart, classReturnColor } from './../../Health/classChart';
 
 import { configServer, LoginIdentif, msgConsole, classtheEvent } from '../../JsonServerClass';
 
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
-
 import { classFileSystem, classAccessFile, classReturnDataFS } from '../../classFileSystem';
 
 @Component({
   selector: 'app-sport-charts',
   templateUrl: './sport-charts.component.html',
-  styleUrls: ['./sport-charts.component.css']
+  styleUrls: ['./sport-charts.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+
 })
 
 export class SportChartsComponent implements OnInit {
-
-  constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
-  ) {}
 
   @Input() identification = new LoginIdentif;
 

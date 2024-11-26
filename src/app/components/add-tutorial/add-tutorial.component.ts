@@ -1,12 +1,23 @@
 import { Component, OnInit } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Tutorial } from 'src/app/components/TutorialClass';
+import { Tutorial } from '../../components/TutorialClass';
 import { Observable } from 'rxjs';
-import { TutorialService } from 'src/app/CloudServices/tutorial.service';
+import { TutorialService } from '../../CloudServices/tutorial.service';
 @Component({
   selector: 'app-add-tutorial',
   templateUrl: './add-tutorial.component.html',
-  styleUrls: ['./add-tutorial.component.css']
+  styleUrls: ['./add-tutorial.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+
 })
 export class AddTutorialComponent implements OnInit {
   
@@ -47,6 +58,7 @@ export class AddTutorialComponent implements OnInit {
       title: this.tutorial.title,
       description: this.tutorial.description
     };
+    /*  TO BE REVIEWED
     this.tutorialService.create(this.tutorial)
         .subscribe(
           res => {
@@ -59,7 +71,7 @@ export class AddTutorialComponent implements OnInit {
             console.log('add tutorial failed  ', error);
           }
           );
-     
+     */
 
   }
 

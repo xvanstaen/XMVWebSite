@@ -1,13 +1,20 @@
 import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
   Output, Input, HostListener, EventEmitter, ElementRef, } from '@angular/core';
-import { FormGroup,UntypedFormControl, FormControl, Validators} from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators} from '@angular/forms';
+import { HttpClient, provideHttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { ActivatedRoute, Router } from "@angular/router";
+
+import { UserFunctionsComponent } from './user-functions/user-functions.component';
 
 import { ManageGoogleService } from './CloudServices/ManageGoogle.service';
 import { ManageSecuredGoogleService } from './CloudServices/ManageSecuredGoogle.service';
 import { ManageMongoDBService } from './CloudServices/ManageMongoDB.service';
+
 import { LoginIdentif , configServer, classUserLogin } from './JsonServerClass';
 import { EventAug, configPhoto, StructurePhotos } from './JsonServerClass';
 import { environment } from '../environments/environment';
@@ -23,7 +30,9 @@ import { fillCredentials } from './copyFilesFunction';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  standalone: true, 
+  imports:[RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, UserFunctionsComponent,],
 })
 
 export class AppComponent {
@@ -31,13 +40,9 @@ export class AppComponent {
   
   constructor(
     private ManageGoogleService: ManageGoogleService,
-    private ManageSecuredGoogleService: ManageSecuredGoogleService,
     private ManageMongoDB: ManageMongoDBService,
-    private elementRef: ElementRef,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private router: Router,
-    
     ) {}
 
 

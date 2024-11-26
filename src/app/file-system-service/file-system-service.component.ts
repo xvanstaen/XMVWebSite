@@ -1,41 +1,29 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+
+  import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+  import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+  import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
   
-import { DatePipe, formatDate } from '@angular/common'; 
-
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
-
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
 
 import {msginLogConsole} from '../consoleLog'
 import { configServer, LoginIdentif, classCredentials, msgConsole } from '../JsonServerClass';
 import {classPosDiv, getPosDiv} from '../getPosDiv';
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
+
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import {AccessConfigService} from '../CloudServices/access-config.service';
 
 import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS, classRetrieveFile }  from '../classFileSystem';
-
-import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, checkData, validateLock, createRecord, updatedAt  } from '../MyStdFunctions';
-
 @Component({
   selector: 'app-file-system-service',
   templateUrl: './file-system-service.component.html',
-  styleUrls: ['./file-system-service.component.css']
+  styleUrls: ['./file-system-service.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+
 })
 export class FileSystemServiceComponent {
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
     ) { }
 

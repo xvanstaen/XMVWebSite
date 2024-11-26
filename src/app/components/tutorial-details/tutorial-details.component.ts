@@ -1,12 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { TutorialService } from 'src/app/CloudServices/tutorial.service';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
+import { TutorialService } from '../../CloudServices/tutorial.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Tutorial } from 'src/app/components/TutorialClass';
+import { Tutorial } from '../../components/TutorialClass';
 
 @Component({
   selector: 'app-tutorial-details',
   templateUrl: './tutorial-details.component.html',
-  styleUrls: ['./tutorial-details.component.css']
+  styleUrls: ['./tutorial-details.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+
 })
 export class TutorialDetailsComponent implements OnInit {
 
@@ -22,6 +33,7 @@ export class TutorialDetailsComponent implements OnInit {
     this.getTutorial(this.route.snapshot.paramMap.get('id'));
   }
   getTutorial(id:any): void {
+  /* TO BE REVIEWED 
     this.tutorialService.get(id)
       .subscribe(
         data => {
@@ -31,6 +43,7 @@ export class TutorialDetailsComponent implements OnInit {
         error => {
           console.log('get details ', error);
         });
+  */
   }
   updatePublished(status:any): void {
     const data = {
@@ -38,6 +51,7 @@ export class TutorialDetailsComponent implements OnInit {
       description: this.currentTutorial.description,
       published: status
     };
+  /* TO BE REVIEWED
     this.tutorialService.update(this.currentTutorial.id, data)
       .subscribe(
         response => {
@@ -47,8 +61,10 @@ export class TutorialDetailsComponent implements OnInit {
         error => {
           console.log(error);
         });
+  */
   }
   updateTutorial(): void {
+    /* TO BE REVIEWED
     this.tutorialService.update(this.currentTutorial.id, this.currentTutorial)
       .subscribe(
         response => {
@@ -58,8 +74,10 @@ export class TutorialDetailsComponent implements OnInit {
         error => {
           console.log(error);
         });
+  */
   }
   deleteTutorial(): void {
+    /* TO BE REVIEWED
     this.tutorialService.delete(this.currentTutorial.id)
       .subscribe(
         response => {
@@ -69,5 +87,6 @@ export class TutorialDetailsComponent implements OnInit {
         error => {
           console.log(error);
         });
+   */
   }
 }

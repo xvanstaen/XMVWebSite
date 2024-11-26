@@ -1,13 +1,19 @@
 import { Component, OnInit, Input, Output, EventEmitter,HostListener, } from '@angular/core';
+
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import {ConfigFitness} from '../ClassFitness';
 import {CreturnedData} from '../ClassFitness';
 import {CmyEvent} from '../ClassFitness';
-import {Ctarget} from '../ClassFitness';
 
 @Component({
   selector: 'app-my-drop-down',
   templateUrl: './my-drop-down.component.html',
-  styleUrls: ['./my-drop-down.component.css']
+  styleUrls: ['./my-drop-down.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,  ],
+
 })
 export class MyDropDownComponent implements OnInit {
 

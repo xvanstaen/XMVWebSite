@@ -1,14 +1,18 @@
 import { Component,  OnInit, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { Inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatDialog} from '@angular/material/dialog';
 
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatDialog} from '@angular/material/dialog';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, UntypedFormControl, FormControl, Validators} from '@angular/forms';
 import {convertDate} from '../MyStdFunctions'
 
 @Component({
   selector: 'app-the-calendar',
   templateUrl: './the-calendar.component.html',
-  styleUrls: ['./the-calendar.component.css']
+  styleUrls: ['./the-calendar.component.css'],
+  standalone: true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
 export class TheCalendarComponent implements OnInit {
   

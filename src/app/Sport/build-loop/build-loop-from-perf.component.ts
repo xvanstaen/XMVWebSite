@@ -1,42 +1,24 @@
 
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
-  
-import { DatePipe, formatDate } from '@angular/common'; 
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
-
-import {msginLogConsole} from '../../consoleLog';
-import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
 import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
 import { fillHeaderFile, updateTabPor, copyInitPerf, reinitTotal } from '../commonSportFunctions';
 
 import { findIds, formatHHMNSS } from '../../MyStdFunctions';
-
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
+import { DisplayCircuitLoopComponent } from '../display-circuit-loop/display-circuit-loop.component';
 
 @Component({
   selector: 'app-build-loop-from-perf',
   templateUrl: './build-loop-from-perf.component.html',
-  styleUrls: ['./build-loop-from-perf.component.css']
+  styleUrls: ['./build-loop-from-perf.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, DisplayCircuitLoopComponent],
 })
 export class BuildLoopFromPerfComponent {
 
-  constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
-    ) { }
-    
   @Input() specificCircuit = new classCircuitRec;
   @Input() filePerf:Array<classFilePerf>=[];
   @Output() savePerf= new EventEmitter<any>();

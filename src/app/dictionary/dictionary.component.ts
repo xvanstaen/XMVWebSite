@@ -1,45 +1,29 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
-  
-import { DatePipe, formatDate, ViewportScroller } from '@angular/common'; 
 
-import { HttpClient , HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
-
-
-import { BucketList } from '../JsonServerClass';
-import { Bucket_List_Info } from '../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MongoDB and accessed via ManageMongoDBService
 import { configServer, LoginIdentif} from '../JsonServerClass';
-import { msgConsole } from '../JsonServerClass';
-import {msginLogConsole} from '../consoleLog'
-import { environment } from '../../environments/environment';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import {AccessConfigService} from '../CloudServices/access-config.service';
+
 @Component({
   selector: 'app-dictionary',
   templateUrl: './dictionary.component.html',
-  styleUrls: ['./dictionary.component.css']
+  styleUrls: ['./dictionary.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+
 })
 export class DictionaryComponent {
 
-
     constructor(
-      private http: HttpClient,
-      private fb: FormBuilder,
-      private scroller: ViewportScroller,
-      private ManageMongoDBService: ManageMongoDBService,
-      private ManageGoogleService: ManageGoogleService,
-      private datePipe: DatePipe,
-      @Inject(LOCALE_ID) private locale: string,
-      ) { }
+      private ManageGoogleService: ManageGoogleService,) { }
 
 
 @Input() configServer = new configServer;

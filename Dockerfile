@@ -1,5 +1,6 @@
 
 FROM --platform=linux/amd64 node:22.0-alpine3.19 AS my-app-build
+##FROM --platform=linux/amd64 node:22.0-slim AS my-app-build
 
 # FROM --platform=linux/arm64/v8 node:16.14.2-alpine3.14 AS my-app-build
 # FROM --platform=linux/arm64 node:16.14.2-alpine3.14 AS my-app-build
@@ -11,17 +12,20 @@ FROM --platform=linux/amd64 node:22.0-alpine3.19 AS my-app-build
 ENV NODE_ENV=production
 
 WORKDIR /usr/src/app 
-COPY package.json package-lock.json ./
+COPY package.json  ./
 #COPY ["package.json", "package-lock.json*", "./"]
 ## 10.8.4
+
+RUN npm install npm@10.9.1 --legacy-peer-deps --omit=dev
 ##  --only=production 
-RUN npm install npm@10.9.1 --omit=dev
-
-
+## RUN npm install npm@10.9.1 @esbuild/linux-x64 --omit=dev
 #RUN npm install --production
-RUN npm audit fix --force
+
+##RUN npm audit fix 
 COPY . ./
 #COPY . .
+
+
 ## -prod
 RUN  npm run build --omit=dev
 

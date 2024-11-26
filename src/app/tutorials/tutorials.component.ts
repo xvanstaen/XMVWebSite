@@ -3,28 +3,23 @@ import {
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
-// angular-google-auth2
-//import {AuthService} from 'angular-google-auth2';
 
-import { Buffer } from 'buffer';
-
-import { DatePipe, formatDate } from '@angular/common';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 
-import { msginLogConsole } from '../consoleLog';
 import { configServer, classFilesToCache, UserParam, LoginIdentif, msgConsole, classCredentials } from '../JsonServerClass';
 
 import { classAccessFile, classFileSystem } from '../classFileSystem';
 
 import { fillConfig } from '../copyFilesFunction'
 
-import { ManageMongoDBService } from 'src/app/CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from 'src/app/CloudServices/ManageGoogle.service';
-import { TutorialService } from 'src/app/CloudServices/tutorial.service';
+import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
+import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
+import { TutorialService } from '../CloudServices/tutorial.service';
 
 export class classPSW{
   id: number=0;
@@ -45,18 +40,15 @@ export class classTuto{
 @Component({
   selector: 'app-tutorials',
   templateUrl: './tutorials.component.html',
-  styleUrls: ['./tutorials.component.css']
+  styleUrls: ['./tutorials.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+
 })
 export class TutorialsComponent {
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
     private ManageTutorialService: TutorialService,
-
   ) { }
 
   @Input() configServer = new configServer;

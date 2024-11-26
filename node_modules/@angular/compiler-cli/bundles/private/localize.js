@@ -5,11 +5,11 @@
 import {
   ConsoleLogger,
   LogLevel
-} from "../chunk-RT2QTF73.js";
+} from "../chunk-FKXFEX7K.js";
 import {
   SourceFile,
   SourceFileLoader
-} from "../chunk-3Z25BX6N.js";
+} from "../chunk-77D5CI2U.js";
 import {
   LogicalFileSystem,
   LogicalProjectPath,
@@ -18,6 +18,7 @@ import {
   absoluteFrom,
   absoluteFromSourceFile,
   basename,
+  createFileSystemTsReadDirectoryFn,
   dirname,
   getFileSystem,
   getSourceFileOrError,
@@ -30,8 +31,8 @@ import {
   resolve,
   setFileSystem,
   toRelativeImport
-} from "../chunk-YE5ORA4V.js";
-import "../chunk-XI2RTGAL.js";
+} from "../chunk-37JMVF7H.js";
+import "../chunk-KPQ72R34.js";
 export {
   ConsoleLogger,
   LogLevel,
@@ -44,6 +45,7 @@ export {
   absoluteFrom,
   absoluteFromSourceFile,
   basename,
+  createFileSystemTsReadDirectoryFn,
   dirname,
   getFileSystem,
   getSourceFileOrError,

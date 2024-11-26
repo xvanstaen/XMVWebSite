@@ -1,11 +1,20 @@
 import { Component, OnInit , Input, Output, ViewChild,  HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID, ElementRef} from '@angular/core';
-import { FormGroup,UntypedFormControl, FormControl, Validators} from '@angular/forms';
+
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { ColorPaletteComponent } from '../color-picker/color-palette/color-palette.component';
+import { ColorSliderComponent } from '../color-picker/color-slider/color-slider.component';  
 import {classPosSlider} from '../JsonServerClass';
+
 @Component({
   selector: 'app-color-picker',
   templateUrl: './color-picker.component.html',
-  styleUrls: ['./color-picker.component.css']
+  styleUrls: ['./color-picker.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ColorPaletteComponent, ColorSliderComponent],
+
 })
 
 
@@ -13,12 +22,6 @@ import {classPosSlider} from '../JsonServerClass';
 export class ColorPickerComponent {
   @Output() returnFile= new EventEmitter<any>(); // not used
 
-  constructor(
-
-    
-    ) {}
-
-    
   my_input_child1:string='';
   my_input_child2:string='';
   my_output_child1:string='';

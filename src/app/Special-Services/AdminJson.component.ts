@@ -1,17 +1,13 @@
 import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
-  
-import { Observable, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
+
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { msginLogConsole } from '../consoleLog';
 
 import { EventAug, configPhoto, StructurePhotos } from '../JsonServerClass';
-import {  LoginIdentif, msgConsole , OneBucketInfo, configServer, classCredentials } from '../JsonServerClass';
+import { LoginIdentif, msgConsole , OneBucketInfo, configServer, classCredentials } from '../JsonServerClass';
 
 import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
 import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
@@ -19,15 +15,27 @@ import {ConfigFitness} from '../Health/ClassFitness';
 import {classConfHTMLFitHealth} from '../Health/classConfHTMLTableAll';
 import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
+import { ListBucketContentComponent }  from '../Special-Services/ListBucketContent.component';
+import { Event27AugComponent}  from '../Special-Services/Event-27AUG2022.component';
+import { GetImagesComponent}  from '../Special-Services/GetImages.component';
+import { RespondContactComponent } from '../Special-Services/Respond-Contact.component';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
-
-
+import { AdminConsoleComponent }  from '../Special-Services/AdminConsole.component';
+import { AdminUserInfoComponent } from '../Special-Services/AdminUserInfo.component';
+import { FitnessStatComponent } from '../Health/fitness-stat/fitness-stat.component';
+import { HealthComponent } from '../Health/healthfood/health.component';
+import { ConverterComponent } from '../converter/converter.component';
+import { RecipeComponent } from '../recipe/recipe.component';
+import { ChangeSaveFileNameComponent }  from '../Special-Services/ChangeSaveFileName.component';
 @Component({
   selector: 'app-AdminJson',
   templateUrl: './AdminJson.component.html',
-  styleUrls: ['./AdminJson.component.css']
+  styleUrls: ['./AdminJson.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ListBucketContentComponent,
+    Event27AugComponent,  GetImagesComponent, RespondContactComponent, AdminUserInfoComponent, AdminConsoleComponent, 
+    FitnessStatComponent, HealthComponent, ConverterComponent, RecipeComponent, ChangeSaveFileNameComponent
+  ],
 })
 
 export class AdminJsonComponent {
@@ -53,12 +61,13 @@ export class AdminJsonComponent {
 
   @Input() WeddingPhotos:Array<StructurePhotos>=[];
 
+
+  @Output() resetServer= new EventEmitter<any>();
+  @Output() newCredentials= new EventEmitter<any>();
+
   constructor(
-    private router:Router,
-    private http: HttpClient,
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
     ) {}
 
     getScreenWidth: any;
@@ -79,7 +88,7 @@ export class AdminJsonComponent {
      // ACCESS TO GOOGLE STORAGE
     HTTP_AddressLog:string='';
     HTTP_Address:string='';
-    myHeader=new HttpHeaders(); 
+
     bucket_data:string='';
     
     SelectedBucketInfo=new OneBucketInfo;
@@ -139,10 +148,7 @@ ngOnInit(){
       this.getScreenHeight = window.innerHeight;
 
       this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + 'logconsole' + "/o?name="  ;
-      this.myHeader=new HttpHeaders({
-        'content-type': 'application/json',
-        'cache-control': 'private, max-age=0'
-      });
+
       this.EventHTTPReceived[0]=true;
       //this.waitHTTP(this.TabLoop[0], 20000, 0);
       
@@ -407,6 +413,8 @@ BackToSaveFile(event:any){
 // for testing purpose only
 ///////////////////////////
  AccessMongo(){
+
+  /**** TO BE REVIEWED AND CHANGED 
      const HTTP_Address="https://data.mongodb-api.com/app/data-kpsyr/endpoint/data/v1/action/insertOne" ;
      this.myHeader=new HttpHeaders({
       'content-type': 'application/json',
@@ -442,10 +450,10 @@ BackToSaveFile(event:any){
                
              } 
            )
+             */
  }
 
- @Output() resetServer= new EventEmitter<any>();
- @Output() newCredentials= new EventEmitter<any>();
+
  fnResetServer(){
          this.resetServer.emit();
    }

@@ -1,7 +1,14 @@
 //import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 import { Component,  SimpleChanges, ViewChild, AfterViewInit, OnInit,  OnChanges,
         Output, Input, HostListener, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+        
   // import {point_circle} from '.././MyStdFunctions'
 import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../clockFunctions'
 
@@ -9,7 +16,9 @@ import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSize
 @Component({
   selector: 'app-my-canvas',
   templateUrl: './my-canvas.component.html',
-  styleUrls: ['./my-canvas.component.css']
+  styleUrls: ['./my-canvas.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
 })
 export class MyCanvasComponent implements OnInit {
   

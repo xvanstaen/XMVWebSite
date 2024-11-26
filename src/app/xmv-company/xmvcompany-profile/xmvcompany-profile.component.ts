@@ -4,7 +4,8 @@ import {  ElementRef } from '@angular/core';
 @Component({
   selector: 'app-xmvcompany-profile',
   templateUrl: './xmvcompany-profile.component.html',
-  styleUrls: ['./xmvcompany-profile.component.css']
+  styleUrls: ['./xmvcompany-profile.component.css'],
+  standalone: true, 
 })
 
 

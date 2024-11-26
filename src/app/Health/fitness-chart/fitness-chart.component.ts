@@ -1,53 +1,29 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
-import { DatePipe, formatDate } from '@angular/common'; 
 
-import { HttpClient } from '@angular/common/http';
+import { MatIconModule} from '@angular/material/icon';
 
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
-import { configServer } from '../../JsonServerClass';
-
-import { LoginIdentif } from '../../JsonServerClass';
-
-import {eventoutput, thedateformat} from '../../apt_code_name';
-
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
+import { MyDropDownComponent } from '../../Health/my-drop-down/my-drop-down.component';
 
 import {ConfigFitness} from '../ClassFitness';
-import {ConfigSport} from '../ClassFitness';
-import {PerformanceFitness} from '../ClassFitness';
-import {ClassSport} from '../ClassFitness';
-import {ClassResult} from '../ClassFitness';
-import {ClassActivity} from '../ClassFitness';
-import {ClassExercise} from '../ClassFitness';
+
 import {BigData} from '../ClassFitness';
 import {CreturnedData} from '../ClassFitness';
-import {CmyEvent} from '../ClassFitness';
-import {Ctarget} from '../ClassFitness';
+
 
 @Component({
   selector: 'app-fitness-chart',
   templateUrl: './fitness-chart.component.html',
-  styleUrls: ['./fitness-chart.component.css']
+  styleUrls: ['./fitness-chart.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, MyDropDownComponent ],
+
 })
 export class FitnessChartComponent implements OnInit {
-
-  constructor(    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
-    @Inject(LOCALE_ID) private locale: string,) {
-
-   }
 
   FieldSelForm=new FormGroup({
     SortOne: new FormControl(''),

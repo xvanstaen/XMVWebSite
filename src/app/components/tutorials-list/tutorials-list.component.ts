@@ -1,12 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { TutorialService } from 'src/app/CloudServices/tutorial.service';
-import { Tutorial } from 'src/app/components/TutorialClass';
-import { ActivatedRoute, Router } from '@angular/router';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDialogModule} from '@angular/material/dialog';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Tutorial } from '../../components/TutorialClass';
+import { Observable } from 'rxjs';
+import { TutorialService } from '../../CloudServices/tutorial.service';
 
 @Component({
   selector: 'app-tutorials-list',
   templateUrl: './tutorials-list.component.html',
-  styleUrls: ['./tutorials-list.component.css']
+  styleUrls: ['./tutorials-list.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
+ 
 })
 export class TutorialsListComponent implements OnInit {
   tutorials :any;
@@ -17,12 +29,13 @@ export class TutorialsListComponent implements OnInit {
   msg_edit:string='';
   constructor(
     private tutorialService: TutorialService,
-    private route: ActivatedRoute,) { }
+    ) { }
 
   ngOnInit(): void {
    // this.retrieveTutorials();
   }
   retrieveTutorials(): void {
+       /* TO BE REVIEWED
     this.tutorialService.getAll()
       .subscribe(
         data => {
@@ -32,6 +45,7 @@ export class TutorialsListComponent implements OnInit {
         error => {
           console.log('get list ', error);
         });
+        */
   }
   refreshList(): void {
     this.retrieveTutorials();
@@ -54,6 +68,7 @@ export class TutorialsListComponent implements OnInit {
     this.currentIndex = index;
   }
   removeAllTutorials(): void {
+       /* TO BE REVIEWED
     this.tutorialService.deleteAll()
       .subscribe(
         response => {
@@ -63,9 +78,12 @@ export class TutorialsListComponent implements OnInit {
         error => {
           console.log(error);
         });
+      */
   }
   searchTitle(): void {
+       /* TO BE REVIEWED
     this.tutorialService.findByTitle(this.title)
+    
       .subscribe(
         data => {
           this.tutorials = data;
@@ -74,6 +92,7 @@ export class TutorialsListComponent implements OnInit {
         error => {
           console.log('searchTitle ', this.title, '  error = ', error);
         });
+        */
   }
   editTutorial(){
    
@@ -82,6 +101,7 @@ export class TutorialsListComponent implements OnInit {
     }
 
     UpdateTutorial(){
+         /* TO BE REVIEWED
       this.tutorialService.update(this.modifiedTutorial.id, this.modifiedTutorial)
       .subscribe(
         data => {
@@ -93,5 +113,6 @@ export class TutorialsListComponent implements OnInit {
           console.log('failure to update id ', this.modifiedTutorial.id, '  error = ', error);
           this.msg_edit = 'failure to update id ' + this.modifiedTutorial.id + '  error = ' + error.status;
         });
+        */
     }
 }

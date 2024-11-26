@@ -10,7 +10,8 @@
 </app-performance-sport>
 -->
 <div style="width:580px; display:inline-block; ">
-    <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="bucketName"  [NbRefresh_Bucket]="NbRefresh_Bucket"
+    <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="bucketName"  
+    [NbRefresh_Bucket]="NbRefresh_Bucket"
             (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)">
     </app-ListBucketContent>
 </div>

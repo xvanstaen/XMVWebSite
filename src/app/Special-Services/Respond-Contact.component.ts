@@ -1,28 +1,26 @@
 import { Component, Input, HostListener, } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
-import { configServer, OneBucketInfo } from '../JsonServerClass';
-import { Bucket_List_Info } from '../JsonServerClass';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
+import { configServer, OneBucketInfo } from '../JsonServerClass';
+
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
+
 
 @Component({
   selector: 'app-Respond-Contact',
   templateUrl: './Respond-Contact.component.html',
-  styleUrls: ['./Respond-Contact.component.css']
+  styleUrls: ['./Respond-Contact.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
+
 })
 
 export class RespondContactComponent {
 
   constructor(
-    private router:Router,
-    private http: HttpClient,
     private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
     ) {}
   
     @Input() configServer=new configServer;

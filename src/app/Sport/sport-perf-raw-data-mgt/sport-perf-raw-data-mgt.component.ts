@@ -1,39 +1,35 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
   
-import { DatePipe, formatDate } from '@angular/common'; 
-
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
-
-import {msginLogConsole} from '../../consoleLog'
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+  
 import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
 import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
-import { findIds, formatHHMNSS } from '../../MyStdFunctions';
+
 import { fillHeaderFile, updateTabPor } from '../commonSportFunctions';
 
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
-
+import { ListBucketContentComponent }  from '../../Special-Services/ListBucketContent.component';
+import { ManagePointOfRefComponent } from '../../Sport/manage-point-of-ref/manage-point-of-ref.component';
+import { BuildLoopFromPerfComponent } from '../../Sport/build-loop/build-loop-from-perf.component';
 
 @Component({
   selector: 'app-sport-perf-raw-data-mgt',
   templateUrl: './sport-perf-raw-data-mgt.component.html',
-  styleUrls: ['./sport-perf-raw-data-mgt.component.css']
+  styleUrls: ['./sport-perf-raw-data-mgt.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ManagePointOfRefComponent, 
+    ListBucketContentComponent, BuildLoopFromPerfComponent, 
+  ],
+
 })
 export class SportPerfRawDataMgtComponent {
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
     private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
     ) { }
 
   @Input() configServer = new configServer;

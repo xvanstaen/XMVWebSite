@@ -1,3 +1,5 @@
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
@@ -6,6 +8,8 @@ import { configServer } from '../JsonServerClass';
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class ManageMongoDBService {
    
   constructor(private   http: HttpClient) { }

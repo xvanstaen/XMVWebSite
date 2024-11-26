@@ -1,13 +1,9 @@
 import { Component, OnInit , Input, Output, OnChanges, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
   
-import { DatePipe, formatDate } from '@angular/common'; 
-
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, UntypedFormControl,FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-import { Observable } from 'rxjs';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
 import {msginLogConsole} from '../../consoleLog'
 import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
@@ -15,26 +11,16 @@ import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFil
 import { findIds, formatHHMNSS } from '../../MyStdFunctions';
 import { fillHeaderFile , reinitTotal, copyInitPerf, copyLegInOut, copyInOut, copyLoopInOut, updateTabPor, createPerfTotal} from '../commonSportFunctions';
 
-import { ManageMongoDBService } from '../../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../../CloudServices/access-config.service';
 
 @Component({
   selector: 'app-display-circuit-loop',
   templateUrl: './display-circuit-loop.component.html',
-  styleUrls: ['./display-circuit-loop.component.css']
+  styleUrls: ['./display-circuit-loop.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
 })
 export class DisplayCircuitLoopComponent {
 
-  constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
-    ) { }
-    
   @Input() perfCircuit:Array<any>=[];
   @Input() filePerf:Array<any>=[];
   @Input() headerPerf= new classHeaderFileSport;

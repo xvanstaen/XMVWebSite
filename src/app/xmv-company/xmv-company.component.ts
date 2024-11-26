@@ -2,10 +2,16 @@
 import {  ChangeDetectorRef } from '@angular/core';
 import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
-  
-import { Router, RouterModule } from '@angular/router';
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+
+
+import { MatIconModule} from '@angular/material/icon';
+import { CommonModule,  DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { XMVCompanyContactComponent } from '../xmv-company/xmvcompany-contact/xmvcompany-contact.component';
+import { XMVCompanyOfferComponent } from '../xmv-company/xmvcompany-offer/xmvcompany-offer.component';
+import { XMVCompanyProfileComponent } from '../xmv-company/xmvcompany-profile/xmvcompany-profile.component';
+import { LoginComponent } from '../Login/login.component';
 
 import { configServer, LoginIdentif, classCredentials } from '../JsonServerClass';
 
@@ -13,25 +19,22 @@ import {mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../C
 import {mainClassCaloriesFat, mainDailyReport} from '../Health/ClassHealthCalories';
 import {ConfigFitness} from '../Health/ClassFitness';
 import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
-import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
+
 import {classConfHTMLFitHealth} from '../Health/classConfHTMLTableAll';
 
 @Component({
   selector: 'app-xmv-company',
   templateUrl: './xmv-company.component.html',
-  styleUrls: ['./xmv-company.component.css']
+  styleUrls: ['./xmv-company.component.css'],
+  standalone: true, 
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule , XMVCompanyContactComponent, XMVCompanyOfferComponent, XMVCompanyProfileComponent
+    , LoginComponent ],
+
 })
 export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked {
 
   constructor(
-
-    private http: HttpClient, 
-    private router:Router,
     private cdref: ChangeDetectorRef,
-    private ManageGoogleService: ManageGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
     ) {}
   
   @Input() configServer=new configServer;

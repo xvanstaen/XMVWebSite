@@ -73,7 +73,7 @@
 
 <div *ngIf="isAppsSelected===true && isIdRetrieved===true && isConfigServerRetrieved===true && isCredentials===true">
     <div *ngIf="selectApps===1 ">
-        <app-xmv-company [configServer]="configServer" [identification]="identification"  [isConfigServerRetrieved]="isConfigServerRetrieved"
+        <app-xmv-company [configServer]="configServer" [INidentification]="identification"  [isConfigServerRetrieved]="isConfigServerRetrieved"
             [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)">
         </app-xmv-company>
     </div>
@@ -103,7 +103,7 @@
 
     <div *ngIf="selectApps===14 || selectApps===15">
         <app-recipe  [identification]="identification"  [configServer]="configServer"  
-         [InConvToDisplay]="ConvToDisplay"     [dictionaryOnly]="dictionaryOnly" [tabLock]="tabLock"
+         [InConvToDisplay]="ConvToDisplay"     [dictionaryOnly]="dictionaryOnly"
         >
         </app-recipe>
     </div>  
@@ -112,33 +112,27 @@
         </app-test-server-js>
     </div>  
     <div *ngIf="selectApps===18">
-        <app-performance-sport   [configServer]="configServer" [identification]="identification" [credentials]="credentials"  
-        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
-        </app-performance-sport>
+        <app-sport-performance   [configServer]="configServer" [identification]="identification"  >
+        </app-sport-performance>
     </div>  
     <div *ngIf="selectApps===19">
-        <app-manage-point-of-ref   [configServer]="configServer" [identification]="identification" [credentials]="credentials"  
-        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        <app-manage-point-of-ref   [configServer]="configServer" [identification]="identification" >
         </app-manage-point-of-ref>
     </div>  
     <div *ngIf="selectApps===20">
-        <app-manage-circuits [configServer]="configServer" [identification]="identification" [credentials]="credentials"  
-        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        <app-manage-circuits [configServer]="configServer" [identification]="identification" >
         </app-manage-circuits>
     </div>  
     <div *ngIf="selectApps===21">
-        <app-sport-reports [configServer]="configServer" [identification]="identification" [credentials]="credentials" 
-        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        <app-sport-reports [configServer]="configServer" [identification]="identification" >
         </app-sport-reports>
     </div>  
     <div *ngIf="selectApps===22">
-        <app-sport-analysis [configServer]="configServer" [identification]="identification" [credentials]="credentials" 
-        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        <app-sport-analysis [configServer]="configServer" [identification]="identification">
         </app-sport-analysis>
     </div> 
     <div *ngIf="selectApps===23">
-        <app-sport-perf-raw-data-mgt [configServer]="configServer" [identification]="identification" [credentials]="credentials"  
-        [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [tabLock]="tabLock">
+        <app-sport-perf-raw-data-mgt [configServer]="configServer" [identification]="identification">
         </app-sport-perf-raw-data-mgt>
     </div> 
     <div *ngIf="selectApps===24">
@@ -147,8 +141,7 @@
         </app-fitness-stat>
     </div> 
     <div *ngIf="selectApps===25">
-        <app-GetImages [identification]="identification" [LoginTable_User_Data]="LoginTable_User_Data" [configServer]="configServer"
-        [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
+        <app-GetImages [identification]="identification" >
         </app-GetImages>
     </div> 
 
@@ -167,7 +160,7 @@
     <div *ngIf="selectApps===29">
      
         <app-kiosk-abd-config [identification]="identification"  [configServer]="configServer" 
-                [credentials]="credentials" [devMode]="devMode"> 
+             [devMode]="devMode"> 
         </app-kiosk-abd-config>
     </div> 
 </div>

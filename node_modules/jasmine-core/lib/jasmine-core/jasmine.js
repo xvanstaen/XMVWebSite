@@ -915,9 +915,9 @@ getJasmineRequireObj().Spec = function(j$) {
      * @property {String} fullName - The full description including all ancestors of this spec.
      * @property {String|null} parentSuiteId - The ID of the suite containing this spec, or null if this spec is not in a describe().
      * @property {String} filename - The name of the file the spec was defined in.
-     * @property {Expectation[]} failedExpectations - The list of expectations that failed during execution of this spec.
-     * @property {Expectation[]} passedExpectations - The list of expectations that passed during execution of this spec.
-     * @property {Expectation[]} deprecationWarnings - The list of deprecation warnings that occurred during execution this spec.
+     * @property {ExpectationResult[]} failedExpectations - The list of expectations that failed during execution of this spec.
+     * @property {ExpectationResult[]} passedExpectations - The list of expectations that passed during execution of this spec.
+     * @property {ExpectationResult[]} deprecationWarnings - The list of deprecation warnings that occurred during execution this spec.
      * @property {String} pendingReason - If the spec is {@link pending}, this will be the reason.
      * @property {String} status - Once the spec has completed, this string represents the pass/fail status of this spec.
      * @property {number} duration - The time in ms used by the spec execution, including any before/afterEach.
@@ -1429,12 +1429,19 @@ getJasmineRequireObj().Env = function(j$) {
          * @extends Error
          * @description Represents a failure of an expectation evaluated with
          * {@link throwUnless}. Properties of this error are a subset of the
-         * properties of {@link Expectation} and have the same values.
+         * properties of {@link ExpectationResult} and have the same values.
+         *
+         * Note: The expected and actual properties are deprecated and may be removed
+         * in a future release. In many Jasmine configurations they are passed
+         * through JSON serialization and deserialization, which is inherently
+         * lossy. In such cases, the expected and actual values may be placeholders
+         * or approximations of the original objects.
+         *
          * @property {String} matcherName - The name of the matcher that was executed for this expectation.
          * @property {String} message - The failure message for the expectation.
          * @property {Boolean} passed - Whether the expectation passed or failed.
-         * @property {Object} expected - If the expectation failed, what was the expected value.
-         * @property {Object} actual - If the expectation failed, what actual value was produced.
+         * @property {Object} expected - Deprecated. If the expectation failed, what was the expected value.
+         * @property {Object} actual - Deprecated. If the expectation failed, what actual value was produced.
          */
         const error = new Error(result.message);
         error.passed = result.passed;
@@ -2430,7 +2437,9 @@ getJasmineRequireObj().MapContaining = function(j$) {
   }
 
   MapContaining.prototype.asymmetricMatch = function(other, matchersUtil) {
-    if (!j$.isMap(other)) return false;
+    if (!j$.isMap(other)) {
+      return false;
+    }
 
     for (const [key, value] of this.sample) {
       // for each key/value pair in `sample`
@@ -2569,7 +2578,9 @@ getJasmineRequireObj().SetContaining = function(j$) {
   }
 
   SetContaining.prototype.asymmetricMatch = function(other, matchersUtil) {
-    if (!j$.isSet(other)) return false;
+    if (!j$.isSet(other)) {
+      return false;
+    }
 
     for (const item of this.sample) {
       // for each item in `sample` there should be at least one matching item in `other`
@@ -2663,13 +2674,21 @@ getJasmineRequireObj().buildExpectationResult = function(j$) {
     const exceptionFormatter = new j$.ExceptionFormatter();
 
     /**
-     * @typedef Expectation
+     * Describes the result of evaluating an expectation
+     *
+     * Note: The expected and actual properties are deprecated and may be removed
+     * in a future release. In many Jasmine configurations they are passed
+     * through JSON serialization and deserialization, which is inherently
+     * lossy. In such cases, the expected and actual values may be placeholders
+     * or approximations of the original objects.
+     *
+     * @typedef ExpectationResult
      * @property {String} matcherName - The name of the matcher that was executed for this expectation.
      * @property {String} message - The failure message for the expectation.
      * @property {String} stack - The stack trace for the failure if available.
      * @property {Boolean} passed - Whether the expectation passed or failed.
-     * @property {Object} expected - If the expectation failed, what was the expected value.
-     * @property {Object} actual - If the expectation failed, what actual value was produced.
+     * @property {Object} expected - Deprecated. If the expectation failed, what was the expected value.
+     * @property {Object} actual - Deprecated. If the expectation failed, what actual value was produced.
      * @property {String|undefined} globalErrorType - The type of an error that
      * is reported on the top suite. Valid values are undefined, "afterAll",
      * "load", "lateExpectation", and "lateError".
@@ -2876,7 +2895,8 @@ getJasmineRequireObj().clearStack = function(j$) {
   const maxInlineCallCount = 10;
 
   function browserQueueMicrotaskImpl(global) {
-    const { setTimeout, queueMicrotask } = global;
+    const unclampedSetTimeout = getUnclampedSetTimeout(global);
+    const { queueMicrotask } = global;
     let currentCallCount = 0;
     return function clearStack(fn) {
       currentCallCount++;
@@ -2885,7 +2905,7 @@ getJasmineRequireObj().clearStack = function(j$) {
         queueMicrotask(fn);
       } else {
         currentCallCount = 0;
-        setTimeout(fn);
+        unclampedSetTimeout(fn);
       }
     };
   }
@@ -2899,6 +2919,37 @@ getJasmineRequireObj().clearStack = function(j$) {
   }
 
   function messageChannelImpl(global) {
+    const { setTimeout } = global;
+    const postMessage = getPostMessage(global);
+
+    let currentCallCount = 0;
+    return function clearStack(fn) {
+      currentCallCount++;
+
+      if (currentCallCount < maxInlineCallCount) {
+        postMessage(fn);
+      } else {
+        currentCallCount = 0;
+        setTimeout(fn);
+      }
+    };
+  }
+
+  function getUnclampedSetTimeout(global) {
+    const { setTimeout } = global;
+    if (j$.util.isUndefined(global.MessageChannel)) {
+      return setTimeout;
+    }
+
+    const postMessage = getPostMessage(global);
+    return function unclampedSetTimeout(fn) {
+      postMessage(function() {
+        setTimeout(fn);
+      });
+    };
+  }
+
+  function getPostMessage(global) {
     const { MessageChannel, setTimeout } = global;
     const channel = new MessageChannel();
     let head = {};
@@ -2922,17 +2973,9 @@ getJasmineRequireObj().clearStack = function(j$) {
       }
     };
 
-    let currentCallCount = 0;
-    return function clearStack(fn) {
-      currentCallCount++;
-
-      if (currentCallCount < maxInlineCallCount) {
-        tail = tail.next = { task: fn };
-        channel.port2.postMessage(0);
-      } else {
-        currentCallCount = 0;
-        setTimeout(fn);
-      }
+    return function postMessage(fn) {
+      tail = tail.next = { task: fn };
+      channel.port2.postMessage(0);
     };
   }
 
@@ -2942,20 +2985,25 @@ getJasmineRequireObj().clearStack = function(j$) {
       global.process.versions &&
       typeof global.process.versions.node === 'string';
 
-    const SAFARI =
+    // Windows builds of WebKit have a fairly generic user agent string when no application name is provided:
+    // e.g. "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/605.1.15 (KHTML, like Gecko)"
+    const SAFARI_OR_WIN_WEBKIT =
       global.navigator &&
-      /^((?!chrome|android).)*safari/i.test(global.navigator.userAgent);
+      /(^((?!chrome|android).)*safari)|(Win64; x64\) AppleWebKit\/[0-9.]+ \(KHTML, like Gecko\)$)/i.test(
+        global.navigator.userAgent
+      );
 
     if (NODE_JS) {
       // Unlike browsers, Node doesn't require us to do a periodic setTimeout
       // so we avoid the overhead.
       return nodeQueueMicrotaskImpl(global);
     } else if (
-      SAFARI ||
+      SAFARI_OR_WIN_WEBKIT ||
       j$.util.isUndefined(global.MessageChannel) /* tests */
     ) {
-      // queueMicrotask is dramatically faster than MessageChannel in Safari,
-      // at least through version 16.
+      // queueMicrotask is dramatically faster than MessageChannel in Safari
+      // and other WebKit-based browsers, such as the one distributed by Playwright
+      // to test Safari-like behavior on Windows.
       // Some of our own integration tests provide a mock queueMicrotask in all
       // environments because it's simpler to mock than MessageChannel.
       return browserQueueMicrotaskImpl(global);
@@ -6650,7 +6698,10 @@ getJasmineRequireObj().toHaveSpyInteractions = function(j$) {
         let hasSpy = false;
         const calledSpies = [];
         for (const spy of Object.values(actual)) {
-          if (!j$.isSpy(spy)) continue;
+          if (!j$.isSpy(spy)) {
+            continue;
+          }
+
           hasSpy = true;
 
           if (spy.calls.any()) {
@@ -8051,6 +8102,32 @@ getJasmineRequireObj().ReportDispatcher = function(j$) {
 };
 
 getJasmineRequireObj().reporterEvents = function() {
+  /**
+   * Used to tell Jasmine what optional or uncommonly implemented features
+   * the reporter supports. If not specified, the defaults described in
+   * {@link ReporterCapabilities} will apply.
+   * @name Reporter#reporterCapabilities
+   * @type ReporterCapabilities | undefined
+   * @since 5.0
+   */
+  /**
+   * Used to tell Jasmine what optional or uncommonly implemented features
+   * the reporter supports.
+   * @interface ReporterCapabilities
+   * @see Reporter#reporterCapabilities
+   * @since 5.0
+   */
+  /**
+   * Indicates whether the reporter supports parallel execution. Jasmine will
+   * not allow parallel execution unless all reporters that are in use set this
+   * capability to true.
+   * @name ReporterCapabilities#parallel
+   * @type boolean | undefined
+   * @default false
+   * @see running_specs_in_parallel
+   * @since 5.0
+   */
+
   const events = [
     /**
      * `jasmineStarted` is called after all of the specs have been loaded, but just before execution starts.
@@ -8967,8 +9044,8 @@ getJasmineRequireObj().Runner = function(j$) {
        * @property {String} incompleteCode - Machine-readable explanation of why the suite was incomplete: 'focused', 'noSpecsFound', or undefined.
        * @property {Order} order - Information about the ordering (random or not) of this execution of the suite.  Note that this property is not present when Jasmine is run in parallel mode.
        * @property {Int} numWorkers - Number of parallel workers.  Note that this property is only present when Jasmine is run in parallel mode.
-       * @property {Expectation[]} failedExpectations - List of expectations that failed in an {@link afterAll} at the global level.
-       * @property {Expectation[]} deprecationWarnings - List of deprecation warnings that occurred at the global level.
+       * @property {ExpectationResult[]} failedExpectations - List of expectations that failed in an {@link afterAll} at the global level.
+       * @property {ExpectationResult[]} deprecationWarnings - List of deprecation warnings that occurred at the global level.
        * @since 2.4.0
        */
       const jasmineDoneInfo = {
@@ -9449,6 +9526,16 @@ getJasmineRequireObj().SpyRegistry = function(j$) {
 
       obj[methodName] = spiedMethod;
 
+      // Check if setting the property actually worked. Some objects, such as
+      // localStorage in Firefox and later Safari versions, have no-op setters.
+      if (obj[methodName] !== spiedMethod) {
+        throw new Error(
+          j$.formatErrorMsg('<spyOn>')(
+            `Can't spy on ${methodName} because assigning to it had no effect`
+          )
+        );
+      }
+
       return spiedMethod;
     };
 
@@ -9802,9 +9889,7 @@ getJasmineRequireObj().SpyStrategy = function(j$) {
 
 getJasmineRequireObj().StackTrace = function(j$) {
   function StackTrace(error) {
-    let lines = error.stack.split('\n').filter(function(line) {
-      return line !== '';
-    });
+    let lines = error.stack.split('\n');
 
     const extractResult = extractMessage(error.message, lines);
 
@@ -9812,6 +9897,10 @@ getJasmineRequireObj().StackTrace = function(j$) {
       this.message = extractResult.message;
       lines = extractResult.remainder;
     }
+
+    lines = lines.filter(function(line) {
+      return line !== '';
+    });
 
     const parseResult = tryParseFrames(lines);
     this.frames = parseResult.frames;
@@ -10037,8 +10126,8 @@ getJasmineRequireObj().Suite = function(j$) {
      * @property {String} fullName - The full description including all ancestors of this suite.
      * @property {String|null} parentSuiteId - The ID of the suite containing this suite, or null if this is not in another describe().
      * @property {String} filename - The name of the file the suite was defined in.
-     * @property {Expectation[]} failedExpectations - The list of expectations that failed in an {@link afterAll} for this suite.
-     * @property {Expectation[]} deprecationWarnings - The list of deprecation warnings that occurred on this suite.
+     * @property {ExpectationResult[]} failedExpectations - The list of expectations that failed in an {@link afterAll} for this suite.
+     * @property {ExpectationResult[]} deprecationWarnings - The list of deprecation warnings that occurred on this suite.
      * @property {String} status - Once the suite has completed, this string represents the pass/fail status of this suite.
      * @property {number} duration - The time in ms for Suite execution, including any before/afterAll, before/afterEach.
      * @property {Object} properties - User-supplied properties, if any, that were set using {@link Env#setSuiteProperty}
@@ -10910,5 +10999,5 @@ getJasmineRequireObj().UserContext = function(j$) {
 };
 
 getJasmineRequireObj().version = function() {
-  return '5.2.0';
+  return '5.4.0';
 };

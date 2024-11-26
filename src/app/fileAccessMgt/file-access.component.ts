@@ -3,57 +3,32 @@ import {
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
-import { DatePipe, formatDate } from '@angular/common';
+import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { ViewportScroller } from "@angular/common";
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { Observable } from 'rxjs';
-
-import { BucketList, Bucket_List_Info } from '../JsonServerClass';
-
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
+import { FileSystemServiceComponent } from '../file-system-service/file-system-service.component';
 
 import { msginLogConsole } from '../consoleLog'
 import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent } from '../JsonServerClass';
-import { classPosDiv, getPosDiv } from '../getPosDiv';
 
-import { getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../DropDownStyle'
-
-import { ClassSubConv, ClassConv, mainClassConv, mainConvItem, ClassUnit, ConvItem } from '../ClassConverter'
-
-import { ClassCaloriesFat, mainClassCaloriesFat } from '../Health/ClassHealthCalories'
-import { ClassItem, DailyReport, mainDailyReport, ClassMeal, ClassDish } from '../Health/ClassHealthCalories'
-
-import { classConfHTMLFitHealth, classConfTableAll } from '../Health/classConfHTMLTableAll';
-
-import { CalcFatCalories } from '../Health/CalcFatCalories';
-import { classConfigChart, classchartHealth } from '../Health/classConfigChart';
-import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../Health/classChart';
 import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS, classRetrieveFile } from '../classFileSystem';
 
-import { ManageMongoDBService } from '../CloudServices/ManageMongoDB.service';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-import { AccessConfigService } from '../CloudServices/access-config.service';
 
 import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../MyStdFunctions';
-import { FillHealthAllInOut } from '../copyFilesFunction';
+
 @Component({
   selector: 'app-file-access',
   templateUrl: './file-access.component.html',
-  styleUrls: ['./file-access.component.css']
+  styleUrls: ['./file-access.component.css'],
+  standalone:true,
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,FileSystemServiceComponent],
+
 })
 export class MainManageFileComponent {
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private scroller: ViewportScroller,
-    private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
-    private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
   ) { }
 
