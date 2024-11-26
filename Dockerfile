@@ -33,7 +33,8 @@ RUN  npm run build --omit=dev
 FROM nginx:alpine
 
 #RUN rm /etc/nginx/nginx.conf  /etc/nginx/conf.d/default.conf
-COPY --from=my-app-build /usr/src/app/dist/ /usr/share/nginx/html/
+#COPY --from=my-app-build /usr/src/app/dist/xmvweb-site/browser/ /usr/share/nginx/html/
+COPY --from=builder /usr/src/app/dist/xmv-website/browser/ /usr/share/nginx/html/
 COPY ConfNGINX /etc/nginx
 
 # must be used when test on Docker and in Docker must select 8080/TCP and enter port 80xx

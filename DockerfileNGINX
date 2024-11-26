@@ -5,7 +5,7 @@ FROM nginx:alpine
 
 #RUN rm /etc/nginx/nginx.conf  /etc/nginx/conf.d/default.conf
 COPY ConfNGINX /etc/nginx
-COPY dist/xmvweb-site/ /usr/share/nginx/html/
+COPY dist/xmv-website/browser/ /usr/share/nginx/html/
 
 
 
