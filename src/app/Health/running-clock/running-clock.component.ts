@@ -53,6 +53,10 @@ export class RunningClockComponent {
     this.y=this.posSizeClock.height/2; // x axis of the center
     this.radius = this.posSizeClock.height / 2; // diameter of the circle
     this.lenRect=this.posSizeClock.width;    
+    const theDate = new Date();
+    this.theSeconds=theDate.getSeconds() ;
+    this.theMinutes=theDate.getMinutes();
+    this.theHours=theDate.getHours();
   }
  
   Clock(){
@@ -95,12 +99,12 @@ export class RunningClockComponent {
     this.ctx.clearRect(0,0,this.theCanvas.width,this.theCanvas.height);
     this.ctx.closePath();
   }
-/*
+
   ngOnChanges(changes: SimpleChanges) {
       for (const propName in changes) {
         const j = changes[propName];
       }
   }
-*/
+
 }
 

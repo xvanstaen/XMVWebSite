@@ -73,8 +73,10 @@
             <div style="font-size:16px; color:blue; display:inline-block; 
                      text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width}">
                     HEALTH DATA MANAGEMENT
+                    
                     <app-running-clock [posSizeClock]="posSizeClock">
                     </app-running-clock>
+                    
                     Time out will occur in 
                     <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
             </div>

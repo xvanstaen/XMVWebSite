@@ -39,7 +39,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   
   @Input() configServer=new configServer;
   @Input() isConfigServerRetrieved:boolean=false;
-  @Input() INidentification=new LoginIdentif;
+  @Input() identification=new LoginIdentif;
   @Input() credentials = new classCredentials;
   @Input() credentialsMongo = new classCredentials;
   @Input() credentialsFS = new classCredentials;
@@ -50,6 +50,8 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   @Output() returnFile= new EventEmitter<any>();
   @Output() callUserFunction= new EventEmitter<any>();
   @Output() triggerUserFunction= new EventEmitter<any>();
+  @Output() triggerIdentification = new EventEmitter<any>();
+  
   redisplay_profile:number=0;
 
   ConfigCaloriesFat=new mainClassCaloriesFat;
@@ -72,7 +74,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
   selected_offer:string='';
  
-  identification=new LoginIdentif;
+  //identification=new LoginIdentif;
 
   Events_nb:string='';
 
@@ -116,6 +118,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     this.getScreenHeight = window.innerHeight;
     this.device_type = navigator.userAgent;
     this.device_type = this.device_type.substring(10, 48);
+    /*
     if (this.INidentification.UserId!==''){
         this.identification=this.INidentification;
     } else {
@@ -123,7 +126,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
         this.identification.UserId="";
         this.identification.phone="";
     }
-
+    */
     //console.log('xmv-company - init --- configServer.google='+this.configServer.googleServer);
   }
 
@@ -195,6 +198,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
   TheIdentifObject(event:any){
     this.identification=event;
+    this.triggerIdentification.emit(this.identification);
     // console.log(this.identif);
   }
 

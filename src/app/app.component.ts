@@ -92,8 +92,8 @@ export class AppComponent {
 
   inData=new classAccessFile;
   tabServers: Array<string> = [
-    'http://localhost:8080', 'https://test-server-359505.uc.r.appspot.com',
-    'https://xmv-it-consulting.uc.r.appspot.com', 'https://serverfs.ue.r.appspot.com', "http://localhost:3000"
+    'http://localhost:8080', 'https://xmv-it-consulting.uc.r.appspot.com','https://test-server-359505.uc.r.appspot.com',
+     'https://serverfs.ue.r.appspot.com', "http://localhost:3000"
   ]
   passInit:number=0;
   saveGoogleServer:string="";
@@ -114,8 +114,8 @@ export class AppComponent {
    // http://localhost:4200/?server=XMV&scope=prod 
    // devMode=local
 
-  this.initConfigServer.googleServer=this.tabServers[0];
-  this.initConfigServer.mongoServer=this.tabServers[1];
+  this.initConfigServer.googleServer=this.tabServers[1];
+  this.initConfigServer.mongoServer=this.tabServers[2];
   this.initConfigServer.fileSystemServer=this.tabServers[3];
 
 
@@ -127,6 +127,18 @@ export class AppComponent {
             this.initConfigServer.googleServer=this.tabServers[0];
             this.initConfigServer.mongoServer=this.tabServers[0];
             this.initConfigServer.fileSystemServer=this.tabServers[0];
+          } else if (this.myParams.server==="google"){
+            this.initConfigServer.googleServer=this.tabServers[1];
+            this.initConfigServer.mongoServer=this.tabServers[1];
+            this.initConfigServer.fileSystemServer=this.tabServers[1];
+          } else if (this.myParams.server==="test"){
+            this.initConfigServer.googleServer=this.tabServers[2];
+            this.initConfigServer.mongoServer=this.tabServers[2];
+            this.initConfigServer.fileSystemServer=this.tabServers[2];
+          } else if (this.myParams.server==="fsys"){
+            this.initConfigServer.googleServer=this.tabServers[3];
+            this.initConfigServer.mongoServer=this.tabServers[3];
+            this.initConfigServer.fileSystemServer=this.tabServers[3];
           }
     }
     if (params['devMode']!==undefined ){
@@ -179,24 +191,7 @@ export class AppComponent {
     console.log('RetrieveConfig()');
     var test_prod='';
     this.errConfig=""
-  /*
-    if (this.myParams.server==="8080"){
-          this.initConfigServer.googleServer='http://localhost:8080';
-          this.initConfigServer.mongoServer='http://localhost:8080';
-          this.initConfigServer.fileSystemServer='http://localhost:8080';
-  
 
-    } else  if (this.myParams.server==="XMV"){
-          this.initConfigServer.googleServer='https://xmv-it-consulting.uc.r.appspot.com';
-          this.initConfigServer.mongoServer='https://xmv-it-consulting.uc.r.appspot.com';
-          this.initConfigServer.fileSystemServer='https://xmv-it-consulting.uc.r.appspot.com';
-            
-    } else {
-          this.initConfigServer.googleServer='https://test-server-359505.uc.r.appspot.com';
-          this.initConfigServer.mongoServer='https://test-server-359505.uc.r.appspot.com';
-          this.initConfigServer.fileSystemServer='https://test-server-359505.uc.r.appspot.com';
-    }
-*/
     if (this.myParams.scope==="prod"){
         test_prod='prod';
     } else {
@@ -236,7 +231,15 @@ export class AppComponent {
 
   isCallUserFunction:boolean=false;
   callUserFunction(event:any){
+    if (this.configServer.userLogin.id!==''){
+      this.isIdRetrieved=true;
+    }
       this.isCallUserFunction=event;
+  }
+
+  TheIdentifObject(event:any){
+    this.identification=event;
+    // console.log(this.identif);
   }
 
   onReturnConfig(data:any,test_prod:string){

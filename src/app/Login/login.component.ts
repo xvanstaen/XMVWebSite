@@ -47,10 +47,10 @@ export class LoginComponent {
     j_loop:Array<number>=[];
     max_j_loop:number=20000;
 
-    @Output() my_output2= new EventEmitter<string>();
-    @Output() resetServer= new EventEmitter<any>();
-    @Output() newCredentials= new EventEmitter<any>();
-    @Output() triggerUserFunction= new EventEmitter<any>();
+    @Output() resetServer = new EventEmitter<any>();
+    @Output() newCredentials = new EventEmitter<any>();
+    @Output() triggerUserFunction = new EventEmitter<any>();
+    @Output() triggerIdentification = new EventEmitter<any>();
 
     getScreenWidth: any;
     getScreenHeight: any;
@@ -199,6 +199,8 @@ checkLogin(){
               this.identification.userServerId=this.credentialsFS.userServerId;
               this.identification.credentialDate=this.credentialsFS.creationDate;
               this.identification.IpAddress=this.configServer.IpAddress;
+              this.triggerIdentification.emit(this.identification);
+              this.triggerUserFunction.emit(true);
   //            this.my_output2.emit(this.routing_code.toString());
             } else {
               this.error=data.msg;
@@ -219,6 +221,7 @@ checkLogin(){
     this.identification.userServerId=this.credentialsFS.userServerId;
     this.identification.credentialDate=this.credentialsFS.creationDate;
     this.identification.IpAddress=this.configServer.IpAddress;
+    this.triggerIdentification.emit(this.identification);
     this.triggerUserFunction.emit(true);
   }
 }

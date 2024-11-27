@@ -4,10 +4,10 @@
 <body>
 <div *ngIf="isCallUserFunction===false">
     <div *ngIf="isConfigServerRetrieved===true && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved===true) || devMode!=='local')">
-        <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved"
+        <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved" [identification]="identification"
             [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
             (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)" 
-            (callUserFunction)="callUserFunction($event)">
+            (callUserFunction)="callUserFunction($event)" (triggerIdentification)='TheIdentifObject($event)' >
         </app-xmv-company>
     </div>
 <!--
