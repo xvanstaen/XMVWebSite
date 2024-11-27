@@ -35,7 +35,7 @@
     <br><br>
     </div>
     -->
-      <div class="pos_icons">
+    <div class="pos_icons">
         <span class=' div_icons' (click) = "Display_Contact()">
          <!--
             <mat-icon  (click)='RouteTo("login")' class="icon-login"> login</mat-icon> 
@@ -45,46 +45,41 @@
             <mat-icon   class=' icons-email' > email</mat-icon>   
             <span class=" icons_data-email" >{{emailXMV}}</span>
         </span>
-       
-
-       
-      </div>
+    </div>
 
     <div class="pos_options">
-          <div   *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Offer; else NoOffer">
-            <div class=' options firstOption options-text ' (click) = "Display_Offer()"><br>
+      <div   *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Offer; else NoOffer">
+        <div class=' options firstOption options-text ' (click) = "Display_Offer()"><br>
               Offer
-            </div>
+        </div>
        <div class="dropdown arrow_down">
-        <span class="material-symbols-outlined arrow_down_size"  >
-          arrow_drop_down
-         
-            <div class="dropdown-content" >
-              <span >
-              <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetDigital') ">Digital Transf.</div>
-              <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetFinance')">Finance</div>
-              <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetCoaching')">Coaching</div>
-              <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetTechnical')">Techn. Expert</div>
-              <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetPgm')" >Projects</div>
-            </span>
-
-            </div>
+          <span class="material-symbols-outlined arrow_down_size"  >
+            arrow_drop_down
+              <div class="dropdown-content" >
+                <span >
+                  <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetDigital') ">Digital Transf.</div>
+                  <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetFinance')">Finance</div>
+                  <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetCoaching')">Coaching</div>
+                  <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetTechnical')">Techn. Expert</div>
+                  <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetPgm')" >Projects</div>
+                </span>
+              </div>
           </span>
-      </div>
-          </div>      
+        </div>
+      </div>      
 
-          <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Profile; else NoProfile">
-                  <div class=' options othertOption options-text option_background' (click) = "Display_Profile()" ><br >Profile</div>
-          </div>
-          <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===HomePage; else NoHomePage">
-                  <div class=' options otherOptions options-text option_background' (click) = "Display_HomePage()"> <br>Home</div>
-            </div>
-          <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Contact; else NoContact" > 
-                  <div class=' options otherOptions options-text option_background' (click) = "Display_Contact()"><br>Contact</div>
-          </div>
-          <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===MyEvents && isConfigServerRetrieved===true; else Events" > 
-            <div class=' options otherOptions options-text option_background' (click) = "Display_Events()"><br>Events</div>
-    </div>
+      <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Profile; else NoProfile">
+          <div class=' options othertOption options-text option_background' (click) = "Display_Profile()" ><br >Profile</div>
+      </div>
+      <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===HomePage; else NoHomePage">
+          <div class=' options otherOptions options-text option_background' (click) = "Display_HomePage()"> <br>Home</div>
+      </div>
+      <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Contact; else NoContact" > 
+          <div class=' options otherOptions options-text option_background' (click) = "Display_Contact()"><br>Contact</div>
+      </div>
+      <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===MyEvents && isConfigServerRetrieved===true; else Events" > 
+          <div class=' options otherOptions options-text option_background' (click) = "Display_Events()"><br>Events</div>
+      </div>
 
     </div>
 
@@ -95,15 +90,10 @@
             <span  class='smITConsulting'>IT Consulting</span >
         </div>
     </div>
- 
-  </div>
+</div>
 
 
-
-
-    
-
-    <ng-template #NoOffer>
+<ng-template #NoOffer>
         <div class=' options firstOption options-text ' (click) = "Display_Offer()"><br>
           Offer
         </div>
@@ -124,21 +114,21 @@
           </div>
           </span>
       </div>
-    </ng-template>
-    <ng-template #NoProfile>
-        <div class=' options othertOption options-text' (click) = "Display_Profile()"><br>Profile</div>
-    </ng-template>
-    <ng-template #NoContact>
-        <div class=' options othertOption options-text' (click) = "Display_Contact()"><br>Contact</div>
-    </ng-template>
-    <ng-template #NoHomePage>
-        <div class=' options othertOption options-text' (click) = "Display_HomePage()"><br>Home</div>
-    </ng-template>
-    <ng-template #Events>
-      <div *ngIf='isConfigServerRetrieved===true'>
-      <div class=' options othertOption options-text' (click) = "Display_Events()"><br>Events</div>
+</ng-template>
+<ng-template #NoProfile>
+    <div class=' options othertOption options-text' (click) = "Display_Profile()"><br>Profile</div>
+</ng-template>
+<ng-template #NoContact>
+    <div class=' options othertOption options-text' (click) = "Display_Contact()"><br>Contact</div>
+</ng-template>
+<ng-template #NoHomePage>
+    <div class=' options othertOption options-text' (click) = "Display_HomePage()"><br>Home</div>
+</ng-template>
+<ng-template #Events>
+    <div *ngIf='isConfigServerRetrieved===true'>
+        <div class=' options othertOption options-text' (click) = "Display_Events()"><br>Events</div>
     </div>
-  </ng-template>
+</ng-template>
    
   <!-- ======== END HEADER ======== -->
 
@@ -220,14 +210,15 @@
 
 <!-- [destination]="source" -->
       <ng-template #TheEvents>   
-        <div *ngIf='isConfigServerRetrieved===true'>
+        <div *ngIf='isConfigServerRetrieved===true && configServer.devMode!=="local"'>
             <span class='mainbody'>  
               <app-login  [identification]="identification" [configServer]="configServer" [credentials]="credentials"
-              [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
+                [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
                 
                 (my_output1)='TheIdentifObject($event)' (my_output2)='TheLoginRoute($event)' 
                 [credentials]="credentials" (resetServer)="fnResetServer()" (serverChange)="changeServerName($event)" (newCredentials)="fnNewCredentials($event)"
-                 >            <!-- (returnFile)="ReceiveFiles($event)" --> 
+                (triggerUserFunction)="triggerUserFn($event)" 
+                >            <!-- (returnFile)="ReceiveFiles($event)" --> 
             </app-login>
           </span>  
         </div>

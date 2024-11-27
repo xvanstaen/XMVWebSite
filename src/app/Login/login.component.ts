@@ -18,7 +18,8 @@ import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, UserFunctionsComponent, AdminJsonComponent ],
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, 
+    AdminJsonComponent ],
 
 })
 
@@ -49,7 +50,7 @@ export class LoginComponent {
     @Output() my_output2= new EventEmitter<string>();
     @Output() resetServer= new EventEmitter<any>();
     @Output() newCredentials= new EventEmitter<any>();
-    
+    @Output() triggerUserFunction= new EventEmitter<any>();
 
     getScreenWidth: any;
     getScreenHeight: any;
@@ -102,6 +103,7 @@ export class LoginComponent {
 
   ngOnInit(){
       //console.log('Login init --- configServer.google='+this.configServer.googleServer);
+      
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
       this.device_type = navigator.userAgent;
@@ -130,6 +132,8 @@ export class LoginComponent {
           this.decryptAllPSW(); // should not be used 
         }
       } 
+
+
 
   }
 savePsw:string="";
@@ -195,7 +199,7 @@ checkLogin(){
               this.identification.userServerId=this.credentialsFS.userServerId;
               this.identification.credentialDate=this.credentialsFS.creationDate;
               this.identification.IpAddress=this.configServer.IpAddress;
-              this.my_output2.emit(this.routing_code.toString());
+  //            this.my_output2.emit(this.routing_code.toString());
             } else {
               this.error=data.msg;
               this.isValidateData=false;
@@ -215,6 +219,7 @@ checkLogin(){
     this.identification.userServerId=this.credentialsFS.userServerId;
     this.identification.credentialDate=this.credentialsFS.creationDate;
     this.identification.IpAddress=this.configServer.IpAddress;
+    this.triggerUserFunction.emit(true);
   }
 }
 
@@ -289,7 +294,7 @@ changeServerName(event:any){
 
 }
 
-/*
+
 ngOnChanges(changes: SimpleChanges) { 
   for (const propName in changes){
     const j=changes[propName];
@@ -301,7 +306,7 @@ ngOnChanges(changes: SimpleChanges) {
     }
   }
 }
-*/
+
 
 /*
 getCredentials(){

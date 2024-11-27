@@ -48,7 +48,8 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   @Output() resetServer= new EventEmitter<any>();
   @Output() newCredentials= new EventEmitter<any>();
   @Output() returnFile= new EventEmitter<any>();
-
+  @Output() callUserFunction= new EventEmitter<any>();
+  @Output() triggerUserFunction= new EventEmitter<any>();
   redisplay_profile:number=0;
 
   ConfigCaloriesFat=new mainClassCaloriesFat;
@@ -122,8 +123,8 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
         this.identification.UserId="";
         this.identification.phone="";
     }
-    //console.log('xmv-company - init --- configServer.google='+this.configServer.googleServer);
 
+    //console.log('xmv-company - init --- configServer.google='+this.configServer.googleServer);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -164,10 +165,18 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
 
   Display_Events(){
-    this.Display_Table[this.i_table].display=false;
-    this.i_table=this.i_Event;
-    this.Display_Table[this.i_table].display=true;
+    if (this.configServer.devMode==='local'){
+        this.callUserFunction.emit(true);
+    } else {
+      this.Display_Table[this.i_table].display=false;
+      this.i_table=this.i_Event;
+      this.Display_Table[this.i_table].display=true;
+    }   
  }
+  triggerUserFn(event:any){
+    this.callUserFunction.emit(true);
+  }
+
   RouteTo(theAction:string){
     if (theAction==='login'){
       this.Display_Table[this.i_table].display=false;

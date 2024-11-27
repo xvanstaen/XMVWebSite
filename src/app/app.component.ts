@@ -10,6 +10,7 @@ import { HttpClient, provideHttpClient, HttpHeaders, HttpParams } from '@angular
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { UserFunctionsComponent } from './user-functions/user-functions.component';
+import { XmvCompanyComponent } from './xmv-company/xmv-company.component';
 
 import { ManageGoogleService } from './CloudServices/ManageGoogle.service';
 import { ManageSecuredGoogleService } from './CloudServices/ManageSecuredGoogle.service';
@@ -32,7 +33,7 @@ import { fillCredentials } from './copyFilesFunction';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   standalone: true, 
-  imports:[RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, UserFunctionsComponent,],
+  imports:[RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule,XmvCompanyComponent, UserFunctionsComponent],
 })
 
 export class AppComponent {
@@ -65,6 +66,7 @@ export class AppComponent {
   credentialsMongo = new classCredentials;
   isCredentials:boolean=false;
   myParams={server:"", scope:"test", devMode:"", auth2Code:""};
+  mainFunction:string="XMVWebSite";
 
   theForm: FormGroup = new FormGroup({ 
     userId: new FormControl({value:'', disabled:false}, { nonNullable: true }),
@@ -232,6 +234,11 @@ export class AppComponent {
         });
   }
 
+  isCallUserFunction:boolean=false;
+  callUserFunction(event:any){
+      this.isCallUserFunction=event;
+  }
+
   onReturnConfig(data:any,test_prod:string){
     this.errConfig="";
     
@@ -272,7 +279,8 @@ export class AppComponent {
       this.configServer.fileSystemServer = this.initConfigServer.fileSystemServer;
       this.configServer.IpAddress=this.IpAddress;
       this.configServer.test_prod= this.initConfigServer.test_prod;
-      this.configServer.project="AllFunctions";
+      this.configServer.project=this.mainFunction;
+      this.configServer.devMode=this.devMode;
       this.saveGoogleServer = this.configServer.googleServer;
       this.isConfigServerRetrieved=true;
       this.currentFunction="getLogin";

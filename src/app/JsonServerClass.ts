@@ -269,6 +269,7 @@ export class Return_Data{
 export class configServer{
   title:string= '';
   test_prod:string= '';
+  devMode:string="";
   GoogleProjectId:string= '';
   project:string="";
   consoleBucket:string= '';

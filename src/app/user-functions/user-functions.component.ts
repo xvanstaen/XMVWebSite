@@ -45,7 +45,7 @@ export class classTabApps{
   templateUrl: './user-functions.component.html',
   styleUrls: ['./user-functions.component.css'],
   standalone: true, 
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, RoutingAppComponent, SelectServerComponent,   XmvCompanyComponent, MainHealthComponent, 
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, RoutingAppComponent, SelectServerComponent, MainHealthComponent, 
     ConverterComponent, RecipeComponent, TestServerJSComponent, ManageCircuitsComponent, ManagePointOfRefComponent, SportPerformanceComponent,
     SportReportsComponent, SportAnalysisComponent, SportPerfRawDataMgtComponent, FitnessStatComponent, 
     KioskAbdConfigComponent, RunningClockComponent, MyCanvasComponent, Event27AugComponent, GetImagesComponent
@@ -70,6 +70,7 @@ export class UserFunctionsComponent {
     @Input() devMode:string="";
 
     @Output() serverChange=  new EventEmitter<any>();
+    @Output() callUserFunction= new EventEmitter<any>();
 
     tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
     maxEventHTTPrequest: number = 12;
@@ -256,6 +257,9 @@ serverTest:string="";
 onSelectApps(){
   this.isAppsSelected=true;
   this.selectApps=this.inputSelect;
+  if (this.selectApps===1){
+    this.callUserFunction.emit(false);
+  }
   if (this.selectApps===16){
     this.serverTest='server';
   } else if (this.selectApps===17){
@@ -310,5 +314,12 @@ fnNewCredentials(credentials:any){
   this.credentials=credentials;
   */
 }
+/*
+ngOnChanges(changes: SimpleChanges) {   
 
+  for (const propName in changes){
+      const j=changes[propName];
+  }
+}
+*/
 }

@@ -5,54 +5,55 @@
 <body>
 
 <div  *ngIf="routing_code===0 || routing_code===4; else AdminJson">
-    <!--
-    <br> Device type is {{device_type}}
-    <br> Screen width = {{getScreenWidth}}
-    <br> Screen height = {{getScreenHeight}}
-    <br><br>
-    </div>
-    -->
+      <!--
+      <br> Device type is {{device_type}}
+      <br> Screen width = {{getScreenWidth}}
+      <br> Screen height = {{getScreenHeight}}
+      <br><br>
+      </div>
+      -->
+  <div *ngIf="configServer.devMode!=='local'">
 
-
-  <img  class="sizeMap" src="./assets/Lavender.JPG" >
-  
-  <div class="main_box">
+    <img  class="sizeMap" src="./assets/Lavender.JPG" >
     
-      <h2 class="title "> Welcome!  </h2>
- 
-      <h3 >
-       <br>Log-in to access your specific features  
-
-      </h3>
-
-    <form class="form_box" [formGroup]="myForm" >
-
-        <div>
-            <label class="error_msg">  {{error}}</label>
-        </div>
-        <div>
-            <label class="field-name">user-id</label>
-            <input  class="input_field first-label" formControlName="userId" id="UserId" type="text"  >
-            <div class="filler"><br> </div>
-        </div>
-        <div class="second-label">
-            <label class="field-name " >password</label>
-            <input  class=" input_field"  formControlName="password" id="psw" type="password" > 
-            <div class="filler"><br> </div>
-        </div>
-          <div *ngIf="routing_code===4" class="second-label">
-            <label class="field-name " >Event to manage</label>
-            <input  class=" input_field"  formControlName="action" id="action" type="text" > 
-          <div class="filler"><br> </div>
-        </div>
+    <div class="main_box">
       
-        <div *ngIf="isValidateData===false">
-            <button id='but_1' class="sizeButtons first-button"  (click)="ValidateData()">Send</button>
-            <button id='but_2' class="sizeButtons" (click)="onClear()">Clear</button>
-        </div>
+        <h2 class="title "> Welcome!  </h2>
+  
+        <h3 >
+        <br>Log-in to access your specific features  
 
-    </form>
+        </h3>
+
+      <form class="form_box" [formGroup]="myForm" >
+
+          <div>
+              <label class="error_msg">  {{error}}</label>
+          </div>
+          <div>
+              <label class="field-name">user-id</label>
+              <input  class="input_field first-label" formControlName="userId" id="UserId" type="text"  >
+              <div class="filler"><br> </div>
+          </div>
+          <div class="second-label">
+              <label class="field-name " >password</label>
+              <input  class=" input_field"  formControlName="password" id="psw" type="password" > 
+              <div class="filler"><br> </div>
+          </div>
+            <div *ngIf="routing_code===4" class="second-label">
+              <label class="field-name " >Event to manage</label>
+              <input  class=" input_field"  formControlName="action" id="action" type="text" > 
+            <div class="filler"><br> </div>
+          </div>
+        
+          <div *ngIf="isValidateData===false">
+              <button id='but_1' class="sizeButtons first-button"  (click)="ValidateData()">Send</button>
+              <button id='but_2' class="sizeButtons" (click)="onClear()">Clear</button>
+          </div>
+
+      </form>
   </div>
+</div>
 </div>
 
 <!--
@@ -65,18 +66,18 @@
   </div>
 </div>  
 -->
-
+<!--
 <div  *ngIf="routing_code===1">
   <app-user-functions
-  [identification]="identification"  [configServer]="configServer"  
-   [configServerChanges]="configServerChanges" [credentials]="credentials"
-  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
-   (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)"
-  >
+    [identification]="identification"  [configServer]="configServer"  
+    [configServerChanges]="configServerChanges" [credentials]="credentials"
+    [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
+    (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)"
+    >
 
   </app-user-functions>
 </div>
-
+-->
 
   <!-- ======== FOOTER ======== -->
 <div class='myfooter'  *ngIf="routing_code!==5">

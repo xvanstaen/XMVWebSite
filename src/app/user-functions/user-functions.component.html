@@ -4,6 +4,8 @@
   </head>
 <body>
 
+
+
 <div *ngIf="devMode!=='local' && configServer.userLogin.accessLevel!=='low'" style="margin-top:10px; width:100%; display:inline-block;">
     <app-select-server [initConfigServer]="configServer" 
                     (returnServer)="getServerNames($event)">
@@ -72,11 +74,13 @@
 </div>
 
 <div *ngIf="isAppsSelected===true && isIdRetrieved===true && isConfigServerRetrieved===true && isCredentials===true">
-    <div *ngIf="selectApps===1 ">
+<!--    
+    <div *ngIf="selectApps===1  ">
         <app-xmv-company [configServer]="configServer" [INidentification]="identification"  [isConfigServerRetrieved]="isConfigServerRetrieved"
             [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)">
         </app-xmv-company>
     </div>
+-->
     <div *ngIf="(selectApps>1 && selectApps<6) || selectApps===7" style="float:none;">       
         <app-routing-app [selectApps]="selectApps"  [configServer]="configServer" > </app-routing-app>
     </div>
