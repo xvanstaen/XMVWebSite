@@ -32,7 +32,7 @@ import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSize
   templateUrl: './health.component.html',
   styleUrls: ['./health.component.css'],
   standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,  MainManageFileComponent, RunningClockComponent ],
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,  MainManageFileComponent,  ], //RunningClockComponent
 
 })
 export class HealthComponent  {
@@ -67,6 +67,9 @@ export class HealthComponent  {
   iWaitToRetrieve:Array<classRetrieveFile>=[];
   @Input() tabNewRecordAll: Array<any> = [
     {
+      ngStyle:0,
+      even:0,
+      change:false,
       nb: 0,
       meal: [{
         nb: 0,
@@ -222,6 +225,15 @@ export class HealthComponent  {
 
   })
 
+  // to display content of table
+  tabHeader:Array<any>=[];
+  divClassHeader:Array<any>=[];
+  tabContent:Array<any>=[];
+  tabDivContent:Array<any>=[];
+  tabDivEmptyContent:Array<any>=[];
+  tabSubTotal:Array<any>=[];
+  tabTotal:Array<any>=[];
+  
   /*
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
@@ -340,6 +352,7 @@ export class HealthComponent  {
     this.posSizeClock.displayAnalog = false;
     this.posSizeClock.displayDigital = true;
 
+    this.fillClassHeader();
 
     //this.configServer.timeoutFileSystem.userTimeOut.mn=2;
     console.log('ngInit() calls this.timeToGo() => userActivity=' + this.userActivity.substring(0,14));
@@ -349,9 +362,180 @@ export class HealthComponent  {
     this.callTimeToGo();
   }
 
+
+  fillClassHeader(){
+    this.divClassHeader[0]=this.createDivClassHeader(this.confTableAll.colWidth.action);
+    this.divClassHeader[1]=this.createDivClassHeader(this.confTableAll.colWidth.date);
+    this.divClassHeader[2]=this.createDivClassHeader(this.confTableAll.colWidth.calBurnt);
+    this.divClassHeader[3]=this.createDivClassHeader(this.confTableAll.colWidth.meal);
+    this.divClassHeader[4]=this.createDivClassHeader(this.confTableAll.colWidth.ingr);
+    this.divClassHeader[5]=this.createDivClassHeader(this.confTableAll.colWidth.other);
+    
+    this.tabHeader[0]=this.createClassHeader(this.confTableAll.colWidth.action);
+    this.tabHeader[1]=this.createClassHeader(this.confTableAll.colWidth.date);
+    this.tabHeader[2]=this.createClassHeader(this.confTableAll.colWidth.calBurnt);
+    this.tabHeader[3]=this.createClassHeader(this.confTableAll.colWidth.meal);
+    this.tabHeader[4]=this.createClassHeader(this.confTableAll.colWidth.ingr);
+    this.tabHeader[5]=this.createClassHeader(this.confTableAll.colWidth.other);
+
+    this.tabDivContent[0]=this.createDivClassContent(this.confTableAll.colWidth.action);
+    this.tabDivContent[1]=this.createDivClassContent(this.confTableAll.colWidth.date);
+    this.tabDivContent[2]=this.createDivClassContent(this.confTableAll.colWidth.calBurnt);
+    this.tabDivContent[3]=this.createDivClassContent(this.confTableAll.colWidth.meal);
+    this.tabDivContent[4]=this.createDivClassContent(this.confTableAll.colWidth.ingr);
+    this.tabDivContent[5]=this.createDivClassContent(this.confTableAll.colWidth.other);
+    
+    this.tabDivEmptyContent[0]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.action));
+    this.tabDivEmptyContent[1]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.date));
+    this.tabDivEmptyContent[2]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.calBurnt));
+    this.tabDivEmptyContent[3]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.meal));
+    this.tabDivEmptyContent[4]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.ingr));
+    this.tabDivEmptyContent[5]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.other));
+
+    
+    for (var i=0; i<3; i++){
+      this.tabContent[i]=[];
+      this.tabContent[i][0]=this.createClassContent(this.confTableAll.colWidth.action,i,'center');
+      this.tabContent[i][1]=this.createClassContent(this.confTableAll.colWidth.date,i,'left');
+      this.tabContent[i][2]=this.createClassContent(this.confTableAll.colWidth.calBurnt,i,'center');
+      this.tabContent[i][3]=this.createClassContent(this.confTableAll.colWidth.meal,i,'center');
+      this.tabContent[i][4]=this.createClassContent(this.confTableAll.colWidth.ingr,i,'left');
+      this.tabContent[i][5]=this.createClassContent(this.confTableAll.colWidth.other,i,'center');
+    }
+    for (var i=0; i<2; i++){
+      this.tabSubTotal[i]=[];
+      this.tabSubTotal[i][0]=this.createSubTotal(Number(this.confTableAll.colWidth.action),i);
+      this.tabSubTotal[i][1]=this.createSubTotal(Number(this.confTableAll.colWidth.date),i);
+      this.tabSubTotal[i][2]=this.createSubTotal(Number(this.confTableAll.colWidth.calBurnt),i);
+      this.tabSubTotal[i][3]=this.createSubTotal(Number(this.confTableAll.colWidth.meal),i);
+      this.tabSubTotal[i][4]=this.createSubTotal(Number(this.confTableAll.colWidth.ingr),i);
+      this.tabSubTotal[i][5]=this.createSubTotal(Number(this.confTableAll.colWidth.other),i);
+    }
+    for (var i=0; i<2; i++){
+      this.tabTotal[i]=[];
+      this.tabTotal[i][0]=this.createTotal(Number(this.confTableAll.colWidth.action),i);
+      this.tabTotal[i][1]=this.createTotal(Number(this.confTableAll.colWidth.date),i);
+      this.tabTotal[i][2]=this.createTotal(Number(this.confTableAll.colWidth.calBurnt),i);
+      this.tabTotal[i][3]=this.createTotal(Number(this.confTableAll.colWidth.meal),i);
+      this.tabTotal[i][4]=this.createTotal(Number(this.confTableAll.colWidth.ingr),i);
+      this.tabTotal[i][5]=this.createTotal(Number(this.confTableAll.colWidth.other),i);
+    }
+  }
+
+  createSubTotal(width:Number,backGround:number){
+    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
+    var style:any;
+    var backColor=this.confTableAll.row.even;
+    if (backGround===1){
+      backColor=this.confTableAll.row.odd;
+    } 
+    width=Number(width)-0.3;
+    return style = {
+        'background-color':backColor,
+        'width.px': width,
+        'height.px':  Number(this.confTableAll.subTotal.height) + 4 ,
+        'color': this.confTableAll.subTotal.color,  
+        'font-size.px':Number(this.confTableAll.subTotal.fontSize),
+        'font-weight':this.confTableAll.subTotal.fontWeight,
+        'text-align': 'center',
+        'display':'inline-block',
+        
+    }
+  }
+
+  createTotal(width:Number,backGround:number){
+    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
+    var style:any;
+    var backColor=this.confTableAll.row.even;
+    if (backGround===1){
+      backColor=this.confTableAll.row.odd;
+    } 
+    width=Number(width)-0.3;
+    return style = {
+        'background-color':backColor,
+        'width.px': width,
+        'height.px':  Number(this.confTableAll.Total.height) + 4 ,
+        'color': this.confTableAll.Total.color,  
+        'font-size.px':Number(this.confTableAll.Total.fontSize),
+        'font-weight':this.confTableAll.Total.fontWeight,
+        'text-align': 'center',
+        'display':'inline-block',
+        
+    }
+  }
+
+  createClassHeader(width:string){
+    var style:any;
+    return style = {
+        'background-color':this.confTableAll.title.background,
+        'width.px': width,
+        'height.px':  Number(this.confTableAll.row.height) + 10 ,
+        'padding-top.px':2,
+        'color': this.confTableAll.title.color,  
+        'border':'1px white solid',
+        'text-align': 'center',
+        'display':'inline-block',
+    }
+  } 
+
+  createClassContent(width:any, backGround:number, align:string){
+    var style:any;
+    var backColor=this.confTableAll.row.even;
+    var theColor=this.confTableAll.row.color;
+    if (backGround===1){
+      backColor=this.confTableAll.row.odd;
+    } else if (backGround===2){
+      backColor=this.confTableAll.rowNew.background;
+      theColor=this.confTableAll.rowNew.color;
+    } 
+    return style = {
+        'background-color':backColor,
+        'width.px': width,
+        'height.px': Number(this.confTableAll.row.height)+5 ,
+        'color': theColor,  
+        'border':'none',
+        'text-align': align,
+        'display':'inline-block',
+    }
+  }
+
+  createDivClassHeader(width:any){
+    var style:any;
+    return style = {
+        'width.px': width,
+        'height.px':  Number(this.confTableAll.row.height)+5 ,
+        'border':'none',
+        'display':'block',
+        'float':'left'
+    }
+  } 
+
+  createDivClassContent(width:any){
+    var style:any;
+    return style = {
+        'width.px': width,
+        'height.px':  Number(this.confTableAll.row.height)+5 ,
+        'border':'none',
+        'display':'block',
+        'float':'left'
+    }
+  }
+
+  createEmptyDivClassContent(width:number){
+    var style:any;
+    return style = {
+        'width.px': width,
+        'height.px':  Number(this.confTableAll.row.height)+5 ,
+        'border':'none',
+        'display':'block',
+        'float':'left'
+    }
+  }
+
+
+
+
   isUserTimeOut:boolean=false;
-
-
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
     console.log('Health component - timeOutactivity');
     window.cancelAnimationFrame(this.idAnimation);
@@ -852,6 +1036,10 @@ export class HealthComponent  {
         this.theEvent.target.id = 'AllIngrA-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
         this.CreateIngredient(this.theEvent);
       }
+      if (this.tabNewRecordAll[this.TabOfId[0]].change===false){
+        this.tabNewRecordAll[this.TabOfId[0]].change=true;
+        this.reInitBackground();
+      }
     }
   }
 
@@ -860,6 +1048,10 @@ export class HealthComponent  {
     if (event.target.id.substring(0, 6) === 'DelAll') {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1], 1);
       this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1], 1);
+      if (this.tabNewRecordAll[this.TabOfId[0]].change===false){
+        this.tabNewRecordAll[this.TabOfId[0]].change=true;
+        this.reInitBackground();
+      }
       if (this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.length === 0) {
         this.theEvent.target.id = 'AllMealA-' + this.TabOfId[0] + '-' + this.TabOfId[1];
         this.CreateMeal(this.theEvent);
@@ -872,6 +1064,7 @@ export class HealthComponent  {
     if (event.target.id.substring(0, 10) === 'DelAllDate') {
       this.HealthAllData.tabDailyReport.splice(this.TabOfId[0], 1);
       this.tabNewRecordAll.splice(this.TabOfId[0], 1);
+      this.reInitBackground();
     } 
   }
 
@@ -885,6 +1078,8 @@ export class HealthComponent  {
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 0, theIngredient);
       this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food.splice(this.TabOfId[2], 0, { nb: 1 });
     }
+    this.tabNewRecordAll[this.TabOfId[0]].change=true;
+    this.reInitBackground();
   }
 
   CreateMeal(event: any) {
@@ -903,21 +1098,23 @@ export class HealthComponent  {
       const trackNew = { nb: 1, food: [{ nb: 1 }] };
       this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1], 0, trackNew);
     }
+    this.tabNewRecordAll[this.TabOfId[0]].change=true;
+    this.reInitBackground();
   }
 
   CreateDay(event: any) {
     this.manageIds(event.target.id);
-    const theDaily = new DailyReport;
+    const theDaily = new DailyReport; 
     var iDate = 0;
     if (event.target.id.substring(0, 8) === 'AllDateA') {
       this.HealthAllData.tabDailyReport.splice(this.TabOfId[0] + 1, 0, theDaily);
       iDate = this.TabOfId[0] + 1;
-      const trackNew = { nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
+      const trackNew = { ngStyle:0, even:0, change:true, nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
       this.tabNewRecordAll.splice(this.TabOfId[0] + 1, 0, trackNew);
     } else if (event.target.id.substring(0, 8) === 'AllDateB') {
       this.HealthAllData.tabDailyReport.splice(this.TabOfId[0], 0, theDaily)
       iDate = this.TabOfId[0];
-      const trackNew = { nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
+      const trackNew = { ngStyle:0, even:0, change:true, nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
       this.tabNewRecordAll.splice(this.TabOfId[0], 0, trackNew);
     }
     if (event.target.id.substring(0, 7) === 'AllDate') {
@@ -929,6 +1126,22 @@ export class HealthComponent  {
       const theIngredient = new ClassDish;
       this.HealthAllData.tabDailyReport[iDate].meal[0].dish.push(theIngredient);
     } 
+    this.reInitBackground();
+  }
+
+  reInitBackground(){
+    for (var i=0; i<this.tabNewRecordAll.length; i++){
+      if (i%2!==0){
+        this.tabNewRecordAll[i].ngStyle=1;
+        this.tabNewRecordAll[i].even=1;
+      } else {
+        this.tabNewRecordAll[i].ngStyle=0;
+        this.tabNewRecordAll[i].even=0;
+      }
+      if (this.tabNewRecordAll[i].change===true){
+        this.tabNewRecordAll[i].ngStyle=2;
+      }
+    }
   }
 
   manageIds(theId: string) {
@@ -1002,6 +1215,8 @@ export class HealthComponent  {
   ConfirmDelDate() {
     const theDate = this.HealthAllData.tabDailyReport[this.recordToDelete].date;
     this.HealthAllData.tabDailyReport.splice(this.recordToDelete, 1);
+    this.tabNewRecordAll.splice(this.recordToDelete, 1);
+    this.reInitBackground();
     this.errorMsg = 'record#' + this.recordToDelete + ' with date=' + theDate + 'is deleted but file is not saved';
     this.errorFn = 'delDate';
     this.isDeleteConfirmed = false;
@@ -1100,6 +1315,7 @@ export class HealthComponent  {
       console.log('File is locked by this user; no specific action needed; user can update the data');
     }
   }
+
 
   firstLoop:boolean=true;
   ngOnChanges(changes: SimpleChanges) {

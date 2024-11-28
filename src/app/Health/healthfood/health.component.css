@@ -43,9 +43,10 @@ td {
   }
   
 .subTotal {
-    display:inline-block;
+    display:block;
     font-weight:bold;
     margin-top:10px;
+    float:left;
   }
 
 .Total {
@@ -57,7 +58,9 @@ td {
 
 
 .trow {
+  /*
   display:inline-block;
+  */
   border: solid 0px blue;
   }
 
@@ -67,7 +70,7 @@ td {
   }
 
 .tReadOnly{
-  display:inline-block;
+  /*display:inline-block;*/
   border: solid 0px blue;
 }
 
@@ -76,7 +79,7 @@ td {
 }
 
 .Colth {
-  display:inline-block;
+  display:block; float:left;
   text-align: center; 
   }
 
@@ -84,19 +87,19 @@ td {
     border:0px solid blue;
   }
 
-.widthDate {
-  text-align: left; 
+.padLeft {
   padding-left:10px;
 }
 
 .alignLeft{
-  text-align: center; 
+  text-align: left; 
 }
 
-.alignMealIngr{
-  text-align: left;
-  padding-left:10px;
+.alignLCenter{
+  text-align: left; 
+  padding-left: 4px;
 }
+
 
 
 .tableCol {
@@ -114,7 +117,7 @@ td {
   font-weight:bold;
   background-color: #8e8c8b;
   text-align: center;
-  padding-top:2px;
+  padding-top:0px;
   display:inline-block;
 }
 

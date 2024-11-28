@@ -64,19 +64,19 @@
         <!--------------- DISPLAY ALL -->
         <div *ngIf="isUserTimeOut===true" style="margin-left:6px;">
             <div style="font-size:16px; color:blue; display:inline-block; 
-                     text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width}">
+                     text-align:center;  margin-top:5px; width:100%;">
                     You have been inactive for too long so your updates are lost. Re-access the application Health 
             </div>
         </div>
 
         <div *ngIf="isUserTimeOut===false" style="margin-left:6px;">
             <div style="font-size:16px; color:blue; display:inline-block; 
-                     text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': confTableAll.minwidth , 'width.px': confTableAll.width}">
+                     text-align:center;  margin-top:5px;  width:100%;" >
                     HEALTH DATA MANAGEMENT
-                    
+         <!--           
                     <app-running-clock [posSizeClock]="posSizeClock">
                     </app-running-clock>
-                    
+         -->           
                     Time out will occur in 
                     <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
             </div>
@@ -116,38 +116,39 @@
                 <button id='clear' class="sizeButtons" style="margin-left:10px;" (click)="actionSearchText($event)">Clear</button>
             </form>
             <div class="skipLine">&nbsp;</div>
-            <div style="margin-top:1px; width:98%; min-width:98%;"></div>
-            <div   id="posAfterTitle"  [ngStyle]="{'min-width.px': confTableAll.minwidth-30 , 'width.px': confTableAll.width-30, 'color':confTableAll.color, 'background-color':confTableAll.background }" >
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Action">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center; padding-left:10px;' type="text" value="Date">
-                <input class="Colth"  [ngStyle]="{'width':confTableAll.colWidth.calBurnt, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Calories Burnt">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.meal, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center; padding-left:10px;' type="text" value="Meal">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.ingr, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center; padding-left:10px;'  type="text" value="Ingredient">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Quantity">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Unit">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.calBurnt, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Cal.">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Chol.">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Gly. Index">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Sugar">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Sat.">
-                <input class="Colth" [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Tot.fat">
-                <input class="Colth " [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Protein">
-                <input class="Colth " [ngStyle]="{'width':confTableAll.colWidth.other, 'height.px':confTableAll.title.height, 'color':confTableAll.title.color, 'background-color':confTableAll.title.background}" 
-                            style='text-align:center' type="text" value="Carbs">
+            <div style="margin-top:5px; width:99%; min-width:99%;"></div>
+            <div   id="posAfterTitle"  [ngStyle]="{'height.px':37, 'min-width.px': confTableAll.minwidth-20 , 'width.px': confTableAll.width-20}" >
+                <div [ngStyle]="divClassHeader[0]">
+                    <input [ngStyle]="tabHeader[0]" type="text" value="Action"></div>
+                <div [ngStyle]="divClassHeader[1]">
+                    <input [ngStyle]="tabHeader[1]" type="text" value="Date"></div>
+                <div [ngStyle]="divClassHeader[2]">
+                    <input [ngStyle]="tabHeader[2]" type="text" value="Cal. Burnt"></div>
+                <div [ngStyle]="divClassHeader[3]">
+                    <input [ngStyle]="tabHeader[3]" type="text" value="Meal"></div>
+                <div [ngStyle]="divClassHeader[4]">
+                    <input [ngStyle]="tabHeader[4]" type="text" value="Ingredient"></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Quant."></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Unit"></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Cal."></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Chol."></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Gly"></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Sugar"></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Sat."></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Sat.Fat"></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Protein"></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Carbs"></div>
+ 
             </div>
 
             <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
@@ -201,11 +202,10 @@
                     </div>            
                 </div>
             </div>
-
             <!-----   MANAGEMENT OF ALL HEALTH DATA  -->
-            <div [ngStyle]="{ 'min-width.px': confTableAll.minwidth-10 ,  'width.px': confTableAll.width-10, 'color':confTableAll.color, 
-                        'height.px': confTableAll.height, 'background-color':confTableAll.background}"
-                        style="overflow-y:scroll;  " > 
+
+            <div [ngStyle]="{ 'min-width.px': confTableAll.minwidth-15 ,  'width.px': confTableAll.width-15, 'color':confTableAll.color, 
+                        'height.px': confTableAll.height, 'background-color':confTableAll.background, 'overflow-y':'scroll'}"> 
 
                 <div *ngFor="let myDaily of HealthAllData.tabDailyReport; let i=index">
                     <div *ngIf="(i >= minNum && i<=maxNum) || checkText!==''">
@@ -215,172 +215,146 @@
 
                             <div *ngIf="searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))">
-                                
                                 <div  *ngIf="checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)"
-                                    [ngStyle]="{'backgroung-color': i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}"  >
-                                    
-                                    <div   
-                                        [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color': i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                            class="tReadOnly  widthAction boxHover"  id="openAction-{{i}}-{{k}}-{{j}}" (click)="onAction($event)">
-                                        <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" >A</span>
+                                     style="display:inline-block; width:100%; border:none; " 
+                                     >
+                                    <div    [ngStyle]="tabDivContent[0]" >
+                                        <span class="boxHover" [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][0]"
+                                              id="openAction-{{i}}-{{k}}-{{j}}" (click)="onAction($event)" style="height:30px;">
+                                            <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" >A</span>
+                                        </span>
                                     </div>
-
-                                    <input type="date" 
-                                        [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        *ngIf="k===0 && j===0" id="dateAll-{{i}}" class="trow widthDate boxHover"  (input)="onInputDailyAll($event)" value="{{myDaily.date}}" >
-                                    <span  class="trow widthDate " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        style="pointer-events: none;" *ngIf="k!==0 || j!==0"  >&nbsp;
-                                    </span>
+                                    <div [ngStyle]="tabDivContent[1]" *ngIf="k===0 && j===0">
+                                        <input  type="date" class="boxHover"
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]" style="height:100%"
+                                            id="dateAll-{{i}}"   (input)="onInputDailyAll($event)" value="{{myDaily.date}}" >
+                                    </div>
+                                    <div [ngStyle]="tabDivEmptyContent[1]" *ngIf="k!==0 || j!==0">  
+                                        
+                                        <input *ngIf="j===0" ng-readonly=&nbsp; type="text" value="{{myDaily.date}}"
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]"
+                                            style="pointer-events: none;"  >
+                                        
+                                         <input *ngIf="j!==0" ng-readonly=&nbsp; type="text" value=&nbsp;
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]"
+                                            style="pointer-events: none;"  >
                                     
-                                    <input type="text"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        *ngIf="k===0 && j===0" id="burnAll-{{i}}" class="trow alignLeft boxHover" (input)="onInputDailyAll($event)" 
-                                        value="{{ myDaily.burntCalories }}"   > 
-                                    <span type="text"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        *ngIf="k!==0 || j!==0" id="burnAll-{{i}}" class="trow alignLeft" 
-                                        >&nbsp;
-                                    </span>
-                    
-                                    <input type="text" 
-                                        [ngStyle]="{'width':confTableAll.colWidth.meal, 'border': meal.name==='' ? 'solid 1px ligthgreen ' : 'solid 0px green', 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':meal.name==='' ? 'green' : tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        *ngIf="j===0" id="mealAll-{{i}}-{{k}}" class="trow alignMealIngr boxHover"  (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{meal.name }}"   >
-                                    <span  class="trow alignMealIngr" 
-                                        [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        style="pointer-events: none;" *ngIf="j!==0"   >&nbsp;
-                                    </span>
-
-                                    <input type="text" 
-                                        [ngStyle]="{'width':confTableAll.colWidth.ingr , 'border': theIngred.name==='' ? 'solid 1px green' : 'solid 0px green', 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':theIngred.name==='' ? 'lightgreen' : tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        id="ingrAll-{{i}}-{{k}}-{{j}}"  class="trow alignMealIngr boxHover"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{theIngred.name }}"  >
-
-                                    <input type="text"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':tabNewRecordAll[i].nb===1 ? confTableAll.row.background : i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.quantity}}" id="quanAll-{{i}}-{{k}}-{{j}}" class="trow alignLeft boxHover"(input)="onInputDailyAll($event)"  >
-                                    
-                                    <input type="text"  class="trow alignLeft boxHover"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.unit }}" id="unitAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)" >
-
-                                    <input type="text"  class="tReadOnly alignLeft"      
-                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.calFat.Calories  | number:'1.0-0'}}"  >
-                                    <input type="text"  class="tReadOnly alignLeft"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.calFat.Cholesterol  | number:'1.1-1'}}"  >
-                                    <input type="text"  class="tReadOnly  alignLeft"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.calFat.GlyIndex  | number:'1.1-1'}}"  >
-                                    <input type="text"  class="tReadOnly  alignLeft"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.calFat.Sugar  | number:'1.1-1'}}" >
-                                    <input type="text"  class="tReadOnly  alignLeft"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.calFat.Fat.Saturated  | number:'1.1-1' }}" >
-                                    <input type="text"  class="tReadOnly  alignLeft"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.calFat.Fat.Total  | number:'1.1-1'}}" >
-                                    <input type="text"  class="tReadOnly  alignLeft"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.calFat.Protein | number:'1.1-1' }}"  >
-                                    <input type="text"  class="tReadOnly  alignLeft"  
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.row.height, 'color':confTableAll.row.color, 'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                        value="{{theIngred.calFat.Carbs  | number:'1.1-1'}}"  >
-
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[2]" *ngIf="k===0 && j===0">
+                                        <input  type="text"  class="boxHover"
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][2]" 
+                                            id="burnAll-{{i}}"  (input)="onInputDailyAll($event)" 
+                                            value="{{ myDaily.burntCalories }}"   > 
+                                    </div>
+                                    <div [ngStyle]="tabDivEmptyContent[2]" *ngIf="k!==0 || j!==0">
+                                        <input ng-readonly=&nbsp; [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][2]" 
+                                            >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[3]"  *ngIf="j===0" >
+                                        <input type="text" class="boxHover"
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][3]" 
+                                            id="mealAll-{{i}}-{{k}}"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{meal.name }}"   >
+                                    </div>
+                                    <div [ngStyle]="tabDivEmptyContent[3]"  *ngIf="j!==0" >    
+                                        <input ng-readonly=&nbsp; [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][3]" >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[4]">
+                                        <input type="text" class="boxHover padLeft" 
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][4]" 
+                                            id="ingrAll-{{i}}-{{k}}-{{j}}"    (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{theIngred.name }}"  >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">
+                                        <input type="text"  class="boxHover" 
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.quantity}}" id="quanAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)"  >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">  
+                                        <input type="text"  class="boxHover"  
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.unit }}" id="unitAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)" >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">  
+                                        <input type="text"      
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.calFat.Calories  | number:'1.0-0'}}"  >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">   
+                                        <input type="text"   
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.calFat.Cholesterol  | number:'1.1-1'}}"  >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]"> 
+                                        <input type="text" 
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.calFat.GlyIndex  | number:'1.1-1'}}"  >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">
+                                        <input type="text"  
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.calFat.Sugar  | number:'1.1-1'}}" >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">  
+                                        <input type="text"  
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.calFat.Fat.Saturated  | number:'1.1-1' }}" >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">
+                                        <input type="text"  
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.calFat.Fat.Total  | number:'1.1-1'}}" >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]"> 
+                                        <input type="text" 
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.calFat.Protein | number:'1.1-1' }}"  >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">
+                                        <input type="text"  
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" [ngClass]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                            value="{{theIngred.calFat.Carbs  | number:'1.1-1'}}"  >
+                                    </div>
                                 </div>
                                 <!-- sub-TOTAL-->
-                                <div *ngIf="HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText==='' " [ngStyle]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}">
-                                    <span class="subTotal widthAction "
-                                        [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>
-                                    <span class="subTotal widthDate"
-                                        [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>
-                                    <span class="subTotal alignLeft"
-                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>
-                                    <span class="subTotal alignMealIngr"
-                                        [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" > &nbsp;</span>                        
-                                    <span class="subTotal alignMealIngr" 
-                                        [ngStyle]="{'width':confTableAll.colWidth.ingr , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        style=" text-align: right; padding-right:5px;">sub-Total</span>
-                                    <span class="subTotal alignLeft"
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>                      
-                                    <span class="subTotal alignLeft"
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" >&nbsp;</span>
-                                    <span class="subTotal alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        >{{meal.total.Calories  | number:'1.0-0'}}</span>                                
-                                    <span class="subTotal alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        >{{meal.total.Cholesterol | number:'1.1-1'}}</span>
-                                    <span class="subTotal alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        >{{myDaily.total.GlyIndex | number:'1.1-1'}}</span>
-                                    <span class="subTotal alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        >{{meal.total.Sugar | number:'1.1-1'}} </span> 
-                                    <span class="subTotal alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        >{{meal.total.Fat.Saturated | number:'1.1-1'}}</span>
-                                    <span class="subTotal alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        >{{meal.total.Fat.Total | number:'1.1-1'}}</span>
-                                    <span class="subTotal alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        >{{meal.total.Protein | number:'1.1-1'}}</span>
-                                    <span class="subTotal alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.subTotal.height, 'color':confTableAll.subTotal.color, 'font-weight':confTableAll.subTotal.fontWeight}" 
-                                        >{{meal.total.Carbs | number:'1.1-1'}}</span>
+                                <div *ngIf="HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText==='' "  style="display:inline-block; width:100%;">
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][0]">&nbsp;</div>
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][1]">&nbsp;</div>
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][2]">&nbsp;</div>
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][3]">&nbsp;</div>
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][4]"
+                                        ><span style=" text-align:right;">sub-Total</span></div>
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Calories  | number:'1.0-0'}}</span></div>                                
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Cholesterol | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Protein | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Carbs | number:'1.1-1'}}</span></div> 
                                 </div>
                                 <!-- TOTAL-->
                                 <!--
                                     style="--Tcol:{{confTableAll.Total.color}}; --TfontW:{{confTableAll.Total.fontWeight}}; --Theight:{{confTableAll.Total.height}}"
                                 -->
-                                <div *ngIf="HealthAllData.tabDailyReport[i].meal.length-1===k && HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''" [ngStyle]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}">
-                                    <span class="Total widthAction" 
-                                    [ngStyle]="{'width':confTableAll.colWidth.action , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >&nbsp;</span>                           
-                                    <span class="Total widthDate " 
-                                    [ngStyle]="{'width':confTableAll.colWidth.date , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >&nbsp;</span>  
-                                    <span class="Total alignLeft"
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >&nbsp;</span>
-                                    <span class="Total alignMealIngr"
-                                    [ngStyle]="{'width':confTableAll.colWidth.meal , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >&nbsp;</span>                        
-                                    <span class="Total alignMealIngr"
-                                    [ngStyle]="{'width':confTableAll.colWidth.ingr , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    style=" text-align: right;  padding-right:5px;">Total </span>
-                                    <span class="Total alignLeft"
-                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >&nbsp;</span>                     
-                                    <span class="Total alignLeft"
-                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >&nbsp;</span>                       
-                                    <span class="Total alignLeft "
-                                    [ngStyle]="{'width':confTableAll.colWidth.calBurnt , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >{{myDaily.total.Calories | number:'1.0-0'}}</span>
-                                    <span class="Total alignLeft " 
-                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >{{myDaily.total.Cholesterol | number:'1.1-1'}}</span>
-                                    <span class="Total alignLeft " 
-                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >{{myDaily.total.GlyIndex | number:'1.1-1'}}</span>
-                                    <span class="Total alignLeft " 
-                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >{{myDaily.total.Sugar | number:'1.1-1'}}</span>
-                                    <span class="Total alignLeft " 
-                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span>
-                                    <span class="Total alignLeft " 
-                                    [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                    >{{myDaily.total.Fat.Total | number:'1.1-1'}}</span>
-                                    <span class="Total alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                        >{{myDaily.total.Protein | number:'1.1-1'}}</span>
-                                    <span class="Total alignLeft " 
-                                        [ngStyle]="{'width':confTableAll.colWidth.other , 'height.px':confTableAll.Total.height, 'color':confTableAll.Total.color, 'font-weight':confTableAll.Total.fontWeight}" 
-                                        >{{myDaily.total.Carbs | number:'1.1-1'}}</span>
+                                <div *ngIf="HealthAllData.tabDailyReport[i].meal.length-1===k && HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''"  style="display:inline-block; width:100%;">
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][0]">&nbsp;</div>
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][1]">&nbsp;</div>
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][2]">&nbsp;</div>
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][3]">&nbsp;</div>
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][4]"
+                                        ><span style=" text-align:right; font-size:18;">Total</span></div>
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Calories  | number:'1.0-0'}}</span></div>                                
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Cholesterol | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Total | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Protein | number:'1.1-1'}}</span></div> 
+                                    <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Carbs | number:'1.1-1'}}</span></div> 
+                    
                                     <div class="skipLine"></div>
                                 </div>
                             </div>

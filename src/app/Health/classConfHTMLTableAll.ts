@@ -22,20 +22,20 @@ export class classConfTableAll{
     color:string='white';
     overF:string="scroll";
     title={
-        height:'40px',
+        height:'40',
         color:'white',
         background:'blue'
     }
     colWidth={
-        action:'60px',
-        date:'135px',
-        calBurnt:'60px',
-        meal:'90px',
-        ingr:'124px',
-        other:'50px',
+        action:'60',
+        date:'135',
+        calBurnt:'60',
+        meal:'90',
+        ingr:'124',
+        other:'50',
     };
     row={
-        height:'22px',
+        height:'22',
         color:'white',
         even:'black',
         odd:'rgb(43, 34, 34)',
@@ -46,14 +46,16 @@ export class classConfTableAll{
         background:'rgb(75, 159, 103)',
     };
     subTotal={
-        height:'25px;',
+        height:'25',
         color:'green',
-        fontWeight:'13px',
+        fontWeight:'bolder',
+        fontSize:'16',
     };
     Total={
-        height:'25px;',
-        color:'green',
-        fontWeight:'13px',
+        height:'25',
+        color:'red',
+        fontWeight:'bolder',
+        fontSize:'16',
     };
   }
 

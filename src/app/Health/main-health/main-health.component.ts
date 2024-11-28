@@ -90,6 +90,9 @@ export class MainHealthComponent {
 
   tabNewRecordAll: Array<any> = [
     {
+      ngStyle:0,
+      even:0,
+      change:false,
       nb: 0,
       meal: [{
         nb: 0,
@@ -841,8 +844,13 @@ export class MainHealthComponent {
     this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
     for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
       if (this.tabNewRecordAll.length === 0 || i !== 0) {
-        const trackNew = { nb: 0, meal: [{ nb: 0, food: [{ nb: 0 }] }] };
+        
+        const trackNew = { ngStyle:0, even:0, change:false, nb: 0, meal: [{ nb: 0, food: [{ nb: 0 }] }] };
         this.tabNewRecordAll.push(trackNew);
+        if (i%2!==0){
+          this.tabNewRecordAll[i].ngStyle=1;
+          this.tabNewRecordAll[i].even=1;
+        }
       }
       for (var j = 0; j < this.HealthAllData.tabDailyReport[i].meal.length; j++) {
         if (this.tabNewRecordAll[i].meal.length === 0 || j !== 0) {
