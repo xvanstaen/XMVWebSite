@@ -67,19 +67,19 @@ export class classConfTableAll{
     color:string='white';
     overF:string="scroll";
     title={
-        height:'34px',
+        height:'34p',
         color:'white',
         background:'blue'
     }
     colWidth={
-        action:'60px',
-        type:'135px',
-        meal:'90px',
-        ingr:'124px',
-        other:'50px',
+        action:'60p',
+        type:'135',
+        meal:'90',
+        ingr:'124',
+        other:'50',
     };
     row={
-        height:'22px',
+        height:'22',
         color:'white',
         even:'black',
         odd:'rgb(43, 34, 34)',

@@ -433,7 +433,7 @@ export class HealthComponent  {
     return style = {
         'background-color':backColor,
         'width.px': width,
-        'height.px':  Number(this.confTableAll.subTotal.height) + 4 ,
+        'height.px':  Number(this.confTableAll.subTotal.height) ,
         'color': this.confTableAll.subTotal.color,  
         'font-size.px':Number(this.confTableAll.subTotal.fontSize),
         'font-weight':this.confTableAll.subTotal.fontWeight,
@@ -454,7 +454,7 @@ export class HealthComponent  {
     return style = {
         'background-color':backColor,
         'width.px': width,
-        'height.px':  Number(this.confTableAll.Total.height) + 4 ,
+        'height.px':  Number(this.confTableAll.Total.height) ,
         'color': this.confTableAll.Total.color,  
         'font-size.px':Number(this.confTableAll.Total.fontSize),
         'font-weight':this.confTableAll.Total.fontWeight,
@@ -469,7 +469,7 @@ export class HealthComponent  {
     return style = {
         'background-color':this.confTableAll.title.background,
         'width.px': width,
-        'height.px':  Number(this.confTableAll.row.height) + 10 ,
+        'height.px':  Number(this.confTableAll.row.height) ,
         'padding-top.px':2,
         'color': this.confTableAll.title.color,  
         'border':'1px white solid',
@@ -491,7 +491,7 @@ export class HealthComponent  {
     return style = {
         'background-color':backColor,
         'width.px': width,
-        'height.px': Number(this.confTableAll.row.height)+5 ,
+        'height.px': Number(this.confTableAll.row.height) ,
         'color': theColor,  
         'border':'none',
         'text-align': align,

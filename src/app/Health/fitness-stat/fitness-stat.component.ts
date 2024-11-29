@@ -45,7 +45,7 @@ export class ClassFilesAlreadyMerged{
   styleUrls: ['./fitness-stat.component.css'],
   standalone:true,
   imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,OneCalendarComponent, FitnessChartComponent, MyDropDownComponent, ],
-
+  providers:[DatePipe]
 })
 
 export class FitnessStatComponent implements OnInit {

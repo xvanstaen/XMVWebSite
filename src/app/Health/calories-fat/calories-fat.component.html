@@ -32,44 +32,47 @@
         <div *ngIf="tabLock[1].lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
 
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+13}">
-        MANAGE RECIPE
-        <app-running-clock [posSizeClock]="posSizeClock">
-        </app-running-clock>
-        Time out will occur in 
-        <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
-
+            MANAGE RECIPE
+            <!--
+            <app-running-clock [posSizeClock]="posSizeClock">
+            </app-running-clock>
+            -->
+            
+            <div style="padding-left:700px; font-size:13px; ">
+                <span >Time out will occur in</span> 
+                <span style="border: black double 2px;margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+            </div>  
         </div>
-
-        <div style="margin-left:5px; display:inline-block; overflow-y:scroll;" [ngStyle]="{'height':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth, 'width.px': HTMLCaloriesFat.width }" >
-            <div class="tHeader" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.action}" >Action</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.type }"  >Recipe
-                <button class="theArrow"   id='Recipe'    (click)="onFilter($event)">
+        <div class="skipLine">&nbsp;</div>
+        <div style="margin-left:5px; display:inline-block; overflow-y:scroll;" [ngStyle]="{'height.px':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth, 'width.px': HTMLCaloriesFat.width }" >
+            <div [ngStyle]="divClassHeader[0]">Action</div>
+            <div [ngStyle]="divClassHeader[1]">Recipe          <button class="theArrow"   id='Recipe'    (click)="onFilter($event)">
                     <mat-icon class="material-symbols-outlined"  id='Recipe' (click)="onFilter($event)">
                         arrow_drop_down
                     </mat-icon>
                 </button>  
             </div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.ingr}" style="padding-top:3px;">Food (Filter)
+            <div [ngStyle]="divClassHeader[2]">Food (Filter)
                 <button class="theArrow"  style="margin-left:35px;"  id='RecipeFood' (click)="onFilter($event)">
                     <mat-icon class="material-symbols-outlined"  id='RecipeFood' (click)="onFilter($event)">
                         arrow_drop_down
                     </mat-icon>
                 </button>  
             </div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Serving</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Serving Unit</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Calories</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Protein</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Carbs</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Glycemic Index</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Sugar</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Natural Sugar</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Added Sugar</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Choles terol</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Saturated fat</div>
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;">Total fat</div>
+            <div [ngStyle]="divClassHeader[3]">Serving</div>
+            <div [ngStyle]="divClassHeader[3]">Serving Unit</div>
+            <div [ngStyle]="divClassHeader[3]">Calories</div>
+            <div [ngStyle]="divClassHeader[3]">Protein</div>
+            <div [ngStyle]="divClassHeader[3]">Carbs</div>
+            <div [ngStyle]="divClassHeader[3]">Glycemic Index</div>
+            <div [ngStyle]="divClassHeader[3]">Sugar</div>
+            <div [ngStyle]="divClassHeader[3]">Natural Sugar</div>
+            <div [ngStyle]="divClassHeader[3]">Added Sugar</div>
+            <div [ngStyle]="divClassHeader[3]">Choles terol</div>
+            <div [ngStyle]="divClassHeader[3]">Saturated fat</div>
+            <div [ngStyle]="divClassHeader[3]">Total fat</div>
             <!--
-            <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" style="padding-top:3px;  border-right:2px solid darkcyan;">Lock </div>
+            <div [ngStyle]="divClassHeader[3]"> style="padding-top:3px;  border-right:2px solid darkcyan;">Lock </div>
             -->
         </div>  
     <!-- ================== DROPDOWN LIST : action =============== -->
@@ -137,8 +140,9 @@
             </div>
         </div>
 
-        <div id="posStartTable" [ngStyle]="{'height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background , 'margin-left.px':5}" 
-                    style="overflow-y:scroll; margin-top:-5px; margin-left:5px;">
+        <div id="posStartTable" [ngStyle]="{'overflow-y':'scroll', 'margin-top.px':0.1, 'margin-left.px':5, 'display':'inline-block', 
+            'height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background }" 
+                   >
         <!-- ================== display of the table =============== -->
             <div *ngFor="let tab of outFileRecipe.tabCaloriesFat; let i=index ">
                 <div *ngIf="(RecipeSel==='' || (RecipeSel.toLowerCase().trim()!=='' && RecipeSel.toLowerCase().trim()===tab.Type.toLowerCase().trim()))">
@@ -149,83 +153,115 @@
                                  <!-- *ngIf="checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)"
                                 -->
                                 
-                                <div  class="alignLeft" [ngStyle]="{'width':HTMLCaloriesFat.colWidth.action}" style="display:inline-block;">
-                                    <span id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
-                                    A
-                                    </span>
+                                <div  [ngStyle]="tabDivContent[0] " >
+                                    <div [ngStyle]="tabContent[tabNewRecord[i].ngStyle][0]">
+                                        <span id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
+                                        A
+                                        </span>
+                                    </div>
                                 </div>
+                                <div  [ngStyle]="tabDivContent[1]">
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]" [readonly]='inputReadOnly' *ngIf='j===0' type="text" (input)="onInputRecipe($event)" id="Recipe-{{i}}" placeholder="name recipe" value="{{tab.Type}}" >
+                                    <span [ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]" *ngIf='j!==0'   style="pointer-events: none; display:inline-block;"   >&nbsp;</span>
+                                </div>
+                                <div [ngStyle]="tabDivContent[2]">
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][2]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="name-{{i}}-{{j}}"  value="{{content.Name}}" >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving }}"  >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="unit-{{i}}-{{j}}" value="{{content.ServingUnit}}" >
 
-                                <input [readonly]='inputReadOnly' *ngIf='j===0' type="text" (input)="onInputRecipe($event)" id="Recipe-{{i}}" placeholder="name recipe" class="text "   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.type, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" value="{{tab.Type}}" >
-                                <span *ngIf='j!==0'  class="text "   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.type, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  style="pointer-events: none; display:inline-block;"   >&nbsp;</span>
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="calo-{{i}}-{{j}}" value="{{content.Calories | number:'1.1-1'}}" >
                         
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="name-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.ingr, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" value="{{content.Name}}" >
-                        
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="serv-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" value="{{content.Serving }}"  >
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="unit-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.ServingUnit}}" >
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="calo-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Calories | number:'1.1-1'}}" >
-                        
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="prot-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Protein | number:'1.1-1'}}" >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="prot-{{i}}-{{j}}" value="{{content.Protein | number:'1.1-1'}}" >
                     
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="carb-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Carbs | number:'1.1-1'}}" >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="carb-{{i}}-{{j}}" value="{{content.Carbs | number:'1.1-1'}}" >
                             
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="glyi-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.GlyIndex | number:'1.1-1'}}" >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="glyi-{{i}}-{{j}}" value="{{content.GlyIndex | number:'1.1-1'}}" >
 
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Sugar | number:'1.1-1'}}" >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" value="{{content.Sugar | number:'1.1-1'}}" >                     
 
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="naturalSuga-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.naturalSugar | number:'1.1-1'}}" >                     
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="addedSuga-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.addedSugar | number:'1.1-1'}}" >                     
-                            
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Cholesterol | number:'1.1-1'}}" >
-                        
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="satu-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Fat.Saturated | number:'1.1-1'}}" >
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="tota-{{i}}-{{j}}" class="text alignLeft" [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  value="{{content.Fat.Total | number:'1.1-1'}}" >
-                            <!--
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="lock-{{i}}-{{j}}" class="text alignLeft"  [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" value="{{content.lockData}}"  >
-                            -->
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="naturalSuga-{{i}}-{{j}}" value="{{content.naturalSugar | number:'1.1-1'}}" >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="addedSuga-{{i}}-{{j}}" value="{{content.addedSugar | number:'1.1-1'}}" >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" value="{{content.Cholesterol | number:'1.1-1'}}" >                       
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="satu-{{i}}-{{j}}" value="{{content.Fat.Saturated | number:'1.1-1'}}" >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="tota-{{i}}-{{j}}" value="{{content.Fat.Total | number:'1.1-1'}}" >
+                                </div>
                             </div>
                         <!-- ============== TOTAL OF THE RECIPE ================== -->
         
                             <div *ngIf="outFileRecipe.tabCaloriesFat[i].Content.length-1===j"
-
-                                [ngStyle]="{'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"
+                                style="display:inline-block;"
+                                [ngStyle]="{'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" 
                                 >
                         
-                                <div  class="alignLeft" [ngStyle]="{'width':HTMLCaloriesFat.colWidth.action}" style="display:inline-block;">
+                                <div  [ngStyle]="tabDivContent[0]">
                                     &nbsp;
                                 </div>
 
-                                <span   class="text " style="pointer-events: none; display:inline-block;"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.type, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >&nbsp;</span>
-                            <!-- [value]="tab.Type" -->
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft"  value="TOTAL"  [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.ingr, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
-                            
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft"  value="{{tab.Total.Serving  | number:'1.0-0'}}"  [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  >
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft"  value="{{tab.Total.ServingUnit}}"  [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Calories  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
-                            
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Protein  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
-                        
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Carbs  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
+                                <div  [ngStyle]="tabDivContent[1]"  style="pointer-events: none; " >&nbsp;</div>
+                                <div [ngStyle]="tabDivContent[2]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][2]" [readonly]='inputReadOnly' type='text' >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.Serving  | number:'1.0-0'}}"   >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft"  value="{{tab.Total.ServingUnit}}"   >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Calories  | number:'1.0-0'}}"   >
                                 
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.GlyIndex  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Sugar  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >                     
-       
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.naturalSugar  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >                     
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.addedSugar  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >                     
-                         
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Cholesterol  | number:'1.0-0'}}"   [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
-                            
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}"  [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Fat.Total  | number:'1.0-0'}}"  [ngStyle]="{'height':HTMLCaloriesFat.row.height,'width':HTMLCaloriesFat.colWidth.other, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
-                    
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Protein  | number:'1.0-0'}}"    >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Carbs  | number:'1.0-0'}}"   >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.GlyIndex  | number:'1.0-0'}}"   >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  value="{{tab.Total.Sugar  | number:'1.0-0'}}"   >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  value="{{tab.Total.naturalSugar  | number:'1.0-0'}}"  >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.addedSugar  | number:'1.0-0'}}"  >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.Cholesterol  | number:'1.0-0'}}"   >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}"  >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.Fat.Total  | number:'1.0-0'}}"  >
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -269,21 +305,26 @@
     </div>
 
     <div class="skipLine">&nbsp;</div>  
-    <div style="border:solid 2px blue; background-color: lightskyblue;display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+13}">
- 
+    <div style="border:solid 2px blue; background-color: lightskyblue;display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
+    
 
         <div *ngIf="tabLock[1].lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
         <div *ngIf="tabLock[1].lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
 
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
-        MANAGE CALORIES & FAT
-        <app-running-clock [posSizeClock]="posSizeClock">
-        </app-running-clock>
-        Time out will occur in 
-        <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+            MANAGE CALORIES & FAT
+            <!--
+            <app-running-clock [posSizeClock]="posSizeClock">
+            </app-running-clock>
+            -->
 
+            <div style="padding-left:700px; font-size:13px; ">
+                <span >Time out will occur in</span> 
+                <span style="border: black double 2px;margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+            </div>  
+            
         </div>
-        <div class="skipLine">&nbsp;</div> 
+        <div class="skipLine">&nbsp;</div>
             <!-- =======================================================
                 ================     Search function    ================ 
                 ========================================================
@@ -301,38 +342,38 @@
                 ================ Display and Manage Calories & Fat table ================ 
                 =========================================================================
             -->
-        <div 
-            [ngStyle]="{'height':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 
-            'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background , 'margin-left.px':5}" 
+
+        <div [ngStyle]="{'height.px':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 
+                'margin-left.px':5, 'display':'inline-block', 'overflow-y':'scroll'}" 
             >
             <!-- ================== TITLE =============== -->
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.action}">Action</div>
-                <div class="tHeader" style='padding-top:3px;'  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.type}">Type
+                <div [ngStyle]="divClassHeader[0]">Action</div>
+                <div [ngStyle]="divClassHeader[1]">Type
                     <button class="theArrow"   id='Type' (click)="onFilter($event)">
                         <mat-icon class="material-symbols-outlined"  id='Type' (click)="onFilter($event)">
                             arrow_drop_down
                         </mat-icon>
                     </button>  
                 </div>
-                <div class="tHeader " style="padding-top:3px;"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.ingr}">Food (Filter)
+                <div [ngStyle]="divClassHeader[2]">Food (Filter)
                     <button class="theArrow"  style="margin-left:35px;"  id='Food' (click)="onFilter($event)">
                         <mat-icon class="material-symbols-outlined"  id='Food' (click)="onFilter($event)">
                             arrow_drop_down
                         </mat-icon>
                     </button>  
                 </div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Serving</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Serving Unit</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}" >Calories</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Protein</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}">Carbs</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Glycemic Index</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Sugar</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Natural Sugar</div>                
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Added Sugar</div>                
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Choles terol</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Saturated fat</div>
-                <div class="tHeader"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.title.height, 'color':HTMLCaloriesFat.title.color, 'background':HTMLCaloriesFat.title.background, 'width':HTMLCaloriesFat.colWidth.other}"style="padding-top:3px;">Total fat</div>
+                <div [ngStyle]="divClassHeader[3]">Serving</div>
+                <div [ngStyle]="divClassHeader[3]">Serving Unit</div>
+                <div [ngStyle]="divClassHeader[3]">Calories</div>
+                <div [ngStyle]="divClassHeader[3]">Protein</div>
+                <div [ngStyle]="divClassHeader[3]">Carbs</div>
+                <div [ngStyle]="divClassHeader[3]">Glycemic Index</div>
+                <div [ngStyle]="divClassHeader[3]">Sugar</div>
+                <div [ngStyle]="divClassHeader[3]">Natural Sugar</div>                
+                <div [ngStyle]="divClassHeader[3]">Added Sugar</div>                
+                <div [ngStyle]="divClassHeader[3]">Choles terol</div>
+                <div [ngStyle]="divClassHeader[3]">Saturated fat</div>
+                <div [ngStyle]="divClassHeader[3]">Total fat</div>
         </div>
                 <!-- ================== DROPDOWN LIST : type =============== -->
         <div class="dropdown " *ngIf="filterType===true">
@@ -383,53 +424,67 @@
         </div>
 
 
-        <div id="posStartTable" [ngStyle]="{'height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background , 'margin-left.px':5}" 
-            style="overflow-y:scroll;">
+        <div id="posStartTable" [ngStyle]="{'margin-top.px':0.1, 'overflow-y':'scroll', 'display':'inline-block','height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background , 'margin-left.px':5}" 
+            >
             <!-- ================== display of the table =============== -->
             <div *ngFor="let tab of outConfigCaloriesFat.tabCaloriesFat; let i=index ">
                 <div *ngIf="(selType==='' || (selType.toLowerCase().trim()!=='' && selType.toLowerCase().trim()===tab.Type.toLowerCase().trim()))">
                     <div *ngFor="let content of outConfigCaloriesFat.tabCaloriesFat[i].Content; let j=index">
                         <div *ngIf="selFood==='' ||  (selFood.toLowerCase().trim()!=='' && selFood.toLowerCase().trim()===content.Name.toLowerCase().trim())">
                             
-                            <div [ngStyle]="{'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"
+                            <div [ngStyle]="{'display':'inline-block', 'width.px':'100%', 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"
                                     *ngIf="checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)" >
                                     
-                                <div  id ="posAction" class="alignLeft" [ngStyle]="{'width':HTMLCaloriesFat.colWidth.action}" style="display:inline-block;">
-                                    <span id='openAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
-                                        A
-                                    </span>
+                                <div  [ngStyle]="tabDivContent[0] " >
+                                    <div [ngStyle]="tabContent[tabNewRecord[i].ngStyle][0]">
+                                        <span id='openAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
+                                            A
+                                        </span>
+                                    </div>
                                 </div>
-                                <div id ="posType" style="display:inline-block;">
-                                    <input [readonly]='inputReadOnly' *ngIf='j===0' type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil" class="text widthType"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.type, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" value="{{tab.Type}}" >
-                                    <span *ngIf='j!==0'  class="text widthType"  style="pointer-events: none; display:inline-block;"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.type, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  >&nbsp;</span>
+                                <div  [ngStyle]="tabDivContent[1]">
+                                    <input *ngIf='j===0'[ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]" style="padding:0.3px;" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
+                                    <div *ngIf='j!==0' [ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]"  style="pointer-events: none; "   >&nbsp;</div>
                                 </div>
-                                <div id ="posFood" style="display:inline-block;">
-                                    <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}" class="text alignLeft" value="{{content.Name}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.ingr, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" >
+                                <div [ngStyle]="tabDivContent[2]">
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][2]"[readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}"  value="{{content.Name}}"   >
                                 </div>
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}" class="text alignLeft" value="{{content.Serving}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  >
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}" class="text alignLeft" value="{{content.ServingUnit}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="calo-{{i}}-{{j}}" class="text alignLeft" value="{{content.Calories}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
-                            
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="prot-{{i}}-{{j}}" class="text alignLeft" value="{{content.Protein}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
-                        
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="carb-{{i}}-{{j}}" class="text alignLeft" value="{{content.Carbs}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
-                                
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="glyi-{{i}}-{{j}}" class="text alignLeft" value="{{content.GlyIndex}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}" class="text alignLeft" value="{{content.Sugar}}" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">                     
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="naturalSuga-{{i}}-{{j}}" class="text alignLeft" value="{{content.naturalSugar}}" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">                     
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="addedSuga-{{i}}-{{j}}" class="text alignLeft" value="{{content.addedSugar}}" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">                     
-                                
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}" class="text alignLeft" value="{{content.Cholesterol}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
-                            
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}" class="text alignLeft" value="{{content.Fat.Saturated}}"  [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
-
-                                <input [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="tota-{{i}}-{{j}}" class="text alignLeft" value="{{content.Fat.Total}}" [ngStyle]="{'padding.px':0.3, 'height':HTMLCaloriesFat.row.height, 'color':HTMLCaloriesFat.row.color, 'background':HTMLCaloriesFat.row.background, 'width':HTMLCaloriesFat.colWidth.other, 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
-                    
+                                <div [ngStyle]="tabDivContent[3]">
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}"  value="{{content.ServingUnit}}"  >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="calo-{{i}}-{{j}}"  value="{{content.Calories}}"  >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="prot-{{i}}-{{j}}"  value="{{content.Protein}}" >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="carb-{{i}}-{{j}}"  value="{{content.Carbs}}"  >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="glyi-{{i}}-{{j}}"  value="{{content.GlyIndex}}"  >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}"  value="{{content.Sugar}}" >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="naturalSuga-{{i}}-{{j}}"  value="{{content.naturalSugar}}" >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="addedSuga-{{i}}-{{j}}"  >                     
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}"  value="{{content.Cholesterol}}">
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}"  value="{{content.Fat.Saturated}}"  >
+                                </div>
+                                <div [ngStyle]="tabDivContent[3]" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="tota-{{i}}-{{j}}"  value="{{content.Fat.Total}}" >
+                                </div>
                             </div>
                         </div>
                     </div>
