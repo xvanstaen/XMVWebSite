@@ -850,6 +850,7 @@ export class HealthComponent  {
   }
 
   onInputDailyAllA(event: any) {
+    var found=true;
     if (this.tabLock[0].lock !== 2) {
       this.resetBooleans();
       this.isAllDataModified = true;
@@ -885,6 +886,10 @@ export class HealthComponent  {
       } else if (fieldName === 'burnAll') {
         this.HealthAllData.tabDailyReport[this.TabOfId[0]].burntCalories = event.target.value;
         this.tabNewRecordAll[this.TabOfId[0]].nb = 1;
+      } else { found=false}
+      if (found===true){
+        this.tabNewRecordAll[this.TabOfId[0]].change=true;
+        this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
       }
     }
   }
@@ -1038,6 +1043,7 @@ export class HealthComponent  {
       }
       if (this.tabNewRecordAll[this.TabOfId[0]].change===false){
         this.tabNewRecordAll[this.TabOfId[0]].change=true;
+        this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
         this.reInitBackground();
       }
     }
@@ -1050,6 +1056,7 @@ export class HealthComponent  {
       this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1], 1);
       if (this.tabNewRecordAll[this.TabOfId[0]].change===false){
         this.tabNewRecordAll[this.TabOfId[0]].change=true;
+        this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
         this.reInitBackground();
       }
       if (this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.length === 0) {
@@ -1079,6 +1086,7 @@ export class HealthComponent  {
       this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food.splice(this.TabOfId[2], 0, { nb: 1 });
     }
     this.tabNewRecordAll[this.TabOfId[0]].change=true;
+    this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
     this.reInitBackground();
   }
 
@@ -1098,8 +1106,12 @@ export class HealthComponent  {
       const trackNew = { nb: 1, food: [{ nb: 1 }] };
       this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1], 0, trackNew);
     }
-    this.tabNewRecordAll[this.TabOfId[0]].change=true;
-    this.reInitBackground();
+    if (event.target.id.substring(0, 7) === 'AllMeal'){
+      this.tabNewRecordAll[this.TabOfId[0]].change=true;
+      this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
+      this.reInitBackground();
+    }
+    
   }
 
   CreateDay(event: any) {

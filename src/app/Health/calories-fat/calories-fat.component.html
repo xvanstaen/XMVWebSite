@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<div *ngIf="isInitComplete===true && isUserTimeOut===false">
+<div *ngIf="isInitComplete===true && isUserTimeOut===false && isNgStyleCompleted===true; waitMsg">
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
  
         <div *ngIf="tabLock[1].lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
@@ -44,7 +44,7 @@
             </div>  
         </div>
         <div class="skipLine">&nbsp;</div>
-        <div style="margin-left:5px; display:inline-block; overflow-y:scroll;" [ngStyle]="{'height.px':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth, 'width.px': HTMLCaloriesFat.width }" >
+        <div style="margin-left:5px; display:inline-block; overflow:hidden;" [ngStyle]="{'height.px':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth, 'width.px': HTMLCaloriesFat.width }" >
             <div [ngStyle]="divClassHeader[0]">Action</div>
             <div [ngStyle]="divClassHeader[1]">Recipe          <button class="theArrow"   id='Recipe'    (click)="onFilter($event)">
                     <mat-icon class="material-symbols-outlined"  id='Recipe' (click)="onFilter($event)">
@@ -149,118 +149,124 @@
                     <div *ngFor="let content of outFileRecipe.tabCaloriesFat[i].Content; let j=index">
                         <div *ngIf="RecipeSelFood==='' ||  (RecipeSelFood.toLowerCase().trim()!=='' && RecipeSelFood.toLowerCase().trim()===content.Name.toLowerCase().trim())">
                         
-                            <div  [ngStyle]="{'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}">
+                            <div  style="display:inline-block; width:100">
                                  <!-- *ngIf="checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)"
                                 -->
                                 
-                                <div  [ngStyle]="tabDivContent[0] " >
-                                    <div [ngStyle]="tabContent[tabNewRecord[i].ngStyle][0]">
-                                        <span id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
-                                        A
-                                        </span>
+                                <div  [ngStyle]="tabDivContent[0] "  >
+                                    <div [ngStyle]="tabContent[tabNewRecord[i].even][0]" >
+                                        <div *ngIf='((j===1 && outFileRecipe.tabCaloriesFat[i].Content.length>2) ||
+                                         (j===0 && outFileRecipe.tabCaloriesFat[i].Content.length<=2)); emptyAction' id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
+                                            <div style="margin-top:2px;">A</div>
+                                        </div>
+                                        <ng-template #emptyAction>
+                                            <div class="nonCircle">B</div>
+                                        </ng-template>
                                     </div>
                                 </div>
+                                
                                 <div  [ngStyle]="tabDivContent[1]">
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]" [readonly]='inputReadOnly' *ngIf='j===0' type="text" (input)="onInputRecipe($event)" id="Recipe-{{i}}" placeholder="name recipe" value="{{tab.Type}}" >
-                                    <span [ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]" *ngIf='j!==0'   style="pointer-events: none; display:inline-block;"   >&nbsp;</span>
+                                    <input *ngIf='j===0' class="textHover" [ngStyle]="tabContent[tabNewRecord[i].even][1]" [readonly]='inputReadOnly'  type="text" (input)="onInputRecipe($event)" id="Recipe-{{i}}" placeholder="name recipe" value="{{tab.Type}}" >
+                                    <input *ngIf='j!==0' [ngStyle]="tabContent[tabNewRecord[i].even][1]"  style="pointer-events: none;" value="&nbsp;"  >
                                 </div>
                                 <div [ngStyle]="tabDivContent[2]">
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][2]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="name-{{i}}-{{j}}"  value="{{content.Name}}" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].even][2]" class="textHover" style="padding-left:10px;" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="name-{{i}}-{{j}}"  value="{{content.Name}}" >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving }}"  >
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving }}"  >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="unit-{{i}}-{{j}}" value="{{content.ServingUnit}}" >
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="unit-{{i}}-{{j}}" value="{{content.ServingUnit}}" >
 
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="calo-{{i}}-{{j}}" value="{{content.Calories | number:'1.1-1'}}" >
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="calo-{{i}}-{{j}}" value="{{content.Calories | number:'1.1-1'}}" >
                         
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="prot-{{i}}-{{j}}" value="{{content.Protein | number:'1.1-1'}}" >
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="prot-{{i}}-{{j}}" value="{{content.Protein | number:'1.1-1'}}" >
                     
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="carb-{{i}}-{{j}}" value="{{content.Carbs | number:'1.1-1'}}" >
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="carb-{{i}}-{{j}}" value="{{content.Carbs | number:'1.1-1'}}" >
                             
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="glyi-{{i}}-{{j}}" value="{{content.GlyIndex | number:'1.1-1'}}" >
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="glyi-{{i}}-{{j}}" value="{{content.GlyIndex | number:'1.1-1'}}" >
 
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" value="{{content.Sugar | number:'1.1-1'}}" >                     
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" value="{{content.Sugar | number:'1.1-1'}}" >                     
 
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="naturalSuga-{{i}}-{{j}}" value="{{content.naturalSugar | number:'1.1-1'}}" >                     
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="naturalSuga-{{i}}-{{j}}" value="{{content.naturalSugar | number:'1.1-1'}}" >                     
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="addedSuga-{{i}}-{{j}}" value="{{content.addedSugar | number:'1.1-1'}}" >                     
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="addedSuga-{{i}}-{{j}}" value="{{content.addedSugar | number:'1.1-1'}}" >                     
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" value="{{content.Cholesterol | number:'1.1-1'}}" >                       
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" value="{{content.Cholesterol | number:'1.1-1'}}" >                       
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="satu-{{i}}-{{j}}" value="{{content.Fat.Saturated | number:'1.1-1'}}" >
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="satu-{{i}}-{{j}}" value="{{content.Fat.Saturated | number:'1.1-1'}}" >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input  [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="tota-{{i}}-{{j}}" value="{{content.Fat.Total | number:'1.1-1'}}" >
+                                    <input  [ngStyle]="tabContent[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="tota-{{i}}-{{j}}" value="{{content.Fat.Total | number:'1.1-1'}}" >
                                 </div>
                             </div>
                         <!-- ============== TOTAL OF THE RECIPE ================== -->
         
                             <div *ngIf="outFileRecipe.tabCaloriesFat[i].Content.length-1===j"
-                                style="display:inline-block;"
-                                [ngStyle]="{'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}" 
+                                style="display:inline-block; width:100%" 
                                 >
                         
-                                <div  [ngStyle]="tabDivContent[0]">
-                                    &nbsp;
+                                <div  [ngStyle]="tabDivTotal[0]" >
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][0]">&nbsp;</div>
                                 </div>
-
-                                <div  [ngStyle]="tabDivContent[1]"  style="pointer-events: none; " >&nbsp;</div>
-                                <div [ngStyle]="tabDivContent[2]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][2]" [readonly]='inputReadOnly' type='text' >
+                                <div  [ngStyle]="tabDivTotal[1]" >
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][1]">&nbsp;</div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.Serving  | number:'1.0-0'}}"   >
+                                <div [ngStyle]="tabDivTotal[2]" >
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][2]" style="padding-right:15px">Total
+                                    </div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft"  value="{{tab.Total.ServingUnit}}"   >
+                                <div [ngStyle]="tabDivTotal[3]" >
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]"  >  {{tab.Total.Serving  | number:'1.0-0'}} </div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Calories  | number:'1.0-0'}}"   >
-                                
+                                <div [ngStyle]="tabDivTotal[3]" >
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]"  >  {{tab.Total.ServingUnit}}</div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Protein  | number:'1.0-0'}}"    >
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]"  >{{tab.Total.Calories  | number:'1.0-0'}}
+                                    </div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.Carbs  | number:'1.0-0'}}"   >
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]" >{{tab.Total.Protein  | number:'1.0-0'}}</div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  class="totalRecipe alignLeft" value="{{tab.Total.GlyIndex  | number:'1.0-0'}}"   >
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]"  > {{tab.Total.Carbs  | number:'1.0-0'}}</div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  value="{{tab.Total.Sugar  | number:'1.0-0'}}"   >                     
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]"  > {{tab.Total.GlyIndex  | number:'1.0-0'}}</div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"  value="{{tab.Total.naturalSugar  | number:'1.0-0'}}"  >                     
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]"  > {{tab.Total.Sugar  | number:'1.0-0'}}</div>                   
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.addedSugar  | number:'1.0-0'}}"  >                     
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]"  > {{tab.Total.naturalSugar  | number:'1.0-0'}}</div>                     
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.Cholesterol  | number:'1.0-0'}}"   >
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]" > {{tab.Total.addedSugar  | number:'1.0-0'}} </div>                     
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}"  >
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]" > {{tab.Total.Cholesterol  | number:'1.0-0'}} </div>
                                 </div>
-                                <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabTotal[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)"   value="{{tab.Total.Fat.Total  | number:'1.0-0'}}"  >
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]" > {{tab.Total.Fat.Saturated  | number:'1.0-0'}}</div>
+                                </div>
+                                <div [ngStyle]="tabDivTotal[3]">
+                                    <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]" > {{tab.Total.Fat.Total  | number:'1.0-0'}}</div>
                                 </div>
                             </div>
                         </div>
@@ -344,7 +350,7 @@
             -->
 
         <div [ngStyle]="{'height.px':HTMLCaloriesFat.title.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 
-                'margin-left.px':5, 'display':'inline-block', 'overflow-y':'scroll'}" 
+                'margin-left.px':5, 'display':'inline-block', 'overflow':'hidden'}" 
             >
             <!-- ================== TITLE =============== -->
                 <div [ngStyle]="divClassHeader[0]">Action</div>
@@ -424,7 +430,7 @@
         </div>
 
 
-        <div id="posStartTable" [ngStyle]="{'margin-top.px':0.1, 'overflow-y':'scroll', 'display':'inline-block','height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'background-color':HTMLCaloriesFat.background , 'margin-left.px':5}" 
+        <div id="posStartTable" [ngStyle]="{'margin-top.px':0.1, 'overflow-y':'scroll', 'overflow-x':'hidden', 'display':'inline-block','max-height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'margin-left.px':5}" 
             >
             <!-- ================== display of the table =============== -->
             <div *ngFor="let tab of outConfigCaloriesFat.tabCaloriesFat; let i=index ">
@@ -432,58 +438,70 @@
                     <div *ngFor="let content of outConfigCaloriesFat.tabCaloriesFat[i].Content; let j=index">
                         <div *ngIf="selFood==='' ||  (selFood.toLowerCase().trim()!=='' && selFood.toLowerCase().trim()===content.Name.toLowerCase().trim())">
                             
-                            <div [ngStyle]="{'display':'inline-block', 'width.px':'100%', 'background-color':(tabNewRecord[i].nb===1 || tabNewRecord[i].food[j].nb===1) ? HTMLCaloriesFat.rowNew.color : i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"
+                            <div [ngStyle]="{'display':'inline-block', 'width.px': HTMLCaloriesFat.width,'height.px':HTMLCaloriesFat.row.height}"
                                     *ngIf="checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)" >
                                     
-                                <div  [ngStyle]="tabDivContent[0] " >
-                                    <div [ngStyle]="tabContent[tabNewRecord[i].ngStyle][0]">
-                                        <span id='openAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
-                                            A
-                                        </span>
+                                
+                                <div [ngStyle]="tabContent[tabNewRecord[i].ngStyle][0]">
+                                    <div style="padding-left:0px;">
+                                        <div id='openAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
+                                            <div style="margin-top:2px;">A</div>
+                                        </div>
                                     </div>
+                                        
                                 </div>
-                                <div  [ngStyle]="tabDivContent[1]">
-                                    <input *ngIf='j===0'[ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]" style="padding:0.3px;" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
-                                    <div *ngIf='j!==0' [ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]"  style="pointer-events: none; "   >&nbsp;</div>
+                                
+                                <div >
+                                    <div  [ngStyle]="tabDivContent[1]" *ngIf='j===0'>
+                                        <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][1]" class="textHover" style="padding-left:0.3px;" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
+                                    </div>  
+                                <!--        
+                                    <div *ngIf='j!==0' [ngStyle]="{'display':'block', 'float':'left', 'pointer-events':'none', 'width.px':HTMLCaloriesFat.colWidth.type, 'height.px':HTMLCaloriesFat.row.height+2, 'background-color': i % 2===0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd}"  >&nbsp;</div>
+                                -->
+                                
+                                    <div *ngIf='j!==0' [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][4]"  >&nbsp;</div>
+                               
                                 </div>
+
+                                                              
                                 <div [ngStyle]="tabDivContent[2]">
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][2]"[readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}"  value="{{content.Name}}"   >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][2]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}"  value="{{content.Name}}"   >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]">
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}"  value="{{content.ServingUnit}}"  >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}"  value="{{content.ServingUnit}}"  >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="calo-{{i}}-{{j}}"  value="{{content.Calories}}"  >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="calo-{{i}}-{{j}}"  value="{{content.Calories}}"  >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="prot-{{i}}-{{j}}"  value="{{content.Protein}}" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="prot-{{i}}-{{j}}"  value="{{content.Protein}}" >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="carb-{{i}}-{{j}}"  value="{{content.Carbs}}"  >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="carb-{{i}}-{{j}}"  value="{{content.Carbs}}"  >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="glyi-{{i}}-{{j}}"  value="{{content.GlyIndex}}"  >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="glyi-{{i}}-{{j}}"  value="{{content.GlyIndex}}"  >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}"  value="{{content.Sugar}}" >                     
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}"  value="{{content.Sugar}}" >                     
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="naturalSuga-{{i}}-{{j}}"  value="{{content.naturalSugar}}" >                     
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="naturalSuga-{{i}}-{{j}}"  value="{{content.naturalSugar}}" >                     
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="addedSuga-{{i}}-{{j}}"  >                     
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]"  class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="addedSuga-{{i}}-{{j}}"  >                     
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}"  value="{{content.Cholesterol}}">
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}"  value="{{content.Cholesterol}}">
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}"  value="{{content.Fat.Saturated}}"  >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]"  class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}"  value="{{content.Fat.Saturated}}"  >
                                 </div>
                                 <div [ngStyle]="tabDivContent[3]" >
-                                    <input [ngStyle]="tabContent[tabNewRecord[i].ngStyle][3]"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="tota-{{i}}-{{j}}"  value="{{content.Fat.Total}}" >
+                                    <input [ngStyle]="tabContent[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="tota-{{i}}-{{j}}"  value="{{content.Fat.Total}}" >
                                 </div>
                             </div>
                         </div>
@@ -528,5 +546,12 @@
         <div class="skipLine">&nbsp;</div> 
     </div>
 </div>
+<ng-template #waitMsg>
+<div style="font-size:22px; color:blue; display:inline; width:200px; text-align:center; 
+            background:lightyellow; ">
+        UNDER CONSTRUCTION
+</div>
+</ng-template>
+
 </body>
 

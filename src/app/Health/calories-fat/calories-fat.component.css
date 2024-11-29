@@ -1,4 +1,18 @@
 @import "../FitnessHealthGeneral.css";
+input:focus {
+  outline: none;
+  border:none;
+}
+input {
+  outline: none;
+  border:none;
+}
+/*
+    textarea:focus {
+        outline: none;
+    }
+
+s*/
 body{
   margin-left:20px;
 }
@@ -6,6 +20,7 @@ body{
 div{
     --bufferW:60%;
 }
+
 
 .yesScroll{
   overflow-y:scroll;
@@ -17,51 +32,32 @@ div{
 }
 
 .circle{
-    border-radius: 50% 50%;
-    color:white;
-    width:18px;
-    height:18px;
-    border: solid 0px rgb(182, 42, 42);
-    font-weight:bold;
-    background-color: #b87451;
-    display:inline-block;
-    font-size: 12px;
-    text-align: center;
-    vertical-align: middle;
-  }
-  
+  border-radius: 50% 50%;
+  color:white;
+  width:18px;
+  height:18px;
+  order: solid 0px rgb(182, 42, 42);
+  font-weight:bold;
+  background-color: #b87451;
+  display:inline-block;
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.nonCircle{
+  width:18px;
+  height:18px;
+  display:inline-block;
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+}
   
 .circle:hover{
-    color:black;
-    background-color:cyan;
-  }
-  /***
-  .sizeButtons{
-    width:40px;
-    height:22px;
-    font-size:10px;
-    margin-left:10px;
+  color:black;
+  background-color:cyan;
 }
-***/
-.tHeader{
-  text-align: center; 
-  display:block;
-  float:left;
-  font-size:13px;
-  word-wrap:normal;
-  word-break: keep-all;
-  border-top:2px grey solid; 
-  border-left:2px grey solid; 
-  border-right:2px rgb(251, 249, 249) solid; 
-  border-bottom:2px rgb(251, 249, 249) solid; 
-  padding-top:10px;
-}
-
-.alignLeft{
-  text-align: left; 
-  padding-left:10px;
-}
-
 
 .theArrow{
   font-size:12px; 
@@ -77,46 +73,17 @@ div{
 
 .theArrow:hover{
   color:red;
-
 }
 
-.text{
-    font-size:14px;
-    display:inline-block;
-    }
-
-.totalRecipe{
-  font-size:16px;
-  font-weight:bold;
-  color:green;
-  display:block;
-  float:left;
-  height:var(--rowHeight,28px);
-  pointer-events: none;
+.textHover{
+  font-weight: normal;
 }
 
-.totalRecipe:read-only{
-  border:0px solid blue;
-  
-}
-.text:hover{
-  color:red;
+.textHover:hover{
+  color:red !important;
   font-weight: bold;
-  background-color:white;
+  background-color:white !important;
 }
-
-.rowEven{
-    background-color: var(--rEven,#9edb9c);
-}
-    
-.rowOdd {
-    background-color: var(--rOdd,#8a97e8);
-}
-
-.rowNew {
-  background-color: var(--rOdd,#ef81a0);
-}
-
 
 .theRadio{
     margin-left:10px; margin-top:10px; color:blue; font-size:12px; 
@@ -129,22 +96,14 @@ div{
 }
 
 .RadioDropDown{
-    font-size:10px;
-    width:200px;
-    text-align: center;
-    border: 2px solid green;
-    height: 100px;
-    background: cyan;
-    color: blue;
+  font-size:10px;
+  width:200px;
+  text-align: center;
+  border: 2px solid green;
+  height: 100px;
+  background: cyan;
+  color: blue;
   }
-
-.disableRow{
-  border:0px solid blue;
-}
-
-.disableRow:read-only{
-  border:0px solid blue;
-}
 
 .StraightDropDown-Cal{
   border: 0px solid green;
@@ -164,5 +123,7 @@ div{
   border:0px; 
   display:inline-block;
   float:none;
+
+
 }
 

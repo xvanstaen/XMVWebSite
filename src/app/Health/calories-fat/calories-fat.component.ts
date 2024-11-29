@@ -26,6 +26,18 @@ import {classConfCaloriesFat} from '../classConfHTMLTableAll';
 import { fnAddTime, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../../clockFunctions'
 
+export class classTabNewRec{
+  ngStyle:number=0;
+  even:number=0;
+  change:boolean=false;
+  nb:number=0;   
+  food:Array<classFood>=[];
+}
+
+export class classFood{
+  nb:number=0;
+  ngStyle:number=0;
+}
 
 @Component({
   selector: 'app-calories-fat',
@@ -123,14 +135,7 @@ export class CaloriesFatComponent implements OnInit {
   RecipeSelFood:string='';
 
   // when value is one then item has been created in this session
-  tabNewRecord:Array<any>=[
-      { ngStyle:0,
-        even:0,
-        change:false,
-        nb:0, // type     
-        food:[{nb:0}]
-      }
-      ] ;
+  tabNewRecord:Array<classTabNewRec>=[] ;
 
   isDeleteType:boolean=false;
   isDeleteFood:boolean=false;
@@ -194,7 +199,9 @@ export class CaloriesFatComponent implements OnInit {
    divClassHeader:Array<any>=[];
    tabContent:Array<any>=[];
    tabDivContent:Array<any>=[];
+   tabDivEmptyContent:Array<any>=[];
    tabTotal:Array<any>=[];
+   tabDivTotal:Array<any>=[];
 
 
 @HostListener('window:mouseup', ['$event'])
@@ -306,127 +313,10 @@ onMouseUp(event: MouseEvent) {
     this.refDate=new Date();
     this.callTimeToGo();
 
-    this.fillClassHeader();
-  }
-
-
-  fillClassHeader(){
-    this.divClassHeader[0]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.action);
-    this.divClassHeader[1]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.type);
-    this.divClassHeader[2]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.ingr);
-    this.divClassHeader[3]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.other);
-
-
-    this.tabDivContent[0]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.action);
-    this.tabDivContent[1]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.type);
-    this.tabDivContent[2]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.ingr);
-    this.tabDivContent[3]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.other);
-
-    
-    for (var i=0; i<3; i++){
-      this.tabContent[i]=[];
-      this.tabContent[i][0]=this.createClassContent(this.HTMLCaloriesFat.colWidth.action,i,'center');
-      this.tabContent[i][1]=this.createClassContent(this.HTMLCaloriesFat.colWidth.type,i,'center');
-      this.tabContent[i][2]=this.createClassContent(this.HTMLCaloriesFat.colWidth.ingr,i,'left');
-      this.tabContent[i][3]=this.createClassContent(this.HTMLCaloriesFat.colWidth.other,i,'center');
-    }
-
-    for (var i=0; i<2; i++){
-      this.tabTotal[i]=[];
-      this.tabTotal[i][0]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.action),i);
-      this.tabTotal[i][1]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.type),i);
-      this.tabTotal[i][2]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.ingr),i);
-      this.tabTotal[i][3]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.meal),i);
-
-    }
 
   }
 
 
-  createClassContent(width:any, backGround:number, align:string){
-    var style:any;
-    var backColor=this.HTMLCaloriesFat.row.even;
-    var theColor=this.HTMLCaloriesFat.row.color;
-    if (backGround===1){
-      backColor=this.HTMLCaloriesFat.row.odd;
-    } else if (backGround===2){
-      backColor=this.HTMLCaloriesFat.rowNew.background;
-      theColor=this.HTMLCaloriesFat.rowNew.color;
-    } 
-    return style = {
-        'background-color':backColor,
-        'width.px': width,
-        'height.px': Number(this.HTMLCaloriesFat.row.height) ,
-        'color': theColor,  
-        'border':'none',
-        'text-align': align,
-        'display':'inline-block',
-    }
-  }
-
-  createDivClassHeader(width:any){
-    var style:any;
-    return style = {
-        'width.px': width,
-        'height.px':  Number(this.HTMLCaloriesFat.title.height) ,
-        'display':'block',
-        'float':'left',
-        'text-align': 'center', 
-        'font-size.px':13,
-        'word-wrap':'normal',
-        'word-break':' keep-all',
-        'border-top':'1px grey solid',
-        'border-left':'1px grey solid', 
-        'border-right':'1px rgb(251, 249, 249) solid',
-        'border-bottom':'1px rgb(251, 249, 249) solid', 
-        'padding-top.px':10,
-        'background':this.HTMLCaloriesFat.title.background,
-        'color':this.HTMLCaloriesFat.title.color
-    }
-  } 
-
-  /*
-        'border-top':'2px grey solid',
-        'border-left':'2px grey solid', 
-        'border-right':'2px rgb(251, 249, 249) solid',
-        'border-bottom':'2px rgb(251, 249, 249) solid', 
-  */
-
-  createDivClassContent(width:any){
-    var style:any;
-    return style = {
-        'width.px': width,
-        'height.px':  Number(this.HTMLCaloriesFat.row.height) ,
-        'display':'block',
-        'float':'left',
-        'border-top':'1px grey solid',
-        'border-left':'1px grey solid', 
-        'border-right':'1px rgb(251, 249, 249) solid',
-        'border-bottom':'1px rgb(251, 249, 249) solid', 
-    }
-  }
-
-
-  createTotal(width:Number,backGround:number){
-    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
-    var style:any;
-    var backColor=this.HTMLCaloriesFat.row.even;
-    if (backGround===1){
-      backColor=this.HTMLCaloriesFat.row.odd;
-    } 
-    width=Number(width)-0.3;
-    return style = {
-        'background-color':backColor,
-        'width.px': width,
-        'height.px':  Number(this.HTMLCaloriesFat.row.height)+5 ,
-        'color': "red",  
-        'text-align': 'center',
-        'display':'inline-block',
-        'font-size.px':'16',
-        'font-weight':'bolder',
-        'pointer-events': 'none'
-    }
-  }
 
   isSaveFile:boolean=false;
   isDataModified:boolean=false;
@@ -479,14 +369,6 @@ onMouseUp(event: MouseEvent) {
 
     if (timeLeft <= 0 && (this.isRecipeModified===true || this.isCalFatModified===true) ){
         this.errorMsg = "your modifications are going to be lost if you don't save them";
-        /*
-        window.cancelAnimationFrame(this.idAnimation);
-        this.isUserTimeOut=true;
-        this.unlockFile.emit(1);
-        this.isInitComplete = false;
-        this.isRecipeModified = false;
-        this.isCalFatModified = false;
-        */
     } else {
         this.displayHour = Math.floor(timeLeft / 3600);
         const minSec = timeLeft % 3600 ;
@@ -593,10 +475,10 @@ fillConfig(outFile:any,inFile:any, type:string){
 }
 
   initTrackRecord(){
-  this.tabNewRecord.splice(0, this.tabNewRecord.length);
+    this.tabNewRecord.splice(0, this.tabNewRecord.length);
     for (var i=0; i<this.outConfigCaloriesFat.tabCaloriesFat.length; i++){
       if (this.tabNewRecord.length===0 || i!==0){
-        const trackNew={ngStyle:0,even:0,change:false, nb:0,food:[{nb:0}]};
+        const trackNew=new classTabNewRec;
         this.tabNewRecord.push(trackNew);
         if (i%2!==0){
           this.tabNewRecord[i].even=1;
@@ -606,8 +488,9 @@ fillConfig(outFile:any,inFile:any, type:string){
       
       for (var j=0; j<this.outConfigCaloriesFat.tabCaloriesFat[i].Content.length; j++){
           if (this.tabNewRecord[i].food.length ===0 || j!==0){
-            const trackNew={nb:0};
-            this.tabNewRecord[i].food.push(trackNew);
+            const trackNewFood=new classFood;
+            this.tabNewRecord[i].food.push(trackNewFood);
+            this.tabNewRecord[i].food[j].ngStyle=this.tabNewRecord[i].even;
           }
       }
     }
@@ -763,7 +646,8 @@ onActionA(event:any){
       } if (this.isDeleteFood===true){
         this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content.splice(this.TabOfId[1],1);
         this.tabNewRecord[this.TabOfId[0]].food.splice(this.TabOfId[1],1);
-        this.tabNewRecord[this.TabOfId[0]].ngStyle=true;
+        this.tabNewRecord[this.TabOfId[0]].change=true;
+        this.tabNewRecord[this.TabOfId[0]].ngStyle=2;
       }
       this.isDeleteType=false;
       this.isDeleteFood=false;
@@ -798,6 +682,11 @@ reInitBackground(){
     if (this.tabNewRecord[i].change===true){
       this.tabNewRecord[i].ngStyle=2;
     }
+    for (var j=0; j<this.tabNewRecord[i].food.length; j++){
+      if (this.tabNewRecord[i].food[j].ngStyle!==2){
+        this.tabNewRecord[i].food[j].ngStyle=this.tabNewRecord[i].even;
+      }
+    }
   }
 }
 
@@ -807,15 +696,25 @@ createAfterBefore(increment:number, item:string){
     this.outConfigCaloriesFat.tabCaloriesFat.splice(increment,0,CalFatClass);
     const itemClass= new ClassItem;
     this.outConfigCaloriesFat.tabCaloriesFat[increment].Content.push(itemClass);
-    const trackNew={nb:1,food:[{nb:1}]};
-    this.tabNewRecord.splice(increment,0,trackNew);
+    var trackNew=new classTabNewRec; //{ngStyle:0, even:0, change:true, nb:1,food:[{nb:1}]};
+    trackNew.change=true;
+    trackNew.ngStyle=2;
+    trackNew.nb=1;
+    var trackFood=new classFood;
+    trackFood.nb=0;
+    trackFood.ngStyle=0;
+    trackNew.food.push(trackFood);
+    this.tabNewRecord.splice(increment,0,trackNew); // classTabNewRec
     this.reInitBackground();
   } else if (item==='Food'){
     const itemClass= new ClassItem;
     this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content.splice(increment,0,itemClass);
-    const trackNew={nb:1};
-    this.tabNewRecord[this.TabOfId[0]].food.splice(increment,0,trackNew);
-    this.tabNewRecord[this.TabOfId[0]].ngStyle=true;
+    var trackFood=new classFood;
+    trackFood.nb=1;
+    trackFood.ngStyle=2;
+    this.tabNewRecord[this.TabOfId[0]].food.splice(increment,0,trackFood);
+    this.tabNewRecord[this.TabOfId[0]].change=true;
+    this.tabNewRecord[this.TabOfId[0]].ngStyle=2;
   } else if (item==='Recipe'){
     const CalFatClass = new ClassCaloriesFat;
     this.outFileRecipe.tabCaloriesFat.splice(increment,0,CalFatClass);
@@ -859,7 +758,7 @@ onInputA(event:any){
   this.tabInputType.splice(0,this.tabInputType.length);
   var iTab:number=0;
   this.errorMsg='';
-
+  var found=true;
   this.manageIds(event.target.id);
   if (event.target.id.substring(0,4)==='type'){
     this.getPosItem("Type");
@@ -899,6 +798,18 @@ onInputA(event:any){
     this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Fat.Saturated=Number(event.target.value);
   } else if (event.target.id.substring(0,4)==='tota'){
     this.outConfigCaloriesFat.tabCaloriesFat[this.TabOfId[0]].Content[this.TabOfId[1]].Fat.Total=Number(event.target.value);
+  } else {
+    found=false;
+  }
+  if (found===true){
+    if (event.target.id.substring(0,4)==='type'){
+      this.tabNewRecord[this.TabOfId[0]].change=true;
+      this.tabNewRecord[this.TabOfId[0]].ngStyle=2;
+    } else {
+      this.tabNewRecord[this.TabOfId[0]].food[this.TabOfId[1]].nb=1;
+      this.tabNewRecord[this.TabOfId[0]].food[this.TabOfId[1]].ngStyle=2;
+    }
+    
   }
 }
 
@@ -1313,6 +1224,7 @@ iRecipeSave:number=0;
         this.isSaveConfirmed=false;
         this.isCalFatModified = false;
         this.initialiseFiles('calFat');
+        this.reInitBackground();
       }
     }
   }
@@ -1440,6 +1352,7 @@ iRecipeSave:number=0;
   }
 
   firstLoop:boolean=true;
+  isNgStyleCompleted:boolean=false;
   ngOnChanges(changes: SimpleChanges) {
     var saveLoop=0;
     if (this.tabLock[1].lock===1){
@@ -1447,6 +1360,10 @@ iRecipeSave:number=0;
     } else {
       this.inputReadOnly=true;
     }
+    if (changes['HTMLCaloriesFat']!==undefined) {
+      this.fillClassHeader();
+      this.isNgStyleCompleted=true;
+    } 
     if (this.firstLoop===true){
       this.firstLoop=false;
     } else {
@@ -1563,8 +1480,170 @@ iRecipeSave:number=0;
             this.tabType.splice(0,0,{name:'cancel'});
             this.tabFood.splice(0,0,{name:'cancel'});
           }
-        } 
+        }
       }
+    }
+  }
+
+
+
+  fillClassHeader(){
+    this.divClassHeader[0]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.action);
+    this.divClassHeader[1]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.type);
+    this.divClassHeader[2]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.ingr);
+    this.divClassHeader[3]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.other);
+
+
+    this.tabDivContent[0]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.action,0);
+    this.tabDivContent[1]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.type,1);
+    this.tabDivContent[2]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.ingr,2);
+    this.tabDivContent[3]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.other,3);
+
+  
+    for (var i=0; i<3; i++){
+      this.tabContent[i]=[];
+      this.tabContent[i][0]=this.createClassContent(this.HTMLCaloriesFat.colWidth.action,0,i,'center');
+      this.tabContent[i][1]=this.createClassContent(this.HTMLCaloriesFat.colWidth.type,1,i,'center');
+      this.tabContent[i][2]=this.createClassContent(this.HTMLCaloriesFat.colWidth.ingr,2,i,'left');
+      this.tabContent[i][3]=this.createClassContent(this.HTMLCaloriesFat.colWidth.other,3,i,'center');
+      /** used for empty type */
+      this.tabContent[i][4]=this.createClassContent(this.HTMLCaloriesFat.colWidth.type,4,i,'left');
+    }
+
+    this.tabDivTotal[0]=this.createDivClassTotal(this.HTMLCaloriesFat.colWidth.action);
+    this.tabDivTotal[1]=this.createDivClassTotal(this.HTMLCaloriesFat.colWidth.type);
+    this.tabDivTotal[2]=this.createDivClassTotal(this.HTMLCaloriesFat.colWidth.ingr);
+    this.tabDivTotal[3]=this.createDivClassTotal(this.HTMLCaloriesFat.colWidth.other);
+
+    for (var i=0; i<2; i++){
+      this.tabTotal[i]=[];
+      this.tabTotal[i][0]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.action),i,'left');
+      this.tabTotal[i][1]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.type),i,'left');
+      this.tabTotal[i][2]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.ingr),i,'right');
+      this.tabTotal[i][3]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.meal),i,'center');
+    }
+  }
+
+
+  createDivClassHeader(width:any){
+    var style:any;
+    
+      return style = {
+        'width.px': width,
+        'height.px':  Number(this.HTMLCaloriesFat.title.height) ,
+        'display':'block',
+        'float':'left',
+        'text-align': 'center', 
+        'font-size.px':13,
+        'word-wrap':'normal',
+        'word-break':' keep-all',
+        'border-top':'1px grey solid',
+        'border-left':'1px grey solid', 
+        'border-right':'1px rgb(251, 249, 249) solid',
+        'border-bottom':'1px rgb(251, 249, 249) solid', 
+        'padding-top.px':10,
+        'background':this.HTMLCaloriesFat.title.background,
+        'color':this.HTMLCaloriesFat.title.color
+      }
+    
+  } 
+
+
+  createDivClassContent(width:any, iTab:number){
+    var style:any;
+    var addHeight=0;
+    var theBlock="block";
+    if (iTab===0){
+      addHeight=0;
+      //theBlock="inline-Block";
+    } 
+    return style = {
+      'width.px': width+2,
+      'height.px':  Number(this.HTMLCaloriesFat.row.height) + addHeight,
+      'display':theBlock,
+      'float':'left',
+    }
+  }
+
+  createClassContent(width:any,  iTab:number, backGround:number, align:string){
+    var style:any;
+    var backColor=this.HTMLCaloriesFat.row.even;
+    var theColor=this.HTMLCaloriesFat.row.color;
+    if (backGround===1){
+      backColor=this.HTMLCaloriesFat.row.odd;
+    } else if (backGround===2){
+      backColor=this.HTMLCaloriesFat.rowNew.background;
+      theColor=this.HTMLCaloriesFat.rowNew.color;
+    } 
+    var addHeight=0;
+    var theBlock="inline-block";
+
+    if (iTab===0 ){
+      addHeight=2;
+      return style = {
+        'background-color':backColor,
+        'width.px': width,
+        'height.px': Number(this.HTMLCaloriesFat.row.height) + addHeight ,
+        'color': theColor,  
+        'text-align': align,
+        'display':'block',
+        'float':'left',
+      }
+    } else if (iTab===4){
+        addHeight=2;
+        return style = {
+          'background-color':backColor,
+          'width.px': width,
+          'height.px': Number(this.HTMLCaloriesFat.row.height)  + addHeight,
+          'display':'block',
+          'float':'left',
+          'pointer-events':'none',
+          'text-align': align,
+        }
+    } else {
+        return style = {
+          'background-color':backColor,
+          'width.px': width,
+          'height.px': Number(this.HTMLCaloriesFat.row.height)  + addHeight,
+          'color': theColor,  
+          'text-align': align,
+
+        }
+    }
+    
+     
+  }
+
+
+
+
+  createDivClassTotal(width:any){
+    var style:any;
+    return style = {
+        'width.px': Number(width)+2,
+        'height.px':  Number(this.HTMLCaloriesFat.row.height) +10,
+        'display':'inline-block',
+        'border-top':'1px grey solid',
+        'border-right':'none',
+        'border-left':'none',
+    }
+  }
+
+  createTotal(width:Number,backGround:number, align:string){
+    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
+    var style:any;
+    var backColor=this.HTMLCaloriesFat.row.even;
+    if (backGround===1){
+      backColor=this.HTMLCaloriesFat.row.odd;
+    } 
+    width=Number(width)-0.3;
+    return style = {
+        'background-color':backColor,
+        'color': "red",  
+        'text-align': align,
+        'font-size.px':'15',
+        'font-weight':'bolder',
+        "padding-top.px":5,
     }
   }
 }
