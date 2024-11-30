@@ -1,5 +1,10 @@
 @import "../app.component.css";
 
+.boxLan{
+  color:blue; background-color:lightgreen; display:inline-block; 
+  text-align: center; height:35px; padding-top:10px; width:41%;  border:solid 1px black;
+}
+
 .FrEven{
     background-color: lightgreen;
 }
@@ -55,7 +60,8 @@
   }
 
   .input{
-    margin-left:8px; width:45%; display:inline-block; overflow-y:auto; 
+    margin-left:8px; width:41%; display:inline-block; overflow-y:auto; height: 26px; 
+    border:solid 0.5px black;
   }
 
   .input:hover{

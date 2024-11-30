@@ -1,7 +1,19 @@
 @import "../Health/FitnessHealthGeneral.css";
 
+.mainBoxMenu{
+  margin-left:10px; width:96%; display:inline-block; height:27px;
+}
+.mainMenu{
+   padding-left:10px; width:40%; display:inline-block; height:25px; margin-left:8px;
+}
 
-.listObj:hover{
+.mainMenuItem{
+  padding-top:3px; padding-left:15px;
+}
+
+
+
+.mainMenu:hover{
   color:white;
   background-color:rgb(113, 113, 247);
   font-size:14px;
@@ -45,9 +57,7 @@
   background-color:rgb(98, 97, 97);
 }
 
-.listObj{
-  width:48%; display:inline-block; height:25px;
-}
+
 
 .eye {
   width:50%; padding-left:28px;  vertical-align:text-bottom;
@@ -130,6 +140,26 @@
     font-size:14px;
     background-color: lightgrey;
   }
+
+
+  .inputArea{
+    width: 95%; overflow-y:scroll; display:inline-block;  word-wrap: break-word; 
+  }
+
+  .colorArea{
+    color:blue; background-color: lightgrey; border:solid 1px blue;
+  }
+
+  .nutriFacts{
+    width:100%; height:10px;  margin-top:-20px; margin-left:10px;
+     display:inline-block; font-size:22px;  text-align: center; color:green;
+  }
+
+  .subNutriFacts{
+    display:inline-block;
+    width:45%;
+  }
+
 
   .materiel{
     height:25px;

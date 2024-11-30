@@ -8,16 +8,20 @@
 
     <div style="margin-top:5px; width:100%; display:inline-block;" ></div>
     <div [ngStyle]="{'width.px':circleWidth,'margin-left.px':circleMarginLeft}" style="display:inline-block;"></div>
-    <div class="input" style=" color:blue; background-color:lightgreen; display:inline-block; text-align: center; height:40px; padding-top:10px;">Français</div> 
-    <div class="input" style=" color:blue; background-color:lightblue; display:inline-block;  text-align: center; height:40px; padding-top:10px;">English </div>
+    <div class="boxLan" style="margin-left:19px;">Français</div> 
+    <div class="boxLan"style="margin-left:4px;" >English </div>
     <div *ngIf="EventHTTPReceived[0]===true" [ngStyle]="{'max-height.px':tabMaxHeight, 'height.px':tabFreEngHeight}" style="overflow-y:auto">
         <div *ngFor="let tab of tabFreEng; let i=index;">
-            <div class="circle" [ngStyle]="{'width.px':circleWidth,'height.px':circleHeight, 'margin-left.px':circleMarginLeft,'margin-top.px': 4 + (tab.inputHeight - inputMinHeight) / 2}" (click)="onAction($event)"  id="{{i}}">A</div>
-            
-            <textarea class="input"  (input)="onInput($event)" id="French-{{i}}" [ngClass]="{'FrEven': i % 2 === 0, 'FrOdd':i % 2 !== 0}" [ngStyle]="{'height.px':tab.inputHeight}" value="{{tab.French}}"> 
-            </textarea>
-            <textarea class="input"  (input)="onInput($event)" id="English-{{i}}"  [ngClass]="{'EnEven': i % 2 === 0, 'EnOdd':i % 2 !== 0}"  [ngStyle]="{'height.px':tab.inputHeight}" value="{{tab.English}}">
-            </textarea>
+            <div class="circle" [ngStyle]="{'width.px':circleWidth,'height.px':circleHeight, 'margin-left.px':circleMarginLeft,'margin-top.px': 4 + (tab.inputHeight - inputMinHeight) / 2}" (click)="onAction($event)"  id="{{i}}">
+                <div style="padding-top:3px;">A</div></div>
+            <div class="input" style="margin-left:18px;">
+                <textarea style="padding-left:5px;" (input)="onInput($event)" id="French-{{i}}" [ngClass]="{'FrEven': i % 2 === 0, 'FrOdd':i % 2 !== 0}"  value="{{tab.French}}"> 
+                </textarea>
+            </div>
+            <div class="input" style="margin-left:5px;">
+                <textarea style="padding-left:5px;" (input)="onInput($event)" id="English-{{i}}"  [ngClass]="{'EnEven': i % 2 === 0, 'EnOdd':i % 2 !== 0}"  value="{{tab.English}}">
+                </textarea>
+            </div>
             <div *ngIf="isAction===true && iRecord===i">
                 <div class="dropdown">
                 <div [ngStyle]="styleBoxAction">
