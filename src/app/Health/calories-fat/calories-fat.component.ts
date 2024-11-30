@@ -1657,11 +1657,7 @@ iRecipeSave:number=0;
     var style:any;
     return style = {
         'width.px': Number(width)+2,
-
         'display':'inline-block',
-        'border-top':'1px grey solid',
-        'border-right':'none',
-        'border-left':'none',
     }
   }
 
@@ -1672,7 +1668,6 @@ iRecipeSave:number=0;
     if (backGround===1){
       backColor=this.HTMLCaloriesFat.row.odd;
     } 
-    width=Number(width)-0.3;
     return style = {
         'background-color':backColor,
         'color': "red",  
@@ -1680,8 +1675,10 @@ iRecipeSave:number=0;
         'font-size.px':'15',
         'font-weight':'bolder',
         "padding-top.px":5,
-        'width.px': Number(width)+2,
         'height.px':  Number(this.HTMLCaloriesFat.row.height) + 15 ,
+        'border-top':'1px grey solid',
+        'border-right':'none',
+        'border-left':'none',
     }
   }
 }

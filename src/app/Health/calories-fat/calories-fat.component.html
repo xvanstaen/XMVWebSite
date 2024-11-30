@@ -153,7 +153,10 @@
      
                                 <div [ngStyle]="tabDivContent[0]">
                                     <div [ngStyle]="tabStyleBox[tabNewRecord[i].ngStyle][0]" >
-                                        <div style="padding-left:0px;">
+                                        <div style="padding-left:0px;" 
+                                        *ngIf="((j===0 && outFileRecipe.tabCaloriesFat[i].Content.length<2)
+                                                || (j===1 && outFileRecipe.tabCaloriesFat[i].Content.length>1 && outFileRecipe.tabCaloriesFat[i].Content.length<5) ||
+                                               (outFileRecipe.tabCaloriesFat[i].Content.length>4 && j=== 3) )">
                                             <div id='openAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
                                                 <div style="margin-top:2px;">A</div>
                                             </div>
