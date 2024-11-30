@@ -202,6 +202,8 @@ export class CaloriesFatComponent implements OnInit {
    tabDivEmptyContent:Array<any>=[];
    tabTotal:Array<any>=[];
    tabDivTotal:Array<any>=[];
+   tabStyleInput:Array<any>=[];
+   tabStyleBox:Array<any>=[];
 
 
 @HostListener('window:mouseup', ['$event'])
@@ -1509,6 +1511,24 @@ iRecipeSave:number=0;
       /** used for empty type */
       this.tabContent[i][4]=this.createClassContent(this.HTMLCaloriesFat.colWidth.type,4,i,'left');
     }
+    
+    for (var i=0; i<3; i++){
+      var iWidth=-2;
+      var iHeight=0;
+      this.tabStyleInput[i]=[];
+      this.tabStyleInput[i][0]=this.createStyle(this.HTMLCaloriesFat.colWidth.action,iWidth,iHeight,i,'center');
+      this.tabStyleInput[i][1]=this.createStyle(this.HTMLCaloriesFat.colWidth.type,iWidth,iHeight,i,'center');
+      this.tabStyleInput[i][2]=this.createStyle(this.HTMLCaloriesFat.colWidth.ingr,iWidth,iHeight,i,'left');
+      this.tabStyleInput[i][3]=this.createStyle(this.HTMLCaloriesFat.colWidth.other,iWidth,iHeight,i,'center');
+      iWidth=0;
+      iHeight=1;
+      this.tabStyleBox[i]=[];
+      this.tabStyleBox[i][0]=this.createStyle(this.HTMLCaloriesFat.colWidth.action,2,2,i,'center');
+      this.tabStyleBox[i][1]=this.createStyle(this.HTMLCaloriesFat.colWidth.type,iWidth,iHeight,i,'center');
+      this.tabStyleBox[i][2]=this.createStyle(this.HTMLCaloriesFat.colWidth.ingr,iWidth,iHeight,i,'left');
+      this.tabStyleBox[i][3]=this.createStyle(this.HTMLCaloriesFat.colWidth.other,iWidth,iHeight,i,'center');
+
+    }
 
     this.tabDivTotal[0]=this.createDivClassTotal(this.HTMLCaloriesFat.colWidth.action);
     this.tabDivTotal[1]=this.createDivClassTotal(this.HTMLCaloriesFat.colWidth.type);
@@ -1523,7 +1543,6 @@ iRecipeSave:number=0;
       this.tabTotal[i][3]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.meal),i,'center');
     }
   }
-
 
   createDivClassHeader(width:any){
     var style:any;
@@ -1553,10 +1572,10 @@ iRecipeSave:number=0;
     var style:any;
     var addHeight=0;
     var theBlock="block";
-    if (iTab===0){
-      addHeight=0;
+    //if (iTab===0){
+      //addHeight=0;
       //theBlock="inline-Block";
-    } 
+    //} 
     return style = {
       'width.px': width+2,
       'height.px':  Number(this.HTMLCaloriesFat.row.height) + addHeight,
@@ -1610,18 +1629,35 @@ iRecipeSave:number=0;
 
         }
     }
-    
-     
   }
 
-
+  createStyle(width:any, iWidth:number,  iHeight:number, backGround:number, align:string){
+    var style:any;
+    var backColor=this.HTMLCaloriesFat.row.even;
+    var theColor=this.HTMLCaloriesFat.row.color;
+    if (backGround===1){
+      backColor=this.HTMLCaloriesFat.row.odd;
+    } else if (backGround===2){
+      backColor=this.HTMLCaloriesFat.rowNew.background;
+      theColor=this.HTMLCaloriesFat.rowNew.color;
+    }       
+    return style = {
+        'background-color':backColor,
+        'width.px': width + iWidth,
+        'height.px': Number(this.HTMLCaloriesFat.row.height) + iHeight,
+        'color': theColor,  
+        'text-align': align,
+        'border':'none',
+        'display':'inline-block',
+      }
+  }
 
 
   createDivClassTotal(width:any){
     var style:any;
     return style = {
         'width.px': Number(width)+2,
-        'height.px':  Number(this.HTMLCaloriesFat.row.height) +10,
+
         'display':'inline-block',
         'border-top':'1px grey solid',
         'border-right':'none',
@@ -1644,6 +1680,8 @@ iRecipeSave:number=0;
         'font-size.px':'15',
         'font-weight':'bolder',
         "padding-top.px":5,
+        'width.px': Number(width)+2,
+        'height.px':  Number(this.HTMLCaloriesFat.row.height) + 15 ,
     }
   }
 }
