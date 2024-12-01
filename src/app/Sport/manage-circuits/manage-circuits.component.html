@@ -58,9 +58,10 @@
                     <label class="titlePOR " style="width:20px; margin-left:28px; ">&nbsp;</label>
                     <label class="titlePOR " style="width:20px;"> #</label>
                     <label class="titlePOR"  style="width:210px" > Reference</label>
+                    <label class="titlePOR"  style="width:40px"> Dist.</label>
                         <!-- <label class="theLabel theTitle" > Altitude</label> -->
-                    <label class="titlePOR"  style="width:120px"> Latitude</label>
-                    <label class="titlePOR"  style="width:120px"> Longitude</label>
+                    <label class="titlePOR"  style="width:100px"> Latitude</label>
+                    <label class="titlePOR"  style="width:100px"> Longitude</label>
 
                     <div  style=" width:100%; display:inline-block;" *ngFor="let tabPoR of fileCircuit[i].points; let j=index">
                         <div *ngIf="this.tabRef.length>0 && TabOfId[0]===i && TabOfId[1]===j"> 
@@ -88,10 +89,10 @@
                             <label class="inputText shortLabel " [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }"  id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">{{j+1}}</label>
                         
                             <input type="text" class="inputText"   style="width:210px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="PoRef-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].points[j].ref}}">
-                            <input type="text" class="inputText"   style="width:210px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="dist-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].dist[j]}}">
+                            <input type="text" class="inputText"   style="width:40px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="dist-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].dist[j]  | number:'1.1-1' }}">
                             <!-- <label  class="inputText" id="PoRalt-{{i}}-{{j}}" >{{fileCircuit[i].points[j].alt}}</label> --> 
-                            <label class="inputText" style="width:120px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lat}}</label>
-                            <label class="inputText" style="width:120px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lon}}</label>
+                            <label class="inputText" style="width:100px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lat}}</label>
+                            <label class="inputText" style="width:100px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lon}}</label>
                         </div>
                     </div>
                 </div>

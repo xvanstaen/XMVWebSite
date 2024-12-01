@@ -13,14 +13,14 @@ body{
     background-color: rgb(232, 229, 229);
     height:22px;
     margin-left:0px;
-    
     padding-left:10px;
     display:block;
     float:left;
 }
 
 .inputText:hover{
-    background-color: cyan;
+    background-color: rgb(186, 98, 21);
+    color:white;
 }
 
 .theTitle{
@@ -67,8 +67,6 @@ body{
     text-align: center; font-size:14px; background-color: cyan; margin-left:40px;
 }
 
-
-
 .myScrollBar{
     scrollbar-color:orange rgb(155, 247, 247);
     scrollbar-width: thick;
@@ -81,6 +79,7 @@ body{
     font-weight:400;
     font-size: 13px;
 }
+
 .even{
     background-color: rgb(80, 166, 153);
     font-weight:400;

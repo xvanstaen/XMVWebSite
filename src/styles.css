@@ -1,1 +1,35 @@
 /* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+/* 
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+
+*/ 
+
+/* 
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+@import url('https://fonts.googleapis.com/css2?family=Tangerine&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tangerine:wght@700&display=swap');
+
+*/
+
+
+@import url('https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css');
+@import url('https://material.io/resources/icons/?style=baseline');
+
+@import url('https://fonts.googleapis.com/css2?family=Tangerine:wght@700&display=swap');
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/*
+@font-face {
+    font-family: "Parisienne";
+    src: local("Parisienne"), url(./assets/Fonts/Parisienne/Parisienne-Regular.ttf) format("truetype");
+  }
+@font-face {
+    font-family: "LucidaCalligraphy";
+    src: local("LucidaCalligraphy"), url(./assets/Fonts/lucida-calligraphy/lucidacalligraphyitalic.ttf) format("truetype");
+  }
+*/

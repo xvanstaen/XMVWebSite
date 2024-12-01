@@ -539,7 +539,9 @@ afterDropDown(event:any){
   var i=0;
   if (event.target.id==='Action'){
       if (event.target.textContent.trim()==="Cancel" ){
-
+        this.idText="";
+        this.isActionRecipe=false;
+        this.isListRecipe=false;
       } else 
       { this.isRecipeModified=true;
         if (event.target.textContent.trim()==="Delete" ){
@@ -1534,7 +1536,10 @@ else {
 
 onDropdownListType(event:any){
   if (event.target.textContent.trim()==='Cancel'){
-
+    this.tabDialog[this.prevDialog]===false;
+    this.idText="";
+    this.isActionRecipe=false;
+    this.isListRecipe=false;
   } else if (this.isListTypeFr==true){
     this.updateTypeName(this.recipeFile,event.target.textContent.trim(),this.recipeFile.recipe[this.recordRecipe].typeFr,"Fr",this.recipeFile.recipe[this.recordRecipe].name);
     this.recipeFile.recipe[this.recordRecipe].typeFr=event.target.textContent.trim();

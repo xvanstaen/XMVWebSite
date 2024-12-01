@@ -1,5 +1,20 @@
 @import "../Health/FitnessHealthGeneral.css";
 
+body{
+  width:var(--boxW);
+}
+
+div{
+  --boxW: 650px;
+  --actionW:60px;
+  --ingW: 406px;
+  --quanW:90px;
+  --unitW:90px;
+  --headerH:30px;
+  --subHeaderH:30px;
+  --rowH:28px;
+}
+
 .mainBoxMenu{
   margin-left:10px; width:96%; display:inline-block; height:27px;
 }
@@ -11,6 +26,9 @@
   padding-top:3px; padding-left:15px;
 }
 
+.visible{
+  width:100%; display:inline-block; background-color:lightgrey;  height:var(--subHeader); 
+}
 
 
 .mainMenu:hover{
@@ -90,14 +108,16 @@
 
 
 .titleHeader{
-    color:blue; display:inline-block;  border: solid 1px blue; text-align: center; 
-    background-color: lightgrey; height:35px; padding-top:6px;
+    color:blue; display:inline-block;  text-align: center; 
+    background-color: lightgrey; height:var(--headerH); padding-top:6px;
 }
 
-.theRow{
-    color:blue; display:inline-block; border:blue solid 1px;
-    height:29px; 
-    background-color: lightgrey;
+
+.rightBorder{
+  border-right:blue solid 1px;
+  border-left:none;
+  border-top:none;
+  border-bottom: none;
 }
 
 .listRecipes{
@@ -115,13 +135,14 @@
     width:22px;
     height:22px;
     border: solid 1px rgb(4, 4, 124);
-    margin-left:15px;
+    margin-left:0px;
     margin-top:2px;
     font-size:14px;
     font-weight:bold;
     background-color: lightgreen;
     text-align: center;
-    padding-top:-5px;
+   
+    padding-top:-2px;
     display:inline-block;
   }
   
@@ -133,21 +154,54 @@
     border: solid 2px rgb(4, 4, 124);
   }
 
+  .divCircle{
+    width:var(--actionW); display:inline-block;  
+    margin-top:0px; border: solid 0px green;
+    padding-left:15px;
+   
+  }
+
+
   .input{
-    height:25px;
-    padding:2px;
-    
+    height:var(--rowH);
     font-size:14px;
     background-color: lightgrey;
   }
 
-
-  .inputArea{
-    width: 95%; overflow-y:scroll; display:inline-block;  word-wrap: break-word; 
+  .input:hover{
+    background-color: cyan;
+    color:blue;
   }
+  .inputArea{
+    width: 99%; overflow-y:scroll; display:inline-block;  word-wrap: break-word; 
+  }
+
+  .inputRow{
+    height:var(--rowH);
+    font-size:14px;
+    background-color: lightgrey;
+    padding-left:8px; 
+
+  }
+  .inputRow:Hover{
+    background-color: rgb(216, 69, 69);
+    color:white;
+  }
+
+  .theRow{
+    color:blue; display:inline-block; 
+    background-color: lightgrey;
+    margin-top:-5px;
+  }
+
+
 
   .colorArea{
     color:blue; background-color: lightgrey; border:solid 1px blue;
+  }
+
+  .stdInline{
+    width:100%; display:inline-block;
   }
 
   .nutriFacts{
@@ -175,13 +229,8 @@
     overflow:hidden;
   }
 
-  .input:hover{
-    background-color: cyan;
-    color:blue;
-  }
-
   .nutritionName{
-    width:76%; padding:5px; margin-left:2%; display:inline-block;
+    width:76%; padding:5px; margin-left:15px; display:inline-block;
   }
 
   .nutritionNb{
@@ -189,7 +238,7 @@
   }
 
   .nutritionTotal{
-    margin-left:5px; width:95%; padding:5px; color:white; background-color: blue;
+    margin-left:15px; width:94%; padding:5px; color:white; background-color: blue;
   }
 
 .typeRecipeSmallBox{
