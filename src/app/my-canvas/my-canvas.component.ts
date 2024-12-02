@@ -59,7 +59,7 @@ export class MyCanvasComponent implements OnInit {
   ctxSunEarth:any;
 
   loopSunEarth:number=0;
-  maxLoopSunEarth:number=1000;
+  maxLoopSunEarth:number=10000;
   lenRectSunEarth:number=0;  // size of the rectangle
   wLineSunEarth:number=4; // width of the line
   xSunEarth:number=0;
@@ -79,7 +79,7 @@ export class MyCanvasComponent implements OnInit {
   ctxCircleRotation:any;
 
   loopCircleRotation:number=0;
-  maxLoopCircleRotation:number=1000;
+  maxLoopCircleRotation:number=10000;
   lenRectCircleRotation:number=0;  // size of the rectangle
   wLineCircleRotation:number=4; // width of the line
   xCircleRotation:number=0;
@@ -137,9 +137,9 @@ export class MyCanvasComponent implements OnInit {
 
   TheCanvasForm = new FormGroup({ 
     ReturnToPage: new FormControl("",{ nonNullable: true }),
-    xPos: new FormControl(160,{ nonNullable: true }),
-    yPos: new FormControl(160,{ nonNullable: true }),
-    radius: new FormControl(100,{ nonNullable: true }),
+    xPos: new FormControl(120,{ nonNullable: true }),
+    yPos: new FormControl(75,{ nonNullable: true }),
+    radius: new FormControl(20,{ nonNullable: true }),
     sAngle: new FormControl(0,{ nonNullable: true }),
     eAngle: new FormControl(2,{ nonNullable: true }),
     Clockwise: new FormControl(true,{ nonNullable: true }),
@@ -148,18 +148,18 @@ export class MyCanvasComponent implements OnInit {
   });
 
   MoveCanvasForm = new FormGroup({ 
-    xFrom: new FormControl(230,{ nonNullable: true }),
-    yFrom: new FormControl(290,{ nonNullable: true }),
-    xTo: new FormControl(230,{ nonNullable: true }),
-    yTo: new FormControl(290,{ nonNullable: true }),
+    xFrom: new FormControl(55,{ nonNullable: true }),
+    yFrom: new FormControl(70,{ nonNullable: true }),
+    xTo: new FormControl(80,{ nonNullable: true }),
+    yTo: new FormControl(85,{ nonNullable: true }),
     radius: new FormControl(5,{ nonNullable: true }),
-    xPas: new FormControl(10,{ nonNullable: true }),
-    yPas: new FormControl(10,{ nonNullable: true }),
+    xPas: new FormControl(12,{ nonNullable: true }),
+    yPas: new FormControl(12,{ nonNullable: true }),
   });
 
   clockCanvasForm = new FormGroup({ 
-    width: new FormControl(50,{ nonNullable: true }),
-    height: new FormControl(50,{ nonNullable: true }),
+    width: new FormControl(250,{ nonNullable: true }),
+    height: new FormControl(250,{ nonNullable: true }),
     margLeft: new FormControl(30,{ nonNullable: true }),
     margTop: new FormControl(30,{ nonNullable: true }),
     stopClock: new FormControl(false,{ nonNullable: true }),
@@ -168,26 +168,27 @@ export class MyCanvasComponent implements OnInit {
   });
 
   sunEarthCanvasForm = new FormGroup({ 
-    width: new FormControl(150,{ nonNullable: true }),
-    height: new FormControl(150,{ nonNullable: true }),
-    margLeft: new FormControl(130,{ nonNullable: true }),
+    width: new FormControl(350,{ nonNullable: true }),
+    height: new FormControl(350,{ nonNullable: true }),
+    margLeft: new FormControl(30,{ nonNullable: true }),
     margTop: new FormControl(30,{ nonNullable: true }),
     stopClock: new FormControl(false,{ nonNullable: true }),
   });
 
   circleRotationCanvasForm = new FormGroup({ 
-    width: new FormControl(250,{ nonNullable: true }),
-    height: new FormControl(250,{ nonNullable: true }),
+    width: new FormControl(450,{ nonNullable: true }),
+    height: new FormControl(450,{ nonNullable: true }),
     margLeft: new FormControl(30,{ nonNullable: true }),
-    margTop: new FormControl(130,{ nonNullable: true }),
+    margTop: new FormControl(30,{ nonNullable: true }),
     stopClock: new FormControl(false,{ nonNullable: true }),
+    radiusCircle: new FormControl(30,{ nonNullable: true }), // to be used
   });
 
   CanvasForm = new FormGroup({ 
-    width: new FormControl(250,{ nonNullable: true }),
-    height: new FormControl(250,{ nonNullable: true }),
-    margLeft: new FormControl(300,{ nonNullable: true }),
-    margTop: new FormControl(130,{ nonNullable: true }),
+    width: new FormControl(350,{ nonNullable: true }),
+    height: new FormControl(350,{ nonNullable: true }),
+    margLeft: new FormControl(30,{ nonNullable: true }),
+    margTop: new FormControl(30,{ nonNullable: true }),
     stopClock: new FormControl(false,{ nonNullable: true }),
   });
 
@@ -215,75 +216,130 @@ export class MyCanvasComponent implements OnInit {
     this.MoveCanvasForm.controls['yPas'].setValue(10);
     */
 
-    this.sun.src = 'https://mdn.mozillademos.org/files/1456/Canvas_sun.png';
-    this.moon.src = 'https://mdn.mozillademos.org/files/1443/Canvas_moon.png';
-    this.earth.src = 'https://mdn.mozillademos.org/files/1429/Canvas_earth.png';
+    //this.sun.src = 'https://mdn.mozillademos.org/files/1456/Canvas_sun.png';
+    //this.moon.src = 'https://mdn.mozillademos.org/files/1443/Canvas_moon.png';
+    //this.earth.src = 'https://mdn.mozillademos.org/files/1429/Canvas_earth.png';
+
+   this.sun.src ='../../assets/sun.png';
+   this.moon.src ='../../assets/moon.png';
+   this.earth.src ='../../assets/earth.png';
+   
     //this.moon.src = '../assets/MoonNew.png';
     this.var_j=45 * Math.PI / 180 / 10;
-  }
 
-fillPosSize(posSize:any,formCtrl:any){
-  posSize.width=formCtrl.controls['width'].value;
-  posSize.height=formCtrl.controls['height'].value;
-  posSize.margLeft=formCtrl.controls['margLeft'].value;
-  posSize.margTop=formCtrl.controls['margTop'].value;
-  return posSize;
-
-}
-
-  ngAfterViewInit() { 
-    this.background.src = "../../../assets/clockImage.jpeg";
+    this.background.src = "../../assets/clockImage.jpeg";
     this.posSizeClock.displayAnalog=this.clockCanvasForm.controls['displayAnalog'].value;
     this.posSizeClock.displayDigital=this.clockCanvasForm.controls['displayDigital'].value;
-    this.posSizeClock=this.fillPosSize(this.posSizeClock, this.clockCanvasForm);
-    this.xClock=this.posSizeClock.width/2; // x axis of the center
-    this.yClock=this.posSizeClock.height/2; // x axis of the center
+    this.clockPos();
     this.radiusClock = this.posSizeClock.height / 2; // diameter of the circle
     this.lenRectClock=this.posSizeClock.width;        
     this.loopClock=0;
+
+    this.background.src = "../../../assets/clockImage.jpeg";
+    this.sunEarthPos();
+    this.radiusSunEarth = this.posSizeClock.height / 2; // diameter of the circle
+    this.lenRectSunEarth=this.posSizeClock.width;        
+    this.loopSunEarth=0;
+
+    this.circleRotationPos();
+    this.radiusCircleRotation = 30; // diameter of the circle
+    this.lenRectCircleRotation=this.posSizeCircleRotation.width /2 ;        
+    this.loopCircleRotation=0;
+
+    this.posSize=this.fillPosSize(this.posSize, this.CanvasForm);
+
+  }
+
+  sunEarthPos(){
+    this.posSizeSunEarth=this.fillPosSize(this.posSizeSunEarth, this.sunEarthCanvasForm);
+    this.xSunEarth=this.posSizeSunEarth.width/2; // x axis of the center
+    this.ySunEarth=this.posSizeSunEarth.height/2; // x axis of the center
+    if (this.SunEarthCanvas!==undefined){
+      this.SunEarthCanvas.width=this.posSizeSunEarth.width;
+      this.SunEarthCanvas.height=this.posSizeSunEarth.height;
+    }
+    
+  }
+
+  clockPos(){
+    this.posSizeClock=this.fillPosSize(this.posSizeClock, this.clockCanvasForm);
+    this.xClock=this.posSizeClock.width/2; // x axis of the center
+    this.yClock=this.posSizeClock.height/2; // x axis of the center
+    if (this.clockCanvas!==undefined){
+      this.clockCanvas.width=this.posSizeClock.width;
+      this.clockCanvas.height=this.posSizeClock.height;
+    }
+  }
+
+  circleRotationPos(){
+    this.posSizeCircleRotation=this.fillPosSize(this.posSizeCircleRotation, this.circleRotationCanvasForm);
+    this.xCircleRotation=this.posSizeCircleRotation.width/2; // x axis of the center
+    this.yCircleRotation=this.posSizeCircleRotation.height/2; // x axis of the center
+    if (this.CircleRotationCanvas!==undefined){
+      this.CircleRotationCanvas.width=this.posSizeCircleRotation.width;
+      this.CircleRotationCanvas.height=this.posSizeCircleRotation.height;
+    }
+  }
+
+  fillPosSize(posSize:any,formCtrl:any){
+    posSize.width=formCtrl.controls['width'].value;
+    posSize.height=formCtrl.controls['height'].value;
+    posSize.margLeft=formCtrl.controls['margLeft'].value;
+    posSize.margTop=formCtrl.controls['margTop'].value;
+    return posSize;
+  }
+
+  updatePos(event:any){
+    if (event==="clock"){
+      this.clockPos();
+    } else if (event==="sunEarth"){
+      this.sunEarthPos();
+    } else if (event==="circleRotation"){
+      this.circleRotationPos();
+    } else if (event==="theCanvas"){
+      this.posSize=this.fillPosSize(this.posSize, this.CanvasForm);
+    }
+  }
+
+  ngAfterViewInit() { 
+    this.initCanvas();
+  }
+
+  initCanvas(){
+
     if (this.posSizeClock.displayAnalog===true){
-      this.theCanvas=document.getElementById('clockCanvas');
+      this.clockCanvas=document.getElementById('clockCanvas');
       if (!this.ctxClock) { //true
-          this.ctxClock=this.theCanvas.getContext('2d');
+          this.ctxClock=this.clockCanvas.getContext('2d');
       } 
       this.clockCanvas.width=this.posSizeClock.width;
       this.clockCanvas.height=this.posSizeClock.height;
     }
 
-    this.background.src = "../../../assets/clockImage.jpeg";
-    this.posSizeSunEarth=this.fillPosSize(this.posSizeSunEarth, this.sunEarthCanvasForm);
-    this.xSunEarth=this.posSizeClock.width/2; // x axis of the center
-    this.ySunEarth=this.posSizeClock.height/2; // x axis of the center
-    this.radiusSunEarth = this.posSizeClock.height / 2; // diameter of the circle
-    this.lenRectSunEarth=this.posSizeClock.width;        
-    this.loopSunEarth=0;
 
-    this.theCanvas=document.getElementById('SunEarthCanvas');
+
+    this.SunEarthCanvas=document.getElementById('SunEarthCanvas');
     if (!this.ctxSunEarth) { //true
-        this.ctxSunEarth=this.theCanvas.getContext('2d');
+        this.ctxSunEarth=this.SunEarthCanvas.getContext('2d');
+        
     } 
     this.SunEarthCanvas.width=this.posSizeSunEarth.width;
     this.SunEarthCanvas.height=this.posSizeSunEarth.height;
 
-    this.posSizeCircleRotation=this.fillPosSize(this.posSizeCircleRotation, this.circleRotationCanvasForm);
-    this.xCircleRotation=this.posSizeCircleRotation.width/2; // x axis of the center
-    this.yCircleRotation=this.posSizeCircleRotation.height/2; // x axis of the center
-    this.radiusCircleRotation = this.posSizeCircleRotation.height / 2; // diameter of the circle
-    this.lenRectCircleRotation=this.posSizeCircleRotation.width;        
-    this.loopCircleRotation=0;
-    this.theCanvas=document.getElementById('circleRotationCanvas');
+    this.CircleRotationCanvas=document.getElementById('circleRotationCanvas');
     if (!this.ctxCircleRotation) { //true
         this.ctxCircleRotation=this.CircleRotationCanvas.getContext('2d');
     } 
+
     this.CircleRotationCanvas.width=this.posSizeCircleRotation.width;
     this.CircleRotationCanvas.height=this.posSizeCircleRotation.height;
 
-    this.posSize=this.fillPosSize(this.posSize, this.CanvasForm);
+
     this.theCanvas=document.getElementById('canvasElem');      
     if (!this.ctx) { //true
         this.ctx=this.theCanvas.getContext('2d');
     }
-  }
+}
 
   drawCircle(){
       // DRAW a circle
@@ -304,7 +360,7 @@ fillPosSize(posSize:any,formCtrl:any){
       this.y_To=this.MoveCanvasForm.controls['yTo'].value;
       this.x_Pas=this.MoveCanvasForm.controls['xPas'].value;
       this.y_Pas=this.MoveCanvasForm.controls['yPas'].value;
-  this.theRadiusBis=this.MoveCanvasForm.controls['radius'].value;   
+      this.theRadiusBis=this.MoveCanvasForm.controls['radius'].value;   
       this.theta_v=this.TheCanvasForm.controls['theta'].value;
       this.theta_pas_v=this.TheCanvasForm.controls['theta_pas'].value;
     }
@@ -325,7 +381,7 @@ fillPosSize(posSize:any,formCtrl:any){
         this.ctx.beginPath();
         this.ctx.moveTo(this.x_coordinate, this.y_coordinate);
         this.ctx.lineTo(this.x_coordinate, this.y_coordinate+this.theRadius);
-        this.ctx.stroke();
+        this.ctx.stroke();  
       }
       else if (this.radioValue==='MoveCircle') {
         this.MoveCanvas('Create');
@@ -350,7 +406,7 @@ fillPosSize(posSize:any,formCtrl:any){
       else if (this.radioValue==='StopAnim') {
         this.stopAnimation();
     }   
-      else if (this.radioValue==='clock') {
+      else if (this.radioValue==='Clock') {
         this.loopClock=0;
         this.Clock();
     } 
@@ -379,9 +435,10 @@ fillPosSize(posSize:any,formCtrl:any){
 
     MoveCanvas(type_action:string){
       this.GetParam();
-      for (this.x_From=this.MoveCanvasForm.controls['xFrom'].value;  this.x_From<this.x_To; this.i_loop<this.max_loop)
+     
+      for (this.x_From=this.MoveCanvasForm.controls['xFrom'].value;  this.x_From<this.MoveCanvasForm.controls['xTo'].value; this.i_loop<this.max_loop)
       {
-        for (this.y_From=this.MoveCanvasForm.controls['yFrom'].value;  this.y_From<=this.y_To; this.i_loop<this.max_loop)
+        for (this.y_From=this.MoveCanvasForm.controls['yFrom'].value;  this.y_From<=this.MoveCanvasForm.controls['yTo'].value; this.i_loop<this.max_loop)
         {
           this.x_coordinate=this.x_From;
           this.y_coordinate=this.y_From;
@@ -496,8 +553,8 @@ fillPosSize(posSize:any,formCtrl:any){
    }
 
   Sun_Earth(){
-    const w_size_image=300; 
-    const h_size_image=300;
+    const w_size_image=90; 
+    const h_size_image=90;
     const distEarthMoon=29;
     const distEarthSun=105;
     const radiusMoon=5;
@@ -506,9 +563,10 @@ fillPosSize(posSize:any,formCtrl:any){
     this.ctxSunEarth.setTransform(1, 0, 0, 1, 0, 0); 
     this.loopSunEarth++;   
     this.ctxSunEarth.globalCompositeOperation = 'destination-over';
-    this.ctxSunEarth.clearRect(this.xSunEarth-w_size_image/2, this.ySunEarth-h_size_image/2, w_size_image, h_size_image);
-    this.ctxSunEarth.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    this.ctxSunEarth.strokeStyle = 'rgba(0, 153, 255, 0.4)';
+    // this.ctxSunEarth.clearRect(this.xSunEarth-w_size_image/2, this.ySunEarth-h_size_image/2, w_size_image, h_size_image);
+    this.ctxSunEarth.clearRect(0, 0, this.xSunEarth*2, this.ySunEarth*2);
+    this.ctxSunEarth.fillStyle = 'rgba(0, 0, 0, 0.4)'; // grey
+    this.ctxSunEarth.strokeStyle = 'rgba(0, 153, 255, 0.4)'; // light blue
     this.ctxSunEarth.save();
     this.ctxSunEarth.translate(this.xSunEarth,this.ySunEarth);
 
@@ -520,7 +578,7 @@ fillPosSize(posSize:any,formCtrl:any){
     this.ctxSunEarth.translate(distEarthSun, 0);
 
     //this.ctxSunEarth.fillRect(0, -radiusEarth, distEarthMoon, 2*radiusEarth); // Shadow)
-    this.ctxSunEarth.drawImage(this.earth, -radiusEarth, -radiusEarth);
+    this.ctxSunEarth.drawImage(this.earth, -radiusEarth, -radiusEarth,40,40);
         
     // Moon
     //this.ctxSunEarth.save();
@@ -536,6 +594,7 @@ fillPosSize(posSize:any,formCtrl:any){
     this.ctxSunEarth.stroke();
 
     // Sun
+    //this.ctxSunEarth.drawImage(this.sun,this.xSunEarth-w_size_image/2, this.ySunEarth-h_size_image/2, w_size_image,h_size_image);
     this.ctxSunEarth.drawImage(this.sun,this.xSunEarth-w_size_image/2, this.ySunEarth-h_size_image/2, w_size_image,h_size_image);
 
     this.idAnimationSunEarth=window.requestAnimationFrame(() => this.Sun_Earth());
@@ -563,7 +622,12 @@ fillPosSize(posSize:any,formCtrl:any){
 
     const time = new Date();
     this.loopCircleRotation++
-
+    // Scales the drawings horizontally
+    // Skews the drawings horizontally
+    // Skews the drawings vertically
+    // Scales the drawings vertically
+    // Moves the the drawings horizontally
+    // Moves the the drawings vertically
     this.ctxCircleRotation.setTransform(1, 0, 0, 1, 0, 0); 
    
     this.ctxCircleRotation.translate(this.xCircleRotation, this.yCircleRotation); 
@@ -575,7 +639,7 @@ fillPosSize(posSize:any,formCtrl:any){
   
     this.ctxCircleRotation.rotate(((2 * Math.PI) / 6) * time.getSeconds() + ((2 * Math.PI) / 6000) * time.getMilliseconds());
 
-    // draw a small rectangle from the centre
+    // draw a rectangle from the centre ==> this corresponds to the line from the center of the canvas to the circle
     this.ctxCircleRotation.fillStyle = "lightblue";
     this.ctxCircleRotation.fillRect(0, 0, 4, this.lenRectCircleRotation); // Shadow
     //this.ctx.stroke();
@@ -603,7 +667,7 @@ fillPosSize(posSize:any,formCtrl:any){
     this.ctxCircleRotation.closePath();
   }
   Clock(){
-
+    const reduceSize=0.5;
     this.loopClock++
     const theDate = new Date();
     if (this.posSizeClock.displayDigital===true){
@@ -618,14 +682,15 @@ fillPosSize(posSize:any,formCtrl:any){
       this.ctxClock.setTransform(1, 0, 0, 1, 0, 0); 
       this.ctxClock.translate(this.xClock, this.yClock); 
 
-      this.ctxClock.clearRect(-this.xClock, -this.yClock, this.posSizeClock.width, this.posSizeClock.height);
+      //this.ctxClock.clearRect(-this.xClock, -this.yClock, this.posSizeClock.width, this.posSizeClock.height);
+      this.ctxClock.clearRect(0, 0, this.posSizeClock.width, this.posSizeClock.height);
 
-      this.ctxClock.drawImage(this.background, -this.xClock, -this.yClock, this.posSizeClock.width, this.posSizeClock.height); 
+      this.ctxClock.drawImage(this.background, -this.xClock * reduceSize, -this.yClock * reduceSize, this.posSizeClock.width/2, this.posSizeClock.height/2); 
       this.ctxClock.stroke();
 
-      this.ctxClock = drawHourHand(this.ctxClock, theDate, this.radiusClock * 0.6, this.radiusClock * 0.05); 
-      this.ctxClock = drawMinuteHand(this.ctxClock, theDate, this.radiusClock * 0.8, this.radiusClock * 0.04); 
-      this.ctxClock = drawSecondHand(this.ctx, theDate, this.radiusClock * 0.9, this.radiusClock * 0.03); 
+      this.ctxClock = drawHourHand(this.ctxClock, theDate, this.radiusClock * 0.6 * reduceSize, this.radiusClock * 0.05 * reduceSize); 
+      this.ctxClock = drawMinuteHand(this.ctxClock, theDate, this.radiusClock * 0.8 * reduceSize, this.radiusClock * 0.04 * reduceSize); 
+      this.ctxClock = drawSecondHand(this.ctxClock, theDate, this.radiusClock * 0.9 * reduceSize, this.radiusClock * 0.03 * reduceSize); 
     }
     this.idAnimationClock=window.requestAnimationFrame(() => this.Clock());
     

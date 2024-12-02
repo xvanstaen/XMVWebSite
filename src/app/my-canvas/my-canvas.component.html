@@ -2,49 +2,49 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
-<button class="dropmenu" style="margin-top:20px;"> <span class="material-symbols-outlined "  >
-    menu</span></button> 
-
-<div [ngStyle]="{'width.px':posSize.width, 'height.px':posSize.width, 'margin-top.px':posSize.margTop, 'margin-left.px':posSize.margLeft}"
-    >
-    <canvas 
-    #baseCanvas 
-    id='canvasElem' 
-    class="position" 
-    [ngStyle]="{'width.px':posSize.width, 'height.px':posSize.width}" 
-    >
-    </canvas>
+<div class="canvasPos">
+    <form  [formGroup]="clockCanvasForm" >
+        <div class="titleCanvas"> CLOCK</div>
+        <br>
+        <label class="position-field">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
+        <label class="position-field">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
+        <label class="position-field">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
+        <label class="position-field">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
+        <input value="submit" type="submit" (click)="updatePos('clock')" >
+    </form>
 </div>
-<div *ngIf="this.posSizeClock.displayAnalog===true || this.posSizeClock.displayDigital===true" 
-                [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.width, 'margin-top.px':posSizeClock.margTop, 'margin-left.px':posSizeClock.margLeft}">
-    <div *ngIf="this.posSizeClock.displayAnalog===true" >   
-        <canvas 
-        #baseCanvas 
-            id='clockCanvas' 
-            class="position" 
-            [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.width}" 
-        >
-        </canvas>
-    </div>
-    <div *ngIf="this.posSizeClock.displayDigital===true" style="width:100%; display:inline-block; text-align: center; margin-top:2px; ">{{theHours | number:'2.0-0'}}:{{theMinutes | number:'2.0-0'}}:{{theSeconds | number:'2.0-0'}}</div>
+<div class="canvasPos">
+    <form  [formGroup]="sunEarthCanvasForm" >
+        <div class="titleCanvas"> Rotation earth & moon</div>
+        <br>
+        <label class="position-field">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
+        <label class="position-field">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
+        <label class="position-field">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
+        <label class="position-field">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
+        <input value="submit" type="submit" (click)="updatePos('sunEarth')" >
+    </form>
 </div>
-<div [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.width, 'margin-top.px':posSizeSunEarth.margTop, 'margin-left.px':posSizeSunEarth.margLeft}">
-        <canvas 
-        #baseCanvas 
-            id='SunEarthCanvas' 
-            class="position" 
-            [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.width}" 
-        >
-        </canvas>
- </div>
- <div [ngStyle]="{'width.px':posSizeCircleRotation.width, 'height.px':posSizeCircleRotation.width, 'margin-top.px':posSizeCircleRotation.margTop, 'margin-left.px':posSizeCircleRotation.margLeft}">
-    <canvas 
-    #baseCanvas 
-        id='circleRotationCanvas' 
-        class="position" 
-        [ngStyle]="{'width.px':posSizeCircleRotation.width, 'height.px':posSizeCircleRotation.width}" 
-    >
-    </canvas>
+<div class="canvasPos">
+    <form  [formGroup]="circleRotationCanvasForm" >
+        <div class="titleCanvas"> Rotation of a circle</div>
+        <br>
+        <label class="position-field">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
+        <label class="position-field">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
+        <label class="position-field">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
+        <label class="position-field">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
+        <input value="submit" type="submit" (click)="updatePos('circleRotation')" >
+    </form>
+</div>
+<div class="canvasPos">
+    <form  [formGroup]="CanvasForm" >
+        <div class="titleCanvas"> General Canvas</div>
+        <br>
+        <label class="position-field">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
+        <label class="position-field">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
+        <label class="position-field">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
+        <label class="position-field">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
+        <input value="submit" type="submit" (click)="updatePos('canvas')" >
+    </form>
 </div>
 
 <div  ><!-- style="display:solid 1px blue; width:50px; height:0px; margin-left:10px;"-->
@@ -110,6 +110,54 @@
 
 
 </div>
+
+<div [ngStyle]="{'width.px':posSize.width, 'height.px':posSize.height, 'margin-top.px':posSize.margTop, 'margin-left.px':posSize.margLeft}"
+    >CANVAS ELEM
+    <canvas 
+    #baseCanvas 
+    id='canvasElem' 
+    class="position" 
+    [ngStyle]="{'width.px':posSize.width, 'height.px':posSize.height}" 
+    >
+    </canvas>
+</div>
+<div *ngIf="this.posSizeClock.displayAnalog===true || this.posSizeClock.displayDigital===true" 
+                [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.width, 'margin-top.px':posSizeClock.margTop, 'margin-left.px':posSizeClock.margLeft}">
+    <div *ngIf="this.posSizeClock.displayAnalog===true" >   CLOCK CANVAS
+        <canvas 
+        #baseCanvas 
+            id='clockCanvas' 
+            class="position" 
+            [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.height}" 
+        >
+        </canvas>
+    </div>
+    <div *ngIf="this.posSizeClock.displayDigital===true" style="width:100%; display:inline-block; text-align: center; margin-top:2px; ">{{theHours | number:'2.0-0'}}:{{theMinutes | number:'2.0-0'}}:{{theSeconds | number:'2.0-0'}}</div>
+</div>
+<div [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.height, 'margin-top.px':posSizeSunEarth.margTop, 'margin-left.px':posSizeSunEarth.margLeft}">
+    SunEarth Canvas    
+    <canvas 
+        #baseCanvas 
+            id='SunEarthCanvas' 
+            class="position" 
+            [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.height}" 
+        >
+        </canvas>
+ </div>
+ <div [ngStyle]="{'width.px':posSizeCircleRotation.width, 'height.px':posSizeCircleRotation.height, 'margin-top.px':posSizeCircleRotation.margTop, 'margin-left.px':posSizeCircleRotation.margLeft}">
+    circleRotationCanvas
+    <canvas 
+    #baseCanvas 
+        id='circleRotationCanvas' 
+        class="position" 
+        [ngStyle]="{'width.px':posSizeCircleRotation.width, 'height.px':posSizeCircleRotation.height}" 
+    >
+    </canvas>
+</div>
+
+<br><br> <div style="margin-left:30px;"><img  src="../../assets/sun.png" ></div>
+<br><br>
+
 <!-- 
     <img src = '../assets/MoonNew.png'>
 -->

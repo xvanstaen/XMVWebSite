@@ -32,7 +32,7 @@ import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSize
   templateUrl: './health.component.html',
   styleUrls: ['./health.component.css'],
   standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,  MainManageFileComponent,  ], //RunningClockComponent
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,  MainManageFileComponent, RunningClockComponent ], //RunningClockComponent
 
 })
 export class HealthComponent  {

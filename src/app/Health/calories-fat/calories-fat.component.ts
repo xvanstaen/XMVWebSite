@@ -44,7 +44,7 @@ export class classFood{
   templateUrl: './calories-fat.component.html',
   styleUrls: ['./calories-fat.component.css'],
   standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, MainManageFileComponent],
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, MainManageFileComponent, RunningClockComponent],
 })
 export class CaloriesFatComponent implements OnInit {
 

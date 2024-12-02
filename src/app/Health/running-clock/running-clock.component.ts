@@ -22,6 +22,8 @@ export class RunningClockComponent {
   //max_clock_loop:number=10000;
   idAnimation:any;
 
+  clockSrc=""
+
   lenRect:number=0;  // size of the rectangle
   wLine:number=4; // width of the line
   theSeconds:number=0;
@@ -49,6 +51,9 @@ export class RunningClockComponent {
 
   ngOnInit(){
     this.background.src = "../../../assets/clockImage.jpeg";
+    this.posSizeClock.displayAnalog=true;
+    this.posSizeClock.displayDigital=false;
+
     this.x=this.posSizeClock.width/2; // x axis of the center
     this.y=this.posSizeClock.height/2; // x axis of the center
     this.radius = this.posSizeClock.height / 2; // diameter of the circle
@@ -63,7 +68,7 @@ export class RunningClockComponent {
     //this.clock_loop++
     const theDate = new Date();
 
-    if (this.posSizeClock.displayDigital===true || this.ctx===undefined){
+    if (this.ctx!==undefined){
       this.theSeconds=theDate.getSeconds() ;
       this.theMinutes=theDate.getMinutes();
       this.theHours=theDate.getHours();
@@ -71,13 +76,13 @@ export class RunningClockComponent {
 
     //var degrees = (hours * 360 / 12) % 360; 
     //const innerRadius = radius * 0.89; 
-    else if (this.posSizeClock.displayAnalog===true && this.ctx!==undefined){
+    if (this.posSizeClock.displayAnalog===true && this.ctx!==undefined){
       this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
       this.ctx.translate(this.x, this.y); 
 
       this.ctx.clearRect(-this.x, -this.y, this.posSizeClock.width, this.posSizeClock.height);
 
-      this.ctx.drawImage(this.background, -this.x, -this.y, this.posSizeClock.width, this.posSizeClock.height); 
+      this.ctx.drawImage(this.background, -this.x, -this.y, this.posSizeClock.width-5, this.posSizeClock.height-5); 
       this.ctx.stroke();
 
       this.ctx = drawHourHand(this.ctx, theDate, this.radius * 0.6, this.radius * 0.05); 
@@ -96,7 +101,8 @@ export class RunningClockComponent {
   ClearClockCanvas(){
     this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
     this.ctx.beginPath();
-    this.ctx.clearRect(0,0,this.theCanvas.width,this.theCanvas.height);
+    this.ctx.clearRect(0,0,this.posSizeClock.width, this.posSizeClock.height);
+    //this.ctx.clearRect(0,0,this.theCanvas.width,this.theCanvas.height);
     this.ctx.closePath();
   }
 

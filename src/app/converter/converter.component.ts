@@ -46,6 +46,7 @@ import { strDateTime } from '../MyStdFunctions';
   styleUrls: ['./converter.component.css'],
   standalone:true,
   imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule],
+  providers:[DatePipe]
 
 })
 export class ConverterComponent implements OnInit {
