@@ -173,6 +173,14 @@ export class MyCanvasComponent implements OnInit {
     margLeft: new FormControl(30,{ nonNullable: true }),
     margTop: new FormControl(30,{ nonNullable: true }),
     stopClock: new FormControl(false,{ nonNullable: true }),
+    wwSizeSun: new FormControl(60,{ nonNullable: true }),
+    hwSizeSun: new FormControl(60,{ nonNullable: true }),
+    wwSizeEarth: new FormControl(20,{ nonNullable: true }),
+    hwSizeEarth: new FormControl(20,{ nonNullable: true }),
+    distEarthMoon: new FormControl(29,{ nonNullable: true }),
+    distEarthSun: new FormControl(111,{ nonNullable: true }),
+    radiusMoon: new FormControl(4,{ nonNullable: true }),
+    radiusEarth: new FormControl(12,{ nonNullable: true }),
   });
 
   circleRotationCanvasForm = new FormGroup({ 
@@ -197,34 +205,17 @@ export class MyCanvasComponent implements OnInit {
   ngOnInit() {
     this.radioValue='';
     this.app_to_display='';
-    /*
-    this.TheCanvasForm.controls['xPos'].setValue(160);
-    this.TheCanvasForm.controls['yPos'].setValue(160);
-    this.TheCanvasForm.controls['radius'].setValue(100);
-    this.TheCanvasForm.controls['sAngle'].setValue(0);
-    this.TheCanvasForm.controls['eAngle'].setValue(2);
-    this.TheCanvasForm.controls['Clockwise'].setValue(true);
-    this.TheCanvasForm.controls['theta'].setValue(0);
-    this.TheCanvasForm.controls['theta_pas'].setValue(15);
-
-    this.MoveCanvasForm.controls['xFrom'].setValue(230);
-    this.MoveCanvasForm.controls['xTo'].setValue(290);
-    this.MoveCanvasForm.controls['yFrom'].setValue(230);
-    this.MoveCanvasForm.controls['yTo'].setValue(290);
-    this.MoveCanvasForm.controls['radius'].setValue(5);
-    this.MoveCanvasForm.controls['xPas'].setValue(10);
-    this.MoveCanvasForm.controls['yPas'].setValue(10);
-    */
-
-    //this.sun.src = 'https://mdn.mozillademos.org/files/1456/Canvas_sun.png';
-    //this.moon.src = 'https://mdn.mozillademos.org/files/1443/Canvas_moon.png';
-    //this.earth.src = 'https://mdn.mozillademos.org/files/1429/Canvas_earth.png';
-
+   
    this.sun.src ='../../assets/sun.png';
    this.moon.src ='../../assets/moon.png';
    this.earth.src ='../../assets/earth.png';
-   
-    //this.moon.src = '../assets/MoonNew.png';
+   this.earth.style.borderRadius='50%';
+   this.earth.style.width='30px';
+   this.earth.style.height='30px';
+   this.sun.style.borderRadius='50%';
+   this.sun.style.width='50px';
+   this.sun.style.height='50px';
+
     this.var_j=45 * Math.PI / 180 / 10;
 
     this.background.src = "../../assets/clockImage.jpeg";
@@ -294,6 +285,8 @@ export class MyCanvasComponent implements OnInit {
       this.clockPos();
     } else if (event==="sunEarth"){
       this.sunEarthPos();
+      this.loopSunEarth=0;
+      this.Sun_Earth();
     } else if (event==="circleRotation"){
       this.circleRotationPos();
     } else if (event==="theCanvas"){
@@ -460,8 +453,8 @@ export class MyCanvasComponent implements OnInit {
     draw_animation(){
       this.GetParam();      
       const pas= 2 * Math.PI / this.theta_pas_v;
-      const w_size_image=300;
-      const h_size_image=300;
+      const wwSizeSun=300;
+      const hwSizeSun=300;
       const distEarthMoon=35;
       const radiusMoon=5;
 
@@ -475,7 +468,7 @@ export class MyCanvasComponent implements OnInit {
       this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
       // delete the max size of the rectangle which is the image 'sun'
       this.ctx.beginPath();
-      this.ctx.clearRect(this.x_coordinate-w_size_image/2,this.y_coordinate-h_size_image/2, w_size_image, h_size_image);  
+      this.ctx.clearRect(this.x_coordinate-wwSizeSun/2,this.y_coordinate-hwSizeSun/2, wwSizeSun, hwSizeSun);  
       this.ctx.stroke();
 
       this.i_loop++;   
@@ -484,7 +477,7 @@ export class MyCanvasComponent implements OnInit {
       // This is equivalent to earth moving around the sun
       //
       this.ctx.beginPath(); // critical
-      this.ctx.drawImage(this.sun,this.x_coordinate-w_size_image/2,this.y_coordinate-h_size_image/2, w_size_image, h_size_image);               
+      this.ctx.drawImage(this.sun,this.x_coordinate-wwSizeSun/2,this.y_coordinate-hwSizeSun/2, wwSizeSun, hwSizeSun);               
       this.ctx.arc( this.x_coordinate, this.y_coordinate, this.theRadius, 0, 2 * Math.PI);
       this.ctx.strokeStyle= 'lightblue'; // color line cycle
       this.ctx.lineWidth = 3; // weight of the line
@@ -553,17 +546,19 @@ export class MyCanvasComponent implements OnInit {
    }
 
   Sun_Earth(){
-    const w_size_image=90; 
-    const h_size_image=90;
-    const distEarthMoon=29;
-    const distEarthSun=105;
-    const radiusMoon=5;
-    const radiusEarth=12;
+    const wwSizeSun=this.sunEarthCanvasForm.controls['wwSizeSun'].value; //90
+    const hwSizeSun=this.sunEarthCanvasForm.controls['hwSizeSun'].value; //90;
+    const wwSizeEarth=this.sunEarthCanvasForm.controls['wwSizeEarth'].value; //90
+    const hwSizeEarth=this.sunEarthCanvasForm.controls['hwSizeEarth'].value; //90;
+    const distEarthMoon=this.sunEarthCanvasForm.controls['distEarthMoon'].value; //29;
+    const distEarthSun=this.sunEarthCanvasForm.controls['distEarthSun'].value; //105;
+    const radiusMoon=this.sunEarthCanvasForm.controls['radiusMoon'].value; //5;
+    const radiusEarth=this.sunEarthCanvasForm.controls['radiusEarth'].value; //12;
 
     this.ctxSunEarth.setTransform(1, 0, 0, 1, 0, 0); 
     this.loopSunEarth++;   
     this.ctxSunEarth.globalCompositeOperation = 'destination-over';
-    // this.ctxSunEarth.clearRect(this.xSunEarth-w_size_image/2, this.ySunEarth-h_size_image/2, w_size_image, h_size_image);
+    // this.ctxSunEarth.clearRect(this.xSunEarth-wwSizeSun/2, this.ySunEarth-hwSizeSun/2, wwSizeSun, hwSizeSun);
     this.ctxSunEarth.clearRect(0, 0, this.xSunEarth*2, this.ySunEarth*2);
     this.ctxSunEarth.fillStyle = 'rgba(0, 0, 0, 0.4)'; // grey
     this.ctxSunEarth.strokeStyle = 'rgba(0, 153, 255, 0.4)'; // light blue
@@ -578,7 +573,7 @@ export class MyCanvasComponent implements OnInit {
     this.ctxSunEarth.translate(distEarthSun, 0);
 
     //this.ctxSunEarth.fillRect(0, -radiusEarth, distEarthMoon, 2*radiusEarth); // Shadow)
-    this.ctxSunEarth.drawImage(this.earth, -radiusEarth, -radiusEarth,40,40);
+    this.ctxSunEarth.drawImage(this.earth, -radiusEarth, -radiusEarth,wwSizeEarth,hwSizeEarth);
         
     // Moon
     //this.ctxSunEarth.save();
@@ -594,8 +589,8 @@ export class MyCanvasComponent implements OnInit {
     this.ctxSunEarth.stroke();
 
     // Sun
-    //this.ctxSunEarth.drawImage(this.sun,this.xSunEarth-w_size_image/2, this.ySunEarth-h_size_image/2, w_size_image,h_size_image);
-    this.ctxSunEarth.drawImage(this.sun,this.xSunEarth-w_size_image/2, this.ySunEarth-h_size_image/2, w_size_image,h_size_image);
+    //this.ctxSunEarth.drawImage(this.sun,this.xSunEarth-wwSizeSun/2, this.ySunEarth-hwSizeSun/2, wwSizeSun,hwSizeSun);
+    this.ctxSunEarth.drawImage(this.sun,this.xSunEarth-wwSizeSun/2, this.ySunEarth-hwSizeSun/2, wwSizeSun,hwSizeSun);
 
     this.idAnimationSunEarth=window.requestAnimationFrame(() => this.Sun_Earth());
     if (this.loopSunEarth>this.maxLoopSunEarth){
@@ -603,6 +598,17 @@ export class MyCanvasComponent implements OnInit {
       this.ClearSunEarthCanvas();
     } 
 
+  }
+  restartSunEarth(){
+    this.loopSunEarth=0;
+  }
+
+  stopSunEarth(){
+    this.loopSunEarth=this.maxLoopSunEarth;
+    this.ctxSunEarth.setTransform(1, 0, 0, 1, 0, 0); 
+    this.ctxSunEarth.beginPath();
+    this.ctxSunEarth.clearRect(0,0,this.SunEarthCanvas.width,this.SunEarthCanvas.height);
+    this.ctxSunEarth.closePath();
   }
 
   ClearSunEarthCanvas(){

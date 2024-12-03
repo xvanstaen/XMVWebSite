@@ -5,45 +5,45 @@
 <div class="canvasPos">
     <form  [formGroup]="clockCanvasForm" >
         <div class="titleCanvas"> CLOCK</div>
-        <br>
-        <label class="position-field">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
-        <label class="position-field">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
-        <label class="position-field">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
-        <label class="position-field">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
-        <input value="submit" type="submit" (click)="updatePos('clock')" >
+        <br><br>
+        <label class="posField skipLine">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
+        <label class="posField skipLine">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
+        <label class="posField skipLine">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
+        <label class="posField skipLine">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
+
+        
+        <div class="divBut">
+            <button id="but3" class="sizeButtons uniqueBut"  (click)="updatePos('clock')" >Run</button>
+        </div>
     </form>
 </div>
-<div class="canvasPos">
-    <form  [formGroup]="sunEarthCanvasForm" >
-        <div class="titleCanvas"> Rotation earth & moon</div>
-        <br>
-        <label class="position-field">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
-        <label class="position-field">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
-        <label class="position-field">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
-        <label class="position-field">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
-        <input value="submit" type="submit" (click)="updatePos('sunEarth')" >
-    </form>
-</div>
+
 <div class="canvasPos">
     <form  [formGroup]="circleRotationCanvasForm" >
         <div class="titleCanvas"> Rotation of a circle</div>
-        <br>
-        <label class="position-field">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
-        <label class="position-field">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
-        <label class="position-field">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
-        <label class="position-field">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
-        <input value="submit" type="submit" (click)="updatePos('circleRotation')" >
+        <br><br>
+        <label class="posField skipLine">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
+        <label class="posField skipLine">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
+        <label class="posField skipLine">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
+        <label class="posField skipLine">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
+        
+        <div class="divBut">
+            <button id="but4" class="sizeButtons uniqueBut"  (click)="updatePos('circleRotation')" >Run</button>
+        </div>
     </form>
 </div>
 <div class="canvasPos">
     <form  [formGroup]="CanvasForm" >
         <div class="titleCanvas"> General Canvas</div>
-        <br>
-        <label class="position-field">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
-        <label class="position-field">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
-        <label class="position-field">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
-        <label class="position-field">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
-        <input value="submit" type="submit" (click)="updatePos('canvas')" >
+        <br><br>
+        <label class="posField skipLine">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
+        <label class="posField skipLine">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
+        <label class="posField skipLine">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
+        <label class="posField skipLine">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
+        
+        <div class="divBut">
+            <button id="but5" class="sizeButtons uniqueBut"  (click)="updatePos('canvas')" >Run</button>
+        </div>
     </form>
 </div>
 
@@ -134,13 +134,45 @@
     </div>
     <div *ngIf="this.posSizeClock.displayDigital===true" style="width:100%; display:inline-block; text-align: center; margin-top:2px; ">{{theHours | number:'2.0-0'}}:{{theMinutes | number:'2.0-0'}}:{{theSeconds | number:'2.0-0'}}</div>
 </div>
+
+<div class="canvasPos">
+    <form  [formGroup]="sunEarthCanvasForm" >
+        <div class="titleCanvas"> Rotation earth & moon</div>
+        <br><br>
+        <label class="posField skipLine">Width </label><input formControlName="width" value="width" type="number" class="input-field" >
+        <label class="posField skipLine">Height </label><input formControlName="height" value="height" type="number" class="input-field" >
+
+        <label class="posField skipLine">Margin top </label><input formControlName="margTop" value="margTop" type="number" class="input-field" >
+        <label class="posField skipLine">Margin left </label><input formControlName="margLeft" value="margLeft" type="number" class="input-field" >
+        <div class="divBut">
+            <button id="but1" class="sizeButtons firstBut"  (click)="updatePos('sunEarth')" >Run</button>
+            <button id="but2" class="sizeButtons"  (click)="stopSunEarth()" >Stop</button>
+            <button id="but2" class="sizeButtons"  (click)="restartSunEarth()" >Reset</button>
+        </div>
+        <div style="display:inline-block; width:100%; height:10px;">&nbsp;</div>
+        <label class="posField skipLine">Width sun </label><input formControlName="wwSizeSun" value="wwSizeSun" type="number" class="input-field" >
+        <label class="posField skipLine">Height sun </label><input formControlName="hwSizeSun" value="hwSizeSun" type="number" class="input-field" >
+
+        <label class="posField skipLine">Width earth </label><input formControlName="wwSizeEarth" value="wwSizeEarth" type="number" class="input-field" >
+        <label class="posField skipLine">Height earth </label><input formControlName="hwSizeEarth" value="hwSizeEarth" type="number" class="input-field" >
+
+        <label class="posField skipLine">Dist. earth-moon </label><input formControlName="distEarthMoon" value="distEarthMoon" type="number" class="input-field" >
+        <label class="posField skipLine">Dist. earth-sun </label><input formControlName="distEarthSun" value="distEarthSun" type="number" class="input-field" >
+
+        <label class="posField skipLine">Radius moon </label><input formControlName="radiusMoon" value="radiusMoon" type="number" class="input-field" >
+        <label class="posField skipLine">Radius earth </label><input formControlName="radiusEarth" value="radiusEarth" type="number" class="input-field" >
+
+        
+    </form>
+    <div style="display:inline-block; height:10px; width:100%;"></div>
+</div>
 <div [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.height, 'margin-top.px':posSizeSunEarth.margTop, 'margin-left.px':posSizeSunEarth.margLeft}">
     SunEarth Canvas    
     <canvas 
         #baseCanvas 
             id='SunEarthCanvas' 
             class="position" 
-            [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.height}" 
+            [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.height, 'background-color':'black'}" 
         >
         </canvas>
  </div>
@@ -155,10 +187,8 @@
     </canvas>
 </div>
 
-<br><br> <div style="margin-left:30px;"><img  src="../../assets/sun.png" ></div>
+<br><br> <div style="margin-left:30px; "><img  src="../../assets/sun.png" class="sunImg" ></div>
 <br><br>
-
-<!-- 
-    <img src = '../assets/MoonNew.png'>
--->
+<br><br> <div style="margin-left:30px; "><img  src="../../assets/earth.png" class="earthImg" ></div>
+<br><br><br><br><br><br>
 

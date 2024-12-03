@@ -226,12 +226,12 @@
                                     </div>
                                     <div [ngStyle]="tabDivContent[1]" *ngIf="k===0 && j===0">
                                         <input  type="date" class="boxHover"
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]" style="height:100%"
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]" 
                                             id="dateAll-{{i}}"   (input)="onInputDailyAll($event)" value="{{myDaily.date}}" >
                                     </div>
                                     <div [ngStyle]="tabDivEmptyContent[1]" *ngIf="k!==0 || j!==0">  
                                         
-                                        <input *ngIf="j===0" ng-readonly=&nbsp; type="text" value="{{myDaily.date}}"
+                                        <input *ngIf="j===0" ng-readonly=&nbsp; type="date" value="{{myDaily.date}}"
                                             [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]"
                                             style="pointer-events: none;"  >
                                         
