@@ -37,7 +37,7 @@ export class classFilterParam{
   templateUrl: './kiosk-abd-config.component.html',
   styleUrl: './kiosk-abd-config.component.css',
   standalone: true, 
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, SelectServerComponent,],
+  imports:[CommonModule, FormsModule, ReactiveFormsModule,], //, SelectServerComponent
 
 })
 export class KioskAbdConfigComponent {
@@ -105,7 +105,7 @@ export class KioskAbdConfigComponent {
     GoogleBucket:string="xml_configuration"; 
     // Configuration file
     GoogleObject:string="ABDMasterConfig.cfg";
-    GoogleObjectOut:string="ABDMasterConfigExtract00.cfg"
+    GoogleObjectOut:string="ABDMasterConfigV1.json"
     iWait:number=0;
 
     //======
@@ -262,35 +262,41 @@ export class KioskAbdConfigComponent {
             if (data.substring(2,8)==="Header"){
               this.mainJSON=JSON.parse(data);
               this.mainOutJSON = new classMainOutFile;
-              this.mainOutJSON.Body.level=new classOutTabLevel0;
+              // this.mainOutJSON.Body.level=new classOutTabLevel0;
               this.mainOutJSON=copyMainToMainOut(this.mainJSON, this.mainOutJSON);
               this.isMainJson=true;
             } else {
                 this.theRecord=data;
-                this.myForm.controls["dataXML"].setValue(data);
-                this.isXMLRetrieved=true;
-                const result = onXMLtoJSON(this.theRecord);
-                if (typeof result === "string"){
-                  this.error=result;
-                } else {
-                  this.mainOutJSON = result;
-                  this.mainJSON = new classMainFile;
-                  this.mainJSON.Body.level=new classTabLevel0;
-                  this.mainJSON=copyMainOuttoMain(this.mainOutJSON, this.mainJSON);
-                  this.isMainJson=true;
-                }
+                this.processXML();
             }
           
       } else if (data.Header!==undefined){
           this.mainJSON=data;
           this.mainOutJSON=copyMainToMainOut(this.mainJSON, this.mainOutJSON);
           this.isMainJson=true;
-      }else if (data.text!==undefined){
+      } else if (data.text!==undefined){
         this.theRecord=data.text;
-        this.isXMLRetrieved=true;
+        this.processXML(); // convert XML in JSON and copy to OutFile
+    
     }
       this.isFileRead=true;
       this.processFile=false;
+  }
+
+  processXML(){
+    this.myForm.controls["dataXML"].setValue(this.theRecord);
+    this.isXMLRetrieved=true;
+    this.isDisplayXML=true;
+    const result = onXMLtoJSON(this.theRecord);
+    if (typeof result === "string"){
+      this.error=result;
+    } else {
+      this.mainOutJSON = result;
+      this.mainJSON = new classMainFile;
+      // this.mainJSON.Body.level=new classTabLevel0;
+      this.mainJSON=copyMainOuttoMain(this.mainOutJSON, this.mainJSON);
+      this.isMainJson=true;
+    }
   }
 
   onDisplayXML(event:any){
@@ -351,6 +357,12 @@ export class KioskAbdConfigComponent {
 
   onSelectServer(){
     this.isSelectServer=true;
+
+    this.isSelectServer=false;
+    this.isFileLocal=false;
+    this.isFileServer=true;
+    this.selectedServer=this.configServer.googleServer;
+
   }
   getOneServerName(event:any){
       this.selectedServer=event.server;
@@ -406,6 +418,8 @@ export class KioskAbdConfigComponent {
       this.isConfirmSave=false;
       this.isConfirmSaveXML=false;
       if (event==="serverJSON"){
+        this.mainJSON=new classMainFile;
+        this.mainJSON=copyMainOuttoMain(this.mainOutJSON, this.mainJSON);
         this.saveJSONFile(JSON.stringify(this.mainOutJSON), this.GoogleBucket,this.myForm.controls['fileName'].value)
       } else if (event==="localJSON"){
         this.saveJSONFile(this.myForm.controls['dataXML'].value, this.GoogleBucket,this.myForm.controls['fileNameXML'].value)
@@ -461,9 +475,15 @@ export class KioskAbdConfigComponent {
       this.isConfirmSave=false;
       this.isConfirmSaveXML=false;
       if (event==="localJSON"  ){
-        this.postFileHTTP("localJSON",JSON.stringify(this.mainOutJSON),this.myForm.controls["fileName"].value);
+        this.mainJSON=new classMainFile;
+        this.mainJSON=copyMainOuttoMain(this.mainOutJSON, this.mainJSON);
+        this.postFileHTTP("localJSON",JSON.stringify(this.mainJSON),this.myForm.controls["fileName"].value);
       } else if (event==="serverJSON"){
-        this.postFileHTTP("server",this.mainOutJSON,this.myForm.controls["fileName"].value);
+        this.mainJSON=new classMainFile;
+        this.mainJSON=copyMainOuttoMain(this.mainOutJSON, this.mainJSON);
+        //this.saveJSONFile(JSON.stringify(this.mainOutJSON), this.GoogleBucket,this.myForm.controls['fileName'].value)
+
+        this.postFileHTTP("server",this.mainJSON,this.myForm.controls["fileName"].value);
       } else if (event==="localXML"  ){
         this.postFileHTTP("localText",this.myForm.controls["dataXML"].value,this.myForm.controls["fileNameXML"].value);
       } else if (event==="serverXML"){
@@ -474,8 +494,13 @@ export class KioskAbdConfigComponent {
   postFileHTTP(server:string,record:any,fileName:string) {
       const Google_Bucket_Access_RootPOST: string = 'https://storage.googleapis.com/upload/storage/v1/b/';
       const GoogleObject_Option: string = '/o?uploadType=media&name='
-      const theHeadersAll = new HttpHeaders({
+      const theHeadersAllA = new HttpHeaders({
         "Authorization": "Bearer " + this.credentials.access_token,
+      });
+      const theHeadersAll = new HttpHeaders({
+        
+        "Content-Type": 'application/json',
+        "Accept": 'application/json',
       });
       if (server==="localJSON"){
 
@@ -491,19 +516,19 @@ export class KioskAbdConfigComponent {
 
       } else {
         const HTTP_Address = Google_Bucket_Access_RootPOST + this.GoogleBucket + GoogleObject_Option + fileName;
-      
-      
-      this.http.post(HTTP_Address, this.mainJSON)
-        .subscribe(
-          data => {
-            this.afterSave=JSON.stringify(data);
-            console.log(JSON.stringify(data));
-          },
-          err => {
-            this.afterSave=JSON.stringify(err);
-            console.log(JSON.stringify(err));       
-          })
-        }
+        
+        //var blob=new Blob([record], {type:"application/json"})
+        this.http.post(HTTP_Address,JSON.stringify(record),  { headers: theHeadersAll })
+          .subscribe(
+            data => {
+              this.error='File is saved';
+              console.log(JSON.stringify(data));
+            },
+            err => {
+              this.error=err.message;
+              console.log(JSON.stringify(err));       
+            })
+          }
   }
 
     /****   CODE VALIDATED BUT NOT NEEDED

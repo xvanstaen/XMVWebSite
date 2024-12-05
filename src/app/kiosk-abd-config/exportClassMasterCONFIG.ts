@@ -74,9 +74,15 @@ export class classTabLevel4{
     name:string="";
     type:string="";
     details:Array<classDetails>=[]
-    tab:Array<classStructure>=[];
+    tab:Array<classTabLevel5>=[];
 }
 
+export class classTabLevel5{
+    name:string="";
+    type:string="";
+    details:Array<classDetails>=[]
+    tab:Array<classStructure>=[];
+}
 
 // ================= for mainOutFile ===> display
 
@@ -157,6 +163,14 @@ export class classOutTabLevel3{
 }
 
 export class classOutTabLevel4{
+    name:string="";
+    type:string="";
+    details:Array<classOutDetails>=[]
+    tab:Array<classOutTabLevel5>=[];
+    display:boolean=true;
+}
+
+export class classOutTabLevel5{
     name:string="";
     type:string="";
     details:Array<classOutDetails>=[]

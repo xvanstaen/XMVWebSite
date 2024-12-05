@@ -1,5 +1,5 @@
 import { classMainFile , classTabLevel0, classTabLevel1, classTabLevel2, classTabLevel3, classTabLevel4} from "./exportClassMasterCONFIG";
-import { classMainOutFile , classOutTabLevel0, classOutTabLevel1, classOutTabLevel2, classOutTabLevel3, classOutTabLevel4} from "./exportClassMasterCONFIG";
+import { classMainOutFile , classOutTabLevel0, classOutTabLevel1, classOutTabLevel2, classOutTabLevel3, classOutTabLevel4, classOutTabLevel5} from "./exportClassMasterCONFIG";
 import { processDetails, copyDetails, removeSpecChar } from "./commonFns"
 
 
@@ -68,7 +68,7 @@ export function onXMLtoJSON(theRecord:any){
           if (startPosDom > -1 && endPos>startPosDom){
               // =========== LEVEL 0
               
-              const class1=new classOutTabLevel0;
+              const class1=new classOutTabLevel1;
               mainOutJSON.Body.level.tab.push(class1);
               iTabJSON[0]=mainOutJSON.Body.level.tab.length-1;
               mainOutJSON.Body.level.tab[iTabJSON[0]].name=tagDomain;
@@ -105,7 +105,7 @@ export function onXMLtoJSON(theRecord:any){
                               && ((startPosCom===-1 || startPosCom>startPosSec))  ){
                             // <ABDConfigs> found and at the beginning of the string of char.
 
-                            const classB=new classOutTabLevel1;
+                            const classB=new classOutTabLevel2;
                             mainOutJSON.Body.level.tab[iTabJSON[0]].tab.push(classB);
 
                             iTabJSON[1]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab.length-1;
@@ -119,7 +119,7 @@ export function onXMLtoJSON(theRecord:any){
                         } else if ((startPosCom>-1 && endPosCom > startPosCom) && (startPosSubSec==-1 || (startPosSubSec>-1 && startPosSubSec > startPosCom)) ){
                           // comment is found
                             if (currentLevel===1){
-                              const classB=new classOutTabLevel1;
+                              const classB=new classOutTabLevel2;
                               mainOutJSON.Body.level.tab[iTabJSON[0]].tab.push(classB);
 
                               iTabJSON[1]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab.length-1;
@@ -127,7 +127,7 @@ export function onXMLtoJSON(theRecord:any){
                               //mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].name=removeSpecChar(mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].name);
                               mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].type="C";
                             } else {
-                              const classD= new classOutTabLevel2;
+                              const classD= new classOutTabLevel3;
                               mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab.push(classD);
 
                               iTabJSON[2]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab.length-1;
@@ -148,7 +148,7 @@ export function onXMLtoJSON(theRecord:any){
 
                                           currentLevel=2;
 
-                                          const classB=new classOutTabLevel2;
+                                          const classB=new classOutTabLevel3;
                                           mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab.push(classB);
 
                                           // =========== LEVEL 2
@@ -193,16 +193,16 @@ export function onXMLtoJSON(theRecord:any){
 
                                               if (startPosTag>-1 && configString.substring(startPosTag,startPosTag+endABDConf.length)===endABDConf){
                                                   configString="";
-                                                  const classA=new classOutTabLevel3;
+                                                  const classA=new classOutTabLevel4;
                                                   
-                                                  mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab.push(classA);
+                                                  mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.push(classA);
                                                   iTabJSON[2]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab.length-1;
                                                   mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].name=endABDConf;
                                                   mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].type="T";
                                               } else if (startPosCom>-1 && startPosCom <= startPosTag && endPosCom>startPosCom){
                                                   if (currentLevel===3){
 
-                                                    const classB=new classOutTabLevel3;
+                                                    const classB=new classOutTabLevel4;
                                                     mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.push(classB);
 
                                                     iTabJSON[3]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.length-1;
@@ -213,7 +213,7 @@ export function onXMLtoJSON(theRecord:any){
 
                                                   } else if (currentLevel===4){
 
-                                                    const classD=new classOutTabLevel4;
+                                                    const classD=new classOutTabLevel5;
                                                     mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab.push(classD);
 
                                                     iTabJSON[4]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab.length-1;
@@ -232,7 +232,7 @@ export function onXMLtoJSON(theRecord:any){
                                                     } 
                                                     if (currentLevel===3){
                                                       // =========== LEVEL 3
-                                                       const classB=new classOutTabLevel3;
+                                                       const classB=new classOutTabLevel4;
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.push(classB);
 
                                                         iTabJSON[3]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.length-1;
@@ -249,7 +249,7 @@ export function onXMLtoJSON(theRecord:any){
 
                                                     } else if (currentLevel===4){
                                                       // =========== LEVEL 4 === THIS SHOUD NOT HAPPEN
-                                                       const classD=new classOutTabLevel4;
+                                                       const classD=new classOutTabLevel5;
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab.push(classD);
 
                                                         iTabJSON[4]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab.length-1;
@@ -280,7 +280,7 @@ export function onXMLtoJSON(theRecord:any){
                                                     }
                                                     if (currentLevel<4){
                                                         currentLevel=3;                                                       
-                                                        const classB=new classOutTabLevel3;
+                                                        const classB=new classOutTabLevel4;
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.push(classB);
 
                                                         iTabJSON[3]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.length-1;
@@ -290,7 +290,7 @@ export function onXMLtoJSON(theRecord:any){
 
 
                                                     } else if (currentLevel===4){
-                                                       const classC=new classOutTabLevel4;
+                                                       const classC=new classOutTabLevel5;
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab.push(classC);
 
                                                         iTabJSON[4]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab.length-1;
