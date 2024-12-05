@@ -210,8 +210,11 @@ body{
     cursor: pointer;
     margin-left:30px;
     color:blue;
+
     float:left;
-    text-align:center;
+
+    display:center;
+
     }
     
 .firstOption{
@@ -308,41 +311,34 @@ body{
     /*** ====================================== ***/
     @media only screen and (max-width: 1000px) {
     .dropdown-content {
-            margin-left:-80px; 
-        } 
+        margin-left:-80px; 
+    } 
    
     .div_icons{
-         width:50%;
+        width:50%;
         margin-left:23%;
-        } 
+    } 
 
     .arrow_down{
         margin-top:15px;
     }
 
     .pos_options{
-    width:560px;
-    height:60px;
-    margin-right:0%;
+        width:560px;
+        height:60px;
+        margin-right:0%;
     }
+    
     .firstOption{
-    margin-left:46px; 
+        margin-left:40px; 
     }
     .options {
-    width:50px;
-    height: 50px;
-    margin-top:0px;
-    margin-left:30px;
+        width:50px;
+        height: 50px;
+        margin-top:0px;
+        margin-left:30px;
     }
-         
-    .firstOption{
-        margin-left:50px; 
-        }
-        
-    .otherOptions{
-        margin-left:50px; 
-        }
-    
+   
     .options-text {
     font-size: 14px;
     }
@@ -363,54 +359,50 @@ body{
     /*** ====================================== ***/
     @media only screen and (max-width: 768px) {
     
-.dropdown:hover .dropdown-content {
-    font-size:12px;
-}
+    .dropdown:hover .dropdown-content {
+        font-size:12px;
+    }
 
-.dropdown-content {
-    margin-left:-150px; 
-    height:30px;
-} 
+    .dropdown-content {
+        margin-left:-150px; 
+        height:30px;
+    } 
 
-
-.dropdown-options{
-    max-width:19%;
-}
-
-
-
+    .dropdown-options{
+        max-width:19%;
+    }
 
     .div_icons{
         width:58%;
         margin-left:20%;
-        }
-    
-    .pos_options{
-    width:390px;
-    height:50px;
-    margin-right:5%;
     }
+        
+    .pos_options{
+        width:390px;
+        height:50px;
+        margin-right:5%;
+        }
 
     .options {
-        width:40px;
+        width:35px;
         height: 40px;
         margin-top:0px;
-        margin-left:20px;
-        }
-        
+        margin-left:10px;
+    }
+            
     .firstOption{
         margin-left:30px; 
-        }
-        
+    }
+            
     .otherOptions{
         margin-left:20px; 
-        }
-    
+    }
+        
     .options:hover {
         font-family:'Tangerine','cursive';
         margin-top:-0.6em;
         font-size:18px;
-        }
+    }
 
     .Main_Page_Title{
     font-size:28px;
@@ -419,8 +411,7 @@ body{
     font-size:16px; 
     }
     
-    }
-    
+}
     
     /*** ====================================== ***/
     /*** ============== @media 650 ================ ***/
@@ -454,10 +445,6 @@ body{
         padding-top:3px;
         }
         
-    .options {
-            width:40px;
-        }
-
     .pos_options{
         width:70%;
         height:60px;
@@ -467,44 +454,43 @@ body{
 
     .firstOption{
         margin-left:15px; 
-        }
+    }
     .otherOptions{
-            margin-left:15px; 
-            }
+        margin-left:10px; 
+    }
     .options-text {
         font-size: 12px;
-        }
+    }
 
     .dropdown-content {
         margin-left:-100px; 
-
-        } 
+    } 
 
     .arrow_down{
-            margin-top:10px;
-            font-size:14px;
-        }
+        margin-top:10px;
+        font-size:14px;
+    }
 
     .sizeMap{
         margin-top:30px;
         height:690px;
-        }
+    }
 
     .Main_Page_Size{
         margin-left:2%;
         margin-top:-690px;
         height:690px;
         width:96%;
-        }
+    }
     
     .Main_Page_Title{
         font-size:22px;
-        }
+    }
 
     .Main_Page_Text{
         font-size:18px; 
-        }
     }
+}
     
     /*** ====================================== ***/
     /*** ============== @media 510 ================ ***/
@@ -513,43 +499,37 @@ body{
 
     .dropdown-content {
         margin-left:-50px; 
-        } 
-
+    } 
 
     .dropdown:hover .dropdown-content {
         font-size:10px;  
-        }
+    }
 
     .dropdown-options{
         max-width:14%;
         height:23px;
-        }
+    }
         
 
     .sizeMap{
 
-    height:790px;
+        height:790px;
     }
 
     .Main_Page_Size{
-    margin-top:-790px;
-    height:790px;
+        margin-top:-790px;
+        height:790px;
     }
 
     .Main_Page_Text{
-    font-size:16px;
+        font-size:16px;
     }
     .pos_options{
         width:75%;
  
     }
-    .options {
-        width:30px;
 
-    }
-
-
-    }
+}
 
     /*** ====================================== ***/
     /*** ============== @media 420 ================ ***/
@@ -557,23 +537,17 @@ body{
     @media only screen and (max-width: 420px) {
     .Main_Page_Text{
         font-size:14px;
-        }
-
-    .firstOption{
-        margin-left:35px; 
-        }
-        
+    }
+   
     .options-text {
         font-size: 10px;
-        }
+    }
 
     .icons {
         font-size:10px;
-
-        }
+    }
     
     .icons_data{
         font-size:10px;
-
-        }
+    }
     }

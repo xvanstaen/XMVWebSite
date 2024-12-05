@@ -33,7 +33,8 @@ import { environment } from '../../environments/environment';
 import { classCredentials} from '../JsonServerClass';
 import { mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
 import { classAccessFile } from '../classFileSystem';
- 
+import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../clockFunctions'
+
 export class classTabApps{
   apps:string="";
   select:number=0;
@@ -71,6 +72,8 @@ export class UserFunctionsComponent {
 
     @Output() serverChange=  new EventEmitter<any>();
     @Output() callUserFunction= new EventEmitter<any>();
+
+    posSizeClock=new classPosSizeClock;
 
     tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
     maxEventHTTPrequest: number = 12;
@@ -128,6 +131,13 @@ ngOnInit(){
   } else if ( this.nbAppsToDisplay===0){
       this.errMsg="This user cannot access any application; update the user file";
   }
+  this.posSizeClock.margLeft = 20;
+  this.posSizeClock.margTop = 20;
+  this.posSizeClock.width = 60;
+  this.posSizeClock.height = 60;
+  this.posSizeClock.displayAnalog = true;
+  this.posSizeClock.displayDigital = true;
+
 }
 
 initTabApps(){

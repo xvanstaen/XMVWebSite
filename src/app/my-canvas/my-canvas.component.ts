@@ -283,13 +283,17 @@ export class MyCanvasComponent implements OnInit {
   updatePos(event:any){
     if (event==="clock"){
       this.clockPos();
+      this.loopClock=0;
+      this.Clock();
     } else if (event==="sunEarth"){
       this.sunEarthPos();
       this.loopSunEarth=0;
       this.Sun_Earth();
     } else if (event==="circleRotation"){
       this.circleRotationPos();
-    } else if (event==="theCanvas"){
+      this.loopCircleRotation=0;
+      this.circleRotation();
+    } else if (event==="canvas"){
       this.posSize=this.fillPosSize(this.posSize, this.CanvasForm);
     }
   }
@@ -384,9 +388,9 @@ export class MyCanvasComponent implements OnInit {
           this.draw_animation();
       }
       else if (this.radioValue==='Clear') {
-        this.MoveCanvas('Clear');
-        this.TheCanvasForm.controls['ReturnToPage'].setValue('');
-        this.ngOnInit();
+        this.ClearCanvas();
+        //this.TheCanvasForm.controls['ReturnToPage'].setValue('');
+        //this.ngOnInit();
       }
       else if (this.radioValue==='Sun_Earth') {
           this.loopSunEarth=0;
@@ -411,10 +415,13 @@ export class MyCanvasComponent implements OnInit {
 
       this.loopCircleRotation=0;
       this.i_loop=0;
+      this.loopClock=0;
       this.loopSunEarth=0;
       this.draw_animation();
       this.Sun_Earth();
       this.circleRotation();
+      this.Clock();
+
     }
 
     ClearCanvas(){
@@ -427,11 +434,12 @@ export class MyCanvasComponent implements OnInit {
 
 
     MoveCanvas(type_action:string){
+
       this.GetParam();
-     
-      for (this.x_From=this.MoveCanvasForm.controls['xFrom'].value;  this.x_From<this.MoveCanvasForm.controls['xTo'].value; this.i_loop<this.max_loop)
+      this.theRadius=this.MoveCanvasForm.controls['radius'].value; 
+      for (this.x_From=this.MoveCanvasForm.controls['xFrom'].value;  this.x_From<this.MoveCanvasForm.controls['xTo'].value && this.i_loop<this.max_loop; this.x_From++ )
       {
-        for (this.y_From=this.MoveCanvasForm.controls['yFrom'].value;  this.y_From<=this.MoveCanvasForm.controls['yTo'].value; this.i_loop<this.max_loop)
+        for (this.y_From=this.MoveCanvasForm.controls['yFrom'].value; this.y_From<=this.MoveCanvasForm.controls['yTo'].value && this.i_loop<this.max_loop; this.y_From++)
         {
           this.x_coordinate=this.x_From;
           this.y_coordinate=this.y_From;
@@ -439,13 +447,10 @@ export class MyCanvasComponent implements OnInit {
           if (type_action==='Create' ){
             this.drawCircle();
           }
-          else if (type_action==='Clear'){
-            this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
-            this.ClearCanvas();
-          }
           this.y_From=this.y_From+this.y_Pas;
         }
         this.x_From=this.x_From+this.x_Pas;
+        this.i_loop=this.i_loop+1;
       }
     }
     
@@ -620,8 +625,10 @@ export class MyCanvasComponent implements OnInit {
     
   stopAnimation(){
     this.i_loop=this.max_i_loop+1;
-    this.loopSunEarth=this.maxLoopSunEarth+1;
-    this.loopCircleRotation=this.maxLoopCircleRotation+1;
+    this.stopSunEarth();
+    this.stopCanvasCircleRotation();
+    this.stopClock();
+    this.ClearCanvas();
   }
 
   circleRotation(){
@@ -666,6 +673,11 @@ export class MyCanvasComponent implements OnInit {
       } 
   }
 
+  stopCanvasCircleRotation(){
+    window.cancelAnimationFrame(this.idAnimationCircleRotation);
+    this.ClearCanvasCircleRotation();
+  } 
+
   ClearCanvasCircleRotation(){
     this.ctxCircleRotation.setTransform(1, 0, 0, 1, 0, 0); 
     this.ctxCircleRotation.beginPath();
@@ -705,6 +717,11 @@ export class MyCanvasComponent implements OnInit {
       this.ClearClockCanvas();
     } 
     
+  }
+
+  stopClock(){
+    window.cancelAnimationFrame(this.idAnimationClock);
+    this.ClearClockCanvas();
   }
 
   ClearClockCanvas(){

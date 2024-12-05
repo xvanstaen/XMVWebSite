@@ -36,7 +36,7 @@
     </div>
     -->
     <div class="pos_icons">
-        <span class=' div_icons' (click) = "Display_Contact()">
+        <div class=' div_icons' (click) = "Display_Contact()">
          <!--
             <mat-icon  (click)='RouteTo("login")' class="icon-login"> login</mat-icon> 
           -->
@@ -44,7 +44,7 @@
             <span class="icons_data">  +65 8268 0480</span>
             <mat-icon   class=' icons-email' > email</mat-icon>   
             <span class=" icons_data-email" >{{emailXMV}}</span>
-        </span>
+        </div>
     </div>
 
     <div class="pos_options">
@@ -64,7 +64,7 @@
                   <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetPgm')" >Projects</div>
                 </span>
               </div>
-          </span>
+            </span>
         </div>
       </div>      
 
@@ -78,7 +78,7 @@
           <div class=' options otherOptions options-text option_background' (click) = "Display_Contact()"><br>Contact</div>
       </div>
       <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===MyEvents && isConfigServerRetrieved===true; else Events" > 
-          <div class=' options otherOptions options-text option_background' (click) = "Display_Events()"><br>Events</div>
+          <div class=' options otherOptions options-text option_background' (click) = "Display_Events()"><br>Login</div>
       </div>
 
     </div>
@@ -98,10 +98,8 @@
           Offer
         </div>
         <div class="  dropdown arrow_down ">
-        <span class="material-symbols-outlined arrow_down_size"  >
-          arrow_drop_down
-         
-           
+          <span class="material-symbols-outlined arrow_down_size"  >
+            arrow_drop_down
           <div class="dropdown-content" >
             <span >
             <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetDigital') ">Digital Transf.</div>
@@ -110,10 +108,10 @@
             <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetTechnical')">Techn. Expert</div>
             <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetPgm')" >Projects</div>
           </span>
-
           </div>
-          </span>
+        </span>
       </div>
+   
 </ng-template>
 <ng-template #NoProfile>
     <div class=' options othertOption options-text' (click) = "Display_Profile()"><br>Profile</div>
