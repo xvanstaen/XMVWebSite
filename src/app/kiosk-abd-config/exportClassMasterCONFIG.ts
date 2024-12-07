@@ -32,55 +32,55 @@ export class classMainFile{
 export class classStructure{
     name:string="";
     type:string="";
-    details:Array<classDetails>=[];
+    det:Array<classDetails>=[];
 }
 
 export class classDetails{
     F:string="";
     V:string="";
-    nl:boolean=false;
-    nlBefore:boolean=false;
+    nl:number=0;
+    nlB:number=0;
 }
 
 export class classTabLevel0{
     name:string="";
     type:string="";
-    details:Array<classDetails>=[]
+    det:Array<classDetails>=[]
     tab:Array<classTabLevel1>=[];
 }
 
 export class classTabLevel1{
     name:string="";
     type:string="";
-    details:Array<classDetails>=[]
+    det:Array<classDetails>=[]
     tab:Array<classTabLevel2>=[];
 }
 
 export class classTabLevel2{
     name:string="";
     type:string="";
-    details:Array<classDetails>=[]
+    det:Array<classDetails>=[]
     tab:Array<classTabLevel3>=[];
 }
 
 export class classTabLevel3{
     name:string="";
     type:string="";
-    details:Array<classDetails>=[]
+    det:Array<classDetails>=[]
     tab:Array<classTabLevel4>=[];
 }
 
 export class classTabLevel4{
     name:string="";
     type:string="";
-    details:Array<classDetails>=[]
+    det:Array<classDetails>=[]
     tab:Array<classTabLevel5>=[];
 }
 
 export class classTabLevel5{
     name:string="";
     type:string="";
-    details:Array<classDetails>=[]
+    det:Array<classDetails>=[]
     tab:Array<classStructure>=[];
 }
 
@@ -117,63 +117,63 @@ export class classMainOutFile{
 export class classOutStructure{
     name:string="";
     type:string="";
-    details:Array<classOutDetails>=[];
-    display:boolean=true;
+    det:Array<classOutDetails>=[];
+    disp:boolean=true;
 }
 
 export class classOutDetails{
     F:string="";
     V:string="";
-    display:boolean=true;
-    nlBefore:boolean=false;
-    nl:boolean=false; // nlAfter
+    disp:boolean=true;
+    nlB:number=0;
+    nl:number=0; // nlAfter
     
 }
 
 export class classOutTabLevel0{
     name:string="";
     type:string="";
-    details:Array<classOutDetails>=[]
+    det:Array<classOutDetails>=[]
     tab:Array<classOutTabLevel1>=[];
-    display:boolean=true;
+    disp:boolean=true;
 }
 
 export class classOutTabLevel1{
     name:string="";
     type:string="";
-    details:Array<classOutDetails>=[]
+    det:Array<classOutDetails>=[]
     tab:Array<classOutTabLevel2>=[];
-    display:boolean=true;
+    disp:boolean=true;
 }
 
 export class classOutTabLevel2{
     name:string="";
     type:string="";
-    details:Array<classOutDetails>=[]
+    det:Array<classOutDetails>=[]
     tab:Array<classOutTabLevel3>=[];
-    display:boolean=true;
+    disp:boolean=true;
 }
 
 export class classOutTabLevel3{
     name:string="";
     type:string="";
-    details:Array<classOutDetails>=[]
+    det:Array<classOutDetails>=[]
     tab:Array<classOutTabLevel4>=[];
-    display:boolean=true;
+    disp:boolean=true;
 }
 
 export class classOutTabLevel4{
     name:string="";
     type:string="";
-    details:Array<classOutDetails>=[]
+    det:Array<classOutDetails>=[]
     tab:Array<classOutTabLevel5>=[];
-    display:boolean=true;
+    disp:boolean=true;
 }
 
 export class classOutTabLevel5{
     name:string="";
     type:string="";
-    details:Array<classOutDetails>=[]
+    det:Array<classOutDetails>=[]
     tab:Array<classOutStructure>=[];
-    display:boolean=true;
+    disp:boolean=true;
 }

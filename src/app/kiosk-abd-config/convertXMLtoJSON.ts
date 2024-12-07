@@ -76,7 +76,7 @@ export function onXMLtoJSON(theRecord:any){
 
               workStr=mainRecord.substring(startPosDom+tagDomain.length,endPos);
               // process the list of fields contained in ABDDomain
-              mainOutJSON.Body.level.tab[iTabJSON[0]].details=processDetails(workStr, false, mainOutJSON.Body.level.tab[iTabJSON[0]].details);
+              mainOutJSON.Body.level.tab[iTabJSON[0]].det=processDetails(workStr, false, mainOutJSON.Body.level.tab[iTabJSON[0]].det);
               //mainRecord=mainRecord.substring(endPos);
               
               // search </ABDDomainConfig> to ensure there is a closure section. Can then process all the fields
@@ -156,7 +156,7 @@ export function onXMLtoJSON(theRecord:any){
                                           endPos=subRecord.substring(startPosSubSec+startABDConf.length).indexOf(">");
                                           workStr=subRecord.substring(startPosSubSec+startABDConf.length,endPos+startPosSubSec+startABDConf.length+1);
                                           // process the list of fields contained in ABDConfig
-                                          mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].details=processDetails(workStr,false, mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].details);
+                                          mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].det=processDetails(workStr,false, mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].det);
                                           
                                           mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].name=startABDConf;
                                           mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].type="F";
@@ -193,9 +193,9 @@ export function onXMLtoJSON(theRecord:any){
 
                                               if (startPosTag>-1 && configString.substring(startPosTag,startPosTag+endABDConf.length)===endABDConf){
                                                   configString="";
-                                                  const classA=new classOutTabLevel4;
-                                                  
-                                                  mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.push(classA);
+                                                  const classA=new classOutTabLevel3;
+                                                  /***   $$$ removed one level */
+                                                  mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab.push(classA);
                                                   iTabJSON[2]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab.length-1;
                                                   mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].name=endABDConf;
                                                   mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].type="T";
@@ -284,7 +284,7 @@ export function onXMLtoJSON(theRecord:any){
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.push(classB);
 
                                                         iTabJSON[3]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab.length-1;
-                                                        mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].details=processDetails(workStr, isNL, mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].details);
+                                                        mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].det=processDetails(workStr, isNL, mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].det);
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].type="/>";
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].name=constName;
 
@@ -295,7 +295,7 @@ export function onXMLtoJSON(theRecord:any){
 
                                                         iTabJSON[4]=mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab.length-1;
                                                         
-                                                        mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab[iTabJSON[4]].details=processDetails(workStr, isNL, mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab[iTabJSON[4]].details);
+                                                        mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab[iTabJSON[4]].det=processDetails(workStr, isNL, mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab[iTabJSON[4]].det);
    
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab[iTabJSON[4]].name=constName;
                                                         mainOutJSON.Body.level.tab[iTabJSON[0]].tab[iTabJSON[1]].tab[iTabJSON[2]].tab[iTabJSON[3]].tab[iTabJSON[4]].type="/>"

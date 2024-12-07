@@ -82,26 +82,3 @@ background-color: lightgrey;
     background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
   }
 
-.theScript{
-    font-size:14px;
-    margin-left:8px;
-    min-width:90%;
-    display:inline-block;
-    color:rgb(214, 35, 35);
-    text-align: left;;
-    
-}
-
-.even{
-    background-color:rgb(129, 160, 214);
-    
-}
-
-.odd{
-    background-color:rgb(142, 216, 183);
-}
-
-.theScript:hover{
-    background-color:rgb(9, 47, 112);
-    color:white;
-}

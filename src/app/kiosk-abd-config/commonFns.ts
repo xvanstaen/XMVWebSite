@@ -47,7 +47,7 @@ export function processDetails(workString:string, isNL:boolean, tabDetails:Array
             tabDetails.push(details);
             iTab++
             if (isNL===true){
-              tabDetails[iTab].nlBefore=true;
+              tabDetails[iTab].nlB=1;
               isNL=false;
             }
             tabDetails[iTab].F = workString.substring(0,initStartPos);
@@ -59,9 +59,9 @@ export function processDetails(workString:string, isNL:boolean, tabDetails:Array
               newEnd=endPos+1;
             }
             if (workString.substring(newEnd,newEnd+10).indexOf("\r\n")===-1 && workString.substring(newEnd,newEnd+10).indexOf("\t")===-1){
-              tabDetails[iTab].nl=false;
+              tabDetails[iTab].nl=0;
             } else {
-              tabDetails[iTab].nl=true;
+              tabDetails[iTab].nl=1;
             }
             workString=workString.substring(newEnd).trimStart();
         } else if (startPos==-1 && endPos==-1){
@@ -113,48 +113,57 @@ export function removeChar(mainRecord:string, specChar:string){
   return mainRecord;
 }
 
-export function copyData(inTab:any,outTab:any){
-    outTab.display=true;
+export function copyData(inTab:any,outTab:any, type:string){
+    if (type==="mainOut"){
+      outTab.display=true;
+     
+    }
     outTab.name=inTab.name;
     outTab.type=inTab.type;
-    outTab.details = copyDetails(inTab.details,outTab.details);
+    outTab.det = copyDetails(inTab.det,outTab.det, type);
     return outTab;
     }
 
-export function copyDetails(inTab:any, outTab:any){
+export function copyDetails(inTab:any, outTab:any, type:string){
     for (var i=0; i<inTab.length; i++){
-      const details=new classOutDetails;
-      outTab.push(details);
+      if (type==="main"){
+        const details=new classDetails;
+        outTab.push(details);
+      } else {
+        const details=new classOutDetails;
+        outTab.push(details);
+      }
       outTab[i].V=inTab[i].V;
       outTab[i].F=inTab[i].F;
       outTab[i].nl=inTab[i].nl;
-      outTab[i].nlBefore=inTab[i].nlBefore;
+      outTab[i].nlB=inTab[i].nlB;
     }
     return outTab;
 }
 
 export function copyMainOuttoMain(inFile:classMainOutFile, outFile:classMainFile){
-    outFile.Body.level=copyData(inFile.Body.level,outFile.Body.level);
-    for (var i=0; i<inFile.Body.level.tab.length; i++){
+  const type="main";
+  outFile.Body.level=copyData(inFile.Body.level,outFile.Body.level, type);
+  for (var i=0; i<inFile.Body.level.tab.length; i++){
       const Level0=new classTabLevel1;
       outFile.Body.level.tab.push(Level0);
-      outFile.Body.level.tab[i]=copyData(inFile.Body.level.tab[i],outFile.Body.level.tab[i]);
+      outFile.Body.level.tab[i]=copyData(inFile.Body.level.tab[i],outFile.Body.level.tab[i], type);
       for (var j=0; j<inFile.Body.level.tab[i].tab.length; j++){
         const Level1=new classTabLevel2;
         outFile.Body.level.tab[i].tab.push(Level1);
-        outFile.Body.level.tab[i].tab[j]=copyData(inFile.Body.level.tab[i].tab[j],outFile.Body.level.tab[i].tab[j]);
+        outFile.Body.level.tab[i].tab[j]=copyData(inFile.Body.level.tab[i].tab[j],outFile.Body.level.tab[i].tab[j], type);
         for (var k=0; k<inFile.Body.level.tab[i].tab[j].tab.length; k++){
           const Level2=new classTabLevel3;
           outFile.Body.level.tab[i].tab[j].tab.push(Level2);
-          outFile.Body.level.tab[i].tab[j].tab[k]=copyData(inFile.Body.level.tab[i].tab[j].tab[k],outFile.Body.level.tab[i].tab[j].tab[k]);
+          outFile.Body.level.tab[i].tab[j].tab[k]=copyData(inFile.Body.level.tab[i].tab[j].tab[k],outFile.Body.level.tab[i].tab[j].tab[k], type);
           for (var l=0; l<inFile.Body.level.tab[i].tab[j].tab[k].tab.length; l++){
             const Level3=new classTabLevel4;
             outFile.Body.level.tab[i].tab[j].tab[k].tab.push(Level3);
-            outFile.Body.level.tab[i].tab[j].tab[k].tab[l]=copyData(inFile.Body.level.tab[i].tab[j].tab[k].tab[l],outFile.Body.level.tab[i].tab[j].tab[k].tab[l]);
+            outFile.Body.level.tab[i].tab[j].tab[k].tab[l]=copyData(inFile.Body.level.tab[i].tab[j].tab[k].tab[l],outFile.Body.level.tab[i].tab[j].tab[k].tab[l], type);
             for (var m=0; m<inFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab.length; m++){
               const Level4=new classTabLevel5;
               outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab.push(Level4);
-              outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m]=copyData(inFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m],outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m]);
+              outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m]=copyData(inFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m],outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m], type);
             }
           }
         }
@@ -165,30 +174,30 @@ export function copyMainOuttoMain(inFile:classMainOutFile, outFile:classMainFile
 
 
 export function copyMainToMainOut(inFile:classMainFile, outFile:classMainOutFile){
-    
+  const type="mainOut";
     outFile.Body.startTag=inFile.Body.startTag;
     outFile.Body.endTag=inFile.Body.endTag;
-    outFile.Body.level=copyData(inFile.Body.level,outFile.Body.level);
+    outFile.Body.level=copyData(inFile.Body.level,outFile.Body.level, type);
     for (var i=0; i<inFile.Body.level.tab.length; i++){
       const Level0=new classOutTabLevel1;
       outFile.Body.level.tab.push(Level0);
-      outFile.Body.level.tab[i]=copyData(inFile.Body.level.tab[i],outFile.Body.level.tab[i]);
+      outFile.Body.level.tab[i]=copyData(inFile.Body.level.tab[i],outFile.Body.level.tab[i], type);
       for (var j=0; j<inFile.Body.level.tab[i].tab.length; j++){
         const Level1=new classOutTabLevel2;
         outFile.Body.level.tab[i].tab.push(Level1);
-        outFile.Body.level.tab[i].tab[j]=copyData(inFile.Body.level.tab[i].tab[j],outFile.Body.level.tab[i].tab[j]);
+        outFile.Body.level.tab[i].tab[j]=copyData(inFile.Body.level.tab[i].tab[j],outFile.Body.level.tab[i].tab[j], type);
         for (var k=0; k<inFile.Body.level.tab[i].tab[j].tab.length; k++){
           const Level2=new classOutTabLevel3;
           outFile.Body.level.tab[i].tab[j].tab.push(Level2);
-          outFile.Body.level.tab[i].tab[j].tab[k]=copyData(inFile.Body.level.tab[i].tab[j].tab[k],outFile.Body.level.tab[i].tab[j].tab[k]);
+          outFile.Body.level.tab[i].tab[j].tab[k]=copyData(inFile.Body.level.tab[i].tab[j].tab[k],outFile.Body.level.tab[i].tab[j].tab[k], type);
           for (var l=0; l<inFile.Body.level.tab[i].tab[j].tab[k].tab.length; l++){
             const Level3=new classOutTabLevel4;
             outFile.Body.level.tab[i].tab[j].tab[k].tab.push(Level3);
-            outFile.Body.level.tab[i].tab[j].tab[k].tab[l]=copyData(inFile.Body.level.tab[i].tab[j].tab[k].tab[l],outFile.Body.level.tab[i].tab[j].tab[k].tab[l]);
+            outFile.Body.level.tab[i].tab[j].tab[k].tab[l]=copyData(inFile.Body.level.tab[i].tab[j].tab[k].tab[l],outFile.Body.level.tab[i].tab[j].tab[k].tab[l], type);
             for (var m=0; m<inFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab.length; m++){
               const Level4=new classOutTabLevel5;
               outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab.push(Level4);
-              outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m]=copyData(inFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m],outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m]);
+              outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m]=copyData(inFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m],outFile.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m], type);
             }
           }
         }

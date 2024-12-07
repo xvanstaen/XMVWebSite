@@ -34,25 +34,25 @@ export function onJSONtoXML(mainJSON:classMainOutFile, partial:boolean){
   var theSpace="";
 
   for (var i=0; i<mainJSON.Body.level.tab.length; i++){
-    if (partial===false || (partial===true && (mainJSON.Body.level.tab[i].display===true || 
-      (i>0 && mainJSON.Body.level.tab[i-1].display===true && mainJSON.Body.level.tab[i].type==="T")))){
+    if (partial===false || (partial===true && (mainJSON.Body.level.tab[i].disp===true || 
+      (i>0 && mainJSON.Body.level.tab[i-1].disp===true && mainJSON.Body.level.tab[i].type==="T")))){
       theRecord = theRecord + levelStr[0] + mainJSON.Body.level.tab[i].name;
-      for (iDet=0; iDet<mainJSON.Body.level.tab[i].details.length; iDet++){
-        if (mainJSON.Body.level.tab[i].details[iDet].V.indexOf(quote)!==-1){
+      for (iDet=0; iDet<mainJSON.Body.level.tab[i].det.length; iDet++){
+        if (mainJSON.Body.level.tab[i].det[iDet].V.indexOf(quote)!==-1){
             startQuote=newStartQuote;
             endQuote=newEndQuote;
         }
-        theRecord = theRecord + " " + mainJSON.Body.level.tab[i].details[iDet].F + startQuote +
-        mainJSON.Body.level.tab[i].details[iDet].V + endQuote;
+        theRecord = theRecord + " " + mainJSON.Body.level.tab[i].det[iDet].F + startQuote +
+        mainJSON.Body.level.tab[i].det[iDet].V + endQuote;
         if (startQuote===newStartQuote){
             startQuote=stdStartQuote;
             endQuote=stdEndQuote;
         }
-        if (mainJSON.Body.level.tab[i].details[iDet].nl===true){
+        if (mainJSON.Body.level.tab[i].det[iDet].nl===1){
           theRecord = theRecord + levelStr[0];
         }
       }
-      if (mainJSON.Body.level.tab[i].details.length===iDet  && iDet>0){
+      if (mainJSON.Body.level.tab[i].det.length===iDet  && iDet>0){
         theRecord = theRecord+'>'
       }
       for (var j=0; j<mainJSON.Body.level.tab[i].tab.length; j++){
@@ -67,22 +67,22 @@ export function onJSONtoXML(mainJSON:classMainOutFile, partial:boolean){
           }
         }
         
-        for (iDet=0; iDet<mainJSON.Body.level.tab[i].tab[j].details.length; iDet++){  
-          if (mainJSON.Body.level.tab[i].tab[j].details[iDet].V.indexOf(quote)!==-1){
+        for (iDet=0; iDet<mainJSON.Body.level.tab[i].tab[j].det.length; iDet++){  
+          if (mainJSON.Body.level.tab[i].tab[j].det[iDet].V.indexOf(quote)!==-1){
             startQuote=newStartQuote;
             endQuote=newEndQuote;
           }
-          theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].details[iDet].F + startQuote +
-          mainJSON.Body.level.tab[i].tab[j].details[iDet].V + endQuote;
+          theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].det[iDet].F + startQuote +
+          mainJSON.Body.level.tab[i].tab[j].det[iDet].V + endQuote;
           if (startQuote===newStartQuote){
             startQuote=stdStartQuote;
             endQuote=stdEndQuote;
           }
-          if (mainJSON.Body.level.tab[i].tab[j].details[iDet].nl===true){
+          if (mainJSON.Body.level.tab[i].tab[j].det[iDet].nl===1){
             theRecord = theRecord + levelStr[1] + theSpace;
           }
         }
-        if (mainJSON.Body.level.tab[i].tab[j].details.length===iDet  && iDet>0 && mainJSON.Body.level.tab[i].tab[j].type!=="T"){
+        if (mainJSON.Body.level.tab[i].tab[j].det.length===iDet  && iDet>0 && mainJSON.Body.level.tab[i].tab[j].type!=="T"){
           theRecord = theRecord+'>'
         }
         for (var k=0; k<mainJSON.Body.level.tab[i].tab[j].tab.length; k++){
@@ -95,22 +95,22 @@ export function onJSONtoXML(mainJSON:classMainOutFile, partial:boolean){
               theSpace = theSpace + spaceChar;
             }
           }
-          for (iDet=0; iDet<mainJSON.Body.level.tab[i].tab[j].tab[k].details.length; iDet++){
-            if (mainJSON.Body.level.tab[i].tab[j].tab[k].details[iDet].V.indexOf(quote)!==-1){
+          for (iDet=0; iDet<mainJSON.Body.level.tab[i].tab[j].tab[k].det.length; iDet++){
+            if (mainJSON.Body.level.tab[i].tab[j].tab[k].det[iDet].V.indexOf(quote)!==-1){
               startQuote=newStartQuote;
               endQuote=newEndQuote;
             }
-            theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].tab[k].details[iDet].F + startQuote +
-            mainJSON.Body.level.tab[i].tab[j].tab[k].details[iDet].V + endQuote;
+            theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].tab[k].det[iDet].F + startQuote +
+            mainJSON.Body.level.tab[i].tab[j].tab[k].det[iDet].V + endQuote;
             if (startQuote===newStartQuote){
               startQuote=stdStartQuote;
               endQuote=stdEndQuote;
             }
-            if (mainJSON.Body.level.tab[i].tab[j].tab[k].details[iDet].nl===true){
+            if (mainJSON.Body.level.tab[i].tab[j].tab[k].det[iDet].nl===1){
               theRecord = theRecord + levelStr[2] + theSpace;
             }
           }
-          if (mainJSON.Body.level.tab[i].tab[j].tab[k].details.length===iDet  && iDet>0  && mainJSON.Body.level.tab[i].tab[j].tab[k].type!=="T"){
+          if (mainJSON.Body.level.tab[i].tab[j].tab[k].det.length===iDet  && iDet>0  && mainJSON.Body.level.tab[i].tab[j].tab[k].type!=="T"){
             theRecord = theRecord+'>'
           }
           for (var l=0; l<mainJSON.Body.level.tab[i].tab[j].tab[k].tab.length; l++){
@@ -123,22 +123,22 @@ export function onJSONtoXML(mainJSON:classMainOutFile, partial:boolean){
                 theSpace = theSpace + spaceChar;
               }
             }
-            for (iDet=0; iDet<mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].details.length; iDet++){
-              if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].details[iDet].V.indexOf(quote)!==-1){
+            for (iDet=0; iDet<mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det.length; iDet++){
+              if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].V.indexOf(quote)!==-1){
                 startQuote=newStartQuote;
                 endQuote=newEndQuote;
               }
-              theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].details[iDet].F + startQuote +
-              mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].details[iDet].V + endQuote;
+              theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].F + startQuote +
+              mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].V + endQuote;
               if (startQuote===newStartQuote){
                 startQuote=stdStartQuote;
                 endQuote=stdEndQuote;
               }
-              if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].details[iDet].nl===true){
+              if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].nl===1){
                 theRecord = theRecord + levelStr[3] + theSpace;
               }
             }
-            if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].details.length===iDet && iDet>0){
+            if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det.length===iDet && iDet>0){
               theRecord = theRecord+mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].type;
             }
 
@@ -152,29 +152,29 @@ export function onJSONtoXML(mainJSON:classMainOutFile, partial:boolean){
                   theSpace = theSpace + spaceChar;
                 }
               }
-              for (iDet=0; iDet<mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details.length; iDet++){
-                if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].nlBefore===false){
-                  if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].V.indexOf(quote)!==-1){
-                    theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].F + "=\'" +
-                    mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].V + "\'";
+              for (iDet=0; iDet<mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det.length; iDet++){
+                if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].nlB===0){
+                  if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].V.indexOf(quote)!==-1){
+                    theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].F + "=\'" +
+                    mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].V + "\'";
                   } else {
-                    theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].F + '=\"' +
-                      mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].V + '\"';
+                    theRecord = theRecord + " " + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].F + '=\"' +
+                      mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].V + '\"';
                   }
                 } else {
-                  if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].V.indexOf(quote)!==-1){
-                    theRecord = theRecord + levelStr[4] + theSpace + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].F + "=\'" +
-                      mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].V + "\'";
+                  if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].V.indexOf(quote)!==-1){
+                    theRecord = theRecord + levelStr[4] + theSpace + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].F + "=\'" +
+                      mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].V + "\'";
                   } else {
-                    theRecord = theRecord + levelStr[4] + theSpace + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].F + '=\"' +
-                      mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].V +  '\"';
+                    theRecord = theRecord + levelStr[4] + theSpace + mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].F + '=\"' +
+                      mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].V +  '\"';
                   }
                 }
-                if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details[iDet].nl===true){
+                if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].nl===1){
                   theRecord = theRecord + levelStr[4] + theSpace;
                 }
               }
-              if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].details.length===iDet  && iDet>0){
+              if (mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det.length===iDet  && iDet>0){
                 theRecord = theRecord+mainJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].type;
               }
             }

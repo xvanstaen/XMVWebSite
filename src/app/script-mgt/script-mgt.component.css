@@ -1,0 +1,126 @@
+
+.buttons{
+    width:100px;
+    height:40px;
+    font-size:16px;
+    margin-left:10px;
+    background-color:cyan;
+    border-radius: 5px;
+    background-image: linear-gradient(cyan, lightcyan);
+    box-shadow: 2px 2px blue;
+    border: solid 1px blue;
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.buttons:hover{
+    background-color:rgb(48, 89, 159);
+    background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+  }
+
+.theScript{
+    font-size:14px;
+    margin-left:8px;
+    min-width:90%;
+    display:inline-block;
+    color:rgb(214, 35, 35);
+    text-align: left;;
+    
+}
+
+.even{
+    background-color:rgb(129, 160, 214);
+    
+}
+
+.odd{
+    background-color:rgb(142, 216, 183);
+}
+
+.theScript:hover{
+    background-color:rgb(9, 47, 112);
+    color:white;
+}
+
+.error{
+    width:400px;
+    display:inline-block; 
+    border:red 1px solid;
+    margin-left:25px;
+    color:red;
+    font-size:15px;
+    background-color: lightgrey;
+    }
+
+.skipLine{
+    display:inline-block;
+    width:100%;
+    margin-top:4px;
+    font-size:8px;
+}
+
+.boxGuided{
+    width:1000px;
+    border: solid 1px blue;
+    display:inline-block;
+    height:300px;
+}
+
+.title{
+    width:100%;
+    display:inline-block;
+    font-size:16px;
+    background-color: lightblue;
+    text-align: center;
+    padding-top:5px;
+    height:28px;
+
+}
+
+.label{
+    width:60Px;
+    color:blue;
+    display:inline-block;
+    font-size: 14px;
+    margin-left:8px;
+}
+
+.input{
+    width:100px;
+    color:blue;
+    display:inline-block;
+    font-size: 14px;;
+    border:none;
+}
+
+.summary{
+    width:100%; display:inline-block; height:25px; 
+    font-size:14px; color:green;
+}
+
+.action{
+    margin-left:5px;
+    width:20px;
+    height:20px;
+    display:inline-block;
+    background-color:cyan;
+    color:black;
+    border-radius: 30%;
+    margin-top:5px;
+}
+
+.action:hover{
+    background-color:red;
+    color:white;
+}
+
+.boxField{
+    margin-left:240px; display:inline-block;  border:1px solid blue;
+    width:700px;
+}
+
+.loop{
+    display:block;
+    width:220px;
+    float:left;
+}

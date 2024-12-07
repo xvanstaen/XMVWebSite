@@ -16,9 +16,10 @@ import { classMainOutFile , classOutStructure, classOutDetails, classOutTabLevel
 import { onXMLtoJSON } from "./convertXMLtoJSON";
 import { onJSONtoXML } from "./convertJSONtoXML";
 import { processDetails, copyDetails, removeSpecChar, copyData, copyMainOuttoMain, copyMainToMainOut } from "./commonFns"
-import { fnExtractParam, fnProcessScript } from "./scriptFns"
+import { fnExtractParam, fnProcessScript } from "../script-mgt/scriptFns"
 
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
+import { ScriptMgtComponent } from "../script-mgt/script-mgt.component";
 
 export class classParamFiles{
   name:string="";
@@ -37,7 +38,7 @@ export class classFilterParam{
   templateUrl: './kiosk-abd-config.component.html',
   styleUrl: './kiosk-abd-config.component.css',
   standalone: true, 
-  imports:[CommonModule, FormsModule, ReactiveFormsModule,], //, SelectServerComponent
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ScriptMgtComponent], //, SelectServerComponent
 
 })
 export class KioskAbdConfigComponent {
@@ -50,10 +51,6 @@ export class KioskAbdConfigComponent {
     @Input() identification=new LoginIdentif; 
     @Input() configServer=new configServer;
     @Input() devMode:string="";
-    //@Input() credentials = new classCredentials;
-    //@Input() credentialsMongo = new classCredentials;
-    //@Input() credentialsFS = new classCredentials;
-
   
     myForm: FormGroup = new FormGroup({
       dataXML: new FormControl('', { nonNullable: true }),
@@ -122,16 +119,6 @@ export class KioskAbdConfigComponent {
     tempMainJson=new classMainFile;
     tempXML:string=""
 
-    paramInputFile:Array<classParamFiles>=[]
-    //nameRetrievedFile:string='';
-    //fileType:string="";
-  
-    nameLocation:string="";
-    domainTabParam=['field="','value="'];
-    selectTabParam:Array<string>=['tag="','field="', 'fromValue="', 'toValue="'];
-    filterTabParam=['tag="','field="'];
-    replaceTabParam:Array<string>=['tag="','refField="', 'withValue="', 'changeField="'];
-
     processFile:boolean=false;
     specQuote='"';
     stdQuote="'"
@@ -188,9 +175,17 @@ export class KioskAbdConfigComponent {
 
       }
   }
-  
-  onInputScript(event:any){
-        this.modifiedScriptContent=event.target.value;
+
+  onProcessScript(event:any){
+    this.processFile = true;
+    this.scriptError="";
+    this.scriptFn = event;
+    const response= fnProcessScript(this.modifiedScriptContent, this.mainOutJSON, this.scriptFn);
+    if (response.status===0){
+      this.mainOutJSON=response.record;
+    }
+    this.scriptError=response.errMsg;
+    this.processFile = false;
   }
 
   onConvertJsonToXML(event:any){
@@ -207,17 +202,6 @@ export class KioskAbdConfigComponent {
       this.processFile = false;
   }
 
-  onProcessScript(){
-    this.processFile = true;
-    this.scriptError="";
-    const response= fnProcessScript(this.modifiedScriptContent, this.isMainJson, this.mainOutJSON, this.scriptFn, this.domainTabParam, this.selectTabParam, this.filterTabParam, this.replaceTabParam);
-    if (response.status===0){
-      this.mainOutJSON=response.record;
-    }
-    this.scriptError=response.errMsg;
-    this.mainOutJSON=response.record;
-    this.processFile = false;
-  }
 
   readFileServer(){
       this.getRecord(this.myForm.controls["bucket"].value, this.myForm.controls["object"].value,0);
@@ -245,14 +229,7 @@ export class KioskAbdConfigComponent {
     this.error="file not found or server is down";
     this.noSubmit=false;
   }
-      
-  onSelectedScript(event:any){
-    //this.scriptFileContent
-    this.currentScript=event;
-    this.scriptError="";
-    this.error="";
-    this.modifiedScriptContent=this.scriptFileContent[this.currentScript];
-  }
+
 
 
   onGetReturn(data:any){
@@ -383,40 +360,25 @@ export class KioskAbdConfigComponent {
     this.isConfirmSaveXML=true;
   }
 
-  confirmSaveScript(){
-    this.scriptError="";
-    this.isConfirmSaveScript=true;
-    if (this.currentScript>-1){
-      this.myForm.controls['fileScriptName'].setValue(this.scriptFileName[this.currentScript]);
-    }
-  }
-
+  actionSave:string="";
   onSaveScript(event:any){
-    this.isConfirmSaveScript=false;
-    this.scriptError="";
-    if (event!=="cancel"){
-      // check if the name already exists otherwise create one
-      for (var i=0; i<this.scriptFileContent.length &&  this.scriptFileName[i]!==this.myForm.controls['fileScriptName'].value; i++){}
-      if (i===this.scriptFileContent.length){
-        this.currentScript=this.scriptFileContent.length;
-      }
-      this.scriptFileName[this.currentScript]=this.myForm.controls['fileScriptName'].value;
-      this.scriptFileContent[this.currentScript]=this.modifiedScriptContent;
-      if (event==="server"){
-        this.saveJSONFile(this.modifiedScriptContent, this.GoogleBucket,this.myForm.controls['fileScriptName'].value)
-      } else if (event==="local"){
-        this.postFileHTTP("localText",this.modifiedScriptContent,this.myForm.controls['fileScriptName'].value)
+    if (event.action!==undefined){
+      this.scriptError="";
+      this.actionSave="script";
+      if (event.action==="server"){
+          this.saveJSONFile(event.content, this.GoogleBucket,event.file)
+      } else if (event.action==="local"){
+          this.postFileHTTP("localText",event.content,event.file)
       } 
     }
   }
 
-  onCancelScript(){
-    this.modifiedScriptContent=this.scriptFileName[this.currentScript];
-  }
+
 
   saveFile(event:any){   
       this.isConfirmSave=false;
       this.isConfirmSaveXML=false;
+      this.actionSave="XML";
       if (event==="serverJSON"){
         this.mainJSON=new classMainFile;
         this.mainJSON=copyMainOuttoMain(this.mainOutJSON, this.mainJSON);
@@ -424,9 +386,9 @@ export class KioskAbdConfigComponent {
       } else if (event==="localJSON"){
         this.saveJSONFile(this.myForm.controls['dataXML'].value, this.GoogleBucket,this.myForm.controls['fileNameXML'].value)
       }
-      
   }
-
+  
+  afterSaveScript:any;
   saveJSONFile(record:any,bucket:string,object:string){ // NOT TO BE USED FOR FILE TOO LARGE
   
     //this.configServer.googleServer="http://localhost:8080";
@@ -440,36 +402,25 @@ export class KioskAbdConfigComponent {
           if (res.body.status===700){
               this.afterSave=JSON.stringify(res.body.msg);
           } else {
-            this.afterSave='Successful Save of file ' + object;
+            if (this.actionSave==="script"){
+              this.afterSaveScript={status:200,msg:'Successful Save of file ' + object};
+            } else {
+              this.afterSave='Successful Save of file ' + object;
+            }
+            
           }
           console.log(this.afterSave);
         }
       },
         err => {
           console.log(JSON.stringify(err));
-          this.afterSave='Problem with Save of file ' + object;       }
-      )
+          if (this.actionSave==="script"){
+            this.afterSaveScript={status:400,msg:'Problem with Save of file "' + object + '"'};
+          } else {
+            this.afterSave='Problem with Save of file "' + object + '"';
+          }
+      })
     }
-
-    credentials = new classCredentials;
-  getDefaultCredentials(){
-      this.ManageGoogleService.getDefaultCredentials(this.configServer,true)
-            .subscribe(
-          (data ) => {
-              //this.configServer.googleServer=saveGoogleServer;
-              this.credentials.access_token=data.credentials.access_token;
-              this.credentials.id_token=data.credentials.id_token
-              this.credentials.refresh_token=data.credentials.refresh_token
-              this.credentials.token_type=data.credentials.token_type;
-              this.credentials.userServerId=data.credentials.userServerId;
-              this.credentials.creationDate=data.credentials.creationDate;
-
-          },
-          err => {
-            //this.configServer.googleServer=saveGoogleServer;
-            console.log(' error request credentials = '+ JSON.stringify(err));
-          });
-  }
 
   saveFileHTTP(event:string){
       this.isConfirmSave=false;
@@ -481,7 +432,7 @@ export class KioskAbdConfigComponent {
       } else if (event==="serverJSON"){
         this.mainJSON=new classMainFile;
         this.mainJSON=copyMainOuttoMain(this.mainOutJSON, this.mainJSON);
-        //this.saveJSONFile(JSON.stringify(this.mainOutJSON), this.GoogleBucket,this.myForm.controls['fileName'].value)
+        //this.saveJSONFile(JSON.stringify(this.mainJSON), this.GoogleBucket,this.myForm.controls['fileName'].value)
 
         this.postFileHTTP("server",this.mainJSON,this.myForm.controls["fileName"].value);
       } else if (event==="localXML"  ){
@@ -506,29 +457,71 @@ export class KioskAbdConfigComponent {
 
         var blob=new Blob([record], {type:"application/json"})
         saveAs(blob, fileName);
+        if (this.actionSave==="script"){
+          this.afterSaveScript={status:200,msg:'Successful Save of file "' + fileName+ '"'};
+        } else {
+          this.afterSave='Successful Save of file "' + fileName + '"';
+        }     
 
 
       } else if (server==="localText"){
 
         var blob=new Blob([record])
         saveAs(blob, fileName);
-
+        if (this.actionSave==="script"){
+          this.afterSaveScript={status:200,msg:'Successful Save of file "' + fileName+ '"'};
+        } else {
+          this.afterSave='Successful Save of file "' + fileName + '"';
+        }  
 
       } else {
         const HTTP_Address = Google_Bucket_Access_RootPOST + this.GoogleBucket + GoogleObject_Option + fileName;
         
         //var blob=new Blob([record], {type:"application/json"})
-        this.http.post(HTTP_Address,JSON.stringify(record),  { headers: theHeadersAll })
+        this.http.post(HTTP_Address,record,  { headers: theHeadersAll })
           .subscribe(
             data => {
               this.error='File is saved';
               console.log(JSON.stringify(data));
+              const cacheControl= 'public,max-age=0,no-cache,no-store';
+              const contentType= 'application/json';
+              this.ManageGoogleService.updateMetaData(this.configServer, this.GoogleBucket, fileName, cacheControl, contentType, [])
+              .subscribe(
+                (res) => {
+                  if (res.type===4 ){
+                    console.log(res);
+                  }
+                    
+                },
+                err => {
+                    console.log(err.message);
+                })
             },
             err => {
               this.error=err.message;
               console.log(JSON.stringify(err));       
             })
           }
+  }
+
+  credentials = new classCredentials;
+  getDefaultCredentials(){
+      this.ManageGoogleService.getDefaultCredentials(this.configServer,true)
+            .subscribe(
+          (data ) => {
+              //this.configServer.googleServer=saveGoogleServer;
+              this.credentials.access_token=data.credentials.access_token;
+              this.credentials.id_token=data.credentials.id_token
+              this.credentials.refresh_token=data.credentials.refresh_token
+              this.credentials.token_type=data.credentials.token_type;
+              this.credentials.userServerId=data.credentials.userServerId;
+              this.credentials.creationDate=data.credentials.creationDate;
+
+          },
+          err => {
+            //this.configServer.googleServer=saveGoogleServer;
+            console.log(' error request credentials = '+ JSON.stringify(err));
+          });
   }
 
     /****   CODE VALIDATED BUT NOT NEEDED
