@@ -70,9 +70,6 @@ export class KioskAbdConfigComponent {
 
     theId:string="";
 
-    scriptFn:Array<any>=["<#domain ","<#select ","<#replace ","<#filter "];
-    paramFiles:Array<classParamFiles>=[];
-
     scriptFileName:Array<string>=[];
     scriptFileContent:Array<string>=[];
     currentScript:number=-1;
@@ -179,8 +176,7 @@ export class KioskAbdConfigComponent {
   onProcessScript(event:any){
     this.processFile = true;
     this.scriptError="";
-    this.scriptFn = event;
-    const response= fnProcessScript(this.modifiedScriptContent, this.mainOutJSON, this.scriptFn);
+    const response= fnProcessScript(event, this.mainOutJSON);
     if (response.status===0){
       this.mainOutJSON=response.record;
     }

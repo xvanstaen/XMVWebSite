@@ -1,4 +1,16 @@
 
+.blockOne{
+    display:block; border:0px solid blue; float:left; width:120px;
+    height:30px; text-align: right; padding-right:10px; padding-top:3px;
+    
+}
+
+.blockTwo{
+    display:block; border:0px solid green;  width:750px;
+    float:left;
+    min-height:22px;
+}
+
 .buttons{
     width:100px;
     height:40px;
@@ -63,64 +75,187 @@
     width:1000px;
     border: solid 1px blue;
     display:inline-block;
-    height:300px;
+    min-height:300px;
+    background-color: cyan;
+}
+
+.subBoxGuided{
+    width:1000px;
+    border: solid 1px green;
+    display:inline-block;
+    min-height:30px;
+    
+}
+.colorDomain{
+    background-color: rgb(8, 125, 37);
+    color:white;
+}
+.colorSelect{
+    background-color: rgb(70, 63, 126);
+    color:white;
+}
+.colorFilter{
+    background-color: rgb(178, 52, 142);
+    color:white;
+}
+.colorReplace{
+    background-color: rgb(200, 59, 59);
+    color:white;
 }
 
 .title{
     width:100%;
     display:inline-block;
-    font-size:16px;
+    font-size:14px;
     background-color: lightblue;
     text-align: center;
     padding-top:5px;
-    height:28px;
+    height:18px;
 
+}
+
+.subTitle{
+width:100%; display:inline-block; font-size:12px; 
+min-height:20px; 
+border:2px red solid;
+}
+
+.subTitlePlus{
+    padding-top: 5px;
+    min-height:20px;
+    padding-left: 22px;
 }
 
 .label{
-    width:60Px;
-    color:blue;
+    width:50px;
     display:inline-block;
-    font-size: 14px;
-    margin-left:8px;
+    font-size: 10px;
+    margin-left:15px;
+    text-align: right;
+    padding-right:5px;  
 }
 
-.input{
-    width:100px;
+
+
+.labelLong{
+    width:80px;
+    display:inline-block;
+    font-size: 10px;
+    margin-left:15px;
+    text-align: right;
+    padding-right:5px;
+    border:0px white solid;
+}
+
+.inpField{
+    width:180px;
     color:blue;
     display:inline-block;
-    font-size: 14px;;
+    font-size: 11px;;
     border:none;
+    height:18px;
+}
+
+.inpColor{
+    background-color:lightblue;
 }
 
 .summary{
-    width:100%; display:inline-block; height:25px; 
+    width:100%; display:inline-block; height:20px; 
     font-size:14px; color:green;
+    
 }
 
 .action{
-    margin-left:5px;
-    width:20px;
-    height:20px;
+    padding-left:3px;
+    width:18px;
+    height:18px;
     display:inline-block;
-    background-color:cyan;
     color:black;
-    border-radius: 30%;
-    margin-top:5px;
+    border-radius: 50%;
+    margin-left:0px;
+}
+.actionA{
+    background-color:green; 
+}
+.actionD{
+    background-color:red;
+}
+.actionDsmall{
+    padding-left:4px;
+    width:18px;
+    height:18px;
+    display:inline-block;
+    background-color:red;
+    color:black;
+    border-radius: 50%;
+    text-align: center;
+    vertical-align: middle;
+    margin-left:0px;
 }
 
-.action:hover{
-    background-color:red;
+.posAct{
+    text-align: right;
+    margin-top:-2px;
+    margin-left:0px;
+    font-size:11px;
+
+}
+
+.posFieldFilter{
+    margin-left:0px;
+    margin-top:0px;
+    text-align: right;
+}
+
+.actionA:hover{
+    background-color:blue;
+    color:white;
+}
+
+.actionD:hover{
+    background-color:rgb(8, 8, 140);
     color:white;
 }
 
 .boxField{
-    margin-left:240px; display:inline-block;  border:1px solid blue;
-    width:700px;
+    margin-left:10px; display:inline-block;  
+    width:750px;
+    /*background-color: lightblue;*/
+    margin-top:2px;
+    min-height:20px;
+    border:0px solid rgb(255, 0, 64);
 }
 
 .loop{
-    display:block;
-    width:220px;
     float:left;
+    width:250px;
+    display:block;
+    border:0px green solid;
+    margin-top:2px;
+   
+}
+
+.posButton{
+    float:left;
+    display:block;
+}
+
+
+.evenReplace{
+    background-color: rgb(16, 127, 196);
+}
+
+.oddReplace{
+    background-color: rgb(8, 66, 102);
+}
+
+.newScript{
+    background-color: white;
+    width:600px;
+    display:inline-block;
+    margin-left:20px;
+    margin-bottom:10px;
+    padding:10px;
+
 }

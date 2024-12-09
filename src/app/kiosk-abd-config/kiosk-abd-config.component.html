@@ -66,9 +66,12 @@
         </div>
     </div>
 -->
-    <div *ngIf="isMainJson===true">
-        <app-script-mgt [mainOutJSON]="mainOutJSON" [processFile]="processFile" [afterSaveScript]="afterSaveScript"
-            [mainJSON]="mainJSON" (saveScript)="onSaveScript($event)" (processScript)="onProcessScript($event)">
+<!--
+*ngIf="isMainJson===true"
+-->
+    <div >
+        <app-script-mgt [isMainJson]="isMainJson" [afterSaveScript]="afterSaveScript"
+            (saveScript)="onSaveScript($event)" (processScript)="onProcessScript($event)">
         </app-script-mgt>
     </div>
 

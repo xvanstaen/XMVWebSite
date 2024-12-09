@@ -1,21 +1,10 @@
 import { removeSpecChar, removeChar } from "../kiosk-abd-config/commonFns";
+import { classSubConf, classReplace, classFilterParam, classChangeField, classDataScript } from "./classScriptFns";
 
-export class classParamFiles{
-    name:string="";
-    bucket:string="";
-    server:string="";
-  }
-  
-  export class classFilterParam{
-    tag:string="";
-    field:string="";
-  }
-
-  export class classTabReplace{
-    tag:string="";
-    old:string="";
-    new:string="";
-  }
+export class classFnParam{
+  val:string="";
+  cond:string="";
+}
 
 export function searchFn(str:string, scriptFn:any, refFn:number){
     for (var i=0; i<scriptFn.length && refFn===-1; i++){
@@ -27,200 +16,269 @@ export function searchFn(str:string, scriptFn:any, refFn:number){
     return refFn;
 }
 
-export function fnExtractParam(str:string, tabFields:any, dom:string, specChar:string){
-    var returnTab:Array<string>=[];
-    var scriptError="";
-    var eField=0;
-    var sField=0;
-    var iTab=-1;
-    for (var i=0; i<tabFields.length; i++){
-      sField=str.indexOf(tabFields[i]);
+export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any){
+  const domainTabParam:Array<classFnParam>=[{val:'field="',cond:'M'},{val:'value="',cond:'M'}];
+  const selectTabParam:Array<classFnParam>=[{val:'tag="',cond:'M'},{val:'field="',cond:'M'}, {val:'fromValue="',cond:'M'}, {val:'toValue="',cond:'O'}];
+  const filterTabParam:Array<classFnParam>=[{val:'tag="',cond:'M'},{val:'subTag="',cond:'O'},{val:'field="',cond:'O'} ];
+  const replaceTabParam:Array<classFnParam>=[{val:'tag="',cond:'M'},{val:'refField="',cond:'M'},{val: 'withValue="',cond:'M'},{val:'changeField="',cond:'M'}];
+  var dataScript=new classDataScript;
+  var workStr= modifiedScriptContent+"        ";
+  const startComment="<!--";
+  const endComment="-->";
+  const separa="<#";
+  var iDomain=-1;
+  var iSpace=0;
+  var endParam=0;
+  var scriptError="";
+
+  var sPos=workStr.indexOf(startComment);
+  var ePos=workStr.indexOf(endComment);
+  while (sPos>-1 && scriptError===""){
+      if (ePos==-1 || ePos<sPos){
+          return({tab:dataScript,msg:"Error with your comments; must be <!-- .... --!>", status:400})
+      } else {
+          workStr=workStr.substr(0,sPos) + workStr.substring(ePos+endComment.length+1)
+      }
+      sPos=workStr.indexOf(startComment);
+      ePos=workStr.indexOf(endComment);
+  }
+  // search all functions
+  sPos=workStr.indexOf(separa);
+   while (sPos>-1 && scriptError===""){
+    var refFn=-1;
+    iSpace=workStr.substring(sPos).indexOf(" ");
+    if (iSpace >-1 ) {
+        refFn = searchFn(workStr.substring(sPos,sPos+iSpace+1).toLowerCase(), scriptFn, refFn);
+        if (refFn!==-1){ // get the parameters of this function
+            endParam=workStr.substring(sPos+separa.length).indexOf(separa)+separa.length;
+            if (endParam===separa.length-1){
+                endParam=workStr.substring(sPos+separa.length).length;
+            }
+            if (refFn===0){
+                const response = onDomainParam(workStr.substring(sPos+separa.length,endParam), domainTabParam);
+                if (typeof response === 'string'){
+                    return ({record:dataScript,errMsg:response, status:400}); 
+                } 
+                dataScript.dom.field=response[0];
+                dataScript.dom.value=response[1];
+            } else if (refFn===1 ){
+                const specChar='"';
+                var data = fnExtractParam(workStr.substring(sPos+separa.length,endParam),selectTabParam,"Select",specChar);
+                if (data.err !== ""){
+                  return({tab:dataScript,msg:data.err, status:400})
+
+                } 
+                if (data.tab[0]!=="<ABDConfig "){
+                  return({tab:dataScript,msg:' value of the tag must be "<ABDConfig " - update your script', status:400})
+                }
+                dataScript.select.tag=data.tab[0];
+                dataScript.select.field=data.tab[1];
+                dataScript.select.fromValue=data.tab[2];
+                dataScript.select.toValue=data.tab[3];
+            } else if (refFn===2 ){
+                const response=extractFilter(workStr.substring(sPos+separa.length,endParam), filterTabParam);
+                if (response.status !== 200){
+                  return({tab:response.tab,msg:response.msg, status:400})
+                } 
+                dataScript.filter=response.tab.filter;
+            } else if (refFn===3 ){
+              const response=fnExtractReplace(dataScript,workStr.substring(sPos+separa.length,endParam),replaceTabParam);
+              if (response.status !== 200){
+                return({tab:response.tab,msg:response.msg, status:400})
+                } 
+              dataScript.replace=response.tab.replace;
+            } 
+            workStr=workStr.substring(endParam);
+        } else {
+            scriptError=scriptError + "Function does not exist " + workStr.substring(sPos,iSpace+2);
+            return({tab:dataScript,msg:scriptError, status:400})
+        }
+    } else {
+        scriptError=" start of function found but following space not found. Script is stopped";
+        return({tab:dataScript,msg:scriptError, status:400})
+     }
+     sPos=workStr.indexOf(separa);
+  }
+  return({tab:dataScript, msg:"", status:200})
+}
+
+
+function extractFilter(str:string, filterTabParam:any){
+  var scriptError='';
+  const specChar='"';
+  var dataScript=new classDataScript;
+  var workStr=str;
+  const ABDConf="<ABDConfig ";
+  while (workStr.trim()!==""){
+    var startTab=workStr.indexOf("[");
+    var endTab=workStr.indexOf("]");
+    if (startTab===-1 || endTab===-1 || endTab<=startTab){
+      if (workStr.length>=10){
+        scriptError=" pb with the format of the <filter function - string = " + workStr;
+        return ({tab:dataScript,msg:scriptError,status:400})
+      }
+      workStr="";
+    } else {
+      // find the parameters
+      var data = fnExtractParam(workStr.substring(startTab+1, endTab), filterTabParam,"Filter",specChar);
+      if (data.err !== ""){
+        scriptError=data.err;
+        workStr="";
+        return ({tab:dataScript,msg:data.err,status:400})
+      } else {
+          if (ABDConf===data.tab[0]){
+            dataScript.filter.tagConf=data.tab[0];
+            dataScript.filter.fieldConf=extractFields(data.tab[1],dataScript.filter.fieldConf);
+          } else {
+            const filterA=new classSubConf;
+            dataScript.filter.subConf.push(filterA);
+            dataScript.filter.subConf[dataScript.filter.subConf.length-1].tag=data.tab[0];
+            dataScript.filter.subConf[dataScript.filter.subConf.length-1].subTag=data.tab[1];
+            dataScript.filter.subConf[dataScript.filter.subConf.length-1].field=extractFields(data.tab[2],dataScript.filter.subConf[dataScript.filter.subConf.length-1].field);
+          }
+          workStr=workStr.substring(endTab+2);
+      }
+    }
+  }
+  return ({tab:dataScript,msg:"",status:200})
+}
+
+function fnExtractReplace(dataScript:classDataScript,str:string,selectTabReplace:any ){
+  var specChar='"';
+  var myValTab:Array<string>=[];
+  var data = fnExtractParam(str,selectTabReplace,"Replace",specChar);
+  var tabChangeParam=[{val:"tag:'",cond:'M'},{val:"old:'",cond:'M'},{val:"new:'",cond:'M'}];
+  const totalFields=4;
+  if (data.err !== ""){
+    return ({tab:dataScript,msg:data.err,status:400});
+  } 
+  myValTab=data.tab;
+  specChar="'";
+
+
+  for (var iData=0; iData<data.tab.length; iData=iData+totalFields){
+    var theValues = fnExtractParam(data.tab[iData+totalFields-1],tabChangeParam,"extract values for Replace", specChar);
+    if (theValues.err !== ""){
+      return ({tab:dataScript,msg:theValues.err,status:400});
+    } 
+    var j=-1;
+    const replace=new classReplace;
+    dataScript.replace.push(replace);
+    dataScript.replace[dataScript.replace.length-1].tag=data.tab[iData];
+    dataScript.replace[dataScript.replace.length-1].refField=data.tab[iData + 1];
+    dataScript.replace[dataScript.replace.length-1].withValue=data.tab[iData + 2];
+    for (var i=0; i<theValues.tab.length;i++){
+      j++;
+      const change=new classChangeField;
+      dataScript.replace[dataScript.replace.length-1].changeField.push(change);
+      dataScript.replace[dataScript.replace.length-1].changeField[j].tag=theValues.tab[i];
+      i++;
+      dataScript.replace[dataScript.replace.length-1].changeField[j].old=theValues.tab[i];
+      i++;
+      dataScript.replace[dataScript.replace.length-1].changeField[j].new=theValues.tab[2];
+    }
+  }
+  return ({tab:dataScript,msg:"",status:200});
+}
+
+export function fnExtractParam(str:string, tabFields:any, fn:string, specChar:string){
+  var returnTab:Array<string>=[];
+  var eField=0;
+  var sField=0;
+  var iTab=-1;
+  for (var i=0; i<tabFields.length; i++){
+    sField=str.indexOf(tabFields[i].val);
   
-      if (sField===-1){
-        return ({tab:returnTab,err:"parameters of " + dom + "  are incorrect - refer to " + str});
-      } 
-      eField=str.substring(sField+tabFields[i].length).indexOf(specChar);
+    if (sField===-1 && tabFields[i].cond==="M"){
+      return ({tab:returnTab,err:"parameter " + tabFields[i].val + " of '" + fn + "'  is missing - refer to " + str});
+    } 
+    if (sField!==-1){
+      eField=str.substring(sField+tabFields[i].val.length).indexOf(specChar);
   
       if (eField===-1 ){
-          return({tab:returnTab,err:"parameters of " + dom + " are incorrect - refer to " + str});
+          return({tab:returnTab,err:"End tag missing for " + tabFields[i].val + " of " + fn + " - refer to " + str});
       } 
       iTab++
-      returnTab[iTab]=str.substring(sField+tabFields[i].length,sField+tabFields[i].length+eField);
+      returnTab[iTab]=str.substring(sField+tabFields[i].val.length,sField+tabFields[i].val.length+eField);
       if (i===tabFields.length-1){
-        str=str.substring(sField+tabFields[i].length+eField+1);
-        sField=str.indexOf(tabFields[0]);
+        str=str.substring(sField+tabFields[i].val.length+eField+1);
+        sField=str.indexOf(tabFields[0].val);
         if (sField!==-1){
           i=-1;
         }
       }
-    }
-    if (returnTab.length!==0){
-        return {tab:returnTab,err:""};
-    } else {
-        return {tab:returnTab,err:"Something is wrong with process " + dom};
+    } else if (sField===-1 && tabFields[i].cond==="O"){
+      iTab++
+      returnTab[iTab]="";
     }
   }
-
-export function fnProcessScript(modifiedScriptContent:string, mainOutJSON:any, scriptFn:any){
-    
-    const domainTabParam=['field="','value="'];
-    const selectTabParam:Array<string>=['tag="','field="', 'fromValue="', 'toValue="'];
-    const filterTabParam=['tag="','field="'];
-    const replaceTabParam:Array<string>=['tag="','refField="', 'withValue="', 'changeField="'];
-
-    var workStr= modifiedScriptContent+"        ";
-    const startComment="<!--";
-    const endComment="-->";
-    const separa="<#";
-    var status=0;
-    var iDomain=-1;
-    var iSpace=0;
-    var endParam=0;
-    var scriptError="";
-    var selectTabData:Array<string>=[];
-      // remove all comments and special character
-    var sPos=workStr.indexOf(startComment);
-    var ePos=workStr.indexOf(endComment);
-    while (sPos>-1 && scriptError===""){
-        if (ePos==-1 || ePos<sPos){
-            scriptError="Error with your comments; must be <!-- .... --!>"
-        } else {
-            workStr=workStr.substr(0,sPos) + workStr.substring(ePos+endComment.length+1)
-        }
-        sPos=workStr.indexOf(startComment);
-        ePos=workStr.indexOf(endComment);
-    }
-      // search all functions
-      //workStr=removeSpecChar(workStr);
-      //workStr=removeChar(workStr,"\n");
-    sPos=workStr.indexOf(separa);
-     while (sPos>-1 && scriptError===""){
-      var refFn=-1;
-      iSpace=workStr.substring(sPos).indexOf(" ");
-      if (iSpace >-1 ) {
-          refFn = searchFn(workStr.substring(sPos,sPos+iSpace+1).toLowerCase(), scriptFn, refFn);
-          if (refFn!==-1){ // get the parameters of this functions
-              endParam=workStr.substring(sPos+separa.length).indexOf(separa)+separa.length;
-              if (endParam===separa.length-1){
-                  endParam=workStr.substring(sPos+separa.length).length;
-              }
-                
-              if (refFn===0){
-                  const response=onDomainParam(workStr.substring(sPos+separa.length,endParam), domainTabParam, mainOutJSON);
-                  if (typeof response === 'string'){
-                      return ({record:mainOutJSON,errMsg:response, status:400}); 
-                  } 
-                  if (response.status===0){
-                      mainOutJSON=response.record;
-                      iDomain=response.iDom;
-                  } else {
-                      return ({record:mainOutJSON,errMsg:response.errMsg, status:400});
-                  }
-              } else if (refFn===1 && iDomain!==-1){
-                  const response=onSelectParam(workStr.substring(sPos+separa.length,endParam), mainOutJSON, selectTabParam,iDomain)
-                  if (typeof response === 'string'){
-                      scriptError = scriptError +  response;
-                  } else {
-                      mainOutJSON=response;
-                  }
-              } else if (refFn===2 && iDomain!==-1){
-                  const response=onReplaceParam(workStr.substring(sPos+separa.length,endParam), replaceTabParam, mainOutJSON,iDomain)
-                  if (typeof response === 'string'){
-                      scriptError = scriptError +  response;
-                  } else {
-                      mainOutJSON=response;
-                  }
-              } else if (refFn===3 && iDomain!==-1){
-                  const response=onFilterParam(workStr.substring(sPos+separa.length,endParam),filterTabParam, mainOutJSON,iDomain)
-                  if (response.status === 400){
-                      scriptError = scriptError + response.errMsg
-                  } else {
-                      mainOutJSON=response.record;
-                  }
-              } 
-              workStr=workStr.substring(endParam);
-          } else {
-              scriptError=scriptError + "Function does not exist " + workStr.substring(sPos,iSpace+2);
-          }
-      } else {
-          scriptError=" start of function found but following space not found. Script is stopped";
-          status=400;
-       }
-       sPos=workStr.indexOf(separa);
-    }
-    return ({record:mainOutJSON,errMsg:scriptError, status:status});
+  if (returnTab.length!==0){
+      return {tab:returnTab,err:""};
+  } else {
+       return {tab:returnTab,err:"Something is wrong with process related to " + fn};
+  }
 }
 
-export function selectDomain(field:string, value:string, mainOutJSON:any){
+export function fnProcessScript(dataScript:classDataScript, mainOutJSON:any){
+    var iDomain=0;
+    var response=selectDomain(dataScript, mainOutJSON);
+    if (response.status !== 200){
+        return ({record:mainOutJSON,errMsg:response.errMsg, status:400}); 
+    } 
+    mainOutJSON=response.record;
+    iDomain=response.iDom;
+    if (dataScript.select.tag!==""){
+      mainOutJSON=onProcessSelect(dataScript, mainOutJSON, iDomain);
+    }
+    if (dataScript.filter.tagConf !==""){
+      mainOutJSON=onProcessFilter(dataScript, mainOutJSON, iDomain);
+    }
+    if (dataScript.replace.length>0 && dataScript.replace[0].changeField.length>0 && 
+      dataScript.replace[0].tag!=="" && dataScript.replace[0].changeField[0].tag!==""){
+      mainOutJSON=onProcessReplace(dataScript, mainOutJSON,iDomain);
+    }
+    return ({record:mainOutJSON,errMsg:"", status:200});
+}
+
+export function onDomainParam(str:string, domainTabParam:any){
   const specChar='"';
+  var data = fnExtractParam(str, domainTabParam, "Domain", specChar);
+  if (data.err !== ""){
+    return data.err;
+  } 
+  return data.tab;
+}
+
+export function selectDomain(dataScript:classDataScript, mainOutJSON:any){
   const tagDomain="<ABDDomainConfig ";
   var iDomain=-1;
   for (var i=0; i<mainOutJSON.Body.level.tab.length; i++){
       mainOutJSON.Body.level.tab[i].disp=false;
       for (var iDet=0; iDet<mainOutJSON.Body.level.tab[i].det.length; iDet++){
-        if (mainOutJSON.Body.level.tab[i].det[iDet].F===field && 
-            mainOutJSON.Body.level.tab[i].det[iDet].V===value){
+        if (mainOutJSON.Body.level.tab[i].det[iDet].F===dataScript.dom.field && 
+            mainOutJSON.Body.level.tab[i].det[iDet].V===dataScript.dom.value){
             //mainOutJSON.Body.level.tab[i].det[iDet].disp=true;
             mainOutJSON.Body.level.tab[i].disp=true;
             iDomain=i;
-        } else {
-            //mainOutJSON.Body.level.tab[i].det[iDet].disp=false;
-        }
+        } 
       }
     }
-  var status=0;
+  var status=200;
   var errMsg="";
   if (iDomain===-1){
     status=400;
-    errMsg="DOmain is not found";
+    errMsg="Domain is not found";
 
   }
   return ({record:mainOutJSON, iDom:iDomain, status:status, errMsg:errMsg});
 }
 
-export function onFilterParam(str:string, filterTabParam:any, mainOutJSON:any,  iDomain:number){
-    var scriptError='';
-    const specChar='"';
-    var allLev2:boolean=true;
-    var allLev3:boolean=true;
-    var allLev4:boolean=true;
-    var found:boolean=false;
-    var workStr=str;
-    var selectTabData:Array<string>=[];
-    const ABDConf="<ABDConfig ";
-    var tabFields:Array<string[]>=[];
-    var filterTabTag=[];
-    var iFilter=-1;
-    while (workStr.trim()!==""){
-        var startTab=workStr.indexOf("[");
-        var endTab=workStr.indexOf("]");
-        if (startTab===-1 || endTab===-1 || endTab<=startTab){
-          if (workStr.length<10){
 
-          } else {
-            scriptError=" pb with the format of the <filter function - string = " + workStr;
-          }
-          workStr="";
-        } else {
-          // find the parameters
-          var data = fnExtractParam(workStr.substring(startTab+1, endTab), filterTabParam,"Filter",specChar);
-          if (data.err !== ""){
-            scriptError=data.err;
-            workStr="";
-          } else {
-              iFilter++
-              filterTabTag[iFilter]=data.tab[0];
-              var j=iFilter * 2 + 1;
-              var theFields:Array<string>=[];
-              theFields=extractFields(data.tab[1],theFields);
-              tabFields[iFilter]=[];
-              for (j=0; j<theFields.length; j++){
-                tabFields[iFilter][j]=theFields[j];
-              }
-              workStr=workStr.substring(endTab+2);
-          }
-        }
-    }
+
+export function onProcessFilter(dataScript:classDataScript, mainOutJSON:any,  iDomain:number){
+    const ABDConf="<ABDConfig ";
+    var iFilter=-1;
+    var found=false;
 
     var i = iDomain;
     for (var j=0; j<mainOutJSON.Body.level.tab[i].tab.length; j++){ // <ABDConfigs>
@@ -228,13 +286,14 @@ export function onFilterParam(str:string, filterTabParam:any, mainOutJSON:any,  
             found=false;
             if (mainOutJSON.Body.level.tab[i].tab[j].tab[k].disp===true){
                 // check if this tag must be kept as displayable
-                for (iFilter=0; iFilter<filterTabTag.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].name.trim()!==filterTabTag[iFilter].trim(); iFilter++){};
-                if (iFilter===filterTabTag.length){
+                //for (iFilter=0; iFilter<dataScript.filter.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].name.trim()!==dataScript.filter[iFilter].tag.trim(); iFilter++){};
+                //if (iFilter===dataScript.filter.length){
+                if (mainOutJSON.Body.level.tab[i].tab[j].tab[k].name.trim()!==dataScript.filter.tagConf.trim()){
                   mainOutJSON.Body.level.tab[i].tab[j].tab[k].disp=false; // remove from the display
                 } else { // check with elements to keep for the display
                   for (var iDet=0; iDet<mainOutJSON.Body.level.tab[i].tab[j].tab[k].det.length; iDet++){ 
-                    for (var iField=0; iField<tabFields[iFilter].length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].det[iDet].F.trim()!==tabFields[iFilter][iField].trim(); iField++){}
-                    if (iField===tabFields[iFilter].length){
+                    for (var iField=0; iField<dataScript.filter.fieldConf.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].det[iDet].F.trim()!==dataScript.filter.fieldConf[iField].trim(); iField++){}
+                    if (iField===dataScript.filter.fieldConf.length){
                         mainOutJSON.Body.level.tab[i].tab[j].tab[k].det[iDet].disp=false;
                     } else {
                         mainOutJSON.Body.level.tab[i].tab[j].tab[k].det[iDet].disp=true;
@@ -242,29 +301,33 @@ export function onFilterParam(str:string, filterTabParam:any, mainOutJSON:any,  
                   }
                                 // filter now levels 3 and 4
                   for (var l=0; l<mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab.length; l++){
-                    for (iFilter=0; iFilter<filterTabTag.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].name.trim()!==filterTabTag[iFilter].trim(); iFilter++){};
-                    if (iFilter===filterTabTag.length){
+                    for (iFilter=0; iFilter<dataScript.filter.subConf.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].name.trim()!==dataScript.filter.subConf[iFilter].tag.trim(); iFilter++){};
+                    if (iFilter===dataScript.filter.subConf.length){
                       mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].disp=false; // remove from the display
                     } else {
-                      for (var iDet=0; iDet<mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det.length; iDet++){ 
-                        for (var iField=0; iField<tabFields[iFilter].length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].F.trim()!==tabFields[iFilter][iField].trim(); iField++){}
-                        if (iField===tabFields[iFilter].length){
-                            mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].disp=false;
-                        } else {
-                            mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].disp=true;
+                      if (dataScript.filter.subConf[iFilter].subTag===""){
+                        for (var iDet=0; iDet<mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det.length; iDet++){ 
+                          for (var iField=0; iField<dataScript.filter.subConf[iField].field.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].F.trim()!==dataScript.filter.subConf[iFilter].field[iField].trim(); iField++){}
+                          if (iField===dataScript.filter.subConf[iFilter].field.length){
+                              mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].disp=false;
+                          } else {
+                              mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].disp=true;
+                          }
                         }
                       }
-                      for (var m=0; m<mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab.length; m++){
-                        for (iFilter=0; iFilter<filterTabTag.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].name.trim()!==filterTabTag[iFilter].trim(); iFilter++){};
-                        if (iFilter===filterTabTag.length){
-                          mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].disp=false; // remove from the display
-                        } else {
-                          for (var iDet=0; iDet<mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det.length; iDet++){ 
-                            for (var iField=0; iField<tabFields[iFilter].length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].F.trim()!==tabFields[iFilter][iField].trim(); iField++){}
-                            if (iField===tabFields[iFilter].length){
-                                mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].disp=false;
-                            } else {
-                                mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].disp=true;
+                      else {
+                        for (var m=0; m<mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab.length; m++){
+                          for (iFilter=0; iFilter<dataScript.filter.subConf.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].name.trim()!==dataScript.filter.subConf[iFilter].subTag.trim(); iFilter++){};
+                          if (iFilter===dataScript.filter.subConf.length){
+                            mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].disp=false; // remove from the display
+                          } else {
+                            for (var iDet=0; iDet<mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det.length; iDet++){ 
+                              for (var iField=0; iField<dataScript.filter.subConf[iFilter].field.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].F.trim()!==dataScript.filter.subConf[iFilter].field[iField].trim(); iField++){}
+                              if (iField===dataScript.filter.subConf[iFilter].field.length){
+                                  mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].disp=false;
+                              } else {
+                                  mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].tab[m].det[iDet].disp=true;
+                              }
                             }
                           }
                         }
@@ -276,11 +339,9 @@ export function onFilterParam(str:string, filterTabParam:any, mainOutJSON:any,  
         }
     }
 
-    if (filterTabTag.length>0){
-        return ({record:mainOutJSON, status:0,errMsg:scriptError});
-    } else {
-        return ({record:mainOutJSON,status:400,errMsg:scriptError});
-    }
+
+    //return ({record:mainOutJSON,status:200,errMsg:""});
+    return mainOutJSON;
   }
 
 export function extractFields(subStr:any, tabFields:any){
@@ -299,34 +360,23 @@ export function extractFields(subStr:any, tabFields:any){
     return tabFields;
 }
 
-export function onSelectParam(str:string, mainOutJSON:any, selectTabParam:any, iDomain:number){
-    var scriptError="";
-    const specChar='"';
-    var data = fnExtractParam(str,selectTabParam,"Select",specChar);
-    if (data.err !== ""){
-      return data.err;
-    } 
-    if (data.tab[0]!=="<ABDConfig "){
-      return ' value of the tag must be "<ABDConfig " - update your script'
-    }
-    // iDomain is the selected domain
-    // find the selected tags 
+export function onProcessSelect(dataScript:classDataScript, mainOutJSON:any, iDomain:number){
     var found=false;
     for (var j=0; j<mainOutJSON.Body.level.tab[iDomain].tab.length; j++){ // <ABDConfigs>
       for (var k=0; k<mainOutJSON.Body.level.tab[iDomain].tab[j].tab.length; k++){ // <ABDConfig ...........>
         found=false;
-        if (mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].name.trim()===data.tab[0].trim()){
+        if (mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].name.trim()===dataScript.select.tag.trim()){
             for (var iDet=0; iDet<mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det.length && 
-                    mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det[iDet].F.trim()!==data.tab[1].trim(); iDet++){}
+                    mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det[iDet].F.trim()!==dataScript.select.field.trim(); iDet++){}
             if (iDet<mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det.length){
               // check if the value corresponds
-              if (data.tab[3].trim()==="" && mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det[iDet].V.indexOf(data.tab[2])!==-1){
+              if (dataScript.select.toValue.trim()==="" && mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det[iDet].V.indexOf(dataScript.select.fromValue)!==-1){
                 mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].disp=true;
                 displayTwoLowerLevels(mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k], true);
                 found=true;
-              } else if (data.tab[3].trim()!==""){
-                 if (((mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det[iDet].V.substring(0,data.tab[3].length)<=data.tab[3])) &&
-                    (mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det[iDet].V.substring(0,data.tab[2].length)>=data.tab[2])){
+              } else if (dataScript.select.toValue.trim()!==""){
+                 if (((mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det[iDet].V.substring(0,dataScript.select.toValue.length)<=dataScript.select.toValue)) &&
+                    (mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].det[iDet].V.substring(0,dataScript.select.fromValue.length)>=dataScript.select.fromValue)){
                       mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k].disp=true;
                       displayTwoLowerLevels(mainOutJSON.Body.level.tab[iDomain].tab[j].tab[k], true);
                       found=true;
@@ -364,83 +414,53 @@ function displayTwoLowerLevels(level2Tab:any, value:boolean){
   return level2Tab;
 }
 
-export function onReplaceParam(str:string, selectTabReplace:any, mainOutJSON:any, iDomain:number){
-    var specChar='"';
-    var myValTab:Array<string>=[];
+export function onProcessReplace(dataScript:classDataScript, mainOutJSON:any, iDomain:number){
+
     var found=false;
-    var data = fnExtractParam(str,selectTabReplace,"Replace",specChar);
-    var tabValue:Array<classTabReplace>=[];
-    var tabChangeParam=["tag:'","old:'","new:'"];
-    const totalFields=4;
-    if (data.err !== ""){
-      return data.err;
-    } 
-    myValTab=data.tab;
-    specChar="'";
 
+    for (var iData=0; iData<dataScript.replace.length; iData++){
 
-    for (var iData=0; iData<data.tab.length; iData=iData+totalFields){
-      var theValues = fnExtractParam(data.tab[iData+totalFields-1],tabChangeParam,"extract values for Replace", specChar);
-      if (theValues.err !== ""){
-        return theValues.err;
-      } 
-      var j=-1;
-      tabValue=[];
-      for (var i=0; i<theValues.tab.length;i++){
-        j++;
-        const theClass=new classTabReplace;
-        tabValue.push(theClass)
-        tabValue[j].tag=theValues.tab[i];
-        i++;
-        tabValue[j].old=theValues.tab[i];
-        i++;
-        tabValue[j].new=theValues.tab[i];
-      }
         // find the appropriate tag and items
         // ckeck if values in iDomain must be changed
-        if (data.tab[iData]==="Domain" ){ // this is just to be sure that the same domain has been selected
-          //for (var iDet=0; iDet< mainOutJSON.Body.level.tab[iDomain].det.length && mainOutJSON.Body.level.tab[iDomain].det[iDet].name.trim()!==data.tab[2]; iDet++){}
-
-          //found=findTag(mainOutJSON.Body.level.tab[iDomain].det,data.tab,iData);
-          //if (found===true){
-            var result=changeValues(mainOutJSON.Body.level.tab[iDomain].det ,tabValue);
+        if (dataScript.replace[iData].tag==="Domain" ){ // this is just to be sure that the same domain has been selected
+            var result=changeValues(mainOutJSON.Body.level.tab[iDomain].det ,dataScript.replace[iData].changeField);
             mainOutJSON.Body.level.tab[iDomain].det=result.record;
           // }
         }
         else {
         
               for (var jTag=0; jTag<mainOutJSON.Body.level.tab[iDomain].tab.length; jTag++){
-                if (mainOutJSON.Body.level.tab[iDomain].tab[jTag].type!=="C" && mainOutJSON.Body.level.tab[iDomain].tab[jTag].name.indexOf(data.tab[iData])!==-1){
-                  found=findTag(mainOutJSON.Body.level.tab[iDomain].tab[jTag].det,data.tab,iData);
+                if (mainOutJSON.Body.level.tab[iDomain].tab[jTag].type!=="C" && mainOutJSON.Body.level.tab[iDomain].tab[jTag].name.indexOf(dataScript.replace[iData].tag)!==-1){
+                  found=findTag(mainOutJSON.Body.level.tab[iDomain].tab[jTag].det, dataScript.replace[iData]);
                   if (found===true){
-                    var result=changeValues(mainOutJSON.Body.level.tab[iDomain].tab[jTag].det ,tabValue);
+                    var result=changeValues(mainOutJSON.Body.level.tab[iDomain].tab[jTag].det ,dataScript.replace[iData].changeField);
                     mainOutJSON.Body.level.tab[iDomain].tab[jTag].det=result.record;
                   }
 
                 } else {
                   for (var kTag=0; kTag<mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab.length; kTag++){
-                    if (mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].type!=="C" && mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].name.indexOf(data.tab[iData])!==-1){
-                      found=findTag(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].det,data.tab,iData);
+                    if (mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].type!=="C" && mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].name.indexOf(dataScript.replace[iData].tag)!==-1){
+                      found=findTag(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].det,dataScript.replace[iData]);
                       if (found===true){
-                        var result=changeValues(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].det ,tabValue);
+                        var result=changeValues(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].det ,dataScript.replace[iData].changeField);
                         mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].det=result.record;
                       }
     
                     } else {
                       for (var lTag=0; lTag<mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab.length; lTag++){
-                        if (mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].type!=="C" && mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].name.indexOf(data.tab[iData])!==-1){
-                          found=findTag(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].det,data.tab,iData);
+                        if (mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].type!=="C" && mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].name.indexOf(dataScript.replace[iData].tag)!==-1){
+                          found=findTag(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].det,dataScript.replace[iData]);
                           if (found===true){
-                            var result=changeValues(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].det ,tabValue);
+                            var result=changeValues(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].det ,dataScript.replace[iData].changeField);
                             mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].det=result.record;
                           }
         
                         } else {
                           for (var mTag=0; mTag<mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab.length; mTag++){
-                            if (mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].type!=="C" && mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].name.indexOf(data.tab[iData])!==-1){
-                              found=findTag(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].det,data.tab,iData);
+                            if (mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].type!=="C" && mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].name.indexOf(dataScript.replace[iData].tag)!==-1){
+                              found=findTag(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].det,dataScript.replace[iData]);
                               if (found===true){
-                                var result=changeValues(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].det ,tabValue);
+                                var result=changeValues(mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].det ,dataScript.replace[iData].changeField);
                                 mainOutJSON.Body.level.tab[iDomain].tab[jTag].tab[kTag].tab[lTag].tab[mTag].det=result.record;
                               }
                             } 
@@ -459,11 +479,11 @@ export function onReplaceParam(str:string, selectTabReplace:any, mainOutJSON:any
 }
 
 
-function findTag(tabDetails:any, tabTag:any, iData:number){
+function findTag(tabDetails:any, tab:any){
   var found=false;
   for (var iDet=0; iDet<tabDetails.length && found===false; iDet++){
-      if (tabDetails[iDet].F===tabTag[iData+1] && 
-        tabDetails[iDet].V.indexOf(tabTag[iData+2])!==-1){
+      if (tabDetails[iDet].F===tab.refField && 
+        tabDetails[iDet].V.indexOf(tab.withValue)!==-1){
             found=true;
       } 
   }
@@ -481,17 +501,5 @@ function changeValues(tabDetails:any, tabValue:any){
   return ({record:tabDetails,found:found})
 }
 
-export function onDomainParam(str:string, domainTabParam:any, mainOutJSON:any){
-    var scriptError="";
-    const specChar='"';
-    var domainTabData:Array<string>=[];
-    var data = fnExtractParam(str, domainTabParam, "Domain", specChar);
-    if (data.err !== ""){
-      //scriptError=data;
-      return data.err;
-    } 
-    domainTabData=data.tab;
-    const result=selectDomain(domainTabData[0], domainTabData[1], mainOutJSON);
-    return result;
-}
+
 
