@@ -192,7 +192,7 @@ export class ScriptMgtComponent {
           this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] + ', ';
         }
       }
-
+      this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] +'"]';
 
       for (var i=0; i<this.scriptJsonContent[this.currentScript].filter.subConf.length; i++){
         this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] + this.nl + '[tag="' + this.scriptJsonContent[this.currentScript].filter.subConf[i].tag ;
@@ -212,7 +212,7 @@ export class ScriptMgtComponent {
       this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] + this.nl + ' #> ';
     }
     
-    if (this.scriptJsonContent[this.currentScript].replace[this.currentScript].tag!==""){
+    if (this.scriptJsonContent[this.currentScript].replace.length>0 && this.scriptJsonContent[this.currentScript].replace[0].tag!==""){
       this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] + this.nl + this.nl + "<#replace" ;
       for (var i=0; i<this.scriptJsonContent[this.currentScript].replace.length; i++){
         this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] + this.nl +  '[tag="'+ this.scriptJsonContent[this.currentScript].replace[i].tag + '" refField="' +
@@ -482,7 +482,14 @@ export class ScriptMgtComponent {
               const classA=new classDataScript;
               this.scriptJsonContent.push(classA);
               this.initDataScript(this.scriptJsonContent[this.currentScript]);
-              this.scriptJsonContent[this.currentScript]=response.tab;
+              this.scriptJsonContent[this.currentScript].dom=response.tab.dom;
+              this.scriptJsonContent[this.currentScript].select=response.tab.select;
+              if (response.tab.filter.tagConf!==undefined){
+                this.scriptJsonContent[this.currentScript].filter=response.tab.filter;
+              }
+              if (response.tab.replace.length>0){
+                this.scriptJsonContent[this.currentScript].replace=response.tab.replace;
+              }
               const saveGuided=this.isGuidedMode;
               this.onStartGuided();
               this.isGuidedMode=saveGuided;

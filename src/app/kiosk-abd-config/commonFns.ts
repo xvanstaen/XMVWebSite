@@ -115,7 +115,7 @@ export function removeChar(mainRecord:string, specChar:string){
 
 export function copyData(inTab:any,outTab:any, type:string){
     if (type==="mainOut"){
-      outTab.display=true;
+      outTab.disp=true;
      
     }
     outTab.name=inTab.name;

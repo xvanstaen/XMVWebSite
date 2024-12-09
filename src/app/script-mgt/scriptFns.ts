@@ -113,7 +113,7 @@ function extractFilter(str:string, filterTabParam:any){
     var startTab=workStr.indexOf("[");
     var endTab=workStr.indexOf("]");
     if (startTab===-1 || endTab===-1 || endTab<=startTab){
-      if (workStr.length>=10){
+      if (workStr.length>25 && workStr.indexOf("#>")>25){
         scriptError=" pb with the format of the <filter function - string = " + workStr;
         return ({tab:dataScript,msg:scriptError,status:400})
       }
@@ -128,7 +128,7 @@ function extractFilter(str:string, filterTabParam:any){
       } else {
           if (ABDConf===data.tab[0]){
             dataScript.filter.tagConf=data.tab[0];
-            dataScript.filter.fieldConf=extractFields(data.tab[1],dataScript.filter.fieldConf);
+            dataScript.filter.fieldConf=extractFields(data.tab[2],dataScript.filter.fieldConf);
           } else {
             const filterA=new classSubConf;
             dataScript.filter.subConf.push(filterA);
@@ -230,7 +230,7 @@ export function fnProcessScript(dataScript:classDataScript, mainOutJSON:any){
     if (dataScript.select.tag!==""){
       mainOutJSON=onProcessSelect(dataScript, mainOutJSON, iDomain);
     }
-    if (dataScript.filter.tagConf !==""){
+    if (dataScript.filter.tagConf !=="" && dataScript.filter.subConf.length>0){
       mainOutJSON=onProcessFilter(dataScript, mainOutJSON, iDomain);
     }
     if (dataScript.replace.length>0 && dataScript.replace[0].changeField.length>0 && 
@@ -307,7 +307,7 @@ export function onProcessFilter(dataScript:classDataScript, mainOutJSON:any,  iD
                     } else {
                       if (dataScript.filter.subConf[iFilter].subTag===""){
                         for (var iDet=0; iDet<mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det.length; iDet++){ 
-                          for (var iField=0; iField<dataScript.filter.subConf[iField].field.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].F.trim()!==dataScript.filter.subConf[iFilter].field[iField].trim(); iField++){}
+                          for (var iField=0; iField<dataScript.filter.subConf[iFilter].field.length && mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].F.trim()!==dataScript.filter.subConf[iFilter].field[iField].trim(); iField++){}
                           if (iField===dataScript.filter.subConf[iFilter].field.length){
                               mainOutJSON.Body.level.tab[i].tab[j].tab[k].tab[l].det[iDet].disp=false;
                           } else {
