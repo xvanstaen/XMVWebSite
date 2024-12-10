@@ -19,75 +19,86 @@
     <div class="title"> Guided mode</div>
     <div class="colorDomain">
         <div class="subTitle">
-            <div class="subTitlePlus" id="domName">Domain to select</div>
+            <span class="subTitlePlus">Domain to select</span>
+            <div class="thePlus">
             <div class="label"  >Field</div>
             <input class="inpField" value="{{scriptJsonContent[this.currentScript].dom.field}}" type="text" id="domField" (input)="onDomainInput($event)">
-            <div class="label"  >Value</div>
+            <div class="label"  style="margin-left:15px;">Value</div>
             <input class="inpField" value="{{scriptJsonContent[this.currentScript].dom.value}}" type="text" id="domValue" (input)="onDomainInput($event)">
+        </div>
         </div>
     </div>
     <div class="colorSelect">
         <div class="subTitle">
             <div class="subTitlePlus">Select Function</div>
-            <div style="display:block;">
-                <div class="labelLong "  >tag</div>
-                <input class="inpField" style="border-bottom: 1px blue solid;" value="{{scriptJsonContent[this.currentScript].select.tag}}" type="text" id="selTag" (input)="onSelectInput($event)">
-                <div class="labelLong" >field</div>
-                <input class="inpField" style="border-bottom: 1px blue solid;" value="{{scriptJsonContent[this.currentScript].select.field}}" type="text" id="selField" (input)="onSelectInput($event)">
-            </div>
-            <div style="display:block;">
-                <div class="labelLong "  >fromValue</div>
-                <input class="inpField"  value="{{scriptJsonContent[this.currentScript].select.fromValue}}" type="text" id="selFromV" (input)="onSelectInput($event)" >
-                <div class="labelLong" >toValue</div>
-                <input class="inpField"   value="{{scriptJsonContent[this.currentScript].select.toValue}}" type="text"id="selToV" (input)="onSelectInput($event)" >
+            <div class="thePlus thePlusTop">
+                <div class="label "  >tag</div>
+                <input class="inpField"  value="{{scriptJsonContent[this.currentScript].select.tag}}" type="text" id="selTag" (input)="onSelectInput($event)">
+                <div class="label"  style="margin-left:15px;">field</div>
+                <input class="inpField"  value="{{scriptJsonContent[this.currentScript].select.field}}" type="text" id="selField" (input)="onSelectInput($event)">
             </div>
         </div>
+            <div class="subTitlePlus" >&nbsp;</div>
+            <div class="thePlus thePlusTop">
+                <div class="label "  >fromValue</div>
+                <input class="inpField"  value="{{scriptJsonContent[this.currentScript].select.fromValue}}" type="text" id="selFromV" (input)="onSelectInput($event)" >
+                <div class="label" style="margin-left:15px;">toValue</div>
+                <input class="inpField"   value="{{scriptJsonContent[this.currentScript].select.toValue}}" type="text"id="selToV" (input)="onSelectInput($event)" >
+            </div>
+        
     </div>
      <div class="colorFilter">
         <div class="subTitle">
             <div class="subTitlePlus">Filter function  </div>
-           
-                <div style="width:100%; display:inline-block;">
-                    <div class="label"> Tag </div>
+            <div class="subTitle">
+                <div class="thePlus thePlusTop">
+                    
+                    <div class="label" style="margin-left:30px;"> Tag </div>
                     <input class="inpField" ng-readonly=&nbsp; type="text" id="tagConf" (input)="onFilterScript($event)" value="{{tagFilterDisp.tagConf}}"> 
                 </div>
-            <div class="blockOne">
-                <div class="label alignRight" >    
-                    <button class="action actionA" id="addConf-" (click)="addField($event)" >A</button>
-                    &nbsp;&nbsp;Field</div>
-            </div>   
-            <div class="blockTwo">
-                <div class="boxField">
-                    <div *ngFor="let tabF of tagFilterDisp.fieldConf; let j=index" >
-                        <div class="loop">
-                            <div class="posButton">
-                                <button   class="actionD actionDsmall" id="delConf-{{j}}" (click)="delField($event)" ><div id="delConf-{{j}}" class="posAct">D</div></button>&nbsp;&nbsp;
-                            </div>
-                            <input  type="text" class="inpField inpColor" (input)="onFilterScript($event)" id="fieldConf-{{j}}" value="{{tabF}}">
-                        </div>
+            </div>
+        </div>
+            
+        <div class="boxFieldTitle">
+            <div class="labelLong " >    
+                <button class="action actionA" id="addConf-" (click)="addField($event)" >A</button>
+                    &nbsp;&nbsp;Field(s)
+            </div>
+        </div>
+        <div class="thePlus thePlusFilter">
+            <div *ngFor="let tabF of tagFilterDisp.fieldConf; let j=index" >
+                <div class="loop">
+                    <div class="posButton">
+                        <button   class="actionD actionDsmall" id="delConf-{{j}}" (click)="delField($event)" ><div id="delConf-{{j}}" class="posAct">D</div></button>&nbsp;&nbsp;
+                    </div>
+                    <input  type="text" class="inpField inpColor" (input)="onFilterScript($event)" id="fieldConf-{{j}}" value="{{tabF}}">
+                </div>
+            </div>
+        </div>
+            
+        <div *ngFor="let tabT of tagFilterDisp.subConf; let i=index" >
+            <div class="subTitle">
+                <div class="thePlus thePlusFilter">
+                    <div class="label" style="margin-left:30px;"> Tag-{{i}} </div>
+                    <input class="inpField" type="text"  id="tagSubC-{{i}}" (input)="onFilterScript($event)" value="{{tagFilterDisp.subConf[i].tag}}"> 
+                    <div class="label" style="margin-left:15px;"> Sub-tag </div>
+                    <input class="inpField" type="text" id="subTagSubC-{{i}}" (input)="onFilterScript($event)" value="{{tagFilterDisp.subConf[i].subTag}}"> 
+                    <div class="labelLong " >    
+                        
+                        <button  class="action actionA"  id="addTag-{{i}}" (click)="addTag($event)" >A</button>&nbsp;&nbsp;
+                        <button  class="action actionD" id="delTag-{{i}}" (click)="delTag($event)" >D</button>
+                        
                     </div>
                 </div>
             </div>
-            
-            <div *ngFor="let tabT of tagFilterDisp.subConf; let i=index" >
-                <div style="width:100%; display:inline-block; margin-left:15px;">
-                    <div class="label"> Tag-{{i}} </div>
-                    <input class="inpField" type="text"  id="tagSubC-{{i}}" (input)="onFilterScript($event)" value="{{tagFilterDisp.subConf[i].tag}}"> 
-                    <div class="label"> Sub-tag </div>
-                    <input class="inpField" type="text" id="subTagSubC-{{i}}" (input)="onFilterScript($event)" value="{{tagFilterDisp.subConf[i].subTag}}"> 
-                    <div class="labelLong" >
-                        <button  class="action actionA" id="addTag-{{i}}" (click)="addTag($event)" >A</button>&nbsp;&nbsp;
-                        <button  class="action actionD" id="delTag-{{i}}" (click)="delTag($event)" >D</button>
-                    </div>
-                </div>
-            <div class="blockOne">
-                <div class="label alignRight" >    
+
+            <div class="boxFieldTitle">
+                <div class="labelLong " >   
                     <button class="action actionA" id="addSubConf-{{i}}" (click)="addField($event)" >A</button>
                     &nbsp;&nbsp;Field-{{i}}
                 </div>
             </div>
-            <div class="blockTwo">
-                <div class="boxField">
+            <div class="thePlus thePlusFilter">
                     <div *ngFor="let tabF of tagFilterDisp.subConf[i].field; let j=index" >
                         <div  class="loop">
                             <div class="posButton">
@@ -97,26 +108,23 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            </div>
-            <br>
         </div>
     </div>
     <div class="colorReplace">
         <div class="subTitle">
             <div class="subTitlePlus">Replace function</div>
             <div style="width:95%; display:inline-block; margin-left:20px;">
-                <div *ngFor="let tab of  scriptJsonContent[this.currentScript].replace; let i=index"  [ngClass]="{'evenReplace':i % 2===0,'oddReplace':i % 2!==0 }">
+                <div *ngFor="let tab of  scriptJsonContent[this.currentScript].replace; let i=index"  >
                     <div class="label" style="margin-left:0px;">
                         <button  class="action actionA" id="replaceAdd-{{i}}" (click)="addReplace($event)" >A</button>&nbsp;&nbsp;
                         <button  class="action actionD" id="replaceDel-{{i}}" (click)="delReplace($event)" >D</button>
                     </div>
                     <div class="label">tag-{{i}}</div>
-                    <input class="inpField" type="text"  id="tagN-{{i}}" (input)="(onReplaceInput($event))" value="{{tab.tag}}">
+                    <input class="inpField" style="color:white;" type="text"  [ngClass]="{'evenReplace':i % 2===0,'oddReplace':i % 2!==0 }" id="tagN-{{i}}" (input)="(onReplaceInput($event))" value="{{tab.tag}}">
                     <div class="labelLong">field</div>
-                    <input class="inpField" type="text" id="tagF-{{i}}" (input)="(onReplaceInput($event))" value="{{tab.refField}}">
+                    <input class="inpField" style="color:white;" type="text" [ngClass]="{'evenReplace':i % 2===0,'oddReplace':i % 2!==0 }" id="tagF-{{i}}" (input)="(onReplaceInput($event))" value="{{tab.refField}}">
                     <div class="labelLong">value</div>
-                    <input class="inpField" type="text"id="tagV-{{i}}" (input)="(onReplaceInput($event))" value="{{tab.withValue}}">
+                    <input class="inpField" style="color:white;" type="text" [ngClass]="{'evenReplace':i % 2===0,'oddReplace':i % 2!==0 }"  id="tagV-{{i}}" (input)="(onReplaceInput($event))" value="{{tab.withValue}}">
                     <div *ngFor="let change of scriptJsonContent[this.currentScript].replace[i].changeField; let j=index" >
                         <div style="width:100%; display:inline-block; ">
                             <div class="label" style="margin-left:0px;" >
@@ -124,11 +132,11 @@
                                 <button  class="action actionD" id="changeDel-{{i}}*{{j}}" (click)="delChange($event)" >D</button>
                             </div>
                             <div class="label">item-{{j}}</div>
-                            <input class="inpField" type="text"  id="changeT-{{i}}*{{j}}" (input)="(onReplaceInput($event))" value="{{change.tag}}" >
+                            <input class="inpField" style="color:white;" type="text" [ngClass]="{'evenReplace':i % 2===0,'oddReplace':i % 2!==0 }"  id="changeT-{{i}}*{{j}}" (input)="(onReplaceInput($event))" value="{{change.tag}}" >
                             <div class="labelLong">old value</div>
-                            <input class="inpField" type="text" id="changeO-{{i}}*{{j}}" (input)="(onReplaceInput($event))" value="{{change.old}}" >
+                            <input class="inpField" style="color:white;" type="text" [ngClass]="{'evenReplace':i % 2===0,'oddReplace':i % 2!==0 }" id="changeO-{{i}}*{{j}}" (input)="(onReplaceInput($event))" value="{{change.old}}" >
                             <div class="labelLong">new value</div>
-                            <input class="inpField" type="text" id="changeN-{{i}}*{{j}}" (input)="(onReplaceInput($event))" value="{{change.new}}" >
+                            <input class="inpField" style="color:white;" type="text" [ngClass]="{'evenReplace':i % 2===0,'oddReplace':i % 2!==0 }" id="changeN-{{i}}*{{j}}" (input)="(onReplaceInput($event))" value="{{change.new}}" >
                         </div>
                     </div>
                 </div>
@@ -137,24 +145,27 @@
     </div>
     <div class="newScript">
         <div class="summary"> 
-            <span style="color:rgb(14, 121, 28)">{{scriptFn[0]}}</span> 
+            <span style="color:rgb(14, 121, 28); font-size: 13px; font-weight:bolder;"  >{{scriptFn[0]}}</span> 
                 field="
             <span style="color:darkorange">{{scriptJsonContent[this.currentScript].dom.field}} </span>" value="'
-            <span style="color:darkorange">{{scriptJsonContent[this.currentScript].dom.value}}</span>" #>
+            <span style="color:darkorange">{{scriptJsonContent[this.currentScript].dom.value}}</span>" 
+            <span style="color:rgb(14, 121, 28); font-size: 13px; font-weight:bolder;"  >#>&nbsp;&nbsp;</span> 
         </div>
-        <div class="summary"> <span style="color:rgb(14, 121, 28)"> {{scriptFn[1]}}  </span><br>
+        <div class="summary"> <span style="color:rgb(14, 121, 28); font-size: 13px; font-weight:bolder;"  > {{scriptFn[1]}}  </span>
                 [tag="<span style="color:darkblue">{{scriptJsonContent[this.currentScript].select.tag}}</span> "&nbsp; field=" 
             <span style="color:darkorange">{{scriptJsonContent[this.currentScript].select.field}} </span>" fromValue="' 
             <span style="color:darkorange">{{scriptJsonContent[this.currentScript].select.fromValue}} </span>" toValue="' 
-            <span style="color:darkorange">{{scriptJsonContent[this.currentScript].select.toValue}} </span>" #>;
-        </div>
-        <div class="summary"> <span style="color:rgb(14, 121, 28)"> {{scriptFn[2]}} </span><br>
+            <span style="color:darkorange">{{scriptJsonContent[this.currentScript].select.toValue}} </span>" 
+            <span style="color:rgb(14, 121, 28); font-size: 13px; font-weight:bolder;"  >#>&nbsp;&nbsp;</span>
+        </div> 
+
+        <div class="summary"> <span style="color:rgb(14, 121, 28); font-size: 13px; font-weight:bolder;"  > {{scriptFn[2]}} </span>
             [tag="<span style="color:darkblue">{{scriptJsonContent[this.currentScript].filter.tagConf}}</span>"&nbsp; field="
             <span *ngFor="let tab of scriptJsonContent[this.currentScript].filter.fieldConf; let iDet=index">
                 <span style="color:darkorange"> {{scriptJsonContent[this.currentScript].filter.fieldConf[iDet]}}</span> 
                 <span *ngIf="iDet<scriptJsonContent[this.currentScript].filter.fieldConf.length-1">,&nbsp;</span>
             </span>
-            "]<br>
+            "]
             <span *ngFor="let tabT of scriptJsonContent[this.currentScript].filter.subConf; let i=index" >
                 [tag="<span style="color:darkblue">{{scriptJsonContent[this.currentScript].filter.subConf[i].tag}}</span>"&nbsp;" 
                 <span *ngIf="scriptJsonContent[this.currentScript].filter.subConf[i].subTag===''">
@@ -163,7 +174,7 @@
                         <span style="color:darkorange"> {{scriptJsonContent[this.currentScript].filter.subConf[i].field[iDet]}}</span> 
                         <span *ngIf="iDet<scriptJsonContent[this.currentScript].filter.subConf[i].field.length-1">,&nbsp;</span>
                     </span>
-                    "]<br>
+                    "]
                 </span>
                 <span *ngIf="scriptJsonContent[this.currentScript].filter.subConf[i].subTag!==''">
                     subTag="<span style="color:darkblue">{{scriptJsonContent[this.currentScript].filter.subConf[i].subTag}}</span>"&nbsp;" field="
@@ -171,18 +182,19 @@
                        <span style="color:darkorange"> {{scriptJsonContent[this.currentScript].filter.subConf[i].field[j]}}</span> 
                        <span *ngIf="j<scriptJsonContent[this.currentScript].filter.subConf[i].field.length-1">,&nbsp;</span>
                     </span>
-                    "]<br>
+                    "]
                 </span>
             </span>
-            <span style="color:rgb(14, 121, 28)">#></span> 
+            <span style="color:rgb(14, 121, 28); font-size: 13px; font-weight:bolder;"  >#></span> 
         </div>
-
-        <div class="summary"> <span style="color:rgb(14, 121, 28)"> {{scriptFn[3]}} </span>
-            <div *ngFor="let tab of scriptJsonContent[this.currentScript].replace; let i=index" >
+        <div class="summary">
+            <span  *ngFor="let tab of scriptJsonContent[this.currentScript].replace; let i=index" >
+               <div class="blockSum">
+                <span  *ngIf="i===0" style="color:rgb(14, 121, 28); font-size: 13px; font-weight:bolder;"  > {{scriptFn[3]}} </span>
                 [tag="<span style="color:darkblue">{{tab.tag}}</span>"&nbsp;" refField="
                 <span style="color:darkorange">{{tab.refField}}</span>"&nbsp;" withValue="
                 <span style="color:darkorange">{{tab.withValue}}</span>"
-                <br>
+                
                 <span>changeField="</span>
                 <span *ngFor="let change of scriptJsonContent[this.currentScript].replace[i].changeField; let j=index" >
                     {{openTag}}
@@ -194,12 +206,13 @@
                         {{closeTag}}
                     <span *ngIf="j<scriptJsonContent[this.currentScript].replace[i].changeField.length-1">,&nbsp;</span>
                 </span>
-                "<br>]<br>
+                "]
             </div>
-            <span style="color:rgb(14, 121, 28)">#></span> 
+            </span>
+            <span style="color:rgb(14, 121, 28); font-size: 13px; font-weight:bolder;"  >#></span> 
+           
         </div>
     </div>
-
 </div>
 
 

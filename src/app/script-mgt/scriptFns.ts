@@ -31,6 +31,8 @@ export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any)
   var endParam=0;
   var scriptError="";
 
+  var theStatus=200;
+
   var sPos=workStr.indexOf(startComment);
   var ePos=workStr.indexOf(endComment);
   while (sPos>-1 && scriptError===""){
@@ -44,7 +46,7 @@ export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any)
   }
   // search all functions
   sPos=workStr.indexOf(separa);
-   while (sPos>-1 && scriptError===""){
+   while (sPos>-1 ){
     var refFn=-1;
     iSpace=workStr.substring(sPos).indexOf(" ");
     if (iSpace >-1 ) {
@@ -57,36 +59,49 @@ export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any)
             if (refFn===0){
                 const response = onDomainParam(workStr.substring(sPos+separa.length,endParam), domainTabParam);
                 if (typeof response === 'string'){
-                    return ({record:dataScript,errMsg:response, status:400}); 
-                } 
-                dataScript.dom.field=response[0];
-                dataScript.dom.value=response[1];
+                  theStatus=400;
+                  return ({record:dataScript,errMsg:response, status:400}); 
+                } else {
+                  dataScript.dom.field=response[0];
+                  dataScript.dom.value=response[1];
+                }
+                
             } else if (refFn===1 ){
                 const specChar='"';
                 var data = fnExtractParam(workStr.substring(sPos+separa.length,endParam),selectTabParam,"Select",specChar);
                 if (data.err !== ""){
-                  return({tab:dataScript,msg:data.err, status:400})
+                  theStatus=400;
+                  scriptError=scriptError+data.err + '--- '
+                  //return({tab:dataScript,msg:data.err, status:400})
 
-                } 
-                if (data.tab[0]!=="<ABDConfig "){
-                  return({tab:dataScript,msg:' value of the tag must be "<ABDConfig " - update your script', status:400})
+                } else {
+                  dataScript.select.tag=data.tab[0];
+                  dataScript.select.field=data.tab[1];
+                  dataScript.select.fromValue=data.tab[2];
+                  dataScript.select.toValue=data.tab[3];
                 }
-                dataScript.select.tag=data.tab[0];
-                dataScript.select.field=data.tab[1];
-                dataScript.select.fromValue=data.tab[2];
-                dataScript.select.toValue=data.tab[3];
+                if (data.tab[0]!=="<ABDConfig "){
+                  theStatus=400;
+                  scriptError=scriptError+' value of the tag must be "<ABDConfig " - update your script' + '--- '
+                  //return({tab:dataScript,msg:' value of the tag must be "<ABDConfig " - update your script', status:400})
+                } 
+                
             } else if (refFn===2 ){
-                const response=extractFilter(workStr.substring(sPos+separa.length,endParam), filterTabParam);
+                const response=extractFilter(workStr.substring(sPos+separa.length,endParam), dataScript, filterTabParam);
                 if (response.status !== 200){
-                  return({tab:response.tab,msg:response.msg, status:400})
+                  theStatus=400;
+                  scriptError=scriptError + response.msg + " --";
+                  //return({tab:response.tab,msg:response.msg, status:400})
                 } 
-                dataScript.filter=response.tab.filter;
+                //dataScript.filter=response.tab.filter;
             } else if (refFn===3 ){
-              const response=fnExtractReplace(dataScript,workStr.substring(sPos+separa.length,endParam),replaceTabParam);
+              const response=fnExtractReplace(dataScript,workStr.substring(sPos+separa.length,endParam), replaceTabParam);
               if (response.status !== 200){
-                return({tab:response.tab,msg:response.msg, status:400})
+                  theStatus=400;
+                  scriptError=scriptError + response.msg + " --";
+                  //return({tab:response.tab,msg:response.msg, status:400})
                 } 
-              dataScript.replace=response.tab.replace;
+              //dataScript.replace=response.tab.replace;
             } 
             workStr=workStr.substring(endParam);
         } else {
@@ -99,14 +114,14 @@ export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any)
      }
      sPos=workStr.indexOf(separa);
   }
-  return({tab:dataScript, msg:"", status:200})
+
+  return({tab:dataScript, msg:scriptError, status:theStatus})
 }
 
 
-function extractFilter(str:string, filterTabParam:any){
+function extractFilter(str:string, dataScript:classDataScript, filterTabParam:any){
   var scriptError='';
   const specChar='"';
-  var dataScript=new classDataScript;
   var workStr=str;
   const ABDConf="<ABDConfig ";
   while (workStr.trim()!==""){
@@ -175,7 +190,7 @@ function fnExtractReplace(dataScript:classDataScript,str:string,selectTabReplace
       i++;
       dataScript.replace[dataScript.replace.length-1].changeField[j].old=theValues.tab[i];
       i++;
-      dataScript.replace[dataScript.replace.length-1].changeField[j].new=theValues.tab[2];
+      dataScript.replace[dataScript.replace.length-1].changeField[j].new=theValues.tab[i];
     }
   }
   return ({tab:dataScript,msg:"",status:200});

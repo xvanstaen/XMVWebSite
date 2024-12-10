@@ -1,14 +1,18 @@
+span{
+    height:20px;
+}
 
 .blockOne{
     display:block; border:0px solid blue; float:left; width:120px;
-    height:30px; text-align: right; padding-right:10px; padding-top:3px;
-    
+    height:25px; text-align: right; padding-right:10px; padding-top:10px;
+    background-color: lightgrey;
 }
 
 .blockTwo{
     display:block; border:0px solid green;  width:750px;
     float:left;
-    min-height:22px;
+    min-height: 25px;
+    background-color: lightyellow;
 }
 
 .buttons{
@@ -99,8 +103,16 @@
     color:white;
 }
 .colorReplace{
-    background-color: rgb(200, 59, 59);
+    background-color: rgb(16, 127, 196);
     color:white;
+}
+
+.evenReplace{
+    background-color: rgb(6, 153, 245);
+}
+
+.oddReplace{
+    background-color: rgb(17, 102, 155);
 }
 
 .title{
@@ -115,23 +127,66 @@
 }
 
 .subTitle{
-width:100%; display:inline-block; font-size:12px; 
+width:100%; display:inline-block; font-size:14px; 
 min-height:20px; 
-border:2px red solid;
+border:0px red solid;
 }
 
 .subTitlePlus{
-    padding-top: 5px;
+    font-size:12px;
+    font-weight: bold;
     min-height:20px;
-    padding-left: 22px;
+    padding-left: 15px;
+    min-width: 130px;
+    max-width: 130px;
+    border:0px red solid;
+    display:inline-block;
 }
+.thePlus{
+    font-size:12px;
+    font-weight: bold;
+    min-height:20px;
+    padding-left: 5px;
+    border:0px blue solid;
+    display:inline-block;
+}
+.thePlusTop{
+    min-width: 600px;
+    max-width:600px;
+}
+.thePlusFilter{
+    min-width: 800px;
+    max-width:800px;
+}
+
+.boxField{
+    margin-left:10px; 
+    display:inline-block;  
+    width:650px;
+    /*background-color: lightblue;*/
+    margin-top:2px;
+    min-height:20px;
+    border:0px solid rgb(255, 0, 64);
+}
+.boxFieldTitle{
+    font-size:12px;
+    font-weight: bold;
+    min-height:22px;
+    width: 130px;
+    border:0px blue solid;
+    display:block;
+    float:left;
+    padding-top:2px;
+}
+
+
 
 .label{
     width:50px;
     display:inline-block;
     font-size: 10px;
-    margin-left:15px;
-    text-align: right;
+    
+    text-align: left;
     padding-right:5px;  
 }
 
@@ -142,7 +197,7 @@ border:2px red solid;
     display:inline-block;
     font-size: 10px;
     margin-left:15px;
-    text-align: right;
+    text-align: left;
     padding-right:5px;
     border:0px white solid;
 }
@@ -160,11 +215,7 @@ border:2px red solid;
     background-color:lightblue;
 }
 
-.summary{
-    width:100%; display:inline-block; height:20px; 
-    font-size:14px; color:green;
-    
-}
+
 
 .action{
     padding-left:3px;
@@ -218,14 +269,6 @@ border:2px red solid;
     color:white;
 }
 
-.boxField{
-    margin-left:10px; display:inline-block;  
-    width:750px;
-    /*background-color: lightblue;*/
-    margin-top:2px;
-    min-height:20px;
-    border:0px solid rgb(255, 0, 64);
-}
 
 .loop{
     float:left;
@@ -241,21 +284,19 @@ border:2px red solid;
     display:block;
 }
 
-
-.evenReplace{
-    background-color: rgb(16, 127, 196);
+.summary{
+    width:100%; display:inline-block; min-height:18px; 
+    font-size:12px; color:green;
+    border:0px solid blue; 
 }
 
-.oddReplace{
-    background-color: rgb(8, 66, 102);
-}
 
 .newScript{
     background-color: white;
-    width:600px;
-    display:inline-block;
+    width:800px;
+    display:block;
     margin-left:20px;
     margin-bottom:10px;
     padding:10px;
-
+    min-height:80px;
 }
