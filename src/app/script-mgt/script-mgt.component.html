@@ -2,13 +2,13 @@
 
 
  <!--     Retrieve script file -->
-<div style="display:block; float:left; max-width:100px; margin-top:20px;">
+<div style="display:block; float:left; max-width:100px; margin-top:5px; margin-left:70px;">
     <label >
         <input id="retrieveScript" style=" display:none;" type="file" (change)="open($event)">
         <a class="buttons" style="padding-left:20px; margin-top:60px; " id="41"> Script to retrieve </a>
     </label>
 </div>
-<div style="overflow-y:scroll; display:inline-block; margin-left:20px; height:100px; width:300px; border:2px green solid; background-color:lightgray; text-align: center;">List of scripts retrieved<br>
+<div style=" overflow-y:scroll; display:inline-block; margin-left:20px; height:100px; width:300px; border:2px green solid; background-color:lightskyblue; text-align: center;">List of scripts retrieved<br>
     <li style="list-style-type: none;" *ngFor="let tab of scriptFileName; let i=index;"  (click)="onSelectedScript(i)">
         <span class="theScript even" *ngIf="i % 2 === 0" > {{i+1}} - {{tab}} </span>
         <span class="theScript odd"  *ngIf="i % 2 === 1" > {{i+1}} - {{tab}} </span>
@@ -216,31 +216,32 @@
 </div>
 
 
-<div [formGroup]="myForm" style="margin-top:10px; width:570px; display:block; margin-left:20px; ">
+<div [formGroup]="myForm" style="margin-top:5px; width:624px; display:block; margin-left:0px; border:2px green solid; background-color: lightskyblue;">
     <div > <!-- *ngIf="scriptFileName.length>0" -->
-        <div *ngIf="isGuidedMode===false" style="margin-top:10px; display:inline-block; max-height:100px; width:900px; border:blue solid 1px; background-color: lightblue;">
-            <div style=" margin-top:10px; max-width:900px;">Content of script : {{scriptFileName[currentScript]}}</div>
+        <div *ngIf="isGuidedMode===false" style="margin-left:2px; margin-top:5px; display:inline-block;  width:100%;  ">
+            <div style=" margin-top:5px; border:none; margin-left:10px; color:blue; font-weight:bolder; text-align: center;">{{scriptFileName[currentScript]}}</div>
 
-            <textarea style="width:900px; height:100px; overflow-y: scroll;" (input)="onInputScript($event)" type="text" value="{{modifiedScriptContent}}">
+            <textarea style="width:600px; height:200px; border:none; padding:10px; overflow-y: scroll;" (input)="onInputScript($event)" type="text" value="{{modifiedScriptContent}}">
             </textarea>
         </div>
         <div class="error" *ngIf="scriptError!==''">{{scriptError}}</div>
         <div *ngIf="isConfirmSaveScript===false" style="margin-top:10px; display:block;">
-            <div *ngIf="isGuidedMode===false">
-                <button id="53"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; "(click)='onStartGuided()' >Start guided</button>
-            </div>
-            <div *ngIf="isGuidedMode===true">
-                <button id="54"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; " (click)='onStopGuided()' >Stop guided</button>
-            </div>
-
+            <span *ngIf="isGuidedMode===false">
+                <button id="53"  class="buttons" style="width:140px;  font-size:13px; margin-left:5px; "(click)='onStartGuided()' >Guided mode</button>
+            </span>
+            <span *ngIf="isGuidedMode===true">
+                <button id="54"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; " (click)='onStopGuided()' >Stop Guided Mode</button>
+            </span>
+            <button *ngIf="isMainJson===true" id="61"  class="buttons" style="width:140px;  font-size:13px;" (click)='onProcessScript()'>Process Script</button>
         </div>
         <div *ngIf="isConfirmSaveScript===false" style="margin-top:10px; display:block;">
-            <button *ngIf="isMainJson===true" id="61"  class="buttons" style="width:140px;  font-size:13px;" (click)='onProcessScript()'>Process Script</button>
-            <button id="62"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; " (click)='confirmSaveScript()'>Save Script</button>
+
+            <button id="62"  class="buttons" style="width:140px;  font-size:13px; margin-left:5px; " (click)='confirmSaveScript()'>Save Script</button>
             <button id="63"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; "(click)='onCancelScript()' >Cancel updates</button>
+            <button id="64"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; "(click)='onClearScript()' >Clear content</button>
          </div>
          <div *ngIf="isConfirmSaveScript===false" style="margin-top:10px; display:block;">
-            <button id="64"  class="buttons" style="width:140px;  font-size:13px; margin-left:15px; "(click)='onClearScript()' >Clear content</button>
+
         </div>
         <div *ngIf="isConfirmSaveScript===true" style="margin-top:10px; display:block;">
             <span style="width:250px; border:blue solid 1px;background-color:white; ">Enter the name of the file </span><input type="text" formControlName="fileScriptName" value="fileScriptName" style="margin-left:20px; width:250px; height:30px; font-size:14px; color:blue; background-color:white;" >

@@ -20,7 +20,6 @@ The available functions are
 -->
 <#filter 
     [tag="<ABDConfig " field="ComputerName, IPAddress, PassportReaderModel"] 
-     [ & ] are mandatory separators
     [tag="<BiometricCamera" field="Disable, QualityThreshold, IlluminatorLevel"] 
     [tag="</ABDConfig> " field=""] 
 #> 

@@ -1,3 +1,41 @@
+@keyframes blinker {
+    0% {
+        left:120px; top:-10px;
+        background-color: lightskyblue;
+    }
+    25% {
+        left:120px; top:-25px;
+        background-color: lightgreen;
+    }
+    50% {
+        left:135px; top:-25px;
+        background-color: cyan;
+    }
+    75% {
+        left:135px; top:-10px;
+        background-color: lightgreen;
+    }
+    100% {
+        left:120px; top:-10px;
+        background-color: cyan;
+    }
+}
+@keyframes myBlink {
+    from {visibility: visible}
+    to {visibility:hidden}
+}
+
+.myBlinker{
+    animation-play-state:running; 
+    animation-duration: 5s; 
+    animation-name: blinker;
+    animation-iteration-count: infinite;
+    animation-delay:0s;
+    animation-direction: reverse;
+    position:relative;
+    width:380px;
+    text-align: center;
+}
 
 .theDiv{
 min-width:560px;

@@ -2,19 +2,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
-<div style="margin-left:20px; margin-top:15px; font-size:16px; display:block; margin-top:5px; width:450px; height:100px; color:blue; border:3px blue solid; background-color: lightsteelblue;">
-    <div style="font-size:16px; display:block; text-align: center; margin-top:5px; font-weight:bolder; width:100%; ">
-            Select the configuration file to process 
+<div style="margin-left:80px; margin-top:15px; font-size:16px; display:block; margin-top:5px; width:450px;  color:blue; border:3px blue solid; background-color: lightskyblue;"
+            [ngStyle]="{'height.px': (devMode==='local') ? 50 : 80}">
+    <div style="font-size:16px; display:inline-block; text-align: center; margin-top:5px; font-weight:bolder; width:100%; ">
+            <div style="padding-top:5px; padding-left:40px;display:block; float:left; min-width:55%;">Retrieve your configuration file</div>
+            <div style="display:block; text-align: left; min-width:20%;">
+            <label *ngIf="devMode==='local'">
+            <input id="mainFile" style=" display:none;" type="file"  (change)="open($event)">
+            <a class="buttons" style="width:60px; height:25px; padding-left:7px;padding-top:3px; margin-top:3px; display:inline-block;" id="mainFile"> Folder </a>
+            </label>
+            </div>
     </div>
 
-    <div style="margin-top:5px; display:inline-block; width:100%;  font-weight:normal;">
+    <div *ngIf="devMode!=='local'" style="margin-top:5px; display:inline-block; width:100%;  font-weight:normal;;">
         <label style="display:block; float:left; font-weight:normal;">
-            <span style="margin-left:15px;  ">from your </span>
+            <span >from your </span>
             <input id="mainFile" style=" display:none;" type="file"  (change)="open($event)">
-            <a class="buttons" style="padding-left:30px;padding-top:6px; margin-top:10px; display:inline-block;" id="mainFile"> Folder </a>
+            <a class="buttons" style="width:60px; height:25px; padding-left:15px;padding-top:3px; margin-top:3px; display:inline-block;" id="mainFile"> Folder </a>
         </label>
 
-        <div *ngIf="devMode!=='local'" style="margin-top:10px;  margin-left:15px;  "> 
+        <div  style="margin-top:10px;  margin-left:15px;  "> 
             <label style="margin-left:10px; font-weight:normal;">or from the</label>
             <button id="10"  class="buttons"  style="padding-left:15px; " (click)='onSelectServer()'>Server</button> 
         </div>  
@@ -28,13 +35,18 @@
     <div style="margin-top:20px; width:100%; display:block; height:170px;"></div>
 </div>
 -->
+<!--
+myBlink steps(1) 500ms infinite alternate
+<div  style="display:inline-block;  margin-left:20px; margin-top:2px; background-color: cyan; ">
+    <div class="myBlinker">&nbsp;&nbsp;&nbsp;File is being processed locally - be patient </div>
+</div>
+-->
 <div class="error">{{error}} </div>
 
-<div *ngIf="processFile===true" style="margin-left:20px; ">
-    <div  style=" display:inline-block;  margin-top:2px; background-color: cyan;">&nbsp;&nbsp;&nbsp;File is being processed&nbsp;&nbsp;&nbsp;</div>
-
+<div *ngIf="processFile===true" style=" display:inline-block; width:100%;">
+    <div  class="myBlinker">&nbsp;&nbsp;&nbsp;File is being processed locally - be patient &nbsp;&nbsp;&nbsp;<br> XML format will also be converted into JSON</div>
 </div>
-<div [formGroup]="myForm" style="margin-top:20px; width:570px; display:block; margin-left:20px; ">
+<div [formGroup]="myForm" style="margin-top:0px; width:570px; display:block; margin-left:20px; ">
     <div *ngIf="isFileLocal===false && isFileServer===true && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')"
             style="border:1px solid blue; background-color: cyan;">
         <div class="title">File to retrieve from Google Server</div>
@@ -69,6 +81,7 @@
 <!--
 *ngIf="isMainJson===true"
 -->
+<div *ngIf="processFile===false">
     <div >
         <app-script-mgt [isMainJson]="isMainJson" [afterSaveScript]="afterSaveScript"
             (saveScript)="onSaveScript($event)" (processScript)="onProcessScript($event)">
@@ -76,40 +89,41 @@
     </div>
 
     
-    <div *ngIf="isMainJson===true" style="display:block; margin-left:70px; margin-top:12px;">
-        <button id="44"  class="buttons" style="width:140px;  font-size:13px;" (click)='onConvertJsonToXML("All")'>Convert JSON to XML</button>
+    <div *ngIf="isMainJson===true" style="display:block; margin-left:0px; margin-top:5px;">
+        <button id="44"  class="buttons" style="width:140px;  margin-left:0px; font-size:13px;" (click)='onConvertJsonToXML("All")'>Convert JSON to XML</button>
         <button id="44"  class="buttons" style="width:140px;  font-size:13px; margin-left:40px;" (click)='onConvertJsonToXML("Partial")'>For selected Domain, convert JSON to XML</button>
     </div>
 
-    <div *ngIf="isXMLRetrieved===true" style="margin-top:10px;">
-        <div *ngIf="isDisplayXML===false">
+    <div *ngIf="isXMLRetrieved===true" style="margin-top:0px;">
+        <div *ngIf="isDisplayXML===false" style="margin-top:8px; margin-left:-10px;">
             <button id="41"  class="buttons" style="width:140px;  font-size:13px;" (click)='onDisplayXML("Yes")'>Display native XML</button>
         </div> 
 
         <div *ngIf="isDisplayXML===true">
-            <div *ngIf="isConfirmSaveXML===false" style="margin-top:20px; margin-left:20px; display:inline-block; width:900px;">
+            <div *ngIf="isConfirmSaveXML===false" style="margin-top:20px; margin-left:0px; display:inline-block; width:900px;">
                 <div [formGroup]="myForm">
-                    <input type="text" formControlName="fileNameXML" value="fileNameXML" style="margin-left:20px; width:250px; height:30px; font-size:14px; color:blue; background-color:white;" >
+                    <input type="text" formControlName="fileNameXML" value="fileNameXML" style="margin-left:0px; width:250px; height:30px; font-size:14px; color:blue; background-color:white;" >
                     <button id="40" class="buttons" style="font-size:13px;"  (click)='onDisplayXML("No")'>Hide native XML</button>
                     <button id="2"  class="buttons" style="font-size:13px;"  (click)='confirmSaveFileXML()'>Confirm save XML</button>
                 </div>
             </div>
-            <div *ngIf="isConfirmSaveXML===true" style="margin-top:30px; margin-left:20px; display:inline-block; width:900px;">
+            <div *ngIf="isConfirmSaveXML===true" style="margin-top:30px; display:inline-block; width:900px;">
     
                 <div  style=" height:30px; font-size:14px; color:blue; " >
-                    <span style="width:250px; border:blue solid 1px;background-color:white; "> {{myForm.controls['fileNameXML'].value}} </span>
+                    <span style="width:250px; border:green solid 1px;background-color:white; "> {{myForm.controls['fileNameXML'].value}} </span>
                 <button id="41"  class="buttons"   style="font-size:13px;"  (click)='onDisplayXML("No")'>Hide native XML</button>
                 <button id="33"  class="buttons"   style="font-size:13px; margin-left:15px;"  (click)='saveFileHTTP("serverXML")'>Save on server</button>
                 <button id="34"  class="buttons"   style="font-size:13px; margin-left:15px;"  (click)='saveFileHTTP("localXML")'>Download locally</button>
                 <button id="35"  class="buttons"   style="font-size:13px; margin-left:15px;"  (click)='saveFileHTTP("cancel")'>Cancel</button>
             </div>
         </div>
-        <div  id="inp1"  style=" display:block; margin-top:20px; overflow-y:scroll; background-color:lightgrey; width:1035px;  height:400px; margin-left:20px; border:solid 2px blue; ">
-            <textarea  style="width:1000px; height:400px; overflow-y:scroll; margin-left:10px;"   type="text" name="dataXML" formControlName="dataXML" value="dataXML" id="theChange"  > 
+       
+            <textarea  style="font-size:12px; width:1000px; height:400px; overflow-y:scroll; margin-top:6px;"   type="text" name="dataXML" formControlName="dataXML" value="dataXML" id="theChange"  > 
             </textarea>
-        </div>
+        
     </div>
     </div>
+</div>
 </div>
 
 <div *ngIf="isMainJson===true">
@@ -120,7 +134,7 @@
             <button id="2"  class="buttons"  style="font-size:13px;"   (click)='reinitOutFile()'>Cancel Updates</button>
         </div>
     </div>
-    <div *ngIf="isConfirmSave===true" style="margin-top:30px; margin-left:20px; display:inline-block; width:800px;">
+    <div *ngIf="isConfirmSave===true" style="margin-top:30px; margin-left:10px; display:inline-block; width:800px;">
 
             <div  style="margin-left:10px;  width:500px; height:30px; font-size:14px; color:blue; " >
                 <span style="width:250px; border:blue solid 1px;background-color:white; "> {{myForm.controls['fileName'].value}} </span>
@@ -131,7 +145,7 @@
     </div>
 </div>
 
-<div *ngIf="isMainJson===true" style="margin-top:20px; margin-left:10px;  overflow-y:scroll; display:block; height:500px; min-width:1035px;">
+<div *ngIf="isMainJson===true" style="font-size:13px; margin-top:20px; margin-left:10px;  overflow-y:scroll; display:block; height:500px; min-width:1035px;">
     <div style="min-width:1000px; margin-left:10px; background-color: rgb(143, 136, 136); color:white; display:inline-block; overflow-x:hidden; overflow-y: scroll;">
         <div style="margin-left:10px;display:inline-block;">{{mainOutJSON.Body.level.name}}&nbsp;&nbsp;&nbsp;
             <span style="display:inline-block;" *ngFor="let tab of mainOutJSON.Body.level.det; let m=index;">
