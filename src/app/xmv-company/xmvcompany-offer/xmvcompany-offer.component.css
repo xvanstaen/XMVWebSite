@@ -10,21 +10,19 @@
     }
     
 .Main_Page_Size{
+    display:block;
     float:left; 
-    margin-left:7%; 
-    margin-top:-530px;
-    width:92%;
-    height:500px;
+    margin-top:10px;
+    max-width:900px;
+    height:370px;
     opacity: 0.65;
-    padding-left:10px;
-    padding-right:10px;
     text-align: center;
     background-color:rgb(46, 78, 221);
     }
     
     
 .Main_Page_Text{
-    font-size:24px; 
+    font-size:18px; 
     margin-left:0px;
     color:white;
     font-weight:bold;
@@ -32,7 +30,7 @@
     
     
 .selectOffer{
-    margin-left:2%; 
+    margin-left:10px; 
     background-color:black;
     color:white;
     display:block;
@@ -64,12 +62,12 @@
 /* main text */
 h1{
     color:blue;
-    font-size:32;
+    font-size:26;
     font-weight:bold;
     }
 h2{
     color:rgb(35, 35, 209);
-    font-size:22;
+    font-size:18;
     }
     
 .el_contact{
@@ -106,13 +104,13 @@ h2{
     
     .myOffer{
     width: 90%;
-    margin-left: 2%;
+    margin-left: 10px;
     margin-top:0px;
     
     color:rgb(94, 77, 77);
-    font-size: 18px;
-    letter-spacing: 0.3px;
-    line-height: 30px;
+    font-size: 16px;
+    letter-spacing: 0px;
+    line-height: 20px;
     
     padding-right:10px;
     background-color:white;
@@ -120,7 +118,7 @@ h2{
     }
     
     .text_myOffer{
-    margin-left:30px;
+    margin-left:10px;
     }
     
     .text_highlight{
@@ -139,92 +137,30 @@ h2{
     }
     
     .Top_class{
-    margin-top:-9px;
-    }
-    
-    /*** ====================================== ***/
-    /*** ============== @media 1200 ================ ***/
-    /*** ====================================== ***/
-    @media only screen and (max-width: 1200px) {
-
-    .el_offer{
-    font-size:18px;
-    }
-    
-    .Main_Page_Text{
-    font-size:22px; 
-    }
+    margin-top:-4px;
     }
     
     
     /*** ====================================== ***/
-    /*** ============== @media 768 ================ ***/
+    /*** ============== @media 700 ================ ***/
     /*** ====================================== ***/
-    @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 900px) {
 
     .Main_Page_Size{
-        width:96%;
+        width:440px;
+        height:350px;
     }
 
     .el_offer{
     font-size:14px;
     }
 
-    .sizeMap{
-        margin-top: 35px;
-        }
-
     .Main_Page_Text{
-    font-size:20px; 
+    font-size:14px; 
     }
-    }
-    
-    /*** ====================================== ***/
-    /*** ============== @media 650 ================ ***/
-    /*** ====================================== ***/
-    @media only screen and (max-width: 650px) {
-
-   
     .selectOffer{
         height:22px;
         font-size:11px;
-            }
-        
-
-    .sizeMap{
-    height:560px;
-    margin-top:50px;
-    }
-    
-    .Main_Page_Size{
-    margin-left:2%;
-    line-height:25px;
-    height:560px;
-    margin-top:-560px;
-    }
-    
-    .Main_Page_Text{
-    font-size:18px; 
     }
     }
     
-    /*** ====================================== ***/
-    /*** ============== @media 420 ================ ***/
-    /*** ====================================== ***/
-    @media only screen and (max-width: 420px) {
-    .sizeMap{
-    height:730px;
-    margin-top:30px;
-    } 
-    
-    .Main_Page_Size{ 
-    margin-top:-730px;
-    height:730px;
-    }
-
-
-    .Main_Page_Text{
-        font-size:14px; 
-    }
-
-    }

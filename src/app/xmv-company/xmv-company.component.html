@@ -2,25 +2,16 @@
 
 
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
   <link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <!-- web site: https://emoji-css.afeld.me/ 
   other sites:
   https://www.kirupa.com/html5/emoji.htm
 -->
 
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="UTF-8">
-  <style>
-    .material-symbols-outlined {
-      font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 48
-    }
-    </style>
 </head>
 
 <body>  
@@ -35,110 +26,57 @@
     <br><br>
     </div>
     -->
-    <div class="pos_icons">
-        <div class=' div_icons' (click) = "Display_Contact()">
-         <!--
-            <mat-icon  (click)='RouteTo("login")' class="icon-login"> login</mat-icon> 
-          -->
-            <mat-icon  class='icons'> smartphone</mat-icon> 
-            <span class="icons_data">  +65 8268 0480</span>
-            <mat-icon   class=' icons-email' > email</mat-icon>   
-            <span class=" icons_data-email" >{{emailXMV}}</span>
-        </div>
+    
+    <div class="myInfo">
+      <div class="dispIcon alignIcon ">
+          <span class="material-symbols-outlined">smartphone</span> 
+      </div>
+      <div class="textIcon">+6582680480 </div>
+      <div class="dispIcon"> 
+        <span  class="material-symbols-outlined"> mail</span>
+      </div>
+      <div class="textIcon"> xvanstaen&#64;gmail.com </div>
     </div>
 
-    <div class="pos_options">
-      <div   *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Offer; else NoOffer">
-        <div class=' options firstOption options-text ' (click) = "Display_Offer()"><br>
-              Offer
-        </div>
-       <div class="dropdown arrow_down">
-          <span class="material-symbols-outlined arrow_down_size"  >
-            arrow_drop_down
-              <div class="dropdown-content" >
-                <span >
-                  <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetDigital') ">Digital Transf.</div>
-                  <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetFinance')">Finance</div>
-                  <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetCoaching')">Coaching</div>
-                  <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetTechnical')">Techn. Expert</div>
-                  <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetPgm')" >Projects</div>
-                </span>
-              </div>
-            </span>
-        </div>
-      </div>      
-
-      <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Profile; else NoProfile">
-          <div class=' options othertOption options-text option_background' (click) = "Display_Profile()" ><br >Profile</div>
+    <div class="pos_mylogo">
+      <div class='  mylogo smcirclesize example_two' >
+          <div class='smwhitecircle'>
+              <span class='smXMV'>XMV</span >
+              <span  class='smITConsulting'>IT Consulting</span >
+          </div>
       </div>
-      <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===HomePage; else NoHomePage">
-          <div class=' options otherOptions options-text option_background' (click) = "Display_HomePage()"> <br>Home</div>
-      </div>
-      <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Contact; else NoContact" > 
-          <div class=' options otherOptions options-text option_background' (click) = "Display_Contact()"><br>Contact</div>
-      </div>
-      <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===MyEvents && isConfigServerRetrieved===true; else Events" > 
-          <div class=' options otherOptions options-text option_background' (click) = "Display_Events()"><br>Login</div>
-      </div>
-
     </div>
 
-<div class="pos_mylogo">
-    <div class='  mylogo smcirclesize example_two' >
-        <div class='smwhitecircle'>
-            <span class='smXMV'>XMV</span >
-            <span  class='smITConsulting'>IT Consulting</span >
-        </div>
+    <div class="apps posProfile"  id="profile" (click) = "Display_Offer()">Offer</div>
+    <div class="posArrow">
+      <div class="drawArrowDown" id="arrow" (click)="dropDown($event)"></div> 
     </div>
-</div>
 
-
-<ng-template #NoOffer>
-        <div class=' options firstOption options-text ' (click) = "Display_Offer()"><br>
-          Offer
-        </div>
-        <div class="  dropdown arrow_down ">
-          <span class="material-symbols-outlined arrow_down_size"  >
-            arrow_drop_down
-          <div class="dropdown-content" >
-            <span >
+    <div *ngIf="isDropDown===true" class="dropDown">
+      <div class="dropdown-content" >
             <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetDigital') ">Digital Transf.</div>
             <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetFinance')">Finance</div>
             <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetCoaching')">Coaching</div>
             <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetTechnical')">Techn. Expert</div>
             <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetPgm')" >Projects</div>
-          </span>
-          </div>
-        </span>
       </div>
-   
-</ng-template>
-<ng-template #NoProfile>
-    <div class=' options othertOption options-text' (click) = "Display_Profile()"><br>Profile</div>
-</ng-template>
-<ng-template #NoContact>
-    <div class=' options othertOption options-text' (click) = "Display_Contact()"><br>Contact</div>
-</ng-template>
-<ng-template #NoHomePage>
-    <div class=' options othertOption options-text' (click) = "Display_HomePage()"><br>Home</div>
-</ng-template>
-<ng-template #Events>
-    <div *ngIf='isConfigServerRetrieved===true'>
-        <div class=' options othertOption options-text' (click) = "Display_Events()"><br>Login</div>
-    </div>
-</ng-template>
-   
+    </div>   
+    <div class="apps posApps" id="contact" (click)="Display_Profile()">Profile</div>
+    <div class="apps posApps" id="contact" (click)="Display_Contact()">Contact</div>
+    <div class="apps posApps" id="home" (click)="Display_HomePage()">Home</div>
+    <div class="apps posApps" id="login" (click)="Display_Events()">Login</div>
   <!-- ======== END HEADER ======== -->
 
           <!-- ======== OFFER ======== -->
-          
-          <div  *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Offer; else profile">
-            <app-xmvcompany-offer [redisplay_child]="display_GoToContact" (my_output1)='Display_Contact()'
-            [selectedoffer]="selected_offer"
-            >
-            </app-xmvcompany-offer>
-              
-          </div> 
+<div style="display:inline-block; width:100%">
+
+
+  <div  *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Offer; else profile">
+      <app-xmvcompany-offer [redisplay_child]="display_GoToContact" (my_output1)='Display_Contact()'
+          [selectedoffer]="selected_offer"
+        >
+      </app-xmvcompany-offer>     
+  </div> 
 
           <!-- PROFILE -->
           <ng-template #profile>
@@ -159,51 +97,39 @@
           </ng-template>
 
           <!-- HOME PAGE -->
-          <ng-template #GHomePage>
-              <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===HomePage; else TheEvents">  
-                  <div >
-                        <img class='sizeMap' src="./assets/Airplane 4.jpg" >
-                  </div>
-                   
-                    <!-- ======== FOOTER ======== -->
+  <ng-template #GHomePage>
+    <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===HomePage; else TheEvents">  
+          <!--  
+      <div >
+        <img class='sizeMap' src="./assets/Airplane 4.jpg" >
+      </div>
+           -->        
+      <div class="Main_Page_Size">                  
+          <br>
+          <span class=" Main_Page_Title">Only Solutions exist! </span>
+          <br><br>
+           <span class=" Main_Page_Text">
+                  with 30 years of experience in a large IT company that enabled technology over the years to lead growth and digital transformation, we can share and adapt this knowledge to help you transform, evolve your technology and organization (e.g. agile work environment) in order to meet your business objectives. 
+                  <br><br>
+                  We also offer services such as project management, architecture expertise, agile methodology and coaching.
+                  <br><br>
+                  With our Partner, we propose Finance solutions (e.g. Payment Reconciliation, Robotic Automation) and services (e.g. BPO Revenue Accounting), and software development.                    <br><br>
+                  We will work closely with you to innovate, find solutions that correspond to your needs and implement them successfully.  
+                  <br><br><br>  <span  class="LearnOffer" (click) = 'Display_Offer()'>Learn more about our offer</span>
+                  <br><br>
+          </span>
+      </div>
+  <!-- ======== FOOTER ======== -->
                                           
-                  <div class='myfooter' >
-                    <!--
-                    <div class="text-footer">email: xmv@gmail.com</div>
-                    <div class="text-footer"> Address: 6 SIMS DRIVE #11-24 Singapore 387388</div>
-                    -->
-                        <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
-                            <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
-                              <br> <div class='copyright'> No rights intended or owned in them </div>                                   
-                              <br>
-                        </div>
-                               <!--
-                               <button [routerLink]="['/myRouting']" > 
-                               <mat-icon style='display:none;' class='material-icons-outlined'> arrow_back_ios</mat-icon> 
-                               </button>   
-                                -->              
-                  </div>
-                 
-                  <div class="Main_Page_Size">                  
-                        <br>
-                        <span class=" Main_Page_Title">Only Solutions exist! 
-                        </span>
-                        <br><br>
-                        <span class=" Main_Page_Text">
-                            with 30 years of experience in a large IT company that enabled technology over the years to lead growth and digital transformation, we can share and adapt this knowledge to help you transform, evolve your technology and organization (e.g. agile work environment) in order to meet your business objectives. 
-                            <br><br>
-                            We also offer services such as project management, architecture expertise, agile methodology and coaching.
-                            <br><br>
-                            With our Partner, we propose Finance solutions (e.g. Payment Reconciliation, Robotic Automation) and services (e.g. BPO Revenue Accounting), and software development.
-                            <br><br>
-                            We will work closely with you to innovate, find solutions that correspond to your needs and implement them successfully.  
-                            <br>
-                            <br><br>  <span  class="LearnOffer" (click) = 'Display_Offer()'>Learn more about our offer</span>
-                            <br><br>
-                        </span>
-                      </div>
-                </div> <!-- *ngIf--> 
-          </ng-template>
+    <div class='myfooter' >
+        <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
+            <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
+              <br> <div class='copyright'> No rights intended or owned in them </div>                                   
+              <br>
+        </div>
+      </div>
+    </div> <!-- *ngIf--> 
+  </ng-template>
 
 
 <!-- [destination]="source" -->
@@ -229,5 +155,5 @@
               <app-login></app-login>
             </span>  </ng-template>
             -->
-
+</div>
 </body>
