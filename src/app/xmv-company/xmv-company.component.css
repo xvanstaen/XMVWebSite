@@ -115,7 +115,7 @@ body{
   }
 
 
-.posProfile{
+.posOffer{
     margin-left:20px;
     min-width:50px;
     padding-left:10px;
@@ -205,7 +205,7 @@ body{
     /* POSITION OF THE TEXT WITHIN THE MAIN_PAGE_SIZE BOX*/
     padding-left:10px;
     padding-right:10px;
-    margin-top:10px;
+    margin-top:20px;
     /* POSITION OF THE THE MAIN_PAGE_SIZE BOX WITHIN sizeMap*/
     margin-left:15px;;
     width:800px;
@@ -268,4 +268,45 @@ body{
     .Main_Page_Title{
         font-size:22px;
     }
+    }
+     /*** ====================================== ***/
+    /*** ============== @media 800 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width:550px) {
+        .sizeMap{
+            width:380px;
+            }
+        .Main_Page_Size{
+            width:380px;
+        }
+        .Main_Page_Text{
+            font-size:14px;
+        }
+        .Main_Page_Title{
+            font-size:22px;
+        }
+        .textIcon:hover{
+            font-size:12px;
+        }
+        .textIcon{
+            min-width:70px;
+            font-size:10px;
+
+        }
+        .alignIcon{
+            margin-left:30px;
+        }
+        .posOffer{
+            margin-left:10px;
+            min-width:40px;
+            padding-left:2px;
+            font-size:10px;
+        }
+        
+        .posApps{
+            margin-right:3px;
+            min-width:40px;
+            margin-left:3px;
+            font-size:10px;
+        }
 }
