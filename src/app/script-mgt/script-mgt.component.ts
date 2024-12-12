@@ -33,7 +33,7 @@ export class ScriptMgtComponent {
     fileScriptName: new FormControl('script001', { nonNullable: true }),
   })
 
-  scriptFn:Array<any>=["<#domain ","<#select ","<#filter ","<#replace "];
+  scriptFn:Array<any>=["<#domain ","<#select ","<#filter ","<#replace ", "<#listDomain "];
 
   scriptFileName:Array<string>=[];
   scriptFileContent:Array<string>=[];
@@ -221,6 +221,8 @@ export class ScriptMgtComponent {
     }
     if (this.scriptError==="" && this.scriptValidated[this.currentScript]===true){
       this.processScript.emit(this.scriptJsonContent[this.currentScript]);
+    } else {
+      this.scriptError="WARNING - " + this.scriptError + this.nl + "  retry or correct your script"
     }
   }
 
@@ -274,9 +276,12 @@ export class ScriptMgtComponent {
   
   buildGuided(){
     this.validateGuidedMode();
-    this.scriptFileContent[this.currentScript]="<!-- function '<#domain' is mandatory to run a script. " + this.nl + " The functions currently available are '<#select', '<#filter', '<#replace'. " +
-    + this.nl + " The end of a function is specified with the 2 following characters: '#>' " + " -->  " + this.nl + 
-    ' <#domain field="'+this.scriptJsonContent[this.currentScript].dom.field+ '" value="' + this.scriptJsonContent[this.currentScript].dom.value+'" #>'+ this.nl ;
+    this.scriptFileContent[this.currentScript]="<!-- function '<#domain' is mandatory to run a script. " + this.nl + " The functions currently available are '<#select', '<#filter', '<#replace', <#listDomain. " +
+    + this.nl + " The end of a function is specified with the 2 following characters: '#>' " + " -->  " + this.nl;
+    if (this.scriptJsonContent[this.currentScript].allDomain===true){
+      this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] + "<#listDomain #>" + this.nl;
+    }
+    this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] + ' <#domain field="'+this.scriptJsonContent[this.currentScript].dom.field+ '" value="' + this.scriptJsonContent[this.currentScript].dom.value+'" #>'+ this.nl ;
     if (this.scriptJsonContent[this.currentScript].select.tag!==""){
       this.scriptFileContent[this.currentScript]=this.scriptFileContent[this.currentScript] + this.nl +  '<#select tag="' + this.scriptJsonContent[this.currentScript].select.tag + '" field="' + this.scriptJsonContent[this.currentScript].select.field + '" fromValue="' +
       this.scriptJsonContent[this.currentScript].select.fromValue + '" toValue="' + this.scriptJsonContent[this.currentScript].select.toValue + '" #>' + this.nl;
@@ -618,6 +623,7 @@ export class ScriptMgtComponent {
       if (response.tab.replace.length>0){
         this.scriptJsonContent[this.currentScript].replace=response.tab.replace;
       }
+      this.scriptJsonContent[this.currentScript].allDomain=response.tab.allDomain;
     }
     this.validateGuidedMode();
     const saveGuided=this.isGuidedMode;

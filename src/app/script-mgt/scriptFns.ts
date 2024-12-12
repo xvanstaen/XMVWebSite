@@ -8,7 +8,7 @@ export class classFnParam{
 
 export function searchFn(str:string, scriptFn:any, refFn:number){
     for (var i=0; i<scriptFn.length && refFn===-1; i++){
-        if (scriptFn[i]===str){
+        if (scriptFn[i].toLowerCase()===str.toLowerCase()){
           return i;
           // find the next command
         }
@@ -21,6 +21,7 @@ export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any)
   const selectTabParam:Array<classFnParam>=[{val:'tag="',cond:'M'},{val:'field="',cond:'M'}, {val:'fromValue="',cond:'M'}, {val:'toValue="',cond:'O'}];
   const filterTabParam:Array<classFnParam>=[{val:'tag="',cond:'M'},{val:'subTag="',cond:'O'},{val:'field="',cond:'O'} ];
   const replaceTabParam:Array<classFnParam>=[{val:'tag="',cond:'M'},{val:'refField="',cond:'M'},{val: 'withValue="',cond:'M'},{val:'changeField="',cond:'M'}];
+  const listDomainTabParam:Array<classFnParam>=[];
   var dataScript=new classDataScript;
   var workStr= modifiedScriptContent+"        ";
   const startComment="<!--";
@@ -32,7 +33,7 @@ export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any)
   var scriptError="";
 
   var theStatus=200;
-
+  dataScript.allDomain=false;
   var sPos=workStr.indexOf(startComment);
   var ePos=workStr.indexOf(endComment);
   while (sPos>-1 && scriptError===""){
@@ -50,7 +51,7 @@ export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any)
     var refFn=-1;
     iSpace=workStr.substring(sPos).indexOf(" ");
     if (iSpace >-1 ) {
-        refFn = searchFn(workStr.substring(sPos,sPos+iSpace+1).toLowerCase(), scriptFn, refFn);
+        refFn = searchFn(workStr.substring(sPos,sPos+iSpace+1), scriptFn, refFn);
         if (refFn!==-1){ // get the parameters of this function
             endParam=workStr.substring(sPos+separa.length).indexOf(separa)+separa.length;
             if (endParam===separa.length-1){
@@ -102,7 +103,9 @@ export function convertScriptToJson(modifiedScriptContent:string,  scriptFn:any)
                   //return({tab:response.tab,msg:response.msg, status:400})
                 } 
               //dataScript.replace=response.tab.replace;
-            } 
+            }  else if (refFn===4 ){
+              dataScript.allDomain=true;
+            }
             workStr=workStr.substring(endParam);
         } else {
             scriptError=scriptError + "Function does not exist " + workStr.substring(sPos,iSpace+2);
@@ -235,22 +238,34 @@ export function fnExtractParam(str:string, tabFields:any, fn:string, specChar:st
 }
 
 export function fnProcessScript(dataScript:classDataScript, mainOutJSON:any){
-    var iDomain=0;
+    var iDomain=-1;
     var response=selectDomain(dataScript, mainOutJSON);
-    if (response.status !== 200){
+    if (response.status !== 200 && dataScript.allDomain===false){
         return ({record:mainOutJSON,errMsg:response.errMsg, status:400}); 
     } 
-    mainOutJSON=response.record;
-    iDomain=response.iDom;
-    if (dataScript.select.tag!==""){
-      mainOutJSON=onProcessSelect(dataScript, mainOutJSON, iDomain);
+    if (response.status == 200){
+      mainOutJSON=response.record;
+      iDomain=response.iDom;
+      if (dataScript.select.tag!==""){
+        mainOutJSON=onProcessSelect(dataScript, mainOutJSON, iDomain);
+      }
+      if (dataScript.filter.tagConf !=="" && dataScript.filter.subConf.length>0){
+        mainOutJSON=onProcessFilter(dataScript, mainOutJSON, iDomain);
+      }
+      if (dataScript.replace.length>0 && dataScript.replace[0].changeField.length>0 && 
+        dataScript.replace[0].tag!=="" && dataScript.replace[0].changeField[0].tag!==""){
+        mainOutJSON=onProcessReplace(dataScript, mainOutJSON,iDomain);
+      }
     }
-    if (dataScript.filter.tagConf !=="" && dataScript.filter.subConf.length>0){
-      mainOutJSON=onProcessFilter(dataScript, mainOutJSON, iDomain);
-    }
-    if (dataScript.replace.length>0 && dataScript.replace[0].changeField.length>0 && 
-      dataScript.replace[0].tag!=="" && dataScript.replace[0].changeField[0].tag!==""){
-      mainOutJSON=onProcessReplace(dataScript, mainOutJSON,iDomain);
+    if (dataScript.allDomain===true){
+      for (var iLev=0; iLev<mainOutJSON.Body.level.tab.length; iLev++){
+        mainOutJSON.Body.level.tab[iLev].disp=true;
+        if (iLev!==iDomain){
+          for (var jLev=0; jLev<mainOutJSON.Body.level.tab[iLev].tab.length; jLev++){
+            mainOutJSON.Body.level.tab[iLev].tab[jLev].disp=false;
+          }
+        }
+      }
     }
     return ({record:mainOutJSON,errMsg:"", status:200});
 }

@@ -3,7 +3,11 @@ YOUR COMMENTS is you want to describe what your script does
 The available functions are
 -->
 
-<!-- you MUST specify the domain - all fields are Mandatory -->
+<!-- To list all the domains which are in your configuration file just trigger the following function -->
+
+<#listDomain #>
+
+<!-- you MUST specify the domain for all functions except of <#listDomain - all fields are Mandatory -->
 <#domain field="Location" value="your_value" #>
 
 <!-- items to select, tag must always be "<ABDConfig " 

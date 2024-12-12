@@ -3,9 +3,10 @@
 </head> 
 <body>
 <div style="margin-left:80px; margin-top:15px; font-size:16px; display:block; margin-top:5px; width:450px;  color:blue; border:3px blue solid; background-color: lightskyblue;"
-            [ngStyle]="{'height.px': (devMode==='local') ? 50 : 80}">
+            [ngStyle]="{'height.px': (devMode==='local') ? 50 : 80, 'width.px': (devMode==='local') ? 450 :350}">
     <div style="font-size:16px; display:inline-block; text-align: center; margin-top:5px; font-weight:bolder; width:100%; ">
-            <div style="padding-top:5px; padding-left:40px;display:block; float:left; min-width:55%;">Retrieve your configuration file</div>
+            <div *ngIf="devMode==='local'" style="padding-top:5px; padding-left:40px;display:block; float:left; min-width:55%;">Retrieve your configuration file</div>
+            <div *ngIf="devMode!=='local'" style="padding-top:5px; padding-left:40px;display:block; float:left; text-align: center;">Retrieve your configuration file</div>
             <div style="display:block; text-align: left; min-width:20%;">
             <label *ngIf="devMode==='local'">
             <input id="mainFile" style=" display:none;" type="file"  (change)="open($event)">
@@ -15,15 +16,16 @@
     </div>
 
     <div *ngIf="devMode!=='local'" style="margin-top:5px; display:inline-block; width:100%;  font-weight:normal;;">
-        <label style="display:block; float:left; font-weight:normal;">
-            <span >from your </span>
+        
+        <div style="margin-left:10px; display:block; float:left; font-weight:normal;">from your </div>
+        <label style="margin-left:5px; margin-top:-5px; display:block; float:left; ">
             <input id="mainFile" style=" display:none;" type="file"  (change)="open($event)">
-            <a class="buttons" style="width:60px; height:25px; padding-left:15px;padding-top:3px; margin-top:3px; display:inline-block;" id="mainFile"> Folder </a>
+            <a class="buttons" style="width:60px; height:25px; padding-left:7px;padding-top:3px; margin-top:3px; display:inline-block;" id="mainFile"> Folder </a>
         </label>
 
-        <div  style="margin-top:10px;  margin-left:15px;  "> 
+        <div > 
             <label style="margin-left:10px; font-weight:normal;">or from the</label>
-            <button id="10"  class="buttons"  style="padding-left:15px; " (click)='onSelectServer()'>Server</button> 
+            <button id="10"  class="buttons"  style="width:60px; height:25px; padding-left:5px;padding-top:3px; margin-top:-5px; display:inline-block;" (click)='onSelectServer()'>Server</button> 
         </div>  
     </div>
 </div>

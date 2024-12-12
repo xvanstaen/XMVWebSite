@@ -87,7 +87,6 @@ div {
     height:120px;
     }
     
-    
     .myPicture{
     margin-left:30px;
     margin-top:-170px;
@@ -110,4 +109,52 @@ div {
     font-size:16px;
     }
     }
+        /*** ====================================== ***/
+    /*** ============== @media 400 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width: 510px) {
+    .sizeMap{
+        height:220px;
+        margin-top:10px;
+    }
+    .heightMap{
+        height:150px;
+    }
+    .size_myPicture{
+        width:60px; 
+        height:80px;
+    }
+        
+    .myPicture{
+        margin-left:20px;
+        margin-top:-110px;
+        }
+        
+    .perso-intro-text{ 
+        margin-left:70px;
+        margin-top:-95px;
+        width: 280px;
+        height:100px;
+        line-height: 20px;
+    }
+        
+    .char_intro_text{
+        margin-left:10px;
+        font-size:12px;
+    }
+        
+    .perso-text{
+        /* position:absolute; */
+        width: 70%;
+        margin-left:15px;
+        margin-top:0px;
+
+        font-size: 12px;
+        letter-spacing: 0.1px;
+        line-height: 20px;
+        padding-left:0px;
+        padding-right:0px;
+ 
+    }
+}
     

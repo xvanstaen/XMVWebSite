@@ -36,5 +36,6 @@ export class classFilterParam{
     };
     filter=new classFilterParam;
     replace:Array<classReplace>=[];
+    allDomain:boolean=false;
   
   }
