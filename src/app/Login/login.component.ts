@@ -138,7 +138,7 @@ export class LoginComponent {
   }
 savePsw:string="";
 decryptAllPSW(){
-  this.ManageGoogleService.decryptAllFn(this.configServer,this.configServer.userLogin.psw, 1, 'AES', "Yes")
+  this.ManageGoogleService.decryptAllFn(this.configServer,this.configServer.userLogin.psw, 1, 'AES', 0, "Yes")
       .subscribe((data ) => { 
         if (data.status===undefined){
           this.savePsw = data;

@@ -140,7 +140,7 @@ Decrypt:string='LIM!12monica#Chin';
 Crypto_Method:string='AES';
 Crypto_Error:string='';
 Crypto_Key:number=2;
-Crypto_Record:number=0;
+Crypto_iFour:number=0;
 Server_Type:string='Google';
 Bucket_Name:string='manage-login';
 Object_Name:string='XMVIT-Admin';
@@ -192,7 +192,8 @@ ngOnInit() {
       const item=this.selectApps-1; 
       const event='Y-'+ item.toString();
       this.SelRadio(event);
-
+  this.auth.userId=this.configServer.userLogin.id;
+  this.auth.psw=this.configServer.userLogin.psw;
   }
 
 
@@ -453,12 +454,12 @@ ClearDiv(){
   }
 
   auth={
-    userId:"Fitness",
-    psw:"A",
+    userId:"",
+    psw:"",
     crypto:true
   };
   
-  //auth="";
+
   
   onCrypt(event:any){
   
@@ -470,7 +471,7 @@ ClearDiv(){
           this.Crypto_Error="Decrypt field is empty";
         } else if (this.Crypto_Method==='AES' || this.Crypto_Method==='DES'){
           this.Encrypt="";
-          this.ManageGoogleService.encryptAllFn(this.configServer,this.Decrypt,this.Crypto_Key,this.Crypto_Method, JSON.stringify(this.auth) )
+          this.ManageGoogleService.encryptAllFn(this.configServer,this.Decrypt,this.Crypto_Key,this.Crypto_Method, this.Crypto_iFour, JSON.stringify(this.auth) )
           .subscribe((data ) => {
     
               if (data.response !== 'Key invalid'){
@@ -498,7 +499,7 @@ ClearDiv(){
         } else
         if (this.Crypto_Method==='AES' || this.Crypto_Method==='DES'){
           this.Decrypt="";
-          this.ManageGoogleService.decryptAllFn(this.configServer,this.Encrypt,this.Crypto_Key,this.Crypto_Method, JSON.stringify(this.auth))
+          this.ManageGoogleService.decryptAllFn(this.configServer,this.Encrypt,this.Crypto_Key,this.Crypto_Method,  this.Crypto_iFour, JSON.stringify(this.auth))
           .subscribe((data ) => {
             console.log(data);
             if (data.response !== 'Key invalid' && data.response !== ''){

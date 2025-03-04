@@ -181,14 +181,14 @@ getSecurityAccess(config:configServer){
     return this.http.get<any>(http_get);
 }
 
-encryptAllFn(config:configServer,data:string,key:number,method:string,authoriz:string): Observable<any> {
+encryptAllFn(config:configServer,data:string,key:number,method:string,iFour:number, authoriz:string): Observable<any> {
     //const myArray=encodeURIComponent(JSON.stringify(TableCryptKey.tab));
-    const http_get=config.googleServer+'/encryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+authoriz;
+    const http_get=config.googleServer+'/encryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+iFour+'/'+authoriz;
     return this.http.get<any>(http_get);                      
 }  
 
-decryptAllFn(config:configServer,data:string,key:number,method:string,authoriz:string): Observable<any> {
-    const http_get=config.googleServer+'/decryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+authoriz;
+decryptAllFn(config:configServer,data:string,key:number,method:string,iFour:number, authoriz:string): Observable<any> {
+    const http_get=config.googleServer+'/decryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+iFour+'/'+authoriz;
   
     return this.http.get<any>(http_get);                      
 }  

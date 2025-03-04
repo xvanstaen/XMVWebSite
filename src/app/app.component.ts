@@ -330,23 +330,24 @@ export class AppComponent {
 
   getServerUsrId(serverType:any){
     console.log('getServerUsrId()');
-      
+    this.saveGoogleServer=this.configServer.googleServer;
     if (serverType==='Mongo'){
         this.configServer.googleServer = this.configServer.mongoServer;
     } else if (serverType==='FS'){
       this.configServer.googleServer = this.configServer.fileSystemServer
-    }
+    } 
     //this.ManageGoogleService.getCredentials(this.configServer  )
     this.ManageGoogleService.getNewServerUsrId (this.configServer  )
       .subscribe(
           (data ) => {
             if (serverType==='Google'){
-              this.configServer.googleServer = this.saveGoogleServer;
               this.credentials = fillCredentials(data.credentials);
             } else if (serverType==='Mongo'){
                 this.credentialsMongo = fillCredentials(data.credentials);
+                this.configServer.googleServer = this.saveGoogleServer;
             } else if (serverType==='FS'){
                 this.credentialsFS = fillCredentials(data.credentials);
+                this.configServer.googleServer = this.saveGoogleServer;
             }
             this.isCredentials=true;
   

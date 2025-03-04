@@ -56,14 +56,14 @@ export class ManageSecuredGoogleService {
         return this.http.get<any>(http_get);                      
     }  
 
-    encryptFn(config:configServer,data:string,key:number,method:string,authoriz:string): Observable<any> {
+    encryptFn(config:configServer,data:string,key:number,method:string,iFour:number,authoriz:string): Observable<any> {
         //const myArray=encodeURIComponent(JSON.stringify(TableCryptKey.tab));
-        const http_get=config.googleServer+'/encryptFn/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+authoriz;
+        const http_get=config.googleServer+'/encryptFn/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+iFour+'/'+authoriz;
         return this.http.get<any>(http_get);                      
     }  
 
-    decryptFn(config:configServer,data:string,key:number,method:string,authoriz:string): Observable<any> {
-        const http_get=config.googleServer+'/decryptFn/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+authoriz;
+    decryptFn(config:configServer,data:string,key:number,method:string,iFour:number,authoriz:string): Observable<any> {
+        const http_get=config.googleServer+'/decryptFn/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+iFour+'/'+authoriz;
       
         return this.http.get<any>(http_get);                      
     }  
