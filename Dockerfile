@@ -15,8 +15,8 @@ WORKDIR /usr/src/app
 COPY package.json  ./
 #COPY ["package.json", "package-lock.json*", "./"]
 
-#RUN npm install npm@11.1.0 --legacy-peer-deps --omit=dev
-RUN npm install npm@10.9.1 --legacy-peer-deps --omit=dev
+RUN npm install npm@11.1.0 --legacy-peer-deps --omit=dev
+#RUN npm install npm@10.9.1 --legacy-peer-deps --omit=dev
 ##  --only=production 
 ## RUN npm install npm@10.9.1 @esbuild/linux-x64 --omit=dev
 #RUN npm install --production
