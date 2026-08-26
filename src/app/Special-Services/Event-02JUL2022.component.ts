@@ -45,7 +45,7 @@ export class Event02JULComponent {
     myConsole:Array<string>=[];
     SaveConsoleFinished:boolean=true;
 
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize', [])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;

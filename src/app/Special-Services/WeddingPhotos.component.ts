@@ -139,7 +139,7 @@ export class WeddingPhotosComponent {
     WentonNgInit:boolean=false;
 
 
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize', [])
 onWindowResize() {
       //this.LogMsgConsole('onWindowResize()');
       this.getScreenWidth = window.innerWidth;

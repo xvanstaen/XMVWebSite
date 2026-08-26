@@ -55,7 +55,7 @@ export class ColorSliderComponent implements OnInit, OnChanges, AfterViewInit {
   getScreenWidth:number=0;
   getScreenHeight:number=0;
   browserType:string="";
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', [])
   onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;

@@ -102,7 +102,7 @@ export class GetImagesComponent {
     updateRecord:number=0;
     init:boolean=true;
 
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize', [])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;

@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<div *ngIf="isInitComplete===true && isUserTimeOut===false && isNgStyleCompleted===true; waitMsg"> <!--  waitMsg -->
+<div *ngIf="isInitComplete===true && isUserTimeOut===false && isNgStyleCompleted===true; else waitMsg">
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
  
         <div *ngIf="tabLock[1].lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>

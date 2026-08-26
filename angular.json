@@ -80,7 +80,7 @@
             "defaultConfiguration": "development"
           },
           "extract-i18n": {
-            "builder": "@angular-devkit/build-angular:extract-i18n"
+            "builder": "@angular/build:dev-server"
           },
           "test": {
             "builder": "@angular-devkit/build-angular:karma",

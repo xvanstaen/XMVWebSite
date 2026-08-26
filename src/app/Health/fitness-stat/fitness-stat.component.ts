@@ -256,6 +256,7 @@ selectedPosition ={
 
   
 @HostListener('window:mouseup', ['$event'])
+
 onMouseUp(event: MouseEvent) {
   this.selectedPosition = { x: event.pageX, y: event.pageY };
   //this.getPosTitle();
@@ -289,7 +290,7 @@ getPosTitle(){
  */
 
 
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize', [])
 onWindowResize() {
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;

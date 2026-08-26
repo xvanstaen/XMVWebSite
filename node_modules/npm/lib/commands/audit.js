@@ -3,6 +3,7 @@ const ArboristWorkspaceCmd = require('../arborist-cmd.js')
 const auditError = require('../utils/audit-error.js')
 const { log, output } = require('proc-log')
 const reifyFinish = require('../utils/reify-finish.js')
+const resolveAllowScripts = require('../utils/resolve-allow-scripts.js')
 const VerifySignatures = require('../utils/verify-signatures.js')
 
 class Audit extends ArboristWorkspaceCmd {
@@ -19,6 +20,7 @@ class Audit extends ArboristWorkspaceCmd {
     'include',
     'foreground-scripts',
     'ignore-scripts',
+    'include-attestations',
     ...super.params,
   ]
 
@@ -36,7 +38,7 @@ class Audit extends ArboristWorkspaceCmd {
       case 'signatures':
         return []
       default:
-        throw Object.assign(new Error(argv[2] + ' not recognized'), {
+        throw Object.assign(new Error(`${argv[2]} not recognized`), {
           code: 'EUSAGE',
         })
     }
@@ -53,16 +55,18 @@ class Audit extends ArboristWorkspaceCmd {
   async auditAdvisories (args) {
     const fix = args[0] === 'fix'
     if (this.npm.config.get('package-lock') === false && fix) {
-      throw this.usageError('fix can not be used without a package-lock')
+      throw this.usageError('fix cannot be used without a package-lock')
     }
     const reporter = this.npm.config.get('json') ? 'json' : 'detail'
     const Arborist = require('@npmcli/arborist')
+    const { policy: allowScriptsPolicy } = await resolveAllowScripts(this.npm)
     const opts = {
       ...this.npm.flatOptions,
       audit: true,
       path: this.npm.prefix,
       reporter,
       workspaces: this.workspaceNames,
+      allowScripts: allowScriptsPolicy,
     }
 
     const arb = new Arborist(opts)

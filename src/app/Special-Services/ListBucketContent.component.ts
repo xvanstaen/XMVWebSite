@@ -80,7 +80,7 @@ export class ListBucketContentComponent {
     ModifyText:boolean=false;
 
     IsngInitDone:boolean=false;
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize', [])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;

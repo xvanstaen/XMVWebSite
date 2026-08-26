@@ -191,7 +191,7 @@ export class ConverterComponent implements OnInit {
     }
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', [])
   onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;

@@ -134,7 +134,7 @@ export class AdminJsonComponent {
 
     dictionaryOnly:boolean=false;
     selectApps:number=0;
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize', [])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;

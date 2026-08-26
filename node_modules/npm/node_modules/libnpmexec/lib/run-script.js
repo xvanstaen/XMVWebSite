@@ -1,8 +1,9 @@
 const ciInfo = require('ci-info')
 const runScript = require('@npmcli/run-script')
-const readPackageJson = require('read-package-json-fast')
+const pkgJson = require('@npmcli/package-json')
 const { log, output } = require('proc-log')
 const noTTY = require('./no-tty.js')
+const isWindowsShell = require('./is-windows.js')
 
 const run = async ({
   args,
@@ -14,12 +15,25 @@ const run = async ({
   runPath,
   scriptShell,
 }) => {
+  // escape executable path
+  // necessary for preventing bash/cmd keywords from overriding
+  if (!isWindowsShell) {
+    if (args.length > 0) {
+      // single-quote so shell metacharacters in the executable name are taken
+      // literally; double quotes still expand $(), backticks, $var and "
+      args[0] = `'${args[0].replace(/'/g, `'\\''`)}'`
+    }
+  }
+
   // turn list of args into command string
   const script = call || args.shift() || scriptShell
 
   // do the fakey runScript dance
   // still should work if no package.json in cwd
-  const realPkg = await readPackageJson(`${path}/package.json`).catch(() => ({}))
+  const { content: realPkg } = await pkgJson.normalize(path, { steps: [
+    'binDir',
+    ...pkgJson.normalizeSteps,
+  ] }).catch(() => ({ content: {} }))
   const pkg = {
     ...realPkg,
     scripts: {

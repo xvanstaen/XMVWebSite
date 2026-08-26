@@ -1,0 +1,134 @@
+{
+  "hash": "34a1fa8a",
+  "configHash": "cbd1afd9",
+  "lockfileHash": "eaa468b0",
+  "browserHash": "9baa81e4",
+  "optimized": {
+    "@angular/cdk/bidi": {
+      "src": "../../../../../../node_modules/@angular/cdk/fesm2022/bidi.mjs",
+      "file": "@angular_cdk_bidi.js",
+      "fileHash": "54ada16a",
+      "needsInterop": false
+    },
+    "@angular/common": {
+      "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
+      "file": "@angular_common.js",
+      "fileHash": "afd7a885",
+      "needsInterop": false
+    },
+    "@angular/common/http": {
+      "src": "../../../../../../node_modules/@angular/common/fesm2022/http.mjs",
+      "file": "@angular_common_http.js",
+      "fileHash": "70123b47",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "a2d9b437",
+      "needsInterop": false
+    },
+    "@angular/forms": {
+      "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
+      "file": "@angular_forms.js",
+      "fileHash": "43232ec2",
+      "needsInterop": false
+    },
+    "@angular/material/dialog": {
+      "src": "../../../../../../node_modules/@angular/material/fesm2022/dialog.mjs",
+      "file": "@angular_material_dialog.js",
+      "fileHash": "a059c511",
+      "needsInterop": false
+    },
+    "@angular/material/icon": {
+      "src": "../../../../../../node_modules/@angular/material/fesm2022/icon.mjs",
+      "file": "@angular_material_icon.js",
+      "fileHash": "2dbf603d",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "3d2b1fdb",
+      "needsInterop": false
+    },
+    "@angular/router": {
+      "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
+      "file": "@angular_router.js",
+      "fileHash": "86d8c8b4",
+      "needsInterop": false
+    },
+    "buffer": {
+      "src": "../../../../../../node_modules/buffer/index.js",
+      "file": "buffer.js",
+      "fileHash": "b1da70e4",
+      "needsInterop": true
+    },
+    "chart.js/auto": {
+      "src": "../../../../../../node_modules/chart.js/auto/auto.js",
+      "file": "chart__js_auto.js",
+      "fileHash": "768f67c6",
+      "needsInterop": false
+    },
+    "file-saver": {
+      "src": "../../../../../../node_modules/file-saver/dist/FileSaver.min.js",
+      "file": "file-saver.js",
+      "fileHash": "d589b3e4",
+      "needsInterop": true
+    },
+    "rxjs": {
+      "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
+      "file": "rxjs.js",
+      "fileHash": "3eea721d",
+      "needsInterop": false
+    },
+    "zone.js": {
+      "src": "../../../../../../node_modules/zone.js/fesm2015/zone.js",
+      "file": "zone__js.js",
+      "fileHash": "e7ca0c21",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "_xhr-chunk-rn44-TKs": {
+      "file": "_xhr-chunk-rn44-TKs.js",
+      "isDynamicEntry": false
+    },
+    "bidi-CBOSzWNJ": {
+      "file": "bidi-CBOSzWNJ.js",
+      "isDynamicEntry": false
+    },
+    "common-DlyONQJh": {
+      "file": "common-DlyONQJh.js",
+      "isDynamicEntry": false
+    },
+    "core-DwmaaD_X": {
+      "file": "core-DwmaaD_X.js",
+      "isDynamicEntry": false
+    },
+    "esm5-ChK3bs0s": {
+      "file": "esm5-ChK3bs0s.js",
+      "isDynamicEntry": false
+    },
+    "http-CtQI6Xep": {
+      "file": "http-CtQI6Xep.js",
+      "isDynamicEntry": false
+    },
+    "objectSpread2-C_IE-bIJ": {
+      "file": "objectSpread2-C_IE-bIJ.js",
+      "isDynamicEntry": false
+    },
+    "platform-browser-eH63sRZa": {
+      "file": "platform-browser-eH63sRZa.js",
+      "isDynamicEntry": false
+    },
+    "private-Ct95DNbE": {
+      "file": "private-Ct95DNbE.js",
+      "isDynamicEntry": false
+    },
+    "rolldown-runtime-BvCyGRYZ": {
+      "file": "rolldown-runtime-BvCyGRYZ.js",
+      "isDynamicEntry": false
+    }
+  }
+}

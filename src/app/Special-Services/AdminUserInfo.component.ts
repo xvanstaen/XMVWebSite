@@ -95,7 +95,7 @@ export class AdminUserInfoComponent {
     WrongNbRecords:number=0;
     IsATable:boolean=false;
  
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize', [])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;

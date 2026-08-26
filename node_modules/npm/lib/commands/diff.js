@@ -45,11 +45,7 @@ class Diff extends BaseCommand {
       this.prefix = this.npm.prefix
     }
 
-    // this is the "top" directory, one up from node_modules
-    // in global mode we have to walk one up from globalDir because our
-    // node_modules is sometimes under ./lib, and in global mode we're only ever
-    // walking through node_modules (because we will have been given a package
-    // name already)
+    // this is the "top" directory, one up from node_modules in global mode we have to walk one up from globalDir because our node_modules is sometimes under ./lib, and in global mode we're only ever walking through node_modules (because we will have been given a package name already)
     if (this.npm.global) {
       this.top = resolve(this.npm.globalDir, '..')
     } else {
@@ -100,18 +96,16 @@ class Diff extends BaseCommand {
       return this.findVersionsByPackageName(specs)
     }
 
-    // no arguments, defaults to comparing cwd
-    // to its latest published registry version
+    // no arguments, defaults to comparing cwd to its latest published registry version
     if (!a) {
       const pkgName = await this.packageName()
       return [
         `${pkgName}@${this.npm.config.get('tag')}`,
-        `file:${this.prefix.replace(/#/g, '%23')}`,
+        `file:${this.prefix}`,
       ]
     }
 
-    // single argument, used to compare wanted versions of an
-    // installed dependency or to compare the cwd to a published version
+    // single argument, used to compare wanted versions of an installed dependency or to compare the cwd to a published version
     let noPackageJson
     let pkgName
     try {
@@ -125,22 +119,18 @@ class Diff extends BaseCommand {
     const missingPackageJson =
       this.usageError('Needs multiple arguments to compare or run from a project dir.')
 
-    // using a valid semver range, that means it should just diff
-    // the cwd against a published version to the registry using the
-    // same project name and the provided semver range
+    // using a valid semver range, that means it should just diff the cwd against a published version to the registry using the same project name and the provided semver range
     if (semver.validRange(a)) {
       if (!pkgName) {
         throw missingPackageJson
       }
       return [
         `${pkgName}@${a}`,
-        `file:${this.prefix.replace(/#/g, '%23')}`,
+        `file:${this.prefix}`,
       ]
     }
 
-    // when using a single package name as arg and it's part of the current
-    // install tree, then retrieve the current installed version and compare
-    // it against the same value `npm outdated` would suggest you to update to
+    // when using a single package name as arg and it's part of the current install tree, then retrieve the current installed version and compare it against the same value `npm outdated` would suggest you to update to
     const spec = npa(a)
     if (spec.registry) {
       let actualTree
@@ -166,7 +156,7 @@ class Diff extends BaseCommand {
         }
         return [
           `${spec.name}@${spec.fetchSpec}`,
-          `file:${this.prefix.replace(/#/g, '%23')}`,
+          `file:${this.prefix}`,
         ]
       }
 
@@ -179,12 +169,11 @@ class Diff extends BaseCommand {
         }
       }
 
-      const aSpec = `file:${node.realpath.replace(/#/g, '%23')}`
+      const aSpec = `file:${node.realpath}`
 
-      // finds what version of the package to compare against, if a exact
-      // version or tag was passed than it should use that, otherwise
-      // work from the top of the arborist tree to find the original semver
-      // range declared in the package that depends on the package.
+      // finds what version of the package to compare against
+      // if an exact version or tag was passed than it should use that
+      // otherwise, work from the top of the arborist tree to find the original semver range declared in the package that depends on the package.
       let bSpec
       if (spec.rawSpec !== '*') {
         bSpec = spec.rawSpec
@@ -193,11 +182,12 @@ class Diff extends BaseCommand {
           tryRootNodeSpec()
           || tryAnySpec()
 
-        // figure out what to compare against,
+        // figure out what to compare against
         // follows same logic to npm outdated "Wanted" results
         const packument = await pacote.packument(spec, {
           ...this.npm.flatOptions,
           preferOnline: true,
+          _isRoot: true,
         })
         bSpec = pickManifest(
           packument,
@@ -212,8 +202,8 @@ class Diff extends BaseCommand {
       ]
     } else if (spec.type === 'directory') {
       return [
-        `file:${spec.fetchSpec.replace(/#/g, '%23')}`,
-        `file:${this.prefix.replace(/#/g, '%23')}`,
+        `file:${spec.fetchSpec}`,
+        `file:${this.prefix}`,
       ]
     } else {
       throw this.usageError(`Spec type ${spec.type} not supported.`)
@@ -241,8 +231,7 @@ class Diff extends BaseCommand {
       return [`${pkgName}@${a}`, `${pkgName}@${b}`]
     }
 
-    // otherwise uses the name from the other arg to
-    // figure out the spec.name of what to compare
+    // otherwise uses the name from the other arg to figure out the spec.name of what to compare
     if (!semverA && semverB) {
       return [a, `${npa(a).name}@${b}`]
     }
@@ -281,7 +270,7 @@ class Diff extends BaseCommand {
 
       const res = !node || !node.package || !node.package.version
         ? spec.fetchSpec
-        : `file:${node.realpath.replace(/#/g, '%23')}`
+        : `file:${node.realpath}`
 
       return `${spec.name}@${res}`
     })

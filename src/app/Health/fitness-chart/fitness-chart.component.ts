@@ -67,7 +67,7 @@ export class FitnessChartComponent implements OnInit {
 
   isSortedFiltered:boolean=false;
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', [])
 
 onWindowResize() {
     this.getScreenWidth = window.innerWidth;
