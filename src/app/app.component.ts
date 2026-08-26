@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
-  Output, Input, HostListener, EventEmitter, ElementRef, } from '@angular/core';
+  Output, Input, HostListener, EventEmitter, ElementRef, NgZone, ChangeDetectorRef} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
@@ -44,6 +44,8 @@ export class AppComponent {
     private ManageMongoDB: ManageMongoDBService,
     private http: HttpClient,
     private route: ActivatedRoute,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef
     ) {}
 
 
@@ -161,7 +163,9 @@ export class AppComponent {
           });
           
       this.RetrieveConfig();
-          
+console.log('isIdRetrieved='+this.isIdRetrieved);   
+console.log('isCallUserFunction='+this.isCallUserFunction);  
+console.log('devMode='+this.devMode);     
       this.passInit++
     }
   }
@@ -208,18 +212,21 @@ export class AppComponent {
         data => {
          // test if data is an array if (Array.isArray(data)===true){}
          //     this.configServer=data[0];
-       
+  
           this.onReturnConfig(data,test_prod);
         //this.configServer.project=this.initConfigServer.project;
           //this.getTokenOAuth2();
           if (this.credentials.access_token===""){
             this.getServerUsrId('Google');
+            console.log('retrieve config Google');
         }  
         if (this.credentialsMongo.access_token===""){
             this.getServerUsrId('Mongo');
+            console.log('retrieve config Mongo');
         }  
         if (this.credentialsFS.access_token===""){
             this.getServerUsrId('FS');
+            console.log('retrieve config FS');
         } 
         
         
@@ -235,6 +242,8 @@ export class AppComponent {
       this.isIdRetrieved=true;
     }
       this.isCallUserFunction=event;
+  console.log('this.isIdRetrieved='+this.isIdRetrieved);
+  console.log('this.isCallUserFunction'+this.isCallUserFunction);
   }
 
   TheIdentifObject(event:any){
@@ -244,7 +253,6 @@ export class AppComponent {
 
   onReturnConfig(data:any,test_prod:string){
     this.errConfig="";
-    
     if (Array.isArray(data) === false){
       if (this.devMode==="local"){
         if (typeof data === "string") {
@@ -282,12 +290,16 @@ export class AppComponent {
       this.configServer.fileSystemServer = this.initConfigServer.fileSystemServer;
       this.configServer.IpAddress=this.IpAddress;
       this.configServer.test_prod= this.initConfigServer.test_prod;
-      this.configServer.project=this.mainFunction;
+      
       this.configServer.devMode=this.devMode;
       this.saveGoogleServer = this.configServer.googleServer;
-      this.isConfigServerRetrieved=true;
+     
+        this.isConfigServerRetrieved=true; // UI updates correctly now
+        this.configServer.project=this.mainFunction;
+     
       this.currentFunction="getLogin";
       this.theFn="Login";
+
     }
 
   }
@@ -350,6 +362,7 @@ export class AppComponent {
                 this.configServer.googleServer = this.saveGoogleServer;
             }
             this.isCredentials=true;
+            this.cdr.detectChanges();
   
           },
           err => {
@@ -437,6 +450,7 @@ fnResetServer(){
   }
 
   ReceiveFiles(event:any){
+   console.log('receive file ' + event.fileType);
     if (event.fileType!=='' && 
             event.fileType===this.identification.configFitness.fileType.convertUnit){ 
         this.ConvertUnit=event;
@@ -468,6 +482,7 @@ fnResetServer(){
         this.configServer.userLogin.accessLevel="Low";
       }
       this.isIdRetrieved=true;
+console.log('isIdRetrieved='+this.isIdRetrieved);
       this.currentFunction="";
     } else {
       this .errConfig=this.nameRetrievedFile + " does not correspond to a login file; retry"

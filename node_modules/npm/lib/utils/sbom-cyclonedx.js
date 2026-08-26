@@ -76,7 +76,7 @@ const toCyclonedxItem = (node, { packageType }) => {
   // Calculate purl from package spec
   let spec = npa(node.pkgid)
   spec = (spec.type === 'alias') ? spec.subSpec : spec
-  const purl = npa.toPurl(spec) + (isGitNode(node) ? `?vcs_url=${node.resolved}` : '')
+  const purl = npa.toPurl(spec) + (isGitNode(node) ? `?vcs_url=${encodeURIComponent(node.resolved)}` : '')
 
   if (node.package) {
     const toNormalize = new PackageJson()
@@ -106,7 +106,7 @@ const toCyclonedxItem = (node, { packageType }) => {
   const component = {
     'bom-ref': toCyclonedxID(node),
     type: packageType,
-    name: node.name,
+    name: node.packageName,
     version: node.version,
     scope: (node.optional || node.devOptional) ? 'optional' : 'required',
     author: (typeof node.package?.author === 'object')
