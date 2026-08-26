@@ -135,7 +135,10 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     this.i_table=this.i_Offer;
     this.Display_Table[this.i_table].display=true;
   }
+  /*
   @HostListener('window:resize', ['$event'])
+  */
+  @HostListener('window:resize', [])
   onWindowResize() {
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;

@@ -20,6 +20,10 @@ import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
   standalone:true,
   imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, 
     AdminJsonComponent ],
+  host: {
+    /*'(click)': 'onClick($event)',*/
+    '(window:resize)': 'onResize($event)'
+  }
 
 })
 
@@ -95,8 +99,11 @@ export class LoginComponent {
       'https://xmv-it-consulting.uc.r.appspot.com', 'https://serverfs.ue.r.appspot.com'
       ]
   
+  /*
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
+  */
+ onResize(event:any) {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
     }

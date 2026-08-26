@@ -590,9 +590,20 @@ export class MainHealthComponent {
           this.iWaitToRetrieve[0].iWait=1;
           this.iWaitToRetrieve[0].accessFS=true;
           iK=1;
-        } else {
-          iK = 0;
-        }
+        } else { 
+            if (this.identification.triggerFileSystem.toUpperCase() !=='YES' && this.tabLock[1].lock === 1) {
+              this.iWait=1;
+              this.EventHTTPReceived[1]=false;
+              const theClass=new classRetrieveFile;
+              this.iWaitToRetrieve.push(theClass);
+              this.iWaitToRetrieve[0].iWait=1;
+              this.iWaitToRetrieve[0].accessFS=true;
+              iK = 1
+            } else { 
+              iK=0 
+            }
+          }
+        
         for (var iJ=iK; iJ<4; iJ++){
             const theClass=new classRetrieveFile;
             this.iWaitToRetrieve.push(theClass);
@@ -883,6 +894,7 @@ export class MainHealthComponent {
     event.fileContent=this.fileParamChart;
     event.checkLock.iCheck=true;
     event.saveCalls++
+    this.triggerSaveFile++
     this.checkLockLimitFn(event);
   }
 
@@ -900,6 +912,7 @@ export class MainHealthComponent {
     }
     event.checkLock.iCheck=true;
     event.saveCalls++
+    this.triggerSaveFile++
     this.checkLockLimitFn(event);
   }
 
@@ -973,6 +986,16 @@ export class MainHealthComponent {
     } 
     this.counterActions++;
     this.actionHealth++;
+  }
+
+  calculateCalFat(event: any){
+    this.calculateHealth(this.HealthAllData.tabDailyReport[event]);
+    if (this.errorMsg !== '') {
+        //this.errCalcCalFat = 'errors found while caculating calories and fat (' + this.errorMsg + ')';
+        //this.errorMsg = "";
+    }
+    this.HealthAllData.tabDailyReport[event].total = this.returnData.outHealthData.total;
+    this.HealthAllData.tabDailyReport[event].meal = this.returnData.outHealthData.meal;
   }
 
   processSaveHealth(event: any) {

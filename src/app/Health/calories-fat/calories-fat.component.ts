@@ -236,7 +236,7 @@ onMouseUp(event: MouseEvent) {
   } 
   posItemAction:number=0;
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', []) /* '$event' */
   onWindowResize() {
     this.getScreenWidth = window.innerWidth ;
     this.getScreenHeight = window.innerHeight;
@@ -746,7 +746,6 @@ initOutTab(inFile:any,type:string){
 onInput(event:any){
   this.returnEmit.saveAction="";
   if (this.identification.triggerFileSystem==="Yes"){
-    this.isCalFatModified = true;
     this.theEvent.target.id=event.target.id;
     this.theEvent.target.value=event.target.value;
     this.onInputAction="onInput";
@@ -755,6 +754,7 @@ onInput(event:any){
 }
 
 onInputA(event:any){
+  this.isCalFatModified = true;
   this.offsetLeft = event.currentTarget.offsetLeft;
   this.offsetWidth = event.currentTarget.offsetWidth;
   this.tabInputType.splice(0,this.tabInputType.length);
@@ -965,7 +965,6 @@ calculateTotal( iRecipe:number){
 
   onInputRecipe(event:any){ 
     if (this.identification.triggerFileSystem==="Yes"){
-      this.isRecipeModified = true;
       this.theEvent.target.id=event.target.id;
       this.theEvent.target.value=event.target.value;
       this.onInputAction="onInputRecipe";
@@ -976,6 +975,7 @@ calculateTotal( iRecipe:number){
 
   onInputRecipeA(event:any){ 
     this.returnEmit.saveAction="";
+    this.isRecipeModified = true;
     //this.offsetHeight= event.currentTarget.offsetHeight;
     this.offsetLeft = event.currentTarget.offsetLeft;
     //this.offsetTop = event.currentTarget.offsetTop;

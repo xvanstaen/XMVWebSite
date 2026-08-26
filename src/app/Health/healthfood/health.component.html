@@ -143,7 +143,7 @@
                 <div [ngStyle]="divClassHeader[5]">
                     <input [ngStyle]="tabHeader[5]" type="text" value="Sat."></div>
                 <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Sat.Fat"></div>
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Tot.Fat"></div>
                 <div [ngStyle]="divClassHeader[5]">
                     <input [ngStyle]="tabHeader[5]" type="text" value="Protein"></div>
                 <div [ngStyle]="divClassHeader[5]">
@@ -161,8 +161,8 @@
                         <li *ngFor="let action of NewTabAction; let m=index;" 
                                 class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="onDropDownAll($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{action.type}}-{{action.name}}">
-                                    <span *ngIf="m>0">&nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}</span>
-                                    <span *ngIf="m===0">&nbsp;&nbsp;{{action.name}}</span>
+                                    <span *ngIf="m>1">&nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}</span>
+                                    <span *ngIf="m===0 || m===1">&nbsp;&nbsp;{{action.name}}</span>
                         </li>
                     </div>                   
                 </div>

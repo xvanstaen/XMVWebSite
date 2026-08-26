@@ -201,7 +201,13 @@ export class MainManageFileComponent {
     eventToCheck=this.eventCheckToLimit;
     this.errCalcCalFat="";
     if (this.identification.triggerFileSystem === "No") { //"No"
-      valueCheck.action = "noAction";
+      if (eventToCheck.checkLock.isSaveFile===true ){
+        valueCheck.action = "ProcessSave";
+      }
+      else {
+        valueCheck.action = "noAction";
+      }
+      
     } else {
       valueCheck = fnCheckLockLimit(this.configServer, this.tabLock, event.checkLock.iWait, event.checkLock.lastInputAt, event.checkLock.isDataModified, event.checkLock.isSaveFile);
     }

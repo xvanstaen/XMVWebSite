@@ -14,6 +14,7 @@ import { RunningClockComponent } from '../../Health/running-clock/running-clock.
 import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent } from '../../JsonServerClass';
 import { classPosDiv, getPosDiv } from '../../getPosDiv';
 
+import { CalcFatCalories } from '../CalcFatCalories';
 
 import { getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
 
@@ -48,6 +49,7 @@ export class HealthComponent  {
   @Output() checkLockLimit = new EventEmitter<any>();
   @Output() cancelUpdates = new EventEmitter<any>();
   @Output() processSaveHealth = new EventEmitter<any>();
+  @Output() calculateCalFat= new EventEmitter<any>();
   @Output() unlockFile = new EventEmitter<any>();
 
   @Input() configServer = new configServer;
@@ -244,6 +246,7 @@ export class HealthComponent  {
   }
   */
 
+
   actionMouseUp(event:any){
     this.posDivAfterTitle = getPosDiv("posAfterTitle");
     this.eventClientY = event.clientY;
@@ -255,7 +258,7 @@ export class HealthComponent  {
     this.posItem =  this.foodPos - Number(sizeBox) / 2 + 10;
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', []) /* '$event' */
   onWindowResize() {
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
@@ -307,25 +310,32 @@ export class HealthComponent  {
     this.TabAction[0].name = 'cancel';
     const A = { name: 'A' };
     this.TabAction.push(A);
-    this.TabAction[1].name = 'insert before';
+    this.TabAction[1].name = 'calCalFat';
     const B = { name: 'A' };
     this.TabAction.push(B);
-    this.TabAction[2].name = 'insert after';
+    this.TabAction[2].name = 'insert before';
     const C = { name: 'A' };
     this.TabAction.push(C);
-    this.TabAction[3].name = 'delete';
+    this.TabAction[3].name = 'insert after';
+    const D = { name: 'A' };
+    this.TabAction.push(D);
+    this.TabAction[4].name = 'delete';
     const tabItems = ['date', 'meal', 'food'];
 
     this.NewTabAction[0].type = '';
     this.NewTabAction[0].name = 'cancel';
-    var k = 0;
+    const E1 = { type: 'a', name: 'A' };
+    this.NewTabAction.push(E1);
+    this.NewTabAction[1].type = '';
+    this.NewTabAction[1].name = 'calCalFat';
+    var k = 1;
     for (i = 0; i < tabItems.length; i++) {
       for (var j = 0; j < 3; j++) {
         k++;
-        const D = { type: 'a', name: 'A' };
-        this.NewTabAction.push(D);
+        const E = { type: 'a', name: 'A' };
+        this.NewTabAction.push(E);
         this.NewTabAction[k].type = tabItems[i];
-        this.NewTabAction[k].name = this.TabAction[j + 1].name;
+        this.NewTabAction[k].name = this.TabAction[j + 2].name;
       }
     }
 
@@ -642,6 +652,10 @@ export class HealthComponent  {
       //this.isSaveHealth = false;
       this.isForceReset = false;
     }
+  }
+
+  calFatCalculation(i:number){
+    this.calculateCalFat.emit(i)
   }
 
   calculateHeight() {
@@ -1003,6 +1017,8 @@ export class HealthComponent  {
                   + ' of meal ' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;;
                 this.posDelConfirm = this.posDelIngr;
               }
+            } else if (this.myType.trim() === "calCalFat") {
+              this.calFatCalculation(this.TabOfId[0]);
             }
           }
         } else if (event.target.id.substring(0, 10) === 'ActionDate') {
