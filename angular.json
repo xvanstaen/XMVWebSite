@@ -83,7 +83,7 @@
             "builder": "@angular/build:dev-server"
           },
           "test": {
-            "builder": "@angular-devkit/build-angular:karma",
+            "builder": "@angular/build-angular:karma",
             "options": {
               "polyfills": [
                 "zone.js",
