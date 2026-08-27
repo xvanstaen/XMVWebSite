@@ -108,19 +108,22 @@
         </div>
     </form>
 </div>
-<div *ngIf="this.posSizeClock.displayAnalog===true || this.posSizeClock.displayDigital===true" 
-                [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.width, 'margin-top.px':posSizeClock.margTop, 'margin-left.px':posSizeClock.margLeft}">
-    <div *ngIf="this.posSizeClock.displayAnalog===true" >   CLOCK CANVAS
-        <canvas 
-        #baseCanvas 
-            id='clockCanvas' 
-            class="position" 
-            [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.height}" 
-        >
-        </canvas>
+@if (this.posSizeClock.displayAnalog===true || this.posSizeClock.displayDigital===true){
+    <div  [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.width, 'margin-top.px':posSizeClock.margTop, 'margin-left.px':posSizeClock.margLeft}">
+        @if(this.posSizeClock.displayAnalog===true){   CLOCK CANVAS
+            <canvas 
+            #baseCanvas 
+                id='clockCanvas' 
+                class="position" 
+                [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.height}" 
+            >
+            </canvas>
+        }
+        @if(this.posSizeClock.displayDigital===true){
+            <div  style="width:100%; display:inline-block; text-align: center; margin-top:2px; ">{{theHours | number:'2.0-0'}}:{{theMinutes | number:'2.0-0'}}:{{theSeconds | number:'2.0-0'}}</div>
+        }
     </div>
-    <div *ngIf="this.posSizeClock.displayDigital===true" style="width:100%; display:inline-block; text-align: center; margin-top:2px; ">{{theHours | number:'2.0-0'}}:{{theMinutes | number:'2.0-0'}}:{{theSeconds | number:'2.0-0'}}</div>
-</div>
+}
 
 <div class="canvasPos">
     <form  [formGroup]="sunEarthCanvasForm" >

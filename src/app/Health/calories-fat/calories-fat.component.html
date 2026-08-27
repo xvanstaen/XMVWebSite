@@ -2,7 +2,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
-    <div *ngIf="openFileAccess===true">
+    @if (openFileAccess===true){
         <app-file-access 
             [configServer]="configServer" [identification]="identification" 
             [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit"
@@ -11,26 +11,31 @@
         >
     
         </app-file-access>
-    </div>
+    }
     <!--
         =========================================================================
         ================  Display and Manage special dishes/recipes  ============
         =========================================================================
      -->
 <div class="skipLine">&nbsp;</div>  
-<div *ngIf="isUserTimeOut===true" style="margin-left:6px;">
-    <div style="font-size:16px; color:blue; display:inline-block; 
-             text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width}">
-            You have been inactive for too long so your updates are lost. Re-access the application Health 
+@if (isUserTimeOut===true){
+    <div style="margin-left:6px;">
+        <div style="font-size:16px; color:blue; display:inline-block; 
+                text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width}">
+                You have been inactive for too long so your updates are lost. Re-access the application Health 
+        </div>
     </div>
-</div>
+}
 
-<div *ngIf="isInitComplete===true && isUserTimeOut===false && isNgStyleCompleted===true; else waitMsg">
+@if (isInitComplete===true && isUserTimeOut===false && isNgStyleCompleted===true){
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
  
-        <div *ngIf="tabLock[1].lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
-        <div *ngIf="tabLock[1].lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
-
+        @if (tabLock[1].lock===2){
+            <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
+        }
+        @if (tabLock[1].lock===3){
+            <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
+        }
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+13}">
             MANAGE RECIPE
  
@@ -145,22 +150,24 @@
                    >
         <!-- ================== display of the table =============== -->
             <div *ngFor="let tab of outFileRecipe.tabCaloriesFat; let i=index ">
-                <div *ngIf="(RecipeSel==='' || (RecipeSel.toLowerCase().trim()!=='' && RecipeSel.toLowerCase().trim()===tab.Type.toLowerCase().trim()))">
+                @if (RecipeSel==='' || (RecipeSel.toLowerCase().trim()!=='' && RecipeSel.toLowerCase().trim()===tab.Type.toLowerCase().trim())){}
                     <div *ngFor="let content of outFileRecipe.tabCaloriesFat[i].Content; let j=index">
-                        <div *ngIf="RecipeSelFood==='' ||  (RecipeSelFood.toLowerCase().trim()!=='' && RecipeSelFood.toLowerCase().trim()===content.Name.toLowerCase().trim())">
+                        @if (RecipeSelFood==='' ||  (RecipeSelFood.toLowerCase().trim()!=='' && RecipeSelFood.toLowerCase().trim()===content.Name.toLowerCase().trim())){
                         
                             <div  style="display:block; "> <!-- all items below will be next to each other-->
      <!--
                                 <div [ngStyle]="tabDivContent[0]">
                                     <div [ngStyle]="tabStyleBox[tabNewRecord[i].ngStyle][0]" >
-                                        <div style="padding-left:0px;" 
-                                        *ngIf="((j===0 && outFileRecipe.tabCaloriesFat[i].Content.length<2)
+                                        
+                                        @if(((j===0 && outFileRecipe.tabCaloriesFat[i].Content.length<2)
                                                 || (j===1 && outFileRecipe.tabCaloriesFat[i].Content.length>1 && outFileRecipe.tabCaloriesFat[i].Content.length<5) ||
-                                               (outFileRecipe.tabCaloriesFat[i].Content.length>4 && j=== 3) )">
-                                            <div id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
-                                                <div style="margin-top:2px;">A</div>
+                                               (outFileRecipe.tabCaloriesFat[i].Content.length>4 && j=== 3) )){
+                                            <div style="padding-left:0px;">
+                                                <div id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
+                                                    <div style="margin-top:2px;">A</div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        }
                                     </div>            
                                 </div>
     -->
@@ -204,9 +211,8 @@
                             </div>
                         <!-- ============== TOTAL OF THE RECIPE ================== -->
         
-                            <div *ngIf="outFileRecipe.tabCaloriesFat[i].Content.length-1===j"
-                               [ngStyle]="{'display':'inline-block','width':'100%'}"
-                                >
+                            @if (outFileRecipe.tabCaloriesFat[i].Content.length-1===j){
+                            <div [ngStyle]="{'display':'inline-block','width':'100%'}">
                         
                                 <div  [ngStyle]="tabDivTotal[0]" >
                                     <div [ngStyle]="tabTotal[tabNewRecord[i].even][0]">&nbsp;</div>
@@ -256,7 +262,8 @@
                                     <div [ngStyle]="tabTotal[tabNewRecord[i].even][3]" > {{tab.Total.Fat.Total  | number:'1.0-0'}}</div>
                                 </div>
                             </div>
-                        </div>
+                            }
+                        }
                     </div>
                 </div>
             </div> 
@@ -272,14 +279,14 @@
                     <button id='RecipeSave' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
                     <button id='RecipeCancel' class="sizeButtons"  style="width:120px" (click)="CancelUpdates($event)"> Cancel Updates</button>
                 </span>
-                <div *ngIf="errorMsg!=='' && returnEmit.saveAction==='RecipeSave'">
+                @if (errorMsg!=='' && returnEmit.saveAction==='RecipeSave'){
                     <div class="skipLine">&nbsp;</div>  
                     <span style="color:red; margin-left:20px; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  >{{errorMsg}}</span>
                     <div class="skipLine">&nbsp;</div> 
-                </div> 
+                } 
             </div>
         </div>
-        <div *ngIf="isSaveRecipeConfirmed===true">
+        @if (isSaveRecipeConfirmed===true){
             <form  [formGroup]="SpecificForm" >
                 <div class="msg"  >
                     Please enter the name of the recipe file to save  :
@@ -293,17 +300,19 @@
                     <button id='RecipeCancel' class="sizeButtons" (click)="CancelTheSave($event)"> No</button>
                 </div>
             </form>       
-        </div>
+        }
         <div class="skipLine">&nbsp;</div> 
-    </div>
+
 
     <div class="skipLine">&nbsp;</div>  
     <div style="border:solid 2px blue; background-color: lightskyblue;display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
     
-
-        <div *ngIf="tabLock[1].lock===2" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
-        <div *ngIf="tabLock[1].lock===3" style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
-
+        @if (tabLock[1].lock===2){
+            <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
+        }
+        @if (tabLock[1].lock===3){
+            <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
+        }
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
             MANAGE CALORIES & FAT
             <!--
@@ -391,39 +400,42 @@
                 </div>
         </div>
         <!-- ================== DROPDOWN LIST : action =============== -->
-        <div class="dropdown" *ngIf="dialogueCalFat[0]===true && isDeleteType===false && isDeleteFood===false">
-                <div class="Straight-content"  >
-                                                        <!-- selectedPosition.y - tablePosTop - 450 -->
-                    <div  class="StraightDropDown "  style="height:180px; width:140px; overflow-y:hidden;" [ngStyle]="{ 'margin-top.px': posItemAction  ,'margin-left.px': 50}"  >
-                        <li *ngFor="let theTab of TabAction; let m=index;" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                class="Straight-options "   style=" width:140px; "
-                                    (click)="onAction($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{m}}">
-                                    <span *ngIf="m>0">&nbsp;&nbsp;{{theTab.name}}-{{theTab.action}}</span>
-                                    <span *ngIf="m===0">&nbsp;&nbsp;{{theTab.name}}</span>
-                        </li>
+         @if (dialogueCalFat[0]===true && isDeleteType===false && isDeleteFood===false){
+            <div class="dropdown" >
+                    <div class="Straight-content"  >
+                                                            <!-- selectedPosition.y - tablePosTop - 450 -->
+                        <div  class="StraightDropDown "  style="height:180px; width:140px; overflow-y:hidden;" [ngStyle]="{ 'margin-top.px': posItemAction  ,'margin-left.px': 50}"  >
+                            <li *ngFor="let theTab of TabAction; let m=index;" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    class="Straight-options "   style=" width:140px; "
+                                        (click)="onAction($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{m}}">
+                                        <span *ngIf="m>0">&nbsp;&nbsp;{{theTab.name}}-{{theTab.action}}</span>
+                                        <span *ngIf="m===0">&nbsp;&nbsp;{{theTab.name}}</span>
+                            </li>
+                        </div>
                     </div>
-                </div>
-        </div>
+            </div>
+        }
             <!-- ================== Confirm/Cancel delete of meal/food =============== selectedPosition.y - posDeletedItem + 50 -->
-        <div class="Straight-content"  *ngIf="(isDeleteType===true || isDeleteFood===true)">
-                <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': posItemAction,'margin-left.px': 50}" >
-                    <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion of {{ nameDeletedItem }}</div> 
-                    <div  class="theRadio">
-                        <input   (click)='onAction($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}"  value="Y" > &nbsp;&nbsp;Yes 
-                        <input  style='margin-left:10px;' (click)='onAction($event)' type="radio"   id="NoDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}"  value="N">  &nbsp;&nbsp; No 
-                        <div class="skipLine">&nbsp; </div>  
+        @if (isDeleteType===true || isDeleteFood===true){
+            <div class="Straight-content">
+                    <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': posItemAction,'margin-left.px': 50}" >
+                        <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion of {{ nameDeletedItem }}</div> 
+                        <div  class="theRadio">
+                            <input   (click)='onAction($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}"  value="Y" > &nbsp;&nbsp;Yes 
+                            <input  style='margin-left:10px;' (click)='onAction($event)' type="radio"   id="NoDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}"  value="N">  &nbsp;&nbsp; No 
+                            <div class="skipLine">&nbsp; </div>  
+                        </div>
                     </div>
-                </div>
-        </div>
-
+            </div>
+        }
 
         <div id="posStartTable" [ngStyle]="{'margin-top.px':0.1, 'overflow-y':'scroll', 'overflow-x':'hidden', 'display':'inline-block','max-height.px':HTMLCaloriesFat.height, 'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width, 'color':HTMLCaloriesFat.color, 'margin-left.px':5}" 
             >
             <!-- ================== display of the table =============== -->
             <div *ngFor="let tab of outConfigCaloriesFat.tabCaloriesFat; let i=index ">
-                <div *ngIf="(selType==='' || (selType.toLowerCase().trim()!=='' && selType.toLowerCase().trim()===tab.Type.toLowerCase().trim()))">
+                @if (selType==='' || (selType.toLowerCase().trim()!=='' && selType.toLowerCase().trim()===tab.Type.toLowerCase().trim())){
                     <div *ngFor="let content of outConfigCaloriesFat.tabCaloriesFat[i].Content; let j=index">
-                        <div *ngIf="selFood==='' ||  (selFood.toLowerCase().trim()!=='' && selFood.toLowerCase().trim()===content.Name.toLowerCase().trim())">
+                        @if (selFood==='' ||  (selFood.toLowerCase().trim()!=='' && selFood.toLowerCase().trim()===content.Name.toLowerCase().trim())){
                             
                             <div  style="display:inline-block; width:100%;" 
                                     *ngIf="checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)" >
@@ -437,59 +449,50 @@
                                             </div>
                                         </div>            
                                     </div>
-                                    <input *ngIf='j===0'[ngStyle]="tabStyleInput[tabNewRecord[i].ngStyle][1]" class="textHover" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
-                                    <input *ngIf='j!==0' [ngStyle]="tabStyleInput[tabNewRecord[i].ngStyle][1]" [readonly]='inputReadOnly'  type="text" style="pointer-events:none; background-color: white !important;" value="&nbsp;">
+                                    @if(j===0){
+                                        <input [ngStyle]="tabStyleInput[tabNewRecord[i].ngStyle][1]" class="textHover" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
+                                    }
+                                    @if(j!==0){    
+                                        <input [ngStyle]="tabStyleInput[tabNewRecord[i].ngStyle][1]" [readonly]='inputReadOnly'  type="text" style="pointer-events:none; background-color: white !important;" value="&nbsp;">
+                                    }   
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][2]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}"  value="&nbsp;{{content.Name}}"   >
-                                
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}"  value="{{content.ServingUnit}}"  >
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="calo-{{i}}-{{j}}"  value="{{content.Calories}}"  >
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="prot-{{i}}-{{j}}"  value="{{content.Protein}}" >
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="carb-{{i}}-{{j}}"  value="{{content.Carbs}}"  >
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="glyi-{{i}}-{{j}}"  value="{{content.GlyIndex}}"  >
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}"  value="{{content.Sugar}}" >                     
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="naturalSuga-{{i}}-{{j}}"  value="{{content.naturalSugar}}" >                     
- 
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]"  class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="addedSuga-{{i}}-{{j}}"  >                     
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}"  value="{{content.Cholesterol}}">
-
                                     <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]"  class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}"  value="{{content.Fat.Saturated}}"  >
-
-                                    <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="tota-{{i}}-{{j}}"  value="{{content.Fat.Total}}" >
-                                
+                                    <input [ngStyle]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="tota-{{i}}-{{j}}"  value="{{content.Fat.Total}}" >                                
                             </div>
-                        </div>
+                        }
                     </div>
-                </div>
+                }
             </div> 
 
         </div>
 
-        <div *ngIf="tabLock[1].lock===1">
+        @if (tabLock[1].lock===1){
             <div class="skipLine">&nbsp;</div> 
             <div class="posConfirm">
-                <span *ngIf="isSaveConfirmed===false && isCalFatModified===true" >
+                @if (isSaveConfirmed===false && isCalFatModified===true){
                     <span class="msg"  >
                         Configuration file is updated. Do you want to
                     </span>
                     <button id='Cal-1' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
                     <button id='Cal-2' class="sizeButtons"  style="width:120px" (click)="CancelUpdates($event)"> Cancel Updates</button>
-                </span>
-                <div *ngIf="errorMsg!=='' && returnEmit.saveAction==='ConfigCalSave'">
+                }
+                @if (errorMsg!=='' && returnEmit.saveAction==='ConfigCalSave'){
                     <div class="skipLine">&nbsp;</div>  
                     <span style="color:red; margin-left:20px; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  >{{errorMsg}}</span>
                     <div class="skipLine">&nbsp;</div> 
-                </div> 
+                }
             </div>
-            <span *ngIf="isSaveConfirmed===true">
+            @if(isSaveConfirmed===true){
                 <form  [formGroup]="SpecificForm" >
                     <div class="msg"  >
                         Please enter the name of the file 
@@ -502,18 +505,16 @@
                         <button id='Cal-4' class="sizeButtons" (click)="CancelTheSave($event)"> No</button>
                     </div>
                 </form>
-                    
-            </span>
-        </div>
+            }
+        }
         <div class="skipLine">&nbsp;</div> 
     </div>
-</div>
-<ng-template #waitMsg>
+} @else {
 <div style="font-size:22px; color:blue; display:inline; width:200px; text-align:center; 
             background:lightyellow; ">
         UNDER CONSTRUCTION
 </div>
-</ng-template>
+}
 
 </body>
 

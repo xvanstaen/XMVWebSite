@@ -26,7 +26,7 @@
 </div>
 <div class="skipLine">&nbsp;</div>
 
-  <div *ngIf="isDisplaySlider===true">
+  @if (isDisplaySlider===true){
       <div class='color-wrapper' >
         <app-color-palette  [my_input1]="my_input_child1" [posPalette]="posPalette"[INreturnField]="returnPalette" [paramChange]="paramChange" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
         </app-color-palette>
@@ -42,7 +42,7 @@
           <span class="text" > palette: {{temporaryColor}} </span>
           <div class="color-div" [ngStyle]="{'background-color': temporaryColor || 'white'}"><br><br></div>
       </div>
-</div>
+}
 
 
  

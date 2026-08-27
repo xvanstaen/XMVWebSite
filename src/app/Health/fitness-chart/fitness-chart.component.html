@@ -59,11 +59,11 @@
             </mat-icon>   
         </div>
     </div>   
-    <div *ngIf="OpenDialogue[prev_Dialogue]===true " >
+    @if (OpenDialogue[prev_Dialogue]===true ){
         <app-my-drop-down [ListSortFields]="ListSortFields" [ListFilter]="ListFilter" [OpenDialogue]="OpenDialogue"
         [callingComponent]="callingComponent" (selectedCriteria)="DropDownData($event)">
         </app-my-drop-down>
-    </div>
+    }
     <div class="skipLine" ></div> 
     <button id='but_1' class="sizeButtons" (click)="Confirm()"> Confirm</button>
     <button id='but_2' class="sizeButtons" (click)="CancelCriteria()"> Cancel</button>
