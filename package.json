@@ -1,6 +1,7 @@
 {
   "name": "xmv-website",
   "version": "0.0.0",
+  "homepage": "https://xvanstaen.github.io/XMVWebSite/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
