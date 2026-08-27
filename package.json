@@ -4,11 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production",
+    "rebuild": "ng build --base-href=/json-storage-service/",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "predeploy": "npm run build",
-    "deploy":"gh-pages -d dist"
+    "test": "ng test"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
