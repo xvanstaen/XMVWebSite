@@ -1,5 +1,5 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, ChangeDetectorRef} from '@angular/core';
 import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
@@ -24,6 +24,7 @@ export class ManagePointOfRefComponent {
   constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
+    private cdr: ChangeDetectorRef
     ) { }
 
     @Output() returnFile= new EventEmitter<any>();
@@ -217,6 +218,7 @@ onActionCountry(event:any){
     this.iCountryPoR=this.TabOfId[0];
   }
   this.scroller.scrollToAnchor('bottomPage');
+  this.cdr.detectChanges();
 }
 
 
@@ -240,6 +242,7 @@ onSelOrAction(event:any){
       theEvent.target.id="Selection-"+this.TabOfId[0].toString();
       this.onSelectPoR(theEvent);
   }
+  this.cdr.detectChanges();
 }
 
 
@@ -336,6 +339,7 @@ onActionPoR(event:any){
     } 
     console.log(event.target.id);
     this.scroller.scrollToAnchor('bottomPage');
+    this.cdr.detectChanges();
 
 }
 
@@ -353,7 +357,7 @@ checkFormData(){
   || isNaN(this.formOptions.controls["lgt"].value)){
     this.errorMsg="Latitude and Loongitude must be numeric values";
   }
-
+  this.cdr.detectChanges();
 
 }
 
@@ -374,6 +378,7 @@ manageUpdates(event:any){
   } else if (event.target.id==="cancelSave"){
       this.saveConfirmed=false;
   }
+  this.cdr.detectChanges();
 }
 
 saveFile(bucket:string, object:string,record:any){
@@ -400,6 +405,7 @@ saveFile(bucket:string, object:string,record:any){
         console.log(this.errorMsg);
         this.scroller.scrollToAnchor('bottomPage');
       })
+      this.cdr.detectChanges();
 }
 
 getFileCircuit(){
@@ -474,6 +480,7 @@ GetRecord(bucketName:string,objectName:string, iWait:number){
         console.log(this.errorMsg);
         this.scroller.scrollToAnchor('bottomPage');
       })
+      this.cdr.detectChanges();
 }
 
 
@@ -492,6 +499,7 @@ waitHTTP(loop:number, maxloop:number, eventNb:number){
                     window.cancelAnimationFrame(this.idAnimation[eventNb]);
             }    
       }  
+  this.cdr.detectChanges();
   }
 
 }

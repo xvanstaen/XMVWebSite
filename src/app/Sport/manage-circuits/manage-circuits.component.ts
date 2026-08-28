@@ -1,5 +1,5 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, ChangeDetectorRef} from '@angular/core';
   
 import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,7 +23,7 @@ export class ManageCircuitsComponent {
   constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
-
+    private cdr: ChangeDetectorRef
     ) { }
 
 
@@ -236,6 +236,7 @@ onInput(event:any){
     this.returnCircuit.emit(this.fileCircuit[this.TabOfId[0]]);
   }
   this.scroller.scrollToAnchor('bottomCircuit');
+  this.cdr.detectChanges();
 }
 
 updateAllCircuits(event:any){
@@ -258,6 +259,7 @@ updateAllCircuits(event:any){
         }
       }
       this.isFileModified=true;
+      this.cdr.detectChanges();
   }
 
   }
@@ -284,6 +286,7 @@ manageUpdates(event:any){
   } else if (event.target.id==="cancelSave"){
       this.saveConfirmed=false;
   }
+  this.cdr.detectChanges();
 }
 
 checkCodeCircuit(){
@@ -315,13 +318,16 @@ saveFile(bucket:string, object:string,record:any){
           this.isFileModified=false;
           this.saveConfirmed=false;
           this.scroller.scrollToAnchor('bottomCircuit');
+           this.cdr.detectChanges();
         }
       }, 
       err => {
         this.errorMessage='failure to get record ' + object+ ' ;  error = '+ JSON.stringify(err);
         console.log(this.errorMessage);
         this.scroller.scrollToAnchor('bottomCircuit');
+         this.cdr.detectChanges();
       })
+     
 }
 sizeTheBox(){
   const maxSizeBox=400;
@@ -399,6 +405,7 @@ GetRecord(bucketName:string,objectName:string, iWait:number){
             }
           }
           this.scroller.scrollToAnchor('bottomCircuit');
+          this.cdr.detectChanges();
       },
       error => {
         this.errorMessage='failure to get record ' + objectName +' ;  error = '+ JSON.stringify(error);
@@ -416,7 +423,9 @@ GetRecord(bucketName:string,objectName:string, iWait:number){
           this.sizeTheBox();
           }
         this.scroller.scrollToAnchor('bottomCircuit');
+        this.cdr.detectChanges();
       })
+      
 }
 
 waitHTTP(loop:number, maxloop:number, eventNb:number){

@@ -1,5 +1,5 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, ChangeDetectorRef} from '@angular/core';
   
 import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -33,6 +33,7 @@ export class SportReportsComponent {
   constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
+    private cdr: ChangeDetectorRef
     ) { }
 
     @Input() configServer = new configServer;
@@ -137,6 +138,7 @@ onSelectPerf(event:any){
     //this.circuitPerfPoR();
     this.isBuildFromPerf=true;
   }
+    this.cdr.detectChanges();
 }
 
 onSelectCircuit(event:any){ 
@@ -155,6 +157,7 @@ onSelectCircuit(event:any){
   this.firstPoR=this.specificCircuit.points[0].ref;
   this.firstPoRNb=0;
   this.scroller.scrollToAnchor('bottomPage');
+  this.cdr.detectChanges();
 }
 
 selFirstPoR(event:any){
@@ -177,6 +180,7 @@ onActionPerf(event:any){
     this.selectionCircuit=false;
   }
   this.scroller.scrollToAnchor('bottomPage');
+  this.cdr.detectChanges();
 }
 
 
@@ -201,13 +205,16 @@ retrievePerfCircuit(resp:string){
               this.perfCircuit=this.theFile.content;
               this.savePerfCircuit.splice(0,this.savePerfCircuit.length);
               this.savePerfCircuit=copyInOut(this.perfCircuit,this.savePerfCircuit);
+                this.cdr.detectChanges();
             },
             err=>{
               this.isPerfCircuitRetrieved=2;
               this.errorMessage=fileName;
+                this.cdr.detectChanges();
             })
   } else {
     this.isPerfCircuitRetrieved=3;
+    this.cdr.detectChanges();
   }
 }
 
@@ -272,7 +279,7 @@ circuitPerfPoR(){
       }
 
   }
-
+  this.cdr.detectChanges();
 }
 
 
@@ -452,6 +459,7 @@ onCalculatePerf(){
     this.filePerf.splice(0, this.filePerf.length);
   }
 this.scroller.scrollToAnchor('bottomPage');
+this.cdr.detectChanges();
 }
 
 createPerfCircuit(){
@@ -504,6 +512,7 @@ createPerfCircuit(){
         this.perfCircuit[i].newLoop.splice(this.perfCircuit[i].newLoop.length-1,1);
     }
   }
+  this.cdr.detectChanges();
 }
 
 
@@ -553,11 +562,13 @@ fnSavePerf(bucket:string, fileName:string,aFile:any){
                   this.nbSave=this.nbSuccessUpload;
                   this.saveMsg =  " file has been updated and stored in the cloud ";
                 }
+                  this.cdr.detectChanges();
           }, 
           err => {
             this.nbErrUpload--;
             this.nbSave=this.nbErrUpload;
             this.saveMsg =  " upload pb - file has not been updated";
+            this.cdr.detectChanges();
           })
 }
 
@@ -570,10 +581,12 @@ fnSave(type:string, content:any, fileName:string, bucket:string){
             res => {
                 if (res.type===4){ 
                   console.log("file is save - " + fileName);
+                  this.cdr.detectChanges();
                 }
             },
             err => {
               console.log("file is not saved - " + fileName);
+              this.cdr.detectChanges();
             });
 }
 
