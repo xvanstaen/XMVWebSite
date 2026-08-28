@@ -1,5 +1,6 @@
 
-import { Component, OnInit , Input, Output, EventEmitter,HostListener, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, OnInit , Input, Output, EventEmitter,HostListener, OnChanges, SimpleChanges
+  , ChangeDetectorRef} from '@angular/core';
 
 import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -26,6 +27,7 @@ export class ListBucketContentComponent {
   constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
+    private cdr: ChangeDetectorRef
     ) {}
   
     @Input() configServer=new configServer;
@@ -125,6 +127,7 @@ RetrieveAllObjects(){
             }
             
             this.DisplayListOfObjects=true;
+            this.cdr.detectChanges();
             this.scroller.scrollToAnchor('targetTopObjects');
           },
           error_handler => {
@@ -176,6 +179,7 @@ RetrieveAllObjects(){
          // if (to!==from ){
             this.RetrieveAllObjects();
             this.DisplayListOfObjects=true;
+            this.cdr.detectChanges();
          // }
         }
       }
