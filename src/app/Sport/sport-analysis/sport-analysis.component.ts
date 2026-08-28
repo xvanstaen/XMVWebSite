@@ -1,5 +1,5 @@
 import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, ChangeDetectorRef} from '@angular/core';
   
 import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +23,7 @@ export class SportAnalysisComponent {
   constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
+    private cdr: ChangeDetectorRef
     ) { }
 
   @Input() configServer = new configServer;
@@ -66,6 +67,7 @@ onSelectCircuit(event:any){
   this.isSpecificCircuitReceived=true;
   this.scroller.scrollToAnchor('bottomPage');
   this.RetrieveAllObjects();
+  this.cdr.detectChanges();
 // retrieve and display all 'perFile' related to the selected circuit
 
 }
@@ -93,7 +95,7 @@ retrieveSelectedFiles(event:any){
       this.userSelection[iSel].sel='N';
       this.checkSelection();
   }
-   
+  this.cdr.detectChanges();
 }
 
 selectAll(){
@@ -105,6 +107,7 @@ selectAll(){
     } 
   }
   this.isSelectedFile=true;
+  this.cdr.detectChanges();
 }
 
 deSelectAll(){
@@ -112,6 +115,7 @@ deSelectAll(){
     this.userSelection[i].sel="N"
   }
   this.isSelectedFile=false;
+  this.cdr.detectChanges();
 }
 
 checkSelection(){
@@ -125,6 +129,7 @@ checkSelection(){
       } 
     }
   }
+  this.cdr.detectChanges();
 }
 
 
@@ -157,6 +162,7 @@ RetrieveAllObjects(){
 
             }
             this.displayListOfObjects=true;
+            this.cdr.detectChanges();
             
           },
           error_handler => {
@@ -174,6 +180,7 @@ deleteFileItems(){
     }
   }
   this.displayListOfObjects=true;
+  this.cdr.detectChanges();
 }
 
 getContentFile(bucket:string, object:string, iList:number){
@@ -190,6 +197,7 @@ getContentFile(bucket:string, object:string, iList:number){
               if (this.nbFilesRead===0){
                 this.createDisplay();
               }
+              this.cdr.detectChanges();
             }
     },
     err => {
@@ -197,6 +205,7 @@ getContentFile(bucket:string, object:string, iList:number){
       if (this.callCreateDisplay===true){
         this.nbFilesRead--
       }
+      this.cdr.detectChanges();
     })
 }
 

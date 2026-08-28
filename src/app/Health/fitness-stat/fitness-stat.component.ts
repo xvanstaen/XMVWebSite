@@ -1,5 +1,5 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID, ChangeDetectorRef} from '@angular/core';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatIconModule} from '@angular/material/icon';
@@ -55,6 +55,7 @@ export class FitnessStatComponent implements OnInit {
     private scroller: ViewportScroller,
     private ManageMongoDBService: ManageMongoDBService,
     private ManageGoogleService: ManageGoogleService,
+     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe,
     @Inject(LOCALE_ID) private locale: string,
     //private TheConfig: AccessConfigService,
@@ -62,6 +63,7 @@ export class FitnessStatComponent implements OnInit {
     //title: new FormControl(''),
     select_file: this.fb.array([]),
         })}
+
 
 get ChartFileList(){
   return this.ChartFileForm.controls["select_file"] as FormArray; 
@@ -372,7 +374,8 @@ ngOnInit(){
   this.minDate_year=parseInt(formatDate(this.minDate,'yyyy',this.locale));
   this.minDate_month=parseInt(formatDate(this.minDate,'MM',this.locale));
   this.minDate_day=parseInt(formatDate(this.minDate,'dd',this.locale));
-  this.datePipeMin = this.datePipe.transform(this.minDate,"YYYY-MM-dd");
+  
+  this.datePipeMin = this.datePipe.transform(this.minDate,"yyyy-MM-dd");
   
   this.maxDate_year=parseInt(formatDate(this.maxDate,'yyyy',this.locale));
   this.maxDate_month=parseInt(formatDate(this.maxDate,'MM',this.locale));
@@ -510,6 +513,7 @@ onAction(event:any){
   }
   this.newTabDialog[this.newPrevDialog]=true;
   this.theHeight=this.TabAction.length*26;
+  this.cdr.detectChanges();
 }
 
 afterDropDown(event:any){
@@ -678,7 +682,7 @@ if (event.target.value===0){ //cancel
     const cResult = new ClassResult;
     this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(myConst,0,cResult);
   }
-
+this.cdr.detectChanges();
 }
 
 this.newTabDialog[this.newPrevDialog]=false;
@@ -701,6 +705,7 @@ SelectDisplay(){
       } else {
         this.DisplayConfig=false;
       }
+    this.cdr.detectChanges();
 }
 
 fillFiles(inFile:PerformanceFitness, outFile:PerformanceFitness){
@@ -777,6 +782,7 @@ SelRadio(event:any){
         this.DisplayShortScreen=false;
       }
     }
+  this.cdr.detectChanges();
 }
 
 SelectAll(){
@@ -786,6 +792,7 @@ SelectAll(){
     this.ChartFileList.controls[i].setValue(this.FillFSelected);
   }
   this.ChartFileSelection();
+  this.cdr.detectChanges();
 }
 
 CancelAll(){
@@ -800,6 +807,7 @@ CancelAll(){
 
   this.newTabDialog[this.newPrevDialog]=false;
   this.OpenDialogue[this.prev_Dialogue]=false;
+  this.cdr.detectChanges();
 }
 
 RadioSelection(event:any){
@@ -879,6 +887,7 @@ UpdateMergeFiles(fileName:string){
     this.TriggerChartChange++
     this.MergeAllFiles(i);
   }
+  this.cdr.detectChanges();
 
 
 }
@@ -984,6 +993,7 @@ initOpenDialogue(){
   for (i=0; i<this.max_dialogue; i++){
     this.OpenDialogue[i]=false;
   }
+  this.cdr.detectChanges();
 }
 
 
@@ -1029,6 +1039,7 @@ theArrow(event:any){
   } 
   this.OpenDialogue[this.prev_Dialogue]=true;
   this.myEvent.dialogueNb=this.prev_Dialogue;
+  this.cdr.detectChanges();
 }
 
 
@@ -1049,10 +1060,12 @@ onArrow(event:any){
     this.prev_Dialogue=11;
   } 
   this.OpenDialogue[this.prev_Dialogue]=true;
+  this.cdr.detectChanges();
 }
 
 cancelDropDown(){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  this.cdr.detectChanges();
 }
 
 onInput(event:any){
