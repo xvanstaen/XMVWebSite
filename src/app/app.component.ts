@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
-  Output, Input, HostListener, EventEmitter, ElementRef, NgZone, ChangeDetectorRef} from '@angular/core';
+  Output, Input, HostListener, EventEmitter, ElementRef, ChangeDetectorRef} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
@@ -44,7 +44,6 @@ export class AppComponent {
     private ManageMongoDB: ManageMongoDBService,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private zone: NgZone,
     private cdr: ChangeDetectorRef
     ) {}
 
@@ -362,7 +361,7 @@ console.log('devMode='+this.devMode);
                 this.configServer.googleServer = this.saveGoogleServer;
             }
             this.isCredentials=true;
-            this.cdr.detectChanges();
+            this.cdr.markForCheck();
   
           },
           err => {

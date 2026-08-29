@@ -374,7 +374,6 @@ ngOnInit(){
   this.minDate_year=parseInt(formatDate(this.minDate,'yyyy',this.locale));
   this.minDate_month=parseInt(formatDate(this.minDate,'MM',this.locale));
   this.minDate_day=parseInt(formatDate(this.minDate,'dd',this.locale));
-  
   this.datePipeMin = this.datePipe.transform(this.minDate,"yyyy-MM-dd");
   
   this.maxDate_year=parseInt(formatDate(this.maxDate,'yyyy',this.locale));
@@ -382,7 +381,7 @@ ngOnInit(){
   this.maxDate_day=parseInt(formatDate(this.maxDate,'dd',this.locale));
   this.datePipeMax = formatDate(this.maxDate,"yyyy-MM-dd",this.locale);
   
-  this.today_year=parseInt(formatDate(Date.now(),'YYYY',this.locale));
+  this.today_year=parseInt(formatDate(Date.now(),'yyyy',this.locale));
   //this.today_month=parseInt(formatDate(Date.now(),'MM',this.locale));
   //this.today_day=parseInt(formatDate(Date.now(),'dd',this.locale));
   this.datePipeToday = this.datePipe.transform(this.todayDate,"yyyy-MM-dd");
@@ -427,6 +426,7 @@ ngOnInit(){
   }
   
   this.scroller.scrollToAnchor('targetTop');
+  
   }
 
   TheSelectDisplays: FormGroup = new FormGroup({ 
@@ -513,7 +513,7 @@ onAction(event:any){
   }
   this.newTabDialog[this.newPrevDialog]=true;
   this.theHeight=this.TabAction.length*26;
-  this.cdr.detectChanges();
+  //this.cdr.detectChanges();
 }
 
 afterDropDown(event:any){
@@ -682,7 +682,7 @@ if (event.target.value===0){ //cancel
     const cResult = new ClassResult;
     this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(myConst,0,cResult);
   }
-this.cdr.detectChanges();
+//this.cdr.detectChanges();
 }
 
 this.newTabDialog[this.newPrevDialog]=false;
@@ -705,7 +705,7 @@ SelectDisplay(){
       } else {
         this.DisplayConfig=false;
       }
-    this.cdr.detectChanges();
+    //this.cdr.detectChanges();
 }
 
 fillFiles(inFile:PerformanceFitness, outFile:PerformanceFitness){
@@ -782,7 +782,7 @@ SelRadio(event:any){
         this.DisplayShortScreen=false;
       }
     }
-  this.cdr.detectChanges();
+  //this.cdr.detectChanges();
 }
 
 SelectAll(){
@@ -792,7 +792,7 @@ SelectAll(){
     this.ChartFileList.controls[i].setValue(this.FillFSelected);
   }
   this.ChartFileSelection();
-  this.cdr.detectChanges();
+  //this.cdr.detectChanges();
 }
 
 CancelAll(){
@@ -807,7 +807,7 @@ CancelAll(){
 
   this.newTabDialog[this.newPrevDialog]=false;
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.cdr.detectChanges();
+  //this.cdr.detectChanges();
 }
 
 RadioSelection(event:any){
@@ -887,7 +887,7 @@ UpdateMergeFiles(fileName:string){
     this.TriggerChartChange++
     this.MergeAllFiles(i);
   }
-  this.cdr.detectChanges();
+  //this.cdr.detectChanges();
 
 
 }
@@ -915,14 +915,7 @@ MergeAllFiles(fileNb:number){
   this.FilesAlreadyMerged[fileNb].startTabBigData=this.TabBigData.length;
 
   for (i=0; i<this.NewPerformanceFitness.Sport.length; i++){
-    for (j=0; j<this.NewPerformanceFitness.Sport[i].exercise.length; j++){
-      for (k=0; k<this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise.length; k++){
-        for (m=0; m<this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result.length; m++){
-            var formatData=new BigData;
-            this.TabBigData.push(formatData);
-            this.TabBigData[this.TabBigData.length-1].id=this.TabBigData.length-1;
-
-            var timestamp = Date.parse(this.NewPerformanceFitness.Sport[i].Sport_date);
+    var timestamp = Date.parse(this.NewPerformanceFitness.Sport[i].Sport_date);
             if (isNaN(timestamp)) {
                 console.log("Date is string format = "+this.NewPerformanceFitness.Sport[i].Sport_date);
                 dateYear=this.NewPerformanceFitness.Sport[i].Sport_date.substring(6);
@@ -934,9 +927,17 @@ MergeAllFiles(fileNb:number){
                 dateDay=parseInt(formatDate(this.NewPerformanceFitness.Sport[i].Sport_date,'dd',this.locale));
             }
               theDate.setDate(dateDay);
-              theDate.setMonth(dateMonth);
+              theDate.setMonth(dateMonth-1);
               theDate.setFullYear(dateYear);
               this.theDatePipe = formatDate(theDate,"yyyy-MM-dd",this.locale);
+    for (j=0; j<this.NewPerformanceFitness.Sport[i].exercise.length; j++){
+      for (k=0; k<this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise.length; k++){
+        for (m=0; m<this.NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result.length; m++){
+            var formatData=new BigData;
+            this.TabBigData.push(formatData);
+            this.TabBigData[this.TabBigData.length-1].id=this.TabBigData.length-1;
+
+            
               this.TabBigData[this.TabBigData.length-1].thedate=this.theDatePipe;
 
             this.TabBigData[this.TabBigData.length-1].sport=this.NewPerformanceFitness.Sport[i].Sport_name;
@@ -993,7 +994,6 @@ initOpenDialogue(){
   for (i=0; i<this.max_dialogue; i++){
     this.OpenDialogue[i]=false;
   }
-  this.cdr.detectChanges();
 }
 
 
@@ -1039,7 +1039,7 @@ theArrow(event:any){
   } 
   this.OpenDialogue[this.prev_Dialogue]=true;
   this.myEvent.dialogueNb=this.prev_Dialogue;
-  this.cdr.detectChanges();
+  //this.cdr.detectChanges();
 }
 
 
@@ -1060,12 +1060,12 @@ onArrow(event:any){
     this.prev_Dialogue=11;
   } 
   this.OpenDialogue[this.prev_Dialogue]=true;
-  this.cdr.detectChanges();
+  //this.cdr.detectChanges();
 }
 
 cancelDropDown(){
   this.OpenDialogue[this.prev_Dialogue]=false;
-  this.cdr.detectChanges();
+  //this.cdr.detectChanges();
 }
 
 onInput(event:any){
@@ -1461,6 +1461,7 @@ GetAllObjects(){
                 }
 
                 this.DisplayListOfObjects=true; 
+                this.cdr.markForCheck();
           },
           error_handler => {
                 console.log('RetrieveAllObjects() - error handler; HTTP= '+this.HTTP_Address);
@@ -1533,6 +1534,7 @@ GetRecord(event:string, iWait:number, ref:number){
                   }
 
                   this.LinkPerfConfig();
+                  this.cdr.markForCheck();
                   
                 } else if (event==='config'){ 
                     if (this.NbWaitHTTP>0){this.NbWaitHTTP--;} 
@@ -1614,6 +1616,7 @@ GetRecord(event:string, iWait:number, ref:number){
                   }
                 this.error_msg='';
                 this.scroller.scrollToAnchor('AccessToListFiles');
+                this.cdr.markForCheck();
               },
               error_handler => {
                 if (event==='data'){
@@ -1638,7 +1641,8 @@ GetRecord(event:string, iWait:number, ref:number){
                       this.MyConfigFitness.ListSport[0].activityPerf[0]='';
                       this.MyConfigFitness.ListSport[0].activityPerfUnit[0]='';
                       this.InitTabConfig();
-                  }   
+                  }  
+                  this.cdr.markForCheck(); 
             } 
       )
   }
@@ -1807,6 +1811,7 @@ RetrieveConfig(){
       this.GetAllObjects();
       this.isConfigServerRetrieved=true;
       this.scroller.scrollToAnchor('AccessToListFiles');
+      //this.cdr.detectChanges;
       },
       error => {
         console.log('error to retrieve the configuration file ;  error = ', error.status);

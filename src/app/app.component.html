@@ -2,16 +2,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-@if (isCallUserFunction===false){
-    @if(isConfigServerRetrieved===true && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved===true) || devMode!=='local')){
-        <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved" [identification]="identification"
-            [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
-            (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)" 
-            (callUserFunction)="callUserFunction($event)" (triggerIdentification)='TheIdentifObject($event)' >
-        </app-xmv-company>  
-    }
-
-<!--
+    <!--
     <div *ngIf="isConfigServerRetrieved===true && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved===true) || devMode!=='local')">
         <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved" [identification]="identification"
             [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
@@ -33,8 +24,22 @@
     <span style="width:94%; background-color: lightgrey; margin-left:10px; border:solid 2px blue; display:inline-block; ">Parameter SCOPE = {{myParams.scope}}</span>
 </div>
 -->
-}
-@if (isCallUserFunction===true){
+<!--
+    <span style="background-color:  lightblue;"><br>isConfigServerRetrieved={{isConfigServerRetrieved}}</span>
+    <span style="background-color:  lightblue;"><br>isIdRetrieved={{isIdRetrieved}}</span>
+-->
+@if (isCallUserFunction===false){
+    @if(isConfigServerRetrieved===true && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved===true) || devMode!=='local')){
+        <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved" [identification]="identification"
+            [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
+            (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)" 
+            (callUserFunction)="callUserFunction($event)" (triggerIdentification)='TheIdentifObject($event)' >
+        </app-xmv-company>  
+    }
+
+
+} @else {
+
     @if (isConfigServerRetrieved===true && devMode!=='local' && configServer.project!=='XMVWebSite'){ 
     <div style="margin-left:30px; margin-top:40px; width:300px;">
         <form [formGroup]="theForm" >

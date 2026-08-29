@@ -127,7 +127,7 @@ RetrieveAllObjects(){
             }
             
             this.DisplayListOfObjects=true;
-            this.cdr.detectChanges();
+            this.cdr.markForCheck();
             this.scroller.scrollToAnchor('targetTopObjects');
           },
           error_handler => {
@@ -179,7 +179,7 @@ RetrieveAllObjects(){
          // if (to!==from ){
             this.RetrieveAllObjects();
             this.DisplayListOfObjects=true;
-            this.cdr.detectChanges();
+            this.cdr.markForCheck();
          // }
         }
       }

@@ -1,4 +1,4 @@
-import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
+import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding,  
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
 
 import { MatIconModule} from '@angular/material/icon';

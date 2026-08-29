@@ -1,40 +1,35 @@
-import { n as _defineProperty, t as _objectSpread2 } from "./objectSpread2-C_IE-bIJ.js";
-import { $n as Output, Dc as Injector, Dl as ɵɵdefineInjector, Do as ɵɵgetInheritedFactory, Dr as ViewEncapsulation, Ec as InjectionToken, En as ElementRef, Er as ViewContainerRef, Fc as NgZone, In as Input, Jo as ɵɵlistener, Lc as PLATFORM_ID, M as createComponent, Mr as afterNextRender, O as booleanAttribute, Rs as ɵɵstyleProp, S as ViewChild, Ui as setClassMetadata, Vs as ɵɵtemplate, Yo as ɵɵloadQuery, Zn as NgModuleRef$1, _s as ɵɵqueryRefresh, an as ChangeDetectionStrategy, ar as RendererFactory2, ba as ɵɵclassProp, bc as EventEmitter, bo as ɵɵelementStart, ca as ɵɵNgOnChangesFeature, cn as Component, do as ɵɵdomElementStart, dr as Service, eo as ɵɵdefineComponent, fc as CSP_NONCE, hc as DestroyRef, io as ɵɵdefineService, ir as Renderer2, is as ɵɵprojectionDef, la as ɵɵProvidersFeature, lc as ANIMATION_MODULE_TYPE, mc as DOCUMENT, no as ɵɵdefineNgModule, oa as ɵɵHostDirectivesFeature, oc as ɵɵviewQuery, oo as ɵɵdomElement, p as IterableDiffers, po as ɵɵdomProperty, qn as NgModule, qt as untracked, r as ChangeDetectorRef, rl as forwardRef, rs as ɵɵprojection, sa as ɵɵInheritDefinitionFeature, sl as inject, tl as effect, tn as ApplicationRef, to as ɵɵdefineDirective, ua as ɵɵadvance, uc as APP_ID, uo as ɵɵdomElementEnd, va as ɵɵattribute, vc as EnvironmentInjector, vr as TemplateRef, wn as Directive, xl as signal, yo as ɵɵelementEnd } from "./core-DwmaaD_X.js";
+import { $n as Output, Do as ɵɵgetInheritedFactory, Dr as ViewEncapsulation, Ec as Injector, El as ɵɵdefineInjector, En as ElementRef, Er as ViewContainerRef, Ic as PLATFORM_ID, In as Input, Jo as ɵɵlistener, M as createComponent, Mr as afterNextRender, O as booleanAttribute, Pc as NgZone, Rs as ɵɵstyleProp, S as ViewChild, Tc as InjectionToken, Ui as setClassMetadata, Vs as ɵɵtemplate, Yo as ɵɵloadQuery, Zn as NgModuleRef$1, _c as EnvironmentInjector, _s as ɵɵqueryRefresh, an as ChangeDetectionStrategy, ar as RendererFactory2, ba as ɵɵclassProp, bl as signal, bo as ɵɵelementStart, ca as ɵɵNgOnChangesFeature, cc as ANIMATION_MODULE_TYPE, cn as Component, dc as CSP_NONCE, do as ɵɵdomElementStart, dr as Service, el as effect, eo as ɵɵdefineComponent, io as ɵɵdefineService, ir as Renderer2, is as ɵɵprojectionDef, la as ɵɵProvidersFeature, lc as APP_ID, mc as DestroyRef, nl as forwardRef, no as ɵɵdefineNgModule, oa as ɵɵHostDirectivesFeature, oc as ɵɵviewQuery, ol as inject, oo as ɵɵdomElement, p as IterableDiffers, pc as DOCUMENT, po as ɵɵdomProperty, qn as NgModule, qt as untracked, r as ChangeDetectorRef, rs as ɵɵprojection, sa as ɵɵInheritDefinitionFeature, tn as ApplicationRef, to as ɵɵdefineDirective, ua as ɵɵadvance, uo as ɵɵdomElementEnd, va as ɵɵattribute, vr as TemplateRef, wn as Directive, yc as EventEmitter, yo as ɵɵelementEnd } from "./core-DK4zC9WD.js";
 import { Ct as take, D as shareReplay, Dn as isObservable, Qn as Subject, T as skip, Tt as debounceTime, U as pairwise, Ut as auditTime, Vn as animationFrameScheduler, Xn as ReplaySubject, Xt as filter, Zn as BehaviorSubject, b as switchMap, dn as concat, g as takeUntil, gt as distinctUntilChanged, h as takeWhile, hn as combineLatest, jn as of, qn as asapScheduler, rr as Observable, tn as merge, tr as ConnectableObservable, un as defer, ur as Subscription, vn as map, x as startWith } from "./esm5-ChK3bs0s.js";
-import { i as Directionality, t as BidiModule } from "./bidi-CBOSzWNJ.js";
-import { jt as Location, u as isPlatformBrowser } from "./common-DlyONQJh.js";
-import { n as _setInnerHtml, t as _VisuallyHiddenLoader } from "./private-Ct95DNbE.js";
-import { r as DomSanitizer } from "./platform-browser-eH63sRZa.js";
+import { i as Directionality, t as BidiModule } from "./bidi-BcqBIoKc.js";
+import { jt as Location, u as isPlatformBrowser } from "./common-gjtnEUjL.js";
+import { n as _setInnerHtml, t as _VisuallyHiddenLoader } from "./private-rxwPxLl5.js";
+import { r as DomSanitizer } from "./platform-browser-BgFAXzy1.js";
 //#region node_modules/@angular/cdk/fesm2022/_platform-chunk.mjs
-var _Platform;
 var hasV8BreakIterator;
 try {
 	hasV8BreakIterator = typeof Intl !== "undefined" && Intl.v8BreakIterator;
-} catch (_unused) {
+} catch {
 	hasV8BreakIterator = false;
 }
-var Platform = class {
-	constructor() {
-		_defineProperty(this, "_platformId", inject(PLATFORM_ID));
-		_defineProperty(this, "isBrowser", this._platformId ? isPlatformBrowser(this._platformId) : typeof document === "object" && !!document);
-		_defineProperty(this, "EDGE", this.isBrowser && /(edge)/i.test(navigator.userAgent));
-		_defineProperty(this, "TRIDENT", this.isBrowser && /(msie|trident)/i.test(navigator.userAgent));
-		_defineProperty(this, "BLINK", this.isBrowser && !!(window.chrome || hasV8BreakIterator) && typeof CSS !== "undefined" && !this.EDGE && !this.TRIDENT);
-		_defineProperty(this, "WEBKIT", this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT);
-		_defineProperty(this, "IOS", this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window));
-		_defineProperty(this, "FIREFOX", this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent));
-		_defineProperty(this, "ANDROID", this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT);
-		_defineProperty(this, "SAFARI", this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT);
-	}
+var Platform = class Platform {
+	_platformId = inject(PLATFORM_ID);
+	isBrowser = this._platformId ? isPlatformBrowser(this._platformId) : typeof document === "object" && !!document;
+	EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
+	TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
+	BLINK = this.isBrowser && !!(window.chrome || hasV8BreakIterator) && typeof CSS !== "undefined" && !this.EDGE && !this.TRIDENT;
+	WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
+	IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
+	FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
+	ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
+	SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
+	static ɵfac = function Platform_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || Platform)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: Platform,
+		factory: Platform.ɵfac
+	});
 };
-_Platform = Platform;
-_defineProperty(Platform, "ɵfac", function Platform_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _Platform)();
-});
-_defineProperty(Platform, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _Platform,
-	factory: _Platform.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Platform, [{ type: Service }], null, null);
 })();
@@ -67,7 +62,7 @@ function _getFocusedElementPierceShadowDom() {
 function _getEventTarget(event) {
 	if (event.composedPath) try {
 		return event.composedPath()[0];
-	} catch (_unused) {}
+	} catch {}
 	return event.target;
 }
 //#endregion
@@ -77,14 +72,11 @@ function _isTestEnvironment() {
 }
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/_style-loader-chunk.mjs
-var _CdkPrivateStyleLoader2;
 var appsWithLoaders = /* @__PURE__ */ new WeakMap();
-var _CdkPrivateStyleLoader = class {
-	constructor() {
-		_defineProperty(this, "_appRef", void 0);
-		_defineProperty(this, "_injector", inject(Injector));
-		_defineProperty(this, "_environmentInjector", inject(EnvironmentInjector));
-	}
+var _CdkPrivateStyleLoader = class _CdkPrivateStyleLoader {
+	_appRef;
+	_injector = inject(Injector);
+	_environmentInjector = inject(EnvironmentInjector);
 	load(loader) {
 		const appRef = this._appRef = this._appRef || this._injector.get(ApplicationRef);
 		let data = appsWithLoaders.get(appRef);
@@ -95,8 +87,7 @@ var _CdkPrivateStyleLoader = class {
 			};
 			appsWithLoaders.set(appRef, data);
 			appRef.onDestroy(() => {
-				var _appsWithLoaders$get;
-				(_appsWithLoaders$get = appsWithLoaders.get(appRef)) === null || _appsWithLoaders$get === void 0 || _appsWithLoaders$get.refs.forEach((ref) => ref.destroy());
+				appsWithLoaders.get(appRef)?.refs.forEach((ref) => ref.destroy());
 				appsWithLoaders.delete(appRef);
 			});
 		}
@@ -105,15 +96,14 @@ var _CdkPrivateStyleLoader = class {
 			data.refs.push(createComponent(loader, { environmentInjector: this._environmentInjector }));
 		}
 	}
+	static ɵfac = function _CdkPrivateStyleLoader_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || _CdkPrivateStyleLoader)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: _CdkPrivateStyleLoader,
+		factory: _CdkPrivateStyleLoader.ɵfac
+	});
 };
-_CdkPrivateStyleLoader2 = _CdkPrivateStyleLoader;
-_defineProperty(_CdkPrivateStyleLoader, "ɵfac", function _CdkPrivateStyleLoader_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkPrivateStyleLoader2)();
-});
-_defineProperty(_CdkPrivateStyleLoader, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _CdkPrivateStyleLoader2,
-	factory: _CdkPrivateStyleLoader2.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(_CdkPrivateStyleLoader, [{ type: Service }], null, null);
 })();
@@ -152,12 +142,11 @@ var rtlScrollAxisType;
 var scrollBehaviorSupported$1;
 function supportsScrollBehavior() {
 	if (scrollBehaviorSupported$1 == null) {
-		var _document$documentEle;
 		if (typeof document !== "object" || !document || typeof Element !== "function" || !Element) {
 			scrollBehaviorSupported$1 = false;
 			return scrollBehaviorSupported$1;
 		}
-		if (((_document$documentEle = document.documentElement) === null || _document$documentEle === void 0 ? void 0 : _document$documentEle.style) && "scrollBehavior" in document.documentElement.style) scrollBehaviorSupported$1 = true;
+		if (document.documentElement?.style && "scrollBehavior" in document.documentElement.style) scrollBehaviorSupported$1 = true;
 		else {
 			const scrollToFunction = Element.prototype.scrollTo;
 			if (scrollToFunction) scrollBehaviorSupported$1 = !/\{\s*\[native code\]\s*\}/.test(scrollToFunction.toString());
@@ -201,9 +190,9 @@ function isDataSource(value) {
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/_recycle-view-repeater-strategy-chunk.mjs
 var ArrayDataSource = class extends DataSource {
+	_data;
 	constructor(_data) {
 		super();
-		_defineProperty(this, "_data", void 0);
 		this._data = _data;
 	}
 	connect() {
@@ -219,10 +208,8 @@ var _ViewRepeaterOperation;
 	_ViewRepeaterOperation[_ViewRepeaterOperation["REMOVED"] = 3] = "REMOVED";
 })(_ViewRepeaterOperation || (_ViewRepeaterOperation = {}));
 var _RecycleViewRepeaterStrategy = class {
-	constructor() {
-		_defineProperty(this, "viewCacheSize", 20);
-		_defineProperty(this, "_viewCache", []);
-	}
+	viewCacheSize = 20;
+	_viewCache = [];
 	applyChanges(changes, viewContainerRef, itemContextFactory, itemValueResolver, itemViewChanged) {
 		changes.forEachOperation((record, adjustedPreviousIndex, currentIndex) => {
 			let view;
@@ -239,7 +226,7 @@ var _RecycleViewRepeaterStrategy = class {
 				operation = _ViewRepeaterOperation.MOVED;
 			}
 			if (itemViewChanged) itemViewChanged({
-				context: view === null || view === void 0 ? void 0 : view.context,
+				context: view?.context,
 				operation,
 				record
 			});
@@ -284,28 +271,17 @@ var _RecycleViewRepeaterStrategy = class {
 };
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/scrolling.mjs
-var _CdkFixedSizeVirtualScroll;
-var _ScrollDispatcher;
-var _CdkScrollable;
-var _ViewportRuler;
-var _CdkVirtualScrollable;
-var _CdkVirtualScrollViewport;
-var _CdkVirtualForOf;
-var _CdkVirtualScrollableElement;
-var _CdkVirtualScrollableWindow;
-var _CdkScrollableModule;
-var _ScrollingModule;
 var _c0 = ["contentWrapper"];
 var _c1 = ["*"];
 var VIRTUAL_SCROLL_STRATEGY = new InjectionToken("VIRTUAL_SCROLL_STRATEGY");
 var FixedSizeVirtualScrollStrategy = class {
+	_scrolledIndexChange = new Subject();
+	scrolledIndexChange = this._scrolledIndexChange.pipe(distinctUntilChanged());
+	_viewport = null;
+	_itemSize;
+	_minBufferPx;
+	_maxBufferPx;
 	constructor(itemSize, minBufferPx, maxBufferPx) {
-		_defineProperty(this, "_scrolledIndexChange", new Subject());
-		_defineProperty(this, "scrolledIndexChange", this._scrolledIndexChange.pipe(distinctUntilChanged()));
-		_defineProperty(this, "_viewport", null);
-		_defineProperty(this, "_itemSize", void 0);
-		_defineProperty(this, "_minBufferPx", void 0);
-		_defineProperty(this, "_maxBufferPx", void 0);
 		this._itemSize = itemSize;
 		this._minBufferPx = minBufferPx;
 		this._maxBufferPx = maxBufferPx;
@@ -387,57 +363,54 @@ var FixedSizeVirtualScrollStrategy = class {
 function _fixedSizeVirtualScrollStrategyFactory(fixedSizeDir) {
 	return fixedSizeDir._scrollStrategy;
 }
-var CdkFixedSizeVirtualScroll = class {
-	constructor() {
-		_defineProperty(this, "_itemSize", 20);
-		_defineProperty(this, "_minBufferPx", 100);
-		_defineProperty(this, "_maxBufferPx", 200);
-		_defineProperty(this, "_scrollStrategy", new FixedSizeVirtualScrollStrategy(this.itemSize, this.minBufferPx, this.maxBufferPx));
-	}
+var CdkFixedSizeVirtualScroll = class CdkFixedSizeVirtualScroll {
 	get itemSize() {
 		return this._itemSize;
 	}
 	set itemSize(value) {
 		this._itemSize = coerceNumberProperty(value);
 	}
+	_itemSize = 20;
 	get minBufferPx() {
 		return this._minBufferPx;
 	}
 	set minBufferPx(value) {
 		this._minBufferPx = coerceNumberProperty(value);
 	}
+	_minBufferPx = 100;
 	get maxBufferPx() {
 		return this._maxBufferPx;
 	}
 	set maxBufferPx(value) {
 		this._maxBufferPx = coerceNumberProperty(value);
 	}
+	_maxBufferPx = 200;
+	_scrollStrategy = new FixedSizeVirtualScrollStrategy(this.itemSize, this.minBufferPx, this.maxBufferPx);
 	ngOnChanges() {
 		this._scrollStrategy.updateItemAndBufferSize(this.itemSize, this.minBufferPx, this.maxBufferPx);
 	}
+	static ɵfac = function CdkFixedSizeVirtualScroll_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkFixedSizeVirtualScroll)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkFixedSizeVirtualScroll,
+		selectors: [[
+			"cdk-virtual-scroll-viewport",
+			"itemSize",
+			""
+		]],
+		inputs: {
+			itemSize: "itemSize",
+			minBufferPx: "minBufferPx",
+			maxBufferPx: "maxBufferPx"
+		},
+		features: [ɵɵProvidersFeature([{
+			provide: VIRTUAL_SCROLL_STRATEGY,
+			useFactory: _fixedSizeVirtualScrollStrategyFactory,
+			deps: [forwardRef(() => CdkFixedSizeVirtualScroll)]
+		}]), ɵɵNgOnChangesFeature]
+	});
 };
-_CdkFixedSizeVirtualScroll = CdkFixedSizeVirtualScroll;
-_defineProperty(CdkFixedSizeVirtualScroll, "ɵfac", function CdkFixedSizeVirtualScroll_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkFixedSizeVirtualScroll)();
-});
-_defineProperty(CdkFixedSizeVirtualScroll, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkFixedSizeVirtualScroll,
-	selectors: [[
-		"cdk-virtual-scroll-viewport",
-		"itemSize",
-		""
-	]],
-	inputs: {
-		itemSize: "itemSize",
-		minBufferPx: "minBufferPx",
-		maxBufferPx: "maxBufferPx"
-	},
-	features: [ɵɵProvidersFeature([{
-		provide: VIRTUAL_SCROLL_STRATEGY,
-		useFactory: _fixedSizeVirtualScrollStrategyFactory,
-		deps: [forwardRef(() => _CdkFixedSizeVirtualScroll)]
-	}]), ɵɵNgOnChangesFeature]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkFixedSizeVirtualScroll, [{
 		type: Directive,
@@ -455,16 +428,14 @@ _defineProperty(CdkFixedSizeVirtualScroll, "ɵdir", /* @__PURE__ */ ɵɵdefineDi
 		maxBufferPx: [{ type: Input }]
 	});
 })();
-var ScrollDispatcher = class {
-	constructor() {
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_renderer", inject(RendererFactory2).createRenderer(null, null));
-		_defineProperty(this, "_cleanupGlobalListener", void 0);
-		_defineProperty(this, "_scrolled", new Subject());
-		_defineProperty(this, "_scrolledCount", 0);
-		_defineProperty(this, "scrollContainers", /* @__PURE__ */ new Map());
-	}
+var ScrollDispatcher = class ScrollDispatcher {
+	_ngZone = inject(NgZone);
+	_platform = inject(Platform);
+	_renderer = inject(RendererFactory2).createRenderer(null, null);
+	_cleanupGlobalListener;
+	_scrolled = new Subject();
+	_scrolledCount = 0;
+	scrollContainers = /* @__PURE__ */ new Map();
 	register(target) {
 		if (!this.scrollContainers.has(target)) this.scrollContainers.set(target, target.elementScrolled().subscribe(() => this._scrolled.next(target)));
 	}
@@ -485,16 +456,14 @@ var ScrollDispatcher = class {
 				subscription.unsubscribe();
 				this._scrolledCount--;
 				if (!this._scrolledCount) {
-					var _this$_cleanupGlobalL;
-					(_this$_cleanupGlobalL = this._cleanupGlobalListener) === null || _this$_cleanupGlobalL === void 0 || _this$_cleanupGlobalL.call(this);
+					this._cleanupGlobalListener?.();
 					this._cleanupGlobalListener = void 0;
 				}
 			};
 		});
 	}
 	ngOnDestroy() {
-		var _this$_cleanupGlobalL2;
-		(_this$_cleanupGlobalL2 = this._cleanupGlobalListener) === null || _this$_cleanupGlobalL2 === void 0 || _this$_cleanupGlobalL2.call(this);
+		this._cleanupGlobalListener?.();
 		this._cleanupGlobalListener = void 0;
 		this.scrollContainers.forEach((_, container) => this.deregister(container));
 		this._scrolled.complete();
@@ -518,37 +487,33 @@ var ScrollDispatcher = class {
 		while (element = element.parentElement);
 		return false;
 	}
+	static ɵfac = function ScrollDispatcher_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || ScrollDispatcher)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: ScrollDispatcher,
+		factory: ScrollDispatcher.ɵfac
+	});
 };
-_ScrollDispatcher = ScrollDispatcher;
-_defineProperty(ScrollDispatcher, "ɵfac", function ScrollDispatcher_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _ScrollDispatcher)();
-});
-_defineProperty(ScrollDispatcher, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _ScrollDispatcher,
-	factory: _ScrollDispatcher.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ScrollDispatcher, [{ type: Service }], null, null);
 })();
-var CdkScrollable = class {
-	constructor() {
-		_defineProperty(this, "elementRef", inject(ElementRef));
-		_defineProperty(this, "scrollDispatcher", inject(ScrollDispatcher));
-		_defineProperty(this, "ngZone", inject(NgZone));
-		_defineProperty(this, "dir", inject(Directionality, { optional: true }));
-		_defineProperty(this, "_scrollElement", this.elementRef.nativeElement);
-		_defineProperty(this, "_destroyed", new Subject());
-		_defineProperty(this, "_renderer", inject(Renderer2));
-		_defineProperty(this, "_cleanupScroll", void 0);
-		_defineProperty(this, "_elementScrolled", new Subject());
-	}
+var CdkScrollable = class CdkScrollable {
+	elementRef = inject(ElementRef);
+	scrollDispatcher = inject(ScrollDispatcher);
+	ngZone = inject(NgZone);
+	dir = inject(Directionality, { optional: true });
+	_scrollElement = this.elementRef.nativeElement;
+	_destroyed = new Subject();
+	_renderer = inject(Renderer2);
+	_cleanupScroll;
+	_elementScrolled = new Subject();
 	ngOnInit() {
 		this._cleanupScroll = this.ngZone.runOutsideAngular(() => this._renderer.listen(this._scrollElement, "scroll", (event) => this._elementScrolled.next(event)));
 		this.scrollDispatcher.register(this);
 	}
 	ngOnDestroy() {
-		var _this$_cleanupScroll;
-		(_this$_cleanupScroll = this._cleanupScroll) === null || _this$_cleanupScroll === void 0 || _this$_cleanupScroll.call(this);
+		this._cleanupScroll?.();
 		this._elementScrolled.complete();
 		this.scrollDispatcher.deregister(this);
 		this._destroyed.next();
@@ -597,36 +562,35 @@ var CdkScrollable = class {
 		else if (from == LEFT) return el.scrollLeft;
 		else return el.scrollWidth - el.clientWidth - el.scrollLeft;
 	}
+	static ɵfac = function CdkScrollable_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkScrollable)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkScrollable,
+		selectors: [[
+			"",
+			"cdk-scrollable",
+			""
+		], [
+			"",
+			"cdkScrollable",
+			""
+		]]
+	});
 };
-_CdkScrollable = CdkScrollable;
-_defineProperty(CdkScrollable, "ɵfac", function CdkScrollable_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkScrollable)();
-});
-_defineProperty(CdkScrollable, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkScrollable,
-	selectors: [[
-		"",
-		"cdk-scrollable",
-		""
-	], [
-		"",
-		"cdkScrollable",
-		""
-	]]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkScrollable, [{
 		type: Directive,
 		args: [{ selector: "[cdk-scrollable], [cdkScrollable]" }]
 	}], null, null);
 })();
-var ViewportRuler = class {
+var ViewportRuler = class ViewportRuler {
+	_platform = inject(Platform);
+	_listeners;
+	_viewportSize = null;
+	_change = new Subject();
+	_document = inject(DOCUMENT);
 	constructor() {
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_listeners", void 0);
-		_defineProperty(this, "_viewportSize", null);
-		_defineProperty(this, "_change", new Subject());
-		_defineProperty(this, "_document", inject(DOCUMENT));
 		const ngZone = inject(NgZone);
 		const renderer = inject(RendererFactory2).createRenderer(null, null);
 		ngZone.runOutsideAngular(() => {
@@ -638,8 +602,7 @@ var ViewportRuler = class {
 		});
 	}
 	ngOnDestroy() {
-		var _this$_listeners;
-		(_this$_listeners = this._listeners) === null || _this$_listeners === void 0 || _this$_listeners.forEach((cleanup) => cleanup());
+		this._listeners?.forEach((cleanup) => cleanup());
 		this._change.complete();
 	}
 	getViewportSize() {
@@ -664,7 +627,6 @@ var ViewportRuler = class {
 		};
 	}
 	getViewportScrollPosition() {
-		var _document$body, _document$body2;
 		if (!this._platform.isBrowser) return {
 			top: 0,
 			left: 0
@@ -674,8 +636,8 @@ var ViewportRuler = class {
 		const documentElement = document.documentElement;
 		const documentRect = documentElement.getBoundingClientRect();
 		return {
-			top: -documentRect.top || ((_document$body = document.body) === null || _document$body === void 0 ? void 0 : _document$body.scrollTop) || window.scrollY || documentElement.scrollTop || 0,
-			left: -documentRect.left || ((_document$body2 = document.body) === null || _document$body2 === void 0 ? void 0 : _document$body2.scrollLeft) || window.scrollX || documentElement.scrollLeft || 0
+			top: -documentRect.top || document.body?.scrollTop || window.scrollY || documentElement.scrollTop || 0,
+			left: -documentRect.left || document.body?.scrollLeft || window.scrollX || documentElement.scrollLeft || 0
 		};
 	}
 	change(throttleTime = 20) {
@@ -694,36 +656,34 @@ var ViewportRuler = class {
 			height: 0
 		};
 	}
+	static ɵfac = function ViewportRuler_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || ViewportRuler)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: ViewportRuler,
+		factory: ViewportRuler.ɵfac
+	});
 };
-_ViewportRuler = ViewportRuler;
-_defineProperty(ViewportRuler, "ɵfac", function ViewportRuler_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _ViewportRuler)();
-});
-_defineProperty(ViewportRuler, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _ViewportRuler,
-	factory: _ViewportRuler.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ViewportRuler, [{ type: Service }], () => [], null);
 })();
 var VIRTUAL_SCROLLABLE = new InjectionToken("VIRTUAL_SCROLLABLE");
-var CdkVirtualScrollable = class extends CdkScrollable {
+var CdkVirtualScrollable = class CdkVirtualScrollable extends CdkScrollable {
 	measureViewportSize(orientation) {
 		const viewportEl = this.elementRef.nativeElement;
 		return orientation === "horizontal" ? viewportEl.clientWidth : viewportEl.clientHeight;
 	}
+	static ɵfac = /* @__PURE__ */ (() => {
+		let ɵCdkVirtualScrollable_BaseFactory;
+		return function CdkVirtualScrollable_Factory(__ngFactoryType__) {
+			return (ɵCdkVirtualScrollable_BaseFactory || (ɵCdkVirtualScrollable_BaseFactory = ɵɵgetInheritedFactory(CdkVirtualScrollable)))(__ngFactoryType__ || CdkVirtualScrollable);
+		};
+	})();
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkVirtualScrollable,
+		features: [ɵɵInheritDefinitionFeature]
+	});
 };
-_CdkVirtualScrollable = CdkVirtualScrollable;
-_defineProperty(CdkVirtualScrollable, "ɵfac", /* @__PURE__ */ (() => {
-	let ɵCdkVirtualScrollable_BaseFactory;
-	return function CdkVirtualScrollable_Factory(__ngFactoryType__) {
-		return (ɵCdkVirtualScrollable_BaseFactory || (ɵCdkVirtualScrollable_BaseFactory = ɵɵgetInheritedFactory(_CdkVirtualScrollable)))(__ngFactoryType__ || _CdkVirtualScrollable);
-	};
-})());
-_defineProperty(CdkVirtualScrollable, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkVirtualScrollable,
-	features: [ɵɵInheritDefinitionFeature]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkVirtualScrollable, [{ type: Directive }], null, null);
 })();
@@ -732,7 +692,15 @@ function rangesEqual(r1, r2) {
 }
 var SCROLL_SCHEDULER = typeof requestAnimationFrame !== "undefined" ? animationFrameScheduler : asapScheduler;
 var CDK_VIRTUAL_SCROLL_VIEWPORT = new InjectionToken("CDK_VIRTUAL_SCROLL_VIEWPORT");
-var CdkVirtualScrollViewport = class extends CdkVirtualScrollable {
+var CdkVirtualScrollViewport = class CdkVirtualScrollViewport extends CdkVirtualScrollable {
+	elementRef = inject(ElementRef);
+	_changeDetectorRef = inject(ChangeDetectorRef);
+	_scrollStrategy = inject(VIRTUAL_SCROLL_STRATEGY, { optional: true });
+	scrollable = inject(VIRTUAL_SCROLLABLE, { optional: true });
+	_platform = inject(Platform);
+	_detachedSubject = new Subject();
+	_renderedRangeSubject = new Subject();
+	_renderedContentOffsetSubject = new Subject();
 	get orientation() {
 		return this._orientation;
 	}
@@ -742,40 +710,32 @@ var CdkVirtualScrollViewport = class extends CdkVirtualScrollable {
 			this._calculateSpacerSize();
 		}
 	}
+	_orientation = "vertical";
+	appendOnly = false;
+	scrolledIndexChange = new Observable((observer) => this._scrollStrategy.scrolledIndexChange.subscribe((index) => Promise.resolve().then(() => this.ngZone.run(() => observer.next(index)))));
+	_contentWrapper;
+	renderedRangeStream = this._renderedRangeSubject;
+	renderedContentOffset = this._renderedContentOffsetSubject.pipe(filter((offset) => offset !== null), distinctUntilChanged());
+	_totalContentSize = 0;
+	_totalContentWidth = signal("", ...ngDevMode ? [{ debugName: "_totalContentWidth" }] : []);
+	_totalContentHeight = signal("", ...ngDevMode ? [{ debugName: "_totalContentHeight" }] : []);
+	_renderedContentTransform;
+	_renderedRange = {
+		start: 0,
+		end: 0
+	};
+	_dataLength = 0;
+	_viewportSize = 0;
+	_forOf = null;
+	_renderedContentOffset = 0;
+	_renderedContentOffsetNeedsRewrite = false;
+	_changeDetectionNeeded = signal(false, ...ngDevMode ? [{ debugName: "_changeDetectionNeeded" }] : []);
+	_runAfterChangeDetection = [];
+	_viewportChanges = Subscription.EMPTY;
+	_injector = inject(Injector);
+	_isDestroyed = false;
 	constructor() {
 		super();
-		_defineProperty(this, "elementRef", inject(ElementRef));
-		_defineProperty(this, "_changeDetectorRef", inject(ChangeDetectorRef));
-		_defineProperty(this, "_scrollStrategy", inject(VIRTUAL_SCROLL_STRATEGY, { optional: true }));
-		_defineProperty(this, "scrollable", inject(VIRTUAL_SCROLLABLE, { optional: true }));
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_detachedSubject", new Subject());
-		_defineProperty(this, "_renderedRangeSubject", new Subject());
-		_defineProperty(this, "_renderedContentOffsetSubject", new Subject());
-		_defineProperty(this, "_orientation", "vertical");
-		_defineProperty(this, "appendOnly", false);
-		_defineProperty(this, "scrolledIndexChange", new Observable((observer) => this._scrollStrategy.scrolledIndexChange.subscribe((index) => Promise.resolve().then(() => this.ngZone.run(() => observer.next(index))))));
-		_defineProperty(this, "_contentWrapper", void 0);
-		_defineProperty(this, "renderedRangeStream", this._renderedRangeSubject);
-		_defineProperty(this, "renderedContentOffset", this._renderedContentOffsetSubject.pipe(filter((offset) => offset !== null), distinctUntilChanged()));
-		_defineProperty(this, "_totalContentSize", 0);
-		_defineProperty(this, "_totalContentWidth", signal("", ...ngDevMode ? [{ debugName: "_totalContentWidth" }] : []));
-		_defineProperty(this, "_totalContentHeight", signal("", ...ngDevMode ? [{ debugName: "_totalContentHeight" }] : []));
-		_defineProperty(this, "_renderedContentTransform", void 0);
-		_defineProperty(this, "_renderedRange", {
-			start: 0,
-			end: 0
-		});
-		_defineProperty(this, "_dataLength", 0);
-		_defineProperty(this, "_viewportSize", 0);
-		_defineProperty(this, "_forOf", null);
-		_defineProperty(this, "_renderedContentOffset", 0);
-		_defineProperty(this, "_renderedContentOffsetNeedsRewrite", false);
-		_defineProperty(this, "_changeDetectionNeeded", signal(false, ...ngDevMode ? [{ debugName: "_changeDetectionNeeded" }] : []));
-		_defineProperty(this, "_runAfterChangeDetection", []);
-		_defineProperty(this, "_viewportChanges", Subscription.EMPTY);
-		_defineProperty(this, "_injector", inject(Injector));
-		_defineProperty(this, "_isDestroyed", false);
 		const viewportRuler = inject(ViewportRuler);
 		if (!this._scrollStrategy && (typeof ngDevMode === "undefined" || ngDevMode)) throw Error("Error: cdk-virtual-scroll-viewport requires the \"itemSize\" property to be set.");
 		this._viewportChanges = viewportRuler.change().subscribe(() => {
@@ -787,7 +747,10 @@ var CdkVirtualScrollViewport = class extends CdkVirtualScrollable {
 		}
 		const ref = effect(() => {
 			if (this._changeDetectionNeeded()) this._doChangeDetection();
-		}, _objectSpread2(_objectSpread2({}, ngDevMode ? { debugName: "ref" } : {}), {}, { injector: inject(ApplicationRef).injector }));
+		}, {
+			...ngDevMode ? { debugName: "ref" } : {},
+			injector: inject(ApplicationRef).injector
+		});
 		inject(DestroyRef).onDestroy(() => void ref.destroy());
 	}
 	ngOnInit() {
@@ -894,14 +857,13 @@ var CdkVirtualScrollViewport = class extends CdkVirtualScrollable {
 		let measureScrollOffset;
 		if (this.scrollable == this) measureScrollOffset = (_from) => super.measureScrollOffset(_from);
 		else measureScrollOffset = (_from) => this.scrollable.measureScrollOffset(_from);
-		return Math.max(0, measureScrollOffset(from !== null && from !== void 0 ? from : this.orientation === "horizontal" ? "start" : "top") - this.measureViewportOffset());
+		return Math.max(0, measureScrollOffset(from ?? (this.orientation === "horizontal" ? "start" : "top")) - this.measureViewportOffset());
 	}
 	measureViewportOffset(from) {
-		var _this$dir;
 		let fromRect;
 		const LEFT = "left";
 		const RIGHT = "right";
-		const isRtl = ((_this$dir = this.dir) === null || _this$dir === void 0 ? void 0 : _this$dir.value) == "rtl";
+		const isRtl = this.dir?.value == "rtl";
 		if (from == "start") fromRect = isRtl ? RIGHT : LEFT;
 		else if (from == "end") fromRect = isRtl ? LEFT : RIGHT;
 		else if (from) fromRect = from;
@@ -953,67 +915,66 @@ var CdkVirtualScrollViewport = class extends CdkVirtualScrollable {
 		this._totalContentHeight.set(this.orientation === "horizontal" ? "" : `${this._totalContentSize}px`);
 		this._totalContentWidth.set(this.orientation === "horizontal" ? `${this._totalContentSize}px` : "");
 	}
+	static ɵfac = function CdkVirtualScrollViewport_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkVirtualScrollViewport)();
+	};
+	static ɵcmp = /* @__PURE__ */ ɵɵdefineComponent({
+		type: CdkVirtualScrollViewport,
+		selectors: [["cdk-virtual-scroll-viewport"]],
+		viewQuery: function CdkVirtualScrollViewport_Query(rf, ctx) {
+			if (rf & 1) ɵɵviewQuery(_c0, 7);
+			if (rf & 2) {
+				let _t;
+				ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._contentWrapper = _t.first);
+			}
+		},
+		hostAttrs: [1, "cdk-virtual-scroll-viewport"],
+		hostVars: 4,
+		hostBindings: function CdkVirtualScrollViewport_HostBindings(rf, ctx) {
+			if (rf & 2) ɵɵclassProp("cdk-virtual-scroll-orientation-horizontal", ctx.orientation === "horizontal")("cdk-virtual-scroll-orientation-vertical", ctx.orientation !== "horizontal");
+		},
+		inputs: {
+			orientation: "orientation",
+			appendOnly: [
+				2,
+				"appendOnly",
+				"appendOnly",
+				booleanAttribute
+			]
+		},
+		outputs: { scrolledIndexChange: "scrolledIndexChange" },
+		features: [ɵɵProvidersFeature([{
+			provide: CdkScrollable,
+			useFactory: () => inject(VIRTUAL_SCROLLABLE, { optional: true }) || inject(CdkVirtualScrollViewport)
+		}, {
+			provide: CDK_VIRTUAL_SCROLL_VIEWPORT,
+			useExisting: CdkVirtualScrollViewport
+		}]), ɵɵInheritDefinitionFeature],
+		ngContentSelectors: _c1,
+		decls: 4,
+		vars: 4,
+		consts: [
+			["contentWrapper", ""],
+			[1, "cdk-virtual-scroll-content-wrapper"],
+			[1, "cdk-virtual-scroll-spacer"]
+		],
+		template: function CdkVirtualScrollViewport_Template(rf, ctx) {
+			if (rf & 1) {
+				ɵɵprojectionDef();
+				ɵɵdomElementStart(0, "div", 1, 0);
+				ɵɵprojection(2);
+				ɵɵdomElementEnd();
+				ɵɵdomElement(3, "div", 2);
+			}
+			if (rf & 2) {
+				ɵɵadvance(3);
+				ɵɵstyleProp("width", ctx._totalContentWidth())("height", ctx._totalContentHeight());
+			}
+		},
+		styles: ["cdk-virtual-scroll-viewport {\n  display: block;\n  position: relative;\n  transform: translateZ(0);\n}\n\n.cdk-virtual-scrollable {\n  overflow: auto;\n  will-change: scroll-position;\n  contain: strict;\n  overflow-anchor: none;\n  scroll-behavior: auto;\n}\n\n.cdk-virtual-scroll-content-wrapper {\n  position: absolute;\n  top: 0;\n  left: 0;\n  contain: content;\n}\n[dir=rtl] .cdk-virtual-scroll-content-wrapper {\n  right: 0;\n  left: auto;\n}\n\n.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper {\n  min-height: 100%;\n}\n.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper > dl:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper > ol:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper > table:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper > ul:not([cdkVirtualFor]) {\n  padding-left: 0;\n  padding-right: 0;\n  margin-left: 0;\n  margin-right: 0;\n  border-left-width: 0;\n  border-right-width: 0;\n  outline: none;\n}\n\n.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper {\n  min-width: 100%;\n}\n.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper > dl:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper > ol:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper > table:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper > ul:not([cdkVirtualFor]) {\n  padding-top: 0;\n  padding-bottom: 0;\n  margin-top: 0;\n  margin-bottom: 0;\n  border-top-width: 0;\n  border-bottom-width: 0;\n  outline: none;\n}\n\n.cdk-virtual-scroll-spacer {\n  height: 1px;\n  transform-origin: 0 0;\n  flex: 0 0 auto;\n}\n[dir=rtl] .cdk-virtual-scroll-spacer {\n  transform-origin: 100% 0;\n}\n"],
+		encapsulation: 2
+	});
 };
-_CdkVirtualScrollViewport = CdkVirtualScrollViewport;
-_defineProperty(CdkVirtualScrollViewport, "ɵfac", function CdkVirtualScrollViewport_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkVirtualScrollViewport)();
-});
-_defineProperty(CdkVirtualScrollViewport, "ɵcmp", /* @__PURE__ */ ɵɵdefineComponent({
-	type: _CdkVirtualScrollViewport,
-	selectors: [["cdk-virtual-scroll-viewport"]],
-	viewQuery: function CdkVirtualScrollViewport_Query(rf, ctx) {
-		if (rf & 1) ɵɵviewQuery(_c0, 7);
-		if (rf & 2) {
-			let _t;
-			ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._contentWrapper = _t.first);
-		}
-	},
-	hostAttrs: [1, "cdk-virtual-scroll-viewport"],
-	hostVars: 4,
-	hostBindings: function CdkVirtualScrollViewport_HostBindings(rf, ctx) {
-		if (rf & 2) ɵɵclassProp("cdk-virtual-scroll-orientation-horizontal", ctx.orientation === "horizontal")("cdk-virtual-scroll-orientation-vertical", ctx.orientation !== "horizontal");
-	},
-	inputs: {
-		orientation: "orientation",
-		appendOnly: [
-			2,
-			"appendOnly",
-			"appendOnly",
-			booleanAttribute
-		]
-	},
-	outputs: { scrolledIndexChange: "scrolledIndexChange" },
-	features: [ɵɵProvidersFeature([{
-		provide: CdkScrollable,
-		useFactory: () => inject(VIRTUAL_SCROLLABLE, { optional: true }) || inject(_CdkVirtualScrollViewport)
-	}, {
-		provide: CDK_VIRTUAL_SCROLL_VIEWPORT,
-		useExisting: _CdkVirtualScrollViewport
-	}]), ɵɵInheritDefinitionFeature],
-	ngContentSelectors: _c1,
-	decls: 4,
-	vars: 4,
-	consts: [
-		["contentWrapper", ""],
-		[1, "cdk-virtual-scroll-content-wrapper"],
-		[1, "cdk-virtual-scroll-spacer"]
-	],
-	template: function CdkVirtualScrollViewport_Template(rf, ctx) {
-		if (rf & 1) {
-			ɵɵprojectionDef();
-			ɵɵdomElementStart(0, "div", 1, 0);
-			ɵɵprojection(2);
-			ɵɵdomElementEnd();
-			ɵɵdomElement(3, "div", 2);
-		}
-		if (rf & 2) {
-			ɵɵadvance(3);
-			ɵɵstyleProp("width", ctx._totalContentWidth())("height", ctx._totalContentHeight());
-		}
-	},
-	styles: ["cdk-virtual-scroll-viewport {\n  display: block;\n  position: relative;\n  transform: translateZ(0);\n}\n\n.cdk-virtual-scrollable {\n  overflow: auto;\n  will-change: scroll-position;\n  contain: strict;\n  overflow-anchor: none;\n  scroll-behavior: auto;\n}\n\n.cdk-virtual-scroll-content-wrapper {\n  position: absolute;\n  top: 0;\n  left: 0;\n  contain: content;\n}\n[dir=rtl] .cdk-virtual-scroll-content-wrapper {\n  right: 0;\n  left: auto;\n}\n\n.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper {\n  min-height: 100%;\n}\n.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper > dl:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper > ol:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper > table:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper > ul:not([cdkVirtualFor]) {\n  padding-left: 0;\n  padding-right: 0;\n  margin-left: 0;\n  margin-right: 0;\n  border-left-width: 0;\n  border-right-width: 0;\n  outline: none;\n}\n\n.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper {\n  min-width: 100%;\n}\n.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper > dl:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper > ol:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper > table:not([cdkVirtualFor]), .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper > ul:not([cdkVirtualFor]) {\n  padding-top: 0;\n  padding-bottom: 0;\n  margin-top: 0;\n  margin-bottom: 0;\n  border-top-width: 0;\n  border-bottom-width: 0;\n  outline: none;\n}\n\n.cdk-virtual-scroll-spacer {\n  height: 1px;\n  transform-origin: 0 0;\n  flex: 0 0 auto;\n}\n[dir=rtl] .cdk-virtual-scroll-spacer {\n  transform-origin: 100% 0;\n}\n"],
-	encapsulation: 2
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkVirtualScrollViewport, [{
 		type: Component,
@@ -1055,7 +1016,14 @@ function getOffset(orientation, direction, node) {
 	if (orientation === "horizontal") return direction === "start" ? rect.left : rect.right;
 	return direction === "start" ? rect.top : rect.bottom;
 }
-var CdkVirtualForOf = class {
+var CdkVirtualForOf = class CdkVirtualForOf {
+	_viewContainerRef = inject(ViewContainerRef);
+	_template = inject(TemplateRef);
+	_differs = inject(IterableDiffers);
+	_viewRepeater = new _RecycleViewRepeaterStrategy();
+	_viewport = inject(CDK_VIRTUAL_SCROLL_VIEWPORT, { skipSelf: true });
+	viewChange = new Subject();
+	_dataSourceChanges = new Subject();
 	get cdkVirtualForOf() {
 		return this._cdkVirtualForOf;
 	}
@@ -1064,6 +1032,7 @@ var CdkVirtualForOf = class {
 		if (isDataSource(value)) this._dataSourceChanges.next(value);
 		else this._dataSourceChanges.next(new ArrayDataSource(isObservable(value) ? value : Array.from(value || [])));
 	}
+	_cdkVirtualForOf;
 	get cdkVirtualForTrackBy() {
 		return this._cdkVirtualForTrackBy;
 	}
@@ -1071,6 +1040,7 @@ var CdkVirtualForOf = class {
 		this._needsUpdate = true;
 		this._cdkVirtualForTrackBy = fn ? (index, item) => fn(index + (this._renderedRange ? this._renderedRange.start : 0), item) : void 0;
 	}
+	_cdkVirtualForTrackBy;
 	set cdkVirtualForTemplate(value) {
 		if (value) {
 			this._needsUpdate = true;
@@ -1083,26 +1053,17 @@ var CdkVirtualForOf = class {
 	set cdkVirtualForTemplateCacheSize(size) {
 		this._viewRepeater.viewCacheSize = coerceNumberProperty(size);
 	}
+	dataStream = this._dataSourceChanges.pipe(startWith(null), pairwise(), switchMap(([prev, cur]) => this._changeDataSource(prev, cur)), shareReplay(1));
+	_differ = null;
+	_data = [];
+	_renderedItems = [];
+	_renderedRange = {
+		start: 0,
+		end: 0
+	};
+	_needsUpdate = false;
+	_destroyed = new Subject();
 	constructor() {
-		_defineProperty(this, "_viewContainerRef", inject(ViewContainerRef));
-		_defineProperty(this, "_template", inject(TemplateRef));
-		_defineProperty(this, "_differs", inject(IterableDiffers));
-		_defineProperty(this, "_viewRepeater", new _RecycleViewRepeaterStrategy());
-		_defineProperty(this, "_viewport", inject(CDK_VIRTUAL_SCROLL_VIEWPORT, { skipSelf: true }));
-		_defineProperty(this, "viewChange", new Subject());
-		_defineProperty(this, "_dataSourceChanges", new Subject());
-		_defineProperty(this, "_cdkVirtualForOf", void 0);
-		_defineProperty(this, "_cdkVirtualForTrackBy", void 0);
-		_defineProperty(this, "dataStream", this._dataSourceChanges.pipe(startWith(null), pairwise(), switchMap(([prev, cur]) => this._changeDataSource(prev, cur)), shareReplay(1)));
-		_defineProperty(this, "_differ", null);
-		_defineProperty(this, "_data", []);
-		_defineProperty(this, "_renderedItems", []);
-		_defineProperty(this, "_renderedRange", {
-			start: 0,
-			end: 0
-		});
-		_defineProperty(this, "_needsUpdate", false);
-		_defineProperty(this, "_destroyed", new Subject());
 		const ngZone = inject(NgZone);
 		this.dataStream.subscribe((data) => {
 			this._data = data;
@@ -1219,27 +1180,26 @@ var CdkVirtualForOf = class {
 	static ngTemplateContextGuard(directive, context) {
 		return true;
 	}
+	static ɵfac = function CdkVirtualForOf_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkVirtualForOf)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkVirtualForOf,
+		selectors: [[
+			"",
+			"cdkVirtualFor",
+			"",
+			"cdkVirtualForOf",
+			""
+		]],
+		inputs: {
+			cdkVirtualForOf: "cdkVirtualForOf",
+			cdkVirtualForTrackBy: "cdkVirtualForTrackBy",
+			cdkVirtualForTemplate: "cdkVirtualForTemplate",
+			cdkVirtualForTemplateCacheSize: "cdkVirtualForTemplateCacheSize"
+		}
+	});
 };
-_CdkVirtualForOf = CdkVirtualForOf;
-_defineProperty(CdkVirtualForOf, "ɵfac", function CdkVirtualForOf_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkVirtualForOf)();
-});
-_defineProperty(CdkVirtualForOf, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkVirtualForOf,
-	selectors: [[
-		"",
-		"cdkVirtualFor",
-		"",
-		"cdkVirtualForOf",
-		""
-	]],
-	inputs: {
-		cdkVirtualForOf: "cdkVirtualForOf",
-		cdkVirtualForTrackBy: "cdkVirtualForTrackBy",
-		cdkVirtualForTemplate: "cdkVirtualForTemplate",
-		cdkVirtualForTemplateCacheSize: "cdkVirtualForTemplateCacheSize"
-	}
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkVirtualForOf, [{
 		type: Directive,
@@ -1251,31 +1211,30 @@ _defineProperty(CdkVirtualForOf, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
 		cdkVirtualForTemplateCacheSize: [{ type: Input }]
 	});
 })();
-var CdkVirtualScrollableElement = class extends CdkVirtualScrollable {
+var CdkVirtualScrollableElement = class CdkVirtualScrollableElement extends CdkVirtualScrollable {
 	measureBoundingClientRectWithScrollOffset(from) {
 		return this.getElementRef().nativeElement.getBoundingClientRect()[from] - this.measureScrollOffset(from);
 	}
+	static ɵfac = /* @__PURE__ */ (() => {
+		let ɵCdkVirtualScrollableElement_BaseFactory;
+		return function CdkVirtualScrollableElement_Factory(__ngFactoryType__) {
+			return (ɵCdkVirtualScrollableElement_BaseFactory || (ɵCdkVirtualScrollableElement_BaseFactory = ɵɵgetInheritedFactory(CdkVirtualScrollableElement)))(__ngFactoryType__ || CdkVirtualScrollableElement);
+		};
+	})();
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkVirtualScrollableElement,
+		selectors: [[
+			"",
+			"cdkVirtualScrollingElement",
+			""
+		]],
+		hostAttrs: [1, "cdk-virtual-scrollable"],
+		features: [ɵɵProvidersFeature([{
+			provide: VIRTUAL_SCROLLABLE,
+			useExisting: CdkVirtualScrollableElement
+		}]), ɵɵInheritDefinitionFeature]
+	});
 };
-_CdkVirtualScrollableElement = CdkVirtualScrollableElement;
-_defineProperty(CdkVirtualScrollableElement, "ɵfac", /* @__PURE__ */ (() => {
-	let ɵCdkVirtualScrollableElement_BaseFactory;
-	return function CdkVirtualScrollableElement_Factory(__ngFactoryType__) {
-		return (ɵCdkVirtualScrollableElement_BaseFactory || (ɵCdkVirtualScrollableElement_BaseFactory = ɵɵgetInheritedFactory(_CdkVirtualScrollableElement)))(__ngFactoryType__ || _CdkVirtualScrollableElement);
-	};
-})());
-_defineProperty(CdkVirtualScrollableElement, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkVirtualScrollableElement,
-	selectors: [[
-		"",
-		"cdkVirtualScrollingElement",
-		""
-	]],
-	hostAttrs: [1, "cdk-virtual-scrollable"],
-	features: [ɵɵProvidersFeature([{
-		provide: VIRTUAL_SCROLLABLE,
-		useExisting: _CdkVirtualScrollableElement
-	}]), ɵɵInheritDefinitionFeature]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkVirtualScrollableElement, [{
 		type: Directive,
@@ -1289,7 +1248,7 @@ _defineProperty(CdkVirtualScrollableElement, "ɵdir", /* @__PURE__ */ ɵɵdefine
 		}]
 	}], null, null);
 })();
-var CdkVirtualScrollableWindow = class extends CdkVirtualScrollable {
+var CdkVirtualScrollableWindow = class CdkVirtualScrollableWindow extends CdkVirtualScrollable {
 	constructor() {
 		super();
 		const document = inject(DOCUMENT);
@@ -1299,23 +1258,22 @@ var CdkVirtualScrollableWindow = class extends CdkVirtualScrollable {
 	measureBoundingClientRectWithScrollOffset(from) {
 		return this.getElementRef().nativeElement.getBoundingClientRect()[from];
 	}
+	static ɵfac = function CdkVirtualScrollableWindow_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkVirtualScrollableWindow)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkVirtualScrollableWindow,
+		selectors: [[
+			"cdk-virtual-scroll-viewport",
+			"scrollWindow",
+			""
+		]],
+		features: [ɵɵProvidersFeature([{
+			provide: VIRTUAL_SCROLLABLE,
+			useExisting: CdkVirtualScrollableWindow
+		}]), ɵɵInheritDefinitionFeature]
+	});
 };
-_CdkVirtualScrollableWindow = CdkVirtualScrollableWindow;
-_defineProperty(CdkVirtualScrollableWindow, "ɵfac", function CdkVirtualScrollableWindow_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkVirtualScrollableWindow)();
-});
-_defineProperty(CdkVirtualScrollableWindow, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkVirtualScrollableWindow,
-	selectors: [[
-		"cdk-virtual-scroll-viewport",
-		"scrollWindow",
-		""
-	]],
-	features: [ɵɵProvidersFeature([{
-		provide: VIRTUAL_SCROLLABLE,
-		useExisting: _CdkVirtualScrollableWindow
-	}]), ɵɵInheritDefinitionFeature]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkVirtualScrollableWindow, [{
 		type: Directive,
@@ -1328,17 +1286,17 @@ _defineProperty(CdkVirtualScrollableWindow, "ɵdir", /* @__PURE__ */ ɵɵdefineD
 		}]
 	}], () => [], null);
 })();
-var CdkScrollableModule = class {};
-_CdkScrollableModule = CdkScrollableModule;
-_defineProperty(CdkScrollableModule, "ɵfac", function CdkScrollableModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkScrollableModule)();
-});
-_defineProperty(CdkScrollableModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _CdkScrollableModule,
-	imports: [CdkScrollable],
-	exports: [CdkScrollable]
-}));
-_defineProperty(CdkScrollableModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({}));
+var CdkScrollableModule = class CdkScrollableModule {
+	static ɵfac = function CdkScrollableModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkScrollableModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: CdkScrollableModule,
+		imports: [CdkScrollable],
+		exports: [CdkScrollable]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkScrollableModule, [{
 		type: NgModule,
@@ -1348,38 +1306,38 @@ _defineProperty(CdkScrollableModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector
 		}]
 	}], null, null);
 })();
-var ScrollingModule = class {};
-_ScrollingModule = ScrollingModule;
-_defineProperty(ScrollingModule, "ɵfac", function ScrollingModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _ScrollingModule)();
-});
-_defineProperty(ScrollingModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _ScrollingModule,
-	imports: [
+var ScrollingModule = class ScrollingModule {
+	static ɵfac = function ScrollingModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || ScrollingModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: ScrollingModule,
+		imports: [
+			BidiModule,
+			CdkScrollableModule,
+			CdkVirtualScrollViewport,
+			CdkFixedSizeVirtualScroll,
+			CdkVirtualForOf,
+			CdkVirtualScrollableWindow,
+			CdkVirtualScrollableElement
+		],
+		exports: [
+			BidiModule,
+			CdkScrollableModule,
+			CdkFixedSizeVirtualScroll,
+			CdkVirtualForOf,
+			CdkVirtualScrollViewport,
+			CdkVirtualScrollableWindow,
+			CdkVirtualScrollableElement
+		]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({ imports: [
 		BidiModule,
 		CdkScrollableModule,
-		CdkVirtualScrollViewport,
-		CdkFixedSizeVirtualScroll,
-		CdkVirtualForOf,
-		CdkVirtualScrollableWindow,
-		CdkVirtualScrollableElement
-	],
-	exports: [
 		BidiModule,
-		CdkScrollableModule,
-		CdkFixedSizeVirtualScroll,
-		CdkVirtualForOf,
-		CdkVirtualScrollViewport,
-		CdkVirtualScrollableWindow,
-		CdkVirtualScrollableElement
-	]
-}));
-_defineProperty(ScrollingModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({ imports: [
-	BidiModule,
-	CdkScrollableModule,
-	BidiModule,
-	CdkScrollableModule
-] }));
+		CdkScrollableModule
+	] });
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ScrollingModule, [{
 		type: NgModule,
@@ -1407,12 +1365,10 @@ _defineProperty(ScrollingModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({ i
 })();
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/_id-generator-chunk.mjs
-var _IdGenerator2;
 var counters = /* @__PURE__ */ new Map();
 var _IdGenerator = class _IdGenerator {
-	constructor() {
-		_defineProperty(this, "_appId", inject(APP_ID));
-	}
+	_appId = inject(APP_ID);
+	static _infix = `a${Math.floor(Math.random() * 1e5).toString()}`;
 	getId(prefix, randomize = false) {
 		if (this._appId !== "ng") prefix += this._appId;
 		let count = counters.get(prefix);
@@ -1421,24 +1377,19 @@ var _IdGenerator = class _IdGenerator {
 		counters.set(prefix, count);
 		return `${prefix}${randomize ? _IdGenerator._infix + "-" : ""}${count}`;
 	}
+	static ɵfac = function _IdGenerator_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || _IdGenerator)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: _IdGenerator,
+		factory: _IdGenerator.ɵfac
+	});
 };
-_IdGenerator2 = _IdGenerator;
-_defineProperty(_IdGenerator, "_infix", `a${Math.floor(Math.random() * 1e5).toString()}`);
-_defineProperty(_IdGenerator, "ɵfac", function _IdGenerator_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _IdGenerator2)();
-});
-_defineProperty(_IdGenerator, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _IdGenerator2,
-	factory: _IdGenerator2.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(_IdGenerator, [{ type: Service }], null, null);
 })();
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/portal.mjs
-var _CdkPortal;
-var _CdkPortalOutlet;
-var _PortalModule;
 function throwNullPortalError() {
 	throw Error("Must provide a portal to attach");
 }
@@ -1458,9 +1409,7 @@ function throwNoPortalAttachedError() {
 	throw Error("Attempting to detach a portal that is not attached to a host");
 }
 var Portal = class {
-	constructor() {
-		_defineProperty(this, "_attachedHost", null);
-	}
+	_attachedHost = null;
 	attach(host) {
 		if (typeof ngDevMode === "undefined" || ngDevMode) {
 			if (host == null) throwNullPortalOutletError();
@@ -1484,14 +1433,14 @@ var Portal = class {
 	}
 };
 var ComponentPortal = class extends Portal {
+	component;
+	viewContainerRef;
+	injector;
+	projectableNodes;
+	bindings;
+	directives;
 	constructor(component, viewContainerRef, injector, projectableNodes, bindings, directives) {
 		super();
-		_defineProperty(this, "component", void 0);
-		_defineProperty(this, "viewContainerRef", void 0);
-		_defineProperty(this, "injector", void 0);
-		_defineProperty(this, "projectableNodes", void 0);
-		_defineProperty(this, "bindings", void 0);
-		_defineProperty(this, "directives", void 0);
 		this.component = component;
 		this.viewContainerRef = viewContainerRef;
 		this.injector = injector;
@@ -1501,12 +1450,12 @@ var ComponentPortal = class extends Portal {
 	}
 };
 var TemplatePortal = class extends Portal {
+	templateRef;
+	viewContainerRef;
+	context;
+	injector;
 	constructor(templateRef, viewContainerRef, context, injector) {
 		super();
-		_defineProperty(this, "templateRef", void 0);
-		_defineProperty(this, "viewContainerRef", void 0);
-		_defineProperty(this, "context", void 0);
-		_defineProperty(this, "injector", void 0);
 		this.templateRef = templateRef;
 		this.viewContainerRef = viewContainerRef;
 		this.context = context;
@@ -1525,19 +1474,16 @@ var TemplatePortal = class extends Portal {
 	}
 };
 var DomPortal = class extends Portal {
+	element;
 	constructor(element) {
 		super();
-		_defineProperty(this, "element", void 0);
 		this.element = element instanceof ElementRef ? element.nativeElement : element;
 	}
 };
 var BasePortalOutlet = class {
-	constructor() {
-		_defineProperty(this, "_attachedPortal", null);
-		_defineProperty(this, "_disposeFn", null);
-		_defineProperty(this, "_isDisposed", false);
-		_defineProperty(this, "attachDomPortal", null);
-	}
+	_attachedPortal = null;
+	_disposeFn = null;
+	_isDisposed = false;
 	hasAttached() {
 		return !!this._attachedPortal;
 	}
@@ -1559,6 +1505,7 @@ var BasePortalOutlet = class {
 		}
 		if (typeof ngDevMode === "undefined" || ngDevMode) throwUnknownPortalTypeError();
 	}
+	attachDomPortal = null;
 	detach() {
 		if (this._attachedPortal) {
 			this._attachedPortal.setAttachedHost(null);
@@ -1582,22 +1529,11 @@ var BasePortalOutlet = class {
 	}
 };
 var DomPortalOutlet = class extends BasePortalOutlet {
+	outletElement;
+	_appRef;
+	_defaultInjector;
 	constructor(outletElement, _appRef, _defaultInjector) {
 		super();
-		_defineProperty(this, "outletElement", void 0);
-		_defineProperty(this, "_appRef", void 0);
-		_defineProperty(this, "_defaultInjector", void 0);
-		_defineProperty(this, "attachDomPortal", (portal) => {
-			const element = portal.element;
-			if (!element.parentNode && (typeof ngDevMode === "undefined" || ngDevMode)) throw Error("DOM portal content must be attached to a parent node.");
-			const anchorNode = this.outletElement.ownerDocument.createComment("dom-portal");
-			element.parentNode.insertBefore(anchorNode, element);
-			this.outletElement.appendChild(element);
-			this._attachedPortal = portal;
-			super.setDisposeFn(() => {
-				if (anchorNode.parentNode) anchorNode.parentNode.replaceChild(element, anchorNode);
-			});
-		});
 		this.outletElement = outletElement;
 		this._appRef = _appRef;
 		this._defaultInjector = _defaultInjector;
@@ -1650,6 +1586,17 @@ var DomPortalOutlet = class extends BasePortalOutlet {
 		this._attachedPortal = portal;
 		return viewRef;
 	}
+	attachDomPortal = (portal) => {
+		const element = portal.element;
+		if (!element.parentNode && (typeof ngDevMode === "undefined" || ngDevMode)) throw Error("DOM portal content must be attached to a parent node.");
+		const anchorNode = this.outletElement.ownerDocument.createComment("dom-portal");
+		element.parentNode.insertBefore(anchorNode, element);
+		this.outletElement.appendChild(element);
+		this._attachedPortal = portal;
+		super.setDisposeFn(() => {
+			if (anchorNode.parentNode) anchorNode.parentNode.replaceChild(element, anchorNode);
+		});
+	};
 	dispose() {
 		super.dispose();
 		this.outletElement.remove();
@@ -1658,27 +1605,26 @@ var DomPortalOutlet = class extends BasePortalOutlet {
 		return componentRef.hostView.rootNodes[0];
 	}
 };
-var CdkPortal = class extends TemplatePortal {
+var CdkPortal = class CdkPortal extends TemplatePortal {
 	constructor() {
 		const templateRef = inject(TemplateRef);
 		const viewContainerRef = inject(ViewContainerRef);
 		super(templateRef, viewContainerRef);
 	}
+	static ɵfac = function CdkPortal_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkPortal)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkPortal,
+		selectors: [[
+			"",
+			"cdkPortal",
+			""
+		]],
+		exportAs: ["cdkPortal"],
+		features: [ɵɵInheritDefinitionFeature]
+	});
 };
-_CdkPortal = CdkPortal;
-_defineProperty(CdkPortal, "ɵfac", function CdkPortal_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkPortal)();
-});
-_defineProperty(CdkPortal, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkPortal,
-	selectors: [[
-		"",
-		"cdkPortal",
-		""
-	]],
-	exportAs: ["cdkPortal"],
-	features: [ɵɵInheritDefinitionFeature]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkPortal, [{
 		type: Directive,
@@ -1688,28 +1634,12 @@ _defineProperty(CdkPortal, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
 		}]
 	}], () => [], null);
 })();
-var CdkPortalOutlet = class extends BasePortalOutlet {
-	constructor(..._args) {
-		super(..._args);
-		_defineProperty(this, "_moduleRef", inject(NgModuleRef$1, { optional: true }));
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_viewContainerRef", inject(ViewContainerRef));
-		_defineProperty(this, "_isInitialized", false);
-		_defineProperty(this, "_attachedRef", null);
-		_defineProperty(this, "attached", new EventEmitter());
-		_defineProperty(this, "attachDomPortal", (portal) => {
-			const element = portal.element;
-			if (!element.parentNode && (typeof ngDevMode === "undefined" || ngDevMode)) throw Error("DOM portal content must be attached to a parent node.");
-			const anchorNode = this._document.createComment("dom-portal");
-			portal.setAttachedHost(this);
-			element.parentNode.insertBefore(anchorNode, element);
-			this._getRootNode().appendChild(element);
-			this._attachedPortal = portal;
-			super.setDisposeFn(() => {
-				if (anchorNode.parentNode) anchorNode.parentNode.replaceChild(element, anchorNode);
-			});
-		});
-	}
+var CdkPortalOutlet = class CdkPortalOutlet extends BasePortalOutlet {
+	_moduleRef = inject(NgModuleRef$1, { optional: true });
+	_document = inject(DOCUMENT);
+	_viewContainerRef = inject(ViewContainerRef);
+	_isInitialized = false;
+	_attachedRef = null;
 	get portal() {
 		return this._attachedPortal;
 	}
@@ -1719,6 +1649,7 @@ var CdkPortalOutlet = class extends BasePortalOutlet {
 		if (portal) super.attach(portal);
 		this._attachedPortal = portal || null;
 	}
+	attached = new EventEmitter();
 	get attachedRef() {
 		return this._attachedRef;
 	}
@@ -1756,34 +1687,45 @@ var CdkPortalOutlet = class extends BasePortalOutlet {
 		this.attached.emit(viewRef);
 		return viewRef;
 	}
+	attachDomPortal = (portal) => {
+		const element = portal.element;
+		if (!element.parentNode && (typeof ngDevMode === "undefined" || ngDevMode)) throw Error("DOM portal content must be attached to a parent node.");
+		const anchorNode = this._document.createComment("dom-portal");
+		portal.setAttachedHost(this);
+		element.parentNode.insertBefore(anchorNode, element);
+		this._getRootNode().appendChild(element);
+		this._attachedPortal = portal;
+		super.setDisposeFn(() => {
+			if (anchorNode.parentNode) anchorNode.parentNode.replaceChild(element, anchorNode);
+		});
+	};
 	_getRootNode() {
 		const nativeElement = this._viewContainerRef.element.nativeElement;
 		return nativeElement.nodeType === nativeElement.ELEMENT_NODE ? nativeElement : nativeElement.parentNode;
 	}
+	static ɵfac = /* @__PURE__ */ (() => {
+		let ɵCdkPortalOutlet_BaseFactory;
+		return function CdkPortalOutlet_Factory(__ngFactoryType__) {
+			return (ɵCdkPortalOutlet_BaseFactory || (ɵCdkPortalOutlet_BaseFactory = ɵɵgetInheritedFactory(CdkPortalOutlet)))(__ngFactoryType__ || CdkPortalOutlet);
+		};
+	})();
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkPortalOutlet,
+		selectors: [[
+			"",
+			"cdkPortalOutlet",
+			""
+		]],
+		inputs: { portal: [
+			0,
+			"cdkPortalOutlet",
+			"portal"
+		] },
+		outputs: { attached: "attached" },
+		exportAs: ["cdkPortalOutlet"],
+		features: [ɵɵInheritDefinitionFeature]
+	});
 };
-_CdkPortalOutlet = CdkPortalOutlet;
-_defineProperty(CdkPortalOutlet, "ɵfac", /* @__PURE__ */ (() => {
-	let ɵCdkPortalOutlet_BaseFactory;
-	return function CdkPortalOutlet_Factory(__ngFactoryType__) {
-		return (ɵCdkPortalOutlet_BaseFactory || (ɵCdkPortalOutlet_BaseFactory = ɵɵgetInheritedFactory(_CdkPortalOutlet)))(__ngFactoryType__ || _CdkPortalOutlet);
-	};
-})());
-_defineProperty(CdkPortalOutlet, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkPortalOutlet,
-	selectors: [[
-		"",
-		"cdkPortalOutlet",
-		""
-	]],
-	inputs: { portal: [
-		0,
-		"cdkPortalOutlet",
-		"portal"
-	] },
-	outputs: { attached: "attached" },
-	exportAs: ["cdkPortalOutlet"],
-	features: [ɵɵInheritDefinitionFeature]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkPortalOutlet, [{
 		type: Directive,
@@ -1799,17 +1741,17 @@ _defineProperty(CdkPortalOutlet, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
 		attached: [{ type: Output }]
 	});
 })();
-var PortalModule = class {};
-_PortalModule = PortalModule;
-_defineProperty(PortalModule, "ɵfac", function PortalModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _PortalModule)();
-});
-_defineProperty(PortalModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _PortalModule,
-	imports: [CdkPortal, CdkPortalOutlet],
-	exports: [CdkPortal, CdkPortalOutlet]
-}));
-_defineProperty(PortalModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({}));
+var PortalModule = class PortalModule {
+	static ɵfac = function PortalModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || PortalModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: PortalModule,
+		imports: [CdkPortal, CdkPortalOutlet],
+		exports: [CdkPortal, CdkPortalOutlet]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PortalModule, [{
 		type: NgModule,
@@ -1827,31 +1769,20 @@ function hasModifierKey(event, ...modifiers) {
 }
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/_overlay-module-chunk.mjs
-var _ScrollStrategyOptions;
-var _BaseOverlayDispatcher;
-var _OverlayKeyboardDispatcher;
-var _OverlayOutsideClickDispatcher;
-var _CdkOverlayStyleLoader2;
-var _OverlayContainer;
-var _OverlayPositionBuilder;
-var _Overlay;
-var _CdkOverlayOrigin;
-var _CdkConnectedOverlay;
-var _OverlayModule;
 var scrollBehaviorSupported = supportsScrollBehavior();
 function createBlockScrollStrategy(injector) {
 	return new BlockScrollStrategy(injector.get(ViewportRuler), injector.get(DOCUMENT));
 }
 var BlockScrollStrategy = class {
+	_viewportRuler;
+	_previousHTMLStyles = {
+		top: "",
+		left: ""
+	};
+	_previousScrollPosition;
+	_isEnabled = false;
+	_document;
 	constructor(_viewportRuler, document) {
-		_defineProperty(this, "_viewportRuler", void 0);
-		_defineProperty(this, "_previousHTMLStyles", {
-			top: "",
-			left: ""
-		});
-		_defineProperty(this, "_previousScrollPosition", void 0);
-		_defineProperty(this, "_isEnabled", false);
-		_defineProperty(this, "_document", void 0);
 		this._viewportRuler = _viewportRuler;
 		this._document = document;
 	}
@@ -1902,18 +1833,14 @@ function createCloseScrollStrategy(injector, config) {
 	return new CloseScrollStrategy(injector.get(ScrollDispatcher), injector.get(NgZone), injector.get(ViewportRuler), config);
 }
 var CloseScrollStrategy = class {
+	_scrollDispatcher;
+	_ngZone;
+	_viewportRuler;
+	_config;
+	_scrollSubscription = null;
+	_overlayRef;
+	_initialScrollPosition;
 	constructor(_scrollDispatcher, _ngZone, _viewportRuler, _config) {
-		_defineProperty(this, "_scrollDispatcher", void 0);
-		_defineProperty(this, "_ngZone", void 0);
-		_defineProperty(this, "_viewportRuler", void 0);
-		_defineProperty(this, "_config", void 0);
-		_defineProperty(this, "_scrollSubscription", null);
-		_defineProperty(this, "_overlayRef", void 0);
-		_defineProperty(this, "_initialScrollPosition", void 0);
-		_defineProperty(this, "_detach", () => {
-			this.disable();
-			if (this._overlayRef.hasAttached()) this._ngZone.run(() => this._overlayRef.detach());
-		});
 		this._scrollDispatcher = _scrollDispatcher;
 		this._ngZone = _ngZone;
 		this._viewportRuler = _viewportRuler;
@@ -1947,6 +1874,10 @@ var CloseScrollStrategy = class {
 		this.disable();
 		this._overlayRef = null;
 	}
+	_detach = () => {
+		this.disable();
+		if (this._overlayRef.hasAttached()) this._ngZone.run(() => this._overlayRef.detach());
+	};
 };
 var NoopScrollStrategy = class {
 	enable() {}
@@ -1975,13 +1906,13 @@ function createRepositionScrollStrategy(injector, config) {
 	return new RepositionScrollStrategy(injector.get(ScrollDispatcher), injector.get(ViewportRuler), injector.get(NgZone), config);
 }
 var RepositionScrollStrategy = class {
+	_scrollDispatcher;
+	_viewportRuler;
+	_ngZone;
+	_config;
+	_scrollSubscription = null;
+	_overlayRef;
 	constructor(_scrollDispatcher, _viewportRuler, _ngZone, _config) {
-		_defineProperty(this, "_scrollDispatcher", void 0);
-		_defineProperty(this, "_viewportRuler", void 0);
-		_defineProperty(this, "_ngZone", void 0);
-		_defineProperty(this, "_config", void 0);
-		_defineProperty(this, "_scrollSubscription", null);
-		_defineProperty(this, "_overlayRef", void 0);
 		this._scrollDispatcher = _scrollDispatcher;
 		this._viewportRuler = _viewportRuler;
 		this._ngZone = _ngZone;
@@ -2025,44 +1956,41 @@ var RepositionScrollStrategy = class {
 		this._overlayRef = null;
 	}
 };
-var ScrollStrategyOptions = class {
-	constructor() {
-		_defineProperty(this, "_injector", inject(Injector));
-		_defineProperty(this, "noop", () => new NoopScrollStrategy());
-		_defineProperty(this, "close", (config) => createCloseScrollStrategy(this._injector, config));
-		_defineProperty(this, "block", () => createBlockScrollStrategy(this._injector));
-		_defineProperty(this, "reposition", (config) => createRepositionScrollStrategy(this._injector, config));
-	}
+var ScrollStrategyOptions = class ScrollStrategyOptions {
+	_injector = inject(Injector);
+	noop = () => new NoopScrollStrategy();
+	close = (config) => createCloseScrollStrategy(this._injector, config);
+	block = () => createBlockScrollStrategy(this._injector);
+	reposition = (config) => createRepositionScrollStrategy(this._injector, config);
+	static ɵfac = function ScrollStrategyOptions_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || ScrollStrategyOptions)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: ScrollStrategyOptions,
+		factory: ScrollStrategyOptions.ɵfac
+	});
 };
-_ScrollStrategyOptions = ScrollStrategyOptions;
-_defineProperty(ScrollStrategyOptions, "ɵfac", function ScrollStrategyOptions_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _ScrollStrategyOptions)();
-});
-_defineProperty(ScrollStrategyOptions, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _ScrollStrategyOptions,
-	factory: _ScrollStrategyOptions.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ScrollStrategyOptions, [{ type: Service }], null, null);
 })();
 var OverlayConfig = class {
+	positionStrategy;
+	scrollStrategy = new NoopScrollStrategy();
+	panelClass = "";
+	hasBackdrop = false;
+	backdropClass = "cdk-overlay-dark-backdrop";
+	disableAnimations;
+	width;
+	height;
+	minWidth;
+	minHeight;
+	maxWidth;
+	maxHeight;
+	direction;
+	disposeOnNavigation = false;
+	usePopover;
+	eventPredicate;
 	constructor(config) {
-		_defineProperty(this, "positionStrategy", void 0);
-		_defineProperty(this, "scrollStrategy", new NoopScrollStrategy());
-		_defineProperty(this, "panelClass", "");
-		_defineProperty(this, "hasBackdrop", false);
-		_defineProperty(this, "backdropClass", "cdk-overlay-dark-backdrop");
-		_defineProperty(this, "disableAnimations", void 0);
-		_defineProperty(this, "width", void 0);
-		_defineProperty(this, "height", void 0);
-		_defineProperty(this, "minWidth", void 0);
-		_defineProperty(this, "minHeight", void 0);
-		_defineProperty(this, "maxWidth", void 0);
-		_defineProperty(this, "maxHeight", void 0);
-		_defineProperty(this, "direction", void 0);
-		_defineProperty(this, "disposeOnNavigation", false);
-		_defineProperty(this, "usePopover", void 0);
-		_defineProperty(this, "eventPredicate", void 0);
 		if (config) {
 			const configKeys = Object.keys(config);
 			for (const key of configKeys) if (config[key] !== void 0) this[key] = config[key];
@@ -2070,9 +1998,9 @@ var OverlayConfig = class {
 	}
 };
 var ConnectedOverlayPositionChange = class {
+	connectionPair;
+	scrollableViewProperties;
 	constructor(connectionPair, scrollableViewProperties) {
-		_defineProperty(this, "connectionPair", void 0);
-		_defineProperty(this, "scrollableViewProperties", void 0);
 		this.connectionPair = connectionPair;
 		this.scrollableViewProperties = scrollableViewProperties;
 	}
@@ -2083,12 +2011,10 @@ function validateVerticalPosition(property, value) {
 function validateHorizontalPosition(property, value) {
 	if (value !== "start" && value !== "end" && value !== "center") throw Error(`ConnectedPosition: Invalid ${property} "${value}". Expected "start", "end" or "center".`);
 }
-var BaseOverlayDispatcher = class {
-	constructor() {
-		_defineProperty(this, "_attachedOverlays", []);
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_isAttached", false);
-	}
+var BaseOverlayDispatcher = class BaseOverlayDispatcher {
+	_attachedOverlays = [];
+	_document = inject(DOCUMENT);
+	_isAttached = false;
 	ngOnDestroy() {
 		this.detach();
 	}
@@ -2106,35 +2032,21 @@ var BaseOverlayDispatcher = class {
 		if (overlayRef.eventPredicate) return overlayRef.eventPredicate(event);
 		return true;
 	}
+	static ɵfac = function BaseOverlayDispatcher_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || BaseOverlayDispatcher)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: BaseOverlayDispatcher,
+		factory: BaseOverlayDispatcher.ɵfac
+	});
 };
-_BaseOverlayDispatcher = BaseOverlayDispatcher;
-_defineProperty(BaseOverlayDispatcher, "ɵfac", function BaseOverlayDispatcher_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _BaseOverlayDispatcher)();
-});
-_defineProperty(BaseOverlayDispatcher, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _BaseOverlayDispatcher,
-	factory: _BaseOverlayDispatcher.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(BaseOverlayDispatcher, [{ type: Service }], null, null);
 })();
-var OverlayKeyboardDispatcher = class extends BaseOverlayDispatcher {
-	constructor(..._args) {
-		super(..._args);
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_renderer", inject(RendererFactory2).createRenderer(null, null));
-		_defineProperty(this, "_cleanupKeydown", void 0);
-		_defineProperty(this, "_keydownListener", (event) => {
-			const overlays = this._attachedOverlays;
-			for (let i = overlays.length - 1; i > -1; i--) {
-				const overlayRef = overlays[i];
-				if (this.canReceiveEvent(overlayRef, event, overlayRef._keydownEvents)) {
-					this._ngZone.run(() => overlayRef._keydownEvents.next(event));
-					break;
-				}
-			}
-		});
-	}
+var OverlayKeyboardDispatcher = class OverlayKeyboardDispatcher extends BaseOverlayDispatcher {
+	_ngZone = inject(NgZone);
+	_renderer = inject(RendererFactory2).createRenderer(null, null);
+	_cleanupKeydown;
 	add(overlayRef) {
 		super.add(overlayRef);
 		if (!this._isAttached) {
@@ -2146,51 +2058,39 @@ var OverlayKeyboardDispatcher = class extends BaseOverlayDispatcher {
 	}
 	detach() {
 		if (this._isAttached) {
-			var _this$_cleanupKeydown;
-			(_this$_cleanupKeydown = this._cleanupKeydown) === null || _this$_cleanupKeydown === void 0 || _this$_cleanupKeydown.call(this);
+			this._cleanupKeydown?.();
 			this._isAttached = false;
 		}
 	}
+	_keydownListener = (event) => {
+		const overlays = this._attachedOverlays;
+		for (let i = overlays.length - 1; i > -1; i--) {
+			const overlayRef = overlays[i];
+			if (this.canReceiveEvent(overlayRef, event, overlayRef._keydownEvents)) {
+				this._ngZone.run(() => overlayRef._keydownEvents.next(event));
+				break;
+			}
+		}
+	};
+	static ɵfac = function OverlayKeyboardDispatcher_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || OverlayKeyboardDispatcher)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: OverlayKeyboardDispatcher,
+		factory: OverlayKeyboardDispatcher.ɵfac
+	});
 };
-_OverlayKeyboardDispatcher = OverlayKeyboardDispatcher;
-_defineProperty(OverlayKeyboardDispatcher, "ɵfac", function OverlayKeyboardDispatcher_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _OverlayKeyboardDispatcher)();
-});
-_defineProperty(OverlayKeyboardDispatcher, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _OverlayKeyboardDispatcher,
-	factory: _OverlayKeyboardDispatcher.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayKeyboardDispatcher, [{ type: Service }], null, null);
 })();
-var OverlayOutsideClickDispatcher = class extends BaseOverlayDispatcher {
-	constructor(..._args2) {
-		super(..._args2);
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_renderer", inject(RendererFactory2).createRenderer(null, null));
-		_defineProperty(this, "_cursorOriginalValue", void 0);
-		_defineProperty(this, "_cursorStyleIsSet", false);
-		_defineProperty(this, "_pointerDownEventTarget", null);
-		_defineProperty(this, "_cleanups", void 0);
-		_defineProperty(this, "_pointerDownListener", (event) => {
-			this._pointerDownEventTarget = _getEventTarget(event);
-		});
-		_defineProperty(this, "_clickListener", (event) => {
-			const target = _getEventTarget(event);
-			const origin = event.type === "click" && this._pointerDownEventTarget ? this._pointerDownEventTarget : target;
-			this._pointerDownEventTarget = null;
-			const overlays = this._attachedOverlays.slice();
-			for (let i = overlays.length - 1; i > -1; i--) {
-				const overlayRef = overlays[i];
-				const outsidePointerEvents = overlayRef._outsidePointerEvents;
-				if (!overlayRef.hasAttached() || !this.canReceiveEvent(overlayRef, event, outsidePointerEvents)) continue;
-				if (containsPierceShadowDom(overlayRef.overlayElement, target) || containsPierceShadowDom(overlayRef.overlayElement, origin)) break;
-				if (this._ngZone) this._ngZone.run(() => outsidePointerEvents.next(event));
-				else outsidePointerEvents.next(event);
-			}
-		});
-	}
+var OverlayOutsideClickDispatcher = class OverlayOutsideClickDispatcher extends BaseOverlayDispatcher {
+	_platform = inject(Platform);
+	_ngZone = inject(NgZone);
+	_renderer = inject(RendererFactory2).createRenderer(null, null);
+	_cursorOriginalValue;
+	_cursorStyleIsSet = false;
+	_pointerDownEventTarget = null;
+	_cleanups;
 	add(overlayRef) {
 		super.add(overlayRef);
 		if (!this._isAttached) {
@@ -2213,8 +2113,7 @@ var OverlayOutsideClickDispatcher = class extends BaseOverlayDispatcher {
 	}
 	detach() {
 		if (this._isAttached) {
-			var _this$_cleanups;
-			(_this$_cleanups = this._cleanups) === null || _this$_cleanups === void 0 || _this$_cleanups.forEach((cleanup) => cleanup());
+			this._cleanups?.forEach((cleanup) => cleanup());
 			this._cleanups = void 0;
 			if (this._platform.IOS && this._cursorStyleIsSet) {
 				this._document.body.style.cursor = this._cursorOriginalValue;
@@ -2223,15 +2122,31 @@ var OverlayOutsideClickDispatcher = class extends BaseOverlayDispatcher {
 			this._isAttached = false;
 		}
 	}
+	_pointerDownListener = (event) => {
+		this._pointerDownEventTarget = _getEventTarget(event);
+	};
+	_clickListener = (event) => {
+		const target = _getEventTarget(event);
+		const origin = event.type === "click" && this._pointerDownEventTarget ? this._pointerDownEventTarget : target;
+		this._pointerDownEventTarget = null;
+		const overlays = this._attachedOverlays.slice();
+		for (let i = overlays.length - 1; i > -1; i--) {
+			const overlayRef = overlays[i];
+			const outsidePointerEvents = overlayRef._outsidePointerEvents;
+			if (!overlayRef.hasAttached() || !this.canReceiveEvent(overlayRef, event, outsidePointerEvents)) continue;
+			if (containsPierceShadowDom(overlayRef.overlayElement, target) || containsPierceShadowDom(overlayRef.overlayElement, origin)) break;
+			if (this._ngZone) this._ngZone.run(() => outsidePointerEvents.next(event));
+			else outsidePointerEvents.next(event);
+		}
+	};
+	static ɵfac = function OverlayOutsideClickDispatcher_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || OverlayOutsideClickDispatcher)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: OverlayOutsideClickDispatcher,
+		factory: OverlayOutsideClickDispatcher.ɵfac
+	});
 };
-_OverlayOutsideClickDispatcher = OverlayOutsideClickDispatcher;
-_defineProperty(OverlayOutsideClickDispatcher, "ɵfac", function OverlayOutsideClickDispatcher_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _OverlayOutsideClickDispatcher)();
-});
-_defineProperty(OverlayOutsideClickDispatcher, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _OverlayOutsideClickDispatcher,
-	factory: _OverlayOutsideClickDispatcher.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayOutsideClickDispatcher, [{ type: Service }], null, null);
 })();
@@ -2244,21 +2159,21 @@ function containsPierceShadowDom(parent, child) {
 	}
 	return false;
 }
-var _CdkOverlayStyleLoader = class {};
-_CdkOverlayStyleLoader2 = _CdkOverlayStyleLoader;
-_defineProperty(_CdkOverlayStyleLoader, "ɵfac", function _CdkOverlayStyleLoader_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkOverlayStyleLoader2)();
-});
-_defineProperty(_CdkOverlayStyleLoader, "ɵcmp", /* @__PURE__ */ ɵɵdefineComponent({
-	type: _CdkOverlayStyleLoader2,
-	selectors: [["ng-component"]],
-	hostAttrs: ["cdk-overlay-style-loader", ""],
-	decls: 0,
-	vars: 0,
-	template: function _CdkOverlayStyleLoader_Template(rf, ctx) {},
-	styles: [".cdk-overlay-container, .cdk-global-overlay-wrapper {\n  pointer-events: none;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n}\n\n.cdk-overlay-container {\n  position: fixed;\n}\n@layer cdk-overlay {\n  .cdk-overlay-container {\n    z-index: 1000;\n  }\n}\n.cdk-overlay-container:empty {\n  display: none;\n}\n\n.cdk-global-overlay-wrapper {\n  display: flex;\n  position: absolute;\n}\n@layer cdk-overlay {\n  .cdk-global-overlay-wrapper {\n    z-index: 1000;\n  }\n}\n\n.cdk-overlay-pane {\n  position: absolute;\n  pointer-events: auto;\n  box-sizing: border-box;\n  display: flex;\n  max-width: 100%;\n  max-height: 100%;\n}\n@layer cdk-overlay {\n  .cdk-overlay-pane {\n    z-index: 1000;\n  }\n}\n\n.cdk-overlay-backdrop {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  pointer-events: auto;\n  -webkit-tap-highlight-color: transparent;\n  opacity: 0;\n  touch-action: manipulation;\n}\n@layer cdk-overlay {\n  .cdk-overlay-backdrop {\n    z-index: 1000;\n    transition: opacity 400ms cubic-bezier(0.25, 0.8, 0.25, 1);\n  }\n}\n@media (prefers-reduced-motion) {\n  .cdk-overlay-backdrop {\n    transition-duration: 1ms;\n  }\n}\n\n.cdk-overlay-backdrop-showing {\n  opacity: 1;\n}\n@media (forced-colors: active) {\n  .cdk-overlay-backdrop-showing {\n    opacity: 0.6;\n  }\n}\n\n@layer cdk-overlay {\n  .cdk-overlay-dark-backdrop {\n    background: rgba(0, 0, 0, 0.32);\n  }\n}\n\n.cdk-overlay-transparent-backdrop {\n  transition: visibility 1ms linear, opacity 1ms linear;\n  visibility: hidden;\n  opacity: 1;\n}\n.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing, .cdk-high-contrast-active .cdk-overlay-transparent-backdrop {\n  opacity: 0;\n  visibility: visible;\n}\n\n.cdk-overlay-backdrop-noop-animation {\n  transition: none;\n}\n\n.cdk-overlay-connected-position-bounding-box {\n  position: absolute;\n  display: flex;\n  flex-direction: column;\n  min-width: 1px;\n  min-height: 1px;\n}\n@layer cdk-overlay {\n  .cdk-overlay-connected-position-bounding-box {\n    z-index: 1000;\n  }\n}\n\n.cdk-global-scrollblock {\n  position: fixed;\n  width: 100%;\n  overflow-y: scroll;\n}\n\n.cdk-overlay-popover {\n  background: none;\n  border: none;\n  padding: 0;\n  outline: 0;\n  overflow: visible;\n  position: fixed;\n  pointer-events: none;\n  white-space: normal;\n  color: inherit;\n  text-decoration: none;\n  width: 100%;\n  height: 100%;\n  inset: auto;\n  top: 0;\n  left: 0;\n}\n.cdk-overlay-popover::backdrop {\n  display: none;\n}\n.cdk-overlay-popover .cdk-overlay-backdrop {\n  position: fixed;\n  z-index: auto;\n}\n"],
-	encapsulation: 2
-}));
+var _CdkOverlayStyleLoader = class _CdkOverlayStyleLoader {
+	static ɵfac = function _CdkOverlayStyleLoader_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || _CdkOverlayStyleLoader)();
+	};
+	static ɵcmp = /* @__PURE__ */ ɵɵdefineComponent({
+		type: _CdkOverlayStyleLoader,
+		selectors: [["ng-component"]],
+		hostAttrs: ["cdk-overlay-style-loader", ""],
+		decls: 0,
+		vars: 0,
+		template: function _CdkOverlayStyleLoader_Template(rf, ctx) {},
+		styles: [".cdk-overlay-container, .cdk-global-overlay-wrapper {\n  pointer-events: none;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 100%;\n}\n\n.cdk-overlay-container {\n  position: fixed;\n}\n@layer cdk-overlay {\n  .cdk-overlay-container {\n    z-index: 1000;\n  }\n}\n.cdk-overlay-container:empty {\n  display: none;\n}\n\n.cdk-global-overlay-wrapper {\n  display: flex;\n  position: absolute;\n}\n@layer cdk-overlay {\n  .cdk-global-overlay-wrapper {\n    z-index: 1000;\n  }\n}\n\n.cdk-overlay-pane {\n  position: absolute;\n  pointer-events: auto;\n  box-sizing: border-box;\n  display: flex;\n  max-width: 100%;\n  max-height: 100%;\n}\n@layer cdk-overlay {\n  .cdk-overlay-pane {\n    z-index: 1000;\n  }\n}\n\n.cdk-overlay-backdrop {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  pointer-events: auto;\n  -webkit-tap-highlight-color: transparent;\n  opacity: 0;\n  touch-action: manipulation;\n}\n@layer cdk-overlay {\n  .cdk-overlay-backdrop {\n    z-index: 1000;\n    transition: opacity 400ms cubic-bezier(0.25, 0.8, 0.25, 1);\n  }\n}\n@media (prefers-reduced-motion) {\n  .cdk-overlay-backdrop {\n    transition-duration: 1ms;\n  }\n}\n\n.cdk-overlay-backdrop-showing {\n  opacity: 1;\n}\n@media (forced-colors: active) {\n  .cdk-overlay-backdrop-showing {\n    opacity: 0.6;\n  }\n}\n\n@layer cdk-overlay {\n  .cdk-overlay-dark-backdrop {\n    background: rgba(0, 0, 0, 0.32);\n  }\n}\n\n.cdk-overlay-transparent-backdrop {\n  transition: visibility 1ms linear, opacity 1ms linear;\n  visibility: hidden;\n  opacity: 1;\n}\n.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing, .cdk-high-contrast-active .cdk-overlay-transparent-backdrop {\n  opacity: 0;\n  visibility: visible;\n}\n\n.cdk-overlay-backdrop-noop-animation {\n  transition: none;\n}\n\n.cdk-overlay-connected-position-bounding-box {\n  position: absolute;\n  display: flex;\n  flex-direction: column;\n  min-width: 1px;\n  min-height: 1px;\n}\n@layer cdk-overlay {\n  .cdk-overlay-connected-position-bounding-box {\n    z-index: 1000;\n  }\n}\n\n.cdk-global-scrollblock {\n  position: fixed;\n  width: 100%;\n  overflow-y: scroll;\n}\n\n.cdk-overlay-popover {\n  background: none;\n  border: none;\n  padding: 0;\n  outline: 0;\n  overflow: visible;\n  position: fixed;\n  pointer-events: none;\n  white-space: normal;\n  color: inherit;\n  text-decoration: none;\n  width: 100%;\n  height: 100%;\n  inset: auto;\n  top: 0;\n  left: 0;\n}\n.cdk-overlay-popover::backdrop {\n  display: none;\n}\n.cdk-overlay-popover .cdk-overlay-backdrop {\n  position: fixed;\n  z-index: auto;\n}\n"],
+		encapsulation: 2
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(_CdkOverlayStyleLoader, [{
 		type: Component,
@@ -2270,16 +2185,13 @@ _defineProperty(_CdkOverlayStyleLoader, "ɵcmp", /* @__PURE__ */ ɵɵdefineCompo
 		}]
 	}], null, null);
 })();
-var OverlayContainer = class {
-	constructor() {
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_containerElement", void 0);
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_styleLoader", inject(_CdkPrivateStyleLoader));
-	}
+var OverlayContainer = class OverlayContainer {
+	_platform = inject(Platform);
+	_containerElement;
+	_document = inject(DOCUMENT);
+	_styleLoader = inject(_CdkPrivateStyleLoader);
 	ngOnDestroy() {
-		var _this$_containerEleme;
-		(_this$_containerEleme = this._containerElement) === null || _this$_containerEleme === void 0 || _this$_containerEleme.remove();
+		this._containerElement?.remove();
 	}
 	getContainerElement() {
 		this._loadStyles();
@@ -2302,34 +2214,25 @@ var OverlayContainer = class {
 	_loadStyles() {
 		this._styleLoader.load(_CdkOverlayStyleLoader);
 	}
+	static ɵfac = function OverlayContainer_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || OverlayContainer)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: OverlayContainer,
+		factory: OverlayContainer.ɵfac
+	});
 };
-_OverlayContainer = OverlayContainer;
-_defineProperty(OverlayContainer, "ɵfac", function OverlayContainer_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _OverlayContainer)();
-});
-_defineProperty(OverlayContainer, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _OverlayContainer,
-	factory: _OverlayContainer.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayContainer, [{ type: Service }], null, null);
 })();
 var BackdropRef = class {
+	_renderer;
+	_ngZone;
+	element;
+	_cleanupClick;
+	_cleanupTransitionEnd;
+	_fallbackTimeout;
 	constructor(document, _renderer, _ngZone, onClick) {
-		_defineProperty(this, "_renderer", void 0);
-		_defineProperty(this, "_ngZone", void 0);
-		_defineProperty(this, "element", void 0);
-		_defineProperty(this, "_cleanupClick", void 0);
-		_defineProperty(this, "_cleanupTransitionEnd", void 0);
-		_defineProperty(this, "_fallbackTimeout", void 0);
-		_defineProperty(this, "dispose", () => {
-			var _this$_cleanupClick, _this$_cleanupTransit;
-			clearTimeout(this._fallbackTimeout);
-			(_this$_cleanupClick = this._cleanupClick) === null || _this$_cleanupClick === void 0 || _this$_cleanupClick.call(this);
-			(_this$_cleanupTransit = this._cleanupTransitionEnd) === null || _this$_cleanupTransit === void 0 || _this$_cleanupTransit.call(this);
-			this._cleanupClick = this._cleanupTransitionEnd = this._fallbackTimeout = void 0;
-			this.element.remove();
-		});
 		this._renderer = _renderer;
 		this._ngZone = _ngZone;
 		this.element = document.createElement("div");
@@ -2338,48 +2241,54 @@ var BackdropRef = class {
 	}
 	detach() {
 		this._ngZone.runOutsideAngular(() => {
-			var _this$_cleanupTransit2;
 			const element = this.element;
 			clearTimeout(this._fallbackTimeout);
-			(_this$_cleanupTransit2 = this._cleanupTransitionEnd) === null || _this$_cleanupTransit2 === void 0 || _this$_cleanupTransit2.call(this);
+			this._cleanupTransitionEnd?.();
 			this._cleanupTransitionEnd = this._renderer.listen(element, "transitionend", this.dispose);
 			this._fallbackTimeout = setTimeout(this.dispose, 500);
 			element.style.pointerEvents = "none";
 			element.classList.remove("cdk-overlay-backdrop-showing");
 		});
 	}
+	dispose = () => {
+		clearTimeout(this._fallbackTimeout);
+		this._cleanupClick?.();
+		this._cleanupTransitionEnd?.();
+		this._cleanupClick = this._cleanupTransitionEnd = this._fallbackTimeout = void 0;
+		this.element.remove();
+	};
 };
 function isElement(value) {
 	return value && value.nodeType === 1;
 }
 var OverlayRef = class {
+	_portalOutlet;
+	_host;
+	_pane;
+	_config;
+	_ngZone;
+	_keyboardDispatcher;
+	_document;
+	_location;
+	_outsideClickDispatcher;
+	_animationsDisabled;
+	_injector;
+	_renderer;
+	_backdropClick = new Subject();
+	_attachments = new Subject();
+	_detachments = new Subject();
+	_positionStrategy;
+	_scrollStrategy;
+	_locationChanges = Subscription.EMPTY;
+	_backdropRef = null;
+	_detachContentMutationObserver;
+	_detachContentAfterRenderRef;
+	_disposed = false;
+	_previousHostParent;
+	_keydownEvents = new Subject();
+	_outsidePointerEvents = new Subject();
+	_afterNextRenderRef;
 	constructor(_portalOutlet, _host, _pane, _config, _ngZone, _keyboardDispatcher, _document, _location, _outsideClickDispatcher, _animationsDisabled = false, _injector, _renderer) {
-		_defineProperty(this, "_portalOutlet", void 0);
-		_defineProperty(this, "_host", void 0);
-		_defineProperty(this, "_pane", void 0);
-		_defineProperty(this, "_config", void 0);
-		_defineProperty(this, "_ngZone", void 0);
-		_defineProperty(this, "_keyboardDispatcher", void 0);
-		_defineProperty(this, "_document", void 0);
-		_defineProperty(this, "_location", void 0);
-		_defineProperty(this, "_outsideClickDispatcher", void 0);
-		_defineProperty(this, "_animationsDisabled", void 0);
-		_defineProperty(this, "_injector", void 0);
-		_defineProperty(this, "_renderer", void 0);
-		_defineProperty(this, "_backdropClick", new Subject());
-		_defineProperty(this, "_attachments", new Subject());
-		_defineProperty(this, "_detachments", new Subject());
-		_defineProperty(this, "_positionStrategy", void 0);
-		_defineProperty(this, "_scrollStrategy", void 0);
-		_defineProperty(this, "_locationChanges", Subscription.EMPTY);
-		_defineProperty(this, "_backdropRef", null);
-		_defineProperty(this, "_detachContentMutationObserver", void 0);
-		_defineProperty(this, "_detachContentAfterRenderRef", void 0);
-		_defineProperty(this, "_disposed", false);
-		_defineProperty(this, "_previousHostParent", void 0);
-		_defineProperty(this, "_keydownEvents", new Subject());
-		_defineProperty(this, "_outsidePointerEvents", new Subject());
-		_defineProperty(this, "_afterNextRenderRef", void 0);
 		this._portalOutlet = _portalOutlet;
 		this._host = _host;
 		this._pane = _pane;
@@ -2402,27 +2311,24 @@ var OverlayRef = class {
 		return this._pane;
 	}
 	get backdropElement() {
-		var _this$_backdropRef;
-		return ((_this$_backdropRef = this._backdropRef) === null || _this$_backdropRef === void 0 ? void 0 : _this$_backdropRef.element) || null;
+		return this._backdropRef?.element || null;
 	}
 	get hostElement() {
 		return this._host;
 	}
 	get eventPredicate() {
-		var _this$_config;
-		return ((_this$_config = this._config) === null || _this$_config === void 0 ? void 0 : _this$_config.eventPredicate) || null;
+		return this._config?.eventPredicate || null;
 	}
 	attach(portal) {
-		var _this$_positionStrate, _this$_afterNextRende;
 		if (this._disposed) return null;
 		this._attachHost();
 		const attachResult = this._portalOutlet.attach(portal);
-		(_this$_positionStrate = this._positionStrategy) === null || _this$_positionStrate === void 0 || _this$_positionStrate.attach(this);
+		this._positionStrategy?.attach(this);
 		this._updateStackingOrder();
 		this._updateElementSize();
 		this._updateElementDirection();
 		if (this._scrollStrategy) this._scrollStrategy.enable();
-		(_this$_afterNextRende = this._afterNextRenderRef) === null || _this$_afterNextRende === void 0 || _this$_afterNextRende.destroy();
+		this._afterNextRenderRef?.destroy();
 		this._afterNextRenderRef = afterNextRender(() => {
 			if (this.hasAttached()) this.updatePosition();
 		}, { injector: this._injector });
@@ -2434,7 +2340,7 @@ var OverlayRef = class {
 		this._keyboardDispatcher.add(this);
 		if (this._config.disposeOnNavigation) this._locationChanges = this._location.subscribe(() => this.dispose());
 		this._outsideClickDispatcher.add(this);
-		if (typeof (attachResult === null || attachResult === void 0 ? void 0 : attachResult.onDestroy) === "function") attachResult.onDestroy(() => {
+		if (typeof attachResult?.onDestroy === "function") attachResult.onDestroy(() => {
 			if (this.hasAttached()) this._ngZone.runOutsideAngular(() => Promise.resolve().then(() => this.detach()));
 		});
 		return attachResult;
@@ -2455,12 +2361,11 @@ var OverlayRef = class {
 		return detachmentResult;
 	}
 	dispose() {
-		var _this$_backdropRef2, _this$_host, _this$_afterNextRende2;
 		if (this._disposed) return;
 		const isAttached = this.hasAttached();
 		if (this._positionStrategy) this._positionStrategy.dispose();
 		this._disposeScrollStrategy();
-		(_this$_backdropRef2 = this._backdropRef) === null || _this$_backdropRef2 === void 0 || _this$_backdropRef2.dispose();
+		this._backdropRef?.dispose();
 		this._locationChanges.unsubscribe();
 		this._keyboardDispatcher.remove(this);
 		this._portalOutlet.dispose();
@@ -2469,8 +2374,8 @@ var OverlayRef = class {
 		this._keydownEvents.complete();
 		this._outsidePointerEvents.complete();
 		this._outsideClickDispatcher.remove(this);
-		(_this$_host = this._host) === null || _this$_host === void 0 || _this$_host.remove();
-		(_this$_afterNextRende2 = this._afterNextRenderRef) === null || _this$_afterNextRende2 === void 0 || _this$_afterNextRende2.destroy();
+		this._host?.remove();
+		this._afterNextRenderRef?.destroy();
 		this._previousHostParent = this._pane = this._host = this._backdropRef = null;
 		if (isAttached) this._detachments.next();
 		this._detachments.complete();
@@ -2511,11 +2416,17 @@ var OverlayRef = class {
 		}
 	}
 	updateSize(sizeConfig) {
-		this._config = _objectSpread2(_objectSpread2({}, this._config), sizeConfig);
+		this._config = {
+			...this._config,
+			...sizeConfig
+		};
 		this._updateElementSize();
 	}
 	setDirection(dir) {
-		this._config = _objectSpread2(_objectSpread2({}, this._config), {}, { direction: dir });
+		this._config = {
+			...this._config,
+			direction: dir
+		};
 		this._updateElementDirection();
 	}
 	addPanelClass(classes) {
@@ -2556,23 +2467,18 @@ var OverlayRef = class {
 	}
 	_attachHost() {
 		if (!this._host.parentElement) {
-			var _this$_positionStrate2, _this$_positionStrate3;
-			const customInsertionPoint = this._config.usePopover ? (_this$_positionStrate2 = this._positionStrategy) === null || _this$_positionStrate2 === void 0 || (_this$_positionStrate3 = _this$_positionStrate2.getPopoverInsertionPoint) === null || _this$_positionStrate3 === void 0 ? void 0 : _this$_positionStrate3.call(_this$_positionStrate2) : null;
+			const customInsertionPoint = this._config.usePopover ? this._positionStrategy?.getPopoverInsertionPoint?.() : null;
 			if (isElement(customInsertionPoint)) customInsertionPoint.after(this._host);
-			else if ((customInsertionPoint === null || customInsertionPoint === void 0 ? void 0 : customInsertionPoint.type) === "parent") customInsertionPoint.element.appendChild(this._host);
-			else {
-				var _this$_previousHostPa;
-				(_this$_previousHostPa = this._previousHostParent) === null || _this$_previousHostPa === void 0 || _this$_previousHostPa.appendChild(this._host);
-			}
+			else if (customInsertionPoint?.type === "parent") customInsertionPoint.element.appendChild(this._host);
+			else this._previousHostParent?.appendChild(this._host);
 		}
 		if (this._config.usePopover) try {
 			this._host["showPopover"]();
-		} catch (_unused) {}
+		} catch {}
 	}
 	_attachBackdrop() {
-		var _this$_backdropRef3;
 		const showingClass = "cdk-overlay-backdrop-showing";
-		(_this$_backdropRef3 = this._backdropRef) === null || _this$_backdropRef3 === void 0 || _this$_backdropRef3.dispose();
+		this._backdropRef?.dispose();
 		this._backdropRef = new BackdropRef(this._document, this._renderer, this._ngZone, (event) => {
 			this._backdropClick.next(event);
 		});
@@ -2581,10 +2487,7 @@ var OverlayRef = class {
 		if (this._config.usePopover) this._host.prepend(this._backdropRef.element);
 		else this._host.parentElement.insertBefore(this._backdropRef.element, this._host);
 		if (!this._animationsDisabled && typeof requestAnimationFrame !== "undefined") this._ngZone.runOutsideAngular(() => {
-			requestAnimationFrame(() => {
-				var _this$_backdropRef4;
-				return (_this$_backdropRef4 = this._backdropRef) === null || _this$_backdropRef4 === void 0 ? void 0 : _this$_backdropRef4.element.classList.add(showingClass);
-			});
+			requestAnimationFrame(() => this._backdropRef?.element.classList.add(showingClass));
 		});
 		else this._backdropRef.element.classList.add(showingClass);
 	}
@@ -2593,13 +2496,9 @@ var OverlayRef = class {
 	}
 	detachBackdrop() {
 		if (this._animationsDisabled) {
-			var _this$_backdropRef5;
-			(_this$_backdropRef5 = this._backdropRef) === null || _this$_backdropRef5 === void 0 || _this$_backdropRef5.dispose();
+			this._backdropRef?.dispose();
 			this._backdropRef = null;
-		} else {
-			var _this$_backdropRef6;
-			(_this$_backdropRef6 = this._backdropRef) === null || _this$_backdropRef6 === void 0 || _this$_backdropRef6.detach();
-		}
+		} else this._backdropRef?.detach();
 	}
 	_toggleClasses(element, cssClasses, isAdd) {
 		const classes = coerceArray(cssClasses || []).filter((c) => !!c);
@@ -2617,9 +2516,9 @@ var OverlayRef = class {
 			this._detachContent();
 		}
 		if (globalThis.MutationObserver && this._pane) {
-			this._detachContentMutationObserver || (this._detachContentMutationObserver = new globalThis.MutationObserver(() => {
+			this._detachContentMutationObserver ||= new globalThis.MutationObserver(() => {
 				this._detachContent();
-			}));
+			});
 			this._detachContentMutationObserver.observe(this._pane, { childList: true });
 		}
 	}
@@ -2634,16 +2533,14 @@ var OverlayRef = class {
 		}
 	}
 	_completeDetachContent() {
-		var _this$_detachContentA, _this$_detachContentM;
-		(_this$_detachContentA = this._detachContentAfterRenderRef) === null || _this$_detachContentA === void 0 || _this$_detachContentA.destroy();
+		this._detachContentAfterRenderRef?.destroy();
 		this._detachContentAfterRenderRef = void 0;
-		(_this$_detachContentM = this._detachContentMutationObserver) === null || _this$_detachContentM === void 0 || _this$_detachContentM.disconnect();
+		this._detachContentMutationObserver?.disconnect();
 	}
 	_disposeScrollStrategy() {
-		var _scrollStrategy$detac;
 		const scrollStrategy = this._scrollStrategy;
-		scrollStrategy === null || scrollStrategy === void 0 || scrollStrategy.disable();
-		scrollStrategy === null || scrollStrategy === void 0 || (_scrollStrategy$detac = scrollStrategy.detach) === null || _scrollStrategy$detac === void 0 || _scrollStrategy$detac.call(scrollStrategy);
+		scrollStrategy?.disable();
+		scrollStrategy?.detach?.();
 	}
 };
 var boundingBoxClass = "cdk-overlay-connected-position-bounding-box";
@@ -2652,47 +2549,47 @@ function createFlexibleConnectedPositionStrategy(injector, origin) {
 	return new FlexibleConnectedPositionStrategy(origin, injector.get(ViewportRuler), injector.get(DOCUMENT), injector.get(Platform), injector.get(OverlayContainer));
 }
 var FlexibleConnectedPositionStrategy = class {
+	_viewportRuler;
+	_document;
+	_platform;
+	_overlayContainer;
+	_overlayRef;
+	_isInitialRender = false;
+	_lastBoundingBoxSize = {
+		width: 0,
+		height: 0
+	};
+	_isPushed = false;
+	_canPush = true;
+	_growAfterOpen = false;
+	_hasFlexibleDimensions = true;
+	_positionLocked = false;
+	_originRect;
+	_overlayRect;
+	_viewportRect;
+	_containerRect;
+	_viewportMargin = 0;
+	_scrollables = [];
+	_preferredPositions = [];
+	_origin;
+	_pane;
+	_isDisposed = false;
+	_boundingBox = null;
+	_lastPosition = null;
+	_lastScrollVisibility = null;
+	_positionChanges = new Subject();
+	_resizeSubscription = Subscription.EMPTY;
+	_offsetX = 0;
+	_offsetY = 0;
+	_transformOriginSelector;
+	_appliedPanelClasses = [];
+	_previousPushAmount = null;
+	_popoverLocation = "global";
+	positionChanges = this._positionChanges;
 	get positions() {
 		return this._preferredPositions;
 	}
 	constructor(connectedTo, _viewportRuler, _document, _platform, _overlayContainer) {
-		_defineProperty(this, "_viewportRuler", void 0);
-		_defineProperty(this, "_document", void 0);
-		_defineProperty(this, "_platform", void 0);
-		_defineProperty(this, "_overlayContainer", void 0);
-		_defineProperty(this, "_overlayRef", void 0);
-		_defineProperty(this, "_isInitialRender", false);
-		_defineProperty(this, "_lastBoundingBoxSize", {
-			width: 0,
-			height: 0
-		});
-		_defineProperty(this, "_isPushed", false);
-		_defineProperty(this, "_canPush", true);
-		_defineProperty(this, "_growAfterOpen", false);
-		_defineProperty(this, "_hasFlexibleDimensions", true);
-		_defineProperty(this, "_positionLocked", false);
-		_defineProperty(this, "_originRect", void 0);
-		_defineProperty(this, "_overlayRect", void 0);
-		_defineProperty(this, "_viewportRect", void 0);
-		_defineProperty(this, "_containerRect", void 0);
-		_defineProperty(this, "_viewportMargin", 0);
-		_defineProperty(this, "_scrollables", []);
-		_defineProperty(this, "_preferredPositions", []);
-		_defineProperty(this, "_origin", void 0);
-		_defineProperty(this, "_pane", void 0);
-		_defineProperty(this, "_isDisposed", false);
-		_defineProperty(this, "_boundingBox", null);
-		_defineProperty(this, "_lastPosition", null);
-		_defineProperty(this, "_lastScrollVisibility", null);
-		_defineProperty(this, "_positionChanges", new Subject());
-		_defineProperty(this, "_resizeSubscription", Subscription.EMPTY);
-		_defineProperty(this, "_offsetX", 0);
-		_defineProperty(this, "_offsetY", 0);
-		_defineProperty(this, "_transformOriginSelector", void 0);
-		_defineProperty(this, "_appliedPanelClasses", []);
-		_defineProperty(this, "_previousPushAmount", null);
-		_defineProperty(this, "_popoverLocation", "global");
-		_defineProperty(this, "positionChanges", this._positionChanges);
 		this._viewportRuler = _viewportRuler;
 		this._document = _document;
 		this._platform = _platform;
@@ -3205,24 +3102,20 @@ var FlexibleConnectedPositionStrategy = class {
 		}
 	}
 	_getViewportMarginStart() {
-		var _this$_viewportMargin, _this$_viewportMargin2;
 		if (typeof this._viewportMargin === "number") return this._viewportMargin;
-		return (_this$_viewportMargin = (_this$_viewportMargin2 = this._viewportMargin) === null || _this$_viewportMargin2 === void 0 ? void 0 : _this$_viewportMargin2.start) !== null && _this$_viewportMargin !== void 0 ? _this$_viewportMargin : 0;
+		return this._viewportMargin?.start ?? 0;
 	}
 	_getViewportMarginEnd() {
-		var _this$_viewportMargin3, _this$_viewportMargin4;
 		if (typeof this._viewportMargin === "number") return this._viewportMargin;
-		return (_this$_viewportMargin3 = (_this$_viewportMargin4 = this._viewportMargin) === null || _this$_viewportMargin4 === void 0 ? void 0 : _this$_viewportMargin4.end) !== null && _this$_viewportMargin3 !== void 0 ? _this$_viewportMargin3 : 0;
+		return this._viewportMargin?.end ?? 0;
 	}
 	_getViewportMarginTop() {
-		var _this$_viewportMargin5, _this$_viewportMargin6;
 		if (typeof this._viewportMargin === "number") return this._viewportMargin;
-		return (_this$_viewportMargin5 = (_this$_viewportMargin6 = this._viewportMargin) === null || _this$_viewportMargin6 === void 0 ? void 0 : _this$_viewportMargin6.top) !== null && _this$_viewportMargin5 !== void 0 ? _this$_viewportMargin5 : 0;
+		return this._viewportMargin?.top ?? 0;
 	}
 	_getViewportMarginBottom() {
-		var _this$_viewportMargin7, _this$_viewportMargin8;
 		if (typeof this._viewportMargin === "number") return this._viewportMargin;
-		return (_this$_viewportMargin7 = (_this$_viewportMargin8 = this._viewportMargin) === null || _this$_viewportMargin8 === void 0 ? void 0 : _this$_viewportMargin8.bottom) !== null && _this$_viewportMargin7 !== void 0 ? _this$_viewportMargin7 : 0;
+		return this._viewportMargin?.bottom ?? 0;
 	}
 	_getOriginRect() {
 		const origin = this._origin;
@@ -3278,18 +3171,16 @@ function createGlobalPositionStrategy(_injector) {
 	return new GlobalPositionStrategy();
 }
 var GlobalPositionStrategy = class {
-	constructor() {
-		_defineProperty(this, "_overlayRef", void 0);
-		_defineProperty(this, "_cssPosition", "static");
-		_defineProperty(this, "_topOffset", "");
-		_defineProperty(this, "_bottomOffset", "");
-		_defineProperty(this, "_alignItems", "");
-		_defineProperty(this, "_xPosition", "");
-		_defineProperty(this, "_xOffset", "");
-		_defineProperty(this, "_width", "");
-		_defineProperty(this, "_height", "");
-		_defineProperty(this, "_isDisposed", false);
-	}
+	_overlayRef;
+	_cssPosition = "static";
+	_topOffset = "";
+	_bottomOffset = "";
+	_alignItems = "";
+	_xPosition = "";
+	_xOffset = "";
+	_width = "";
+	_height = "";
+	_isDisposed = false;
 	attach(overlayRef) {
 		const config = overlayRef.getConfig();
 		this._overlayRef = overlayRef;
@@ -3402,31 +3293,27 @@ var GlobalPositionStrategy = class {
 		this._isDisposed = true;
 	}
 };
-var OverlayPositionBuilder = class {
-	constructor() {
-		_defineProperty(this, "_injector", inject(Injector));
-	}
+var OverlayPositionBuilder = class OverlayPositionBuilder {
+	_injector = inject(Injector);
 	global() {
 		return createGlobalPositionStrategy();
 	}
 	flexibleConnectedTo(origin) {
 		return createFlexibleConnectedPositionStrategy(this._injector, origin);
 	}
+	static ɵfac = function OverlayPositionBuilder_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || OverlayPositionBuilder)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: OverlayPositionBuilder,
+		factory: OverlayPositionBuilder.ɵfac
+	});
 };
-_OverlayPositionBuilder = OverlayPositionBuilder;
-_defineProperty(OverlayPositionBuilder, "ɵfac", function OverlayPositionBuilder_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _OverlayPositionBuilder)();
-});
-_defineProperty(OverlayPositionBuilder, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _OverlayPositionBuilder,
-	factory: _OverlayPositionBuilder.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayPositionBuilder, [{ type: Service }], null, null);
 })();
 var OVERLAY_DEFAULT_CONFIG = new InjectionToken("OVERLAY_DEFAULT_CONFIG");
 function createOverlayRef(injector, config) {
-	var _injector$get$usePopo, _injector$get, _overlayConfig$positi, _overlayConfig$positi2, _config$disableAnimat;
 	injector.get(_CdkPrivateStyleLoader).load(_CdkOverlayStyleLoader);
 	const overlayContainer = injector.get(OverlayContainer);
 	const doc = injector.get(DOCUMENT);
@@ -3435,13 +3322,10 @@ function createOverlayRef(injector, config) {
 	const directionality = injector.get(Directionality);
 	const renderer = injector.get(Renderer2, null, { optional: true }) || injector.get(RendererFactory2).createRenderer(null, null);
 	const overlayConfig = new OverlayConfig(config);
-	const defaultUsePopover = (_injector$get$usePopo = (_injector$get = injector.get(OVERLAY_DEFAULT_CONFIG, null, { optional: true })) === null || _injector$get === void 0 ? void 0 : _injector$get.usePopover) !== null && _injector$get$usePopo !== void 0 ? _injector$get$usePopo : true;
+	const defaultUsePopover = injector.get(OVERLAY_DEFAULT_CONFIG, null, { optional: true })?.usePopover ?? true;
 	overlayConfig.direction = overlayConfig.direction || directionality.value;
 	if (!doc.body || !("showPopover" in doc.body)) overlayConfig.usePopover = false;
-	else {
-		var _config$usePopover;
-		overlayConfig.usePopover = (_config$usePopover = config === null || config === void 0 ? void 0 : config.usePopover) !== null && _config$usePopover !== void 0 ? _config$usePopover : defaultUsePopover;
-	}
+	else overlayConfig.usePopover = config?.usePopover ?? defaultUsePopover;
 	const pane = doc.createElement("div");
 	const host = doc.createElement("div");
 	pane.id = idGenerator.getId("cdk-overlay-");
@@ -3451,33 +3335,30 @@ function createOverlayRef(injector, config) {
 		host.setAttribute("popover", "manual");
 		host.classList.add("cdk-overlay-popover");
 	}
-	const customInsertionPoint = overlayConfig.usePopover ? (_overlayConfig$positi = overlayConfig.positionStrategy) === null || _overlayConfig$positi === void 0 || (_overlayConfig$positi2 = _overlayConfig$positi.getPopoverInsertionPoint) === null || _overlayConfig$positi2 === void 0 ? void 0 : _overlayConfig$positi2.call(_overlayConfig$positi) : null;
+	const customInsertionPoint = overlayConfig.usePopover ? overlayConfig.positionStrategy?.getPopoverInsertionPoint?.() : null;
 	if (isElement(customInsertionPoint)) customInsertionPoint.after(host);
-	else if ((customInsertionPoint === null || customInsertionPoint === void 0 ? void 0 : customInsertionPoint.type) === "parent") customInsertionPoint.element.appendChild(host);
+	else if (customInsertionPoint?.type === "parent") customInsertionPoint.element.appendChild(host);
 	else overlayContainer.getContainerElement().appendChild(host);
-	return new OverlayRef(new DomPortalOutlet(pane, appRef, injector), host, pane, overlayConfig, injector.get(NgZone), injector.get(OverlayKeyboardDispatcher), doc, injector.get(Location), injector.get(OverlayOutsideClickDispatcher), (_config$disableAnimat = config === null || config === void 0 ? void 0 : config.disableAnimations) !== null && _config$disableAnimat !== void 0 ? _config$disableAnimat : injector.get(ANIMATION_MODULE_TYPE, null, { optional: true }) === "NoopAnimations", injector.get(EnvironmentInjector), renderer);
+	return new OverlayRef(new DomPortalOutlet(pane, appRef, injector), host, pane, overlayConfig, injector.get(NgZone), injector.get(OverlayKeyboardDispatcher), doc, injector.get(Location), injector.get(OverlayOutsideClickDispatcher), config?.disableAnimations ?? injector.get(ANIMATION_MODULE_TYPE, null, { optional: true }) === "NoopAnimations", injector.get(EnvironmentInjector), renderer);
 }
-var Overlay = class {
-	constructor() {
-		_defineProperty(this, "scrollStrategies", inject(ScrollStrategyOptions));
-		_defineProperty(this, "_positionBuilder", inject(OverlayPositionBuilder));
-		_defineProperty(this, "_injector", inject(Injector));
-	}
+var Overlay = class Overlay {
+	scrollStrategies = inject(ScrollStrategyOptions);
+	_positionBuilder = inject(OverlayPositionBuilder);
+	_injector = inject(Injector);
 	create(config) {
 		return createOverlayRef(this._injector, config);
 	}
 	position() {
 		return this._positionBuilder;
 	}
+	static ɵfac = function Overlay_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || Overlay)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: Overlay,
+		factory: Overlay.ɵfac
+	});
 };
-_Overlay = Overlay;
-_defineProperty(Overlay, "ɵfac", function Overlay_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _Overlay)();
-});
-_defineProperty(Overlay, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _Overlay,
-	factory: _Overlay.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Overlay, [{ type: Service }], null, null);
 })();
@@ -3514,36 +3395,33 @@ var CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY = new InjectionToken("cdk-connected-ov
 		return () => createRepositionScrollStrategy(injector);
 	}
 });
-var CdkOverlayOrigin = class {
-	constructor() {
-		_defineProperty(this, "elementRef", inject(ElementRef));
-	}
+var CdkOverlayOrigin = class CdkOverlayOrigin {
+	elementRef = inject(ElementRef);
+	static ɵfac = function CdkOverlayOrigin_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkOverlayOrigin)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkOverlayOrigin,
+		selectors: [
+			[
+				"",
+				"cdk-overlay-origin",
+				""
+			],
+			[
+				"",
+				"overlay-origin",
+				""
+			],
+			[
+				"",
+				"cdkOverlayOrigin",
+				""
+			]
+		],
+		exportAs: ["cdkOverlayOrigin"]
+	});
 };
-_CdkOverlayOrigin = CdkOverlayOrigin;
-_defineProperty(CdkOverlayOrigin, "ɵfac", function CdkOverlayOrigin_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkOverlayOrigin)();
-});
-_defineProperty(CdkOverlayOrigin, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkOverlayOrigin,
-	selectors: [
-		[
-			"",
-			"cdk-overlay-origin",
-			""
-		],
-		[
-			"",
-			"overlay-origin",
-			""
-		],
-		[
-			"",
-			"cdkOverlayOrigin",
-			""
-		]
-	],
-	exportAs: ["cdkOverlayOrigin"]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkOverlayOrigin, [{
 		type: Directive,
@@ -3554,7 +3432,23 @@ _defineProperty(CdkOverlayOrigin, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
 	}], null, null);
 })();
 var CDK_CONNECTED_OVERLAY_DEFAULT_CONFIG = new InjectionToken("cdk-connected-overlay-default-config");
-var CdkConnectedOverlay = class {
+var CdkConnectedOverlay = class CdkConnectedOverlay {
+	_dir = inject(Directionality, { optional: true });
+	_injector = inject(Injector);
+	_overlayRef;
+	_templatePortal;
+	_backdropSubscription = Subscription.EMPTY;
+	_attachSubscription = Subscription.EMPTY;
+	_detachSubscription = Subscription.EMPTY;
+	_positionSubscription = Subscription.EMPTY;
+	_offsetX;
+	_offsetY;
+	_position;
+	_scrollStrategyFactory = inject(CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY);
+	_ngZone = inject(NgZone);
+	origin;
+	positions;
+	positionStrategy;
 	get offsetX() {
 		return this._offsetX;
 	}
@@ -3569,56 +3463,40 @@ var CdkConnectedOverlay = class {
 		this._offsetY = offsetY;
 		if (this._position) this._updatePositionStrategy(this._position);
 	}
+	width;
+	height;
+	minWidth;
+	minHeight;
+	backdropClass;
+	panelClass;
+	viewportMargin = 0;
+	scrollStrategy;
+	open = false;
+	disableClose = false;
+	transformOriginSelector;
+	hasBackdrop = false;
+	lockPosition = false;
+	flexibleDimensions = false;
+	growAfterOpen = false;
+	push = false;
+	disposeOnNavigation = false;
+	usePopover;
+	matchWidth = false;
 	set _config(value) {
 		if (typeof value !== "string") this._assignConfig(value);
 	}
+	backdropClick = new EventEmitter();
+	positionChange = new EventEmitter();
+	attach = new EventEmitter();
+	detach = new EventEmitter();
+	overlayKeydown = new EventEmitter();
+	overlayOutsideClick = new EventEmitter();
 	constructor() {
-		_defineProperty(this, "_dir", inject(Directionality, { optional: true }));
-		_defineProperty(this, "_injector", inject(Injector));
-		_defineProperty(this, "_overlayRef", void 0);
-		_defineProperty(this, "_templatePortal", void 0);
-		_defineProperty(this, "_backdropSubscription", Subscription.EMPTY);
-		_defineProperty(this, "_attachSubscription", Subscription.EMPTY);
-		_defineProperty(this, "_detachSubscription", Subscription.EMPTY);
-		_defineProperty(this, "_positionSubscription", Subscription.EMPTY);
-		_defineProperty(this, "_offsetX", void 0);
-		_defineProperty(this, "_offsetY", void 0);
-		_defineProperty(this, "_position", void 0);
-		_defineProperty(this, "_scrollStrategyFactory", inject(CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY));
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "origin", void 0);
-		_defineProperty(this, "positions", void 0);
-		_defineProperty(this, "positionStrategy", void 0);
-		_defineProperty(this, "width", void 0);
-		_defineProperty(this, "height", void 0);
-		_defineProperty(this, "minWidth", void 0);
-		_defineProperty(this, "minHeight", void 0);
-		_defineProperty(this, "backdropClass", void 0);
-		_defineProperty(this, "panelClass", void 0);
-		_defineProperty(this, "viewportMargin", 0);
-		_defineProperty(this, "scrollStrategy", void 0);
-		_defineProperty(this, "open", false);
-		_defineProperty(this, "disableClose", false);
-		_defineProperty(this, "transformOriginSelector", void 0);
-		_defineProperty(this, "hasBackdrop", false);
-		_defineProperty(this, "lockPosition", false);
-		_defineProperty(this, "flexibleDimensions", false);
-		_defineProperty(this, "growAfterOpen", false);
-		_defineProperty(this, "push", false);
-		_defineProperty(this, "disposeOnNavigation", false);
-		_defineProperty(this, "usePopover", void 0);
-		_defineProperty(this, "matchWidth", false);
-		_defineProperty(this, "backdropClick", new EventEmitter());
-		_defineProperty(this, "positionChange", new EventEmitter());
-		_defineProperty(this, "attach", new EventEmitter());
-		_defineProperty(this, "detach", new EventEmitter());
-		_defineProperty(this, "overlayKeydown", new EventEmitter());
-		_defineProperty(this, "overlayOutsideClick", new EventEmitter());
 		const templateRef = inject(TemplateRef);
 		const viewContainerRef = inject(ViewContainerRef);
 		const defaultConfig = inject(CDK_CONNECTED_OVERLAY_DEFAULT_CONFIG, { optional: true });
 		const globalConfig = inject(OVERLAY_DEFAULT_CONFIG, { optional: true });
-		this.usePopover = (globalConfig === null || globalConfig === void 0 ? void 0 : globalConfig.usePopover) === false ? null : "global";
+		this.usePopover = globalConfig?.usePopover === false ? null : "global";
 		this._templatePortal = new TemplatePortal(templateRef, viewContainerRef);
 		this.scrollStrategy = this._scrollStrategyFactory();
 		if (defaultConfig) this._assignConfig(defaultConfig);
@@ -3630,18 +3508,16 @@ var CdkConnectedOverlay = class {
 		return this._dir ? this._dir.value : "ltr";
 	}
 	ngOnDestroy() {
-		var _this$_overlayRef;
 		this._attachSubscription.unsubscribe();
 		this._detachSubscription.unsubscribe();
 		this._backdropSubscription.unsubscribe();
 		this._positionSubscription.unsubscribe();
-		(_this$_overlayRef = this._overlayRef) === null || _this$_overlayRef === void 0 || _this$_overlayRef.dispose();
+		this._overlayRef?.dispose();
 	}
 	ngOnChanges(changes) {
 		if (this._position) {
-			var _this$_overlayRef2;
 			this._updatePositionStrategy(this._position);
-			(_this$_overlayRef2 = this._overlayRef) === null || _this$_overlayRef2 === void 0 || _this$_overlayRef2.updateSize({
+			this._overlayRef?.updateSize({
 				width: this._getWidth(),
 				minWidth: this.minWidth,
 				height: this.height,
@@ -3714,9 +3590,8 @@ var CdkConnectedOverlay = class {
 		return null;
 	}
 	_getWidth() {
-		var _this$_getOriginEleme, _this$_getOriginEleme2;
 		if (this.width) return this.width;
-		return this.matchWidth ? (_this$_getOriginEleme = this._getOriginElement()) === null || _this$_getOriginEleme === void 0 || (_this$_getOriginEleme2 = _this$_getOriginEleme.getBoundingClientRect) === null || _this$_getOriginEleme2 === void 0 ? void 0 : _this$_getOriginEleme2.call(_this$_getOriginEleme).width : void 0;
+		return this.matchWidth ? this._getOriginElement()?.getBoundingClientRect?.().width : void 0;
 	}
 	attachOverlay() {
 		if (!this._overlayRef) this._createOverlay();
@@ -3734,207 +3609,204 @@ var CdkConnectedOverlay = class {
 		this.open = true;
 	}
 	detachOverlay() {
-		var _this$_overlayRef3;
-		(_this$_overlayRef3 = this._overlayRef) === null || _this$_overlayRef3 === void 0 || _this$_overlayRef3.detach();
+		this._overlayRef?.detach();
 		this._backdropSubscription.unsubscribe();
 		this._positionSubscription.unsubscribe();
 		this.open = false;
 	}
 	_assignConfig(config) {
-		var _config$origin, _config$positions, _config$positionStrat, _config$offsetX, _config$offsetY, _config$width, _config$height, _config$minWidth, _config$minHeight, _config$backdropClass, _config$panelClass, _config$viewportMargi, _config$scrollStrateg, _config$disableClose, _config$transformOrig, _config$hasBackdrop, _config$lockPosition, _config$flexibleDimen, _config$growAfterOpen, _config$push, _config$disposeOnNavi, _config$usePopover2, _config$matchWidth;
-		this.origin = (_config$origin = config.origin) !== null && _config$origin !== void 0 ? _config$origin : this.origin;
-		this.positions = (_config$positions = config.positions) !== null && _config$positions !== void 0 ? _config$positions : this.positions;
-		this.positionStrategy = (_config$positionStrat = config.positionStrategy) !== null && _config$positionStrat !== void 0 ? _config$positionStrat : this.positionStrategy;
-		this.offsetX = (_config$offsetX = config.offsetX) !== null && _config$offsetX !== void 0 ? _config$offsetX : this.offsetX;
-		this.offsetY = (_config$offsetY = config.offsetY) !== null && _config$offsetY !== void 0 ? _config$offsetY : this.offsetY;
-		this.width = (_config$width = config.width) !== null && _config$width !== void 0 ? _config$width : this.width;
-		this.height = (_config$height = config.height) !== null && _config$height !== void 0 ? _config$height : this.height;
-		this.minWidth = (_config$minWidth = config.minWidth) !== null && _config$minWidth !== void 0 ? _config$minWidth : this.minWidth;
-		this.minHeight = (_config$minHeight = config.minHeight) !== null && _config$minHeight !== void 0 ? _config$minHeight : this.minHeight;
-		this.backdropClass = (_config$backdropClass = config.backdropClass) !== null && _config$backdropClass !== void 0 ? _config$backdropClass : this.backdropClass;
-		this.panelClass = (_config$panelClass = config.panelClass) !== null && _config$panelClass !== void 0 ? _config$panelClass : this.panelClass;
-		this.viewportMargin = (_config$viewportMargi = config.viewportMargin) !== null && _config$viewportMargi !== void 0 ? _config$viewportMargi : this.viewportMargin;
-		this.scrollStrategy = (_config$scrollStrateg = config.scrollStrategy) !== null && _config$scrollStrateg !== void 0 ? _config$scrollStrateg : this.scrollStrategy;
-		this.disableClose = (_config$disableClose = config.disableClose) !== null && _config$disableClose !== void 0 ? _config$disableClose : this.disableClose;
-		this.transformOriginSelector = (_config$transformOrig = config.transformOriginSelector) !== null && _config$transformOrig !== void 0 ? _config$transformOrig : this.transformOriginSelector;
-		this.hasBackdrop = (_config$hasBackdrop = config.hasBackdrop) !== null && _config$hasBackdrop !== void 0 ? _config$hasBackdrop : this.hasBackdrop;
-		this.lockPosition = (_config$lockPosition = config.lockPosition) !== null && _config$lockPosition !== void 0 ? _config$lockPosition : this.lockPosition;
-		this.flexibleDimensions = (_config$flexibleDimen = config.flexibleDimensions) !== null && _config$flexibleDimen !== void 0 ? _config$flexibleDimen : this.flexibleDimensions;
-		this.growAfterOpen = (_config$growAfterOpen = config.growAfterOpen) !== null && _config$growAfterOpen !== void 0 ? _config$growAfterOpen : this.growAfterOpen;
-		this.push = (_config$push = config.push) !== null && _config$push !== void 0 ? _config$push : this.push;
-		this.disposeOnNavigation = (_config$disposeOnNavi = config.disposeOnNavigation) !== null && _config$disposeOnNavi !== void 0 ? _config$disposeOnNavi : this.disposeOnNavigation;
-		this.usePopover = (_config$usePopover2 = config.usePopover) !== null && _config$usePopover2 !== void 0 ? _config$usePopover2 : this.usePopover;
-		this.matchWidth = (_config$matchWidth = config.matchWidth) !== null && _config$matchWidth !== void 0 ? _config$matchWidth : this.matchWidth;
+		this.origin = config.origin ?? this.origin;
+		this.positions = config.positions ?? this.positions;
+		this.positionStrategy = config.positionStrategy ?? this.positionStrategy;
+		this.offsetX = config.offsetX ?? this.offsetX;
+		this.offsetY = config.offsetY ?? this.offsetY;
+		this.width = config.width ?? this.width;
+		this.height = config.height ?? this.height;
+		this.minWidth = config.minWidth ?? this.minWidth;
+		this.minHeight = config.minHeight ?? this.minHeight;
+		this.backdropClass = config.backdropClass ?? this.backdropClass;
+		this.panelClass = config.panelClass ?? this.panelClass;
+		this.viewportMargin = config.viewportMargin ?? this.viewportMargin;
+		this.scrollStrategy = config.scrollStrategy ?? this.scrollStrategy;
+		this.disableClose = config.disableClose ?? this.disableClose;
+		this.transformOriginSelector = config.transformOriginSelector ?? this.transformOriginSelector;
+		this.hasBackdrop = config.hasBackdrop ?? this.hasBackdrop;
+		this.lockPosition = config.lockPosition ?? this.lockPosition;
+		this.flexibleDimensions = config.flexibleDimensions ?? this.flexibleDimensions;
+		this.growAfterOpen = config.growAfterOpen ?? this.growAfterOpen;
+		this.push = config.push ?? this.push;
+		this.disposeOnNavigation = config.disposeOnNavigation ?? this.disposeOnNavigation;
+		this.usePopover = config.usePopover ?? this.usePopover;
+		this.matchWidth = config.matchWidth ?? this.matchWidth;
 	}
+	static ɵfac = function CdkConnectedOverlay_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkConnectedOverlay)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkConnectedOverlay,
+		selectors: [
+			[
+				"",
+				"cdk-connected-overlay",
+				""
+			],
+			[
+				"",
+				"connected-overlay",
+				""
+			],
+			[
+				"",
+				"cdkConnectedOverlay",
+				""
+			]
+		],
+		inputs: {
+			origin: [
+				0,
+				"cdkConnectedOverlayOrigin",
+				"origin"
+			],
+			positions: [
+				0,
+				"cdkConnectedOverlayPositions",
+				"positions"
+			],
+			positionStrategy: [
+				0,
+				"cdkConnectedOverlayPositionStrategy",
+				"positionStrategy"
+			],
+			offsetX: [
+				0,
+				"cdkConnectedOverlayOffsetX",
+				"offsetX"
+			],
+			offsetY: [
+				0,
+				"cdkConnectedOverlayOffsetY",
+				"offsetY"
+			],
+			width: [
+				0,
+				"cdkConnectedOverlayWidth",
+				"width"
+			],
+			height: [
+				0,
+				"cdkConnectedOverlayHeight",
+				"height"
+			],
+			minWidth: [
+				0,
+				"cdkConnectedOverlayMinWidth",
+				"minWidth"
+			],
+			minHeight: [
+				0,
+				"cdkConnectedOverlayMinHeight",
+				"minHeight"
+			],
+			backdropClass: [
+				0,
+				"cdkConnectedOverlayBackdropClass",
+				"backdropClass"
+			],
+			panelClass: [
+				0,
+				"cdkConnectedOverlayPanelClass",
+				"panelClass"
+			],
+			viewportMargin: [
+				0,
+				"cdkConnectedOverlayViewportMargin",
+				"viewportMargin"
+			],
+			scrollStrategy: [
+				0,
+				"cdkConnectedOverlayScrollStrategy",
+				"scrollStrategy"
+			],
+			open: [
+				0,
+				"cdkConnectedOverlayOpen",
+				"open"
+			],
+			disableClose: [
+				0,
+				"cdkConnectedOverlayDisableClose",
+				"disableClose"
+			],
+			transformOriginSelector: [
+				0,
+				"cdkConnectedOverlayTransformOriginOn",
+				"transformOriginSelector"
+			],
+			hasBackdrop: [
+				2,
+				"cdkConnectedOverlayHasBackdrop",
+				"hasBackdrop",
+				booleanAttribute
+			],
+			lockPosition: [
+				2,
+				"cdkConnectedOverlayLockPosition",
+				"lockPosition",
+				booleanAttribute
+			],
+			flexibleDimensions: [
+				2,
+				"cdkConnectedOverlayFlexibleDimensions",
+				"flexibleDimensions",
+				booleanAttribute
+			],
+			growAfterOpen: [
+				2,
+				"cdkConnectedOverlayGrowAfterOpen",
+				"growAfterOpen",
+				booleanAttribute
+			],
+			push: [
+				2,
+				"cdkConnectedOverlayPush",
+				"push",
+				booleanAttribute
+			],
+			disposeOnNavigation: [
+				2,
+				"cdkConnectedOverlayDisposeOnNavigation",
+				"disposeOnNavigation",
+				booleanAttribute
+			],
+			usePopover: [
+				0,
+				"cdkConnectedOverlayUsePopover",
+				"usePopover"
+			],
+			matchWidth: [
+				2,
+				"cdkConnectedOverlayMatchWidth",
+				"matchWidth",
+				booleanAttribute
+			],
+			_config: [
+				0,
+				"cdkConnectedOverlay",
+				"_config"
+			]
+		},
+		outputs: {
+			backdropClick: "backdropClick",
+			positionChange: "positionChange",
+			attach: "attach",
+			detach: "detach",
+			overlayKeydown: "overlayKeydown",
+			overlayOutsideClick: "overlayOutsideClick"
+		},
+		exportAs: ["cdkConnectedOverlay"],
+		features: [ɵɵNgOnChangesFeature]
+	});
 };
-_CdkConnectedOverlay = CdkConnectedOverlay;
-_defineProperty(CdkConnectedOverlay, "ɵfac", function CdkConnectedOverlay_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkConnectedOverlay)();
-});
-_defineProperty(CdkConnectedOverlay, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkConnectedOverlay,
-	selectors: [
-		[
-			"",
-			"cdk-connected-overlay",
-			""
-		],
-		[
-			"",
-			"connected-overlay",
-			""
-		],
-		[
-			"",
-			"cdkConnectedOverlay",
-			""
-		]
-	],
-	inputs: {
-		origin: [
-			0,
-			"cdkConnectedOverlayOrigin",
-			"origin"
-		],
-		positions: [
-			0,
-			"cdkConnectedOverlayPositions",
-			"positions"
-		],
-		positionStrategy: [
-			0,
-			"cdkConnectedOverlayPositionStrategy",
-			"positionStrategy"
-		],
-		offsetX: [
-			0,
-			"cdkConnectedOverlayOffsetX",
-			"offsetX"
-		],
-		offsetY: [
-			0,
-			"cdkConnectedOverlayOffsetY",
-			"offsetY"
-		],
-		width: [
-			0,
-			"cdkConnectedOverlayWidth",
-			"width"
-		],
-		height: [
-			0,
-			"cdkConnectedOverlayHeight",
-			"height"
-		],
-		minWidth: [
-			0,
-			"cdkConnectedOverlayMinWidth",
-			"minWidth"
-		],
-		minHeight: [
-			0,
-			"cdkConnectedOverlayMinHeight",
-			"minHeight"
-		],
-		backdropClass: [
-			0,
-			"cdkConnectedOverlayBackdropClass",
-			"backdropClass"
-		],
-		panelClass: [
-			0,
-			"cdkConnectedOverlayPanelClass",
-			"panelClass"
-		],
-		viewportMargin: [
-			0,
-			"cdkConnectedOverlayViewportMargin",
-			"viewportMargin"
-		],
-		scrollStrategy: [
-			0,
-			"cdkConnectedOverlayScrollStrategy",
-			"scrollStrategy"
-		],
-		open: [
-			0,
-			"cdkConnectedOverlayOpen",
-			"open"
-		],
-		disableClose: [
-			0,
-			"cdkConnectedOverlayDisableClose",
-			"disableClose"
-		],
-		transformOriginSelector: [
-			0,
-			"cdkConnectedOverlayTransformOriginOn",
-			"transformOriginSelector"
-		],
-		hasBackdrop: [
-			2,
-			"cdkConnectedOverlayHasBackdrop",
-			"hasBackdrop",
-			booleanAttribute
-		],
-		lockPosition: [
-			2,
-			"cdkConnectedOverlayLockPosition",
-			"lockPosition",
-			booleanAttribute
-		],
-		flexibleDimensions: [
-			2,
-			"cdkConnectedOverlayFlexibleDimensions",
-			"flexibleDimensions",
-			booleanAttribute
-		],
-		growAfterOpen: [
-			2,
-			"cdkConnectedOverlayGrowAfterOpen",
-			"growAfterOpen",
-			booleanAttribute
-		],
-		push: [
-			2,
-			"cdkConnectedOverlayPush",
-			"push",
-			booleanAttribute
-		],
-		disposeOnNavigation: [
-			2,
-			"cdkConnectedOverlayDisposeOnNavigation",
-			"disposeOnNavigation",
-			booleanAttribute
-		],
-		usePopover: [
-			0,
-			"cdkConnectedOverlayUsePopover",
-			"usePopover"
-		],
-		matchWidth: [
-			2,
-			"cdkConnectedOverlayMatchWidth",
-			"matchWidth",
-			booleanAttribute
-		],
-		_config: [
-			0,
-			"cdkConnectedOverlay",
-			"_config"
-		]
-	},
-	outputs: {
-		backdropClick: "backdropClick",
-		positionChange: "positionChange",
-		attach: "attach",
-		detach: "detach",
-		overlayKeydown: "overlayKeydown",
-		overlayOutsideClick: "overlayOutsideClick"
-	},
-	exportAs: ["cdkConnectedOverlay"],
-	features: [ɵɵNgOnChangesFeature]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkConnectedOverlay, [{
 		type: Directive,
@@ -4072,35 +3944,35 @@ _defineProperty(CdkConnectedOverlay, "ɵdir", /* @__PURE__ */ ɵɵdefineDirectiv
 		overlayOutsideClick: [{ type: Output }]
 	});
 })();
-var OverlayModule = class {};
-_OverlayModule = OverlayModule;
-_defineProperty(OverlayModule, "ɵfac", function OverlayModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _OverlayModule)();
-});
-_defineProperty(OverlayModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _OverlayModule,
-	imports: [
-		BidiModule,
-		PortalModule,
-		ScrollingModule,
-		CdkConnectedOverlay,
-		CdkOverlayOrigin
-	],
-	exports: [
-		CdkConnectedOverlay,
-		CdkOverlayOrigin,
-		ScrollingModule
-	]
-}));
-_defineProperty(OverlayModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({
-	providers: [Overlay],
-	imports: [
-		BidiModule,
-		PortalModule,
-		ScrollingModule,
-		ScrollingModule
-	]
-}));
+var OverlayModule = class OverlayModule {
+	static ɵfac = function OverlayModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || OverlayModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: OverlayModule,
+		imports: [
+			BidiModule,
+			PortalModule,
+			ScrollingModule,
+			CdkConnectedOverlay,
+			CdkOverlayOrigin
+		],
+		exports: [
+			CdkConnectedOverlay,
+			CdkOverlayOrigin,
+			ScrollingModule
+		]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({
+		providers: [Overlay],
+		imports: [
+			BidiModule,
+			PortalModule,
+			ScrollingModule,
+			ScrollingModule
+		]
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayModule, [{
 		type: NgModule,
@@ -4123,26 +3995,20 @@ _defineProperty(OverlayModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({
 })();
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/overlay.mjs
-var _FullscreenOverlayContainer;
-var FullscreenOverlayContainer = class extends OverlayContainer {
-	constructor(..._args) {
-		super(..._args);
-		_defineProperty(this, "_renderer", inject(RendererFactory2).createRenderer(null, null));
-		_defineProperty(this, "_fullScreenEventName", void 0);
-		_defineProperty(this, "_cleanupFullScreenListener", void 0);
-	}
+var FullscreenOverlayContainer = class FullscreenOverlayContainer extends OverlayContainer {
+	_renderer = inject(RendererFactory2).createRenderer(null, null);
+	_fullScreenEventName;
+	_cleanupFullScreenListener;
 	ngOnDestroy() {
-		var _this$_cleanupFullScr;
 		super.ngOnDestroy();
-		(_this$_cleanupFullScr = this._cleanupFullScreenListener) === null || _this$_cleanupFullScr === void 0 || _this$_cleanupFullScr.call(this);
+		this._cleanupFullScreenListener?.();
 	}
 	_createContainer() {
 		const eventName = this._getEventName();
 		super._createContainer();
 		this._adjustParentForFullscreenChange();
 		if (eventName) {
-			var _this$_cleanupFullScr2;
-			(_this$_cleanupFullScr2 = this._cleanupFullScreenListener) === null || _this$_cleanupFullScr2 === void 0 || _this$_cleanupFullScr2.call(this);
+			this._cleanupFullScreenListener?.();
 			this._cleanupFullScreenListener = this._renderer.listen("document", eventName, () => {
 				this._adjustParentForFullscreenChange();
 			});
@@ -4165,15 +4031,14 @@ var FullscreenOverlayContainer = class extends OverlayContainer {
 		const _document = this._document;
 		return _document.fullscreenElement || _document.webkitFullscreenElement || _document.mozFullScreenElement || _document.msFullscreenElement || null;
 	}
+	static ɵfac = function FullscreenOverlayContainer_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || FullscreenOverlayContainer)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: FullscreenOverlayContainer,
+		factory: FullscreenOverlayContainer.ɵfac
+	});
 };
-_FullscreenOverlayContainer = FullscreenOverlayContainer;
-_defineProperty(FullscreenOverlayContainer, "ɵfac", function FullscreenOverlayContainer_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _FullscreenOverlayContainer)();
-});
-_defineProperty(FullscreenOverlayContainer, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _FullscreenOverlayContainer,
-	factory: _FullscreenOverlayContainer.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(FullscreenOverlayContainer, [{ type: Service }], null, null);
 })();
@@ -4202,9 +4067,6 @@ function normalizePassiveListenerOptions(options) {
 }
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/_focus-monitor-chunk.mjs
-var _InputModalityDetector;
-var _FocusMonitor;
-var _CdkMonitorFocus;
 var INPUT_MODALITY_DETECTOR_OPTIONS = new InjectionToken("cdk-input-modality-detector-options");
 var INPUT_MODALITY_DETECTOR_DEFAULT_OPTIONS = { ignoreKeys: [
 	18,
@@ -4218,43 +4080,45 @@ var modalityEventListenerOptions = {
 	passive: true,
 	capture: true
 };
-var InputModalityDetector = class {
+var InputModalityDetector = class InputModalityDetector {
+	_platform = inject(Platform);
+	_listenerCleanups;
+	modalityDetected;
+	modalityChanged;
 	get mostRecentModality() {
 		return this._modality.value;
 	}
-	constructor() {
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_listenerCleanups", void 0);
-		_defineProperty(this, "modalityDetected", void 0);
-		_defineProperty(this, "modalityChanged", void 0);
-		_defineProperty(this, "_mostRecentTarget", null);
-		_defineProperty(this, "_modality", new BehaviorSubject(null));
-		_defineProperty(this, "_options", void 0);
-		_defineProperty(this, "_lastTouchMs", 0);
-		_defineProperty(this, "_onKeydown", (event) => {
-			var _this$_options;
-			if ((_this$_options = this._options) === null || _this$_options === void 0 || (_this$_options = _this$_options.ignoreKeys) === null || _this$_options === void 0 ? void 0 : _this$_options.some((keyCode) => keyCode === event.keyCode)) return;
+	_mostRecentTarget = null;
+	_modality = new BehaviorSubject(null);
+	_options;
+	_lastTouchMs = 0;
+	_onKeydown = (event) => {
+		if (this._options?.ignoreKeys?.some((keyCode) => keyCode === event.keyCode)) return;
+		this._modality.next("keyboard");
+		this._mostRecentTarget = _getEventTarget(event);
+	};
+	_onMousedown = (event) => {
+		if (Date.now() - this._lastTouchMs < TOUCH_BUFFER_MS) return;
+		this._modality.next(isFakeMousedownFromScreenReader(event) ? "keyboard" : "mouse");
+		this._mostRecentTarget = _getEventTarget(event);
+	};
+	_onTouchstart = (event) => {
+		if (isFakeTouchstartFromScreenReader(event)) {
 			this._modality.next("keyboard");
-			this._mostRecentTarget = _getEventTarget(event);
-		});
-		_defineProperty(this, "_onMousedown", (event) => {
-			if (Date.now() - this._lastTouchMs < TOUCH_BUFFER_MS) return;
-			this._modality.next(isFakeMousedownFromScreenReader(event) ? "keyboard" : "mouse");
-			this._mostRecentTarget = _getEventTarget(event);
-		});
-		_defineProperty(this, "_onTouchstart", (event) => {
-			if (isFakeTouchstartFromScreenReader(event)) {
-				this._modality.next("keyboard");
-				return;
-			}
-			this._lastTouchMs = Date.now();
-			this._modality.next("touch");
-			this._mostRecentTarget = _getEventTarget(event);
-		});
+			return;
+		}
+		this._lastTouchMs = Date.now();
+		this._modality.next("touch");
+		this._mostRecentTarget = _getEventTarget(event);
+	};
+	constructor() {
 		const ngZone = inject(NgZone);
 		const document = inject(DOCUMENT);
 		const options = inject(INPUT_MODALITY_DETECTOR_OPTIONS, { optional: true });
-		this._options = _objectSpread2(_objectSpread2({}, INPUT_MODALITY_DETECTOR_DEFAULT_OPTIONS), options);
+		this._options = {
+			...INPUT_MODALITY_DETECTOR_DEFAULT_OPTIONS,
+			...options
+		};
 		this.modalityDetected = this._modality.pipe(skip(1));
 		this.modalityChanged = this.modalityDetected.pipe(distinctUntilChanged());
 		if (this._platform.isBrowser) {
@@ -4269,19 +4133,17 @@ var InputModalityDetector = class {
 		}
 	}
 	ngOnDestroy() {
-		var _this$_listenerCleanu;
 		this._modality.complete();
-		(_this$_listenerCleanu = this._listenerCleanups) === null || _this$_listenerCleanu === void 0 || _this$_listenerCleanu.forEach((cleanup) => cleanup());
+		this._listenerCleanups?.forEach((cleanup) => cleanup());
 	}
+	static ɵfac = function InputModalityDetector_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || InputModalityDetector)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: InputModalityDetector,
+		factory: InputModalityDetector.ɵfac
+	});
 };
-_InputModalityDetector = InputModalityDetector;
-_defineProperty(InputModalityDetector, "ɵfac", function InputModalityDetector_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _InputModalityDetector)();
-});
-_defineProperty(InputModalityDetector, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _InputModalityDetector,
-	factory: _InputModalityDetector.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InputModalityDetector, [{ type: Service }], () => [], null);
 })();
@@ -4295,35 +4157,35 @@ var captureEventListenerOptions = normalizePassiveListenerOptions({
 	passive: true,
 	capture: true
 });
-var FocusMonitor = class {
+var FocusMonitor = class FocusMonitor {
+	_ngZone = inject(NgZone);
+	_platform = inject(Platform);
+	_inputModalityDetector = inject(InputModalityDetector);
+	_origin = null;
+	_lastFocusOrigin = null;
+	_windowFocused = false;
+	_windowFocusTimeoutId;
+	_originTimeoutId;
+	_originFromTouchInteraction = false;
+	_elementInfo = /* @__PURE__ */ new Map();
+	_monitoredElementCount = 0;
+	_rootNodeFocusListenerCount = /* @__PURE__ */ new Map();
+	_detectionMode;
+	_windowFocusListener = () => {
+		this._windowFocused = true;
+		this._windowFocusTimeoutId = setTimeout(() => this._windowFocused = false);
+	};
+	_document = inject(DOCUMENT);
+	_stopInputModalityDetector = new Subject();
 	constructor() {
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_inputModalityDetector", inject(InputModalityDetector));
-		_defineProperty(this, "_origin", null);
-		_defineProperty(this, "_lastFocusOrigin", null);
-		_defineProperty(this, "_windowFocused", false);
-		_defineProperty(this, "_windowFocusTimeoutId", void 0);
-		_defineProperty(this, "_originTimeoutId", void 0);
-		_defineProperty(this, "_originFromTouchInteraction", false);
-		_defineProperty(this, "_elementInfo", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_monitoredElementCount", 0);
-		_defineProperty(this, "_rootNodeFocusListenerCount", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_detectionMode", void 0);
-		_defineProperty(this, "_windowFocusListener", () => {
-			this._windowFocused = true;
-			this._windowFocusTimeoutId = setTimeout(() => this._windowFocused = false);
-		});
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_stopInputModalityDetector", new Subject());
-		_defineProperty(this, "_rootNodeFocusAndBlurListener", (event) => {
-			const target = _getEventTarget(event);
-			for (let element = target; element; element = element.parentElement) if (event.type === "focus") this._onFocus(event, element);
-			else this._onBlur(event, element);
-		});
 		const options = inject(FOCUS_MONITOR_DEFAULT_OPTIONS, { optional: true });
-		this._detectionMode = (options === null || options === void 0 ? void 0 : options.detectionMode) || FocusMonitorDetectionMode.IMMEDIATE;
+		this._detectionMode = options?.detectionMode || FocusMonitorDetectionMode.IMMEDIATE;
 	}
+	_rootNodeFocusAndBlurListener = (event) => {
+		const target = _getEventTarget(event);
+		for (let element = target; element; element = element.parentElement) if (event.type === "focus") this._onFocus(event, element);
+		else this._onBlur(event, element);
+	};
 	monitor(element, checkChildren = false) {
 		const nativeElement = coerceElement(element);
 		if (!this._platform.isBrowser || nativeElement.nodeType !== 1) return of();
@@ -4374,7 +4236,7 @@ var FocusMonitor = class {
 		return "program";
 	}
 	_shouldBeAttributedToTouch(focusEventTarget) {
-		return this._detectionMode === FocusMonitorDetectionMode.EVENTUAL || !!(focusEventTarget === null || focusEventTarget === void 0 ? void 0 : focusEventTarget.contains(this._inputModalityDetector._mostRecentTarget));
+		return this._detectionMode === FocusMonitorDetectionMode.EVENTUAL || !!focusEventTarget?.contains(this._inputModalityDetector._mostRecentTarget);
 	}
 	_setClasses(element, origin) {
 		element.classList.toggle("cdk-focused", !!origin);
@@ -4466,26 +4328,23 @@ var FocusMonitor = class {
 		}
 		return false;
 	}
+	static ɵfac = function FocusMonitor_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || FocusMonitor)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: FocusMonitor,
+		factory: FocusMonitor.ɵfac
+	});
 };
-_FocusMonitor = FocusMonitor;
-_defineProperty(FocusMonitor, "ɵfac", function FocusMonitor_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _FocusMonitor)();
-});
-_defineProperty(FocusMonitor, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _FocusMonitor,
-	factory: _FocusMonitor.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(FocusMonitor, [{ type: Service }], () => [], null);
 })();
-var CdkMonitorFocus = class {
-	constructor() {
-		_defineProperty(this, "_elementRef", inject(ElementRef));
-		_defineProperty(this, "_focusMonitor", inject(FocusMonitor));
-		_defineProperty(this, "_monitorSubscription", void 0);
-		_defineProperty(this, "_focusOrigin", null);
-		_defineProperty(this, "cdkFocusChange", new EventEmitter());
-	}
+var CdkMonitorFocus = class CdkMonitorFocus {
+	_elementRef = inject(ElementRef);
+	_focusMonitor = inject(FocusMonitor);
+	_monitorSubscription;
+	_focusOrigin = null;
+	cdkFocusChange = new EventEmitter();
 	get focusOrigin() {
 		return this._focusOrigin;
 	}
@@ -4497,29 +4356,27 @@ var CdkMonitorFocus = class {
 		});
 	}
 	ngOnDestroy() {
-		var _this$_monitorSubscri;
 		this._focusMonitor.stopMonitoring(this._elementRef);
-		(_this$_monitorSubscri = this._monitorSubscription) === null || _this$_monitorSubscri === void 0 || _this$_monitorSubscri.unsubscribe();
+		this._monitorSubscription?.unsubscribe();
 	}
+	static ɵfac = function CdkMonitorFocus_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkMonitorFocus)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkMonitorFocus,
+		selectors: [[
+			"",
+			"cdkMonitorElementFocus",
+			""
+		], [
+			"",
+			"cdkMonitorSubtreeFocus",
+			""
+		]],
+		outputs: { cdkFocusChange: "cdkFocusChange" },
+		exportAs: ["cdkMonitorFocus"]
+	});
 };
-_CdkMonitorFocus = CdkMonitorFocus;
-_defineProperty(CdkMonitorFocus, "ɵfac", function CdkMonitorFocus_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkMonitorFocus)();
-});
-_defineProperty(CdkMonitorFocus, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkMonitorFocus,
-	selectors: [[
-		"",
-		"cdkMonitorElementFocus",
-		""
-	], [
-		"",
-		"cdkMonitorSubtreeFocus",
-		""
-	]],
-	outputs: { cdkFocusChange: "cdkFocusChange" },
-	exportAs: ["cdkMonitorFocus"]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkMonitorFocus, [{
 		type: Directive,
@@ -4531,30 +4388,27 @@ _defineProperty(CdkMonitorFocus, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
 })();
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/_breakpoints-observer-chunk.mjs
-var _MediaMatcher;
-var _BreakpointObserver;
 var mediaQueriesForWebkitCompatibility = /* @__PURE__ */ new Set();
 var mediaQueryStyleNode;
-var MediaMatcher = class {
+var MediaMatcher = class MediaMatcher {
+	_platform = inject(Platform);
+	_nonce = inject(CSP_NONCE, { optional: true });
+	_matchMedia;
 	constructor() {
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_nonce", inject(CSP_NONCE, { optional: true }));
-		_defineProperty(this, "_matchMedia", void 0);
 		this._matchMedia = this._platform.isBrowser && window.matchMedia ? window.matchMedia.bind(window) : noopMatchMedia;
 	}
 	matchMedia(query) {
 		if (this._platform.WEBKIT || this._platform.BLINK) createEmptyStyleRule(query, this._nonce);
 		return this._matchMedia(query);
 	}
+	static ɵfac = function MediaMatcher_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MediaMatcher)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: MediaMatcher,
+		factory: MediaMatcher.ɵfac
+	});
 };
-_MediaMatcher = MediaMatcher;
-_defineProperty(MediaMatcher, "ɵfac", function MediaMatcher_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MediaMatcher)();
-});
-_defineProperty(MediaMatcher, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _MediaMatcher,
-	factory: _MediaMatcher.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MediaMatcher, [{ type: Service }], () => [], null);
 })();
@@ -4583,13 +4437,11 @@ function noopMatchMedia(query) {
 		removeListener: () => {}
 	};
 }
-var BreakpointObserver = class {
-	constructor() {
-		_defineProperty(this, "_mediaMatcher", inject(MediaMatcher));
-		_defineProperty(this, "_zone", inject(NgZone));
-		_defineProperty(this, "_queries", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_destroySubject", new Subject());
-	}
+var BreakpointObserver = class BreakpointObserver {
+	_mediaMatcher = inject(MediaMatcher);
+	_zone = inject(NgZone);
+	_queries = /* @__PURE__ */ new Map();
+	_destroySubject = new Subject();
 	ngOnDestroy() {
 		this._destroySubject.next();
 		this._destroySubject.complete();
@@ -4631,15 +4483,14 @@ var BreakpointObserver = class {
 		this._queries.set(query, output);
 		return output;
 	}
+	static ɵfac = function BreakpointObserver_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || BreakpointObserver)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: BreakpointObserver,
+		factory: BreakpointObserver.ɵfac
+	});
 };
-_BreakpointObserver = BreakpointObserver;
-_defineProperty(BreakpointObserver, "ɵfac", function BreakpointObserver_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _BreakpointObserver)();
-});
-_defineProperty(BreakpointObserver, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _BreakpointObserver,
-	factory: _BreakpointObserver.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(BreakpointObserver, [{ type: Service }], null, null);
 })();
@@ -4648,10 +4499,6 @@ function splitQueries(queries) {
 }
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/observers.mjs
-var _MutationObserverFactory;
-var _ContentObserver;
-var _CdkObserveContent;
-var _ObserversModule;
 function shouldIgnoreRecord(record) {
 	if (record.type === "characterData" && record.target instanceof Comment) return true;
 	if (record.type === "childList") {
@@ -4661,28 +4508,25 @@ function shouldIgnoreRecord(record) {
 	}
 	return false;
 }
-var MutationObserverFactory = class {
+var MutationObserverFactory = class MutationObserverFactory {
 	create(callback) {
 		return typeof MutationObserver === "undefined" ? null : new MutationObserver(callback);
 	}
+	static ɵfac = function MutationObserverFactory_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MutationObserverFactory)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: MutationObserverFactory,
+		factory: MutationObserverFactory.ɵfac
+	});
 };
-_MutationObserverFactory = MutationObserverFactory;
-_defineProperty(MutationObserverFactory, "ɵfac", function MutationObserverFactory_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MutationObserverFactory)();
-});
-_defineProperty(MutationObserverFactory, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _MutationObserverFactory,
-	factory: _MutationObserverFactory.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MutationObserverFactory, [{ type: Service }], null, null);
 })();
-var ContentObserver = class {
-	constructor() {
-		_defineProperty(this, "_mutationObserverFactory", inject(MutationObserverFactory));
-		_defineProperty(this, "_observedElements", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_ngZone", inject(NgZone));
-	}
+var ContentObserver = class ContentObserver {
+	_mutationObserverFactory = inject(MutationObserverFactory);
+	_observedElements = /* @__PURE__ */ new Map();
+	_ngZone = inject(NgZone);
 	ngOnDestroy() {
 		this._observedElements.forEach((_, element) => this._cleanupObserver(element));
 	}
@@ -4733,27 +4577,21 @@ var ContentObserver = class {
 			this._observedElements.delete(element);
 		}
 	}
+	static ɵfac = function ContentObserver_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || ContentObserver)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: ContentObserver,
+		factory: ContentObserver.ɵfac
+	});
 };
-_ContentObserver = ContentObserver;
-_defineProperty(ContentObserver, "ɵfac", function ContentObserver_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _ContentObserver)();
-});
-_defineProperty(ContentObserver, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _ContentObserver,
-	factory: _ContentObserver.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ContentObserver, [{ type: Service }], null, null);
 })();
-var CdkObserveContent = class {
-	constructor() {
-		_defineProperty(this, "_contentObserver", inject(ContentObserver));
-		_defineProperty(this, "_elementRef", inject(ElementRef));
-		_defineProperty(this, "event", new EventEmitter());
-		_defineProperty(this, "_disabled", false);
-		_defineProperty(this, "_debounce", void 0);
-		_defineProperty(this, "_currentSubscription", null);
-	}
+var CdkObserveContent = class CdkObserveContent {
+	_contentObserver = inject(ContentObserver);
+	_elementRef = inject(ElementRef);
+	event = new EventEmitter();
 	get disabled() {
 		return this._disabled;
 	}
@@ -4761,6 +4599,7 @@ var CdkObserveContent = class {
 		this._disabled = value;
 		this._disabled ? this._unsubscribe() : this._subscribe();
 	}
+	_disabled = false;
 	get debounce() {
 		return this._debounce;
 	}
@@ -4768,6 +4607,8 @@ var CdkObserveContent = class {
 		this._debounce = coerceNumberProperty(value);
 		this._subscribe();
 	}
+	_debounce;
+	_currentSubscription = null;
 	ngAfterContentInit() {
 		if (!this._currentSubscription && !this.disabled) this._subscribe();
 	}
@@ -4780,33 +4621,31 @@ var CdkObserveContent = class {
 		this._currentSubscription = (this.debounce ? stream.pipe(debounceTime(this.debounce)) : stream).subscribe(this.event);
 	}
 	_unsubscribe() {
-		var _this$_currentSubscri;
-		(_this$_currentSubscri = this._currentSubscription) === null || _this$_currentSubscri === void 0 || _this$_currentSubscri.unsubscribe();
+		this._currentSubscription?.unsubscribe();
 	}
+	static ɵfac = function CdkObserveContent_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkObserveContent)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkObserveContent,
+		selectors: [[
+			"",
+			"cdkObserveContent",
+			""
+		]],
+		inputs: {
+			disabled: [
+				2,
+				"cdkObserveContentDisabled",
+				"disabled",
+				booleanAttribute
+			],
+			debounce: "debounce"
+		},
+		outputs: { event: "cdkObserveContent" },
+		exportAs: ["cdkObserveContent"]
+	});
 };
-_CdkObserveContent = CdkObserveContent;
-_defineProperty(CdkObserveContent, "ɵfac", function CdkObserveContent_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkObserveContent)();
-});
-_defineProperty(CdkObserveContent, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkObserveContent,
-	selectors: [[
-		"",
-		"cdkObserveContent",
-		""
-	]],
-	inputs: {
-		disabled: [
-			2,
-			"cdkObserveContentDisabled",
-			"disabled",
-			booleanAttribute
-		],
-		debounce: "debounce"
-	},
-	outputs: { event: "cdkObserveContent" },
-	exportAs: ["cdkObserveContent"]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkObserveContent, [{
 		type: Directive,
@@ -4829,17 +4668,17 @@ _defineProperty(CdkObserveContent, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective(
 		debounce: [{ type: Input }]
 	});
 })();
-var ObserversModule = class {};
-_ObserversModule = ObserversModule;
-_defineProperty(ObserversModule, "ɵfac", function ObserversModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _ObserversModule)();
-});
-_defineProperty(ObserversModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _ObserversModule,
-	imports: [CdkObserveContent],
-	exports: [CdkObserveContent]
-}));
-_defineProperty(ObserversModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({ providers: [MutationObserverFactory] }));
+var ObserversModule = class ObserversModule {
+	static ɵfac = function ObserversModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || ObserversModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: ObserversModule,
+		imports: [CdkObserveContent],
+		exports: [CdkObserveContent]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({ providers: [MutationObserverFactory] });
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ObserversModule, [{
 		type: NgModule,
@@ -4852,17 +4691,8 @@ _defineProperty(ObserversModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({ p
 })();
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/_a11y-module-chunk.mjs
-var _InteractivityChecker;
-var _FocusTrapFactory;
-var _CdkTrapFocus;
-var _LiveAnnouncer;
-var _CdkAriaLive;
-var _HighContrastModeDetector;
-var _A11yModule;
-var InteractivityChecker = class {
-	constructor() {
-		_defineProperty(this, "_platform", inject(Platform));
-	}
+var InteractivityChecker = class InteractivityChecker {
+	_platform = inject(Platform);
 	isDisabled(element) {
 		return element.hasAttribute("disabled");
 	}
@@ -4893,24 +4723,23 @@ var InteractivityChecker = class {
 		return element.tabIndex >= 0;
 	}
 	isFocusable(element, config) {
-		return isPotentiallyFocusable(element) && !this.isDisabled(element) && ((config === null || config === void 0 ? void 0 : config.ignoreVisibility) || this.isVisible(element));
+		return isPotentiallyFocusable(element) && !this.isDisabled(element) && (config?.ignoreVisibility || this.isVisible(element));
 	}
+	static ɵfac = function InteractivityChecker_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || InteractivityChecker)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: InteractivityChecker,
+		factory: InteractivityChecker.ɵfac
+	});
 };
-_InteractivityChecker = InteractivityChecker;
-_defineProperty(InteractivityChecker, "ɵfac", function InteractivityChecker_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _InteractivityChecker)();
-});
-_defineProperty(InteractivityChecker, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _InteractivityChecker,
-	factory: _InteractivityChecker.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InteractivityChecker, [{ type: Service }], null, null);
 })();
 function getFrameElement(window) {
 	try {
 		return window.frameElement;
-	} catch (_unused) {
+	} catch {
 		return null;
 	}
 }
@@ -4956,6 +4785,20 @@ function getWindow(node) {
 	return node.ownerDocument && node.ownerDocument.defaultView || window;
 }
 var FocusTrap = class {
+	_element;
+	_checker;
+	_ngZone;
+	_document;
+	_injector;
+	_startAnchor = null;
+	_endAnchor = null;
+	_hasAttached = false;
+	startAnchorListener = () => {
+		if (!this.focusLastTabbableElement() && this._checker.isFocusable(this._element)) this._element.focus();
+	};
+	endAnchorListener = () => {
+		if (!this.focusFirstTabbableElement() && this._checker.isFocusable(this._element)) this._element.focus();
+	};
 	get enabled() {
 		return this._enabled;
 	}
@@ -4966,22 +4809,8 @@ var FocusTrap = class {
 			this._toggleAnchorTabIndex(value, this._endAnchor);
 		}
 	}
+	_enabled = true;
 	constructor(_element, _checker, _ngZone, _document, deferAnchors = false, _injector) {
-		_defineProperty(this, "_element", void 0);
-		_defineProperty(this, "_checker", void 0);
-		_defineProperty(this, "_ngZone", void 0);
-		_defineProperty(this, "_document", void 0);
-		_defineProperty(this, "_injector", void 0);
-		_defineProperty(this, "_startAnchor", null);
-		_defineProperty(this, "_endAnchor", null);
-		_defineProperty(this, "_hasAttached", false);
-		_defineProperty(this, "startAnchorListener", () => {
-			if (!this.focusLastTabbableElement() && this._checker.isFocusable(this._element)) this._element.focus();
-		});
-		_defineProperty(this, "endAnchorListener", () => {
-			if (!this.focusFirstTabbableElement() && this._checker.isFocusable(this._element)) this._element.focus();
-		});
-		_defineProperty(this, "_enabled", true);
 		this._element = _element;
 		this._checker = _checker;
 		this._ngZone = _ngZone;
@@ -5053,7 +4882,7 @@ var FocusTrap = class {
 			if ((typeof ngDevMode === "undefined" || ngDevMode) && !this._checker.isFocusable(redirectToElement)) console.warn(`Element matching '[cdkFocusInitial]' is not focusable.`, redirectToElement);
 			if (!this._checker.isFocusable(redirectToElement)) {
 				const focusableChild = this._getFirstTabbableElement(redirectToElement);
-				focusableChild === null || focusableChild === void 0 || focusableChild.focus(options);
+				focusableChild?.focus(options);
 				return !!focusableChild;
 			}
 			redirectToElement.focus(options);
@@ -5113,100 +4942,93 @@ var FocusTrap = class {
 		afterNextRender(fn, { injector: this._injector });
 	}
 };
-var FocusTrapFactory = class {
+var FocusTrapFactory = class FocusTrapFactory {
+	_checker = inject(InteractivityChecker);
+	_ngZone = inject(NgZone);
+	_document = inject(DOCUMENT);
+	_injector = inject(Injector);
 	constructor() {
-		_defineProperty(this, "_checker", inject(InteractivityChecker));
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_injector", inject(Injector));
 		inject(_CdkPrivateStyleLoader).load(_VisuallyHiddenLoader);
 	}
 	create(element, deferCaptureElements = false) {
 		return new FocusTrap(element, this._checker, this._ngZone, this._document, deferCaptureElements, this._injector);
 	}
+	static ɵfac = function FocusTrapFactory_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || FocusTrapFactory)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: FocusTrapFactory,
+		factory: FocusTrapFactory.ɵfac
+	});
 };
-_FocusTrapFactory = FocusTrapFactory;
-_defineProperty(FocusTrapFactory, "ɵfac", function FocusTrapFactory_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _FocusTrapFactory)();
-});
-_defineProperty(FocusTrapFactory, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _FocusTrapFactory,
-	factory: _FocusTrapFactory.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(FocusTrapFactory, [{ type: Service }], () => [], null);
 })();
-var CdkTrapFocus = class {
+var CdkTrapFocus = class CdkTrapFocus {
+	_elementRef = inject(ElementRef);
+	_focusTrapFactory = inject(FocusTrapFactory);
+	focusTrap = void 0;
+	_previouslyFocusedElement = null;
 	get enabled() {
-		var _this$focusTrap;
-		return ((_this$focusTrap = this.focusTrap) === null || _this$focusTrap === void 0 ? void 0 : _this$focusTrap.enabled) || false;
+		return this.focusTrap?.enabled || false;
 	}
 	set enabled(value) {
 		if (this.focusTrap) this.focusTrap.enabled = value;
 	}
+	autoCapture = false;
 	constructor() {
-		_defineProperty(this, "_elementRef", inject(ElementRef));
-		_defineProperty(this, "_focusTrapFactory", inject(FocusTrapFactory));
-		_defineProperty(this, "focusTrap", void 0);
-		_defineProperty(this, "_previouslyFocusedElement", null);
-		_defineProperty(this, "autoCapture", false);
 		if (inject(Platform).isBrowser) this.focusTrap = this._focusTrapFactory.create(this._elementRef.nativeElement, true);
 	}
 	ngOnDestroy() {
-		var _this$focusTrap2;
-		(_this$focusTrap2 = this.focusTrap) === null || _this$focusTrap2 === void 0 || _this$focusTrap2.destroy();
+		this.focusTrap?.destroy();
 		if (this._previouslyFocusedElement) {
 			this._previouslyFocusedElement.focus();
 			this._previouslyFocusedElement = null;
 		}
 	}
 	ngAfterContentInit() {
-		var _this$focusTrap3;
-		(_this$focusTrap3 = this.focusTrap) === null || _this$focusTrap3 === void 0 || _this$focusTrap3.attachAnchors();
+		this.focusTrap?.attachAnchors();
 		if (this.autoCapture) this._captureFocus();
 	}
 	ngDoCheck() {
 		if (this.focusTrap && !this.focusTrap.hasAttached()) this.focusTrap.attachAnchors();
 	}
 	ngOnChanges(changes) {
-		var _this$focusTrap4;
 		const autoCaptureChange = changes["autoCapture"];
-		if (autoCaptureChange && !autoCaptureChange.firstChange && this.autoCapture && ((_this$focusTrap4 = this.focusTrap) === null || _this$focusTrap4 === void 0 ? void 0 : _this$focusTrap4.hasAttached())) this._captureFocus();
+		if (autoCaptureChange && !autoCaptureChange.firstChange && this.autoCapture && this.focusTrap?.hasAttached()) this._captureFocus();
 	}
 	_captureFocus() {
-		var _this$focusTrap5;
 		this._previouslyFocusedElement = _getFocusedElementPierceShadowDom();
-		(_this$focusTrap5 = this.focusTrap) === null || _this$focusTrap5 === void 0 || _this$focusTrap5.focusInitialElementWhenReady();
+		this.focusTrap?.focusInitialElementWhenReady();
 	}
-};
-_CdkTrapFocus = CdkTrapFocus;
-_defineProperty(CdkTrapFocus, "ɵfac", function CdkTrapFocus_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkTrapFocus)();
-});
-_defineProperty(CdkTrapFocus, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkTrapFocus,
-	selectors: [[
-		"",
-		"cdkTrapFocus",
-		""
-	]],
-	inputs: {
-		enabled: [
-			2,
+	static ɵfac = function CdkTrapFocus_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkTrapFocus)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkTrapFocus,
+		selectors: [[
+			"",
 			"cdkTrapFocus",
-			"enabled",
-			booleanAttribute
-		],
-		autoCapture: [
-			2,
-			"cdkTrapFocusAutoCapture",
-			"autoCapture",
-			booleanAttribute
-		]
-	},
-	exportAs: ["cdkTrapFocus"],
-	features: [ɵɵNgOnChangesFeature]
-}));
+			""
+		]],
+		inputs: {
+			enabled: [
+				2,
+				"cdkTrapFocus",
+				"enabled",
+				booleanAttribute
+			],
+			autoCapture: [
+				2,
+				"cdkTrapFocusAutoCapture",
+				"autoCapture",
+				booleanAttribute
+			]
+		},
+		exportAs: ["cdkTrapFocus"],
+		features: [ɵɵNgOnChangesFeature]
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkTrapFocus, [{
 		type: Directive,
@@ -5237,16 +5059,16 @@ var LIVE_ANNOUNCER_ELEMENT_TOKEN = new InjectionToken("liveAnnouncerElement", {
 });
 var LIVE_ANNOUNCER_DEFAULT_OPTIONS = new InjectionToken("LIVE_ANNOUNCER_DEFAULT_OPTIONS");
 var uniqueIds = 0;
-var LiveAnnouncer = class {
+var LiveAnnouncer = class LiveAnnouncer {
+	_ngZone = inject(NgZone);
+	_defaultOptions = inject(LIVE_ANNOUNCER_DEFAULT_OPTIONS, { optional: true });
+	_liveElement;
+	_document = inject(DOCUMENT);
+	_sanitizer = inject(DomSanitizer);
+	_previousTimeout;
+	_currentPromise;
+	_currentResolve;
 	constructor() {
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_defaultOptions", inject(LIVE_ANNOUNCER_DEFAULT_OPTIONS, { optional: true }));
-		_defineProperty(this, "_liveElement", void 0);
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_sanitizer", inject(DomSanitizer));
-		_defineProperty(this, "_previousTimeout", void 0);
-		_defineProperty(this, "_currentPromise", void 0);
-		_defineProperty(this, "_currentResolve", void 0);
 		const elementToken = inject(LIVE_ANNOUNCER_ELEMENT_TOKEN, { optional: true });
 		this._liveElement = elementToken || this._createLiveElement();
 	}
@@ -5266,11 +5088,10 @@ var LiveAnnouncer = class {
 			if (!this._currentPromise) this._currentPromise = new Promise((resolve) => this._currentResolve = resolve);
 			clearTimeout(this._previousTimeout);
 			this._previousTimeout = setTimeout(() => {
-				var _this$_currentResolve;
 				if (!message || typeof message === "string") this._liveElement.textContent = message;
 				else _setInnerHtml(this._liveElement, message, this._sanitizer);
 				if (typeof duration === "number") this._previousTimeout = setTimeout(() => this.clear(), duration);
-				(_this$_currentResolve = this._currentResolve) === null || _this$_currentResolve === void 0 || _this$_currentResolve.call(this);
+				this._currentResolve?.();
 				this._currentPromise = this._currentResolve = void 0;
 			}, 100);
 			return this._currentPromise;
@@ -5280,11 +5101,10 @@ var LiveAnnouncer = class {
 		if (this._liveElement) this._liveElement.textContent = "";
 	}
 	ngOnDestroy() {
-		var _this$_liveElement, _this$_currentResolve2;
 		clearTimeout(this._previousTimeout);
-		(_this$_liveElement = this._liveElement) === null || _this$_liveElement === void 0 || _this$_liveElement.remove();
+		this._liveElement?.remove();
 		this._liveElement = null;
-		(_this$_currentResolve2 = this._currentResolve) === null || _this$_currentResolve2 === void 0 || _this$_currentResolve2.call(this);
+		this._currentResolve?.();
 		this._currentPromise = this._currentResolve = void 0;
 	}
 	_createLiveElement() {
@@ -5309,19 +5129,22 @@ var LiveAnnouncer = class {
 			else if (ariaOwns.indexOf(id) === -1) modal.setAttribute("aria-owns", ariaOwns + " " + id);
 		}
 	}
+	static ɵfac = function LiveAnnouncer_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || LiveAnnouncer)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: LiveAnnouncer,
+		factory: LiveAnnouncer.ɵfac
+	});
 };
-_LiveAnnouncer = LiveAnnouncer;
-_defineProperty(LiveAnnouncer, "ɵfac", function LiveAnnouncer_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _LiveAnnouncer)();
-});
-_defineProperty(LiveAnnouncer, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _LiveAnnouncer,
-	factory: _LiveAnnouncer.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LiveAnnouncer, [{ type: Service }], () => [], null);
 })();
-var CdkAriaLive = class {
+var CdkAriaLive = class CdkAriaLive {
+	_elementRef = inject(ElementRef);
+	_liveAnnouncer = inject(LiveAnnouncer);
+	_contentObserver = inject(ContentObserver);
+	_ngZone = inject(NgZone);
 	get politeness() {
 		return this._politeness;
 	}
@@ -5342,47 +5165,41 @@ var CdkAriaLive = class {
 			});
 		});
 	}
+	_politeness = "polite";
+	duration;
+	_previousAnnouncedText;
+	_subscription;
 	constructor() {
-		_defineProperty(this, "_elementRef", inject(ElementRef));
-		_defineProperty(this, "_liveAnnouncer", inject(LiveAnnouncer));
-		_defineProperty(this, "_contentObserver", inject(ContentObserver));
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_politeness", "polite");
-		_defineProperty(this, "duration", void 0);
-		_defineProperty(this, "_previousAnnouncedText", void 0);
-		_defineProperty(this, "_subscription", void 0);
 		inject(_CdkPrivateStyleLoader).load(_VisuallyHiddenLoader);
 	}
 	ngOnDestroy() {
-		var _this$_subscription;
-		(_this$_subscription = this._subscription) === null || _this$_subscription === void 0 || _this$_subscription.unsubscribe();
+		this._subscription?.unsubscribe();
 	}
-};
-_CdkAriaLive = CdkAriaLive;
-_defineProperty(CdkAriaLive, "ɵfac", function CdkAriaLive_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkAriaLive)();
-});
-_defineProperty(CdkAriaLive, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _CdkAriaLive,
-	selectors: [[
-		"",
-		"cdkAriaLive",
-		""
-	]],
-	inputs: {
-		politeness: [
-			0,
+	static ɵfac = function CdkAriaLive_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkAriaLive)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: CdkAriaLive,
+		selectors: [[
+			"",
 			"cdkAriaLive",
-			"politeness"
-		],
-		duration: [
-			0,
-			"cdkAriaLiveDuration",
-			"duration"
-		]
-	},
-	exportAs: ["cdkAriaLive"]
-}));
+			""
+		]],
+		inputs: {
+			politeness: [
+				0,
+				"cdkAriaLive",
+				"politeness"
+			],
+			duration: [
+				0,
+				"cdkAriaLiveDuration",
+				"duration"
+			]
+		},
+		exportAs: ["cdkAriaLive"]
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkAriaLive, [{
 		type: Directive,
@@ -5410,12 +5227,12 @@ var HighContrastMode;
 var BLACK_ON_WHITE_CSS_CLASS = "cdk-high-contrast-black-on-white";
 var WHITE_ON_BLACK_CSS_CLASS = "cdk-high-contrast-white-on-black";
 var HIGH_CONTRAST_MODE_ACTIVE_CSS_CLASS = "cdk-high-contrast-active";
-var HighContrastModeDetector = class {
+var HighContrastModeDetector = class HighContrastModeDetector {
+	_platform = inject(Platform);
+	_hasCheckedHighContrastMode = false;
+	_document = inject(DOCUMENT);
+	_breakpointSubscription;
 	constructor() {
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_hasCheckedHighContrastMode", false);
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_breakpointSubscription", void 0);
 		this._breakpointSubscription = inject(BreakpointObserver).observe("(forced-colors: active)").subscribe(() => {
 			if (this._hasCheckedHighContrastMode) {
 				this._hasCheckedHighContrastMode = false;
@@ -5455,42 +5272,40 @@ var HighContrastModeDetector = class {
 			else if (mode === HighContrastMode.WHITE_ON_BLACK) bodyClasses.add(HIGH_CONTRAST_MODE_ACTIVE_CSS_CLASS, WHITE_ON_BLACK_CSS_CLASS);
 		}
 	}
+	static ɵfac = function HighContrastModeDetector_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || HighContrastModeDetector)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: HighContrastModeDetector,
+		factory: HighContrastModeDetector.ɵfac
+	});
 };
-_HighContrastModeDetector = HighContrastModeDetector;
-_defineProperty(HighContrastModeDetector, "ɵfac", function HighContrastModeDetector_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _HighContrastModeDetector)();
-});
-_defineProperty(HighContrastModeDetector, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _HighContrastModeDetector,
-	factory: _HighContrastModeDetector.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HighContrastModeDetector, [{ type: Service }], () => [], null);
 })();
-var A11yModule = class {
+var A11yModule = class A11yModule {
 	constructor() {
 		inject(HighContrastModeDetector)._applyBodyHighContrastModeCssClasses();
 	}
+	static ɵfac = function A11yModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || A11yModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: A11yModule,
+		imports: [
+			ObserversModule,
+			CdkAriaLive,
+			CdkTrapFocus,
+			CdkMonitorFocus
+		],
+		exports: [
+			CdkAriaLive,
+			CdkTrapFocus,
+			CdkMonitorFocus
+		]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({ imports: [ObserversModule] });
 };
-_A11yModule = A11yModule;
-_defineProperty(A11yModule, "ɵfac", function A11yModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _A11yModule)();
-});
-_defineProperty(A11yModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _A11yModule,
-	imports: [
-		ObserversModule,
-		CdkAriaLive,
-		CdkTrapFocus,
-		CdkMonitorFocus
-	],
-	exports: [
-		CdkAriaLive,
-		CdkTrapFocus,
-		CdkMonitorFocus
-	]
-}));
-_defineProperty(A11yModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({ imports: [ObserversModule] }));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(A11yModule, [{
 		type: NgModule,
@@ -5511,77 +5326,66 @@ _defineProperty(A11yModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({ import
 })();
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/dialog.mjs
-var _CdkDialogContainer;
-var _Dialog;
-var _DialogModule;
 function CdkDialogContainer_ng_template_0_Template(rf, ctx) {}
 var DialogConfig = class {
-	constructor() {
-		_defineProperty(this, "viewContainerRef", void 0);
-		_defineProperty(this, "injector", void 0);
-		_defineProperty(this, "id", void 0);
-		_defineProperty(this, "role", "dialog");
-		_defineProperty(this, "panelClass", "");
-		_defineProperty(this, "hasBackdrop", true);
-		_defineProperty(this, "backdropClass", "");
-		_defineProperty(this, "disableClose", false);
-		_defineProperty(this, "closePredicate", void 0);
-		_defineProperty(this, "width", "");
-		_defineProperty(this, "height", "");
-		_defineProperty(this, "minWidth", void 0);
-		_defineProperty(this, "minHeight", void 0);
-		_defineProperty(this, "maxWidth", void 0);
-		_defineProperty(this, "maxHeight", void 0);
-		_defineProperty(this, "positionStrategy", void 0);
-		_defineProperty(this, "data", null);
-		_defineProperty(this, "direction", void 0);
-		_defineProperty(this, "ariaDescribedBy", null);
-		_defineProperty(this, "ariaLabelledBy", null);
-		_defineProperty(this, "ariaLabel", null);
-		_defineProperty(this, "ariaModal", false);
-		_defineProperty(this, "autoFocus", "first-tabbable");
-		_defineProperty(this, "restoreFocus", true);
-		_defineProperty(this, "scrollStrategy", void 0);
-		_defineProperty(this, "closeOnNavigation", true);
-		_defineProperty(this, "closeOnDestroy", true);
-		_defineProperty(this, "closeOnOverlayDetachments", true);
-		_defineProperty(this, "disableAnimations", false);
-		_defineProperty(this, "providers", void 0);
-		_defineProperty(this, "container", void 0);
-		_defineProperty(this, "templateContext", void 0);
-		_defineProperty(this, "bindings", void 0);
-	}
+	viewContainerRef;
+	injector;
+	id;
+	role = "dialog";
+	panelClass = "";
+	hasBackdrop = true;
+	backdropClass = "";
+	disableClose = false;
+	closePredicate;
+	width = "";
+	height = "";
+	minWidth;
+	minHeight;
+	maxWidth;
+	maxHeight;
+	positionStrategy;
+	data = null;
+	direction;
+	ariaDescribedBy = null;
+	ariaLabelledBy = null;
+	ariaLabel = null;
+	ariaModal = false;
+	autoFocus = "first-tabbable";
+	restoreFocus = true;
+	scrollStrategy;
+	closeOnNavigation = true;
+	closeOnDestroy = true;
+	closeOnOverlayDetachments = true;
+	disableAnimations = false;
+	providers;
+	container;
+	templateContext;
+	bindings;
 };
 function throwDialogContentAlreadyAttachedError() {
 	throw Error("Attempting to attach dialog content after content is already attached");
 }
-var CdkDialogContainer = class extends BasePortalOutlet {
+var CdkDialogContainer = class CdkDialogContainer extends BasePortalOutlet {
+	_elementRef = inject(ElementRef);
+	_focusTrapFactory = inject(FocusTrapFactory);
+	_config;
+	_interactivityChecker = inject(InteractivityChecker);
+	_ngZone = inject(NgZone);
+	_focusMonitor = inject(FocusMonitor);
+	_renderer = inject(Renderer2);
+	_changeDetectorRef = inject(ChangeDetectorRef);
+	_injector = inject(Injector);
+	_platform = inject(Platform);
+	_document = inject(DOCUMENT);
+	_portalOutlet;
+	_focusTrapped = new Subject();
+	_focusTrap = null;
+	_elementFocusedBeforeDialogWasOpened = null;
+	_closeInteractionType = null;
+	_ariaLabelledByQueue = [];
+	_isDestroyed = false;
 	constructor() {
 		super();
-		_defineProperty(this, "_elementRef", inject(ElementRef));
-		_defineProperty(this, "_focusTrapFactory", inject(FocusTrapFactory));
-		_defineProperty(this, "_config", void 0);
-		_defineProperty(this, "_interactivityChecker", inject(InteractivityChecker));
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_focusMonitor", inject(FocusMonitor));
-		_defineProperty(this, "_renderer", inject(Renderer2));
-		_defineProperty(this, "_changeDetectorRef", inject(ChangeDetectorRef));
-		_defineProperty(this, "_injector", inject(Injector));
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_portalOutlet", void 0);
-		_defineProperty(this, "_focusTrapped", new Subject());
-		_defineProperty(this, "_focusTrap", null);
-		_defineProperty(this, "_elementFocusedBeforeDialogWasOpened", null);
-		_defineProperty(this, "_closeInteractionType", null);
-		_defineProperty(this, "_ariaLabelledByQueue", []);
-		_defineProperty(this, "_isDestroyed", false);
-		_defineProperty(this, "attachDomPortal", (portal) => {
-			if (this._portalOutlet.hasAttached() && (typeof ngDevMode === "undefined" || ngDevMode)) throwDialogContentAlreadyAttachedError();
-			const result = this._portalOutlet.attachDomPortal(portal);
-			this._contentAttached();
-			return result;
-		});
 		this._config = inject(DialogConfig, { optional: true }) || new DialogConfig();
 		if (this._config.ariaLabelledBy) this._ariaLabelledByQueue.push(this._config.ariaLabelledBy);
 	}
@@ -5620,6 +5424,12 @@ var CdkDialogContainer = class extends BasePortalOutlet {
 		this._contentAttached();
 		return result;
 	}
+	attachDomPortal = (portal) => {
+		if (this._portalOutlet.hasAttached() && (typeof ngDevMode === "undefined" || ngDevMode)) throwDialogContentAlreadyAttachedError();
+		const result = this._portalOutlet.attachDomPortal(portal);
+		this._contentAttached();
+		return result;
+	};
 	_recaptureFocus() {
 		if (!this._containsFocus()) this._trapFocus();
 	}
@@ -5653,8 +5463,7 @@ var CdkDialogContainer = class extends BasePortalOutlet {
 					break;
 				case true:
 				case "first-tabbable":
-					var _this$_focusTrap;
-					if (!((_this$_focusTrap = this._focusTrap) === null || _this$_focusTrap === void 0 ? void 0 : _this$_focusTrap.focusInitialElement(options))) this._focusDialogContainer(options);
+					if (!this._focusTrap?.focusInitialElement(options)) this._focusDialogContainer(options);
 					break;
 				case "first-heading":
 					this._focusByCssSelector("h1, h2, h3, h4, h5, h6, [role=\"heading\"]", options);
@@ -5683,8 +5492,7 @@ var CdkDialogContainer = class extends BasePortalOutlet {
 		if (this._focusTrap) this._focusTrap.destroy();
 	}
 	_focusDialogContainer(options) {
-		var _this$_elementRef$nat, _this$_elementRef$nat2;
-		(_this$_elementRef$nat = (_this$_elementRef$nat2 = this._elementRef.nativeElement).focus) === null || _this$_elementRef$nat === void 0 || _this$_elementRef$nat.call(_this$_elementRef$nat2, options);
+		this._elementRef.nativeElement.focus?.(options);
 	}
 	_containsFocus() {
 		const element = this._elementRef.nativeElement;
@@ -5697,43 +5505,42 @@ var CdkDialogContainer = class extends BasePortalOutlet {
 			if (this._document) this._elementFocusedBeforeDialogWasOpened = _getFocusedElementPierceShadowDom();
 		}
 	}
+	static ɵfac = function CdkDialogContainer_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || CdkDialogContainer)();
+	};
+	static ɵcmp = /* @__PURE__ */ ɵɵdefineComponent({
+		type: CdkDialogContainer,
+		selectors: [["cdk-dialog-container"]],
+		viewQuery: function CdkDialogContainer_Query(rf, ctx) {
+			if (rf & 1) ɵɵviewQuery(CdkPortalOutlet, 7);
+			if (rf & 2) {
+				let _t;
+				ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._portalOutlet = _t.first);
+			}
+		},
+		hostAttrs: [
+			"tabindex",
+			"-1",
+			1,
+			"cdk-dialog-container"
+		],
+		hostVars: 6,
+		hostBindings: function CdkDialogContainer_HostBindings(rf, ctx) {
+			if (rf & 2) ɵɵattribute("id", ctx._config.id || null)("role", ctx._config.role)("aria-modal", ctx._config.ariaModal)("aria-labelledby", ctx._config.ariaLabel ? null : ctx._ariaLabelledByQueue[0])("aria-label", ctx._config.ariaLabel)("aria-describedby", ctx._config.ariaDescribedBy || null);
+		},
+		features: [ɵɵInheritDefinitionFeature],
+		decls: 1,
+		vars: 0,
+		consts: [["cdkPortalOutlet", ""]],
+		template: function CdkDialogContainer_Template(rf, ctx) {
+			if (rf & 1) ɵɵtemplate(0, CdkDialogContainer_ng_template_0_Template, 0, 0, "ng-template", 0);
+		},
+		dependencies: [CdkPortalOutlet],
+		styles: [".cdk-dialog-container {\n  display: block;\n  width: 100%;\n  height: 100%;\n  min-height: inherit;\n  max-height: inherit;\n}\n"],
+		encapsulation: 2,
+		changeDetection: 1
+	});
 };
-_CdkDialogContainer = CdkDialogContainer;
-_defineProperty(CdkDialogContainer, "ɵfac", function CdkDialogContainer_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _CdkDialogContainer)();
-});
-_defineProperty(CdkDialogContainer, "ɵcmp", /* @__PURE__ */ ɵɵdefineComponent({
-	type: _CdkDialogContainer,
-	selectors: [["cdk-dialog-container"]],
-	viewQuery: function CdkDialogContainer_Query(rf, ctx) {
-		if (rf & 1) ɵɵviewQuery(CdkPortalOutlet, 7);
-		if (rf & 2) {
-			let _t;
-			ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._portalOutlet = _t.first);
-		}
-	},
-	hostAttrs: [
-		"tabindex",
-		"-1",
-		1,
-		"cdk-dialog-container"
-	],
-	hostVars: 6,
-	hostBindings: function CdkDialogContainer_HostBindings(rf, ctx) {
-		if (rf & 2) ɵɵattribute("id", ctx._config.id || null)("role", ctx._config.role)("aria-modal", ctx._config.ariaModal)("aria-labelledby", ctx._config.ariaLabel ? null : ctx._ariaLabelledByQueue[0])("aria-label", ctx._config.ariaLabel)("aria-describedby", ctx._config.ariaDescribedBy || null);
-	},
-	features: [ɵɵInheritDefinitionFeature],
-	decls: 1,
-	vars: 0,
-	consts: [["cdkPortalOutlet", ""]],
-	template: function CdkDialogContainer_Template(rf, ctx) {
-		if (rf & 1) ɵɵtemplate(0, CdkDialogContainer_ng_template_0_Template, 0, 0, "ng-template", 0);
-	},
-	dependencies: [CdkPortalOutlet],
-	styles: [".cdk-dialog-container {\n  display: block;\n  width: 100%;\n  height: 100%;\n  min-height: inherit;\n  max-height: inherit;\n}\n"],
-	encapsulation: 2,
-	changeDetection: 1
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CdkDialogContainer, [{
 		type: Component,
@@ -5761,19 +5568,19 @@ _defineProperty(CdkDialogContainer, "ɵcmp", /* @__PURE__ */ ɵɵdefineComponent
 	}] });
 })();
 var DialogRef = class {
+	overlayRef;
+	config;
+	componentInstance = null;
+	componentRef = null;
+	containerInstance;
+	disableClose;
+	closed = new Subject();
+	backdropClick;
+	keydownEvents;
+	outsidePointerEvents;
+	id;
+	_detachSubscription;
 	constructor(overlayRef, config) {
-		_defineProperty(this, "overlayRef", void 0);
-		_defineProperty(this, "config", void 0);
-		_defineProperty(this, "componentInstance", null);
-		_defineProperty(this, "componentRef", null);
-		_defineProperty(this, "containerInstance", void 0);
-		_defineProperty(this, "disableClose", void 0);
-		_defineProperty(this, "closed", new Subject());
-		_defineProperty(this, "backdropClick", void 0);
-		_defineProperty(this, "keydownEvents", void 0);
-		_defineProperty(this, "outsidePointerEvents", void 0);
-		_defineProperty(this, "id", void 0);
-		_defineProperty(this, "_detachSubscription", void 0);
 		this.overlayRef = overlayRef;
 		this.config = config;
 		this.disableClose = config.disableClose;
@@ -5789,10 +5596,7 @@ var DialogRef = class {
 		});
 		this.backdropClick.subscribe(() => {
 			if (!this.disableClose && this._canClose()) this.close(void 0, { focusOrigin: "mouse" });
-			else {
-				var _this$containerInstan, _this$containerInstan2;
-				(_this$containerInstan = (_this$containerInstan2 = this.containerInstance)._recaptureFocus) === null || _this$containerInstan === void 0 || _this$containerInstan.call(_this$containerInstan2);
-			}
+			else this.containerInstance._recaptureFocus?.();
 		});
 		this._detachSubscription = overlayRef.detachments().subscribe(() => {
 			if (config.closeOnOverlayDetachments !== false) this.close();
@@ -5801,7 +5605,7 @@ var DialogRef = class {
 	close(result, options) {
 		if (this._canClose(result)) {
 			const closedSubject = this.closed;
-			this.containerInstance._closeInteractionType = (options === null || options === void 0 ? void 0 : options.focusOrigin) || "program";
+			this.containerInstance._closeInteractionType = options?.focusOrigin || "program";
 			this._detachSubscription.unsubscribe();
 			this.overlayRef.dispose();
 			closedSubject.next(result);
@@ -5857,30 +5661,31 @@ function getDirectionality(value) {
 	};
 }
 var Dialog = class Dialog {
-	constructor() {
-		_defineProperty(this, "_injector", inject(Injector));
-		_defineProperty(this, "_defaultOptions", inject(DEFAULT_DIALOG_CONFIG, { optional: true }));
-		_defineProperty(this, "_parentDialog", inject(Dialog, {
-			optional: true,
-			skipSelf: true
-		}));
-		_defineProperty(this, "_overlayContainer", inject(OverlayContainer));
-		_defineProperty(this, "_idGenerator", inject(_IdGenerator));
-		_defineProperty(this, "_openDialogsAtThisLevel", []);
-		_defineProperty(this, "_afterAllClosedAtThisLevel", new Subject());
-		_defineProperty(this, "_afterOpenedAtThisLevel", new Subject());
-		_defineProperty(this, "_ariaHiddenElements", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_scrollStrategy", inject(DIALOG_SCROLL_STRATEGY));
-		_defineProperty(this, "afterAllClosed", defer(() => this.openDialogs.length ? this._getAfterAllClosed() : this._getAfterAllClosed().pipe(startWith(void 0))));
-	}
+	_injector = inject(Injector);
+	_defaultOptions = inject(DEFAULT_DIALOG_CONFIG, { optional: true });
+	_parentDialog = inject(Dialog, {
+		optional: true,
+		skipSelf: true
+	});
+	_overlayContainer = inject(OverlayContainer);
+	_idGenerator = inject(_IdGenerator);
+	_openDialogsAtThisLevel = [];
+	_afterAllClosedAtThisLevel = new Subject();
+	_afterOpenedAtThisLevel = new Subject();
+	_ariaHiddenElements = /* @__PURE__ */ new Map();
+	_scrollStrategy = inject(DIALOG_SCROLL_STRATEGY);
 	get openDialogs() {
 		return this._parentDialog ? this._parentDialog.openDialogs : this._openDialogsAtThisLevel;
 	}
 	get afterOpened() {
 		return this._parentDialog ? this._parentDialog.afterOpened : this._afterOpenedAtThisLevel;
 	}
+	afterAllClosed = defer(() => this.openDialogs.length ? this._getAfterAllClosed() : this._getAfterAllClosed().pipe(startWith(void 0)));
 	open(componentOrTemplateRef, config) {
-		config = _objectSpread2(_objectSpread2({}, this._defaultOptions || new DialogConfig()), config);
+		config = {
+			...this._defaultOptions || new DialogConfig(),
+			...config
+		};
 		config.id = config.id || this._idGenerator.getId("cdk-dialog-");
 		if (config.id && this.getDialogById(config.id) && (typeof ngDevMode === "undefined" || ngDevMode)) throw Error(`Dialog with id "${config.id}" exists already. The dialog id must be unique.`);
 		const overlayConfig = this._getOverlayConfig(config);
@@ -5936,8 +5741,7 @@ var Dialog = class Dialog {
 		return state;
 	}
 	_attachContainer(overlay, dialogRef, config) {
-		var _config$viewContainer;
-		const userInjector = config.injector || ((_config$viewContainer = config.viewContainerRef) === null || _config$viewContainer === void 0 ? void 0 : _config$viewContainer.injector);
+		const userInjector = config.injector || config.viewContainerRef?.injector;
 		const providers = [
 			{
 				provide: DialogConfig,
@@ -5972,7 +5776,10 @@ var Dialog = class Dialog {
 				$implicit: config.data,
 				dialogRef
 			};
-			if (config.templateContext) context = _objectSpread2(_objectSpread2({}, context), typeof config.templateContext === "function" ? config.templateContext() : config.templateContext);
+			if (config.templateContext) context = {
+				...context,
+				...typeof config.templateContext === "function" ? config.templateContext() : config.templateContext
+			};
 			dialogContainer.attachTemplatePortal(new TemplatePortal(componentOrTemplateRef, null, context, injector));
 		} else {
 			const injector = this._createInjector(config, dialogRef, dialogContainer, this._injector);
@@ -5982,8 +5789,7 @@ var Dialog = class Dialog {
 		}
 	}
 	_createInjector(config, dialogRef, dialogContainer, fallbackInjector) {
-		var _config$viewContainer2;
-		const userInjector = config.injector || ((_config$viewContainer2 = config.viewContainerRef) === null || _config$viewContainer2 === void 0 ? void 0 : _config$viewContainer2.injector);
+		const userInjector = config.injector || config.viewContainerRef?.injector;
 		const providers = [{
 			provide: DIALOG_DATA,
 			useValue: config.data
@@ -6032,15 +5838,14 @@ var Dialog = class Dialog {
 		const parent = this._parentDialog;
 		return parent ? parent._getAfterAllClosed() : this._afterAllClosedAtThisLevel;
 	}
+	static ɵfac = function Dialog_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || Dialog)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: Dialog,
+		factory: Dialog.ɵfac
+	});
 };
-_Dialog = Dialog;
-_defineProperty(Dialog, "ɵfac", function Dialog_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _Dialog)();
-});
-_defineProperty(Dialog, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _Dialog,
-	factory: _Dialog.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Dialog, [{ type: Service }], null, null);
 })();
@@ -6048,30 +5853,30 @@ function reverseForEach(items, callback) {
 	let i = items.length;
 	while (i--) callback(items[i]);
 }
-var DialogModule = class {};
-_DialogModule = DialogModule;
-_defineProperty(DialogModule, "ɵfac", function DialogModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _DialogModule)();
-});
-_defineProperty(DialogModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _DialogModule,
-	imports: [
-		OverlayModule,
-		PortalModule,
-		A11yModule,
-		CdkDialogContainer
-	],
-	exports: [PortalModule, CdkDialogContainer]
-}));
-_defineProperty(DialogModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({
-	providers: [Dialog],
-	imports: [
-		OverlayModule,
-		PortalModule,
-		A11yModule,
-		PortalModule
-	]
-}));
+var DialogModule = class DialogModule {
+	static ɵfac = function DialogModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || DialogModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: DialogModule,
+		imports: [
+			OverlayModule,
+			PortalModule,
+			A11yModule,
+			CdkDialogContainer
+		],
+		exports: [PortalModule, CdkDialogContainer]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({
+		providers: [Dialog],
+		imports: [
+			OverlayModule,
+			PortalModule,
+			A11yModule,
+			PortalModule
+		]
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DialogModule, [{
 		type: NgModule,
@@ -6089,14 +5894,13 @@ _defineProperty(DialogModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({
 })();
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/layout.mjs
-var _LayoutModule;
-var LayoutModule = class {};
-_LayoutModule = LayoutModule;
-_defineProperty(LayoutModule, "ɵfac", function LayoutModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _LayoutModule)();
-});
-_defineProperty(LayoutModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({ type: _LayoutModule }));
-_defineProperty(LayoutModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({}));
+var LayoutModule = class LayoutModule {
+	static ɵfac = function LayoutModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || LayoutModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({ type: LayoutModule });
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LayoutModule, [{
 		type: NgModule,
@@ -6108,9 +5912,8 @@ _defineProperty(LayoutModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({}));
 var MATERIAL_ANIMATIONS = new InjectionToken("MATERIAL_ANIMATIONS");
 var reducedMotion = null;
 function _getAnimationsState() {
-	var _inject, _reducedMotion;
-	if (((_inject = inject(MATERIAL_ANIMATIONS, { optional: true })) === null || _inject === void 0 ? void 0 : _inject.animationsDisabled) || inject(ANIMATION_MODULE_TYPE, { optional: true }) === "NoopAnimations") return "di-disabled";
-	(_reducedMotion = reducedMotion) !== null && _reducedMotion !== void 0 || (reducedMotion = inject(MediaMatcher).matchMedia("(prefers-reduced-motion)").matches);
+	if (inject(MATERIAL_ANIMATIONS, { optional: true })?.animationsDisabled || inject(ANIMATION_MODULE_TYPE, { optional: true }) === "NoopAnimations") return "di-disabled";
+	reducedMotion ??= inject(MediaMatcher).matchMedia("(prefers-reduced-motion)").matches;
 	return reducedMotion ? "reduced-motion" : "enabled";
 }
 function _animationsDisabled() {
@@ -6118,9 +5921,6 @@ function _animationsDisabled() {
 }
 //#endregion
 //#region node_modules/@angular/cdk/fesm2022/a11y.mjs
-var _AriaDescriber;
-var _FocusTrapManager;
-var _ConfigurableFocusTrapFactory;
 var ID_DELIMITER = " ";
 function addAriaReferencedId(el, attr, id) {
 	const ids = getAriaReferenceIds(el, attr);
@@ -6137,20 +5937,18 @@ function removeAriaReferencedId(el, attr, id) {
 	else el.removeAttribute(attr);
 }
 function getAriaReferenceIds(el, attr) {
-	var _attrValue$match;
-	const attrValue = el.getAttribute(attr);
-	return (_attrValue$match = attrValue === null || attrValue === void 0 ? void 0 : attrValue.match(/\S+/g)) !== null && _attrValue$match !== void 0 ? _attrValue$match : [];
+	return el.getAttribute(attr)?.match(/\S+/g) ?? [];
 }
 var CDK_DESCRIBEDBY_ID_PREFIX = "cdk-describedby-message";
 var CDK_DESCRIBEDBY_HOST_ATTRIBUTE = "cdk-describedby-host";
 var nextId = 0;
-var AriaDescriber = class {
+var AriaDescriber = class AriaDescriber {
+	_platform = inject(Platform);
+	_document = inject(DOCUMENT);
+	_messageRegistry = /* @__PURE__ */ new Map();
+	_messagesContainer = null;
+	_id = `${nextId++}`;
 	constructor() {
-		_defineProperty(this, "_platform", inject(Platform));
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_messageRegistry", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_messagesContainer", null);
-		_defineProperty(this, "_id", `${nextId++}`);
 		inject(_CdkPrivateStyleLoader).load(_VisuallyHiddenLoader);
 		this._id = inject(APP_ID) + "-" + nextId++;
 	}
@@ -6167,7 +5965,6 @@ var AriaDescriber = class {
 		if (!this._isElementDescribedByMessage(hostElement, key)) this._addMessageReference(hostElement, key);
 	}
 	removeDescription(hostElement, message, role) {
-		var _this$_messagesContai;
 		if (!message || !this._isElementNode(hostElement)) return;
 		const key = getKey(message, role);
 		if (this._isElementDescribedByMessage(hostElement, key)) this._removeMessageReference(hostElement, key);
@@ -6175,19 +5972,18 @@ var AriaDescriber = class {
 			const registeredMessage = this._messageRegistry.get(key);
 			if (registeredMessage && registeredMessage.referenceCount === 0) this._deleteMessageElement(key);
 		}
-		if (((_this$_messagesContai = this._messagesContainer) === null || _this$_messagesContai === void 0 ? void 0 : _this$_messagesContai.childNodes.length) === 0) {
+		if (this._messagesContainer?.childNodes.length === 0) {
 			this._messagesContainer.remove();
 			this._messagesContainer = null;
 		}
 	}
 	ngOnDestroy() {
-		var _this$_messagesContai2;
 		const describedElements = this._document.querySelectorAll(`[${CDK_DESCRIBEDBY_HOST_ATTRIBUTE}="${this._id}"]`);
 		for (let i = 0; i < describedElements.length; i++) {
 			this._removeCdkDescribedByReferenceIds(describedElements[i]);
 			describedElements[i].removeAttribute(CDK_DESCRIBEDBY_HOST_ATTRIBUTE);
 		}
-		(_this$_messagesContai2 = this._messagesContainer) === null || _this$_messagesContai2 === void 0 || _this$_messagesContai2.remove();
+		this._messagesContainer?.remove();
 		this._messagesContainer = null;
 		this._messageRegistry.clear();
 	}
@@ -6204,8 +6000,7 @@ var AriaDescriber = class {
 		});
 	}
 	_deleteMessageElement(key) {
-		var _this$_messageRegistr;
-		(_this$_messageRegistr = this._messageRegistry.get(key)) === null || _this$_messageRegistr === void 0 || (_this$_messageRegistr = _this$_messageRegistr.messageElement) === null || _this$_messageRegistr === void 0 || _this$_messageRegistr.remove();
+		this._messageRegistry.get(key)?.messageElement?.remove();
 		this._messageRegistry.delete(key);
 	}
 	_createMessagesContainer() {
@@ -6253,15 +6048,14 @@ var AriaDescriber = class {
 	_isElementNode(element) {
 		return element.nodeType === this._document.ELEMENT_NODE;
 	}
+	static ɵfac = function AriaDescriber_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || AriaDescriber)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: AriaDescriber,
+		factory: AriaDescriber.ɵfac
+	});
 };
-_AriaDescriber = AriaDescriber;
-_defineProperty(AriaDescriber, "ɵfac", function AriaDescriber_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _AriaDescriber)();
-});
-_defineProperty(AriaDescriber, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _AriaDescriber,
-	factory: _AriaDescriber.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AriaDescriber, [{ type: Service }], () => [], null);
 })();
@@ -6272,6 +6066,8 @@ function setMessageId(element, serviceId) {
 	if (!element.id) element.id = `${CDK_DESCRIBEDBY_ID_PREFIX}-${serviceId}-${nextId++}`;
 }
 var ConfigurableFocusTrap = class extends FocusTrap {
+	_focusTrapManager;
+	_inertStrategy;
 	get enabled() {
 		return this._enabled;
 	}
@@ -6282,8 +6078,6 @@ var ConfigurableFocusTrap = class extends FocusTrap {
 	}
 	constructor(_element, _checker, _ngZone, _document, _focusTrapManager, _inertStrategy, config, injector) {
 		super(_element, _checker, _ngZone, _document, config.defer, injector);
-		_defineProperty(this, "_focusTrapManager", void 0);
-		_defineProperty(this, "_inertStrategy", void 0);
 		this._focusTrapManager = _focusTrapManager;
 		this._inertStrategy = _inertStrategy;
 		this._focusTrapManager.register(this);
@@ -6302,9 +6096,7 @@ var ConfigurableFocusTrap = class extends FocusTrap {
 	}
 };
 var EventListenerFocusTrapInertStrategy = class {
-	constructor() {
-		_defineProperty(this, "_listener", null);
-	}
+	_listener = null;
 	preventFocus(focusTrap) {
 		if (this._listener) focusTrap._document.removeEventListener("focus", this._listener, true);
 		this._listener = (e) => this._trapFocus(focusTrap, e);
@@ -6318,19 +6110,16 @@ var EventListenerFocusTrapInertStrategy = class {
 		this._listener = null;
 	}
 	_trapFocus(focusTrap, event) {
-		var _target$closest;
 		const target = event.target;
 		const focusTrapRoot = focusTrap._element;
-		if (target && !focusTrapRoot.contains(target) && !((_target$closest = target.closest) === null || _target$closest === void 0 ? void 0 : _target$closest.call(target, "div.cdk-overlay-pane"))) setTimeout(() => {
+		if (target && !focusTrapRoot.contains(target) && !target.closest?.("div.cdk-overlay-pane")) setTimeout(() => {
 			if (focusTrap.enabled && !focusTrapRoot.contains(focusTrap._document.activeElement)) focusTrap.focusFirstTabbableElement();
 		});
 	}
 };
 var FOCUS_TRAP_INERT_STRATEGY = new InjectionToken("FOCUS_TRAP_INERT_STRATEGY");
-var FocusTrapManager = class {
-	constructor() {
-		_defineProperty(this, "_focusTrapStack", []);
-	}
+var FocusTrapManager = class FocusTrapManager {
+	_focusTrapStack = [];
 	register(focusTrap) {
 		this._focusTrapStack = this._focusTrapStack.filter((ft) => ft !== focusTrap);
 		let stack = this._focusTrapStack;
@@ -6347,117 +6136,90 @@ var FocusTrapManager = class {
 			if (stack.length) stack[stack.length - 1]._enable();
 		}
 	}
+	static ɵfac = function FocusTrapManager_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || FocusTrapManager)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: FocusTrapManager,
+		factory: FocusTrapManager.ɵfac
+	});
 };
-_FocusTrapManager = FocusTrapManager;
-_defineProperty(FocusTrapManager, "ɵfac", function FocusTrapManager_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _FocusTrapManager)();
-});
-_defineProperty(FocusTrapManager, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _FocusTrapManager,
-	factory: _FocusTrapManager.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(FocusTrapManager, [{ type: Service }], null, null);
 })();
-var ConfigurableFocusTrapFactory = class {
+var ConfigurableFocusTrapFactory = class ConfigurableFocusTrapFactory {
+	_checker = inject(InteractivityChecker);
+	_ngZone = inject(NgZone);
+	_focusTrapManager = inject(FocusTrapManager);
+	_document = inject(DOCUMENT);
+	_inertStrategy;
+	_injector = inject(Injector);
 	constructor() {
-		_defineProperty(this, "_checker", inject(InteractivityChecker));
-		_defineProperty(this, "_ngZone", inject(NgZone));
-		_defineProperty(this, "_focusTrapManager", inject(FocusTrapManager));
-		_defineProperty(this, "_document", inject(DOCUMENT));
-		_defineProperty(this, "_inertStrategy", void 0);
-		_defineProperty(this, "_injector", inject(Injector));
 		const inertStrategy = inject(FOCUS_TRAP_INERT_STRATEGY, { optional: true });
 		this._inertStrategy = inertStrategy || new EventListenerFocusTrapInertStrategy();
 	}
 	create(element, config = { defer: false }) {
 		return new ConfigurableFocusTrap(element, this._checker, this._ngZone, this._document, this._focusTrapManager, this._inertStrategy, config, this._injector);
 	}
+	static ɵfac = function ConfigurableFocusTrapFactory_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || ConfigurableFocusTrapFactory)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: ConfigurableFocusTrapFactory,
+		factory: ConfigurableFocusTrapFactory.ɵfac
+	});
 };
-_ConfigurableFocusTrapFactory = ConfigurableFocusTrapFactory;
-_defineProperty(ConfigurableFocusTrapFactory, "ɵfac", function ConfigurableFocusTrapFactory_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _ConfigurableFocusTrapFactory)();
-});
-_defineProperty(ConfigurableFocusTrapFactory, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _ConfigurableFocusTrapFactory,
-	factory: _ConfigurableFocusTrapFactory.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ConfigurableFocusTrapFactory, [{ type: Service }], () => [], null);
 })();
 //#endregion
 //#region node_modules/@angular/material/fesm2022/dialog.mjs
-var _MatDialogContainer;
-var _MatDialog;
-var _MatDialogClose;
-var _MatDialogLayoutSection;
-var _MatDialogTitle;
-var _MatDialogContent;
-var _MatDialogActions;
-var _MatDialogModule;
 function MatDialogContainer_ng_template_2_Template(rf, ctx) {}
 var MatDialogConfig = class {
-	constructor() {
-		_defineProperty(this, "viewContainerRef", void 0);
-		_defineProperty(this, "injector", void 0);
-		_defineProperty(this, "id", void 0);
-		_defineProperty(this, "role", "dialog");
-		_defineProperty(this, "panelClass", "");
-		_defineProperty(this, "hasBackdrop", true);
-		_defineProperty(this, "backdropClass", "");
-		_defineProperty(this, "disableClose", false);
-		_defineProperty(this, "closePredicate", void 0);
-		_defineProperty(this, "width", "");
-		_defineProperty(this, "height", "");
-		_defineProperty(this, "minWidth", void 0);
-		_defineProperty(this, "minHeight", void 0);
-		_defineProperty(this, "maxWidth", void 0);
-		_defineProperty(this, "maxHeight", void 0);
-		_defineProperty(this, "position", void 0);
-		_defineProperty(this, "data", null);
-		_defineProperty(this, "direction", void 0);
-		_defineProperty(this, "ariaDescribedBy", null);
-		_defineProperty(this, "ariaLabelledBy", null);
-		_defineProperty(this, "ariaLabel", null);
-		_defineProperty(this, "ariaModal", false);
-		_defineProperty(this, "autoFocus", "first-tabbable");
-		_defineProperty(this, "restoreFocus", true);
-		_defineProperty(this, "delayFocusTrap", true);
-		_defineProperty(this, "scrollStrategy", void 0);
-		_defineProperty(this, "closeOnNavigation", true);
-		_defineProperty(this, "enterAnimationDuration", void 0);
-		_defineProperty(this, "exitAnimationDuration", void 0);
-		_defineProperty(this, "bindings", void 0);
-	}
+	viewContainerRef;
+	injector;
+	id;
+	role = "dialog";
+	panelClass = "";
+	hasBackdrop = true;
+	backdropClass = "";
+	disableClose = false;
+	closePredicate;
+	width = "";
+	height = "";
+	minWidth;
+	minHeight;
+	maxWidth;
+	maxHeight;
+	position;
+	data = null;
+	direction;
+	ariaDescribedBy = null;
+	ariaLabelledBy = null;
+	ariaLabel = null;
+	ariaModal = false;
+	autoFocus = "first-tabbable";
+	restoreFocus = true;
+	delayFocusTrap = true;
+	scrollStrategy;
+	closeOnNavigation = true;
+	enterAnimationDuration;
+	exitAnimationDuration;
+	bindings;
 };
 var OPEN_CLASS = "mdc-dialog--open";
 var OPENING_CLASS = "mdc-dialog--opening";
 var CLOSING_CLASS = "mdc-dialog--closing";
 var OPEN_ANIMATION_DURATION = 150;
 var CLOSE_ANIMATION_DURATION = 75;
-var MatDialogContainer = class extends CdkDialogContainer {
-	constructor(..._args) {
-		var _parseCssTime, _parseCssTime2;
-		super(..._args);
-		_defineProperty(this, "_animationStateChanged", new EventEmitter());
-		_defineProperty(this, "_animationsEnabled", !_animationsDisabled());
-		_defineProperty(this, "_actionSectionCount", 0);
-		_defineProperty(this, "_hostElement", this._elementRef.nativeElement);
-		_defineProperty(this, "_enterAnimationDuration", this._animationsEnabled ? (_parseCssTime = parseCssTime(this._config.enterAnimationDuration)) !== null && _parseCssTime !== void 0 ? _parseCssTime : OPEN_ANIMATION_DURATION : 0);
-		_defineProperty(this, "_exitAnimationDuration", this._animationsEnabled ? (_parseCssTime2 = parseCssTime(this._config.exitAnimationDuration)) !== null && _parseCssTime2 !== void 0 ? _parseCssTime2 : CLOSE_ANIMATION_DURATION : 0);
-		_defineProperty(this, "_animationTimer", null);
-		_defineProperty(this, "_finishDialogOpen", () => {
-			this._clearAnimationClasses();
-			this._openAnimationDone(this._enterAnimationDuration);
-		});
-		_defineProperty(this, "_finishDialogClose", () => {
-			this._clearAnimationClasses();
-			this._animationStateChanged.emit({
-				state: "closed",
-				totalTime: this._exitAnimationDuration
-			});
-		});
-	}
+var MatDialogContainer = class MatDialogContainer extends CdkDialogContainer {
+	_animationStateChanged = new EventEmitter();
+	_animationsEnabled = !_animationsDisabled();
+	_actionSectionCount = 0;
+	_hostElement = this._elementRef.nativeElement;
+	_enterAnimationDuration = this._animationsEnabled ? parseCssTime(this._config.enterAnimationDuration) ?? OPEN_ANIMATION_DURATION : 0;
+	_exitAnimationDuration = this._animationsEnabled ? parseCssTime(this._config.exitAnimationDuration) ?? CLOSE_ANIMATION_DURATION : 0;
+	_animationTimer = null;
 	_contentAttached() {
 		super._contentAttached();
 		this._startOpenAnimation();
@@ -6492,6 +6254,17 @@ var MatDialogContainer = class extends CdkDialogContainer {
 		this._actionSectionCount += delta;
 		this._changeDetectorRef.markForCheck();
 	}
+	_finishDialogOpen = () => {
+		this._clearAnimationClasses();
+		this._openAnimationDone(this._enterAnimationDuration);
+	};
+	_finishDialogClose = () => {
+		this._clearAnimationClasses();
+		this._animationStateChanged.emit({
+			state: "closed",
+			totalTime: this._exitAnimationDuration
+		});
+	};
 	_clearAnimationClasses() {
 		this._hostElement.classList.remove(OPENING_CLASS, CLOSING_CLASS);
 	}
@@ -6524,60 +6297,59 @@ var MatDialogContainer = class extends CdkDialogContainer {
 		ref.location.nativeElement.classList.add("mat-mdc-dialog-component-host");
 		return ref;
 	}
+	static ɵfac = /* @__PURE__ */ (() => {
+		let ɵMatDialogContainer_BaseFactory;
+		return function MatDialogContainer_Factory(__ngFactoryType__) {
+			return (ɵMatDialogContainer_BaseFactory || (ɵMatDialogContainer_BaseFactory = ɵɵgetInheritedFactory(MatDialogContainer)))(__ngFactoryType__ || MatDialogContainer);
+		};
+	})();
+	static ɵcmp = /* @__PURE__ */ ɵɵdefineComponent({
+		type: MatDialogContainer,
+		selectors: [["mat-dialog-container"]],
+		hostAttrs: [
+			"tabindex",
+			"-1",
+			1,
+			"mat-mdc-dialog-container",
+			"mdc-dialog"
+		],
+		hostVars: 10,
+		hostBindings: function MatDialogContainer_HostBindings(rf, ctx) {
+			if (rf & 2) {
+				ɵɵdomProperty("id", ctx._config.id);
+				ɵɵattribute("aria-modal", ctx._config.ariaModal)("role", ctx._config.role)("aria-labelledby", ctx._config.ariaLabel ? null : ctx._ariaLabelledByQueue[0])("aria-label", ctx._config.ariaLabel)("aria-describedby", ctx._config.ariaDescribedBy || null);
+				ɵɵclassProp("_mat-animation-noopable", !ctx._animationsEnabled)("mat-mdc-dialog-container-with-actions", ctx._actionSectionCount > 0);
+			}
+		},
+		features: [ɵɵInheritDefinitionFeature],
+		decls: 3,
+		vars: 0,
+		consts: [
+			[
+				1,
+				"mat-mdc-dialog-inner-container",
+				"mdc-dialog__container"
+			],
+			[
+				1,
+				"mat-mdc-dialog-surface",
+				"mdc-dialog__surface"
+			],
+			["cdkPortalOutlet", ""]
+		],
+		template: function MatDialogContainer_Template(rf, ctx) {
+			if (rf & 1) {
+				ɵɵelementStart(0, "div", 0)(1, "div", 1);
+				ɵɵtemplate(2, MatDialogContainer_ng_template_2_Template, 0, 0, "ng-template", 2);
+				ɵɵelementEnd()();
+			}
+		},
+		dependencies: [CdkPortalOutlet],
+		styles: [".mat-mdc-dialog-container {\n  width: 100%;\n  height: 100%;\n  display: block;\n  box-sizing: border-box;\n  max-height: inherit;\n  min-height: inherit;\n  min-width: inherit;\n  max-width: inherit;\n  outline: 0;\n}\n\n.cdk-overlay-pane.mat-mdc-dialog-panel {\n  max-width: var(--%NS%mat-dialog-container-max-width, 560px);\n  min-width: var(--%NS%mat-dialog-container-min-width, 280px);\n}\n@media (max-width: 599px) {\n  .cdk-overlay-pane.mat-mdc-dialog-panel {\n    max-width: var(--%NS%mat-dialog-container-small-max-width, calc(100vw - 32px));\n  }\n}\n\n.mat-mdc-dialog-inner-container {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: space-around;\n  box-sizing: border-box;\n  height: 100%;\n  opacity: 0;\n  transition: opacity linear var(--%NS%mat-dialog-transition-duration, 0ms);\n  max-height: inherit;\n  min-height: inherit;\n  min-width: inherit;\n  max-width: inherit;\n}\n.mdc-dialog--closing .mat-mdc-dialog-inner-container {\n  transition: opacity 75ms linear;\n  transform: none;\n}\n.mdc-dialog--open .mat-mdc-dialog-inner-container {\n  opacity: 1;\n}\n._mat-animation-noopable .mat-mdc-dialog-inner-container {\n  transition: none;\n}\n\n.mat-mdc-dialog-surface {\n  display: flex;\n  flex-direction: column;\n  flex-grow: 0;\n  flex-shrink: 0;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  position: relative;\n  overflow-y: auto;\n  outline: 0;\n  transform: scale(0.8);\n  transition: transform var(--%NS%mat-dialog-transition-duration, 0ms) cubic-bezier(0, 0, 0.2, 1);\n  max-height: inherit;\n  min-height: inherit;\n  min-width: inherit;\n  max-width: inherit;\n  box-shadow: var(--%NS%mat-dialog-container-elevation-shadow, none);\n  border-radius: var(--%NS%mat-dialog-container-shape, var(--%NS%mat-sys-corner-extra-large, 4px));\n  background-color: var(--%NS%mat-dialog-container-color, var(--%NS%mat-sys-surface, white));\n}\n[dir=rtl] .mat-mdc-dialog-surface {\n  text-align: right;\n}\n.mdc-dialog--open .mat-mdc-dialog-surface, .mdc-dialog--closing .mat-mdc-dialog-surface {\n  transform: none;\n}\n._mat-animation-noopable .mat-mdc-dialog-surface {\n  transition: none;\n}\n.mat-mdc-dialog-surface::before {\n  position: absolute;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  border: 2px solid transparent;\n  border-radius: inherit;\n  content: \"\";\n  pointer-events: none;\n}\n\n.mat-mdc-dialog-title {\n  display: block;\n  position: relative;\n  flex-shrink: 0;\n  box-sizing: border-box;\n  margin: 0 0 1px;\n  padding: var(--%NS%mat-dialog-headline-padding, 6px 24px 13px);\n}\n.mat-mdc-dialog-title::before {\n  display: inline-block;\n  width: 0;\n  height: 40px;\n  content: \"\";\n  vertical-align: 0;\n}\n[dir=rtl] .mat-mdc-dialog-title {\n  text-align: right;\n}\n.mat-mdc-dialog-container .mat-mdc-dialog-title {\n  color: var(--%NS%mat-dialog-subhead-color, var(--%NS%mat-sys-on-surface, rgba(0, 0, 0, 0.87)));\n  font-family: var(--%NS%mat-dialog-subhead-font, var(--%NS%mat-sys-headline-small-font, inherit));\n  line-height: var(--%NS%mat-dialog-subhead-line-height, var(--%NS%mat-sys-headline-small-line-height, 1.5rem));\n  font-size: var(--%NS%mat-dialog-subhead-size, var(--%NS%mat-sys-headline-small-size, 1rem));\n  font-weight: var(--%NS%mat-dialog-subhead-weight, var(--%NS%mat-sys-headline-small-weight, 400));\n  letter-spacing: var(--%NS%mat-dialog-subhead-tracking, var(--%NS%mat-sys-headline-small-tracking, 0.03125em));\n}\n\n.mat-mdc-dialog-content {\n  display: block;\n  flex-grow: 1;\n  box-sizing: border-box;\n  margin: 0;\n  overflow: auto;\n  max-height: 65vh;\n}\n.mat-mdc-dialog-content > :first-child {\n  margin-top: 0;\n}\n.mat-mdc-dialog-content > :last-child {\n  margin-bottom: 0;\n}\n.mat-mdc-dialog-container .mat-mdc-dialog-content {\n  color: var(--%NS%mat-dialog-supporting-text-color, var(--%NS%mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)));\n  font-family: var(--%NS%mat-dialog-supporting-text-font, var(--%NS%mat-sys-body-medium-font, inherit));\n  line-height: var(--%NS%mat-dialog-supporting-text-line-height, var(--%NS%mat-sys-body-medium-line-height, 1.5rem));\n  font-size: var(--%NS%mat-dialog-supporting-text-size, var(--%NS%mat-sys-body-medium-size, 1rem));\n  font-weight: var(--%NS%mat-dialog-supporting-text-weight, var(--%NS%mat-sys-body-medium-weight, 400));\n  letter-spacing: var(--%NS%mat-dialog-supporting-text-tracking, var(--%NS%mat-sys-body-medium-tracking, 0.03125em));\n}\n.mat-mdc-dialog-container .mat-mdc-dialog-content {\n  padding: var(--%NS%mat-dialog-content-padding, 20px 24px);\n}\n.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {\n  padding: var(--%NS%mat-dialog-with-actions-content-padding, 20px 24px 0);\n}\n.mat-mdc-dialog-container .mat-mdc-dialog-title + .mat-mdc-dialog-content {\n  padding-top: 0;\n}\n\n.mat-mdc-dialog-actions {\n  display: flex;\n  position: relative;\n  flex-shrink: 0;\n  flex-wrap: wrap;\n  align-items: center;\n  box-sizing: border-box;\n  min-height: 52px;\n  margin: 0;\n  border-top: 1px solid transparent;\n  padding: var(--%NS%mat-dialog-actions-padding, 16px 24px);\n  justify-content: var(--%NS%mat-dialog-actions-alignment, flex-end);\n}\n@media (forced-colors: active) {\n  .mat-mdc-dialog-actions {\n    border-top-color: CanvasText;\n  }\n}\n.mat-mdc-dialog-actions.mat-mdc-dialog-actions-align-start, .mat-mdc-dialog-actions[align=start] {\n  justify-content: start;\n}\n.mat-mdc-dialog-actions.mat-mdc-dialog-actions-align-center, .mat-mdc-dialog-actions[align=center] {\n  justify-content: center;\n}\n.mat-mdc-dialog-actions.mat-mdc-dialog-actions-align-end, .mat-mdc-dialog-actions[align=end] {\n  justify-content: flex-end;\n}\n.mat-mdc-dialog-actions .mat-button-base + .mat-button-base,\n.mat-mdc-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {\n  margin-left: 8px;\n}\n[dir=rtl] .mat-mdc-dialog-actions .mat-button-base + .mat-button-base,\n[dir=rtl] .mat-mdc-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {\n  margin-left: 0;\n  margin-right: 8px;\n}\n\n.mat-mdc-dialog-component-host {\n  display: contents;\n}\n"],
+		encapsulation: 2,
+		changeDetection: 1
+	});
 };
-_MatDialogContainer = MatDialogContainer;
-_defineProperty(MatDialogContainer, "ɵfac", /* @__PURE__ */ (() => {
-	let ɵMatDialogContainer_BaseFactory;
-	return function MatDialogContainer_Factory(__ngFactoryType__) {
-		return (ɵMatDialogContainer_BaseFactory || (ɵMatDialogContainer_BaseFactory = ɵɵgetInheritedFactory(_MatDialogContainer)))(__ngFactoryType__ || _MatDialogContainer);
-	};
-})());
-_defineProperty(MatDialogContainer, "ɵcmp", /* @__PURE__ */ ɵɵdefineComponent({
-	type: _MatDialogContainer,
-	selectors: [["mat-dialog-container"]],
-	hostAttrs: [
-		"tabindex",
-		"-1",
-		1,
-		"mat-mdc-dialog-container",
-		"mdc-dialog"
-	],
-	hostVars: 10,
-	hostBindings: function MatDialogContainer_HostBindings(rf, ctx) {
-		if (rf & 2) {
-			ɵɵdomProperty("id", ctx._config.id);
-			ɵɵattribute("aria-modal", ctx._config.ariaModal)("role", ctx._config.role)("aria-labelledby", ctx._config.ariaLabel ? null : ctx._ariaLabelledByQueue[0])("aria-label", ctx._config.ariaLabel)("aria-describedby", ctx._config.ariaDescribedBy || null);
-			ɵɵclassProp("_mat-animation-noopable", !ctx._animationsEnabled)("mat-mdc-dialog-container-with-actions", ctx._actionSectionCount > 0);
-		}
-	},
-	features: [ɵɵInheritDefinitionFeature],
-	decls: 3,
-	vars: 0,
-	consts: [
-		[
-			1,
-			"mat-mdc-dialog-inner-container",
-			"mdc-dialog__container"
-		],
-		[
-			1,
-			"mat-mdc-dialog-surface",
-			"mdc-dialog__surface"
-		],
-		["cdkPortalOutlet", ""]
-	],
-	template: function MatDialogContainer_Template(rf, ctx) {
-		if (rf & 1) {
-			ɵɵelementStart(0, "div", 0)(1, "div", 1);
-			ɵɵtemplate(2, MatDialogContainer_ng_template_2_Template, 0, 0, "ng-template", 2);
-			ɵɵelementEnd()();
-		}
-	},
-	dependencies: [CdkPortalOutlet],
-	styles: [".mat-mdc-dialog-container {\n  width: 100%;\n  height: 100%;\n  display: block;\n  box-sizing: border-box;\n  max-height: inherit;\n  min-height: inherit;\n  min-width: inherit;\n  max-width: inherit;\n  outline: 0;\n}\n\n.cdk-overlay-pane.mat-mdc-dialog-panel {\n  max-width: var(--%NS%mat-dialog-container-max-width, 560px);\n  min-width: var(--%NS%mat-dialog-container-min-width, 280px);\n}\n@media (max-width: 599px) {\n  .cdk-overlay-pane.mat-mdc-dialog-panel {\n    max-width: var(--%NS%mat-dialog-container-small-max-width, calc(100vw - 32px));\n  }\n}\n\n.mat-mdc-dialog-inner-container {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: space-around;\n  box-sizing: border-box;\n  height: 100%;\n  opacity: 0;\n  transition: opacity linear var(--%NS%mat-dialog-transition-duration, 0ms);\n  max-height: inherit;\n  min-height: inherit;\n  min-width: inherit;\n  max-width: inherit;\n}\n.mdc-dialog--closing .mat-mdc-dialog-inner-container {\n  transition: opacity 75ms linear;\n  transform: none;\n}\n.mdc-dialog--open .mat-mdc-dialog-inner-container {\n  opacity: 1;\n}\n._mat-animation-noopable .mat-mdc-dialog-inner-container {\n  transition: none;\n}\n\n.mat-mdc-dialog-surface {\n  display: flex;\n  flex-direction: column;\n  flex-grow: 0;\n  flex-shrink: 0;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  position: relative;\n  overflow-y: auto;\n  outline: 0;\n  transform: scale(0.8);\n  transition: transform var(--%NS%mat-dialog-transition-duration, 0ms) cubic-bezier(0, 0, 0.2, 1);\n  max-height: inherit;\n  min-height: inherit;\n  min-width: inherit;\n  max-width: inherit;\n  box-shadow: var(--%NS%mat-dialog-container-elevation-shadow, none);\n  border-radius: var(--%NS%mat-dialog-container-shape, var(--%NS%mat-sys-corner-extra-large, 4px));\n  background-color: var(--%NS%mat-dialog-container-color, var(--%NS%mat-sys-surface, white));\n}\n[dir=rtl] .mat-mdc-dialog-surface {\n  text-align: right;\n}\n.mdc-dialog--open .mat-mdc-dialog-surface, .mdc-dialog--closing .mat-mdc-dialog-surface {\n  transform: none;\n}\n._mat-animation-noopable .mat-mdc-dialog-surface {\n  transition: none;\n}\n.mat-mdc-dialog-surface::before {\n  position: absolute;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  border: 2px solid transparent;\n  border-radius: inherit;\n  content: \"\";\n  pointer-events: none;\n}\n\n.mat-mdc-dialog-title {\n  display: block;\n  position: relative;\n  flex-shrink: 0;\n  box-sizing: border-box;\n  margin: 0 0 1px;\n  padding: var(--%NS%mat-dialog-headline-padding, 6px 24px 13px);\n}\n.mat-mdc-dialog-title::before {\n  display: inline-block;\n  width: 0;\n  height: 40px;\n  content: \"\";\n  vertical-align: 0;\n}\n[dir=rtl] .mat-mdc-dialog-title {\n  text-align: right;\n}\n.mat-mdc-dialog-container .mat-mdc-dialog-title {\n  color: var(--%NS%mat-dialog-subhead-color, var(--%NS%mat-sys-on-surface, rgba(0, 0, 0, 0.87)));\n  font-family: var(--%NS%mat-dialog-subhead-font, var(--%NS%mat-sys-headline-small-font, inherit));\n  line-height: var(--%NS%mat-dialog-subhead-line-height, var(--%NS%mat-sys-headline-small-line-height, 1.5rem));\n  font-size: var(--%NS%mat-dialog-subhead-size, var(--%NS%mat-sys-headline-small-size, 1rem));\n  font-weight: var(--%NS%mat-dialog-subhead-weight, var(--%NS%mat-sys-headline-small-weight, 400));\n  letter-spacing: var(--%NS%mat-dialog-subhead-tracking, var(--%NS%mat-sys-headline-small-tracking, 0.03125em));\n}\n\n.mat-mdc-dialog-content {\n  display: block;\n  flex-grow: 1;\n  box-sizing: border-box;\n  margin: 0;\n  overflow: auto;\n  max-height: 65vh;\n}\n.mat-mdc-dialog-content > :first-child {\n  margin-top: 0;\n}\n.mat-mdc-dialog-content > :last-child {\n  margin-bottom: 0;\n}\n.mat-mdc-dialog-container .mat-mdc-dialog-content {\n  color: var(--%NS%mat-dialog-supporting-text-color, var(--%NS%mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)));\n  font-family: var(--%NS%mat-dialog-supporting-text-font, var(--%NS%mat-sys-body-medium-font, inherit));\n  line-height: var(--%NS%mat-dialog-supporting-text-line-height, var(--%NS%mat-sys-body-medium-line-height, 1.5rem));\n  font-size: var(--%NS%mat-dialog-supporting-text-size, var(--%NS%mat-sys-body-medium-size, 1rem));\n  font-weight: var(--%NS%mat-dialog-supporting-text-weight, var(--%NS%mat-sys-body-medium-weight, 400));\n  letter-spacing: var(--%NS%mat-dialog-supporting-text-tracking, var(--%NS%mat-sys-body-medium-tracking, 0.03125em));\n}\n.mat-mdc-dialog-container .mat-mdc-dialog-content {\n  padding: var(--%NS%mat-dialog-content-padding, 20px 24px);\n}\n.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {\n  padding: var(--%NS%mat-dialog-with-actions-content-padding, 20px 24px 0);\n}\n.mat-mdc-dialog-container .mat-mdc-dialog-title + .mat-mdc-dialog-content {\n  padding-top: 0;\n}\n\n.mat-mdc-dialog-actions {\n  display: flex;\n  position: relative;\n  flex-shrink: 0;\n  flex-wrap: wrap;\n  align-items: center;\n  box-sizing: border-box;\n  min-height: 52px;\n  margin: 0;\n  border-top: 1px solid transparent;\n  padding: var(--%NS%mat-dialog-actions-padding, 16px 24px);\n  justify-content: var(--%NS%mat-dialog-actions-alignment, flex-end);\n}\n@media (forced-colors: active) {\n  .mat-mdc-dialog-actions {\n    border-top-color: CanvasText;\n  }\n}\n.mat-mdc-dialog-actions.mat-mdc-dialog-actions-align-start, .mat-mdc-dialog-actions[align=start] {\n  justify-content: start;\n}\n.mat-mdc-dialog-actions.mat-mdc-dialog-actions-align-center, .mat-mdc-dialog-actions[align=center] {\n  justify-content: center;\n}\n.mat-mdc-dialog-actions.mat-mdc-dialog-actions-align-end, .mat-mdc-dialog-actions[align=end] {\n  justify-content: flex-end;\n}\n.mat-mdc-dialog-actions .mat-button-base + .mat-button-base,\n.mat-mdc-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {\n  margin-left: 8px;\n}\n[dir=rtl] .mat-mdc-dialog-actions .mat-button-base + .mat-button-base,\n[dir=rtl] .mat-mdc-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {\n  margin-left: 0;\n  margin-right: 8px;\n}\n\n.mat-mdc-dialog-component-host {\n  display: contents;\n}\n"],
-	encapsulation: 2,
-	changeDetection: 1
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatDialogContainer, [{
 		type: Component,
@@ -6619,20 +6391,20 @@ var MatDialogState;
 	MatDialogState[MatDialogState["CLOSED"] = 2] = "CLOSED";
 })(MatDialogState || (MatDialogState = {}));
 var MatDialogRef = class {
+	_ref;
+	_config;
+	_containerInstance;
+	componentInstance;
+	componentRef = null;
+	disableClose;
+	id;
+	_afterOpened = new ReplaySubject(1);
+	_beforeClosed = new ReplaySubject(1);
+	_result;
+	_closeFallbackTimeout;
+	_state = MatDialogState.OPEN;
+	_closeInteractionType;
 	constructor(_ref, _config, _containerInstance) {
-		_defineProperty(this, "_ref", void 0);
-		_defineProperty(this, "_config", void 0);
-		_defineProperty(this, "_containerInstance", void 0);
-		_defineProperty(this, "componentInstance", void 0);
-		_defineProperty(this, "componentRef", null);
-		_defineProperty(this, "disableClose", void 0);
-		_defineProperty(this, "id", void 0);
-		_defineProperty(this, "_afterOpened", new ReplaySubject(1));
-		_defineProperty(this, "_beforeClosed", new ReplaySubject(1));
-		_defineProperty(this, "_result", void 0);
-		_defineProperty(this, "_closeFallbackTimeout", void 0);
-		_defineProperty(this, "_state", MatDialogState.OPEN);
-		_defineProperty(this, "_closeInteractionType", void 0);
 		this._ref = _ref;
 		this._config = _config;
 		this._containerInstance = _containerInstance;
@@ -6731,6 +6503,23 @@ var MAT_DIALOG_SCROLL_STRATEGY = new InjectionToken("mat-mdc-dialog-scroll-strat
 	}
 });
 var MatDialog = class MatDialog {
+	_defaultOptions = inject(MAT_DIALOG_DEFAULT_OPTIONS, { optional: true });
+	_scrollStrategy = inject(MAT_DIALOG_SCROLL_STRATEGY);
+	_parentDialog = inject(MatDialog, {
+		optional: true,
+		skipSelf: true
+	});
+	_idGenerator = inject(_IdGenerator);
+	_injector = inject(Injector);
+	_dialog = inject(Dialog);
+	_animationsDisabled = _animationsDisabled();
+	_openDialogsAtThisLevel = [];
+	_afterAllClosedAtThisLevel = new Subject();
+	_afterOpenedAtThisLevel = new Subject();
+	dialogConfigClass = MatDialogConfig;
+	_dialogRefConstructor;
+	_dialogContainerType;
+	_dialogDataToken;
 	get openDialogs() {
 		return this._parentDialog ? this._parentDialog.openDialogs : this._openDialogsAtThisLevel;
 	}
@@ -6741,42 +6530,28 @@ var MatDialog = class MatDialog {
 		const parent = this._parentDialog;
 		return parent ? parent._getAfterAllClosed() : this._afterAllClosedAtThisLevel;
 	}
+	afterAllClosed = defer(() => this.openDialogs.length ? this._getAfterAllClosed() : this._getAfterAllClosed().pipe(startWith(void 0)));
 	constructor() {
-		_defineProperty(this, "_defaultOptions", inject(MAT_DIALOG_DEFAULT_OPTIONS, { optional: true }));
-		_defineProperty(this, "_scrollStrategy", inject(MAT_DIALOG_SCROLL_STRATEGY));
-		_defineProperty(this, "_parentDialog", inject(MatDialog, {
-			optional: true,
-			skipSelf: true
-		}));
-		_defineProperty(this, "_idGenerator", inject(_IdGenerator));
-		_defineProperty(this, "_injector", inject(Injector));
-		_defineProperty(this, "_dialog", inject(Dialog));
-		_defineProperty(this, "_animationsDisabled", _animationsDisabled());
-		_defineProperty(this, "_openDialogsAtThisLevel", []);
-		_defineProperty(this, "_afterAllClosedAtThisLevel", new Subject());
-		_defineProperty(this, "_afterOpenedAtThisLevel", new Subject());
-		_defineProperty(this, "dialogConfigClass", MatDialogConfig);
-		_defineProperty(this, "_dialogRefConstructor", void 0);
-		_defineProperty(this, "_dialogContainerType", void 0);
-		_defineProperty(this, "_dialogDataToken", void 0);
-		_defineProperty(this, "afterAllClosed", defer(() => this.openDialogs.length ? this._getAfterAllClosed() : this._getAfterAllClosed().pipe(startWith(void 0))));
 		this._dialogRefConstructor = MatDialogRef;
 		this._dialogContainerType = MatDialogContainer;
 		this._dialogDataToken = MAT_DIALOG_DATA;
 	}
 	open(componentOrTemplateRef, config) {
-		var _config$enterAnimatio, _config$exitAnimation;
 		let dialogRef;
-		config = _objectSpread2(_objectSpread2({}, this._defaultOptions || new MatDialogConfig()), config);
+		config = {
+			...this._defaultOptions || new MatDialogConfig(),
+			...config
+		};
 		config.id = config.id || this._idGenerator.getId("mat-mdc-dialog-");
 		config.scrollStrategy = config.scrollStrategy || this._scrollStrategy();
-		const cdkRef = this._dialog.open(componentOrTemplateRef, _objectSpread2(_objectSpread2({}, config), {}, {
+		const cdkRef = this._dialog.open(componentOrTemplateRef, {
+			...config,
 			positionStrategy: createGlobalPositionStrategy(this._injector).centerHorizontally().centerVertically(),
 			disableClose: true,
 			closePredicate: void 0,
 			closeOnDestroy: false,
 			closeOnOverlayDetachments: false,
-			disableAnimations: this._animationsDisabled || ((_config$enterAnimatio = config.enterAnimationDuration) === null || _config$enterAnimatio === void 0 ? void 0 : _config$enterAnimatio.toLocaleString()) === "0" || ((_config$exitAnimation = config.exitAnimationDuration) === null || _config$exitAnimation === void 0 ? void 0 : _config$exitAnimation.toString()) === "0",
+			disableAnimations: this._animationsDisabled || config.enterAnimationDuration?.toLocaleString() === "0" || config.exitAnimationDuration?.toString() === "0",
 			container: {
 				type: this._dialogContainerType,
 				providers: () => [{
@@ -6790,7 +6565,7 @@ var MatDialog = class MatDialog {
 			templateContext: () => ({ dialogRef }),
 			providers: (ref, cdkConfig, dialogContainer) => {
 				dialogRef = new this._dialogRefConstructor(ref, config, dialogContainer);
-				dialogRef.updatePosition(config === null || config === void 0 ? void 0 : config.position);
+				dialogRef.updatePosition(config?.position);
 				return [
 					{
 						provide: this._dialogContainerType,
@@ -6810,7 +6585,7 @@ var MatDialog = class MatDialog {
 					}
 				];
 			}
-		}));
+		});
 		dialogRef.componentRef = cdkRef.componentRef;
 		dialogRef.componentInstance = cdkRef.componentInstance;
 		this.openDialogs.push(dialogRef);
@@ -6839,28 +6614,25 @@ var MatDialog = class MatDialog {
 		let i = dialogs.length;
 		while (i--) dialogs[i].close();
 	}
+	static ɵfac = function MatDialog_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MatDialog)();
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineService({
+		token: MatDialog,
+		factory: MatDialog.ɵfac
+	});
 };
-_MatDialog = MatDialog;
-_defineProperty(MatDialog, "ɵfac", function MatDialog_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MatDialog)();
-});
-_defineProperty(MatDialog, "ɵprov", /* @__PURE__ */ ɵɵdefineService({
-	token: _MatDialog,
-	factory: _MatDialog.ɵfac
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatDialog, [{ type: Service }], () => [], null);
 })();
-var MatDialogClose = class {
-	constructor() {
-		_defineProperty(this, "dialogRef", inject(MatDialogRef, { optional: true }));
-		_defineProperty(this, "_elementRef", inject(ElementRef));
-		_defineProperty(this, "_dialog", inject(MatDialog));
-		_defineProperty(this, "ariaLabel", void 0);
-		_defineProperty(this, "type", "button");
-		_defineProperty(this, "dialogResult", void 0);
-		_defineProperty(this, "_matDialogClose", void 0);
-	}
+var MatDialogClose = class MatDialogClose {
+	dialogRef = inject(MatDialogRef, { optional: true });
+	_elementRef = inject(ElementRef);
+	_dialog = inject(MatDialog);
+	ariaLabel;
+	type = "button";
+	dialogResult;
+	_matDialogClose;
 	ngOnInit() {
 		if (!this.dialogRef) this.dialogRef = getClosestDialog(this._elementRef, this._dialog.openDialogs);
 	}
@@ -6872,50 +6644,49 @@ var MatDialogClose = class {
 		if (this._elementRef.nativeElement.getAttribute("aria-disabled") === "true") return;
 		_closeDialogVia(this.dialogRef, event.screenX === 0 && event.screenY === 0 ? "keyboard" : "mouse", this.dialogResult);
 	}
-};
-_MatDialogClose = MatDialogClose;
-_defineProperty(MatDialogClose, "ɵfac", function MatDialogClose_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MatDialogClose)();
-});
-_defineProperty(MatDialogClose, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _MatDialogClose,
-	selectors: [[
-		"",
-		"mat-dialog-close",
-		""
-	], [
-		"",
-		"matDialogClose",
-		""
-	]],
-	hostVars: 2,
-	hostBindings: function MatDialogClose_HostBindings(rf, ctx) {
-		if (rf & 1) ɵɵlistener("click", function MatDialogClose_click_HostBindingHandler($event) {
-			return ctx._onButtonClick($event);
-		});
-		if (rf & 2) ɵɵattribute("aria-label", ctx.ariaLabel || null)("type", ctx.type);
-	},
-	inputs: {
-		ariaLabel: [
-			0,
-			"aria-label",
-			"ariaLabel"
-		],
-		type: "type",
-		dialogResult: [
-			0,
+	static ɵfac = function MatDialogClose_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MatDialogClose)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: MatDialogClose,
+		selectors: [[
+			"",
 			"mat-dialog-close",
-			"dialogResult"
-		],
-		_matDialogClose: [
-			0,
+			""
+		], [
+			"",
 			"matDialogClose",
-			"_matDialogClose"
-		]
-	},
-	exportAs: ["matDialogClose"],
-	features: [ɵɵNgOnChangesFeature]
-}));
+			""
+		]],
+		hostVars: 2,
+		hostBindings: function MatDialogClose_HostBindings(rf, ctx) {
+			if (rf & 1) ɵɵlistener("click", function MatDialogClose_click_HostBindingHandler($event) {
+				return ctx._onButtonClick($event);
+			});
+			if (rf & 2) ɵɵattribute("aria-label", ctx.ariaLabel || null)("type", ctx.type);
+		},
+		inputs: {
+			ariaLabel: [
+				0,
+				"aria-label",
+				"ariaLabel"
+			],
+			type: "type",
+			dialogResult: [
+				0,
+				"mat-dialog-close",
+				"dialogResult"
+			],
+			_matDialogClose: [
+				0,
+				"matDialogClose",
+				"_matDialogClose"
+			]
+		},
+		exportAs: ["matDialogClose"],
+		features: [ɵɵNgOnChangesFeature]
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatDialogClose, [{
 		type: Directive,
@@ -6944,12 +6715,10 @@ _defineProperty(MatDialogClose, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
 		}]
 	});
 })();
-var MatDialogLayoutSection = class {
-	constructor() {
-		_defineProperty(this, "_dialogRef", inject(MatDialogRef, { optional: true }));
-		_defineProperty(this, "_elementRef", inject(ElementRef));
-		_defineProperty(this, "_dialog", inject(MatDialog));
-	}
+var MatDialogLayoutSection = class MatDialogLayoutSection {
+	_dialogRef = inject(MatDialogRef, { optional: true });
+	_elementRef = inject(ElementRef);
+	_dialog = inject(MatDialog);
 	ngOnInit() {
 		if (!this._dialogRef) this._dialogRef = getClosestDialog(this._elementRef, this._dialog.openDialogs);
 		if (this._dialogRef) Promise.resolve().then(() => {
@@ -6957,65 +6726,57 @@ var MatDialogLayoutSection = class {
 		});
 	}
 	ngOnDestroy() {
-		var _this$_dialogRef;
-		if ((_this$_dialogRef = this._dialogRef) === null || _this$_dialogRef === void 0 ? void 0 : _this$_dialogRef._containerInstance) Promise.resolve().then(() => {
+		if (this._dialogRef?._containerInstance) Promise.resolve().then(() => {
 			this._onRemove();
 		});
 	}
+	static ɵfac = function MatDialogLayoutSection_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MatDialogLayoutSection)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({ type: MatDialogLayoutSection });
 };
-_MatDialogLayoutSection = MatDialogLayoutSection;
-_defineProperty(MatDialogLayoutSection, "ɵfac", function MatDialogLayoutSection_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MatDialogLayoutSection)();
-});
-_defineProperty(MatDialogLayoutSection, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({ type: _MatDialogLayoutSection }));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatDialogLayoutSection, [{ type: Directive }], null, null);
 })();
-var MatDialogTitle = class extends MatDialogLayoutSection {
-	constructor(..._args2) {
-		super(..._args2);
-		_defineProperty(this, "id", inject(_IdGenerator).getId("mat-mdc-dialog-title-"));
-	}
+var MatDialogTitle = class MatDialogTitle extends MatDialogLayoutSection {
+	id = inject(_IdGenerator).getId("mat-mdc-dialog-title-");
 	_onAdd() {
-		var _this$_dialogRef$_con, _this$_dialogRef$_con2;
-		(_this$_dialogRef$_con = this._dialogRef._containerInstance) === null || _this$_dialogRef$_con === void 0 || (_this$_dialogRef$_con2 = _this$_dialogRef$_con._addAriaLabelledBy) === null || _this$_dialogRef$_con2 === void 0 || _this$_dialogRef$_con2.call(_this$_dialogRef$_con, this.id);
+		this._dialogRef._containerInstance?._addAriaLabelledBy?.(this.id);
 	}
 	_onRemove() {
-		var _this$_dialogRef2, _this$_dialogRef2$_re;
-		(_this$_dialogRef2 = this._dialogRef) === null || _this$_dialogRef2 === void 0 || (_this$_dialogRef2 = _this$_dialogRef2._containerInstance) === null || _this$_dialogRef2 === void 0 || (_this$_dialogRef2$_re = _this$_dialogRef2._removeAriaLabelledBy) === null || _this$_dialogRef2$_re === void 0 || _this$_dialogRef2$_re.call(_this$_dialogRef2, this.id);
+		this._dialogRef?._containerInstance?._removeAriaLabelledBy?.(this.id);
 	}
+	static ɵfac = /* @__PURE__ */ (() => {
+		let ɵMatDialogTitle_BaseFactory;
+		return function MatDialogTitle_Factory(__ngFactoryType__) {
+			return (ɵMatDialogTitle_BaseFactory || (ɵMatDialogTitle_BaseFactory = ɵɵgetInheritedFactory(MatDialogTitle)))(__ngFactoryType__ || MatDialogTitle);
+		};
+	})();
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: MatDialogTitle,
+		selectors: [[
+			"",
+			"mat-dialog-title",
+			""
+		], [
+			"",
+			"matDialogTitle",
+			""
+		]],
+		hostAttrs: [
+			1,
+			"mat-mdc-dialog-title",
+			"mdc-dialog__title"
+		],
+		hostVars: 1,
+		hostBindings: function MatDialogTitle_HostBindings(rf, ctx) {
+			if (rf & 2) ɵɵdomProperty("id", ctx.id);
+		},
+		inputs: { id: "id" },
+		exportAs: ["matDialogTitle"],
+		features: [ɵɵInheritDefinitionFeature]
+	});
 };
-_MatDialogTitle = MatDialogTitle;
-_defineProperty(MatDialogTitle, "ɵfac", /* @__PURE__ */ (() => {
-	let ɵMatDialogTitle_BaseFactory;
-	return function MatDialogTitle_Factory(__ngFactoryType__) {
-		return (ɵMatDialogTitle_BaseFactory || (ɵMatDialogTitle_BaseFactory = ɵɵgetInheritedFactory(_MatDialogTitle)))(__ngFactoryType__ || _MatDialogTitle);
-	};
-})());
-_defineProperty(MatDialogTitle, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _MatDialogTitle,
-	selectors: [[
-		"",
-		"mat-dialog-title",
-		""
-	], [
-		"",
-		"matDialogTitle",
-		""
-	]],
-	hostAttrs: [
-		1,
-		"mat-mdc-dialog-title",
-		"mdc-dialog__title"
-	],
-	hostVars: 1,
-	hostBindings: function MatDialogTitle_HostBindings(rf, ctx) {
-		if (rf & 2) ɵɵdomProperty("id", ctx.id);
-	},
-	inputs: { id: "id" },
-	exportAs: ["matDialogTitle"],
-	features: [ɵɵInheritDefinitionFeature]
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatDialogTitle, [{
 		type: Directive,
@@ -7029,33 +6790,33 @@ _defineProperty(MatDialogTitle, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
 		}]
 	}], null, { id: [{ type: Input }] });
 })();
-var MatDialogContent = class {};
-_MatDialogContent = MatDialogContent;
-_defineProperty(MatDialogContent, "ɵfac", function MatDialogContent_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MatDialogContent)();
-});
-_defineProperty(MatDialogContent, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _MatDialogContent,
-	selectors: [
-		[
-			"",
-			"mat-dialog-content",
-			""
+var MatDialogContent = class MatDialogContent {
+	static ɵfac = function MatDialogContent_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MatDialogContent)();
+	};
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: MatDialogContent,
+		selectors: [
+			[
+				"",
+				"mat-dialog-content",
+				""
+			],
+			["mat-dialog-content"],
+			[
+				"",
+				"matDialogContent",
+				""
+			]
 		],
-		["mat-dialog-content"],
-		[
-			"",
-			"matDialogContent",
-			""
-		]
-	],
-	hostAttrs: [
-		1,
-		"mat-mdc-dialog-content",
-		"mdc-dialog__content"
-	],
-	features: [ɵɵHostDirectivesFeature([CdkScrollable])]
-}));
+		hostAttrs: [
+			1,
+			"mat-mdc-dialog-content",
+			"mdc-dialog__content"
+		],
+		features: [ɵɵHostDirectivesFeature([CdkScrollable])]
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatDialogContent, [{
 		type: Directive,
@@ -7066,54 +6827,48 @@ _defineProperty(MatDialogContent, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
 		}]
 	}], null, null);
 })();
-var MatDialogActions = class extends MatDialogLayoutSection {
-	constructor(..._args3) {
-		super(..._args3);
-		_defineProperty(this, "align", void 0);
-	}
+var MatDialogActions = class MatDialogActions extends MatDialogLayoutSection {
+	align;
 	_onAdd() {
-		var _this$_dialogRef$_con3, _this$_dialogRef$_con4;
-		(_this$_dialogRef$_con3 = this._dialogRef._containerInstance) === null || _this$_dialogRef$_con3 === void 0 || (_this$_dialogRef$_con4 = _this$_dialogRef$_con3._updateActionSectionCount) === null || _this$_dialogRef$_con4 === void 0 || _this$_dialogRef$_con4.call(_this$_dialogRef$_con3, 1);
+		this._dialogRef._containerInstance?._updateActionSectionCount?.(1);
 	}
 	_onRemove() {
-		var _this$_dialogRef$_con5, _this$_dialogRef$_con6;
-		(_this$_dialogRef$_con5 = this._dialogRef._containerInstance) === null || _this$_dialogRef$_con5 === void 0 || (_this$_dialogRef$_con6 = _this$_dialogRef$_con5._updateActionSectionCount) === null || _this$_dialogRef$_con6 === void 0 || _this$_dialogRef$_con6.call(_this$_dialogRef$_con5, -1);
+		this._dialogRef._containerInstance?._updateActionSectionCount?.(-1);
 	}
-};
-_MatDialogActions = MatDialogActions;
-_defineProperty(MatDialogActions, "ɵfac", /* @__PURE__ */ (() => {
-	let ɵMatDialogActions_BaseFactory;
-	return function MatDialogActions_Factory(__ngFactoryType__) {
-		return (ɵMatDialogActions_BaseFactory || (ɵMatDialogActions_BaseFactory = ɵɵgetInheritedFactory(_MatDialogActions)))(__ngFactoryType__ || _MatDialogActions);
-	};
-})());
-_defineProperty(MatDialogActions, "ɵdir", /* @__PURE__ */ ɵɵdefineDirective({
-	type: _MatDialogActions,
-	selectors: [
-		[
-			"",
-			"mat-dialog-actions",
-			""
+	static ɵfac = /* @__PURE__ */ (() => {
+		let ɵMatDialogActions_BaseFactory;
+		return function MatDialogActions_Factory(__ngFactoryType__) {
+			return (ɵMatDialogActions_BaseFactory || (ɵMatDialogActions_BaseFactory = ɵɵgetInheritedFactory(MatDialogActions)))(__ngFactoryType__ || MatDialogActions);
+		};
+	})();
+	static ɵdir = /* @__PURE__ */ ɵɵdefineDirective({
+		type: MatDialogActions,
+		selectors: [
+			[
+				"",
+				"mat-dialog-actions",
+				""
+			],
+			["mat-dialog-actions"],
+			[
+				"",
+				"matDialogActions",
+				""
+			]
 		],
-		["mat-dialog-actions"],
-		[
-			"",
-			"matDialogActions",
-			""
-		]
-	],
-	hostAttrs: [
-		1,
-		"mat-mdc-dialog-actions",
-		"mdc-dialog__actions"
-	],
-	hostVars: 6,
-	hostBindings: function MatDialogActions_HostBindings(rf, ctx) {
-		if (rf & 2) ɵɵclassProp("mat-mdc-dialog-actions-align-start", ctx.align === "start")("mat-mdc-dialog-actions-align-center", ctx.align === "center")("mat-mdc-dialog-actions-align-end", ctx.align === "end");
-	},
-	inputs: { align: "align" },
-	features: [ɵɵInheritDefinitionFeature]
-}));
+		hostAttrs: [
+			1,
+			"mat-mdc-dialog-actions",
+			"mdc-dialog__actions"
+		],
+		hostVars: 6,
+		hostBindings: function MatDialogActions_HostBindings(rf, ctx) {
+			if (rf & 2) ɵɵclassProp("mat-mdc-dialog-actions-align-start", ctx.align === "start")("mat-mdc-dialog-actions-align-center", ctx.align === "center")("mat-mdc-dialog-actions-align-end", ctx.align === "end");
+		},
+		inputs: { align: "align" },
+		features: [ɵɵInheritDefinitionFeature]
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatDialogActions, [{
 		type: Directive,
@@ -7140,41 +6895,41 @@ var DIRECTIVES = [
 	MatDialogActions,
 	MatDialogContent
 ];
-var MatDialogModule = class {};
-_MatDialogModule = MatDialogModule;
-_defineProperty(MatDialogModule, "ɵfac", function MatDialogModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MatDialogModule)();
-});
-_defineProperty(MatDialogModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _MatDialogModule,
-	imports: [
-		DialogModule,
-		OverlayModule,
-		PortalModule,
-		MatDialogContainer,
-		MatDialogClose,
-		MatDialogTitle,
-		MatDialogActions,
-		MatDialogContent
-	],
-	exports: [
-		BidiModule,
-		MatDialogContainer,
-		MatDialogClose,
-		MatDialogTitle,
-		MatDialogActions,
-		MatDialogContent
-	]
-}));
-_defineProperty(MatDialogModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({
-	providers: [MatDialog],
-	imports: [
-		DialogModule,
-		OverlayModule,
-		PortalModule,
-		BidiModule
-	]
-}));
+var MatDialogModule = class MatDialogModule {
+	static ɵfac = function MatDialogModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MatDialogModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: MatDialogModule,
+		imports: [
+			DialogModule,
+			OverlayModule,
+			PortalModule,
+			MatDialogContainer,
+			MatDialogClose,
+			MatDialogTitle,
+			MatDialogActions,
+			MatDialogContent
+		],
+		exports: [
+			BidiModule,
+			MatDialogContainer,
+			MatDialogClose,
+			MatDialogTitle,
+			MatDialogActions,
+			MatDialogContent
+		]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({
+		providers: [MatDialog],
+		imports: [
+			DialogModule,
+			OverlayModule,
+			PortalModule,
+			BidiModule
+		]
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatDialogModule, [{
 		type: NgModule,

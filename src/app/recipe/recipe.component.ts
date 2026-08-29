@@ -1,5 +1,6 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, 
+    AfterContentChecked, Inject, LOCALE_ID, ChangeDetectorRef} from '@angular/core';
   
 import { formatDate, ViewportScroller } from '@angular/common'; 
 import { MatIconModule} from '@angular/material/icon';
@@ -85,6 +86,7 @@ export class RecipeComponent {
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
     @Inject(LOCALE_ID) private locale: string,
+    private cdr: ChangeDetectorRef
     ) { }
 
 @Input() configServer = new configServer;
@@ -315,14 +317,14 @@ ngOnInit(){
       'z-index': '1'
     }
     this.styleBoxOptionListRecipe = {
-      'background-color':'lightgrey',
+      'background-color':'red',
       'width': 250 + 'px',
       'height':80 + 'px',
-      'margin-top' :  '0px',
+      'margin-top' :   0 + 'px',
       'margin-left':140 + 'px',
       'overflow-x': 'hidden',
       'overflow-y': 'hidden',
-      'border':'1px blue solid',
+      'border':'1px black solid',
       'display':'inline-block'
       }
       this.styleBoxChangeAll = {
@@ -513,8 +515,8 @@ createDropDownRecipe(){
         'width': 205 + 'px',
         'height': this.heightListRecipe + 'px',
         'position': 'absolute',
-        'margin-left':'15%', 
-        'margin-top':'5px',
+        'margin-left':-500 + 'px', 
+        'margin-top': 5 + 'px',
         'display':'inline-block',
         'z-index': '1'
       }
@@ -522,13 +524,14 @@ createDropDownRecipe(){
         'background-color':'lightgrey',
         'width':205 + 'px',
         'height':this.heightListRecipe + 'px',
-        'margin-top' :  '0px',
-        'margin-left':140 + 'px',
+        'margin-top' :  0 + 'px',
+        'margin-left': 80 + 'px',
         'overflow-x': 'hidden',
         'overflow-y': scrollY,
         'border':'1px blue solid',
         'display':'inline-block'
         }
+        this.cdr.markForCheck();
       }
 }
 
@@ -1946,7 +1949,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                     this.tabFreEng[i].nbWordsEn=data[i].nbWordsEn;
                   }
                 }
-
+                this.cdr.markForCheck();
             },
             (error_handler) => {
               this.nbCallGetRecord++

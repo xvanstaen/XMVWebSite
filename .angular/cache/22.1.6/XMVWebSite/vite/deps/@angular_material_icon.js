@@ -1,12 +1,10 @@
-import { n as _defineProperty } from "./objectSpread2-C_IE-bIJ.js";
-import { Al as ɵɵinject, Dl as ɵɵdefineInjector, Dr as ViewEncapsulation, Ec as InjectionToken, El as ɵɵdefineInjectable, En as ElementRef, Fn as Injectable, In as Input, O as booleanAttribute, Pn as Inject, Qn as Optional, Ui as setClassMetadata, Wc as SecurityContext, ba as ɵɵclassProp, cn as Component, eo as ɵɵdefineComponent, f as HostAttributeToken, is as ɵɵprojectionDef, mc as DOCUMENT, no as ɵɵdefineNgModule, qn as NgModule, rs as ɵɵprojection, sl as inject, va as ɵɵattribute, ya as ɵɵclassMap, yc as ErrorHandler } from "./core-DwmaaD_X.js";
+import { Dr as ViewEncapsulation, El as ɵɵdefineInjector, En as ElementRef, Fn as Injectable, In as Input, O as booleanAttribute, Pn as Inject, Qn as Optional, Tc as InjectionToken, Tl as ɵɵdefineInjectable, Uc as SecurityContext, Ui as setClassMetadata, ba as ɵɵclassProp, cn as Component, eo as ɵɵdefineComponent, f as HostAttributeToken, is as ɵɵprojectionDef, kl as ɵɵinject, no as ɵɵdefineNgModule, ol as inject, pc as DOCUMENT, qn as NgModule, rs as ɵɵprojection, va as ɵɵattribute, vc as ErrorHandler, ya as ɵɵclassMap } from "./core-DK4zC9WD.js";
 import { An as throwError, Ct as take, Lt as catchError, O as share, cn as forkJoin, jn as of, m as tap, ot as finalize, ur as Subscription, vn as map } from "./esm5-ChK3bs0s.js";
-import { t as BidiModule } from "./bidi-CBOSzWNJ.js";
-import { l as HttpClient } from "./http-CtQI6Xep.js";
-import { r as trustedHTMLFromString } from "./private-Ct95DNbE.js";
-import { r as DomSanitizer } from "./platform-browser-eH63sRZa.js";
+import { t as BidiModule } from "./bidi-BcqBIoKc.js";
+import { l as HttpClient } from "./http-hRRm1bGc.js";
+import { r as trustedHTMLFromString } from "./private-rxwPxLl5.js";
+import { r as DomSanitizer } from "./platform-browser-BgFAXzy1.js";
 //#region node_modules/@angular/material/fesm2022/_icon-registry-chunk.mjs
-var _MatIconRegistry;
 function getMatIconNameNotFoundError(iconName) {
 	return Error(`Unable to find icon with the name "${iconName}"`);
 }
@@ -20,29 +18,29 @@ function getMatIconFailedToSanitizeLiteralError(literal) {
 	return Error(`The literal provided to MatIconRegistry was not trusted as safe HTML by Angular's DomSanitizer. Attempted literal was "${literal}".`);
 }
 var SvgIconConfig = class {
+	url;
+	svgText;
+	options;
+	svgElement = null;
 	constructor(url, svgText, options) {
-		_defineProperty(this, "url", void 0);
-		_defineProperty(this, "svgText", void 0);
-		_defineProperty(this, "options", void 0);
-		_defineProperty(this, "svgElement", null);
 		this.url = url;
 		this.svgText = svgText;
 		this.options = options;
 	}
 };
-var MatIconRegistry = class {
+var MatIconRegistry = class MatIconRegistry {
+	_httpClient;
+	_sanitizer;
+	_errorHandler;
+	_document;
+	_svgIconConfigs = /* @__PURE__ */ new Map();
+	_iconSetConfigs = /* @__PURE__ */ new Map();
+	_cachedIconsByUrl = /* @__PURE__ */ new Map();
+	_inProgressUrlFetches = /* @__PURE__ */ new Map();
+	_fontCssClassesByAlias = /* @__PURE__ */ new Map();
+	_resolvers = [];
+	_defaultFontSetClass = ["material-icons", "mat-ligature-font"];
 	constructor(_httpClient, _sanitizer, document, _errorHandler) {
-		_defineProperty(this, "_httpClient", void 0);
-		_defineProperty(this, "_sanitizer", void 0);
-		_defineProperty(this, "_errorHandler", void 0);
-		_defineProperty(this, "_document", void 0);
-		_defineProperty(this, "_svgIconConfigs", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_iconSetConfigs", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_cachedIconsByUrl", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_inProgressUrlFetches", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_fontCssClassesByAlias", /* @__PURE__ */ new Map());
-		_defineProperty(this, "_resolvers", []);
-		_defineProperty(this, "_defaultFontSetClass", ["material-icons", "mat-ligature-font"]);
 		this._httpClient = _httpClient;
 		this._sanitizer = _sanitizer;
 		this._errorHandler = _errorHandler;
@@ -197,9 +195,8 @@ var MatIconRegistry = class {
 		return svg;
 	}
 	_fetchIcon(iconConfig) {
-		var _options$withCredenti;
 		const { url: safeUrl, options } = iconConfig;
-		const withCredentials = (_options$withCredenti = options === null || options === void 0 ? void 0 : options.withCredentials) !== null && _options$withCredenti !== void 0 ? _options$withCredenti : false;
+		const withCredentials = options?.withCredentials ?? false;
 		if (!this._httpClient) throw getMatIconNoHttpProviderError();
 		if (safeUrl == null) throw Error(`Cannot fetch icon from URL "${safeUrl}".`);
 		const url = this._sanitizer.sanitize(SecurityContext.RESOURCE_URL, safeUrl);
@@ -239,16 +236,15 @@ var MatIconRegistry = class {
 			if (result) return isSafeUrlWithOptions(result) ? new SvgIconConfig(result.url, null, result.options) : new SvgIconConfig(result, null);
 		}
 	}
+	static ɵfac = function MatIconRegistry_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MatIconRegistry)(ɵɵinject(HttpClient, 8), ɵɵinject(DomSanitizer), ɵɵinject(DOCUMENT, 8), ɵɵinject(ErrorHandler));
+	};
+	static ɵprov = /* @__PURE__ */ ɵɵdefineInjectable({
+		token: MatIconRegistry,
+		factory: MatIconRegistry.ɵfac,
+		providedIn: "root"
+	});
 };
-_MatIconRegistry = MatIconRegistry;
-_defineProperty(MatIconRegistry, "ɵfac", function MatIconRegistry_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MatIconRegistry)(ɵɵinject(HttpClient, 8), ɵɵinject(DomSanitizer), ɵɵinject(DOCUMENT, 8), ɵɵinject(ErrorHandler));
-});
-_defineProperty(MatIconRegistry, "ɵprov", /* @__PURE__ */ ɵɵdefineInjectable({
-	token: _MatIconRegistry,
-	factory: _MatIconRegistry.ɵfac,
-	providedIn: "root"
-}));
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatIconRegistry, [{
 		type: Injectable,
@@ -280,8 +276,6 @@ function isSafeUrlWithOptions(value) {
 }
 //#endregion
 //#region node_modules/@angular/material/fesm2022/icon.mjs
-var _MatIcon;
-var _MatIconModule;
 var _c0 = ["*"];
 var MAT_ICON_DEFAULT_OPTIONS = new InjectionToken("MAT_ICON_DEFAULT_OPTIONS");
 var MAT_ICON_LOCATION = new InjectionToken("mat-icon-location", {
@@ -308,13 +302,20 @@ var funcIriAttributes = [
 ];
 var funcIriAttributeSelector = funcIriAttributes.map((attr) => `[${attr}]`).join(", ");
 var funcIriPattern = /^url\(['"]?#(.*?)['"]?\)$/;
-var MatIcon = class {
+var MatIcon = class MatIcon {
+	_elementRef = inject(ElementRef);
+	_iconRegistry = inject(MatIconRegistry);
+	_location = inject(MAT_ICON_LOCATION);
+	_errorHandler = inject(ErrorHandler);
+	_defaultColor;
 	get color() {
 		return this._color || this._defaultColor;
 	}
 	set color(value) {
 		this._color = value;
 	}
+	_color;
+	inline = false;
 	get svgIcon() {
 		return this._svgIcon;
 	}
@@ -325,6 +326,7 @@ var MatIcon = class {
 			this._svgIcon = value;
 		}
 	}
+	_svgIcon;
 	get fontSet() {
 		return this._fontSet;
 	}
@@ -335,6 +337,7 @@ var MatIcon = class {
 			this._updateFontIconClasses();
 		}
 	}
+	_fontSet;
 	get fontIcon() {
 		return this._fontIcon;
 	}
@@ -345,24 +348,15 @@ var MatIcon = class {
 			this._updateFontIconClasses();
 		}
 	}
+	_fontIcon;
+	_previousFontSetClass = [];
+	_previousFontIconClass;
+	_svgName = null;
+	_svgNamespace = null;
+	_previousPath;
+	_elementsWithExternalReferences;
+	_currentIconFetch = Subscription.EMPTY;
 	constructor() {
-		_defineProperty(this, "_elementRef", inject(ElementRef));
-		_defineProperty(this, "_iconRegistry", inject(MatIconRegistry));
-		_defineProperty(this, "_location", inject(MAT_ICON_LOCATION));
-		_defineProperty(this, "_errorHandler", inject(ErrorHandler));
-		_defineProperty(this, "_defaultColor", void 0);
-		_defineProperty(this, "_color", void 0);
-		_defineProperty(this, "inline", false);
-		_defineProperty(this, "_svgIcon", void 0);
-		_defineProperty(this, "_fontSet", void 0);
-		_defineProperty(this, "_fontIcon", void 0);
-		_defineProperty(this, "_previousFontSetClass", []);
-		_defineProperty(this, "_previousFontIconClass", void 0);
-		_defineProperty(this, "_svgName", null);
-		_defineProperty(this, "_svgNamespace", null);
-		_defineProperty(this, "_previousPath", void 0);
-		_defineProperty(this, "_elementsWithExternalReferences", void 0);
-		_defineProperty(this, "_currentIconFetch", Subscription.EMPTY);
 		const ariaHidden = inject(new HostAttributeToken("aria-hidden"), { optional: true });
 		const defaults = inject(MAT_ICON_DEFAULT_OPTIONS, { optional: true });
 		if (defaults) {
@@ -475,54 +469,53 @@ var MatIcon = class {
 			});
 		}
 	}
-};
-_MatIcon = MatIcon;
-_defineProperty(MatIcon, "ɵfac", function MatIcon_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MatIcon)();
-});
-_defineProperty(MatIcon, "ɵcmp", /* @__PURE__ */ ɵɵdefineComponent({
-	type: _MatIcon,
-	selectors: [["mat-icon"]],
-	hostAttrs: [
-		"role",
-		"img",
-		1,
-		"mat-icon",
-		"notranslate"
-	],
-	hostVars: 10,
-	hostBindings: function MatIcon_HostBindings(rf, ctx) {
-		if (rf & 2) {
-			ɵɵattribute("data-mat-icon-type", ctx._usingFontIcon() ? "font" : "svg")("data-mat-icon-name", ctx._svgName || ctx.fontIcon)("data-mat-icon-namespace", ctx._svgNamespace || ctx.fontSet)("fontIcon", ctx._usingFontIcon() ? ctx.fontIcon : null);
-			ɵɵclassMap(ctx.color ? "mat-" + ctx.color : "");
-			ɵɵclassProp("mat-icon-inline", ctx.inline)("mat-icon-no-color", ctx.color !== "primary" && ctx.color !== "accent" && ctx.color !== "warn");
-		}
-	},
-	inputs: {
-		color: "color",
-		inline: [
-			2,
-			"inline",
-			"inline",
-			booleanAttribute
+	static ɵfac = function MatIcon_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MatIcon)();
+	};
+	static ɵcmp = /* @__PURE__ */ ɵɵdefineComponent({
+		type: MatIcon,
+		selectors: [["mat-icon"]],
+		hostAttrs: [
+			"role",
+			"img",
+			1,
+			"mat-icon",
+			"notranslate"
 		],
-		svgIcon: "svgIcon",
-		fontSet: "fontSet",
-		fontIcon: "fontIcon"
-	},
-	exportAs: ["matIcon"],
-	ngContentSelectors: _c0,
-	decls: 1,
-	vars: 0,
-	template: function MatIcon_Template(rf, ctx) {
-		if (rf & 1) {
-			ɵɵprojectionDef();
-			ɵɵprojection(0);
-		}
-	},
-	styles: ["mat-icon, mat-icon.mat-primary, mat-icon.mat-accent, mat-icon.mat-warn {\n  color: var(--%NS%mat-icon-color, inherit);\n}\n\n.mat-icon {\n  -webkit-user-select: none;\n  user-select: none;\n  background-repeat: no-repeat;\n  display: inline-block;\n  fill: currentColor;\n  height: 24px;\n  width: 24px;\n  overflow: hidden;\n}\n.mat-icon.mat-icon-inline {\n  font-size: inherit;\n  height: inherit;\n  line-height: inherit;\n  width: inherit;\n}\n.mat-icon.mat-ligature-font[fontIcon]::before {\n  content: attr(fontIcon);\n}\n\n[dir=rtl] .mat-icon-rtl-mirror {\n  transform: scale(-1, 1);\n}\n\n.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-prefix .mat-icon,\n.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon {\n  display: block;\n}\n.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-prefix .mat-icon-button .mat-icon,\n.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button .mat-icon {\n  margin: auto;\n}\n"],
-	encapsulation: 2
-}));
+		hostVars: 10,
+		hostBindings: function MatIcon_HostBindings(rf, ctx) {
+			if (rf & 2) {
+				ɵɵattribute("data-mat-icon-type", ctx._usingFontIcon() ? "font" : "svg")("data-mat-icon-name", ctx._svgName || ctx.fontIcon)("data-mat-icon-namespace", ctx._svgNamespace || ctx.fontSet)("fontIcon", ctx._usingFontIcon() ? ctx.fontIcon : null);
+				ɵɵclassMap(ctx.color ? "mat-" + ctx.color : "");
+				ɵɵclassProp("mat-icon-inline", ctx.inline)("mat-icon-no-color", ctx.color !== "primary" && ctx.color !== "accent" && ctx.color !== "warn");
+			}
+		},
+		inputs: {
+			color: "color",
+			inline: [
+				2,
+				"inline",
+				"inline",
+				booleanAttribute
+			],
+			svgIcon: "svgIcon",
+			fontSet: "fontSet",
+			fontIcon: "fontIcon"
+		},
+		exportAs: ["matIcon"],
+		ngContentSelectors: _c0,
+		decls: 1,
+		vars: 0,
+		template: function MatIcon_Template(rf, ctx) {
+			if (rf & 1) {
+				ɵɵprojectionDef();
+				ɵɵprojection(0);
+			}
+		},
+		styles: ["mat-icon, mat-icon.mat-primary, mat-icon.mat-accent, mat-icon.mat-warn {\n  color: var(--%NS%mat-icon-color, inherit);\n}\n\n.mat-icon {\n  -webkit-user-select: none;\n  user-select: none;\n  background-repeat: no-repeat;\n  display: inline-block;\n  fill: currentColor;\n  height: 24px;\n  width: 24px;\n  overflow: hidden;\n}\n.mat-icon.mat-icon-inline {\n  font-size: inherit;\n  height: inherit;\n  line-height: inherit;\n  width: inherit;\n}\n.mat-icon.mat-ligature-font[fontIcon]::before {\n  content: attr(fontIcon);\n}\n\n[dir=rtl] .mat-icon-rtl-mirror {\n  transform: scale(-1, 1);\n}\n\n.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-prefix .mat-icon,\n.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon {\n  display: block;\n}\n.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-prefix .mat-icon-button .mat-icon,\n.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button .mat-icon {\n  margin: auto;\n}\n"],
+		encapsulation: 2
+	});
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatIcon, [{
 		type: Component,
@@ -555,17 +548,17 @@ _defineProperty(MatIcon, "ɵcmp", /* @__PURE__ */ ɵɵdefineComponent({
 		fontIcon: [{ type: Input }]
 	});
 })();
-var MatIconModule = class {};
-_MatIconModule = MatIconModule;
-_defineProperty(MatIconModule, "ɵfac", function MatIconModule_Factory(__ngFactoryType__) {
-	return new (__ngFactoryType__ || _MatIconModule)();
-});
-_defineProperty(MatIconModule, "ɵmod", /* @__PURE__ */ ɵɵdefineNgModule({
-	type: _MatIconModule,
-	imports: [MatIcon],
-	exports: [MatIcon, BidiModule]
-}));
-_defineProperty(MatIconModule, "ɵinj", /* @__PURE__ */ ɵɵdefineInjector({ imports: [BidiModule] }));
+var MatIconModule = class MatIconModule {
+	static ɵfac = function MatIconModule_Factory(__ngFactoryType__) {
+		return new (__ngFactoryType__ || MatIconModule)();
+	};
+	static ɵmod = /* @__PURE__ */ ɵɵdefineNgModule({
+		type: MatIconModule,
+		imports: [MatIcon],
+		exports: [MatIcon, BidiModule]
+	});
+	static ɵinj = /* @__PURE__ */ ɵɵdefineInjector({ imports: [BidiModule] });
+};
 (() => {
 	(typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatIconModule, [{
 		type: NgModule,
