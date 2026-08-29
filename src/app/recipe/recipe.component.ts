@@ -515,7 +515,7 @@ createDropDownRecipe(){
         'width': 205 + 'px',
         'height': this.heightListRecipe + 'px',
         'position': 'absolute',
-        'margin-left':-500 + 'px', 
+        'margin-left':140 + 'px', 
         'margin-top': 5 + 'px',
         'display':'inline-block',
         'z-index': '1'
