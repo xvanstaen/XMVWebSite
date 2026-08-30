@@ -369,7 +369,9 @@
                                             </div>
                                                                     <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
                                             <div [style.width]=" 'var(--ingW)' " class="theRow" style="background-color: yellow;">
+                                                
                                                 <input class="inputRow" [style.width]=" 'var(--ingW)' " style="background-color: pink;" type="text" id="ingr-{{i}}"  (mouseup)="onMouseUp($event)"   (input)="modifInput($event)" value="{{theRecipe.ingr}}">
+                                                
                                                 @if (isIngrDropDown() && i===idNb && idText==='ingr'){
                                                     <div class="dropdown ">
                                                         <div [style]="styleBox">
@@ -383,11 +385,11 @@
                                                     </div>
                                                 }
                                             </div>
-                                            <div class="theRow " [style.width]=" 'var(--quanW)' ">
-                                                <input [style.width]=" 'var(--quanW)' "  style="background-color: lightsalmon; padding-left: 10px;"  type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
+                                            <div class="theRow " >
+                                                <input [style.width]=" 'var(--quanW)' " style="background-color: lightsalmon; padding-left: 10px;"  type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
                                             </div>
-                                            <div style="width:var(--unitW); " class="theRow" >
-                                                <input  [style.width]=" 'var(--unitW)' "  style="background-color: lightgreen; padding-left: 10px;" type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
+                                            <div  class="theRow" >
+                                                <input   [style.width]=" 'var(--unitW)' " style="background-color: lightgreen; padding-left: 10px;" type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
                                             </div>
                                         </div>
                                     </div>
