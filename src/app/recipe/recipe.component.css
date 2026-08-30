@@ -160,7 +160,7 @@ div{
 
   .divCircle{
     width:var(--actionW); display:inline-block;  
-    margin-top:0px; border: solid 0px green;
+    margin-top:0px; border: solid 3px green;
     padding-left:15px;
    
   }

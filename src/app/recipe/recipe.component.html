@@ -358,7 +358,7 @@
                                             </div>
                                         }
                                         
-                                        <div  style="background-color: lightgrey; border: solid 0px red;height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; ">
+                                        <div  style="width: calc( var(--actionW )+ var(--ingW) + var(--quanW)+ var(--unitW) ); background-color: lightgrey; border: solid 3px red;height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; ">
                                             <!--
                                             <input class="circle"  (click)="onAction($event)"  id='Action-{{i}}' type="text" value='A'>
                                             -->
@@ -383,12 +383,11 @@
                                                     </div>
                                                 }
                                             </div>
-
-                                            <div class="theRow " [style.width]=" 'var(--quanW)' " >
-                                                <input class="inputRow " [style.width]=" 'var(--quanW)' "  style="background-color: lightsalmon;" type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
+                                            <div class="theRow " [style.width]=" 'var(--quanW)' ">
+                                                <input [style.width]=" 'var(--quanW)' "  style="background-color: lightsalmon; padding-left: 10px;"  type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
                                             </div>
                                             <div style="width:var(--unitW); " class="theRow" >
-                                                <input class="inputRow " [style.width]=" 'var(--unitW)' "  style="background-color: lightgreen;"type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
+                                                <input  [style.width]=" 'var(--unitW)' "  style="background-color: lightgreen; padding-left: 10px;" type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
                                             </div>
                                         </div>
                                     </div>
