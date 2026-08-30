@@ -19,18 +19,19 @@
 </div>
 
 <div [formGroup]="TheSelectDisplays" style="display:block; background-color:cyan; width:86.2%; height:140px; margin-left:20px; border:solid 2px blue; ">
+<!--    
     <div  >
         <div class="radioConfig">Performance figures </div>  
         <input  (click)='SelRadio("Y-1")' class="theRadioButt" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
         <input  (click)='SelRadio("N-1")' class="theRadioButt" style="margin-left:10px;" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
     </div>
-<!--
+-->
     <div  >
         <div class="radioConfig">Short display of performance </div>  
         <input  (click)='SelRadio("Y-4")' class="theRadioButt" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
         <input  (click)='SelRadio("N-4")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
     </div>
--->
+
     <div  >
         <div class="radioConfig">Performance chart (N/A)</div> 
         <input  (click)='SelRadio("Y-2")' class="theRadioButt" type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
@@ -86,7 +87,7 @@
 
 @if (DisplayShortScreen===true){
     <div  style=" width:1124px;  margin-left:20px; display:inline-block; border:blue solid 2px;" 
-                            [ngStyle]="{'height.px': mainTableHeight}">
+                            [style.height.px]="mainTableHeight">
         <div id="posTitle">
             <span class="theTitle boxAction" > &nbsp; </span>
             <span class="theTitle sportTitle" > Sport </span>
@@ -126,7 +127,7 @@
         }
         
         <div style="overflow-y:scroll; width:1120px; border-bottom:2px solid blue; border-top:2px solid blue; background-color:cyan;"
-                                    [ngStyle]="{'height.px': subTableHeight }">
+                                    [style.height.px]="subTableHeight">
             <div *ngFor="let theSport of NewPerformanceFitness.Sport; let i=index" > 
                 <div class="skipLine" style="height:2px;">&nbsp;</div>
                 @if (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityName[0]!=='N/A' )){

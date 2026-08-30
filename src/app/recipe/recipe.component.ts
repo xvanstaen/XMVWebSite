@@ -1,6 +1,6 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, 
-    AfterContentChecked, Inject, LOCALE_ID, ChangeDetectorRef} from '@angular/core';
+    AfterContentChecked, Inject, LOCALE_ID, ChangeDetectorRef, signal} from '@angular/core';
   
 import { formatDate, ViewportScroller } from '@angular/common'; 
 import { MatIconModule} from '@angular/material/icon';
@@ -162,28 +162,28 @@ isDictionary:boolean=false; // @input to activate the management of the dictiona
 isListOfObjectsRetrieved:boolean=false; // list of objects containing the name of the files 
 isFileRetrieved:boolean=false;
 isFileUpdated:boolean=false;
-IsSaveConfirmed:boolean=false;
+IsSaveConfirmed=signal(false);
 
-isActionComments:boolean=false; // used to trigger function dropdownComments()
-isActionRecipe:boolean=false; // used to trigger function tabActionRecipe()
-isListRecipe:boolean=false;
+isActionComments=signal(false);  // used to trigger function dropdownComments()
+isActionRecipe=signal(false); // used to trigger function tabActionRecipe()
+isListRecipe=signal(false);
 
-isCreateRecipeName:boolean=false; // used to provide name of recipe on Create and Duplicate
-isChangeRecipeName:boolean=false; // used to trigger function onChangeName()
-isDeleteRecipe:boolean=false; // used to trigger function delRecipe()
-isDuplicate:boolean=false; // used to update listTypeRecipe[].recipe[] 
+isCreateRecipeName=signal(false); // used to provide name of recipe on Create and Duplicate
+isChangeRecipeName=signal(false); // used to trigger function onChangeName()
+isDeleteRecipe=signal(false); // used to trigger function delRecipe()
+isDuplicate=signal(false); // used to update listTypeRecipe[].recipe[] 
 
-isChangeValueForAll:boolean=false; // used to trigger the function onChangeValues()
-isChangeValueForAllPerso:boolean=false; // used to trigger the function onChangeValues()
+isChangeValueForAll=signal(false); // used to trigger the function onChangeValues()
+isChangeValueForAllPerso=signal(false); // used to trigger the function onChangeValues()
 
-isRecipeModified:boolean=false; 
+isRecipeModified=signal(false); 
 
 isListTypeFr:boolean=false; //used to trigger function tabDropdownType()
 isListTypeEn:boolean=false; //used to trigger function tabDropdownType()
 
 isSearchText:boolean=false;  // used to trigger function searchText()
 
-isIngrDropDown:boolean=false; // used to trigger function modifInput()
+isIngrDropDown=signal(false); // used to trigger function modifInput()
 
 changeValue:number=0;
 temporaryNameRecipe:string="";
@@ -252,15 +252,69 @@ styleBox:any;
 styleBoxOption:any;
 styleBoxAction:any;
 styleBoxOptionAction:any;
-styleBoxListRecipe:any;
-styleBoxOptionListRecipe:any;
-styleBoxListType:any;
-styleBoxOptionListType:any;
-styleBoxChangeAll:any;
-styleBoxOptionChangeAll:any;
-styleBoxChangeName:any;
-styleBoxOptionChangeName:any;
+styleBoxListRecipe=signal({
+      'width' : '250px',
+      'height' : '80px',
+      'position' : 'absolute',
+      'margin-left' :'15%', 
+      'margin-top' :'5px',
+      'display' :'inline-block',
+      'z-index' : '1'
+    });
+styleBoxOptionListRecipe = signal ({
+      'background-color':'red',
+      'width': 250 + 'px',
+      'height':80 + 'px',
+      'margin-top' :   0 + 'px',
+      'margin-left':140 + 'px',
+      'overflow-x': 'hidden',
+      'overflow-y': 'hidden',
+      'border':'1px black solid',
+      'display':'inline-block'
+      })
+styleBoxChangeAll = {
+        'width': 220 + 'px',
+        'height': 150 + 'px',
+        'position': 'absolute',
+        'margin-left':'15%', 
+        'margin-top':'0px',
+        'display':'inline-block',
+        'z-index': '1'
+      }
+styleBoxOptionChangeAll = {
+        'background-color':'lightgreen',
+        'width': 220 + 'px',
+        'height':150 + 'px',
+        'margin-top' :  '0px',
+        'margin-left': 20 + 'px',
+        'overflow-x': 'hidden',
+        'overflow-y': 'hidden',
+        'border':'1px blue solid',
+        'display':'inline-block'
+        }
 
+styleBoxChangeName = signal({
+          'width': 320 + 'px',
+          'height': 150 + 'px',
+          'position': 'absolute',
+          'margin-left':'15%', 
+          'margin-top':'0px',
+          'display':'inline-block',
+          'z-index': '1'
+      })
+  styleBoxOptionChangeName = signal({
+          'background-color':'lightgreen',
+          'width': 320 + 'px',
+          'height':150 + 'px',
+          'margin-top' :  '0px',
+          'margin-left': 20 + 'px',
+          'overflow-x': 'hidden',
+          'overflow-y': 'hidden',
+          'border':'1px blue solid',
+          'display':'inline-block'
+      })                 
+styleBoxListType=signal({});
+styleBoxOptionListType=signal({});
 
 // used by translate function
 tabFreEng:Array<any>=[];
@@ -296,6 +350,7 @@ ngOnInit(){
     'margin-top':'5px',
     'z-index': '1'
   }
+
   this.styleBoxOptionAction = {
     'background-color':'lightgrey',
     'width': 150 + 'px',
@@ -307,67 +362,7 @@ ngOnInit(){
     'border':'1px blue solid'
     }
 
-    this.styleBoxListRecipe = {
-      'width': 250 + 'px',
-      'height': 80 + 'px',
-      'position': 'absolute',
-      'margin-left':'15%', 
-      'margin-top':'5px',
-      'display':'inline-block',
-      'z-index': '1'
-    }
-    this.styleBoxOptionListRecipe = {
-      'background-color':'red',
-      'width': 250 + 'px',
-      'height':80 + 'px',
-      'margin-top' :   0 + 'px',
-      'margin-left':140 + 'px',
-      'overflow-x': 'hidden',
-      'overflow-y': 'hidden',
-      'border':'1px black solid',
-      'display':'inline-block'
-      }
-      this.styleBoxChangeAll = {
-        'width': 220 + 'px',
-        'height': 150 + 'px',
-        'position': 'absolute',
-        'margin-left':'15%', 
-        'margin-top':'0px',
-        'display':'inline-block',
-        'z-index': '1'
-      }
-      this.styleBoxOptionChangeAll = {
-        'background-color':'lightgreen',
-        'width': 220 + 'px',
-        'height':150 + 'px',
-        'margin-top' :  '0px',
-        'margin-left': 20 + 'px',
-        'overflow-x': 'hidden',
-        'overflow-y': 'hidden',
-        'border':'1px blue solid',
-        'display':'inline-block'
-        }
-
-        this.styleBoxChangeName = {
-          'width': 320 + 'px',
-          'height': 150 + 'px',
-          'position': 'absolute',
-          'margin-left':'15%', 
-          'margin-top':'0px',
-          'display':'inline-block',
-          'z-index': '1'
-        }
-        this.styleBoxOptionChangeName = {
-          'background-color':'lightgreen',
-          'width': 320 + 'px',
-          'height':150 + 'px',
-          'margin-top' :  '0px',
-          'margin-left': 20 + 'px',
-          'overflow-x': 'hidden',
-          'overflow-y': 'hidden',
-          'border':'1px blue solid',
-          'display':'inline-block'
-          }
+  
 }
 
 selLanguage(event:string){
@@ -435,20 +430,20 @@ if (this.radioSelect!==this.idNb){
 }
 
 resetBooleans(){
-  this.isListRecipe=false;
-  this.isActionRecipe=false;
-  this.isDeleteRecipe=false;
-  this.isIngrDropDown=false;
-  this.IsSaveConfirmed=false;
-  this.isCreateRecipeName=false;
+  this.isListRecipe=signal(false);
+  this.isActionRecipe=signal(false);
+  this.isDeleteRecipe=signal(false);
+  this.isIngrDropDown=signal(false);
+  this.IsSaveConfirmed=signal(false);
+  this.isCreateRecipeName=signal(false);
   this.tabDialog[this.prevDialog]=false;
-  this.isChangeValueForAll=false;
-  this.isChangeValueForAllPerso=false;
-  this.isChangeRecipeName=false;
-  this.isActionComments=false;
+  this.isChangeValueForAll=signal(false);
+  this.isChangeValueForAllPerso=signal(false);
+  this.isChangeRecipeName=signal(false); 
+  this.isActionComments=signal(false); 
   this.isListTypeFr=false;
   this.isListTypeEn=false;
-  this.isIngrDropDown=false;
+  this.isIngrDropDown=signal(false);
 }
 
 onAction(event:any){
@@ -469,9 +464,9 @@ onAction(event:any){
   } else if (event.target.id==='listRecipe'){
       this.createDropDownRecipe();
   } else if(event.target.id==='ActionRecipe'){
-    this.isActionRecipe=true;
+    this.isActionRecipe=signal(true);
   } else if(event.target.id==='ActionComments' || event.target.id==='ActionCommentsPerso'){
-    this.isActionComments=true;
+    this.isActionComments=signal(true); 
   }
 }
 
@@ -498,41 +493,40 @@ createDropDownRecipe(){
     }
   }
   if (this.tabRecipe.length>1){
-      this.tabRecipe.sort((a, b) => (a.name < b.name) ? -1 : 1);
-      this.tabRecipe.splice(0,0,{name:"",posRec:0});
-      this.tabRecipe[0].name='Cancel';
-      var scrollY='hidden';
-      if (this.tabRecipe.length>9){
-        this.heightListRecipe=210;
-        scrollY='scroll';
+    this.tabRecipe.sort((a, b) => (a.name < b.name) ? -1 : 1);
+    this.tabRecipe.splice(0,0,{name:"",posRec:0});
+    this.tabRecipe[0].name='Cancel';
+    var scrollY='hidden';
+    if (this.tabRecipe.length>9){
+      this.heightListRecipe=210;
+      scrollY='scroll';
+    } else { 
+      this.heightListRecipe = this.tabRecipe.length * 25 + 15;
+    }
+    this.isListRecipe=signal(true);
 
-      } else { 
-        this.heightListRecipe = this.tabRecipe.length * 25 + 15;
-      }
-      this.isListRecipe=true;
-
-      this.styleBoxListRecipe = {
-        'width': 205 + 'px',
-        'height': this.heightListRecipe + 'px',
-        'position': 'absolute',
-        'margin-left':140 + 'px', 
-        'margin-top': 5 + 'px',
-        'display':'inline-block',
-        'z-index': '1'
-      }
-      this.styleBoxOptionListRecipe = {
-        'background-color':'lightgrey',
-        'width':205 + 'px',
-        'height':this.heightListRecipe + 'px',
-        'margin-top' :  0 + 'px',
-        'margin-left': 80 + 'px',
-        'overflow-x': 'hidden',
-        'overflow-y': scrollY,
-        'border':'1px blue solid',
-        'display':'inline-block'
-        }
-        this.cdr.markForCheck();
-      }
+    this.styleBoxListRecipe=signal({
+      width : '205px',
+      'height' : this.heightListRecipe + 'px',
+      'position' : 'absolute',
+      'margin-left':140 + 'px', 
+      'margin-top': 5 + 'px',
+      'display' :'inline-block',
+      'z-index' : '1'
+    });
+        
+    this.styleBoxOptionListRecipe = signal({
+      'background-color':'lightgrey',
+      'width':180 + 'px',
+      'height':this.heightListRecipe + 'px',
+      'margin-top' :  -40 + 'px',
+      'margin-left': 80 + 'px',
+      'overflow-x': 'hidden',
+      'overflow-y': scrollY,
+      'border':'2px blue solid',
+      'display':'inline-block'
+    });
+  }
 }
 
 
@@ -543,10 +537,10 @@ afterDropDown(event:any){
   if (event.target.id==='Action'){
       if (event.target.textContent.trim()==="Cancel" ){
         this.idText="";
-        this.isActionRecipe=false;
-        this.isListRecipe=false;
+        this.isActionRecipe=signal(false);
+        this.isListRecipe=signal(false);
       } else 
-      { this.isRecipeModified=true;
+      { this.isRecipeModified=signal(true);
         if (event.target.textContent.trim()==="Delete" ){
           this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,1);
           this.tabUpdateRef.splice(this.idNb,1);
@@ -599,7 +593,7 @@ afterDropDown(event:any){
           }
           
         } else if (event.target.textContent.trim()==="Change value for all" ){
-          this.isChangeValueForAll=true;
+          this.isChangeValueForAll=signal(true);
           this.currentValue=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity;
           this.currentIngr=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr;
           this.margLeftChangeAll=30;
@@ -641,7 +635,7 @@ afterDropDownPerso(event:any){
 
   } else 
   {
-    this.isRecipeModified=true;
+    this.isRecipeModified=signal(true);
     if (event.target.textContent.trim()==="Delete" ){
       
     } else if (event.target.textContent.trim()==="Add after" ){
@@ -685,7 +679,7 @@ afterDropDownPerso(event:any){
           this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb-1]=saveData;
         } 
     } else if (event.target.textContent.trim()==="Change value for all" ){
-        this.isChangeValueForAllPerso=true;
+        this.isChangeValueForAllPerso=signal(true);
         this.currentValue=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
         this.currentIngr=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr;
         this.margLeftChangeAll=30;
@@ -698,17 +692,17 @@ afterDropDownPerso(event:any){
 afterDropDownRecipe(event:any){
   this.tabDialog[this.prevDialog]=false;
   this.resetBooleans();
-  this.isCreateRecipeName=false;
-  this.isDuplicate=false;
+  this.isCreateRecipeName=signal(false);
+  this.isDuplicate==signal(false);
   var i=0;
-  this.isActionRecipe=false;
+  this.isActionRecipe=signal(false);
   if (this.tabActionRecipe[event.target.value]==="Cancel"){
 
   } else {
-    this.isRecipeModified=true;
+    this.isRecipeModified=signal(true);
     if (this.tabActionRecipe[event.target.value]==="Delete"){
       
-      this.isDeleteRecipe=true;   
+      this.isDeleteRecipe=signal(true);   
       this.delMsg=this.recipeFile.recipe[this.recordRecipe].name; 
       //this.styleBox=getStyleDropDownContent(90, 240);
       this.styleBox = {
@@ -732,16 +726,16 @@ afterDropDownRecipe(event:any){
         }
 
     } else if (this.tabActionRecipe[event.target.value]==="Create" ){
-        this.isRecipeModified=true;
-        this.isCreateRecipeName=true;
+        this.isRecipeModified=signal(true);
+        this.isCreateRecipeName==signal(true);
 
     } else if (this.tabActionRecipe[event.target.value]==="Duplicate"){
-        this.isRecipeModified=true;
-        this.isCreateRecipeName=true;
-        this.isDuplicate=true;
+        this.isRecipeModified=signal(true);
+        this.isCreateRecipeName=signal(true);
+        this.isDuplicate=signal(true);
 
     } else if (this.tabActionRecipe[event.target.value]==="Rename"){
-        this.isChangeRecipeName=true;
+        this.isChangeRecipeName=signal(true); 
         this.temporaryNameRecipe="";
      } else  if (this.tabActionRecipe[event.target.value]==="Calculate nut. facts for all recipes"){
         this.calculateNutritionForAllRecipe();
@@ -767,14 +761,14 @@ copyFromTo(toRecord:any, fromRecord:any){
 
 onChangeName(event:any){
   if (event.target.id==='cancel'){
-    this.isChangeRecipeName=false;
+    this.isChangeRecipeName=signal(false); 
   } else if (event.target.id==='input'){
     this.temporaryNameRecipe=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
   } else if (event.target.id==='save'){
     this.recipeFile.recipe[this.recordRecipe].name=this.temporaryNameRecipe;
     this.updateInListType(this.temporaryNameRecipe,'FR','Rename');
-    this.isRecipeModified=true;
-    this.isChangeRecipeName=false;
+    this.isRecipeModified=signal(true);
+    this.isChangeRecipeName=signal(false); 
   }
 }
 
@@ -785,14 +779,14 @@ onChangeValues(event:any){
     this.changeValue=Number(this.SpecificForm.controls["changeValue"].value);
     if (this.changeValue !==0){
       
-      if (this.isChangeValueForAll === true){
+      if (this.isChangeValueForAll()){
         value = this.changeValue / this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity ;
         for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].data.length; i++){
           this.recipeFile.recipe[this.recordRecipe].data[i].quantity = this.recipeFile.recipe[this.recordRecipe].data[i].quantity * value;
         }
         
     
-      } else if (this.isChangeValueForAllPerso === true){
+      } else if (this.isChangeValueForAllPerso()){
         value = this.changeValue / this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
         for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].dataPerso.length; i++){
           this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity = this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity * value;
@@ -800,8 +794,8 @@ onChangeValues(event:any){
       }
     }
   }
-  this.isChangeValueForAll=false;
-  this.isChangeValueForAllPerso=false;
+  this.isChangeValueForAll=signal(false);
+  this.isChangeValueForAllPerso=signal(false);
   this.currentIngr="";
   this.currentValue=0;
 
@@ -863,7 +857,7 @@ calculateNutrition(type:string){
     }
     this.recipeFile.recipe[this.recordRecipe].nutritionPerso.totalWeight=theTotal;
   } 
-  this.isRecipeModified=true;
+  this.isRecipeModified=signal(true);
 }
 
 processNutrition(infile:any){
@@ -913,7 +907,7 @@ filterCalFat(ingr:string){
     }
   }
   if (this.tabListCalFat.length!==0){
-    this.isIngrDropDown=true;
+    this.isIngrDropDown=signal(true);
     if (this.tabListCalFat.length *  this.heightItemDropDown > this.maxHeightDropDown){
       this.heightDropDown=this.maxHeightDropDown;
       this.scrollY='scroll';
@@ -924,7 +918,7 @@ filterCalFat(ingr:string){
     this.styleBox=getStyleDropDownContent(this.heightDropDown, 230 );
     this.styleBoxOption=getStyleDropDownBox(this.heightDropDown, 230, 0 , 0, this.scrollY);
   } else {
-    this.isIngrDropDown=false;
+    this.isIngrDropDown==signal(false);
   }
   
 }
@@ -1123,7 +1117,7 @@ nameRecipe(event:any){
       const pushDataPerso=new classRecipe;
       this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
       
-      if (this.isCreateRecipeName===true && this.isDuplicate===false){
+      if (this.isCreateRecipeName() && !this.isDuplicate()){
           this.recipeFile.recipe[this.recordRecipe].name="";
           this.recipeFile.recipe[this.recordRecipe].commentsBox=this.minHeightCommBox;
           this.recipeFile.recipe[this.recordRecipe].commentsPersoBox=this.minHeightCommBox;
@@ -1136,7 +1130,7 @@ nameRecipe(event:any){
       this.tabUpdateRef.push({init:0});
       this.tabUpdateRef[this.tabUpdateRef.length-1].init=-1;
       this.recipeFile.recipe[this.recordRecipe].name=this.temporaryNameRecipe;
-      if (this.isDuplicate===false){
+      if (!this.isDuplicate()){
         for (var i=0; i<this.recipeFile.listTypeRecipe.length && trouve===false; i++){
             if (this.recipeFile.listTypeRecipe[i].Fr===this.recipeFile.recipe[this.recordRecipe].typeFr && 
                   this.recipeFile.listTypeRecipe[i].En===this.recipeFile.recipe[this.recordRecipe].typeEn) {
@@ -1147,9 +1141,9 @@ nameRecipe(event:any){
       } else {
         this.updateTypeName(this.recipeFile,'','',"Fr",this.recipeFile.recipe[this.recordRecipe].name);
       }
-      this.isDuplicate=false;
-      this.isCreateRecipeName=false;
-      this.isRecipeModified=true;
+      this.isDuplicate=signal(false);
+      this.isCreateRecipeName=signal(false);
+      this.isRecipeModified=signal(true);
   } else if (event.target.id==='clear'){
       this.temporaryNameRecipe="";
   } else if (event.target.id==='cancel'){
@@ -1161,9 +1155,9 @@ nameRecipe(event:any){
 }
 
 delRecipe(event:any){
-  this.isDeleteRecipe=false;
+  this.isDeleteRecipe=signal(false);
   if (event.target.id==='YesDelConfirm'){
-    this.isRecipeModified=true;
+    this.isRecipeModified=signal(true);
     this.updateInListType(this.recipeFile.recipe[this.recordRecipe].name,'FR','Delete');
 /*
     for (var i=this.recordRecipe+1; i<this.tabUpdateRef.length; i++){
@@ -1245,8 +1239,8 @@ searchText(event:any){
 modifInput(event:any){
   this.resetBooleans();
   this.findId(event.target.id);
-  this.isIngrDropDown=false;
-  this.isRecipeModified=true;
+  this.isIngrDropDown=signal(false);
+  this.isRecipeModified=signal(true);
   if (this.idText==="ingr"){
       this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr=event.target.value;
       this.ingrType=this.idText;
@@ -1289,7 +1283,7 @@ modifInput(event:any){
 
 dropdownComments(event:any){
   this.resetBooleans();
-  this.isActionComments=false;
+  this.isActionComments=signal(false); 
   if (this.tabActionComments[event.target.value]==="Translate FR to UK"){
     this.translateComments('FrToUk');
    } else if (this.tabActionComments[event.target.value]==="Translate UK to FR"){
@@ -1405,7 +1399,7 @@ reInitialieRecipe(){
 onInputType(event:any){
     this.resetBooleans();
     const theValue=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
-    this.isRecipeModified=true;
+    this.isRecipeModified=signal(true);
     if (event.target.id==='Fr'){
       this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeFr.trim(),"Fr",this.recipeFile.recipe[this.recordRecipe].name.trim());
       this.recipeFile.recipe[this.recordRecipe].typeFr=theValue;
@@ -1429,7 +1423,7 @@ onInputType(event:any){
 
 
 updateInListType(recipeName:string,lang:string,action:string){
-  this.isRecipeModified=true;
+  this.isRecipeModified==signal(true);
   var i=0;
   var theValue="ALL";
   if (lang==="FR"){
@@ -1455,7 +1449,7 @@ updateInListType(recipeName:string,lang:string,action:string){
         else if (lang==="UK") {this.recipeFile.listTypeRecipe[i].En};
     } 
     this.createTabDropdownType(this.recipeFile.listTypeRecipe,lang,theValue);
-    if (this.isListRecipe===true){
+    if (this.isListRecipe()){
       this.createDropDownRecipe();
     }
     if (this.isSearchText===true){
@@ -1515,15 +1509,15 @@ else {
     theHeight=this.tabDropdownType.length * 30;
   }
 
-  this.styleBoxListType = {
+  this.styleBoxListType = signal({
 
     'position': 'absolute',
     'margin-left':'10px', 
     'margin-top':'5px',
     'display':'inline-block',
     'z-index': '1'
-  }
-  this.styleBoxOptionListType = {
+  })
+  this.styleBoxOptionListType = signal({
     'background-color':'lightgrey',
     'width':150 + 'px',
     'height':theHeight + 'px',
@@ -1533,16 +1527,15 @@ else {
     'overflow-y': scrollY,
     'border':'1px blue solid',
     'display':'inline-block'
-    }
-
+    })
 }
 
 onDropdownListType(event:any){
   if (event.target.textContent.trim()==='Cancel'){
     this.tabDialog[this.prevDialog]===false;
     this.idText="";
-    this.isActionRecipe=false;
-    this.isListRecipe=false;
+    this.isActionRecipe=signal(false);
+    this.isListRecipe=signal(false);
   } else if (this.isListTypeFr==true){
     this.updateTypeName(this.recipeFile,event.target.textContent.trim(),this.recipeFile.recipe[this.recordRecipe].typeFr,"Fr",this.recipeFile.recipe[this.recordRecipe].name);
     this.recipeFile.recipe[this.recordRecipe].typeFr=event.target.textContent.trim();
@@ -1557,7 +1550,7 @@ onDropdownListType(event:any){
 }
 
 updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:string){
-  this.isRecipeModified=true;
+  this.isRecipeModified=signal(true);
   var trouve=false;
   var iType=0;
   if (oldType===""){
@@ -1761,8 +1754,8 @@ CancelRecord(){
       }
     } 
     this.resetBooleans();
-    this.isRecipeModified=false;
-    this.isCreateRecipeName=false;
+    this.isRecipeModified=signal(false);
+    this.isCreateRecipeName==signal(false);
   }
 
 CancelSave(){
@@ -1776,7 +1769,7 @@ ConfirmSave(){
     //this.SpecificForm.controls['FileName'].setValue(this.myListOfObjects.items[this.fileNb].name);
     this.SpecificForm.controls['fileHeader'].setValue(this.theListOfObjects[this.fileNb].header);
     this.SpecificForm.controls['fileName'].setValue(this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json);
-    this.IsSaveConfirmed = true;
+    this.IsSaveConfirmed=signal(true);
   }
 
 calculateNutritionForAllRecipe(){
@@ -1787,11 +1780,11 @@ calculateNutritionForAllRecipe(){
   }
   this.recipeFile.updatedAt=strDateTime();
   this.message="";
-  this.isRecipeModified=true;
+  this.isRecipeModified=signal(true);
   //this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
   this.recordRecipe=saveRecipeRecord;
   //this.message='Nutrition facts calculated and saved for all recipes';
-  //this.isRecipeModified=false;
+  //this.isRecipeModified=signal(true);
 }
 
 SaveRecord(){
@@ -1799,8 +1792,8 @@ SaveRecord(){
     this.recipeFile.updatedAt=strDateTime();
     this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
     this.resetBooleans();
-    this.isRecipeModified=false;
-    this.isCreateRecipeName=false;
+    this.isRecipeModified=signal(true);
+    this.isCreateRecipeName=signal(false);
   }
 
 putRecord(GoogleBucket:string, GoogleObject:string, record:any){
@@ -1810,8 +1803,8 @@ putRecord(GoogleBucket:string, GoogleObject:string, record:any){
       .subscribe(res => {
               if (res.type===4){
                 this.message='File "'+ GoogleObject +'" is successfully stored in the cloud';
-                this.isRecipeModified=false;
-                this.IsSaveConfirmed=false;
+                this.isRecipeModified=signal(true);
+                this.IsSaveConfirmed=signal(false);
               }
             },
             error_handler => {

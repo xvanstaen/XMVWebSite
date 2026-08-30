@@ -1,6 +1,6 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID, ChangeDetectorRef} from '@angular/core';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatIconModule} from '@angular/material/icon';
 import { MatDialogModule} from '@angular/material/dialog';
