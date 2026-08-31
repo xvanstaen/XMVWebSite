@@ -10,7 +10,7 @@
     @if (EventHTTPReceived[0]===true && isCreateRecipeName() && isRecipeModified() && theListOfObjects.length>1){
         <div style="width:450px;  margin-top:5px; display:inline-block;" >
             <div class="objectHeader" style="margin-left:10px; font-size:18px; width:100%; display:inline-block;">Select the recipe file
-            </div>
+            </div>TOTOTO
             <li   *ngFor="let listFile of theListOfObjects; let i=index" class="stdInline" style="list-style: none;" (click)='RadioSelection($event)' >
                 @if (fileNb===i){
                     <input  class="radioButton"  type="radio"  name="theRadio" id="selFile-{{i}}" value="Y"  checked>
@@ -24,7 +24,7 @@
         </div>
     }
     
-    <div style="width:var(--boxW); display:inline-block; margin-left:20px;">
+    <div style="width:var(--boxW); display:inline-block; margin-left:20px; background-color: white;">
         @if (EventHTTPReceived[0]===true  && recipeFile.listTypeRecipe.length>1){
             <div style="max-width:450px; width:100%; margin-top:5px; display:inline-block;" >
                 <div style=" margin-left:10px; font-size:14px; width:100%; border:blue solid 1px; background-color:cyan;">
@@ -44,7 +44,7 @@
                             <div  *ngFor="let listType of recipeFile.listTypeRecipe; let i=index"  >
                                 
                                 @if (i > 0 && i % 2=== 1){
-                                    <div class="mainBoxMenu" (click)='RadioSelection($event)' >
+                                    <div class="mainBoxMenu"  >
                                         <div  class="mainMenu "  id="TypeA-{{i}}" [class]="{'even1': i % 4 === 1 , 'even2': i % 4 === 3,'listObjSel':i===radioSelect}"  (click)='RadioSelection($event)'>
                                             <div class="mainMenuItem"> 
                                                 
@@ -71,7 +71,7 @@
                                         }
                                     </div>
                                 } @else if (i===0){
-                                    <div  class="mainBoxMenu" (click)='RadioSelection($event)'>
+                                    <div  class="mainBoxMenu" >
                                         <div   id="TypeAll"  class="mainMenu even2" [class]="{'listObjSel':selectedTypeFr==='ALL'}"  (click)='RadioSelection($event)'>
                                             <div class="mainMenuItem">
                                                 0 - 
@@ -108,15 +108,15 @@
         }
     </div>
     @if (EventHTTPReceived[1]===true){
-        <div style=" margin-left:20px; width:var(--boxW); display:inline-block;  margin-top:20px; background-color: lightgrey" >
+        <div style=" margin-left:20px; width:var(--boxW); display:inline-block;  margin-top:20px; background-color: white; border:solid 3px black;" >
             <div id="posDivBeforeTitle"></div>
             @if (!isCreateRecipeName()){
-                <div style="width:100%; border:solid 2px blue;">
+                <div style="width:100%; border:solid 0px blue;">
                     <div style="margin-top:8px;"></div>
                     <!-- ====== SEARCH RECIPE ====== -->
                     <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Search recipe </span>
                     <input type="text" [value]="textToSearch" id='search' (input)="searchText($event)" (click)="searchText($event)"
-                        style="margin-left:10px; width:120px; height:25px; color:blue; ">
+                        style="box-sizing: border-box; margin-left:10px; width:120px; height:25px; color:blue; ">
                     <button id='cancel' class="sizeButtons" style="margin-left:10px;" (click)="searchText($event)" >Cancel</button>
                     <div class="skipLine">&nbsp;</div>
                     <div [style]="{'height.px':heightSearchDropdown, 'max-height.px': 150, 'overflow-y':searchScroll}">
@@ -134,9 +134,9 @@
             }
             <!-- ====== SAVE/CANCEL MODIFICATION OF RECIPE ====== -->
             @if (!IsSaveConfirmed() && isRecipeModified() && !isCreateRecipeName()){
-                <div  class="stdInline" style="margin-left:10px; color:blue; font-size:14px; ">
+                <div  class="stdInline" style="padding-left:10px;  color:red; font-size:16px; ">
                         Recipe has been modified
-                    <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button> &nbsp;&nbsp;
+                    <button id='but_1' class="sizeButtons"  (click)="ConfirmSave()"> Save</button> &nbsp;&nbsp;
                     <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
             
                     <div class="msg" style="width:100%; display:inline-block;" ><br>{{message}} </div>
@@ -173,17 +173,18 @@
                     <button id='clear' class="sizeButtons" style="margin-left:10px;" (click)="nameRecipe($event)" >Clear</button>
                     <button id='cancel' class="sizeButtons" style="margin-left:10px;" (click)="nameRecipe($event)" >Cancel</button>
             } @else {
+            <div style="background-color:lightblue;">
                 <!-- TITLE-->
-                <div class="titleHeader" style="width:100%; background-color:cyan;"> 
+                <div class="titleHeader" style="width:100%; "> 
                     @if (yourLanguage==='FR'){
                         Type de recette: 
-                        <input type="text" (input)="onInputType($event)" id='Fr' class='theType' value="{{recipeFile.recipe[recordRecipe].typeFr}}">
+                        <input type="text" (input)="onInputType($event)" id='Fr' class='theType' style="box-sizing: border-box;" value="{{recipeFile.recipe[recordRecipe].typeFr}}">
                     } @else if (yourLanguage==='UK') {
                         Type of recipe: 
-                        <input type="text" (input)="onInputType($event)" id='En' class='theType' value="{{this.recipeFile.recipe[this.recordRecipe].typeEn}}">
+                        <input type="text" (input)="onInputType($event)" id='En' class='theType' style="box-sizing: border-box;" value="{{this.recipeFile.recipe[this.recordRecipe].typeEn}}">
                     }
                 </div>
-                <div class="titleName"> 
+                <div class="titleName" style="border:solid 0px blue;"> 
                     @if (isListTypeFr===true || isListTypeEn===true){
                         <div class="dropdown">
                             <div [style]="styleBoxListType()">
@@ -196,7 +197,7 @@
                             </div>
                         </div>
                     }
-                    <div style="margin-left:80px;" class="circle"  (click)="onAction($event)"  id='ActionRecipe'>A</div>  
+                    <div class="circle"   style="margin-left:80px; " (click)="onAction($event)"  id='ActionRecipe'>A</div>  
                         @if (isActionRecipe()){ 
                             <div class="dropdown" >
                                 <div [style]="styleBoxAction">
@@ -271,12 +272,12 @@
                 <div *ngFor="let StdPer of theStdPersoDisplay; let j=index;">                
                                     <!-- Header table -->
                     
-                    <div  class="visible">
-                        <div style='font-size:16px; padding-top:8px; border: solid 1px red; '>
+                    <div  >
+                        <div style='font-size:16px; padding-top:8px; border: solid 0px red;' [class]=" {'colorPerso': j ===1 , 'colorStd': j ===0}">
                             @if (j===0){
                                 <!-- Display the title for STANDARD and Visibility on/off icon -->
                                 <div  class="titleStdPerso">
-                                    <span style="font-size:22px; color:green; ">STANDARD</span>
+                                    <span style="font-size:16px; font-weight:bold; color:blue; ">STANDARD RECIPE</span>
                  
                                         @if (theStdPersoDisplay[0]==="Y"){
                                             <mat-icon style=" color: red;" class="eye" id="eyeStd" (click)='selStdPer($event)' >
@@ -291,9 +292,9 @@
                                 </div> 
                             } @else if (j===1){
                                     <!-- Display the title for PERSONNALIZED and Visibility on/off  icon-->
-                                <div  class="titleStdPerso">
-                                    <span style=" font-size:22px;  color:green;"> 
-                                        PERSONNALIZED
+                                <div  class="titleStdPerso colorPerso">
+                                    <span style=" font-size:16px;  font-weight:bold; color:green; margin-left:20px;"> 
+                                        RECIPE PERSO
                                     </span>
                                         @if (theStdPersoDisplay[1]==="Y"){
                                             <mat-icon style=" color: red;" class="eye" id="eyePerso" (click)='selStdPer($event)' >
@@ -312,11 +313,11 @@
                  
             
                     @if ((j===0 && theStdPersoDisplay[0]==='Y') || (j===1 && theStdPersoDisplay[1]==='Y')){
-                        <div class="visible" style="border: solid 1px blue;">
-                            <div class="titleHeader rightBorder" style="width:var(--actionW); " >Action</div>
+                        <div  style="border: solid 0px blue; padding-left:1px; box-sizing: border-box; " [class]=" {'colorPerso': j ===1 , 'colorStd': j ===0}">
+                            <div class="titleHeader rightBorder" style="width:var(--actionW);border-left: blue solid 1px; " >Action</div>
                             <div class="titleHeader rightBorder" style="width:var(--ingW); " >Ingredients</div>
                             <div class="titleHeader rightBorder" style="width:var(--quanW); " >Quantity</div>
-                            <div class="titleHeader " style="width:var(--unitW); " >Unit</div>
+                            <div class="titleHeader rightBorder" style="width:calc( var(--unitW) + 2px); " >Unit</div>
                         </div>
                         <!-- ====== Display record related to STANDARD recipe ====== -->
                         @if (theStdPersoDisplay[0]==='Y' && j===0){
@@ -357,19 +358,20 @@
                                             </div>
                                         }
                                         
-                                        <div  style="width: calc( var(--actionW )+ var(--ingW) + var(--quanW)+ var(--unitW) ); background-color: lightgrey; box-sizing: border-box; height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; ">
+                                        <div  style="display:block; height:30px;    box-sizing: border-box;  padding:0px; margin-top:2px;
+                                        border: solid 0px blue; width:97%" class="colorStd" >
                                             <!--
                                             <input class="circle"  (click)="onAction($event)"  id='Action-{{i}}' type="text" value='A'>
                                             -->
-                                            <div  class="divCircle"  style="box-sizing: border-box;">
-                                                <div class="circle" (click)="onAction($event)"  id='Action-{{i}}' >
+                                            <div  class="divCircle"  style="box-sizing: border-box; border-bottom: 0px; border-top:0px; ">
+                                                <div class="circle"  (click)="onAction($event)"  id='Action-{{i}}' >
                                                     <span  style="padding-top:-1px;"  id='Action-{{i}}'>A</span>
                                                 </div>  
                                             </div>
                                                                     <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
                                             <div [style.width]=" 'var(--ingW)' " class="theRow" >
                                                 
-                                                <input class="inputRow" [style.width]=" 'var(--ingW)' " style="box-sizing: border-box; " type="text" id="ingr-{{i}}"  (mouseup)="onMouseUp($event)"   (input)="modifInput($event)" value="{{theRecipe.ingr}}">
+                                                <input class="inputRow colorStd" style="border-bottom: 0px; border-top:0px;" [style.width]=" 'var(--ingW)' "  type="text" id="ingr-{{i}}"  (mouseup)="onMouseUp($event)"   (input)="modifInput($event)" value="{{theRecipe.ingr}}">
                                                 
                                                 @if (isIngrDropDown() && i===idNb && idText==='ingr'){
                                                     <div class="dropdown ">
@@ -385,24 +387,24 @@
                                                 }
                                             </div>
                                             <div class="theRow " >
-                                                <input class="inputRow" [style.width]=" 'var(--quanW)' " style="box-sizing: border-box;  padding-left: 10px;"  type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
+                                                <input class="inputRow colorStd" [style.width]=" 'var(--quanW)' " style=" border-left: 0px;border-bottom: 0px; border-top:0px;"  type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
                                             </div>
                                             <div  class="theRow" >
-                                                <input  class="inputRow"  [style.width]=" 'var(--unitW)' " style="box-sizing: border-box;  padding-left: 10px;" type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
+                                                <input  class="inputRow colorStd"  [style.width]=" 'calc( var(--unitW) + 2px)' " style="padding-left: 10px; border-left: 0px;border-bottom: 0px; border-top:0px;" type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="colorArea stdInline" style =" text-align: center; margin-top:5px;">Ustensiles Std</div>
-                                <div class="colorArea stdInline" >
+                                <div class=" stdInline" style ="color:blue; margin-left:240px; margin-top:15px;">Ustensiles Std</div>
+                                <div  >
                     
-                                    <textarea  class="input inputArea" (input)="modifInput($event)"  
+                                    <textarea  class="input inputArea colorStd" (input)="modifInput($event)"  
                                             [style]="{'height.px':recipeFile.recipe[recordRecipe].materielBox, 'max-height.px':maxHeightCommBox}" id="materiel" value="{{recipeFile.recipe[recordRecipe].materiel}}">
                                     </textarea>
                                 </div>
-                                <div class="colorArea stdInline" style ="text-align: left;">
-                                    <div style="margin-left:35%;" class="circle"  id='ActionComments' (click)="onAction($event)"   id='ActionComments'><span   id='ActionComments' style="padding-top:1px;">A</span></div>  
-                                    <span style="margin-left:20px;">Comments Std</span>
+                                <div style ="text-align: left;">
+                                    <div style="margin-left:198px;" class="circle"  id='ActionComments' (click)="onAction($event)"   id='ActionComments'><span   id='ActionComments' style="padding-top:1px;">A</span></div>  
+                                    <span style="margin-left:20px; color:blue;">Comments Std</span>
                                     
                                     @if (isActionComments() && idText==='ActionComments'){
                                         <div class="dropdown ">
@@ -417,26 +419,26 @@
                                         </div>
                                     }
                                 </div>
-                                <div class="colorArea stdInline" >
+                                <div >
                                     <div class="flag " (click)="translateComments('UkToFr')"> <span><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagFrance.png" ></span></div>
 
-                                    <textarea  class="input inputArea colorArea" (input)="modifInput($event)"  
+                                    <textarea  class="input inputArea colorStd" (input)="modifInput($event)"  
                                         [style.height.px]="recipeFile.recipe[recordRecipe].commentsBox" [style.max-height.px]="maxHeightCommBox" id="comments" value="{{recipeFile.recipe[recordRecipe].comments}}">
                                     </textarea>
                                 </div>
-                                <div class="colorArea stdInline" style =" background-color: white;"> 
+                                <div  > 
                                     <div class="flag" (click)="translateComments('FrToUk')"> <span><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagUK.png" ></span></div>
 
-                                    <textarea  class="input inputArea colorArea" (input)="modifInput($event)"  
+                                    <textarea  class="input inputArea colorStd" (input)="modifInput($event)"  
                                         [style.height.px]="recipeFile.recipe[this.recordRecipe].commentsEnBox" [style.max-height.px]="maxHeightCommBox" id="commentsEn" value="{{recipeFile.recipe[recordRecipe].commentsEn}}">
                                     </textarea>
                                 </div>
                                 <!-- ====== NUTRITION FACTS FOR STANDARD ====== -->
                                 @if (!isCreateRecipeName()){
-                                    <div style="width:100%; display:inline-block; border:solid 2px black; ">
+                                    <div style="width:100%; display:inline-block; border-top:solid 1px black; ">
                                         <div class="skipLine">&nbsp;</div>
                                         
-                                        <div class="nutriFacts">
+                                        <div class="nutriFacts" style="color:blue;">
                                             Nutrition Facts Std
                                             @if (eyeNutritionFact[0]==="Y"){
                                                 <mat-icon style=" color: red;" class="eyeNutrition" id="eyeStd" (click)='selEyeNutFact($event)' >
@@ -446,6 +448,7 @@
                                                 <mat-icon style=" color: blue;" class="eyeNutrition" id="eyeStd"  (click)='selEyeNutFact($event)' >
                                                     visibility
                                                 </mat-icon>
+                                                <br><br>
                                             }
                                         </div>
                                         @if (eyeNutritionFact[0]==="Y"){
@@ -473,6 +476,7 @@
 
                         <!-- ====== Display record related to PERSONNALIZED recipe ====== -->
                         @if (theStdPersoDisplay[1]==='Y'&& j===1){
+                        <div class="colorPerso">
                             <div   *ngFor="let theRecipe of recipeFile.recipe[recordRecipe].data; let i=index">
 
                                     @if (tabDialog[prevDialog]===true && i===idNb && idText==='ActionPerso'){
@@ -507,22 +511,22 @@
                                             </div>
                                         </div>
                                     }
-                                <div  style="background-color: lightgrey; box-sizing: border-box; ;height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; "  >
-                                    <div  class="divCircle"  >
+                                <div  style=" box-sizing: border-box; ;height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; "  >
+                                    <div  class="divCircle "  >
                                         <div class="circle"  (click)="onAction($event)"  id='ActionPerso-{{i}}'>
                                             <span  style="padding-top:-1px;" id='ActionPerso-{{i}}'>A</span>
                                         </div>  
                                     </div> 
-                                <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
+                                    <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
                                     <div style="width:var(--ingW); " class="theRow">
-                                        <input class="inputRow" style=" width:var(--ingW); " type="text" id="ingrPerso-{{i}}" (mouseup)="onMouseUp($event)"  (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].ingr}}">
+                                        <input class="inputRow colorPerso" style=" width:var(--ingW); border-right: 0px;" type="text" id="ingrPerso-{{i}}" (mouseup)="onMouseUp($event)"  (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].ingr}}">
                                         @if (isIngrDropDown() && i===idNb && idText==='ingrPerso'){
                                             <div class="dropdown ">
                                                 <div [style]="styleBox">
                                                     <div  [style]="styleBoxOption">
                                                         <li *ngFor="let tab of tabListCalFat; let m=index;" 
-                                                                class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                                    (click)="modifInput($event)" id="sel{{ingrType}}-{{i}}"  [value]="m">{{tab.name}} - serving: {{tab.serving | number:'1.0-0'}}  {{tab.unit }}
+                                                                class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                                        (click)="modifInput($event)" id="sel{{ingrType}}-{{i}}"  [value]="m">{{tab.name}} - serving: {{tab.serving | number:'1.0-0'}}  {{tab.unit }}
                                                         </li>
                                                     </div>
                                                 </div>
@@ -530,48 +534,46 @@
                                         }
                                     </div>
                                     <div class="theRow " style="width:var(--quanW);" >
-                                        <input class="inputRow " style=" width:var(--quanW); " type="text" id="quantityPerso-{{i}}"   (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].quantity}}">
+                                        <input class="inputRow colorPerso" style=" width:var(--quanW); border-right: 0px;" type="text" id="quantityPerso-{{i}}"   (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].quantity}}">
                                     </div>
                                     <div style="width:var(--unitW); " class="theRow" >
-                                        <input class="inputRow " style=" width:var(--unitW); " type="text" id="unitPerso-{{i}}"  (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].unit}}">
+                                        <input class="inputRow colorPerso" style=" width:var(--unitW); " type="text" id="unitPerso-{{i}}"  (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].unit}}">
                                     </div>
                                 </div>
                             </div> <!-- *ngFor --> 
-                            <div class="colorArea stdInline" style ="text-align: center;">Ustensiles Perso</div>
-                            <div  class="colorArea stdInline">
-                                <textarea  class="input inputArea" (input)="modifInput($event)" 
-                                [style]="{'height.px':recipeFile.recipe[recordRecipe].materielPersoBox, 'max-height.px':maxHeightCommBox}"
-                                            id="materielPerso" value="{{recipeFile.recipe[recordRecipe].materielPerso}}">
+                            <div  style ="margin-left:240px; color:green; font-weight: bold;">Ustensiles Perso</div>                            <div >
+                                <textarea  class="input inputArea colorPerso" (input)="modifInput($event)" 
+                                    [style]="{'height.px':recipeFile.recipe[recordRecipe].materielPersoBox, 'max-height.px':maxHeightCommBox}"
+                                                id="materielPerso" value="{{recipeFile.recipe[recordRecipe].materielPerso}}">
                                 </textarea>
                             </div>
-                
-                            <div class="colorArea stdInline" style="text-align:left;">
-                                <div style="margin-left:35%;" class="circle"  (click)="onAction($event)"  id='ActionCommentsPerso'>A</div>  
-                                <span style="margin-left:20px;">Comments Perso</span>
+                    
+                            <div  style="text-align:left;">
+                                <div style="margin-left:195px;" class="circle"  (click)="onAction($event)"  id='ActionCommentsPerso'>A</div>  
+                                <span style="margin-left:20px; color:green; font-weight: bold;">Comments Perso</span>
                                 @if (isActionComments() && idText==='ActionCommentsPerso'){
                                     <div class="dropdown ">
                                         <div class="Straight-content" style=" width:240px; margin-left: 200px;" [style.height.px]="theHeight" [style.margin-top.px]="posTopDropDown+40">
-                                                <div  class="StraightDropDown " style="overflow-y:scroll;  " [style.height.px]="theHeight  - 100"  >
+                                            <div  class="StraightDropDown " style="overflow-y:scroll;  " [style.height.px]="theHeight  - 100"  >
                                                 <li *ngFor="let tab of tabActionCommentsPerso; let m=index;" 
-                                                        class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                            (click)="dropdownComments($event)" id="commentsPerso" [value]="m">{{tab}}   
+                                                            class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                                (click)="dropdownComments($event)" id="commentsPerso" [value]="m">{{tab}}   
                                                 </li>
                                             </div>
                                         </div>
                                     </div>
                                 }
                             </div>
-                            <div>
-                                <textarea  class="input inputArea colorArea" (input)="modifInput($event)" 
-                                        [style]="{'height.px':recipeFile.recipe[this.recordRecipe].commentsPersoBox, 'max-height.px':maxHeightCommBox}" id="commentsPerso" value="{{recipeFile.recipe[recordRecipe].commentsPerso}}">
+                            <div style="margin-top:10px;">
+                                <textarea  class="input inputArea colorPerso" (input)="modifInput($event)" 
+                                            [style]="{'height.px':recipeFile.recipe[this.recordRecipe].commentsPersoBox, 'max-height.px':maxHeightCommBox}" id="commentsPerso" value="{{recipeFile.recipe[recordRecipe].commentsPerso}}">
                                 </textarea>
                             </div>
                             <!-- ====== NUTRITION FACTS FOR PERSO ====== -->
                             @if (!isCreateRecipeName() && recipeFile.recipe[recordRecipe].nutritionPerso.totalWeight>0){
                                 <div style="width:100%; display:inline-block; border:solid 2px black;  ">
-                                    <div class="skipLine">&nbsp;</div>
-                                    
-                                    <div class="stdInline" style=" margin-top:-20px;margin-left:10px; font-size:22px;  text-align: center; color:green;">
+                                    <div class="skipLine">&nbsp;</div>    
+                                    <div class="nutriFacts" style=" margin-top:5px;margin-left:10px; margin-left:200px; color:green;">
                                         Nutrition Facts Perso
                                         @if (eyeNutritionFact[1]==="Y"){
                                             <mat-icon style=" color: red;" class="eyeNutrition" id="eyePerso" (click)='selEyeNutFact($event)' >
@@ -581,8 +583,9 @@
                                             <mat-icon style=" color: blue;" class="eyeNutrition" id="eyePerso"  (click)='selEyeNutFact($event)' >
                                                 visibility
                                             </mat-icon>
+                                            <br><br>
                                         }
-                                    
+                                        
                                     </div>
                                     @if (eyeNutritionFact[1]==="Y"){
                                         <div class="skipLine">&nbsp;</div>
@@ -591,8 +594,7 @@
                                         <div class="nutritionName odd">Proteins</div>
                                         <div  class="nutritionNb odd">{{recipeFile.recipe[recordRecipe].nutritionPerso.proteins | number:'1.2-2'}}</div>
                                         <div class="nutritionName even">Carbs & Sugar</div>
-                                        <div  class="nutritionNb even"> {{recipeFile.recipe[recordRecipe].nutritionPerso.carbs | number:'1.2-2'}}</div>
-                                        <div class="nutritionName odd">Cholesterol</div>
+                                        <div  class="nutritionNb even"> {{recipeFile.recipe[recordRecipe].nutritionPerso.carbs | number:'1.2-2'}}</div>                                        <div class="nutritionName odd">Cholesterol</div>
                                         <div  class="nutritionNb odd">{{recipeFile.recipe[recordRecipe].nutritionPerso.cholesterol | number:'1.2-2'}}</div>
                                         <div class="nutritionName even">Saturated Fat</div>
                                         <div  class="nutritionNb even">{{recipeFile.recipe[recordRecipe].nutritionPerso.satFat | number:'1.2-2'}}</div>
@@ -602,11 +604,13 @@
                                     }
                                 </div>
                             }
+                        </div>
                         } <!-- if j===1-->
                     }<!-- if j==0 or j===1-->
                 </div> <!-- ngFor j -->    
-            }
-        </div>
+            </div>
+        }
+    </div>
     }
 }
 <div class="skipLine">&nbsp;</div>

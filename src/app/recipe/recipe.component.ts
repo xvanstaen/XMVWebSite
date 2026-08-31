@@ -377,7 +377,12 @@ selLanguage(event:string){
 
 RadioSelection(event:any){
 
-this.findId(event.target.id);
+if (event.currentTarget.id!==''){
+  this.findId(event.currentTarget.id);
+} else {
+  this.findId(event.target.id);
+}
+
 // const i=parseInt(event.target.id.substring(2));
 const val=this.idNb;
 if (this.radioSelect!==this.idNb){
@@ -1664,6 +1669,7 @@ updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:s
 
 onRefresh(){
   this.refreshFileType(this.recipeFile)
+  this.isRecipeModified=signal(true);
 }
 
 refreshFileType(inFile:any){
@@ -1792,7 +1798,7 @@ SaveRecord(){
     this.recipeFile.updatedAt=strDateTime();
     this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
     this.resetBooleans();
-    this.isRecipeModified=signal(true);
+    this.isRecipeModified=signal(false);
     this.isCreateRecipeName=signal(false);
   }
 
@@ -1803,8 +1809,8 @@ putRecord(GoogleBucket:string, GoogleObject:string, record:any){
       .subscribe(res => {
               if (res.type===4){
                 this.message='File "'+ GoogleObject +'" is successfully stored in the cloud';
-                this.isRecipeModified=signal(true);
-                this.IsSaveConfirmed=signal(false);
+                if (this.isRecipeModified()) {this.isRecipeModified=signal(false)};
+                if (this.IsSaveConfirmed) {this.IsSaveConfirmed=signal(false)};
               }
             },
             error_handler => {
@@ -2034,7 +2040,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                       // keep the files corresponding to the recipes of the user
                     } 
                 }
-                  this.isListOfObjectsRetrieved=true; 
+                  // this.isListOfObjectsRetrieved=true; 
                   if (this.theListOfObjects.length===1){
                   //if (this.myListOfObjects.items.length===1){
                     this.fileNb=0;
