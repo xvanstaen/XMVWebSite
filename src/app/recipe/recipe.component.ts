@@ -346,8 +346,8 @@ ngOnInit(){
     'width': 150 + 'px',
     'height': HeightAction + 'px',
     'position': 'absolute',
-    'margin-left':'15%', 
-    'margin-top':'5px',
+    'margin-left':'170px', 
+    'margin-top':'-32px',
     'z-index': '1'
   }
 
@@ -431,7 +431,7 @@ if (this.radioSelect!==this.idNb){
 
 resetBooleans(){
   this.isListRecipe=signal(false);
-  this.isActionRecipe=signal(false);
+  if (this.isActionRecipe()){this.isActionRecipe=signal(false)};
   this.isDeleteRecipe=signal(false);
   this.isIngrDropDown=signal(false);
   this.IsSaveConfirmed=signal(false);

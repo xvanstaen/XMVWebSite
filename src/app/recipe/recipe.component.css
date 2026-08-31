@@ -152,7 +152,7 @@ div{
   
   .circle:hover{
     color:red;
-    background-color:cyan;
+    background-color: rgb(237, 149, 149);
     width:22px;
     height:22px;
     border: solid 2px rgb(4, 4, 124);
@@ -160,7 +160,7 @@ div{
 
   .divCircle{
     width:var(--actionW); display:inline-block;  
-    margin-top:0px; border: solid 3px green;
+    margin-top:0px; border: solid 0px green;
     padding-left:0px;
    
   }
@@ -185,15 +185,16 @@ div{
     font-size:14px;
     background-color: lightgrey;
     padding-left:8px; 
+    border: solid 0px blue; 
 
   }
   .inputRow:Hover{
-    background-color: rgb(216, 69, 69);
-    color:white;
+    background-color: rgb(237, 149, 149);
+    color:darkblue;
   }
 
   .theRow{
-    color:blue; display:inline-block; 
+    display:inline-block; 
     background-color: lightgrey;
     margin-top:-5px;
   }

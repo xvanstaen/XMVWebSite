@@ -7,7 +7,6 @@
 @if (dictionaryOnly===true){
     <app-dictionary [configServer]="configServer" [identification]="identification"  ></app-dictionary>
 } @else {
-
     @if (EventHTTPReceived[0]===true && isCreateRecipeName() && isRecipeModified() && theListOfObjects.length>1){
         <div style="width:450px;  margin-top:5px; display:inline-block;" >
             <div class="objectHeader" style="margin-left:10px; font-size:18px; width:100%; display:inline-block;">Select the recipe file
@@ -198,11 +197,11 @@
                         </div>
                     }
                     <div style="margin-left:80px;" class="circle"  (click)="onAction($event)"  id='ActionRecipe'>A</div>  
-                        @if (isActionRecipe()){
+                        @if (isActionRecipe()){ 
                             <div class="dropdown" >
-                                <div [style]="styleBoxAction()">
-                                    <div   [style]="styleBoxOptionAction()"  >
-                                        <li *ngFor="let tab of tabActionRecipe; let m=index;" 
+                                <div [style]="styleBoxAction">
+                                    <div   [style]="styleBoxOptionAction"  > 
+                                        <li *ngFor="let tab of this.tabActionRecipe; let m=index;" {{m}}
                                                 class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                                     (click)="afterDropDownRecipe($event)" id="ActionRecipe" [value]="m">{{tab}}   
                                         </li>
@@ -257,7 +256,7 @@
                 @if (isListRecipe()){
                     <br>
                     <div class="dropdown ">
-                        <div [style]="styleBoxListRecipe() ">             
+                        <div [style]="styleBoxListRecipe() ">          
                             <div   [style]="styleBoxOptionListRecipe()"  >
                                 <li *ngFor="let tab of tabRecipe; let m=index;" 
                                         class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
@@ -358,7 +357,7 @@
                                             </div>
                                         }
                                         
-                                        <div  style="width: calc( var(--actionW )+ var(--ingW) + var(--quanW)+ var(--unitW) ); background-color: lightgrey; border: solid 3px red;height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; ">
+                                        <div  style="width: calc( var(--actionW )+ var(--ingW) + var(--quanW)+ var(--unitW) ); background-color: lightgrey; box-sizing: border-box; height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; ">
                                             <!--
                                             <input class="circle"  (click)="onAction($event)"  id='Action-{{i}}' type="text" value='A'>
                                             -->
@@ -368,9 +367,9 @@
                                                 </div>  
                                             </div>
                                                                     <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
-                                            <div [style.width]=" 'var(--ingW)' " class="theRow" style="background-color: yellow;">
+                                            <div [style.width]=" 'var(--ingW)' " class="theRow" >
                                                 
-                                                <input class="inputRow" [style.width]=" 'var(--ingW)' " style="box-sizing: border-box; background-color: pink;" type="text" id="ingr-{{i}}"  (mouseup)="onMouseUp($event)"   (input)="modifInput($event)" value="{{theRecipe.ingr}}">
+                                                <input class="inputRow" [style.width]=" 'var(--ingW)' " style="box-sizing: border-box; " type="text" id="ingr-{{i}}"  (mouseup)="onMouseUp($event)"   (input)="modifInput($event)" value="{{theRecipe.ingr}}">
                                                 
                                                 @if (isIngrDropDown() && i===idNb && idText==='ingr'){
                                                     <div class="dropdown ">
@@ -386,10 +385,10 @@
                                                 }
                                             </div>
                                             <div class="theRow " >
-                                                <input [style.width]=" 'var(--quanW)' " style="box-sizing: border-box; background-color: lightsalmon; padding-left: 10px;"  type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
+                                                <input class="inputRow" [style.width]=" 'var(--quanW)' " style="box-sizing: border-box;  padding-left: 10px;"  type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
                                             </div>
                                             <div  class="theRow" >
-                                                <input   [style.width]=" 'var(--unitW)' " style="box-sizing: border-box; background-color: lightgreen; padding-left: 10px;" type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
+                                                <input  class="inputRow"  [style.width]=" 'var(--unitW)' " style="box-sizing: border-box;  padding-left: 10px;" type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
                                             </div>
                                         </div>
                                     </div>
@@ -407,8 +406,8 @@
                                     
                                     @if (isActionComments() && idText==='ActionComments'){
                                         <div class="dropdown ">
-                                            <div class="Straight-content" style="overflow-y:scroll;" [style]="{ 'width.px':240, 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':posTopDropDown }">
-                                                <div  class="StraightDropDown " style="overflow-y:scroll;" [style]="{ 'height.px': theHeight  - 60,'margin-left.px': 5}"  >
+                                            <div class="Straight-content" style="width:240px; margin-left: 200px;" [style.height.px]="theHeight" [style.margin-top.px]="posTopDropDown+40">
+                                                <div  class="StraightDropDown " style="overflow-y:scroll;  " [style.height.px]="theHeight  - 100"  >
                                                     <li *ngFor="let tab of tabActionComments; let m=index;" 
                                                             class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                                                 (click)="dropdownComments($event)" id="comments" [value]="m">{{tab}}   
@@ -422,14 +421,14 @@
                                     <div class="flag " (click)="translateComments('UkToFr')"> <span><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagFrance.png" ></span></div>
 
                                     <textarea  class="input inputArea colorArea" (input)="modifInput($event)"  
-                                        [style]="{'height.px':recipeFile.recipe[recordRecipe].commentsBox, 'max-height.px':maxHeightCommBox}" id="comments" value="{{recipeFile.recipe[recordRecipe].comments}}">
+                                        [style.height.px]="recipeFile.recipe[recordRecipe].commentsBox" [style.max-height.px]="maxHeightCommBox" id="comments" value="{{recipeFile.recipe[recordRecipe].comments}}">
                                     </textarea>
                                 </div>
                                 <div class="colorArea stdInline" style =" background-color: white;"> 
                                     <div class="flag" (click)="translateComments('FrToUk')"> <span><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagUK.png" ></span></div>
 
                                     <textarea  class="input inputArea colorArea" (input)="modifInput($event)"  
-                                        [style]="{'height.px':recipeFile.recipe[this.recordRecipe].commentsEnBox, 'max-height.px':maxHeightCommBox}" id="commentsEn" value="{{recipeFile.recipe[recordRecipe].commentsEn}}">
+                                        [style.height.px]="recipeFile.recipe[this.recordRecipe].commentsEnBox" [style.max-height.px]="maxHeightCommBox" id="commentsEn" value="{{recipeFile.recipe[recordRecipe].commentsEn}}">
                                     </textarea>
                                 </div>
                                 <!-- ====== NUTRITION FACTS FOR STANDARD ====== -->
@@ -508,7 +507,7 @@
                                             </div>
                                         </div>
                                     }
-                                <div  style="background-color: lightgrey; border: solid 0px red;height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; "  >
+                                <div  style="background-color: lightgrey; box-sizing: border-box; ;height:calc( var(--subHeaderH) + 10 ); width:100%; padding:0px; margin-top:2px; "  >
                                     <div  class="divCircle"  >
                                         <div class="circle"  (click)="onAction($event)"  id='ActionPerso-{{i}}'>
                                             <span  style="padding-top:-1px;" id='ActionPerso-{{i}}'>A</span>
@@ -551,8 +550,8 @@
                                 <span style="margin-left:20px;">Comments Perso</span>
                                 @if (isActionComments() && idText==='ActionCommentsPerso'){
                                     <div class="dropdown ">
-                                        <div class="Straight-content"  [style]="{ 'width.px':50, 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':posTopDropDown }">
-                                            <div  class="StraightDropDown "  style="overflow-y:scroll;" [style]="{ 'height.px': theHeight  - 80 ,'margin-left.px': 5}"  >
+                                        <div class="Straight-content" style=" width:240px; margin-left: 200px;" [style.height.px]="theHeight" [style.margin-top.px]="posTopDropDown+40">
+                                                <div  class="StraightDropDown " style="overflow-y:scroll;  " [style.height.px]="theHeight  - 100"  >
                                                 <li *ngFor="let tab of tabActionCommentsPerso; let m=index;" 
                                                         class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                                             (click)="dropdownComments($event)" id="commentsPerso" [value]="m">{{tab}}   
