@@ -1,7 +1,7 @@
 
 import {  ChangeDetectorRef } from '@angular/core';
 import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID, signal} from '@angular/core';
 
 
 import { MatIconModule} from '@angular/material/icon';
@@ -38,7 +38,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     ) {}
   
   @Input() configServer=new configServer;
-  @Input() isConfigServerRetrieved:boolean=false;
+  @Input() isConfigServerRetrieved=signal(false);
   @Input() identification=new LoginIdentif;
   @Input() credentials = new classCredentials;
   @Input() credentialsMongo = new classCredentials;
@@ -103,7 +103,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     {type:'', display:false}, 
 
   ];
-  isDropDown:boolean=false;
+  isDropDown=signal(false);
 
   ngOnInit(): void {
     this.i_table=this.i_HomePage;
@@ -131,7 +131,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
     //console.log('xmv-company - init --- configServer.google='+this.configServer.googleServer);
   }
   dropDown(event:any){
-    this.isDropDown=true;
+    this.isDropDown=signal(true);
     this.i_table=this.i_Offer;
     this.Display_Table[this.i_table].display=true;
   }
@@ -145,7 +145,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   }
 
   Display_Profile(){
-    this.isDropDown=false;
+    this.isDropDown=signal(false);
     this.redisplay_profile++;
     this.Display_Table[this.i_table].display=false;
     this.i_table=this.i_Profile;
@@ -154,18 +154,18 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
   Reset(event:number){
     this.redisplay_profile=1;
-    this.isDropDown=false;
+    this.isDropDown=signal(false);
   }
 
   Display_Contact(){
-    this.isDropDown=false;
+    this.isDropDown=signal(false);
     this.Display_Table[this.i_table].display=false;
     this.i_table=this.i_Contact;
     this.Display_Table[this.i_table].display=true;
   }
 
   Display_Offer(){
-    this.isDropDown=false;
+    this.isDropDown=signal(false);
     this.Display_Table[this.i_table].display=false;
     this.i_table=this.i_Offer;
     this.Display_Table[this.i_table].display=true;
@@ -173,7 +173,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   }
 
   Display_HomePage(){
-    this.isDropDown=false;
+    this.isDropDown=signal(false);
     this.Display_Table[this.i_table].display=false;
     this.i_table=this.i_HomePage;
     this.Display_Table[this.i_table].display=true;
@@ -181,7 +181,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
 
   Display_Events(){
-    this.isDropDown=false;
+    this.isDropDown=signal(false);
     if (this.configServer.devMode==='local'){
         this.callUserFunction.emit(true);
     } else {
@@ -195,7 +195,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   }
 
   RouteTo(theAction:string){
-    this.isDropDown=false;
+    this.isDropDown=signal(false);
     if (theAction==='login'){
       this.Display_Table[this.i_table].display=false;
       this.i_table=this.i_Login;
@@ -205,7 +205,7 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
   }
   
   goDown1(action:string){
-    this.isDropDown=false;
+    this.isDropDown=signal(false);
     this.Display_Table[this.i_table].display=false;
     this.i_table=this.i_Offer;
     this.Display_Table[this.i_table].display=true;

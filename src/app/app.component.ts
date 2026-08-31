@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
-  Output, Input, HostListener, EventEmitter, ElementRef, ChangeDetectorRef} from '@angular/core';
+  Output, Input, HostListener, EventEmitter, ElementRef, ChangeDetectorRef, signal} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
@@ -54,7 +54,7 @@ export class AppComponent {
   initConfigServer=new configServer;
   configServerChanges:number=0;
   //XMVConfig=new XMVConfig;
-  isConfigServerRetrieved:boolean=false;
+  isConfigServerRetrieved=signal(false);
   identification=new LoginIdentif;
   ConvertUnit=new mainClassConv;
   ConvToDisplay=new mainConvItem;
@@ -293,7 +293,7 @@ console.log('devMode='+this.devMode);
       this.configServer.devMode=this.devMode;
       this.saveGoogleServer = this.configServer.googleServer;
      
-        this.isConfigServerRetrieved=true; // UI updates correctly now
+        this.isConfigServerRetrieved=signal(true); // UI updates correctly now
         this.configServer.project=this.mainFunction;
      
       this.currentFunction="getLogin";
@@ -509,7 +509,7 @@ console.log('isIdRetrieved='+this.isIdRetrieved);
               this.identification.IpAddress=this.configServer.IpAddress;
               this.errorMsg="";
             
-              console.log("isResetServer= "+this.isResetServer + "  isIdRetrieved=" + this.isIdRetrieved + "  isConfigServerRetrieved=" + this.isConfigServerRetrieved)
+              console.log("isResetServer= "+this.isResetServer + "  isIdRetrieved=" + this.isIdRetrieved )
             } else {
               this.errorMsg=data.msg;
               this.isValidateId=false;

@@ -3,6 +3,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
+  ==================================
+
+@if (EventHTTPReceived[0]===true  && EventHTTPReceived[0]===true && recipeFile.listTypeRecipe.length>1){
+    <div   *ngFor="let theRecipe of recipeFile.recipe[recordRecipe].data; let i=index">
+        <div class="tabIngr"  style="margin-left:20px; width:var(--actionW); margin-top:0px; " 
+            [class]=" {'borderLeft': i===recipeFile.recipe[recordRecipe].data.length-1}" [class]=" {'borderTopYes': i===0 , 'borderTopNo': i!==0}">
+            
+                <div class="circle"  id='Action-{{i}}'(click)="onAction($event)">A  
+                    
+                </div>  
+           
+        </div>
+        <div class="tabIngr" style="width:var(--ingW); padding-top:3px; padding-left:3px;" 
+             [class]=" {'borderTopYes': i===0 , 'borderTopNo': i!==0 && i!==recipeFile.recipe[recordRecipe].data.length-1, 'borderRight': i===recipeFile.recipe[recordRecipe].data.length-1}">
+INGREDIENT
+        </div>
+         <div class="tabIngr" style=" width:var(--quanW); padding-top:3px; padding-left:3px;" 
+            [class]=" {'borderLeft': i===recipeFile.recipe[recordRecipe].data.length-1}" [class]=" {'borderTopYes': i===0 , 'borderTopNo': i!==0}">
+QUANTITY
+        </div>
+         <div class="tabIngr borderRight" style=" width:var(--unitW); padding-top:3px; padding-left:3px;"   
+            [class]=" {'borderTopYes': i===0 , 'borderTopNo': i!==0 }">
+UNIT
+        </div>
+    </div>
+    
+    
+}
+
+  ==================================
+
 <div style="margin-top:40px;"></div>
 @if (dictionaryOnly===true){
     <app-dictionary [configServer]="configServer" [identification]="identification"  ></app-dictionary>
@@ -198,18 +229,18 @@
                         </div>
                     }
                     <div class="circle"   style="margin-left:80px; " (click)="onAction($event)"  id='ActionRecipe'>A</div>  
-                        @if (isActionRecipe()){ 
-                            <div class="dropdown" >
-                                <div [style]="styleBoxAction">
-                                    <div   [style]="styleBoxOptionAction"  > 
-                                        <li *ngFor="let tab of this.tabActionRecipe; let m=index;" {{m}}
-                                                class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                    (click)="afterDropDownRecipe($event)" id="ActionRecipe" [value]="m">{{tab}}   
-                                        </li>
-                                    </div>
+                     @if (isActionRecipe()){ 
+                        <div class="dropdown" >
+                            <div [style]="styleBoxAction">
+                                <div   [style]="styleBoxOptionAction"  > 
+                                    <li *ngFor="let tab of this.tabActionRecipe; let m=index;" {{m}}
+                                            class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                            (click)="afterDropDownRecipe($event)" id="ActionRecipe" [value]="m">{{tab}}   
+                                    </li>
                                 </div>
                             </div>
-                        }
+                        </div>
+                    }
                     @if (isChangeRecipeName()){
                         <div class="dropdown ">
                             <div  [style]="styleBoxChangeName()">
@@ -358,20 +389,21 @@
                                             </div>
                                         }
                                         
-                                        <div  style="display:block; height:30px;    box-sizing: border-box;  padding:0px; margin-top:2px;
-                                        border: solid 0px blue; width:97%" class="colorStd" >
+                                        <div   class="colorStd" >
                                             <!--
                                             <input class="circle"  (click)="onAction($event)"  id='Action-{{i}}' type="text" value='A'>
                                             -->
-                                            <div  class="divCircle"  style="box-sizing: border-box; border-bottom: 0px; border-top:0px; ">
-                                                <div class="circle"  (click)="onAction($event)"  id='Action-{{i}}' >
-                                                    <span  style="padding-top:-1px;"  id='Action-{{i}}'>A</span>
+                                            <div  class="tabIngr" style="width:var(--actionW); margin-top:0px; " 
+                                                 [class]=" {'borderTopYes': i===0 , 'borderTopNo': i!==0}" >
+                                                <div class="circleB"  (click)="onAction($event)"  id='Action-{{i}}' >
+                                                    <span    id='Action-{{i}}'>A</span>
                                                 </div>  
                                             </div>
                                                                     <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
-                                            <div [style.width]=" 'var(--ingW)' " class="theRow" >
+                                            <div class="tabIngr" style="width:var(--ingW);  padding-left:3px; padding-top:2px;" 
+                                                [class]=" {'borderTopYes': i===0 , 'borderTopNo': i!==0 && i!==recipeFile.recipe[recordRecipe].data.length-1}" >
                                                 
-                                                <input class="inputRow colorStd" style="border-bottom: 0px; border-top:0px;" [style.width]=" 'var(--ingW)' "  type="text" id="ingr-{{i}}"  (mouseup)="onMouseUp($event)"   (input)="modifInput($event)" value="{{theRecipe.ingr}}">
+                                                <input class="inputRow " style=" width:var(--ingInpW); " type="text" id="ingr-{{i}}"  (mouseup)="onMouseUp($event)"   (input)="modifInput($event)" value="{{theRecipe.ingr}}">
                                                 
                                                 @if (isIngrDropDown() && i===idNb && idText==='ingr'){
                                                     <div class="dropdown ">
@@ -386,11 +418,13 @@
                                                     </div>
                                                 }
                                             </div>
-                                            <div class="theRow " >
-                                                <input class="inputRow colorStd" [style.width]=" 'var(--quanW)' " style=" border-left: 0px;border-bottom: 0px; border-top:0px;"  type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
+                                            <div class="tabIngr" style="width:var(--quanW);  padding-top:2px; padding-left:3px;" 
+                                                [class]=" {'borderTopYes': i===0 , 'borderTopNo': i!==0 && i!==recipeFile.recipe[recordRecipe].data.length-1}" >
+                                                <input class="inputRow" style="width: var(--quanInpW)"   type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
                                             </div>
-                                            <div  class="theRow" >
-                                                <input  class="inputRow colorStd"  [style.width]=" 'calc( var(--unitW) + 2px)' " style="padding-left: 10px; border-left: 0px;border-bottom: 0px; border-top:0px;" type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
+                                            <div  class="tabIngr borderRight" style="width:var(--unitWBox);  padding-top:2px; padding-left:3px; " 
+                                                [class]=" {'borderTopYes': i===0 , 'borderTopNo': i!==0 && i!==recipeFile.recipe[recordRecipe].data.length-1}" >
+                                                <input  class="inputRow "  style="width: var(--unitInpW)"  type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
                                             </div>
                                         </div>
                                     </div>

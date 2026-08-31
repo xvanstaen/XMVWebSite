@@ -5,17 +5,60 @@ body{
 }
 
 div{
-  --boxW: 650px;
+  --boxW: 730px;
   --actionW:80px;
-  --ingW: 370px;
+  --ingW: 270px;
+  
   --quanW:90px;
-  --unitW:80px;
+  --unitW:90px;
+  --unitWBox:92px;
+  --ingInpW: 260px;
+  --quanInpW:80px;
+  --unitInpW:83px;
   --headerH:30px;
-  --rowH:28px;
+  --rowH:22px;
+}
+
+.circleB{
+    font-weight:bold;
+    background-color: yellow;
+    border-radius: 50% 50%; 
+    color:rgb(232, 86, 18); 
+    display:flex;
+    width:23px;  height:23px; 
+    padding-top:2px;
+    text-align: center;
+    padding-left:7px;
+    margin-left:23px;
+    margin-top:2px;
+  }
+
+.circleB:hover{
+    background-color: blue;
+  }
+
+.tabIngr{
+  height:28px; background-color: lightblue;
+  border-bottom:solid 1px blue; border-left:solid 1px blue;
+  box-sizing: border-box;
+  display:inline-block;
+  vertical-align: middle;
+  font-size:14px;
 }
 
 .borderBot{
   border-bottom: solid 1px blue
+}
+
+.borderRight{
+  border-right: solid 1px blue
+}
+
+.borderTopYes{
+  border-top: solid 1px blue
+}
+.borderTopNo{
+  border-top: solid 0px blue
 }
 
 .titleStdPerso{
@@ -147,7 +190,7 @@ div{
     font-weight:bold;
     background-color: lightgreen;
     text-align: center;
-   
+    padding-left:5px ;
     padding-top:-2px;
     display:inline-block;
   }
@@ -188,9 +231,9 @@ div{
   .inputRow{
     height:var(--rowH);
     font-size:14px;
-    padding-left:8px; 
-    border: solid 1px blue; 
-    box-sizing: border-box;
+
+
+
 
   }
   .inputRow:Hover{

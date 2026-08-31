@@ -53,16 +53,17 @@
     <div class="posArrow">
       <div class="drawArrowDown" id="arrow" (click)="dropDown($event)"></div> 
     </div>
-
-    <div *ngIf="isDropDown===true" class="dropDown">
-      <div class="dropdown-content" >
-            <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetDigital') ">Digital Transf.</div>
-            <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetFinance')">Finance</div>
-            <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetCoaching')">Coaching</div>
-            <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetTechnical')">Techn. Expert</div>
-            <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetPgm')" >Projects</div>
-      </div>
-    </div>   
+    @if (isDropDown()){
+      <div class="dropDown">
+        <div class="dropdown-content" >
+              <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetDigital') ">Digital Transf.</div>
+              <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetFinance')">Finance</div>
+              <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetCoaching')">Coaching</div>
+              <div class="dropdown-options dropdown-options-odd" (click)="goDown1('targetTechnical')">Techn. Expert</div>
+              <div class="dropdown-options dropdown-options-even" (click)="goDown1('targetPgm')" >Projects</div>
+        </div>
+      </div>  
+    } 
     <div class="apps posApps" id="contact" (click)="Display_Profile()">Profile</div>
     <div class="apps posApps" id="contact" (click)="Display_Contact()">Contact</div>
     <div class="apps posApps" id="home" (click)="Display_HomePage()">Home</div>
@@ -73,39 +74,19 @@
 <div style="display:inline-block; width:100%">
 
 
-  <div  *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Offer; else profile">
+  @if (Display_Table[i_table].display===true && Display_Table[i_table].type===Offer){
       <app-xmvcompany-offer [redisplay_child]="display_GoToContact" (my_output1)='Display_Contact()'
           [selectedoffer]="selected_offer"
         >
       </app-xmvcompany-offer>     
-  </div> 
-
-          <!-- PROFILE -->
-          <ng-template #profile>
-            <span *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Profile; else contact"> 
-              <app-xmvcompany-profile [redisplay_child]="redisplay_profile" (my_output1)='Reset($event)' 
-              [redisplay_child]="display_GoToOffer" (my_outputO)='Display_Offer()'
-              [redisplay_child]="display_GoToContact" (my_outputC)='Display_Contact()'
-              ></app-xmvcompany-profile> 
-            </span> 
-          </ng-template>
-
-
-          <!-- CONTACT -->
-          <ng-template #contact> 
-              <span *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Contact; else GHomePage" > 
+  } @else if (Display_Table[i_table].display===true && Display_Table[i_table].type===Profile){
+      <app-xmvcompany-profile [redisplay_child]="redisplay_profile" (my_output1)='Reset($event)' 
+          [redisplay_child]="display_GoToOffer" (my_outputO)='Display_Offer()'
+          [redisplay_child]="display_GoToContact" (my_outputC)='Display_Contact()'
+      ></app-xmvcompany-profile> 
+  } @else if (Display_Table[i_table].display===true && Display_Table[i_table].type===Contact){
               <app-xmvcompany-contact [configServer]="configServer"></app-xmvcompany-contact>
-              </span>
-          </ng-template>
-
-          <!-- HOME PAGE -->
-  <ng-template #GHomePage>
-    <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===HomePage; else TheEvents">  
-          <!--  
-      <div >
-        <img class='sizeMap' src="./assets/Airplane 4.jpg" >
-      </div>
-           -->        
+  } @else if (Display_Table[i_table].display===true && Display_Table[i_table].type===HomePage){     
       <div class="Main_Page_Size">                  
           <br>
           <span class=" Main_Page_Title">Only Solutions exist! </span>
@@ -129,33 +110,18 @@
               <br> <div class='copyright'> No rights intended or owned in them </div>                                   
               <br>
         </div>
-      </div>
-    </div> <!-- *ngIf--> 
-  </ng-template>
-
-
-<!-- [destination]="source" -->
-      <ng-template #TheEvents>   
-        <div *ngIf='isConfigServerRetrieved===true && configServer.devMode!=="local"'>
-            <span class='mainbody'>  
-              <app-login  [identification]="identification" [configServer]="configServer" [credentials]="credentials"
-                [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
-                
-                (triggerIdentification)='TheIdentifObject($event)' 
-                [credentials]="credentials" (resetServer)="fnResetServer()" (serverChange)="changeServerName($event)" (newCredentials)="fnNewCredentials($event)"
-                (triggerUserFunction)="triggerUserFn($event)" 
-                >            <!-- (returnFile)="ReceiveFiles($event)" --> 
-            </app-login>
-          </span>  
-        </div>
-        </ng-template>
-
-
-
-            <!-- NOT AVAILABLE replaced by Events 
-            <ng-template #AdmLogin>   <span class='mainbody'>  
-              <app-login></app-login>
-            </span>  </ng-template>
-            -->
+    </div>
+  } @else  if (isConfigServerRetrieved() && configServer.devMode!=="local"){
+      <span class='mainbody'>  
+        <app-login  [identification]="identification" [configServer]="configServer" [credentials]="credentials"
+                  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
+                  
+                  (triggerIdentification)='TheIdentifObject($event)' 
+                  [credentials]="credentials" (resetServer)="fnResetServer()" (serverChange)="changeServerName($event)" (newCredentials)="fnNewCredentials($event)"
+                  (triggerUserFunction)="triggerUserFn($event)" 
+                  >            <!-- (returnFile)="ReceiveFiles($event)" --> 
+        </app-login>
+      </span>  
+  }
 </div>
 </body>
