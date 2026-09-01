@@ -6,38 +6,57 @@ body{
 
 div{
   --boxW: 730px;
-  --actionW:80px;
-  --ingW: 270px;
-  
-  --quanW:90px;
-  --unitW:90px;
+  --actionW:90px;
+  --ingW: 280px;
+  --quanW:100px;
+  --unitW:100px;
+
   --unitWBox:98px;
   --ingInpW: 260px;
   --quanInpW:80px;
+
   --unitInpW:83px;
   --headerH:30px;
   --rowH:22px;
 }
 
-.circleB{
+.circleContainer{
     font-weight:bold;
     background-color: cyan;
     border-radius: 50% 50%; 
     color:rgb(232, 86, 18); 
     display:flex;
     width:22px;  height:22px; 
-    padding-top:2px;
-    padding-left:9px;
-    margin-left:23px;
-    margin-top:2px;
-    text-align: center;
+
     justify-content: center;
-    align-items: center;
+   
+    box-sizing: border-box;
+  }
+.circleText {
+  /* Typography */
+  color: blue;
+ 
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  
+  /* Handle long text */
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.circleContainer:hover{
+    background-color: rgb(230, 113, 115);
+    color:black;
   }
 
-.circleB:hover{
-    background-color: blue;
-  }
+.titleHeaderFlex{
+    color:blue; text-align: center; display:flex;
+     height:var(--headerH); padding:3px;
+    justify-content: center; 
+    border-top:solid 1px blue;
+}
+
 
 .tabIngr{
   height:32px; 
@@ -163,13 +182,6 @@ div{
 .titleHeader{
     color:blue; display:inline-block;  text-align: center; 
      height:var(--headerH); padding-top:6px; 
-}
-
-.titleHeaderFlex{
-    color:blue; text-align: center; display:inline-block;
-     height:var(--headerH); border-top: solid blue 1px; border-bottom: solid blue 0px;
-     border-left: solid blue 0px; padding:3px;
-
 }
 
 
