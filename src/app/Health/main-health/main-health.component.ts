@@ -1,7 +1,7 @@
 import {
   Component, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
-  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
-} from '@angular/core';
+  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID,
+  signal } from '@angular/core';
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -65,7 +65,7 @@ export class MainHealthComponent {
   @Input() credentialsMongo = new classCredentials;
   @Input() credentialsFS = new classCredentials;
   @Output()  onTriggerSave = new EventEmitter<any>();
-  openFileAccess:boolean=true;
+  openFileAccess=signal<boolean>(true);
 
   isRetrieveFile :boolean=false;
   iWaitToRetrieve:Array<classRetrieveFile>=[];
@@ -302,7 +302,7 @@ export class MainHealthComponent {
   statusSaveFnRecipe:any;
 
   resultSaveRecord(event:any){
-    this.openFileAccess=false;
+    this.openFileAccess.set(false);
     if (event.iWait===0){
       if (this.actionSave==='saveCopy'){
         // reinitialise
@@ -506,8 +506,8 @@ export class MainHealthComponent {
   SelRadio(event: any) {
     // this.checkLockLimit(0);
     var iK=0;
-    if (this.openFileAccess===false){
-      this.openFileAccess=true;
+    if (!this.openFileAccess()){
+      this.openFileAccess.set(true);
     }
     this.callFileSystem=false;
     this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
@@ -820,7 +820,7 @@ export class MainHealthComponent {
   }
 
   checkLockLimitFn(event:any) {
-    this.openFileAccess=true;
+    this.openFileAccess.set(true);
     const saveNbCalls=this.eventLockLimit.nbCalls;
     if (event.bucket===undefined){
       this.eventLockLimit.checkLock = event;
@@ -834,7 +834,7 @@ export class MainHealthComponent {
   }
 
   retrieveRecord(event:any){
-    this.openFileAccess=true;
+    this.openFileAccess.set(true);
     this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
     const theClass=new classRetrieveFile;
     this.iWaitToRetrieve.push(theClass);
@@ -880,7 +880,7 @@ export class MainHealthComponent {
 
   saveParamChart(event:any){
     
-    this.openFileAccess=true;
+    this.openFileAccess.set(true);
     this.errorMsg="";
     this.fileParamChart.fileType = this.identification.fitness.fileType.myChart;
     this.fileParamChart.updatedAt = strDateTime();
@@ -899,7 +899,7 @@ export class MainHealthComponent {
   }
 
   SaveCaloriesFat(event: any) {
-    this.openFileAccess=true;
+    this.openFileAccess.set(true);
     this.errorMsg="";
     this.isSaveCaloriesFat = true;
     //if (event.fileType === undefined) {

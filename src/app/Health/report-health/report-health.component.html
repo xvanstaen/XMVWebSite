@@ -1,6 +1,6 @@
 
 
-<div *ngIf="openFileAccess===true">
+@if (openFileAccess()){
     <app-file-access 
         [configServer]="configServer" [identification]="identification" 
         [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit"
@@ -8,9 +8,9 @@
         (resultFileSystem)="resultAccessFile($event)"
     >
     </app-file-access>
-</div>
+}
 <div class="skipLine">&nbsp;</div>
-<div *ngIf="isParamAxis===true && isSliderSelected===false ">
+@if (isParamAxis() && isSliderSelected()){
     <div class="dropdown" >
         <div class="Straight-content" style="margin-top:120px;">
             <div  class="StraightDropDown " style="width:98%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
@@ -61,30 +61,36 @@
                     </div>
                 </form>
                 <div class="skipLine">&nbsp;</div>
-                <button id='axis' *ngIf="tabLock[5].lock===1" style="margin-left:40px;" (click)="processAxis($event)" > Save</button>
+                @if (tabLock[5].lock===1){
+                    <button id='axis' (click)="processAxis($event)" > Save</button>
+                }
                 <div class="skipLine">&nbsp;</div>
             </div>
         </div>
     </div>
+}
 
-</div>
-<div *ngIf="(isParamTitle===true || isParamLegend===true) && isSelectLChartTitleColor===false &&  isSliderSelected===false" >
-<div class="dropdown" >
+@if ((isParamTitle() || isParamLegend()) && !isSelectLChartTitleColor() &&  !isSliderSelected()){
+    <div class="dropdown" >
         <div class="Straight-content" style="margin-top:120px;">
             <div  class="StraightDropDown " style="width:98%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
                 <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">
-                    Chart # {{selectedChart}} - Parameters of <span *ngIf="isParamTitle===true"> Title  </span>
-                        <span *ngIf="isParamLegend===true"> Legend </span>
+                    Chart # {{selectedChart}} - Parameters of 
+                        @if (isParamTitle()){Title
+                        } @else if (isParamLegend()){ Legend }
+                        
                     <div class="cancelCross" id="chartTitle" (click)="cancelChartParam($event)">
                         <div style="font-size:16px; color:black; font-weight:bold; margin-top: -2px;" id="chartTitle" (click)="cancelChartParam($event)">x</div>
                     </div>
                 </div>
                 <form  [formGroup]="selectTitle" style="margin-left:20px;">
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Display</span><input  class='inputText' type="text" style="width:30%;"  formControlName="display" placeholder="false/true" > 
-                        <span id="selTitleDisplay" class="circle" *ngIf="tabLock[5].lock===1" style='margin-left:20px;' (click)="selectType($event)">A</span>
-                        <div *ngIf="isTitleDisplay===true && tabLock[5].lock===1 ">
-
+                        <span class="trow" style="width:25%;"> Display</span>
+                        <input  class='inputText' type="text" style="width:30%;"  formControlName="display" placeholder="false/true" > 
+                        @if (tabLock[5].lock===1){
+                        <span id="selTitleDisplay" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
+                        }
+                        @if (isTitleDisplay() && tabLock[5].lock===1){
                             <div class="dropdown " >
                                 <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
                                     <div  class="StraightDropDown "  [ngStyle]="{'height.px':tabDisplay.length * 26, 'width.px':80}">
@@ -95,7 +101,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     </div> 
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Text</span><input  class='inputText' type="text" style="width:70%;"  formControlName="text"  > 
@@ -105,14 +111,17 @@
                         <span   class="trow" style="width:10%;"> Top</span><input  class='inputText' type="text" style="width:10%;"  formControlName="paddingTop"  > 
                         <span   class="trow" style="margin-left:20px; width:15%;"> Bottom</span>
                         <input  class='inputText' type="text" style="width:10%;"  formControlName="paddingBottom"  > 
-                        <span   *ngIf="isParamLegend===true" class="trow" style="margin-left:20px; width:10%;"> Left</span>
-                        <input  *ngIf="isParamLegend===true" class='inputText' type="text" style="width:10%;"  formControlName="paddingLeft"  > 
-
+                        @if (isParamLegend()){
+                            <span   class="trow" style="margin-left:20px; width:10%;"> Left</span>
+                            <input  class='inputText' type="text" style="width:10%;"  formControlName="paddingLeft"  > 
+                        }
                     </div> 
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Position</span><input  class='inputText' type="text" style="width:30%;"  formControlName="position"  > 
-                        <span id="selTitlePosition" class="circle" *ngIf="tabLock[5].lock===1" style='margin-left:20px;' (click)="selectType($event)">A</span>
-                        <div *ngIf="isTitlePosition===true">
+                        @if (tabLock[5].lock===1){    
+                            <span id="selTitlePosition" class="circle"  style='margin-left:20px;' (click)="selectType($event)">A</span>
+                        }
+                        @if (isTitlePosition()){
 
                             <div class="dropdown " >
                                 <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
@@ -124,12 +133,14 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     </div> 
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Align</span><input  class='inputText' type="text" style="width:30%;"  formControlName="align"  > 
-                        <span id="selTextAlign" class="circle" style='margin-left:20px;'  *ngIf="tabLock[5].lock===1"  (click)="selectType($event)">A</span>
-                        <div *ngIf="isTextAlign===true">
+                        @if (tabLock[5].lock===1){
+                            <span id="selTextAlign" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
+                        }    
+                        @if (isTextAlign()){
 
                             <div class="dropdown " >
                                 <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
@@ -141,7 +152,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     </div> 
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldColorTitle')" formControlName="color"  > 
@@ -153,9 +164,10 @@
                     </div> 
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Font Weight</span><input  class='inputText' type="text" style="width:30%;"  formControlName="fontWeight"  > 
-                        <span id="selFontWeight" class="circle" style='margin-left:20px;' *ngIf="tabLock[5].lock===1" (click)="selectType($event)">A</span>
-                        <div *ngIf="isFontWeight===true">
-
+                        @if (tabLock[5].lock===1){
+                            <span id="selFontWeight" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
+                        }
+                        @if (isFontWeight()){
                             <div class="dropdown " >
                                 <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
                                     <div  class="StraightDropDown "  [ngStyle]="{'height.px':150, 'width.px':80}" style="overflow-x:hidden; overflow-y:scroll">
@@ -166,7 +178,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     
                     
                     </div> 
@@ -174,7 +186,9 @@
                         <span class="trow" style="width:25%;"> Family</span><input  class='inputText' type="text" style="width:30%;"  formControlName="family"  > 
                     </div> 
                     <div class="skipLine">&nbsp;</div>
-                            <button *ngIf="tabLock[5].lock===1" (click)="processTitle()" > Save</button>
+                        @if (tabLock[5].lock===1){
+                            <button  (click)="processTitle()" > Save</button>
+                        }
                     <div class="skipLine">&nbsp;</div>
                 </form>
 
@@ -182,47 +196,41 @@
             </div>
         </div>
     </div>
-</div>
+}
 <div id="posDivSlider"  ></div>
-<div *ngIf="isSliderSelected===true  && tabLock[5].lock===1">
-<div  class="dropdown" >
-    <div id="posDivSliderTrue"  ></div>
-    <div class="Straight-content" style="margin-top:120px; width:90%;">
-   <!-- <div  style="position:absolute; z-index:1; margin-left:10px; margin-top:120px; width:400px;">  -->
-        <div  class="StraightDropDown " style="width:100%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
-<!--
-<div *ngIf="isSliderSelected===true " style="position:absolute; margin-left:20px;height:520px;width:410px; z-index: 1; background-color: lightgrey; border: solid 2px blue;"
-        [ngStyle]="{'margin-top.px':mainWindow.top}">
-    <div style=" margin-top:10px; margin-left:10px;height:495px;width:380px; z-index: 1; background-color: white; border: solid 2px blue;">  
--->
-            <div class="skipline">&nbsp;</div>
-            <span style='margin-left:30px; width:90%; display:inline-block;' > SliderA {{my_input_child2}} </span>
-            <span style='margin-left:30px; width:90%; display:inline-block;' > Palette: {{temporaryColor}} </span>
-            <div class="skipline">&nbsp;</div>
-            <app-color-palette  [my_input1]="my_input_child1" [posPalette]="posPalette"[INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
-            </app-color-palette>
-            <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
-            </app-color-slider>
-            <div style="margin-top:80px;">
-                <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:55px;" [ngStyle]="{'background-color':my_input_child2}"></span>
-                <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [ngStyle]="{'background-color':temporaryColor}"></span>
-                <div style="margin-left:200px; margin-top:-40px;">
-                    <button (click)="fnExitPalette('Save')" > Save</button>
-                    <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
-                </div>
+@if (isSliderSelected()  && tabLock[5].lock===1){
+    <div  class="dropdown" >
+        <div id="posDivSliderTrue"  ></div>
+        <div class="Straight-content" style="margin-top:120px; width:90%;">
+            <div  class="StraightDropDown " style="width:100%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
                 <div class="skipline">&nbsp;</div>
-            </div>  
+                <span style='margin-left:30px; width:90%; display:inline-block;' > SliderA {{my_input_child2}} </span>
+                <span style='margin-left:30px; width:90%; display:inline-block;' > Palette: {{temporaryColor}} </span>
+                <div class="skipline">&nbsp;</div>
+                <app-color-palette  [my_input1]="my_input_child1" [posPalette]="posPalette"[INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+                </app-color-palette>
+                <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                </app-color-slider>
+                <div style="margin-top:80px;">
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:55px;" [ngStyle]="{'background-color':my_input_child2}"></span>
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [ngStyle]="{'background-color':temporaryColor}"></span>
+                    <div style="margin-left:200px; margin-top:-40px;">
+                        <button (click)="fnExitPalette('Save')" > Save</button>
+                        <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
+                    </div>
+                    <div class="skipline">&nbsp;</div>
+                </div>  
+            </div>
         </div>
     </div>
-</div>
-</div>
+}
+
 <div class="skipLine">&nbsp;</div>
-<div *ngIf="tabLock[5].lock===2">
+@if (tabLock[5].lock===2){
     <div class="msg">File is locked by another user; you cannot update the parameters</div>
-</div>
+}
+
 <div style="width:410px;; max-width:410px; margin-left:20px; border:solid 2px blue; display:block;">
-  
- 
     <div style="margin-top:8px; text-align: center; width:410px; font-size:16px; color:blue; ">CREATE/CHANGE PARAMETERS FOR 
         <div class="cancelCross"  id="allChartParam" (click)="cancelChartParam($event)">
             <div style="font-size:16px; color:black; font-weight:bold; margin-top: -2px;"  id="allChartParam" (click)="cancelChartParam($event)">x</div>
@@ -233,7 +241,10 @@
     </app-running-clock>
     -->
     <br> <span style="margin-left:25px;">Time out will occur in </span>
-    <span style="border: black double 2px; margin-left:5px;"> <span *ngIf="displayHour!==0">{{displayHour |number:'2.0-0'}} hour(s)</span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+    <span style="border: black double 2px; margin-left:5px;"> 
+        @if (displayHour!==0){ {{displayHour |number:'2.0-0'}} hour(s) }
+        <span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+    </span>
     <div class="skipLine">&nbsp;</div>
     <span style="margin-left:25px;"> Chart 1</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart1"   >  
     <span style="margin-left:30px;"> Chart 2</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart2"   >  
@@ -244,7 +255,7 @@
     <div class="skipLine">&nbsp;</div>
 
     <!--   **************************** SELECTION PARAMETERS **************************** -->
-    <div *ngIf="selectedChart!==0 ">
+    @if (selectedChart!==0){
         <form  [formGroup]="selectChart" style="margin-left:20px;">
             <div style="width:100%; display:inline-block;">
                 <div class="skipLine">&nbsp;</div>
@@ -252,8 +263,10 @@
                 <span class="trow" style="text-align:center; width:90%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:5px;"> CHART </span>
                 
                 <span class="trow" style="width:25%;"> Type</span><input   class='inputText' type="text"  style="width:30%;"  formControlName="chartType"  > 
-                <span id="selType" class="circle" *ngIf="tabLock[5].lock===1" style='margin-left:20px;' (click)="selectType($event)">A</span>
-                <div *ngIf="isTypeSelected===true ">
+                @if (tabLock[5].lock===1){
+                    <span id="selType" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
+                }
+                @if (isTypeSelected()){
                     <div class="dropdown " >
                         <div class="Straight-content" style="margin-left:50px;">
                             <div  class="StraightDropDown "  [ngStyle]="{'height.px':lineChartType.length * 30, 'width.px':80}">
@@ -264,7 +277,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             </div> 
             <div style="width:100%; display:inline-block;  margin-top:5px;">
                 <span class="trow" style="width:25%;"> Title</span><input   class='inputText' type="text" style="width:40%;"  formControlName="chartTitle"  > 
@@ -346,9 +359,11 @@
             </div>
             <div style="width:100%; display:inline-block;  margin-top:5px;">    
                 <span class="trow" style="width:25%; "> period</span><input  type="text"   class='inputText' style="width:30%;" formControlName="period" placeholder="daily/weekly" > 
-                <span *ngIf="paramAllCharts.controls['period'].value==='weekly'"><span  class="trow" style="width:25%; "> nb of weeks</span><input  type="number"   class='inputText' style="width:30%;" formControlName="nbWeeks"></span> 
-                <span id="selPeriod" class="circle" *ngIf="tabLock[5].lock===1" style='margin-left:5px;' (click)="selectPeriod($event)">A</span>
-                <div *ngIf="isPeriodSelected===true  && tabLock[5].lock===1">
+                @if (paramAllCharts.controls['period'].value==='weekly'){<span  class="trow" style="width:25%; "> nb of weeks</span><input  type="number"   class='inputText' style="width:30%;" formControlName="nbWeeks">}
+                @if (tabLock[5].lock===1){
+                    <span id="selPeriod" class="circle"  style='margin-left:5px;' (click)="selectPeriod($event)">A</span>
+                }
+                @if (isPeriodSelected()  && tabLock[5].lock===1){
                     <div class="dropdown" >
                         <div class="Straight-content" style="margin-left:90px;">
                             <div  class="StraightDropDown " [ngStyle]="{'height.px':tabPeriod.length * 30}" >
@@ -359,89 +374,93 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             
             </div> 
-            <div style="width:100%; display:inline-block; margin-top:5px;" *ngIf="selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'">
-                <span class="trow" style="width:25%; "> start date</span>
-                <input  type="date"  class='inputText' style="width:36%;" formControlName="startRange"  > 
-            </div>
-            <div style="width:100%; display:inline-block; margin-top:5px;"  *ngIf="selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'">
-                <span class="trow" style="width:25%; "> end date</span>
-                <input  type="date"   class='inputText' style="width:36%;" formControlName="endRange"  > 
-            </div>
-        
+            @if (selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'){
+                <div style="width:100%; display:inline-block; margin-top:5px;">
+                    <span class="trow" style="width:25%; "> start date</span>
+                    <input  type="date"  class='inputText' style="width:36%;" formControlName="startRange"  > 
+                </div>
+            }
+            @if (selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'){
+                <div style="width:100%; display:inline-block; margin-top:5px;">
+                    <span class="trow" style="width:25%; "> end date</span>
+                    <input  type="date"   class='inputText' style="width:36%;" formControlName="endRange"  > 
+                </div>
+        }
         </form>
 
         <!-- ************* SELECTION OF LABELS FOR THIS CHART ************* -->
         <div class="skipLine">&nbsp;</div>
         <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the items to consider for this chart</div>
         <span *ngFor="let tab of ConfigChartHealth.barDefault.datasets.labels; let i=index;">
-
-            <span *ngIf="ConfigChartHealth.barDefault.datasets.fieldsToSelect[i]===true" style="width:47%; display:inline-block; margin-left:10px;">
-                <span *ngIf="selectedFields[i]==='N'" style="width:5%;">
-                    <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y"  >  
+            @if (ConfigChartHealth.barDefault.datasets.fieldsToSelect[i]===true){
+                <span  style="width:47%; display:inline-block; margin-left:10px;">
+                    <span style="width:5%;">
+                        @if (selectedFields[i]==='N'){
+                            <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y"  >  
+                        } @else {
+                             <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y" checked="checked" >
+                        }
+                    </span>
+                    <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
+                    @if (selectedFields[i]==='Y'){
+                        <span style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelColor-{{i}}" [ngStyle]="{'background-color':tabOfLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
+                    }
                 </span>
-                <span *ngIf="selectedFields[i]==='Y'" style="width:5%;">
-                    <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y" checked="checked" >
-                </span>
-            
-                <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
-                <span *ngIf="selectedFields[i]==='Y'" style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelColor-{{i}}" [ngStyle]="{'background-color':tabOfLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
-
-            </span>
-            
+            }
         </span>
 
         <!-- ************* SELECTION OF LIMIT LABELS FOR THIS CHART ************* -->
         <div class="skipLine">&nbsp;</div>
         <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the 'LIMIT' items to consider for this chart</div>
         <span *ngFor="let tab of ConfigChartHealth.barDefault.datasets.labelsLimits; let i=index;">
-            <span *ngIf="ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[i]===true" style="width:47%; display:inline-block; margin-left:10px;">
-              
-                <span *ngIf="selectedLimitFields[i]==='N'" style="width:5%;">
-                    <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"   class="theRadioButt" type="radio"  id="L-{{i}}"  value="Y"  >  
+            @if (ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[i]===true){   
+                <span style="width:47%; display:inline-block; margin-left:10px;">
+                    <span style="width:5%;">
+                        @if (selectedLimitFields[i]==='N'){
+                            <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"   class="theRadioButt" type="radio"  id="L-{{i}}"  value="Y"  >  
+                        } @else {
+                             <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="L-{{i}}"  value="Y" checked="checked" >
+                        }
+                    </span>
+                
+                    <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
+                    @if (selectedLimitFields[i]==='Y'){    
+                        <span style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelLimitColor-{{i}}" [ngStyle]="{'background-color':tabOfLimitLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
+                    }
                 </span>
-                <span *ngIf="selectedLimitFields[i]==='Y'" style="width:5%;">
-                    <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="L-{{i}}"  value="Y" checked="checked" >
-                </span>
-            
-                <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
-                <span *ngIf="selectedLimitFields[i]==='Y'" style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelLimitColor-{{i}}" [ngStyle]="{'background-color':tabOfLimitLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
-
-
-
-
-            </span>
-            
+            }
         </span>
         
         <div class="skipLine">&nbsp;</div>
-        <span *ngIf="errorMsg!==''" style="color:red; font-size:14px; width:90%; margin-left:30px;">{{errorMsg}}</span>
-
+        @if (errorMsg!==''){
+            <span style="color:red; font-size:14px; width:90%; margin-left:30px;">{{errorMsg}}</span>
+        }
         <!-- ************* PROCESS or CANCEL PARAMETERS FOR THIS CHART# ************* --><!--saveFn('save')-->
-        <div *ngIf="tabLock[5].lock===1">
+        @if (tabLock[5].lock===1){
             <div class="skipLine">&nbsp;</div>
 
-            
-            <span *ngIf="IsSaveConfirmed===true" style="width:100%; display:inline-block;  background-color: lightskyblue;">
-                <form  [formGroup]="SpecificForm" >
-                    <div class="skipLine">&nbsp;</div>
-                    <div class="msg"  >
-                        Please enter the name of the file to save :
-                        <input type='text' style="width:240px;" formControlName="FileName" >
-                    </div>
-                    <div class="skipLine">&nbsp;</div>
-                    <div style="width:100%; display:inline-block; ">
-                        <span style="width:240px; margin-left:20px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
-                        <button id='All-1' class="sizeButtons" (click)="saveFn()">Yes</button>
-                        <button id='All-2' class="sizeButtons" (click)="cancelTheSave()"> No</button>
-                    </div>
-                    <div class="skipLine">&nbsp;</div>
-                </form>        
-            </span>
-
-            <span *ngIf="IsSaveConfirmed===false">            
+            @if (IsSaveConfirmed()){
+                <span style="width:100%; display:inline-block;  background-color: lightskyblue;">
+                    <form  [formGroup]="SpecificForm" >
+                        <div class="skipLine">&nbsp;</div>
+                        <div class="msg"  >
+                            Please enter the name of the file to save :
+                            <input type='text' style="width:240px;" formControlName="FileName" >
+                        </div>
+                        <div class="skipLine">&nbsp;</div>
+                        <div style="width:100%; display:inline-block; ">
+                            <span style="width:240px; margin-left:20px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
+                            <button id='All-1' class="sizeButtons" (click)="saveFn()">Yes</button>
+                            <button id='All-2' class="sizeButtons" (click)="cancelTheSave()"> No</button>
+                        </div>
+                        <div class="skipLine">&nbsp;</div>
+                    </form>        
+                </span>
+            }
+            @if (!IsSaveConfirmed()){            
                 <button class="sizeButtons" id="save" style='margin-left:30px; width:90px; height:45px;' type='Submit'  (click)="ConfirmSave($event)" > Save this chart & process it
                 </button>
                 <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="fnSelectChart()"> Process this chart
@@ -453,10 +472,10 @@
                 </button>
                 <button class="sizeButtons"  id="saveAll" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="ConfirmSave($event)"> Save all charts
                 </button>
-            </span>
-        </div>
+            }
+        }
         <div class="skipLine">&nbsp;</div>
-    </div>
+    }
 </div>
 
 
@@ -471,8 +490,10 @@
             <div style="width:100%; display:inline-block;  margin-top:5px;">    
                 <span class="trow" style="width:25%; "> period</span>
                 <input  type="text"   class='inputText' style="width:46%;" formControlName="period" placeholder="daily/weekly/monthly" value="period"> 
-                <span id="selPeriod" class="circle" *ngIf="tabLock[5].lock===1" style='margin-left:5px;' (click)="selectPeriodAll($event)">A</span>
-                <div *ngIf="isPeriodSelected===true  && tabLock[5].lock===1">
+                @if (tabLock[5].lock===1){
+                    <span id="selPeriod" class="circle" style='margin-left:5px;' (click)="selectPeriodAll($event)">A</span>
+                }
+                @if (isPeriodSelected()  && tabLock[5].lock===1){
                     <div class="dropdown" >
                         <div class="Straight-content" style="margin-left:90px;">
                             <div  class="StraightDropDown " [ngStyle]="{'height.px':tabPeriod.length * 30}" >
@@ -483,7 +504,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             
             </div> 
             <div style="width:100%; display:inline-block; margin-top:5px;" >
@@ -554,17 +575,18 @@
         </div>
     </div>
     <div class="skipLine">&nbsp;</div>
-    <div *ngIf="isTestLineChart===true" style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
-        <div style=" border:1px blue solid; padding-top:50px;" 
-                [ngStyle]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
-                'width.px': canvas[3].width, 'height.px ': canvas[3].height}">
-            <canvas #baseChart id="myLineCanvas"
-        
-            >
-            </canvas>
+    @if (isTestLineChart===true){
+        <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+            <div style=" border:1px blue solid; padding-top:50px;" 
+                    [ngStyle]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
+                    'width.px': canvas[3].width, 'height.px ': canvas[3].height}">
+                <canvas #baseChart id="myLineCanvas"
+            
+                >
+                </canvas>
+            </div>
         </div>
-    </div>
-
+    }
     <div class="skipLine">&nbsp;</div>
     <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
         <div style=" border:1px blue solid; padding-top:50px;" 
@@ -578,51 +600,72 @@
     </div>
 
 <!-- check data value when debugging iPhone -->
-    <div *ngIf="isPosDivSlider===true " style="width:90%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
+ @if (isPosDivSlider===true){
+    <div style="width:90%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
         <ul   style="list-style-type: none" >
             <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
                     <span style="width:25%; display:inline-block;">{{posDivPosSlider.Height}}</span>
-                    <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Height}}</span>
-            <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
-                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.Top}}</span>
-                    <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Top}}</span>
-            <span style="width:55%; display:inline-block; margin-top:5px; ">offsetLeft: </span>
-                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.Left}}</span>
-                    <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Left}}</span>
+                @if (isPosDivSliderTrue===true){    
+                    <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Height}}</span>
+                }
+                <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
+                <span style="width:25%; display:inline-block;">{{posDivPosSlider.Top}}</span>
+                @if (isPosDivSliderTrue===true){
+                    <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Top}}</span>
+                }
+                <span style="width:55%; display:inline-block; margin-top:5px; ">offsetLeft: </span>
+                <span style="width:25%; display:inline-block;">{{posDivPosSlider.Left}}</span>
+                @if (isPosDivSliderTrue===true){
+                    <span  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Left}}</span>
+                }
             <span style="width:100%; display:inline-block; margin-top:5px; ">parentElement </span>    
                 <ul>
                     <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
                         <span style="width:25%; display:inline-block;">{{posDivPosSlider.parentElement.offsetHeight}} </span>
-                        <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetHeight}} </span>
+                     @if (isPosDivSliderTrue===true){    
+                        <span  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetHeight}} </span>
+                     }
                     <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
                         <span style="width:25%; display:inline-block;">{{posDivPosSlider.parentElement.offsetTop}}</span>
-                        <span *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetTop}}</span>
+                     @if (isPosDivSliderTrue===true){        
+                        <span  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetTop}}</span>
+                     }
                 </ul>
             <span style="width:100%; display:inline-block; margin-top:5px; ">offsetParent</span>
                 <ul>
-                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
-                        <span  *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
+                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span> 
+                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
+                     @if (isPosDivSliderTrue===true){
+                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
+                     }
                     <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
-                        <span  *ngIf="isPosDivSliderTrue===true" style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
+                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
+                     @if (isPosDivSliderTrue===true){
+                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
+                     }
                 </ul>
 
             <span style="width:100%; display:inline-block; margin-top:5px; ">docDivRecipeTable.getBoundingClientRect()</span>
                 <ul>
                     <span style="width:55%; display:inline-block; margin-top:5px;">Height: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Height}}</span>
-                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Height}} </span>
+                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Height}}</span>
+                    @if (isPosDivSliderTrue===true){
+                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Height}} </span>
+                    }
                     <span style="width:55%; display:inline-block; margin-top:5px; ">Top: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
-                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
+                    <span style="width:25%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
+                     @if (isPosDivSliderTrue===true){
+                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
+                     }
                     <span style="width:55%; display:inline-block; margin-top:5px; ">Bottom: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Bottom}}</span>
-                        <span *ngIf="isPosDivSliderTrue===true"  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Bottom}}</span>
+                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Bottom}}</span>
+                     @if (isPosDivSliderTrue===true){
+                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Bottom}}</span>
+                    }
                     
                 </ul>
             <span style="width:55%; display:inline-block; margin-top:5px; ">clientY: </span><span style="width:45%; display:inline-block;">{{eventClientY}}</span>
             <span style="width:55%; display:inline-block; margin-top:5px; ">pageY: </span><span style="width:45%; display:inline-block;">{{eventPageY}} </span>
         </ul>
     </div>
-
+}

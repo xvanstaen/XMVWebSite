@@ -435,20 +435,20 @@ if (this.radioSelect!==this.idNb){
 }
 
 resetBooleans(){
-  this.isListRecipe=signal(false);
-  if (this.isActionRecipe()){this.isActionRecipe=signal(false)};
-  this.isDeleteRecipe=signal(false);
-  this.isIngrDropDown=signal(false);
-  this.IsSaveConfirmed=signal(false);
-  this.isCreateRecipeName=signal(false);
+  this.isListRecipe.set(false);
+  if (this.isActionRecipe()){this.isActionRecipe.set(false)};
+  this.isDeleteRecipe.set(false);
+  this.isIngrDropDown.set(false);
+  this.IsSaveConfirmed.set(false);
+  this.isCreateRecipeName.set(false);
   this.tabDialog[this.prevDialog]=false;
-  this.isChangeValueForAll=signal(false);
-  this.isChangeValueForAllPerso=signal(false);
-  this.isChangeRecipeName=signal(false); 
-  this.isActionComments=signal(false); 
+  this.isChangeValueForAll.set(false);
+  this.isChangeValueForAllPerso.set(false);
+  this.isChangeRecipeName.set(false); 
+  this.isActionComments.set(false); 
   this.isListTypeFr=false;
   this.isListTypeEn=false;
-  this.isIngrDropDown=signal(false);
+  this.isIngrDropDown.set(false);
 }
 
 onAction(event:any){
@@ -469,9 +469,9 @@ onAction(event:any){
   } else if (event.target.id==='listRecipe'){
       this.createDropDownRecipe();
   } else if(event.target.id==='ActionRecipe'){
-    this.isActionRecipe=signal(true);
+    this.isActionRecipe.set(true);
   } else if(event.target.id==='ActionComments' || event.target.id==='ActionCommentsPerso'){
-    this.isActionComments=signal(true); 
+    this.isActionComments.set(true); 
   }
 }
 
@@ -508,9 +508,9 @@ createDropDownRecipe(){
     } else { 
       this.heightListRecipe = this.tabRecipe.length * 25 + 15;
     }
-    this.isListRecipe=signal(true);
+    this.isListRecipe.set(true);
 
-    this.styleBoxListRecipe=signal({
+    this.styleBoxListRecipe.set({
       width : '205px',
       'height' : this.heightListRecipe + 'px',
       'position' : 'absolute',
@@ -542,10 +542,10 @@ afterDropDown(event:any){
   if (event.target.id==='Action'){
       if (event.target.textContent.trim()==="Cancel" ){
         this.idText="";
-        this.isActionRecipe=signal(false);
-        this.isListRecipe=signal(false);
+        this.isActionRecipe.set(false);
+        this.isListRecipe.set(false);
       } else 
-      { this.isRecipeModified=signal(true);
+      { this.isRecipeModified.set(true);
         if (event.target.textContent.trim()==="Delete" ){
           this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,1);
           this.tabUpdateRef.splice(this.idNb,1);
@@ -598,7 +598,7 @@ afterDropDown(event:any){
           }
           
         } else if (event.target.textContent.trim()==="Change value for all" ){
-          this.isChangeValueForAll=signal(true);
+          this.isChangeValueForAll.set(true);
           this.currentValue=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity;
           this.currentIngr=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr;
           this.margLeftChangeAll=30;
@@ -640,7 +640,7 @@ afterDropDownPerso(event:any){
 
   } else 
   {
-    this.isRecipeModified=signal(true);
+    this.isRecipeModified.set(true);
     if (event.target.textContent.trim()==="Delete" ){
       
     } else if (event.target.textContent.trim()==="Add after" ){
@@ -684,7 +684,7 @@ afterDropDownPerso(event:any){
           this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb-1]=saveData;
         } 
     } else if (event.target.textContent.trim()==="Change value for all" ){
-        this.isChangeValueForAllPerso=signal(true);
+        this.isChangeValueForAllPerso.set(true);
         this.currentValue=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
         this.currentIngr=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr;
         this.margLeftChangeAll=30;
@@ -697,17 +697,17 @@ afterDropDownPerso(event:any){
 afterDropDownRecipe(event:any){
   this.tabDialog[this.prevDialog]=false;
   this.resetBooleans();
-  this.isCreateRecipeName=signal(false);
-  this.isDuplicate==signal(false);
+  this.isCreateRecipeName.set(false);
+  this.isDuplicate.set(false);
   var i=0;
-  this.isActionRecipe=signal(false);
+  this.isActionRecipe.set(false);
   if (this.tabActionRecipe[event.target.value]==="Cancel"){
 
   } else {
-    this.isRecipeModified=signal(true);
+    this.isRecipeModified.set(true);
     if (this.tabActionRecipe[event.target.value]==="Delete"){
       
-      this.isDeleteRecipe=signal(true);   
+      this.isDeleteRecipe.set(true);   
       this.delMsg=this.recipeFile.recipe[this.recordRecipe].name; 
       //this.styleBox=getStyleDropDownContent(90, 240);
       this.styleBox = {
@@ -731,16 +731,16 @@ afterDropDownRecipe(event:any){
         }
 
     } else if (this.tabActionRecipe[event.target.value]==="Create" ){
-        this.isRecipeModified=signal(true);
-        this.isCreateRecipeName==signal(true);
+        this.isRecipeModified.set(true);
+        this.isCreateRecipeName.set(true);
 
     } else if (this.tabActionRecipe[event.target.value]==="Duplicate"){
-        this.isRecipeModified=signal(true);
-        this.isCreateRecipeName=signal(true);
-        this.isDuplicate=signal(true);
+        this.isRecipeModified.set(true);
+        this.isCreateRecipeName.set(true);
+        this.isDuplicate.set(true);
 
     } else if (this.tabActionRecipe[event.target.value]==="Rename"){
-        this.isChangeRecipeName=signal(true); 
+        this.isChangeRecipeName.set(true); 
         this.temporaryNameRecipe="";
      } else  if (this.tabActionRecipe[event.target.value]==="Calculate nut. facts for all recipes"){
         this.calculateNutritionForAllRecipe();
@@ -766,14 +766,14 @@ copyFromTo(toRecord:any, fromRecord:any){
 
 onChangeName(event:any){
   if (event.target.id==='cancel'){
-    this.isChangeRecipeName=signal(false); 
+    this.isChangeRecipeName.set(false); 
   } else if (event.target.id==='input'){
     this.temporaryNameRecipe=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
   } else if (event.target.id==='save'){
     this.recipeFile.recipe[this.recordRecipe].name=this.temporaryNameRecipe;
     this.updateInListType(this.temporaryNameRecipe,'FR','Rename');
-    this.isRecipeModified=signal(true);
-    this.isChangeRecipeName=signal(false); 
+    this.isRecipeModified.set(true);
+    this.isChangeRecipeName.set(false); 
   }
 }
 
@@ -799,8 +799,8 @@ onChangeValues(event:any){
       }
     }
   }
-  this.isChangeValueForAll=signal(false);
-  this.isChangeValueForAllPerso=signal(false);
+  this.isChangeValueForAll.set(false);
+  this.isChangeValueForAllPerso.set(false);
   this.currentIngr="";
   this.currentValue=0;
 
@@ -862,7 +862,7 @@ calculateNutrition(type:string){
     }
     this.recipeFile.recipe[this.recordRecipe].nutritionPerso.totalWeight=theTotal;
   } 
-  this.isRecipeModified=signal(true);
+  this.isRecipeModified.set(true);
 }
 
 processNutrition(infile:any){
@@ -912,7 +912,7 @@ filterCalFat(ingr:string){
     }
   }
   if (this.tabListCalFat.length!==0){
-    this.isIngrDropDown=signal(true);
+    this.isIngrDropDown.set(true);
     if (this.tabListCalFat.length *  this.heightItemDropDown > this.maxHeightDropDown){
       this.heightDropDown=this.maxHeightDropDown;
       this.scrollY='scroll';
@@ -923,7 +923,7 @@ filterCalFat(ingr:string){
     this.styleBox=getStyleDropDownContent(this.heightDropDown, 230 );
     this.styleBoxOption=getStyleDropDownBox(this.heightDropDown, 230, 0 , 0, this.scrollY);
   } else {
-    this.isIngrDropDown==signal(false);
+    this.isIngrDropDown.set(false);
   }
   
 }
@@ -1146,9 +1146,9 @@ nameRecipe(event:any){
       } else {
         this.updateTypeName(this.recipeFile,'','',"Fr",this.recipeFile.recipe[this.recordRecipe].name);
       }
-      this.isDuplicate=signal(false);
-      this.isCreateRecipeName=signal(false);
-      this.isRecipeModified=signal(true);
+      this.isDuplicate.set(false);
+      this.isCreateRecipeName.set(false);
+      this.isRecipeModified.set(true);
   } else if (event.target.id==='clear'){
       this.temporaryNameRecipe="";
   } else if (event.target.id==='cancel'){
@@ -1160,9 +1160,9 @@ nameRecipe(event:any){
 }
 
 delRecipe(event:any){
-  this.isDeleteRecipe=signal(false);
+  this.isDeleteRecipe.set(false);
   if (event.target.id==='YesDelConfirm'){
-    this.isRecipeModified=signal(true);
+    this.isRecipeModified.set(true);
     this.updateInListType(this.recipeFile.recipe[this.recordRecipe].name,'FR','Delete');
 /*
     for (var i=this.recordRecipe+1; i<this.tabUpdateRef.length; i++){
@@ -1244,8 +1244,8 @@ searchText(event:any){
 modifInput(event:any){
   this.resetBooleans();
   this.findId(event.target.id);
-  this.isIngrDropDown=signal(false);
-  this.isRecipeModified=signal(true);
+  this.isIngrDropDown.set(false);
+  this.isRecipeModified.set(true);
   if (this.idText==="ingr"){
       this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr=event.target.value;
       this.ingrType=this.idText;
@@ -1288,7 +1288,7 @@ modifInput(event:any){
 
 dropdownComments(event:any){
   this.resetBooleans();
-  this.isActionComments=signal(false); 
+  this.isActionComments.set(false); 
   if (this.tabActionComments[event.target.value]==="Translate FR to UK"){
     this.translateComments('FrToUk');
    } else if (this.tabActionComments[event.target.value]==="Translate UK to FR"){
@@ -1404,7 +1404,7 @@ reInitialieRecipe(){
 onInputType(event:any){
     this.resetBooleans();
     const theValue=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
-    this.isRecipeModified=signal(true);
+    this.isRecipeModified.set(true);
     if (event.target.id==='Fr'){
       this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeFr.trim(),"Fr",this.recipeFile.recipe[this.recordRecipe].name.trim());
       this.recipeFile.recipe[this.recordRecipe].typeFr=theValue;
@@ -1428,7 +1428,7 @@ onInputType(event:any){
 
 
 updateInListType(recipeName:string,lang:string,action:string){
-  this.isRecipeModified==signal(true);
+  this.isRecipeModified.set(true);
   var i=0;
   var theValue="ALL";
   if (lang==="FR"){
@@ -1539,8 +1539,8 @@ onDropdownListType(event:any){
   if (event.target.textContent.trim()==='Cancel'){
     this.tabDialog[this.prevDialog]===false;
     this.idText="";
-    this.isActionRecipe=signal(false);
-    this.isListRecipe=signal(false);
+    this.isActionRecipe.set(false);
+    this.isListRecipe.set(false);
   } else if (this.isListTypeFr==true){
     this.updateTypeName(this.recipeFile,event.target.textContent.trim(),this.recipeFile.recipe[this.recordRecipe].typeFr,"Fr",this.recipeFile.recipe[this.recordRecipe].name);
     this.recipeFile.recipe[this.recordRecipe].typeFr=event.target.textContent.trim();
@@ -1555,7 +1555,7 @@ onDropdownListType(event:any){
 }
 
 updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:string){
-  this.isRecipeModified=signal(true);
+  this.isRecipeModified.set(true);
   var trouve=false;
   var iType=0;
   if (oldType===""){
@@ -1669,7 +1669,7 @@ updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:s
 
 onRefresh(){
   this.refreshFileType(this.recipeFile)
-  this.isRecipeModified=signal(true);
+  this.isRecipeModified.set(true);
 }
 
 refreshFileType(inFile:any){
@@ -1760,8 +1760,8 @@ CancelRecord(){
       }
     } 
     this.resetBooleans();
-    this.isRecipeModified=signal(false);
-    this.isCreateRecipeName==signal(false);
+    this.isRecipeModified.set(false);
+    this.isCreateRecipeName.set(false);
   }
 
 CancelSave(){
@@ -1775,7 +1775,7 @@ ConfirmSave(){
     //this.SpecificForm.controls['FileName'].setValue(this.myListOfObjects.items[this.fileNb].name);
     this.SpecificForm.controls['fileHeader'].setValue(this.theListOfObjects[this.fileNb].header);
     this.SpecificForm.controls['fileName'].setValue(this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json);
-    this.IsSaveConfirmed=signal(true);
+    this.IsSaveConfirmed.set(true);
   }
 
 calculateNutritionForAllRecipe(){
@@ -1786,11 +1786,11 @@ calculateNutritionForAllRecipe(){
   }
   this.recipeFile.updatedAt=strDateTime();
   this.message="";
-  this.isRecipeModified=signal(true);
+  this.isRecipeModified.set(true);
   //this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
   this.recordRecipe=saveRecipeRecord;
   //this.message='Nutrition facts calculated and saved for all recipes';
-  //this.isRecipeModified=signal(true);
+  //this.isRecipeModified.set(true);
 }
 
 SaveRecord(){
@@ -1798,8 +1798,8 @@ SaveRecord(){
     this.recipeFile.updatedAt=strDateTime();
     this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
     this.resetBooleans();
-    this.isRecipeModified=signal(false);
-    this.isCreateRecipeName=signal(false);
+    this.isRecipeModified.set(false);
+    this.isCreateRecipeName.set(false);
   }
 
 putRecord(GoogleBucket:string, GoogleObject:string, record:any){
@@ -1809,8 +1809,8 @@ putRecord(GoogleBucket:string, GoogleObject:string, record:any){
       .subscribe(res => {
               if (res.type===4){
                 this.message='File "'+ GoogleObject +'" is successfully stored in the cloud';
-                if (this.isRecipeModified()) {this.isRecipeModified=signal(false)};
-                if (this.IsSaveConfirmed) {this.IsSaveConfirmed=signal(false)};
+                if (this.isRecipeModified()) {this.isRecipeModified.set(false)};
+                if (this.IsSaveConfirmed) {this.IsSaveConfirmed.set(false)};
               }
             },
             error_handler => {

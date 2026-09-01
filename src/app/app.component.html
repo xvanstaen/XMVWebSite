@@ -24,10 +24,7 @@
     <span style="width:94%; background-color: lightgrey; margin-left:10px; border:solid 2px blue; display:inline-block; ">Parameter SCOPE = {{myParams.scope}}</span>
 </div>
 -->
-<!--
-    <span style="background-color:  lightblue;"><br>isConfigServerRetrieved={{isConfigServerRetrieved}}</span>
-    <span style="background-color:  lightblue;"><br>isIdRetrieved={{isIdRetrieved}}</span>
--->
+
 @if (isCallUserFunction===false){
     @if(isConfigServerRetrieved() && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved===true) || devMode!=='local')){
         <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved" [identification]="identification"
@@ -39,6 +36,7 @@
 
 
 } @else {
+
 
     @if (isConfigServerRetrieved() && devMode!=='local' && configServer.project!=='XMVWebSite'){ 
     <div style="margin-left:30px; margin-top:40px; width:300px;">

@@ -54,7 +54,7 @@ export class AppComponent {
   initConfigServer=new configServer;
   configServerChanges:number=0;
   //XMVConfig=new XMVConfig;
-  isConfigServerRetrieved=signal(false);
+  isConfigServerRetrieved=signal<boolean>(false);
   identification=new LoginIdentif;
   ConvertUnit=new mainClassConv;
   ConvToDisplay=new mainConvItem;
@@ -293,12 +293,12 @@ console.log('devMode='+this.devMode);
       this.configServer.devMode=this.devMode;
       this.saveGoogleServer = this.configServer.googleServer;
      
-        this.isConfigServerRetrieved=signal(true); // UI updates correctly now
-        this.configServer.project=this.mainFunction;
+      this.isConfigServerRetrieved.set(true); // UI updates correctly now
+      this.configServer.project=this.mainFunction;
      
       this.currentFunction="getLogin";
       this.theFn="Login";
-
+      //this.cdr.detectChanges.mark()
     }
 
   }
@@ -361,7 +361,7 @@ console.log('devMode='+this.devMode);
                 this.configServer.googleServer = this.saveGoogleServer;
             }
             this.isCredentials=true;
-            this.cdr.markForCheck();
+            //this.cdr.markForCheck();
   
           },
           err => {

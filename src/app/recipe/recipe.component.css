@@ -31,6 +31,8 @@ div{
     margin-left:23px;
     margin-top:2px;
     text-align: center;
+    justify-content: center;
+    align-items: center;
   }
 
 .circleB:hover{
@@ -42,9 +44,10 @@ div{
   background-color: lightblue;
   border-bottom:solid 1px blue; border-left:solid 1px blue;
   box-sizing: border-box;
-  display:inline-block;
+  display:flex;
   vertical-align: middle;
   font-size:14px;
+  text-align: center;
 }
 
 .borderBot{
@@ -162,6 +165,13 @@ div{
      height:var(--headerH); padding-top:6px; 
 }
 
+.titleHeaderFlex{
+    color:blue; text-align: center; display:inline-block;
+     height:var(--headerH); border-top: solid blue 1px; border-bottom: solid blue 0px;
+     border-left: solid blue 0px; padding:3px;
+
+}
+
 
 .rightBorder{
   border-right:blue solid 1px;
@@ -259,6 +269,23 @@ div{
 
   .colorArea{
     color:blue; background-color: lightblue; border:solid 0px blue;
+  }
+
+  .gridContainer{
+    width:100%; 
+    display:grid;
+    grid-template-columns: repeat(5,1fr);
+    align-items:normal;
+
+    border: solid blue 2px;
+  }
+
+  .container{
+    width:100%; 
+    display:flex;
+    align-items:normal;
+    box-sizing: border-box; 
+    border: solid red 0px;
   }
 
   .stdInline{

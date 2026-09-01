@@ -1,6 +1,7 @@
 import {
   Component, OnInit, Input, Output, ViewChild, HostListener, HostBinding, ChangeDetectionStrategy,
-  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
+  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, 
+  AfterContentChecked, Inject, LOCALE_ID, signal
 } from '@angular/core';
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -296,7 +297,7 @@ export class ReportHealthComponent implements OnInit {
 
   isSelectCanvasColor: boolean = false;
   isSelectLegendColor: boolean = false;
-  isSelectLChartTitleColor: boolean = false;
+  isSelectLChartTitleColor = signal(false);
   isSelectBoxColor: boolean = false;
 
   isSelectAxisXBorderColor: boolean = false;
@@ -304,26 +305,26 @@ export class ReportHealthComponent implements OnInit {
   isSelectAxisYBorderColor: boolean = false;
   isSelectAxisYTicksColor: boolean = false;
 
-  isTypeSelected: boolean = false;
-  isPeriodSelected: boolean = false;
+  isTypeSelected = signal(false);
+  isPeriodSelected = signal(false);
   isTestLineChart: boolean = false;
 
-  isParamTitle: boolean = false;
-  isParamLegend: boolean = false;
-  isParamAxis: boolean = false;
+  isParamTitle=signal(false);
+  isParamLegend=signal(false);
+  isParamAxis=signal(false);
 
-  isFontWeight: boolean = false;
-  isTextAlign: boolean = false;
-  isTitlePosition: boolean = false;
-  isTitleDisplay: boolean = false;
+  isFontWeight = signal(false);
+  isTextAlign = signal(false);
+  isTitlePosition = signal(false);
+  isTitleDisplay = signal( false);
 
-  isSelectChartTitleColor: boolean = false;
+  isSelectChartTitleColor = signal(false);
 
   isSelectXBorderColor: boolean = false;
   isSelectYBorderColor: boolean = false;
   isSelectXTicksColor: boolean = false;
   isSelectYTicksColor: boolean = false;
-  isSliderSelected: boolean = false;
+  isSliderSelected = signal(false);
 
   returnXBorderColorRgba = {
     slider: new classReturnColor,
@@ -395,8 +396,7 @@ export class ReportHealthComponent implements OnInit {
     FileName: new FormControl('', { nonNullable: true }),
   })
 
-  isConfirmSaveA:boolean=false;
-  IsSaveConfirmed: boolean = false;
+  IsSaveConfirmed = signal(false);
 
   lockValueBeforeCheck:number=0;
   @HostListener('window:mouseup', ['$event'])
@@ -582,7 +582,7 @@ export class ReportHealthComponent implements OnInit {
   displayHour:number=0;
   idAnimation:any;
 
-  openFileAccess:boolean=false;
+  openFileAccess=signal(false);
 
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
       window.cancelAnimationFrame(this.idAnimation);
@@ -590,7 +590,7 @@ export class ReportHealthComponent implements OnInit {
       this.refDate=new Date();
       this.lastInputAt = strDateTime();
       if (theAction==="only"){
-        this.openFileAccess=true;
+        this.openFileAccess=signal(true);
         this.theEvent.checkLock.action='checkTO';
         this.theEvent.checkLock.iWait=iWait;
         this.theEvent.checkLock.isDataModified=isDataModified;
@@ -839,25 +839,22 @@ export class ReportHealthComponent implements OnInit {
     this.timeOutactivity(5, true, false,"only");
     if (event.target.id === "allChartParam") {
       this.selectedChart = 0;
-      this.isParamTitle = false;
-      this.isParamLegend = false;
-      this.isParamAxis = false;
-      this.isParamTitle = false;
-      this.isParamLegend = false;
-      this.isParamAxis = false;
+      this.isParamTitle=signal(false);
+      this.isParamLegend=signal(false);
+      this.isParamAxis = signal(false);
       this.resetBooleans();
 
     } else if (event.target.id === "chartTitle") {
-      this.isParamTitle = false;
-      this.isParamLegend = false;
+      this.isParamTitle =signal(false);
+      this.isParamLegend=signal(false);
     } else if (event.target.id === "axis") {
-      this.isParamAxis = false;
+      this.isParamAxis = signal(false);
     }
   }
 
   processAxis(event: any) {
     this.timeOutactivity(5, true, false,"only");
-    this.isParamAxis = false;
+    this.isParamAxis = signal(false);
     if (this.selectAxisX.controls['stacked'].value === 'false') {
       this.tabParamChart[this.selectedChart - 1].axisX.stacked = false;
     } else {
@@ -1266,9 +1263,9 @@ export class ReportHealthComponent implements OnInit {
     this.selected_chartTitleColor = this.tabParamChart[nb].chartTitle.color;
     this.selected_legendColor = this.tabParamChart[nb].legendTitle.color;
     this.selected_boxColor = this.tabParamChart[nb].legendBox.color;
-    if (this.isParamLegend === true) {
+    if (this.isParamLegend ()) {
       this.selected_colorTitle = this.selected_legendColor;
-    } else if (this.isParamTitle === true) {
+    } else if (this.isParamTitle ()) {
       this.selected_colorTitle = this.selected_chartTitleColor;
     }
 
@@ -1288,8 +1285,8 @@ export class ReportHealthComponent implements OnInit {
 
   transferTitle(id: string, outFile: any, outRgba: any) {
     this.resetBooleans();
-    this.isParamTitle = false;
-    this.isParamLegend = false;
+    this.isParamTitle=signal(false);
+    this.isParamLegend=signal(false);
 
     this.selectTitle.controls['fontWeight'].setValue(outFile.font.weight);
     this.selectTitle.controls['fontSize'].setValue(outFile.font.size);
@@ -1310,7 +1307,7 @@ export class ReportHealthComponent implements OnInit {
     this.selectTitle.controls['sliderYpos'].setValue(outRgba.slider.yPos);
 
     if (id === 'viewChartTitle') {
-      this.isParamTitle = true;
+      this.isParamTitle = signal(true);
       this.selectTitle.controls['text'].setValue(this.selectChart.controls['chartTitle'].value);
       this.selectTitle.controls['color'].setValue(this.selectChart.controls['colorChartTitle'].value);
       this.selected_colorTitle = this.selectChart.controls['colorChartTitle'].value;
@@ -1318,19 +1315,19 @@ export class ReportHealthComponent implements OnInit {
       this.selectTitle.controls['paddingLeft'].setValue(this.tabParamChart[this.selectedChart - 1].legendTitle.padding.left);
       this.selectTitle.controls['text'].setValue(this.selectChart.controls['legendTitle'].value);
       this.selectTitle.controls['color'].setValue(this.selectChart.controls['colorLegendTitle'].value);
-      this.isParamLegend = true;
+      this.isParamLegend = signal(true);
       this.selected_colorTitle = this.selectChart.controls['colorLegendTitle'].value;
     }
   }
 
   processTitle() {
-    if (this.isParamTitle === true) {
+    if (this.isParamTitle ()) {
       this.fillTabTitle(this.tabParamChart[this.selectedChart - 1].chartTitle, this.tabParamChart[this.selectedChart - 1].chartTitleRgba);
       this.fillInFormFromTab(this.selectedChart - 1);
-      this.isParamTitle = false;
-    } else if (this.isParamLegend === true) {
+      this.isParamTitle =signal(false);
+    } else if (this.isParamLegend()) {
       this.fillTabTitle(this.tabParamChart[this.selectedChart - 1].legendTitle, this.tabParamChart[this.selectedChart - 1].legendTitleRgba);
-      this.isParamLegend = false;
+      this.isParamLegend =signal(false);
     }
     this.selected_colorTitle = "";
   }
@@ -1354,14 +1351,14 @@ export class ReportHealthComponent implements OnInit {
     outRgba.slider.xPos = this.selectTitle.controls['sliderXpos'].value;
     outRgba.slider.yPos = this.selectTitle.controls['sliderYpos'].value;
 
-    if (this.isParamLegend === true) {
+    if (this.isParamLegend()) {
       outFile.padding.left = this.selectTitle.controls['paddingLeft'].value;
 
       this.selectChart.controls['legendTitle'].setValue(outFile.text);
       this.selectChart.controls['colorLegendTitle'].setValue(outFile.color);
 
 
-    } else if (this.isParamTitle === true) {
+    } else if (this.isParamTitle()) {
       outFile.padding.left = this.selectTitle.controls['paddingLeft'].value;
       this.selectChart.controls['chartTitle'].setValue(outFile.text);
       this.selectChart.controls['colorChartTitle'].setValue(outFile.color);
@@ -1372,9 +1369,9 @@ export class ReportHealthComponent implements OnInit {
     this.timeOutactivity(5, true, false,"only");
     this.resetBooleans();
     if (event.target.id === 'selType') {
-      this.isTypeSelected = true;
+      this.isTypeSelected = signal(true);
     } else if (event.target.id === 'selectedType') {
-      this.isTypeSelected = false;
+      this.isTypeSelected = signal(false);
       this.selectChart.controls['chartType'].setValue(event.target.textContent.trim());
     } else if (event.target.textContent.trim() !== "cancel") {
       if (event.target.id === 'viewChartTitle') {
@@ -1382,27 +1379,27 @@ export class ReportHealthComponent implements OnInit {
       } else if (event.target.id === 'viewLegendTitle') {
         this.transferTitle(event.target.id, this.tabParamChart[this.selectedChart - 1].legendTitle, this.tabParamChart[this.selectedChart - 1].legendTitleRgba);
       } else if (event.target.id === 'viewAxis') {
-        this.isParamAxis = true;
+        this.isParamAxis = signal(true);
       } else
         if (event.target.id === 'selFontWeight') {
-          this.isFontWeight = true;
+          this.isFontWeight = signal(true);
         } else if (event.target.id === 'selectedFontWeight') {
-          this.isFontWeight = false;
+          this.isFontWeight = signal(false);
           this.selectTitle.controls['fontWeight'].setValue(event.target.textContent.trim());
         } else if (event.target.id === 'selTextAlign') {
-          this.isTextAlign = true;
+          this.isTextAlign = signal(true);
         } else if (event.target.id === 'selectedTextAlign') {
-          this.isTextAlign = false;
+          this.isTextAlign = signal(false);
           this.selectTitle.controls['align'].setValue(event.target.textContent.trim());
         } else if (event.target.id === 'selTitlePosition') {
-          this.isTitlePosition = true;
+          this.isTitlePosition = signal(true);
         } else if (event.target.id === 'selectedTitlePosition') {
-          this.isTitlePosition = false;
+          this.isTitlePosition = signal(false);
           this.selectTitle.controls['position'].setValue(event.target.textContent.trim());
         } else if (event.target.id === 'selTitleDisplay') {
-          this.isTitleDisplay = true;
+          this.isTitleDisplay = signal(true);
         } else if (event.target.id === 'selectedTitleDisplay') {
-          this.isTitleDisplay = false;
+          this.isTitleDisplay = signal(false);
           this.selectTitle.controls['display'].setValue(event.target.textContent.trim());
         }
     } else { this.resetBooleans(); }
@@ -1414,9 +1411,9 @@ export class ReportHealthComponent implements OnInit {
     this.timeOutactivity(5, true, false,"only");
     this.resetBooleans();
     if (event.target.id === 'selPeriod') {
-      this.isPeriodSelected = true;
+      this.isPeriodSelected = signal(true);
     } else if (event.target.id === 'selectedPeriod') {
-      this.isPeriodSelected = false;
+      this.isPeriodSelected = signal(false);
       this.selectChart.controls['period'].setValue(event.target.textContent.toLowerCase().trim());
     }
   }
@@ -1425,9 +1422,9 @@ export class ReportHealthComponent implements OnInit {
     this.timeOutactivity(5, true, false,"only");
     this.resetBooleans();
     if (event.target.id === 'selPeriod') {
-      this.isPeriodSelected = true;
+      this.isPeriodSelected = signal(true);
     } else if (event.target.id === 'selectedPeriod') {
-      this.isPeriodSelected = false;
+      this.isPeriodSelected = signal(false);
       this.paramAllCharts.controls['period'].setValue(event.target.textContent.toLowerCase().trim());
     }
   }
@@ -1467,7 +1464,7 @@ export class ReportHealthComponent implements OnInit {
         this.returnPalette = this.returnYTicksRgba.palette;
 
       }
-      this.isSliderSelected = true;
+      this.isSliderSelected = signal(true);
     }
   }
 
@@ -1483,45 +1480,45 @@ export class ReportHealthComponent implements OnInit {
         this.my_input_child2 = this.selected_canvasColor;
         this.returnSlider = this.returnCanvasRgba.slider;
         this.returnPalette = this.returnCanvasRgba.palette;
-        this.isSliderSelected = true;
-      } else if (event === 'legendColor' || (event === 'colorTitle' && this.isParamLegend === true)) {
+        this.isSliderSelected = signal(true);
+      } else if (event === 'legendColor' || (event === 'colorTitle' && this.isParamLegend())) {
         this.my_input_child1 = this.selected_legendColor;
         this.my_input_child2 = this.selected_legendColor;
         this.returnSlider = this.returnLegendRgba.slider;
         this.returnPalette = this.returnLegendRgba.palette;
-        if (this.isParamLegend === true) {
-          this.isSelectLChartTitleColor = true;
+        if (this.isParamLegend()) {
+          this.isSelectLChartTitleColor = signal(true);
         } else {
           this.isSelectLegendColor = true;
         }
-        this.isSliderSelected = true;
-      } else if (event === 'colorChartTitle' || (event === 'colorTitle' && this.isParamTitle === true)) {
+        this.isSliderSelected = signal(true);
+      } else if (event === 'colorChartTitle' || (event === 'colorTitle' && this.isParamTitle())) {
         this.my_input_child1 = this.selected_chartTitleColor;
         this.my_input_child2 = this.selected_chartTitleColor;
         this.returnSlider = this.returnTitleRgba.slider;
         this.returnPalette = this.returnTitleRgba.palette;
-        if (this.isParamTitle === true) {
-          this.isSelectLChartTitleColor = true;
+        if (this.isParamTitle()) {
+          this.isSelectLChartTitleColor = signal(true);
         } else {
-          this.isSelectChartTitleColor = true;
+          this.isSelectChartTitleColor= signal(true);
         }
-        this.isSliderSelected = true;
+        this.isSliderSelected = signal(true);
       } else if (event === "boxColor") {
         this.isSelectBoxColor = true;
         this.my_input_child1 = this.selected_boxColor;
         this.my_input_child2 = this.selected_boxColor;
         this.returnSlider = this.returnBoxRgba.slider;
         this.returnPalette = this.returnBoxRgba.palette;
-        this.isSliderSelected = true;
+        this.isSliderSelected = signal(true);
       }
 
       else if (event === 'fieldCanvasColor') { //  
         this.selected_canvasColor = this.selectChart.controls["canvasBackground"].value;
         this.initRgba(this.returnCanvasRgba);
-      } else if (event === 'fieldLegendColor' || (event === 'fieldColorTitle' && this.isParamLegend === true)) {
+      } else if (event === 'fieldLegendColor' || (event === 'fieldColorTitle' && this.isParamLegend())) {
         this.selected_legendColor = this.selectChart.controls["colorLegendTitle"].value;
         this.initRgba(this.returnLegendRgba);
-      } else if (event === 'fieldColorChartTitle' || (event === 'fieldColorTitle' && this.isParamTitle === true)) {
+      } else if (event === 'fieldColorChartTitle' || (event === 'fieldColorTitle' && this.isParamTitle())) {
         this.selected_chartTitleColor = this.selectChart.controls["colorChartTitle"].value;
         this.initRgba(this.returnTitleRgba);
       } else if (event === 'fieldBoxColor') {
@@ -1601,16 +1598,16 @@ export class ReportHealthComponent implements OnInit {
           this.returnCanvasRgba.slider = this.returnSlider;
           this.isSelectCanvasColor = false;
           this.selectChart.controls['canvasBackground'].setValue(this.temporaryColor);
-        } else if (this.isSelectLegendColor === true || (this.isParamLegend === true && this.isSelectLChartTitleColor === true)) {
+        } else if (this.isSelectLegendColor === true || (this.isParamLegend() && this. isSelectLChartTitleColor())) {
           this.selected_legendColor = this.temporaryColor;
           this.isSelectLegendColor = false;
           this.returnLegendRgba.palette = this.returnPalette;
           this.returnLegendRgba.slider = this.returnSlider;
           this.selectChart.controls['colorLegendTitle'].setValue(this.temporaryColor);
 
-        } else if (this.isSelectChartTitleColor === true || (this.isParamTitle === true && this.isSelectLChartTitleColor === true)) {
+        } else if (this.isSelectChartTitleColor() || (this.isParamTitle() && this.isSelectLChartTitleColor())) {
           this.selected_chartTitleColor = this.temporaryColor;
-          this.isSelectChartTitleColor = false;
+          this.isSelectChartTitleColor = signal(false);
           this.returnTitleRgba.palette = this.returnPalette;
           this.returnTitleRgba.slider = this.returnSlider;
 
@@ -1663,9 +1660,9 @@ export class ReportHealthComponent implements OnInit {
           this.isSelectYTicksColor = false;
         }
 
-        if (this.isSelectLChartTitleColor === true) {
+        if (this.isSelectLChartTitleColor()) {
           this.selected_colorTitle = this.temporaryColor;
-          this.isSelectLChartTitleColor = false;
+          this.isSelectLChartTitleColor = signal(false);
           this.selectTitle.controls['color'].setValue(this.temporaryColor);
           this.selectTitle.controls['paletteRgba'].setValue(this.returnPalette.rgba);
           this.selectTitle.controls['paletteXpos'].setValue(this.returnPalette.xPos);
@@ -1676,7 +1673,7 @@ export class ReportHealthComponent implements OnInit {
         }
 
       }
-      this.isSliderSelected = false;
+      this.isSliderSelected = signal(false);
     }
   }
   selectLabelColor(event: any) {
@@ -1707,7 +1704,7 @@ export class ReportHealthComponent implements OnInit {
         this.my_input_child1 = this.returnPalette.rgba;
         this.temporaryColor = this.returnPalette.rgba;
       }
-      this.isSliderSelected = true;
+      this.isSliderSelected = signal(true);
       this.mainWindow.top = 370;
       this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
     }
@@ -1927,23 +1924,22 @@ export class ReportHealthComponent implements OnInit {
 
 
   resetBooleans() {
-    this.isTypeSelected = false;
-    this.isPeriodSelected = false;
+    this.isTypeSelected = signal(false);
+    this.isPeriodSelected = signal(false);
     this.isSelectLegendColor = false;
     this.isSelectBoxColor = false;
     this.isSelectCanvasColor = false;
-    this.isSelectLChartTitleColor = false;
-    this.isSelectChartTitleColor = false;
+    this.isSelectLChartTitleColor = signal(false);
     this.isSelectLabColor = false;
     this.dialogLabColor[this.currentLabColor] = false;
 
-    this.isSliderSelected = false;
+    this.isSliderSelected = signal(false);
     //this.selectedChart=0;
 
-    this.isFontWeight = false;
-    this.isTextAlign = false;
-    this.isTitlePosition = false;
-    this.isTitleDisplay = false;
+    this.isFontWeight = signal(false);
+    this.isTextAlign = signal(false);
+    this.isTitlePosition = signal(false);;
+    this.isTitleDisplay = signal(false);;
 
     this.isSelectXBorderColor = false;
     this.isSelectXTicksColor = false;
@@ -1969,14 +1965,14 @@ export class ReportHealthComponent implements OnInit {
   }
 
   cancelTheSave(){
-    this.IsSaveConfirmed = false;
+    this.IsSaveConfirmed = signal(false);
     this.isMustSaveFile = false;
   }
 
 
   saveFn() {
     this.errorMsg = '';
-    this.IsSaveConfirmed = false;
+    this.IsSaveConfirmed = signal(false);
     this.fillInTabOfCharts(this.selectedChart - 1);
     if (this.errorMsg === '') {
       if (this.theEvent.target.id === 'save') {
@@ -2021,7 +2017,7 @@ export class ReportHealthComponent implements OnInit {
 
 
   resultAccessFile(theEvent:any){
-    //this.openFileAccess=false;
+    //this.openFileAccess=signal(false);
     if (this.lockValueBeforeCheck!==this.tabLock[5].lock){
       if (this.tabLock[5].lock===1){
         this.enableForm();
@@ -2033,7 +2029,7 @@ export class ReportHealthComponent implements OnInit {
     }
     if (this.onInputAction === "confirmSave"){
       this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.myChartConfig);
-      this.IsSaveConfirmed = true;
+      this.IsSaveConfirmed = signal(true);
     }
     console.log(theEvent);
   }
