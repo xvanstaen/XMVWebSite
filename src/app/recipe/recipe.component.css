@@ -283,14 +283,6 @@ div{
     color:blue; background-color: lightblue; border:solid 0px blue;
   }
 
-  .gridContainer{
-    width:100%; 
-    display:grid;
-    grid-template-columns: repeat(5,1fr);
-    align-items:normal;
-
-    border: solid blue 2px;
-  }
 
   .container{
     width:100%; 
@@ -298,6 +290,7 @@ div{
     align-items:normal;
     box-sizing: border-box; 
     border: solid red 0px;
+    padding-left:20px;
   }
 
   .stdInline{

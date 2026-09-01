@@ -375,7 +375,7 @@
                                                     </div>
                                             </div>
                                                                     <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
-                                            <div class="tabIngr" style="width:var(--ingW);  padding-left:3px; padding-top:4px;" 
+                                            <div class="tabIngr" style="width:var(--ingW);  padding-left:3px; padding-top:3px;" 
                                                  >
                                                 
                                                 <input class="inputRow " style=" width:var(--ingInpW); " type="text" id="ingr-{{i}}"  (mouseup)="onMouseUp($event)"   (input)="modifInput($event)" value="{{theRecipe.ingr}}">
@@ -393,11 +393,11 @@
                                                     </div>
                                                 }
                                             </div>
-                                            <div class="tabIngr" style="width:var(--quanW);  padding-top:4px; padding-left:3px;" 
+                                            <div class="tabIngr" style="width:var(--quanW);  padding-top:3px; padding-left:3px;" 
                                                  >
                                                 <input class="inputRow" style="width: var(--quanInpW)"   type="text" id="quantity-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.quantity}}">
                                             </div>
-                                            <div  class="tabIngr borderRight" style="width:var(--unitW);  padding-top:4px; padding-left:3px; " 
+                                            <div  class="tabIngr borderRight" style="width:var(--unitW);  padding-top:3px; padding-left:3px; " 
                                                  >
                                                 <input  class="inputRow "  style="width: var(--unitInpW)"  type="text" id="unit-{{i}}"   (input)="modifInput($event)" value="{{theRecipe.unit}}">
                                             </div>
