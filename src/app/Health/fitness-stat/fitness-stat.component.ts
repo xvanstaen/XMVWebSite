@@ -1,5 +1,6 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID, ChangeDetectorRef} from '@angular/core';
+  SimpleChanges,EventEmitter, AfterViewInit, 
+   AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID, ChangeDetectorRef} from '@angular/core';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatIconModule} from '@angular/material/icon';
@@ -142,8 +143,9 @@ Google_Object_Fitness:string='';
 
 bucket_data:string='';
 
-DisplayListOfObjects:boolean=false;
-
+DisplayListOfObjects=signal<boolean>(false);
+isnewTabDialog=signal<boolean>(false);
+isTabDisplayCalendar=signal<boolean>(false);
 // used to create object name in Google Storage
 //myDate:string='';
 //myTime=new Date();
@@ -205,6 +207,7 @@ ObjectIsRetrieved:boolean=false;
 ConfigExist:boolean=false;
 isConfigConfirmed:boolean=false;
 OpenDialogue:Array<boolean>=[];
+isOpenDialogue=signal<boolean>(false);
 
 //Draw_Line:string='-';
 TabDisplayCalendar:Array<boolean>=[];
@@ -243,26 +246,45 @@ callingComponent:string='FitnessStat';
 
 nbToDisplay:number=0;
 nbSeanceDisplay:number=0;
-
 mainTableHeight:number=130;
-subTableHeight:number=100;
+subTableHeight:number=120
+defaultMainTableHeight:number=130;
+defaultSubTableHeight:number=120;
 
 largeMainTableHeight:number=480;
 largeSubTableHeight:number=450;
 
+posDivTitle = new classPosDiv;
+posDivAction = new classPosDiv;
+posFirstTitle = new classPosDiv;
+posListFiles = new classPosDiv;
 
 /************* START Select position of the table ***************/
 selectedPosition ={ 
   x: 0,
   y: 0} ;
 
-  
 @HostListener('window:mouseup', ['$event'])
 
 onMouseUp(event: MouseEvent) {
   this.selectedPosition = { x: event.pageX, y: event.pageY };
   //this.getPosTitle();
-  this.posDivTable=getPosDiv("posTitle");
+  this.posListFiles=getPosDiv("posListFiles");
+  this.posDivTitle=getPosDiv("posTitle");
+  this.posDivAction=getPosDiv("posAction");
+  this.posFirstTitle=getPosDiv("posFirstTitle");
+  const element = document.getElementById("posAction");
+  if (element !== null){
+    const theRect = element.getBoundingClientRect();
+      this.selectedPosition.y = event.clientY - theRect.top;
+      this.selectedPosition.y = event.y;
+      this. selectedPosition.x = event.clientX - theRect.left;
+      
+  }
+  //this.theRect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  
+  // Exact X and Y position relative to the top-left corner of the div
+
   //console.log('evt.pageX='+evt.pageX+' evt.pageY=' + evt.pageY );
 }
 
@@ -275,7 +297,7 @@ onMouseMove(evt: MouseEvent) {
 }
 
 
-posDivTable= new classPosDiv;
+
 /**
 getPosTitle(){
   if (document.getElementById("posTitle")!==null){
@@ -313,18 +335,15 @@ boxActionWidth:number=36;
 dateWidth:number=100;
 calendarWidth:number=30;
 
-posLeftSport:number=34;
+posLeftSport:number=175;
 posLeftActivity:number=0;
 posLeftExercise:number=0;
 posLeftSeance:number=0;
 posLeftResult:number=0;
 
-
 posLeftDropDown:number=0;
 
-/*
-
-*/
+isResultImplemented=signal<boolean>(false);
 
 ngOnInit(){
   
@@ -332,7 +351,6 @@ ngOnInit(){
   this.posLeftExercise=this.posLeftActivity+this.newTextWidth+this.boxActionWidth + 8;
   this.posLeftSeance=this.posLeftExercise+this.newTextWidth - 18;
   this.posLeftResult=this.posLeftExercise+this.newTextWidth+this.boxActionWidth + 200;
-
 
   this.DisplayConfig=false;
   this.TheSelectDisplays.controls['Config'].setValue('N');
@@ -438,8 +456,10 @@ ngOnInit(){
 
 newTabDialog:Array<boolean>=[];
 newPrevDialog:number=0;
+
 onAction(event:any){
   this.newTabDialog[this.newPrevDialog]=false;
+  if (this.isnewTabDialog()){this.isnewTabDialog.set(false);}
   this.TabAction.splice(0,this.TabAction.length);
   this.manageIds(event.target.id);
   this.TabAction.push({name:'',type:''});
@@ -512,180 +532,186 @@ onAction(event:any){
     
   }
   this.newTabDialog[this.newPrevDialog]=true;
+  this.isnewTabDialog.set(true)
+
   this.theHeight=this.TabAction.length*26;
   //this.cdr.detectChanges();
 }
 
 afterDropDown(event:any){
-var myConst:number=0;
-if (event.target.value===0){ //cancel 
-  // nothing to do
-} else if (this.newPrevDialog===0 && this.newTabDialog[this.newPrevDialog]===true){ // Sport
+  var myConst:number=0;
+  
+  this.isnewTabDialog.set(false)
+  
+  if (event.target.value===0){ //cancel 
+    // nothing to do
+  } else if (this.newPrevDialog===0 && this.newTabDialog[this.newPrevDialog]===true){ // Sport
 
-  const theLength = this.NewPerformanceFitness.Sport.length - 1;
-
-  if (event.target.value===1){
-      if (theLength > 0) {  // delete the Sport item
-        this.NewPerformanceFitness.Sport.splice(this.TabOfId[0],1); 
-      } else { 
-        // should display an error message that item cannot be 
-      }
-  }  else if (event.target.value===2 || event.target.value===3){
-    // create after
-    if (event.target.value===3){
-      myConst=this.TabOfId[0];
-     } else {
-      myConst=this.TabOfId[0]+1;
-     }
-    const theClassSport = new ClassSport;
-    this.NewPerformanceFitness.Sport.splice(myConst,0,theClassSport);
-    this.NewPerformanceFitness.Sport[myConst].Sport_name='';
-    this.datePipeSelected = this.datePipe.transform(this.todayDate,"dd-MM-yyyy");
-    this.NewPerformanceFitness.Sport[myConst].Sport_date=this.datePipeSelected;
-    this.TabinputDate[myConst]=this.datePipeSelected;
-    this.TabIsDateWrong[myConst]=false;
-    this.NewPerformanceFitness.Sport[myConst].exercise[0].Activity_name='';
-    this.NewPerformanceFitness.Sport[myConst].exercise[0].ActivityExercise[0].Exercise_name='';
-    this.NewPerformanceFitness.Sport[myConst].exercise[0].ActivityExercise[0].seance[0].nb=0;
-  } else if (event.target.value===4 ) {
-    // create a copy
-    const theNewSport= new ClassSport;
-    myConst=this.TabOfId[0];
-    this.NewPerformanceFitness.Sport.splice(myConst+1,0,theNewSport);
-    this.NewPerformanceFitness.Sport[myConst+1].Sport_name=this.NewPerformanceFitness.Sport[myConst].Sport_name;
-    this.datePipeSelected = this.datePipe.transform(this.todayDate,"dd-MM-yyyy");
-    this.NewPerformanceFitness.Sport[myConst+1].Sport_date=this.datePipeSelected;
-    this.TabinputDate[myConst+1]=this.datePipeSelected;
-    this.TabIsDateWrong[myConst+1]=false;
-    for (var i=0; i<this.NewPerformanceFitness.Sport[myConst].exercise.length; i++){
-      
-      if (i>0){
-        const theClassActivity = new ClassActivity;
-        this.NewPerformanceFitness.Sport[myConst+1].exercise.push(theClassActivity); 
-      }
-      this.NewPerformanceFitness.Sport[myConst+1].exercise[i].Activity_name=this.NewPerformanceFitness.Sport[myConst].exercise[i].Activity_name;
-      for (var j=0; j<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise.length; j++){
-            if (j>0){
-              const theClassExec = new ClassExercise;
-              this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise.push(theClassExec);
-            }
-            this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Exercise_name = 
-                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Exercise_name;
-              this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Exercise_unit = 
-                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Exercise_unit;
-              for (var k=0; k<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].seance.length; k++){
-                if (k>0){
-                  this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].seance.push({nb:0});
-                }
-                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].seance[k].nb=
-                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].seance[k].nb;
-
-              }
-              for (var k=0; k<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result.length; k++){
-                if (k>0){
-                  const cResult = new ClassResult;
-                  this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result.push(cResult);
-                }
-                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].perf_type=
-                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].perf_type;
-                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].perf=
-                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].perf;
-                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].unit =
-                          this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].unit;
-
-              }
-      }
-
-    }
-    this.LinkPerfConfig();
-
-  }
-
-} else if (this.newPrevDialog===1 && this.newTabDialog[this.newPrevDialog]===true){
-  const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise.length - 1;
+    const theLength = this.NewPerformanceFitness.Sport.length - 1;
 
     if (event.target.value===1){
-      if (theLength > 0) {  // delete the Activity item
-        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise.splice(this.TabOfId[1],1); 
-      } else { 
-        // should display an error message that item cannot be deleted
-      }
-    } else if (event.target.value===2 || event.target.value===3){
-      if (event.target.value===2){
-        myConst=this.TabOfId[1];
+        if (theLength > 0) {  // delete the Sport item
+          this.NewPerformanceFitness.Sport.splice(this.TabOfId[0],1); 
+        } else { 
+          // should display an error message that item cannot be 
+        }
+    }  else if (event.target.value===2 || event.target.value===3){
+      // create after
+      if (event.target.value===3){
+        myConst=this.TabOfId[0];
       } else {
-        myConst=this.TabOfId[1]+1;
+        myConst=this.TabOfId[0]+1;
       }
-      const theClassActivity = new ClassActivity;
-      this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise.splice(myConst,0,theClassActivity); 
-      this.mainTableHeight=this.largeMainTableHeight;
-      this.subTableHeight=this.largeSubTableHeight;
+      const theClassSport = new ClassSport;
+      this.NewPerformanceFitness.Sport.splice(myConst,0,theClassSport);
+      this.NewPerformanceFitness.Sport[myConst].Sport_name='';
+      this.datePipeSelected = this.datePipe.transform(this.todayDate,"dd-MM-yyyy");
+      this.NewPerformanceFitness.Sport[myConst].Sport_date=this.datePipeSelected;
+      this.TabinputDate[myConst]=this.datePipeSelected;
+      this.TabIsDateWrong[myConst]=false;
+      this.NewPerformanceFitness.Sport[myConst].exercise[0].Activity_name='';
+      this.NewPerformanceFitness.Sport[myConst].exercise[0].ActivityExercise[0].Exercise_name='';
+      this.NewPerformanceFitness.Sport[myConst].exercise[0].ActivityExercise[0].seance[0].nb=0;
+    } else if (event.target.value===4 ) {
+      // create a copy
+      const theNewSport= new ClassSport;
+      myConst=this.TabOfId[0];
+      this.NewPerformanceFitness.Sport.splice(myConst+1,0,theNewSport);
+      this.NewPerformanceFitness.Sport[myConst+1].Sport_name=this.NewPerformanceFitness.Sport[myConst].Sport_name;
+      this.datePipeSelected = this.datePipe.transform(this.todayDate,"dd-MM-yyyy");
+      this.NewPerformanceFitness.Sport[myConst+1].Sport_date=this.datePipeSelected;
+      this.TabinputDate[myConst+1]=this.datePipeSelected;
+      this.TabIsDateWrong[myConst+1]=false;
+      for (var i=0; i<this.NewPerformanceFitness.Sport[myConst].exercise.length; i++){
+        
+        if (i>0){
+          const theClassActivity = new ClassActivity;
+          this.NewPerformanceFitness.Sport[myConst+1].exercise.push(theClassActivity); 
+        }
+        this.NewPerformanceFitness.Sport[myConst+1].exercise[i].Activity_name=this.NewPerformanceFitness.Sport[myConst].exercise[i].Activity_name;
+        for (var j=0; j<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise.length; j++){
+              if (j>0){
+                const theClassExec = new ClassExercise;
+                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise.push(theClassExec);
+              }
+              this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Exercise_name = 
+                            this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Exercise_name;
+                this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Exercise_unit = 
+                            this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Exercise_unit;
+                for (var k=0; k<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].seance.length; k++){
+                  if (k>0){
+                    this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].seance.push({nb:0});
+                  }
+                  this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].seance[k].nb=
+                            this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].seance[k].nb;
+
+                }
+                for (var k=0; k<this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result.length; k++){
+                  if (k>0){
+                    const cResult = new ClassResult;
+                    this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result.push(cResult);
+                  }
+                  this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].perf_type=
+                            this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].perf_type;
+                  this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].perf=
+                            this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].perf;
+                  this.NewPerformanceFitness.Sport[myConst+1].exercise[i].ActivityExercise[j].Result[k].unit =
+                            this.NewPerformanceFitness.Sport[myConst].exercise[i].ActivityExercise[j].Result[k].unit;
+
+                }
+        }
+
+      }
+      this.LinkPerfConfig();
     }
 
-} else if (this.newPrevDialog===2 && this.newTabDialog[this.newPrevDialog]===true){
-  const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise.length - 1;
+  } else if (this.newPrevDialog===1 && this.newTabDialog[this.newPrevDialog]===true){
+    const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise.length - 1;
 
-
-    if (event.target.value===1){
+      if (event.target.value===1){
         if (theLength > 0) {  // delete the Activity item
-          this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise.splice(this.TabOfId[2],1); 
+          this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise.splice(this.TabOfId[1],1); 
         } else { 
           // should display an error message that item cannot be deleted
         }
-    } else if (event.target.value===2 || event.target.value===3){
-          if (event.target.value===2){
-            myConst=this.TabOfId[2];
-          } else {
-            myConst=this.TabOfId[2]+1;
-          }
-          const theClassExec = new ClassExercise;
-          this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise.splice(myConst,0,theClassExec); 
-          this.mainTableHeight=this.largeMainTableHeight;
-          this.subTableHeight=this.largeSubTableHeight;
-      } 
-
-} else if (this.newPrevDialog===3 && this.newTabDialog[this.newPrevDialog]===true){
-  const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance.length - 1;
-  if (event.target.value===1){
-    // delete last seance item if more than one exists 
-      if (theLength > 0){
-        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance.splice(theLength,1);
-      } else {
-        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance[theLength].nb=0;
+      } else if (event.target.value===2 || event.target.value===3){
+        if (event.target.value===2){
+          myConst=this.TabOfId[1];
+        } else {
+          myConst=this.TabOfId[1]+1;
+        }
+        const theClassActivity = new ClassActivity;
+        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise.splice(myConst,0,theClassActivity); 
+        this.mainTableHeight=this.largeMainTableHeight;
+        this.subTableHeight=this.largeSubTableHeight;
       }
-      
-    } else if (event.target.value===2){
-      this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance.splice(theLength+1,0,{nb:0});
-    }
 
-} else if (this.newPrevDialog===4 && this.newTabDialog[this.newPrevDialog]===true){
-  const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.length - 1;
+  } else if (this.newPrevDialog===2 && this.newTabDialog[this.newPrevDialog]===true){
+    const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise.length - 1;
 
-  if (event.target.value===1){
-     // delete last result item if more than one exists 
-     if (theLength > 0){
-      this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(theLength,1);
-    } else {
-      this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[theLength].perf_type='';
-      this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[theLength].unit='';
-      this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[theLength].perf=0;
-    }
-  } 
-  else if (event.target.value===2 || event.target.value===3){
-    // create Result at the end of the tab
-    if (event.target.value===2){
-      myConst=this.TabOfId[3];
-    } else {
-      myConst=this.TabOfId[3]+1;
-    }
+      if (event.target.value===1){
+          if (theLength > 0) {  // delete the Activity item
+            this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise.splice(this.TabOfId[2],1); 
+          } else { 
+            // should display an error message that item cannot be deleted
+          }
+      } else if (event.target.value===2 || event.target.value===3){
+            if (event.target.value===2){
+              myConst=this.TabOfId[2];
+            } else {
+              myConst=this.TabOfId[2]+1;
+            }
+            const theClassExec = new ClassExercise;
+            this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise.splice(myConst,0,theClassExec); 
+            this.mainTableHeight=this.largeMainTableHeight;
+            this.subTableHeight=this.largeSubTableHeight;
+        } 
 
-    const cResult = new ClassResult;
-    this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(myConst,0,cResult);
+  } else if (this.newPrevDialog===3 && this.newTabDialog[this.newPrevDialog]===true){
+    const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance.length - 1;
+    if (event.target.value===1){
+      // delete last seance item if more than one exists 
+        if (theLength > 0){
+          this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance.splice(theLength,1);
+        } else {
+          this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance[theLength].nb=0;
+        }
+        
+      } else if (event.target.value===2){
+        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].seance.splice(theLength+1,0,{nb:0});
+      }
+
+  } else if (this.newPrevDialog===4 && this.newTabDialog[this.newPrevDialog]===true){
+    const theLength = this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.length - 1;
+
+    if (event.target.value===1){
+      // delete last result item if more than one exists 
+      if (theLength > 0){
+        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(theLength,1);
+      } else {
+        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[theLength].perf_type='';
+        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[theLength].unit='';
+        this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[theLength].perf=0;
+      }
+    } 
+    else if (event.target.value===2 || event.target.value===3){
+      // create Result at the end of the tab
+      if (event.target.value===2){
+        myConst=this.TabOfId[3];
+      } else {
+        myConst=this.TabOfId[3]+1;
+      }
+
+      const cResult = new ClassResult;
+      this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result.splice(myConst,0,cResult);
+    }
+  //this.cdr.detectChanges();
   }
-//this.cdr.detectChanges();
-}
 
-this.newTabDialog[this.newPrevDialog]=false;
+  this.newTabDialog[this.newPrevDialog]=false;
+  if (!this.isnewTabDialog()){
+      this.isnewTabDialog.set(false)
+  }
 }
 theHeight:number=160;
 SelectDisplay(){
@@ -806,7 +832,14 @@ CancelAll(){
   this.TriggerChartChange++;
 
   this.newTabDialog[this.newPrevDialog]=false;
+  if (!this.isnewTabDialog()){
+    this.isnewTabDialog.set(false)
+  }
+    
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   //this.cdr.detectChanges();
 }
 
@@ -1003,6 +1036,10 @@ returnedData=new CreturnedData;
 
 DropDownData(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
+
   this.returnedData=event;
   if (this.returnedData.valueString!=='Cancel'){
       this.myEvent.target.id=this.returnedData.idString;
@@ -1017,6 +1054,9 @@ DropDownData(event:any){
 }
 theArrow(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   this.manageIds(event.target.id);
   if (  event.target.id.substring(0,5)==='Sport'){
     this.myEvent.idString='lSpo-'+this.TabOfId[0];
@@ -1038,6 +1078,7 @@ theArrow(event:any){
     this.prev_Dialogue=5;
   } 
   this.OpenDialogue[this.prev_Dialogue]=true;
+  this.isOpenDialogue.set(true);
   this.myEvent.dialogueNb=this.prev_Dialogue;
   //this.cdr.detectChanges();
 }
@@ -1045,6 +1086,9 @@ theArrow(event:any){
 
 onArrow(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   this.manageIds(event.target.id);
   if (  event.target.id.substring(0,6)==='lSport'){
     this.prev_Dialogue=6;
@@ -1060,11 +1104,15 @@ onArrow(event:any){
     this.prev_Dialogue=11;
   } 
   this.OpenDialogue[this.prev_Dialogue]=true;
+  this.isOpenDialogue.set(true);
   //this.cdr.detectChanges();
 }
 
 cancelDropDown(){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   //this.cdr.detectChanges();
 }
 
@@ -1072,6 +1120,9 @@ onInput(event:any){
   // This is only used for NewPerformanceFitness
     
     this.OpenDialogue[this.prev_Dialogue]=false;
+    if (this.isOpenDialogue()){
+      this.isOpenDialogue.set(false);
+    }
     this.manageIds(event.target.id);
     //event.target.value;
     if (  event.target.id.substring(0,4)==='Spor'){
@@ -1110,8 +1161,11 @@ onInput(event:any){
   onInputPerf(event:any){
      // This is only used for NewPerformanceFitness
     
-     this.OpenDialogue[this.prev_Dialogue]=false;
-     this.manageIds(event.target.id);
+    this.OpenDialogue[this.prev_Dialogue]=false;
+    if (this.isOpenDialogue()){
+        this.isOpenDialogue.set(false);
+    }
+    this.manageIds(event.target.id);
       // for sports such as runnning/cycling, result of the performance with type of perf (e.g. avd speed), the value of the perforamnce and the unit of that value (e.g. km/h) 
     if (event.target.id.substring(0,5)==='tPerf'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Result[this.TabOfId[3]].perf_type=event.target.value;
@@ -1137,6 +1191,9 @@ onInputList(event:any){
   // This is only used for myConfigFitness
   
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   this.manageIds(event.target.id);
   // configuration
   if (event.target.id.substring(0,4)==='cSpo'){ // input sport (e.g. running)
@@ -1158,6 +1215,9 @@ onInputTab(event:any){
     // This is only used for myConfigFitness
    
     this.OpenDialogue[this.prev_Dialogue]=false;
+    if (this.isOpenDialogue()){
+      this.isOpenDialogue.set(false);
+    }
     this.manageIds(event.target.id);
     // ==== management of the tables
     // data coming from user input
@@ -1179,6 +1239,9 @@ onInputTab(event:any){
 onClickList(event:any){
  
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   this.manageIds(event.target.id);
     // ==== management of the tables
     // data coming from dropdown list
@@ -1200,6 +1263,9 @@ onClickList(event:any){
 // date entered manually
 CheckDate(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   const id =parseInt(event.target.id.substring(5)); 
 
   this.inputDate = event.target.value;
@@ -1244,6 +1310,9 @@ CheckDate(event:any){
 // Add and Delete items related to NewPerformanceFitness
 addItem(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   this.manageIds(event.target.id);
 
   if (event.target.id.substring(0,4)==='Spor'){
@@ -1284,6 +1353,9 @@ addItem(event:any){
 delItem(event:any){
   this.manageIds(event.target.id);
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   if (event.target.id.substring(0,4)==='Spor'){
     this.NewPerformanceFitness.Sport.splice(this.TabOfId[0],1);
   } else  if (event.target.id.substring(0,4)==='Acti'){
@@ -1301,6 +1373,9 @@ delItem(event:any){
 // Add and Delete items related to ConfigFitness
 addConfig(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   this.manageIds(event.target.id);
   if (event.target.id.substring(0,4)==='aSpo'){
     const TheSport=new ConfigSport;
@@ -1332,6 +1407,9 @@ addConfig(event:any){
 
 delConfig(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   this.manageIds(event.target.id);
   if (event.target.id.substring(0,4)==='dSpo'){
     this.MyConfigFitness.ListSport.splice(this.TabOfId[0],1);
@@ -1350,6 +1428,9 @@ delConfig(event:any){
 
 addList(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   if (event.target.id.substring(0,4)==='aSpo'){
     this.MyConfigFitness.TabSport.push({name:''});
 
@@ -1372,6 +1453,9 @@ addList(event:any){
 
 delList(event:any){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   this.manageIds(event.target.id);
   if (event.target.id.substring(0,4)==='dSpo'){
     this.MyConfigFitness.TabSport.splice(this.TabOfId[0],1);
@@ -1460,8 +1544,8 @@ GetAllObjects(){
                   }
                 }
 
-                this.DisplayListOfObjects=true; 
-                this.cdr.markForCheck();
+                this.DisplayListOfObjects.set(true); 
+                //this.cdr.markForCheck();
           },
           error_handler => {
                 console.log('RetrieveAllObjects() - error handler; HTTP= '+this.HTTP_Address);
@@ -1476,6 +1560,9 @@ GetRecord(event:string, iWait:number, ref:number){
   // get object in Google Storage
   this.scroller.scrollToAnchor('theTop');
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   var i=0;
   var j=0;
   var k=0;
@@ -1616,7 +1703,7 @@ GetRecord(event:string, iWait:number, ref:number){
                   }
                 this.error_msg='';
                 this.scroller.scrollToAnchor('AccessToListFiles');
-                this.cdr.markForCheck();
+                //this.cdr.markForCheck();
               },
               error_handler => {
                 if (event==='data'){
@@ -1642,13 +1729,16 @@ GetRecord(event:string, iWait:number, ref:number){
                       this.MyConfigFitness.ListSport[0].activityPerfUnit[0]='';
                       this.InitTabConfig();
                   }  
-                  this.cdr.markForCheck(); 
+                  //this.cdr.markForCheck(); 
             } 
       )
   }
 
 ConfirmSave(){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
   var i=0;
   
   for (i=0; i<this.ErrorinputDate.length && ( this.ErrorinputDate[i]==='' || this.ErrorinputDate[i]===undefined ); i++){
@@ -1761,8 +1851,8 @@ CancelRecord(){
     this.TabinputDate.splice(1, this.TabinputDate.length);
     this.CancelAll();
     this.TabPerfConfig.splice(0,this.TabPerfConfig.length);
-    this.mainTableHeight=130;
-    this.subTableHeight=100;
+    this.mainTableHeight=this.defaultMainTableHeight;
+    this.subTableHeight=this.defaultSubTableHeight;
   }
 
 // this.scroller.scrollToAnchor('AccessToListFiles');
@@ -1868,6 +1958,9 @@ SelectedDate(event:any){
       }
   }
   this.TabDisplayCalendar[theID]=false; 
+  if (this.isTabDisplayCalendar()){
+    this.isTabDisplayCalendar.set(false)
+  }
 }
 
 
@@ -1881,6 +1974,7 @@ ActionCalendar(event:any){
       this.TabDisplayCalendar[this.TabOfId[0]]=true;
       this.TabDisplayId[this.TabOfId[0]]=this.TabOfId[0];
       this.DisplayCalendar=true;
+      this.isTabDisplayCalendar.set(true);
       
       const selYear=parseInt(this.NewPerformanceFitness.Sport[this.TabOfId[0]].Sport_date.substring(6,10));
       const selMonth=parseInt(this.NewPerformanceFitness.Sport[this.TabOfId[0]].Sport_date.substring(3,6));

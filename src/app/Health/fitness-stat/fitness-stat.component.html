@@ -10,13 +10,15 @@
 <br><span style="background-color: lightblue; width:150px;">DisplayMerge={{this.DisplayMerge}}</span>
 -->
 <h2 style="margin-top:5px;"><br></h2>
+<div id="posFirstTitle" >
 <h1 style="color:red; font-size:26px; margin-top: 5px; display:block; text-align:center; width:100%">My Fitness Performance!</h1>
-
+</div>  
 <div class="specialDiv">
     <span style="font-size:16px; color:red; margin-left:30px;"  >
         
     </span>
 </div>
+
 
 <div [formGroup]="TheSelectDisplays" style="display:block; background-color:cyan; width:86.2%; height:140px; margin-left:20px; border:solid 2px blue; ">
 <!--    
@@ -49,8 +51,8 @@
 </div>
 
    <!--  ********************** File selection  ************************************************  -->   
-@if (DisplayListOfObjects===true){
-    <div style="margin-top:20px; margin-left:-10px;">
+@if (DisplayListOfObjects()){
+    <div id="posListFiles" style="margin-top:20px; margin-left:-10px;">
         <div class="objectHeader">Select the files for your chart performance</div>
         <form  [formGroup]="ChartFileForm" >
             <div formArrayName="select_file"  *ngFor="let FormChart of ChartFileList.controls; let i=index">
@@ -75,9 +77,9 @@
         </div>
     </div>
 }
-<div class="skipLine">&nbsp;</div>
+<div  class="skipLine">&nbsp;</div>
 <div style="margin-top:20px;"></div>
-<div id="theTop"></div>  
+
 
 
 <!-- ==================================================================== -->
@@ -86,21 +88,21 @@
 <div class="skipLine">&nbsp;</div>
 
 @if (DisplayShortScreen===true){
-    <div  style=" width:1124px;  margin-left:20px; display:inline-block; border:blue solid 2px;" 
+    <div  style=" width:1080px;   display:flex; margin-left:20px; display:inline-block; " 
                             [style.height.px]="mainTableHeight">
-        <div id="posTitle">
-            <span class="theTitle boxAction" > &nbsp; </span>
-            <span class="theTitle sportTitle" > Sport </span>
-            <span class="theTitle dateTitle" > Date </span>
-            <span class="theTitle ActivityTitle"> Activity </span>
-            <span class="theTitle ExerciseTitle"> Exercise </span>
-            <span class="theTitle" style="width: calc(var(--seanceResultWidth) + 106px)"> Seance / Result</span>
+        <div  class="theTitle" style="margin-top:5px;">
+            <span class="emptyBoxAction" > &nbsp; </span>
+            <span class="sportTitle" > Sport </span>
+            <span class="dateTitle" > Date </span>
+            <span class="ActivityTitle"> Activity </span>
+            <span class="ExerciseTitle"> Exercise </span>
+            <span style="width: calc(var(--seanceResultWidth) + 106px)"> Seance / Result</span>
         
         </div>
         
-        @if (newTabDialog[newPrevDialog]===true){
+        @if (isnewTabDialog() && newTabDialog[newPrevDialog]===true){
             <div class="dropdown ">
-                <div class="newStraight-content"  [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':selectedPosition.y - this.posDivTable.Top - 249 }">
+                <div class="newStraight-content"  [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':selectedPosition.y - 80 }">
                     <div  class="newStraightDropDown " [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': 1}"  >
                         <li *ngFor="let tab of TabAction; let m=index;" 
                                 class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
@@ -111,9 +113,9 @@
             </div>
         }
 
-        @if (TabDisplayCalendar[TabOfId[0]]===true){
+        @if (isTabDisplayCalendar() && TabDisplayCalendar[TabOfId[0]]===true){
             <div class="dropdown" >
-                <div class="Straight-content" [ngStyle]="{'margin-top.px': selectedPosition.y - this.posDivTable.Top - 249 }" >
+                <div class="Straight-content" [ngStyle]="{'margin-top.px': selectedPosition.y - this.posDivTitle.Top - 249 }" >
                     <div class="StraightDropDown" >
                         <div class="skipLine">&nbsp;</div>
                         <app-one-calendar [Input_MinDate]="minDate" [Input_MaxDate]="maxDate" [DisplayCalendarOnly]="DisplayCalendarOnly"
@@ -126,101 +128,102 @@
             </div>
         }
         
-        <div style="overflow-y:scroll; width:1120px; border-bottom:2px solid blue; border-top:2px solid blue; background-color:cyan;"
-                                    [style.height.px]="subTableHeight">
-            <div *ngFor="let theSport of NewPerformanceFitness.Sport; let i=index" > 
-                <div class="skipLine" style="height:2px;">&nbsp;</div>
-                @if (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityName[0]!=='N/A' )){
-                    <div *ngFor="let theActivity of NewPerformanceFitness.Sport[i].exercise; let j=index" >
-                        @if (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityExercise[0]!=='N/A' )){
-                            <div *ngFor="let TabExec of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise; let k=index" style="width:100%; display:block; border:blue solid 0px; height:27px; " >
-                                @if (k===0){
-                                    <div  class="boxAction" style=" padding-left:-10px;" >
-                                        <span class="circle" id="Sport-{{i}}" (click)="onAction($event)" style="margin-top:3px; margin-left:10px;">A</span>
-                                    </div>
-                                    <div>
-                                        <input id="Spor-{{i}}" (input)="onInput($event)" class="inputNewText"  style="background-color: lightskyblue; font-weight: bold; color:red" type="text" value="{{theSport.Sport_name}}" >
-                                        @if (j===0){
-                                            <input  class="inputNewDate fieldNewDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (input)="CheckDate($event)">
-                                        } @else {
-                                            <div  class="inputNewDate fieldNewDate" style="padding-top: 5px;;"  >{{TabinputDate[i]}}</div>
-                                        }
-                                    </div>
-                                    @if (j!==0){<div class="posCalendarNew" style="float:left;"> &nbsp; </div>
-                                    } @else {
-                                        <div style="float:left;">
-                                            <mat-icon  id="Date-{{i}}"  class="material-icons-outlined posCalendarNew"  (click)="ActionCalendar($event)" >
-                                                calendar_month
-                                            </mat-icon>
-                                        </div>  
-                                    }
-                                } @else { 
-                                    <div style="float:left; height:calc(var(--fieldHeight) + 2px);" >
-                                        <div class="boxAction" > &nbsp; </div>
-                                        <div class="emptyInput" >&nbsp; </div>
-                                        <div class="fieldNewDate" >&nbsp; </div>
-                                        <div class="posCalendarNew" style="display:inline-block;"> &nbsp; </div>
-                                    </div>
-                                }
-                                @if (k===0){ 
-                                    <div style="float:left;"  >
-                                        <div class="boxAction" >
-                                            <span class="circle" id="Activity-{{i}}-{{j}}" (click)="onAction($event)" style="margin-left:13px;">A</span>
+        <div id="posTitle" style="overflow-y:scroll;  border:2px solid blue; "
+                                   [style.height.px]="subTableHeight">
+                                
+            <div *ngFor="let theSport of NewPerformanceFitness.Sport; let i=index" >
+                <div  [class]="{ 'evenColor': i % 2 === 0, 'oddColor' : i % 2 !==0}" style="margin-top:2px;" >
+                    @if (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityName[0]!=='N/A' )){
+                        <div *ngFor="let theActivity of NewPerformanceFitness.Sport[i].exercise; let j=index" >
+                            @if (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityExercise[0]!=='N/A' )){
+                                <div *ngFor="let TabExec of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise; let k=index" style="width:100%; display:block; border:blue solid 0px; height:27px; " >
+                                    <div id="posAction" class=""class="container" >
+                                    @if (k===0){
+                                        <div  class="boxAction"  >
+                                            <span class="circle" id="Sport-{{i}}" (click)="onAction($event)" >A</span>
                                         </div>
-                                        <input id="Acti-{{i}}-{{j}}" (input)="onInput($event)" class="inputNewText" style="float:left;"  type="text" value="{{theActivity.Activity_name}}"  >  
-                                    </div>
-                                } @else { 
-                                    <div  style="float:left;" >
-                                        <div class="boxAction" >&nbsp;</div>
-                                        <div class="emptyInput" >&nbsp; </div>
-                                    </div>
-                                }
-                                <div class="boxAction" >
-                                    <span class="circle"  id="Exercise-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" style="margin-left:13px;" >A</span>
-                                </div>                        
-                                <input id="nExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"  style="float:left;" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
-                                <input id="uExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"  style="float:left;" type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">
-                                <div style="border:black 0px solid;  display:block; width: 520px; float:left;" >   
-                                    <div class="boxAction" >
-                                        <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" style="margin-left:12px; ">A</span>
-                                    </div>
-                                    <div *ngFor="let SecSeance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let t=index"  >
-                                        @if (t % 10 === 0){
-                                            @if (t > 0){
-                                                <div  class="boxAction" >
-                                                    &nbsp;
+                                        <div>
+                                            <input class="inputNewText" style="background-color: lightskyblue; font-weight: bold; color:red" id="Spor-{{i}}" (input)="onInput($event)"   type="text" value="{{theSport.Sport_name}}" >
+                                            <input  class="inputNewDate fieldNewDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (input)="CheckDate($event)">
+                                            @if (j===0){
+                                                
+                                                <mat-icon  id="Date-{{i}}"  class="material-icons-outlined posCalendarNew"  (click)="ActionCalendar($event)" >
+                                                    calendar_month
+                                                </mat-icon>
+                                            } @else {
+                                                
+                                                <div style="width:30px; height:25px; display:inline-block; box-sizing: border-box; border: solid blue 2px;" > &nbsp; </div>
+                                            }
+                                        </div>
+                                        
+                                            <div class="boxAction" >
+                                                <span class="circle" id="Activity-{{i}}-{{j}}" (click)="onAction($event)">A</span>
+                                            </div>
+                                            <input class="inputNewText" id="Acti-{{i}}-{{j}}" (input)="onInput($event)" type="text" value="{{theActivity.Activity_name}}"  >  
+
+                                    } @else { 
+                                        <div style="height:calc(var(--fieldHeight) + 2px); display:flex;" >
+                                            <div class="emptyBoxAction" > &nbsp; </div>
+                                            <div class="emptyInput" >&nbsp; </div>
+                                            <div class="fieldNewDate" >&nbsp; </div>
+                                            <div class="posCalendarNew" style="display:inline-block;"> &nbsp; </div>
+                                        
+                                            <div class="emptyBoxAction" >&nbsp;</div>
+                                            <div class="emptyInput" >&nbsp; </div>
+                                        </div>
+                                    }
+
+                                    <div style="margin-left:5px;" class="boxAction" >
+                                        <span class="circle"  id="Exercise-{{i}}-{{j}}-{{k}}" (click)="onAction($event)"  >A</span>
+                                    </div>                        
+                                    <input id="nExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
+                                    <input id="uExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">
+                                    
+                                    <div style="box-sizing:border-box; border:red 1px solid;  display:flex; width: 480px; margin-left:5px;" >   
+                                        <div class="boxAction" >
+                                            <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" >A</span>
+                                        </div>
+                                        <div *ngFor="let SecSeance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let t=index"  >
+                                            @if (t % 10 === 0){
+                                                @if (t > 0){
+                                                    <div  class="boxAction" >
+                                                        &nbsp;
+                                                    </div>
+                                                }
+                                                <div style="width: 450px; display:flex; box-sizing:border-box; border:black 1px solid; margin-left:5px;">
+                                                    <div *ngFor="let Seance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let l=index"  >
+                                                        @if (l>=t && l<t+10){
+                                                            <input class="inputNewSean" id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)"   type="text" value="{{Seance.nb}}">
+                                                        }
+                                                    </div>
                                                 </div>
                                             }
-                                            <div style="width: 450px; display:inline-block; border:black 2px solid;">
-                                                <div *ngFor="let Seance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let l=index"  >
-                                                    @if (l>=t && l<t+10){
-                                                        <input id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)" class="inputNewSean" style="float:left;" type="text" value="{{Seance.nb}}">
-                                                    }
+                                        </div>
+                                        <!-- TO BE REVIEWED WHEN "RESULT" IS IMPLEMENTED -->
+                                        @if (isResultImplemented()){
+                                            @if (NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result!==undefined  && 
+                                                        (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf[0]!=='N/A' ))){
+                                                <div *ngFor="let theResult of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result; let p=index" >
+                                                    <div class="resultField" >
+                                                        <div  class="boxAction">
+                                                            <div class="circle"  id="Result-{{i}}-{{j}}-{{k}}-{{p}}" (click)="onAction($event)">A</div>  
+                                                        </div>
+                                                        <div style=" width:4px; border:red solid 0px; ">&nbsp;</div>
+                                                        <input id="tPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewText"  type="text" value="t-{{theResult.perf_type}}">             
+                                                        <input id="vPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewSean"  type="text" value="{{theResult.perf}}">               
+                                                        <input id="uPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewSean"  type="text" value="{{theResult.unit}}">               
+                                                        <span style="display:inline-block; width:6px;" >&nbsp;</span>
+                                                    </div>       
                                                 </div>
-                                            </div>
+                                            }
                                         }
                                     </div>
-                                    
-                                    @if (NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result!==undefined  && 
-                                                (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf[0]!=='N/A' ))){
-                                        <div *ngFor="let theResult of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result; let p=index" style="float:left">
-                                            <div class="resultField" >
-                                                <div  class="boxAction" style="float:left; padding-left:2px;">
-                                                    <div class="circle"  id="Result-{{i}}-{{j}}-{{k}}-{{p}}" (click)="onAction($event)"  style="margin-left:10px; ">A</div>  
-                                                </div>
-                                                <div style="display:block; width:4px; border:red solid 0px; float:left;" >&nbsp;</div>
-                                                <input id="tPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewText"  type="text" value="{{theResult.perf_type}}">             
-                                                <input id="vPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewSean"  type="text" value="{{theResult.perf}}">               
-                                                <input id="uPerf-{{i}}-{{j}}-{{k}}-{{p}}" (input)="onInputPerf($event)" class="inputNewSean"  type="text" value="{{theResult.unit}}">               
-                                                <span style="display:inline-block; width:6px;" >&nbsp;</span>
-                                            </div>       
-                                        </div>
-                                    }
+                                    </div>
                                 </div>
-                            </div>
-                        }
-                    </div>
-                }
+                            }
+                        </div>
+                    }
+                </div>
             </div> 
         </div>
         <div class="skipLine">&nbsp;</div>
@@ -291,7 +294,7 @@
                             arrow_drop_down
                         </mat-icon>
                     </div>
-                    @if (OpenDialogue[0]===true && TabOfId[0]===i){
+                    @if (isOpenDialogue() && OpenDialogue[0]===true && TabOfId[0]===i){
                         <div >
                             <app-my-drop-down [MyConfigFitness]="MyConfigFitness"  [myEvent]="myEvent" [OpenDialogue]="OpenDialogue"
                                 [TabOfId]="TabOfId" [TabPerfConfig]="TabPerfConfig"
@@ -326,7 +329,7 @@
                         </mat-icon>
                     </div>
                 </div>   
-                @if (TabDisplayCalendar[i]===true){
+                @if (isTabDisplayCalendar() && TabDisplayCalendar[i]===true){
                     <div class="dropdown" >
                         <div class="Straight-content" >
                             <div class="StraightDropDown" >
@@ -368,7 +371,7 @@
                                 <mat-icon class="material-symbols-outlined arrow_down_size" id="Activity-{{i}}-{{j}}"  (click)="theArrow($event)" >
                                 arrow_drop_down
                                 </mat-icon>
-                                @if (OpenDialogue[1]===true && TabOfId[0]===i && TabOfId[1]===j){\
+                                @if (isOpenDialogue() && OpenDialogue[1]===true && TabOfId[0]===i && TabOfId[1]===j){\
                                     <app-my-drop-down [MyConfigFitness]="MyConfigFitness"  [myEvent]="myEvent" [OpenDialogue]="OpenDialogue"
                                         [TabOfId]="TabOfId" [TabPerfConfig]="TabPerfConfig"
                                         [callingComponent]="callingComponent" (selectedCriteria)="DropDownData($event)">
@@ -409,7 +412,7 @@
                                     <mat-icon class="material-symbols-outlined arrow_down_size"  id="ExerciseName-{{i}}-{{j}}-{{k}}" (click)="theArrow($event)" >
                                             arrow_drop_down
                                     </mat-icon>
-                                    @if (OpenDialogue[5]===true && TabOfId[0]===i && TabOfId[1]===j  && TabOfId[2]===k){
+                                    @if (isOpenDialogue() && OpenDialogue[5]===true && TabOfId[0]===i && TabOfId[1]===j  && TabOfId[2]===k){
                                         <app-my-drop-down [MyConfigFitness]="MyConfigFitness"  [myEvent]="myEvent" [OpenDialogue]="OpenDialogue"
                                         [TabOfId]="TabOfId" [TabPerfConfig]="TabPerfConfig"
                                         [callingComponent]="callingComponent" (selectedCriteria)="DropDownData($event)">
@@ -424,7 +427,7 @@
                                     <mat-icon class="material-symbols-outlined arrow_down_size" id="ExerciseUnit-{{i}}-{{j}}-{{k}}"  (click)="theArrow($event)" >
                                         arrow_drop_down
                                     </mat-icon>
-                                    @if (OpenDialogue[2]===true && TabOfId[0]===i && TabOfId[1]===j && TabOfId[2]===k){
+                                    @if (isOpenDialogue() && OpenDialogue[2]===true && TabOfId[0]===i && TabOfId[1]===j && TabOfId[2]===k){
                                     <div>
                                         <app-my-drop-down [MyConfigFitness]="MyConfigFitness"  [myEvent]="myEvent" [OpenDialogue]="OpenDialogue"
                                             [TabOfId]="TabOfId" [TabPerfConfig]="TabPerfConfig"
@@ -520,7 +523,7 @@
                                             <mat-icon class="material-symbols-outlined arrow_down_size" id="PerfType-{{i}}-{{j}}-{{k}}-{{p}}"  (click)="theArrow($event)" >
                                                 arrow_drop_down
                                             </mat-icon>   
-                                            @if (OpenDialogue[3]===true && TabOfId[0]===i && TabOfId[1]===j && TabOfId[2]===k && TabOfId[3]===p){
+                                            @if (isOpenDialogue() && OpenDialogue[3]===true && TabOfId[0]===i && TabOfId[1]===j && TabOfId[2]===k && TabOfId[3]===p){
                                                 <div>
                                                     <app-my-drop-down [MyConfigFitness]="MyConfigFitness"  [myEvent]="myEvent" [OpenDialogue]="OpenDialogue"
                                                     [TabOfId]="TabOfId" [TabPerfConfig]="TabPerfConfig"
@@ -540,7 +543,7 @@
                                                 arrow_drop_down
                                             </mat-icon>   
                                         </div>
-                                        @if (OpenDialogue[4]===true && TabOfId[0]===i && TabOfId[1]===j && TabOfId[2]===k && TabOfId[3]===p){
+                                        @if (isOpenDialogue() && OpenDialogue[4]===true && TabOfId[0]===i && TabOfId[1]===j && TabOfId[2]===k && TabOfId[3]===p){
                                             <div >
                                                 <app-my-drop-down [MyConfigFitness]="MyConfigFitness"  [myEvent]="myEvent" [OpenDialogue]="OpenDialogue"
                                                     [TabOfId]="TabOfId" [TabPerfConfig]="TabPerfConfig"
@@ -615,7 +618,7 @@
             <mat-icon class="material-symbols-outlined arrow_down_size" id="lSport-{{i}}" (click)="onArrow($event)" >
               arrow_drop_down
             </mat-icon>
-            @if (OpenDialogue[6]===true  && TabOfId[0]===i){
+            @if (isOpenDialogue() && OpenDialogue[6]===true  && TabOfId[0]===i){
                 <div class="Straight-content">
                     <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                         <ul class="Buffer">&nbsp; </ul>
@@ -657,7 +660,7 @@
                   arrow_drop_down
                 </mat-icon>
             
-                @if (OpenDialogue[7]===true && TabOfId[0]===i && TabOfId[1]===k){
+                @if (isOpenDialogue() && OpenDialogue[7]===true && TabOfId[0]===i && TabOfId[1]===k){
                     <div class="Straight-content">
                         <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
@@ -700,7 +703,7 @@
                 <mat-icon class="material-symbols-outlined arrow_down_size" id='lExercise-{{i}}-{{k}}' (click)="onArrow($event)" >
                   arrow_drop_down
                 </mat-icon>
-                @if (OpenDialogue[11]===true  && TabOfId[0]===i && TabOfId[1]===k){
+                @if (isOpenDialogue() && OpenDialogue[11]===true  && TabOfId[0]===i && TabOfId[1]===k){
                     <div class="Straight-content">
                         <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
@@ -744,7 +747,7 @@
                 <mat-icon class="material-symbols-outlined arrow_down_size" id='lUnit-{{i}}-{{k}}' (click)="onArrow($event)" >
                   arrow_drop_down
                 </mat-icon>
-                @if (OpenDialogue[8]===true  && TabOfId[0]===i && TabOfId[1]===k){
+                @if (isOpenDialogue() && OpenDialogue[8]===true  && TabOfId[0]===i && TabOfId[1]===k){
                     <div class="Straight-content">
                         <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
@@ -786,7 +789,7 @@
                 <mat-icon class="material-symbols-outlined arrow_down_size" id='lPerfType-{{i}}-{{k}}' (click)="onArrow($event)" >
                   arrow_drop_down
                 </mat-icon>
-                @if (OpenDialogue[9]===true  && TabOfId[0]===i && TabOfId[1]===k){               
+                @if (isOpenDialogue() && OpenDialogue[9]===true  && TabOfId[0]===i && TabOfId[1]===k){               
                     <div class="Straight-content">
                         <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
@@ -829,7 +832,7 @@
                 <mat-icon class="material-symbols-outlined arrow_down_size" id='lPerfUnit-{{i}}-{{k}}' (click)="onArrow($event)" >
                   arrow_drop_down
                 </mat-icon>
-                @if (OpenDialogue[10]===true  && TabOfId[0]===i && TabOfId[1]===k){
+                @if (isOpenDialogue() && OpenDialogue[10]===true  && TabOfId[0]===i && TabOfId[1]===k){
                     <div class="Straight-content">
                         <div  class=" StraightDropDown" style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
