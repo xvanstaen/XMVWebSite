@@ -88,7 +88,7 @@
 <div class="skipLine">&nbsp;</div>
 
 @if (DisplayShortScreen===true){
-    <div  style=" width:1080px;   display:flex; margin-left:20px; display:inline-block; " 
+    <div  style=" width:1120px;   display:flex; margin-left:20px; display:inline-block; " 
                             [style.height.px]="mainTableHeight">
         <div  class="theTitle" style="margin-top:5px;">
             <span class="emptyBoxAction" > &nbsp; </span>
@@ -152,24 +152,25 @@
                                                 </mat-icon>
                                             } @else {
                                                 
-                                                <div style="width:30px; height:25px; display:inline-block; box-sizing: border-box; border: solid blue 2px;" > &nbsp; </div>
+                                                <div class="posCalendarNew"  > &nbsp; </div>
                                             }
                                         </div>
                                         
-                                            <div class="boxAction" >
+                                            <div style="margin-left:2px;" class="boxAction" >
                                                 <span class="circle" id="Activity-{{i}}-{{j}}" (click)="onAction($event)">A</span>
                                             </div>
-                                            <input class="inputNewText" id="Acti-{{i}}-{{j}}" (input)="onInput($event)" type="text" value="{{theActivity.Activity_name}}"  >  
-
+                                            <div style="margin-left:2px;">
+                                                <input class="inputNewText" id="Acti-{{i}}-{{j}}" (input)="onInput($event)" type="text" value="{{theActivity.Activity_name}}"  >  
+                                            </div>
                                     } @else { 
                                         <div style="height:calc(var(--fieldHeight) + 2px); display:flex;" >
                                             <div class="emptyBoxAction" > &nbsp; </div>
-                                            <div class="emptyInput" >&nbsp; </div>
-                                            <div class="fieldNewDate" >&nbsp; </div>
+                                            <div class="inputNewText" >&nbsp; 47.6</div>
+                                            <div class="inputNewDate fieldNewDate" >&nbsp; </div>
                                             <div class="posCalendarNew" style="display:inline-block;"> &nbsp; </div>
                                         
-                                            <div class="emptyBoxAction" >&nbsp;</div>
-                                            <div class="emptyInput" >&nbsp; </div>
+                                            <div style="margin-left:2px;" class="emptyBoxAction" >&nbsp;</div>
+                                            <div style="margin-left:2px;" class="emptyInput" >&nbsp; </div>
                                         </div>
                                     }
 
