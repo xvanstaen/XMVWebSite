@@ -36,13 +36,15 @@ div{
     padding-left:5px;
   }
 
-  .emptyBoxAction{
+.emptyBoxAction{
     width:24px;  
+    height:24px; 
     display:flex;
     justify-content: center;
     box-sizing: border-box;
 
-  }
+}
+
   /* circleContainer*/
 .boxAction{
     font-weight:bold;
@@ -120,41 +122,18 @@ div{
  
 }
 
-.boxActionTitle{
-  width:var(--boxActionTitleWidth,38px);  
-}
-
-.circleOld{
-  border-radius: 50% 50%;
-  color:blue;
-  width:var(--circleWidth,22px);
-  height:22px;
-  border: solid 1px rgb(4, 4, 124);
-  font-size:10px;
-  font-weight:bold;
-  background-color: #8e8c8b;
-  text-align: center;
-  padding-top:2px;
-  display:inline-block;
-}
-
-.circleOld:hover{
-  color:red;
-  background-color:cyan;
-}
-
 .inputNewSean{
   margin-left: 4px;
-  width:var(--newSeanWidth);
-  height:var(--fieldHeight, 26px);
+  width:35px;
+  height:26px;
   font-size:14px;
   text-align: center;
   display:inline-block;
 }
 
 .inputNewText{
-  width:var(--newTextWidth,130px);
-  height:var(--fieldHeight, 26px);
+  width:130px;
+  height:26px;
   font-size:14px;
   background-color: rgb(104, 177, 240);
   text-align: center;
@@ -168,8 +147,8 @@ div{
 }
 
 .fieldNewDate{
-  width:var(--dateWidth,100px); 
-  height:var(--fieldHeight, 26px);
+  width:100px;
+  height:26px;
   border:solid 1px red;
 }
 
@@ -182,8 +161,8 @@ div{
 }
 
 .posCalendarNew{
-  width:var(--calendarWidth,30px); 
-  height:25px;
+  width:30px; 
+  height:26px;
   color:blue;
   border:solid 2px darkgreen;
   vertical-align: middle;
