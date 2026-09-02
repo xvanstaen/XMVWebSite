@@ -143,7 +143,7 @@
                                             <span class="circle" id="Sport-{{i}}" (click)="onAction($event)" >A</span>
                                         </div>
                                         <div>
-                                            <input class="inputNewText" style="background-color: lightskyblue; font-weight: bold; color:red" id="Spor-{{i}}" (input)="onInput($event)"   type="text" value="{{theSport.Sport_name}}" >
+                                            <input class="inputNewText"  id="Spor-{{i}}" (input)="onInput($event)"   type="text" value="{{theSport.Sport_name}}" >
                                             <input  class="inputNewDate fieldNewDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (input)="CheckDate($event)">
                                             @if (j===0){
                                                 
@@ -165,12 +165,13 @@
                                     } @else { 
                                         <div style="height:calc(var(--fieldHeight) + 2px); display:flex;" >
                                             <div class="emptyBoxAction" > &nbsp; </div>
-                                            <div class="inputNewText" >&nbsp; 47.6</div>
-                                            <div class="inputNewDate fieldNewDate" >&nbsp; </div>
+                                            <input class="inputNewText" readonly="&nbsp;"  type="text" value=&nbsp; >
+                                             <input  class="inputNewDate fieldNewDate" readonly="&nbsp;"  type="text" value=&nbsp; >
                                             <div class="posCalendarNew" style="display:inline-block;"> &nbsp; </div>
-                                        
                                             <div style="margin-left:2px;" class="emptyBoxAction" >&nbsp;</div>
-                                            <div style="margin-left:2px;" class="inputNewText" >&nbsp; </div>
+                                            <div style="margin-left:2px;">
+                                                <input class="inputNewText" readonly="&nbsp;"  type="text" value=&nbsp; >
+                                            </div>
                                         </div>
                                     }
 
@@ -180,7 +181,7 @@
                                     <input id="nExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
                                     <input id="uExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">
                                     
-                                    <div style="box-sizing:border-box; border:red 1px solid;  display:flex; width: 480px; margin-left:5px;" >   
+                                    <div style="box-sizing:border-box; border:red 0px solid;  display:flex; width: 480px; margin-left:5px;" >   
                                         <div class="boxAction" >
                                             <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" >A</span>
                                         </div>
@@ -191,7 +192,7 @@
                                                         &nbsp;
                                                     </div>
                                                 }
-                                                <div style="width: 450px; display:flex; box-sizing:border-box; border:black 1px solid; margin-left:5px;">
+                                                <div style="width: 450px; display:flex; box-sizing:border-box; height:25px; border:black 0px solid; margin-left:5px;">
                                                     <div *ngFor="let Seance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let l=index"  >
                                                         @if (l>=t && l<t+10){
                                                             <input class="inputNewSean" id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)"   type="text" value="{{Seance.nb}}">
