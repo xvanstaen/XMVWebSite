@@ -29,6 +29,11 @@
     </div>
 -->
     <div  >
+        <div class="radioConfig">Create new file </div>  
+        <input  (click)='SelRadio("Y-5")' class="theRadioButt" type="radio" name="createNewFile" formControlName="createNewFile" id="createNewFile"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
+        <input  (click)='SelRadio("N-5")' class="theRadioButt" style="margin-left:10px;" type="radio" name="createNewFile" formControlName="createNewFile" id="createNewFile"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
+    </div>
+    <div  >
         <div class="radioConfig">Short display of performance </div>  
         <input  (click)='SelRadio("Y-4")' class="theRadioButt" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
         <input  (click)='SelRadio("N-4")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
@@ -51,7 +56,7 @@
 </div>
 
    <!--  ********************** File selection  ************************************************  -->   
-@if (DisplayListOfObjects()){
+@if (DisplayListOfObjects() || isResetRadio()){
     <div id="posListFiles" style="margin-top:20px; margin-left:-10px;">
         <div class="objectHeader">Select the files for your chart performance</div>
         <form  [formGroup]="ChartFileForm" >
@@ -80,14 +85,16 @@
 <div  class="skipLine">&nbsp;</div>
 <div style="margin-top:20px;"></div>
 
-
-
 <!-- ==================================================================== -->
 <!-- ===========              NEW DISPLAY                ================ -->
 <!-- ==================================================================== -->
 <div class="skipLine">&nbsp;</div>
+@if (message!==""){
+    <div class="message">{{message}}&nbsp;&nbsp;&nbsp;&nbsp;</div>
+}
 
-@if (DisplayShortScreen===true){
+@if (isSelectObject() || isCreateNewFile() || (DisplayShortScreen===true && NewPerformanceFitness.Sport[0].Sport_name!=="")){
+    
     <div  style=" width:1120px;   display:flex; margin-left:20px; display:inline-block; " 
                             [style.height.px]="mainTableHeight">
         <div  class="theTitle" style="margin-top:5px;">
@@ -96,16 +103,24 @@
             <span class="dateTitle" > Date </span>
             <span class="ActivityTitle"> Activity </span>
             <span class="ExerciseTitle"> Exercise </span>
-            <span style="width: calc(var(--seanceResultWidth) + 106px)"> Seance / Result</span>
+            <span style="width: calc(var(--seanceResultWidth) + 106px)"> Result seance (max 10)</span>
         
         </div>
         
         @if (isnewTabDialog() && newTabDialog[newPrevDialog]===true){
             <div class="dropdown ">
-                <div class="newStraight-content"  [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':selectedPosition.y - 80 }">
-                    <div  class="newStraightDropDown " [ngStyle]="{ 'height.px': theHeight  ,'margin-left.px': 1}"  >
+                <div class="newStraight-content"  [style.margin-left.px]="posLeftDropDown" [style.height.px]="theHeight" 
+                style="margin-top:110px ">
+                    <div  class="newStraightDropDown "  style="background-color:yellow">
+                        <div style="text-align: center; height:20px;">{{titleDropDownDate}}</div>
+                        @if (titleDropDown!==""){
+                            <div style="text-align: center; height:28px;">{{titleDropDown}}</div>
+                        } @else {
+                            <div style="font-size:5px; text-align: center; height:8px;">&nbsp;</div>
+                        }
+                        
                         <li *ngFor="let tab of TabAction; let m=index;" 
-                                class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                class="Straight-options"  [style.width.px]="280" [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="afterDropDown($event)" id="Sport" [value]="m">{{tab.name}} {{tab.type}}   
                         </li>
                     </div>
@@ -143,8 +158,8 @@
                                             <span class="circle" id="Sport-{{i}}" (click)="onAction($event)" >A</span>
                                         </div>
                                         <div>
-                                            <input class="inputNewText"  id="Spor-{{i}}" (input)="onInput($event)"   type="text" value="{{theSport.Sport_name}}" >
-                                            <input  class="inputNewDate fieldNewDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (input)="CheckDate($event)">
+                                            <input class="inputNewText hoverInput"  id="Spor-{{i}}" (click)="onClick()" (input)="onInput($event)"   type="text" value="{{theSport.Sport_name}}" >
+                                            <input  class="inputNewDate fieldNewDate hoverDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (click)="onClick()" (input)="CheckDate($event)">
                                             @if (j===0){
                                                 
                                                 <mat-icon  id="Date-{{i}}"  class="material-icons-outlined posCalendarNew"  (click)="ActionCalendar($event)" >
@@ -160,7 +175,7 @@
                                                 <span class="circle" id="Activity-{{i}}-{{j}}" (click)="onAction($event)">A</span>
                                             </div>
                                             <div style="margin-left:2px;">
-                                                <input class="inputNewText" id="Acti-{{i}}-{{j}}" (input)="onInput($event)" type="text" value="{{theActivity.Activity_name}}"  >  
+                                                <input class="hoverInput inputNewText " id="Acti-{{i}}-{{j}}" (click)="onClick()" (input)="onInput($event)" type="text" value="{{theActivity.Activity_name}}"  >  
                                             </div>
                                     } @else { 
                                         <div style="height:25px; display:flex;" >
@@ -178,24 +193,22 @@
                                     <div style="margin-left:5px;" class="boxAction" >
                                         <span class="circle"  id="Exercise-{{i}}-{{j}}-{{k}}" (click)="onAction($event)"  >A</span>
                                     </div>                        
-                                    <input id="nExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
-                                    <input id="uExe-{{i}}-{{j}}-{{k}}" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">
+                                    <input id="nExe-{{i}}-{{j}}-{{k}}" (click)="onClick()" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
+                                    <input id="uExe-{{i}}-{{j}}-{{k}}" (click)="onClick()" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">                                   
                                     
-                                    <div style="box-sizing:border-box; border:red 0px solid;  display:flex; width: 480px; margin-left:5px;" >   
-                                        <div class="boxAction" >
-                                            <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" >A</span>
-                                        </div>
-                                        <div *ngFor="let SecSeance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let t=index"  >
-                                            @if (t % 10 === 0){
-                                                <div style="width: 450px; display:flex; box-sizing:border-box; height:calc( 23 * (t+1))px; border:black 0px solid; margin-left:5px;" >
-                                                    <div *ngFor="let Seance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let l=index"  >
-                                                        @if (l>=t && l<t+10){
-                                                            <input class="inputNewSean" id="Sean-{{i}}-{{j}}-{{k}}-{{l}}" (input)="onInput($event)"   type="text" value="{{Seance.nb}}">
-                                                        }
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
+                                    <div style="margin-left:5px;" class="boxAction" >
+                                        <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" >A</span>
+                                    </div>
+
+                                    <div *ngFor="let SecSeance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let t=index"  >
+                                        <input class="inputNewSean" id="Sean-{{i}}-{{j}}-{{k}}-{{t}}}" (input)="onInput($event)"   type="text" value="{{SecSeance.nb}}">
+                                        @if (t === 9){
+                                            <input class="inputNewSean" style="background-color: red; color:white;" id="Sean-{{i}}-{{j}}-{{k}}-{{t}}}" (click)="onClick()" (input)="onInput($event)"   type="text" value="X">
+                                        }
+                                        
+                                    </div>
+                                   
+
                                         <!-- TO BE REVIEWED WHEN "RESULT" IS IMPLEMENTED -->
                                         @if (isResultImplemented()){
                                             @if (NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result!==undefined  && 
@@ -214,7 +227,7 @@
                                                 </div>
                                             }
                                         }
-                                    </div>
+                                    
                                     </div>
                                 </div>
                             }
@@ -225,25 +238,27 @@
         </div>
         <div class="skipLine">&nbsp;</div>
         
-        @if (IsSaveConfirmed===false){ 
-            <div style="margin-left:180px; width:80%">
-                <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button>
-                <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
-                <div class="msg"  ><br>{{message}} </div>
-            </div>
-        } @else {
-            <div tyle="margin-left:20px; width:80%">
-                <div class="msg"  >
-                    Please enter the name of the file you want to save your data in :
+        @if (isModified()){
+            @if (IsSaveConfirmed===false){ 
+                <div style="margin-left:180px; width:80%">
+                    <button id='but_1' class="sizeButtons" (click)="ConfirmSave()"> Save</button>
+                    <button id='but_2' class="sizeButtons" (click)="cancelUpdates()"> Cancel</button>
+                    <div class="msg"  ><br>{{message}} </div>
                 </div>
-                <form  [formGroup]="SpecificForm" >
-                    <input type='text' style='margin-left:20px; background-color:lightgrey;' formControlName="FileName" >
+            } @else {
+                <div tyle="margin-left:20px; width:80%">
+                    <div class="msg"  >
+                        Please enter the name of the file you want to save your data in :
+                    </div>
+                    <form  [formGroup]="SpecificForm" >
+                        <input type='text' style='margin-left:20px; background-color:lightgrey;' formControlName="FileName" >
+                        <br><br>
+                        <button id='but_3' class="sizeButtons" (click)="SaveNewRecord()">Confirm</button>
+                        <button id='but_4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
+                    </form>
                     <br><br>
-                    <button id='but_3' class="sizeButtons" (click)="SaveNewRecord()">Confirm</button>
-                    <button id='but_4' class="sizeButtons" (click)="CancelSave()"> Cancel</button>
-                </form>
-                <br><br>
-            </div>  
+                </div>  
+            }
         }
     </div> 
 }
