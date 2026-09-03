@@ -93,24 +93,10 @@
     <div class="message">{{message}}&nbsp;&nbsp;&nbsp;&nbsp;</div>
 }
 
-@if (isSelectObject() || isCreateNewFile() || (DisplayShortScreen===true && NewPerformanceFitness.Sport[0].Sport_name!=="")){
-    
-    <div  style=" width:1120px;   display:flex; margin-left:20px; display:inline-block; " 
-                            [style.height.px]="mainTableHeight">
-        <div  class="theTitle" style="margin-top:5px;">
-            <span class="emptyBoxAction" > &nbsp; </span>
-            <span class="sportTitle" > Sport </span>
-            <span class="dateTitle" > Date </span>
-            <span class="ActivityTitle"> Activity </span>
-            <span class="ExerciseTitle"> Exercise </span>
-            <span style="width: calc(var(--seanceResultWidth) + 106px)"> Result seance (max 10)</span>
-        
-        </div>
-        
-        @if (isnewTabDialog() && newTabDialog[newPrevDialog]===true){
+    @if (isnewTabDialog() && newTabDialog[newPrevDialog]===true){
             <div class="dropdown ">
                 <div class="newStraight-content"  [style.margin-left.px]="posLeftDropDown" [style.height.px]="theHeight" 
-                style="margin-top:110px ">
+                style="margin-top:130px ">
                     <div  class="newStraightDropDown "  style="background-color:yellow">
                         <div style="text-align: center; height:20px;">{{titleDropDownDate}}</div>
                         @if (titleDropDown!==""){
@@ -122,6 +108,20 @@
                         <li *ngFor="let tab of TabAction; let m=index;" 
                                 class="Straight-options"  [style.width.px]="280" [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="afterDropDown($event)" id="Sport" [value]="m">{{tab.name}} {{tab.type}}   
+                        </li>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (isInputDropDown() && lengthTabInput>0){
+            <div class="dropdown ">
+                <div class="newStraight-content"  [style.margin-left.px]="posLeftDropDown" [style.height.px]="theHeight" 
+                style="margin-top:60px ">
+                    <div  class="newStraightDropDown "  >                        
+                        <li *ngFor="let tab of tabInputDropDown; let m=index;" 
+                                class="Straight-options"  [style.width.px]="280" [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    (click)="afterTabInput($event)" id="{{m}}" [value]="m">{{m}}-{{tab.name}}  
                         </li>
                     </div>
                 </div>
@@ -142,6 +142,22 @@
                 </div>
             </div>
         }
+
+@if (isSelectObject() || isCreateNewFile() || (DisplayShortScreen===true && NewPerformanceFitness.Sport[0].Sport_name!=="")){
+    
+    <div  style=" width:1120px;   display:flex; margin-left:20px; display:inline-block; " 
+                            [style.height.px]="mainTableHeight">
+        <div  class="theTitle" style="margin-top:5px;">
+            <span class="emptyBoxAction" > &nbsp; </span>
+            <span class="sportTitle" > Sport </span>
+            <span class="dateTitle" > Date </span>
+            <span class="ActivityTitle"> Activity </span>
+            <span class="ExerciseTitle"> Exercise </span>
+            <span style="width: calc(var(--seanceResultWidth) + 106px)"> Result seance (max 10)</span>
+        
+        </div>
+        
+    
         
         <div id="posTitle" style="overflow-y:scroll;  border:2px solid blue; "
                                    [style.height.px]="subTableHeight">
@@ -158,8 +174,8 @@
                                             <span class="circle" id="Sport-{{i}}" (click)="onAction($event)" >A</span>
                                         </div>
                                         <div>
-                                            <input class="inputNewText hoverInput"  id="Spor-{{i}}" (click)="onClick()" (input)="onInput($event)"   type="text" value="{{theSport.Sport_name}}" >
-                                            <input  class="inputNewDate fieldNewDate hoverDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (click)="onClick()" (input)="CheckDate($event)">
+                                            <input class="inputNewText hoverInput"  id="Spor-{{i}}" (click)="onClick($event)" (input)="onInput($event)"   type="text" value="{{theSport.Sport_name}}" >
+                                            <input  class="inputNewDate fieldNewDate hoverDate" id="Date-{{i}}"  type="text"  value="{{TabinputDate[i]}}" (click)="onClick($event)" (input)="CheckDate($event)">
                                             @if (j===0){
                                                 
                                                 <mat-icon  id="Date-{{i}}"  class="material-icons-outlined posCalendarNew"  (click)="ActionCalendar($event)" >
@@ -175,7 +191,7 @@
                                                 <span class="circle" id="Activity-{{i}}-{{j}}" (click)="onAction($event)">A</span>
                                             </div>
                                             <div style="margin-left:2px;">
-                                                <input class="hoverInput inputNewText " id="Acti-{{i}}-{{j}}" (click)="onClick()" (input)="onInput($event)" type="text" value="{{theActivity.Activity_name}}"  >  
+                                                <input class="hoverInput inputNewText " id="Acti-{{i}}-{{j}}" (click)="onClick($event)" (input)="onInput($event)" type="text" value="{{theActivity.Activity_name}}"  >  
                                             </div>
                                     } @else { 
                                         <div style="height:25px; display:flex;" >
@@ -193,8 +209,8 @@
                                     <div style="margin-left:5px;" class="boxAction" >
                                         <span class="circle"  id="Exercise-{{i}}-{{j}}-{{k}}" (click)="onAction($event)"  >A</span>
                                     </div>                        
-                                    <input id="nExe-{{i}}-{{j}}-{{k}}" (click)="onClick()" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
-                                    <input id="uExe-{{i}}-{{j}}-{{k}}" (click)="onClick()" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">                                   
+                                    <input id="nExe-{{i}}-{{j}}-{{k}}" (click)="onClick($event)" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_name}}">
+                                    <input id="uExe-{{i}}-{{j}}-{{k}}" (click)="onClick($event)" (input)="onInput($event)" class="inputNewSean"   type="text" value="{{NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Exercise_unit}}">                                   
                                     
                                     <div style="margin-left:5px;" class="boxAction" >
                                         <span class="circle"  id="Seance-{{i}}-{{j}}-{{k}}" (click)="onAction($event)" >A</span>
@@ -203,7 +219,7 @@
                                     <div *ngFor="let SecSeance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let t=index"  >
                                         <input class="inputNewSean" id="Sean-{{i}}-{{j}}-{{k}}-{{t}}}" (input)="onInput($event)"   type="text" value="{{SecSeance.nb}}">
                                         @if (t === 9){
-                                            <input class="inputNewSean" style="background-color: red; color:white;" id="Sean-{{i}}-{{j}}-{{k}}-{{t}}}" (click)="onClick()" (input)="onInput($event)"   type="text" value="X">
+                                            <input class="inputNewSean" style="background-color: red; color:white;" id="Sean-{{i}}-{{j}}-{{k}}-{{t}}}" (click)="onClick($event)" (input)="onInput($event)"   type="text" value="X">
                                         }
                                         
                                     </div>

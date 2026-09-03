@@ -1180,7 +1180,7 @@ cancelDropDown(){
   //this.cdr.detectChanges();
 }
 
-onClick(){
+onClick(event:any){
     this.OpenDialogue[this.prev_Dialogue]=false;
     if (this.isOpenDialogue()){
       this.isOpenDialogue.set(false);
@@ -1192,6 +1192,73 @@ onClick(){
       this.isTabDisplayCalendar.set(false);
     }
     this.message="";
+    this.manageIds(event.target.id);
+    //event.target.value;
+    if (  event.target.id.substring(0,4)==='Spor'){
+      this.tabInput('Spor');
+    } else  if (event.target.id.substring(0,4)==='Acti'){
+      this.tabInput('Acti');
+    } else  if (event.target.id.substring(0,4)==='uExe'){
+      this.tabInput('uExe');
+    }
+}
+
+isInputDropDown=signal<boolean>(false)
+tabInputDropDown:Array<any>=[{name:'', idSpo:-1, idAct:-1, idUnit:-1}];
+lengthTabInput:number=0;
+
+tabInput(type:string){
+  this.tabInputDropDown.splice(0,this.tabInputDropDown.length);
+  if (type === "Spor"){
+    const A = {name:'Cancel', idSpo:-1, idAct:-1, idUnit:-1}
+    this.tabInputDropDown.push(A);
+    for (var i=0; i<this.MyConfigFitness.TabSport.length; i++){
+      const B = {name:this.MyConfigFitness.TabSport[i].name, idSpo:this.TabOfId[0], idAct:-1, idUnit:-1}
+      this.tabInputDropDown.push(B);
+    }
+    this.posLeftDropDown=this.posLeftSport;
+  } else if (type === "Acti"){
+    const A = {name:'Cancel', idSpo:-1, idAct:-1, idUnit:-1}
+    this.tabInputDropDown.push(A);
+    for (var i=0; i<this.MyConfigFitness.TabActivity.length; i++){
+      const B = {name:this.MyConfigFitness.TabActivity[i].name, idSpo:this.TabOfId[0], idAct:this.TabOfId[1], idUnit:-1}
+      this.tabInputDropDown.push(B);
+    }
+    this.posLeftDropDown=this.posLeftActivity;
+  } else if (type === "uExe"){
+    const A = {name:'Cancel', idSpo:-1, idAct:-1, idUnit:-1}
+    this.tabInputDropDown.push(A);
+    for (var i=0; i<this.MyConfigFitness.TabUnits.length; i++){
+      const B = {name:this.MyConfigFitness.TabUnits[i].name, idSpo:this.TabOfId[0], idAct:this.TabOfId[1], idUnit:this.TabOfId[2]}
+      this.tabInputDropDown.push(B);
+    }
+    this.posLeftDropDown=this.posLeftExercise;
+  }
+  this.lengthTabInput=this.tabInputDropDown.length;
+  this.isInputDropDown.set(true);
+  this.theHeight = this.lengthTabInput * 26 + 20;
+
+}
+
+afterTabInput(event:any){
+  this.lengthTabInput=0;
+
+  this.manageIds(event.target.id);
+  const A = event.target.value; 
+  if (this.tabInputDropDown[A].idUnit > -1){
+      this.NewPerformanceFitness.Sport[this.tabInputDropDown[A].idSpo].exercise[this.tabInputDropDown[A].idAct].ActivityExercise[this.tabInputDropDown[A].idUnit].Exercise_unit=
+            this.tabInputDropDown[A].name;
+  } else if (this.tabInputDropDown[A].idAct > -1){
+      this.NewPerformanceFitness.Sport[this.tabInputDropDown[A].idSpo].exercise[this.tabInputDropDown[A].idAct].Activity_name = 
+            this.tabInputDropDown[A].name;
+  } else if (this.tabInputDropDown[A].idSpo > -1){
+      this.NewPerformanceFitness.Sport[this.tabInputDropDown[A].idSpo].Sport_name=
+          this.tabInputDropDown[A].name;
+  }
+
+  this.isInputDropDown.set(false);
+  this.tabInputDropDown.splice(0,this.tabInputDropDown.length);
+
 }
 
 onInput(event:any){
@@ -1212,11 +1279,13 @@ onInput(event:any){
     if (  event.target.id.substring(0,4)==='Spor'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].Sport_name=event.target.value;
       this.LinkPerfConfig();
+      this.tabInput('Spor');
     } else if (event.target.id.substring(0,4)==='lSpo'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].Sport_name=event.target.textContent;
       this.LinkPerfConfig();
     } else  if (event.target.id.substring(0,4)==='Acti'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].Activity_name=event.target.value;
+      this.tabInput('Acti');
     } else  if (event.target.id.substring(0,4)==='lAct'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].Activity_name=event.target.textContent;
     
@@ -1227,7 +1296,7 @@ onInput(event:any){
       // unit of the value of the exercise
     }  else  if (event.target.id.substring(0,4)==='uExe'){
         this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Exercise_unit=event.target.value;
-    
+        this.tabInput('uExe');
       // unit of the value of the exercise from the list
     } else if (event.target.id.substring(0,8)==='lExeName'){
       this.NewPerformanceFitness.Sport[this.TabOfId[0]].exercise[this.TabOfId[1]].ActivityExercise[this.TabOfId[2]].Exercise_name=event.target.textContent;
