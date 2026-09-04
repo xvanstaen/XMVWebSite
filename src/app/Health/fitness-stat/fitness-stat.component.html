@@ -136,7 +136,7 @@
 
         @if (isTabDisplayCalendar() && TabDisplayCalendar[TabOfId[0]]===true){
             <div class="dropdown" >
-                <div class="Straight-content" [ngStyle]="{'margin-top.px': selectedPosition.y - this.posDivTitle.Top - 249 }" >
+                <div class="Straight-content" [style]="{'margin-top.px': selectedPosition.y - this.posDivTitle.Top - 249 }" >
                     <div class="StraightDropDown" >
                         <div class="skipLine">&nbsp;</div>
                         <app-one-calendar [Input_MinDate]="minDate" [Input_MaxDate]="maxDate" [DisplayCalendarOnly]="DisplayCalendarOnly"
@@ -303,10 +303,10 @@
 
         <div *ngFor="let theSport of NewPerformanceFitness.Sport; let i=index" > 
         
-            <!-- ***************** MANAGE SPORT ********************** [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}"-->
-            <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
+            <!-- ***************** MANAGE SPORT ********************** [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}"-->
+            <div class="theDiv"  [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
                 <div class="skipLine" style="height:8px; display:block; float:left; border-top:solid black 2px; width:100%; margin-left:0px;"  
-                            [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">&nbsp;</div>
+                            [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">&nbsp;</div>
                 <div class="divItem">
                     <div class="masterLabel labelSport" >Sport</div>
                     @if (NewPerformanceFitness.Sport.length>1){
@@ -344,8 +344,8 @@
                 </div>  <!-- divItem -->
             </div> <!-- end theDiv -->
         
-            <div class="skipLine" style="height:8px; display:block; float:left;"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">&nbsp;</div>
-            <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
+            <div class="skipLine" style="height:8px; display:block; float:left;"  [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">&nbsp;</div>
+            <div class="theDiv"  [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
             
                 <!-- ******** MANAGE THE DATE********  -->
                 <div class="divItem">
@@ -383,7 +383,7 @@
                 <!-- ***************** MANAGE ACTIVITY ********************** -->
                 <!--  =====  Test on N/A =======  -->  
                 @if (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityName[0]!=='N/A')){
-                    <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
+                    <div class="theDiv"  [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
                         <div class="divItem">
                             <div class="masterLabel labelActiv" >Activity</div>
                             @if (NewPerformanceFitness.Sport[i].exercise.length>1){
@@ -425,7 +425,7 @@
                 <span *ngFor="let TabExec of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise; let k=index">
                         <!--  =====  Test on N/A =======  -->           
                     @if (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityExercise[0]!=='N/A' )){
-                        <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
+                        <div class="theDiv"  [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
                             <div class="divItem">
                                 <div class="masterLabel labelExec" >Exercise</div>
                                 @if (NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise.length>1){
@@ -482,7 +482,7 @@
             
                         <span *ngFor="let SecSeance of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].seance; let t=index">
                             @if (getScreenWidth<refMedia+1 && t % 3 ===0 || getScreenWidth>refMedia  && t % 5 ===0){
-                                <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
+                                <div class="theDiv"  [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
                                     <div class="divItem" >
                                         @if (SecSeance.length!==0 && t===0){
                                             <div class="masterLabel labelSean">Seance(s)</div>
@@ -530,7 +530,7 @@
                         <!--  =====  Test on N/A =======  -->  
                         @if (TabPerfConfig[i]=== undefined || TabPerfConfig.length=== 0 || (TabPerfConfig[i]!== undefined && MyConfigFitness.ListSport[TabPerfConfig[i]].activityPerf[0]!=='N/A')){
                             <span *ngFor="let theResult of NewPerformanceFitness.Sport[i].exercise[j].ActivityExercise[k].Result; let p=index">
-                                <div class="theDiv"  [ngClass]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
+                                <div class="theDiv"  [class]="{'GroundCyan':  i % 2 !==0, 'GroundGrey':  i % 2 ===0}">
                                     <div class="divItem" >
                                         @if (p!==0) {
                                             <div class="masterLabel labelSean" >&nbsp;</div>
@@ -657,7 +657,7 @@
                     <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                         <ul class="Buffer">&nbsp; </ul>
                                 <li *ngFor="let selSport of MyConfigFitness.TabSport; let m=index;" 
-                                    class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="onClickList($event)" id="lSport-{{i}}" [value]="selSport.name" >{{selSport.name}}</li>
                             <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
                             <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
@@ -699,7 +699,7 @@
                         <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
                                 <li *ngFor="let activity of MyConfigFitness.TabActivity; let m=index;" 
-                                        class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                        class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onClickList($event)" id="lActivity-{{i}}-{{k}}" [value]="activity.name" >{{activity.name}}</li>
                                 <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
                                 <div class="Buffer" style="margin-top:15px;">&nbsp; </div>     
@@ -742,7 +742,7 @@
                         <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
                                 <li *ngFor="let Exercise of MyConfigFitness.TabExercise; let m=index;" 
-                                        class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                        class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onClickList($event)" id="lExercise-{{i}}-{{k}}" [value]="Exercise.name" >{{Exercise.name}}</li>
                                 <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
                                 <div class="Buffer" style="margin-top:15px;">&nbsp; </div>                            
@@ -786,7 +786,7 @@
                         <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
                                 <li *ngFor="let selUnit of MyConfigFitness.TabUnits; let m=index;" 
-                                        class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                        class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onClickList($event)" id="lUnit-{{i}}-{{k}}" [value]="selUnit.name" >{{selUnit.name}}</li>
                                 <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
                                 <div class="Buffer" style="margin-top:15px;">&nbsp; </div>        
@@ -828,7 +828,7 @@
                         <div  class=" StraightDropDown"  style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
                                 <li *ngFor="let selPerfType of MyConfigFitness.TabPerfType;  let m=index;" 
-                                        class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                        class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onClickList($event)" id="lPerfType-{{i}}-{{k}}" [value]="selPerfType.name" >{{selPerfType.name}}</li>
                                 <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
                                 <div class="Buffer" style="margin-top:15px;">&nbsp; </div>    
@@ -871,7 +871,7 @@
                         <div  class=" StraightDropDown" style="margin-left:calc(2 * var(--textWidth) - (var(--textWidth) / 2) + 10px);">
                             <ul class="Buffer">&nbsp; </ul>
                                 <li *ngFor="let selPerfUnit of MyConfigFitness.TabPerfUnit; let m=index;" 
-                                        class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                        class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onClickList($event)" id="lUnitPerf-{{i}}-{{k}}" [value]="selPerfUnit.name" >{{selPerfUnit.name}}</li>
                                 <button class="sizeButtons" style="margin-top:15px; margin-left: 55px;" (click)="cancelDropDown()">Cancel</button>
                                 <div class="Buffer" style="margin-top:15px;">&nbsp; </div> 

@@ -810,29 +810,42 @@ SelRadio(event:any){
               this.NewPerformanceFitness.firstname=this.identification.firstname;
               this.NewPerformanceFitness.lastname=this.identification.surname;
               this.NewPerformanceFitness.user_id=this.identification.id;
-              this.message="No data to display. Select a file"
+              this.message="No data to display. Select a file";
+              this.isModified.set(false);
         }
       } else {
-        this.DisplayShortScreen=false;
-        this.saveNewPerfFile();
+        if (this.DisplayShortScreen===true){
+          this.DisplayShortScreen=false;
+          this.saveNewPerfFile();
+        }
         this.resetSelection();
       }
     } else if (i==='5'){
       if (NoYes==='Y'){
-        this.isCreateNewFile.set(true);
-        this.DisplayShortScreen=false;
-        this.TheSelectDisplays.controls['ShortScreen'].setValue('N');
-        this.saveNewPerfFile();
-        if (this.saveNewPerfModified===true){
+        
+        if (this.DisplayShortScreen===true){
+          this.DisplayShortScreen=false;
+          this.TheSelectDisplays.controls['ShortScreen'].setValue('N');
+          this.saveNewPerfFile();
+        }
+        if (this.saveCreateFileModified===true){
           this.NewPerformanceFitness=new PerformanceFitness;
           this.fillFiles(this.createNewPerformance, this.NewPerformanceFitness);
-          this.saveNewPerfModified=false;
+          this.saveCreateFileModified=false;
           this.isModified.set(true);
+        } else {
+              this.NewPerformanceFitness=new PerformanceFitness;
+              this.NewPerformanceFitness.firstname=this.identification.firstname;
+              this.NewPerformanceFitness.lastname=this.identification.surname;
+              this.NewPerformanceFitness.user_id=this.identification.id;
+              this.isModified.set(false);
         }
-        this.resetSelection();
+        this.isCreateNewFile.set(true);
       } else {
         this.isCreateNewFile.set(false);
+        this.resetSelection();
       }
+      
     }
   //this.cdr.detectChanges();
 }
@@ -875,12 +888,21 @@ SelectAll(){
 
 CancelAll(){
   this.resetSelection();
+  if (this.isCreateNewFile()){
+    this.saveCreateFile();
+    this.isCreateNewFile.set(false);
+    this.TheSelectDisplays.controls['createNewFile'].setValue('N');
+  } else {
+    this.DisplayShortScreen=false;
+    this.TheSelectDisplays.controls['ShortScreen'].setValue('N');
+  }
+  this.isModified.set(false);
   this.saveNewPerfModified=false;
   this.NewPerformanceFitness= new PerformanceFitness;
   this.saveNewPerformance= new PerformanceFitness;
   this.isResetRadio.set(true);
-  //this.cdr.detectChanges();
 }
+
 isResetRadio=signal<boolean>(false);
 
 resetSelection(){
@@ -912,11 +934,7 @@ RadioSelection(event:any){
     const val=event.target.id.substring(0,1);
     this.FillFSelected.selected=val;
     this.ChartFileList.controls[i].setValue(this.FillFSelected);
-
-  
 }
-
-
 
 ChartFileSelection(){
   // Files have been selected by the end user
@@ -1918,15 +1936,21 @@ ConfirmSave(){
  
   var i=0;
 
-    for (i=0; i<this.ErrorinputDate.length && ( this.ErrorinputDate[i]==='' || this.ErrorinputDate[i]===undefined ); i++){
-    }
-    if (i===this.ErrorinputDate.length) {
-      //this.SpecificForm.controls['FileName'].setValue(this.Google_Object_Name);
+  for (i=0; i<this.ErrorinputDate.length && ( this.ErrorinputDate[i]==='' || this.ErrorinputDate[i]===undefined ); i++){
+  }
+  if (i===this.ErrorinputDate.length) {
+      if (this.DisplayShortScreen===true){
+        for (var i=0; i<this.ChartFileList.controls.length && this.ChartFileList.controls[i].value.selected !== "Y"; i++){
+        }
+        this.SpecificForm.controls['FileName'].setValue(this.myListOfObjects.items[i].name);
+      } else {
+        this.SpecificForm.controls['FileName'].setValue("");
+      }
       this.IsSaveConfirmed = true;
       this.message='';
-    } else {
+  } else {
       this.message='correct your error';
-    }
+  }
   
 }
 
