@@ -251,13 +251,13 @@ callingComponent:string='FitnessStat';
 
 nbToDisplay:number=0;
 nbSeanceDisplay:number=0;
-mainTableHeight:number=130;
-subTableHeight:number=120
-defaultMainTableHeight:number=130;
-defaultSubTableHeight:number=120;
+mainTableHeight:number=180;
+subTableHeight:number=160
+defaultMainTableHeight:number=180;
+defaultSubTableHeight:number=160;
 
-largeMainTableHeight:number=480;
-largeSubTableHeight:number=450;
+largeMainTableHeight:number=180;
+largeSubTableHeight:number=160;
 
 theHeight:number=160;
 
@@ -368,8 +368,8 @@ isResultImplemented=signal<boolean>(false);
 
 ngOnInit(){
   
-  this.posLeftActivity=this.boxActionWidth+this.dateWidth+this.calendarWidth+this.newTextWidth + 34;
-  this.posLeftExercise=this.posLeftActivity+this.newTextWidth+this.boxActionWidth + 8;
+  this.posLeftActivity=(this.boxActionWidth * 2) + this.dateWidth + this.calendarWidth + (this.newTextWidth*2) ;
+  this.posLeftExercise=this.posLeftActivity+this.boxActionWidth + (2 * this.newSeanWidth);
   this.posLeftSeance=this.posLeftExercise+this.newTextWidth - 18;
   this.posLeftResult=this.posLeftExercise+this.newTextWidth+this.boxActionWidth + 200;
 
@@ -472,6 +472,7 @@ ngOnInit(){
 
 onAction(event:any){
   this.message="";
+  this.isInputDropDown.set(false);
   this.newTabDialog[this.newPrevDialog]=false;
   if (this.isnewTabDialog()){this.isnewTabDialog.set(false);}
   this.TabAction.splice(0,this.TabAction.length);
@@ -538,8 +539,9 @@ onAction(event:any){
 
 afterDropDown(event:any){
   var myConst:number=0;
-  
-  this.isnewTabDialog.set(false)
+
+  this.tabInputDropDown.splice(0,this.tabInputDropDown.length);
+  this.isnewTabDialog.set(false);
   
   if (event.target.value===0){ //cancel 
     // nothing to do
@@ -919,10 +921,21 @@ RadioSelection(event:any){
 ChartFileSelection(){
   // Files have been selected by the end user
   // time to consolidate all of them
+  if (this.isCreateNewFile()){
+    this.saveCreateFile();
+    this.isCreateNewFile.set(false);
+    this.TheSelectDisplays.controls['createNewFile'].setValue('N');
+  } 
+  if (this.DisplayShortScreen===false){
+    this.DisplayShortScreen=true;
+    this.TheSelectDisplays.controls['ShortScreen'].setValue('Y');
+  };
+        
   var i=0;
   var j=1;
   var k=0;
   var fileFound=false;
+  this.message="";
   this.DisplayMerge=false;
   this.NbFilesMerged=0;
   //this.MergeFilesFitness.splice(0,this.MergeFilesFitness.length);
@@ -1208,6 +1221,7 @@ tabInputDropDown:Array<any>=[{name:'', idSpo:-1, idAct:-1, idUnit:-1}];
 lengthTabInput:number=0;
 
 tabInput(type:string){
+  this.isnewTabDialog.set(false)
   this.tabInputDropDown.splice(0,this.tabInputDropDown.length);
   if (type === "Spor"){
     const A = {name:'Cancel', idSpo:-1, idAct:-1, idUnit:-1}
@@ -1237,12 +1251,17 @@ tabInput(type:string){
   this.lengthTabInput=this.tabInputDropDown.length;
   this.isInputDropDown.set(true);
   this.theHeight = this.lengthTabInput * 26 + 20;
+  if (this.theHeight>130){
+    this.theHeight=130;
+  }
 
 }
 
 afterTabInput(event:any){
+  
   this.lengthTabInput=0;
-
+  this.message = "";
+  this.isModified.set(true);
   this.manageIds(event.target.id);
   const A = event.target.value; 
   if (this.tabInputDropDown[A].idUnit > -1){
@@ -2001,13 +2020,16 @@ SaveConfigFtiness(){
 }
 
 cancelUpdates(){
-  for (var i=0; i<this.ChartFileList.controls.length && this.ChartFileList.controls[i].value.selected !== "Y"; i++){
-  }
-  this.Google_Object_Fitness=this.myListOfObjects.items[i].name;
-  for (var j=0; j<this.FilesAlreadyMerged.length && this.FilesAlreadyMerged[j].name !== this.myListOfObjects.items[i].name; j++){
-  }
   this.NewPerformanceFitness = new PerformanceFitness;
-  this.fillFiles(this.MergeFilesFitness[this.FilesAlreadyMerged[j].refFileMerge], this.NewPerformanceFitness);
+  if (!this.isCreateNewFile()){
+      for (var i=0; i<this.ChartFileList.controls.length && this.ChartFileList.controls[i].value.selected !== "Y"; i++){
+      }
+      this.Google_Object_Fitness=this.myListOfObjects.items[i].name;
+      for (var j=0; j<this.FilesAlreadyMerged.length && this.FilesAlreadyMerged[j].name !== this.myListOfObjects.items[i].name; j++){
+      }
+      this.fillFiles(this.MergeFilesFitness[this.FilesAlreadyMerged[j].refFileMerge], this.NewPerformanceFitness);
+  }
+
   this.isModified.set(false);
   this.message="cancel updates completed"
 }

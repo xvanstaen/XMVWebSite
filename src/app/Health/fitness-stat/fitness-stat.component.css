@@ -1,5 +1,5 @@
 
-@import "../FitnessHealthGeneral.css"; 
+
 div{
   --fieldHeight:26px;
   --newTextWidth:130px;
@@ -25,7 +25,18 @@ div{
   margin-left:5px;
 }
 
-/********************* NEW DISPLAY ***********************/
+.titleListFiles{
+  font-size:22px;
+  color:blue;
+  text-align: center;
+  width:850px;
+  height:50px;
+  border:solid blue 2px;
+  background-color: cyan;
+  padding-top:10px;
+  font-weight: bold;
+}
+
 .message{
     color:blue;
     font-size:16px;
@@ -240,7 +251,8 @@ div{
   width:300px;  
   background-color:yellow;
   border:solid green 0px;
-  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .Straight-content{
   position: absolute;
@@ -250,7 +262,6 @@ div{
   margin-top:-30px; 
   border:solid blue 0px; 
   background-color:white;
-  overflow: hidden;
 }
 
 .StraightDropDown{
@@ -260,12 +271,91 @@ div{
   width:380px;  
   height:355px; 
   border:solid green 0px;
-  overflow: hidden;
+  overflow: scroll;
+} 
+
+.Straight-options{
+    width:305px;
+    font-size:12px;
+    height:25px;
+    color:black;
+    text-align: left;
+    padding-left:5px;
+    padding-top:4px;
+    border:0px; 
+    display:inline-block;
+    float:none;
+    background-color: pink;
+  }
+
+.posRadioButt{
+  margin-left:10px;
 }
 
-.radioConfig{
-  margin-left:10px; width:60%; display:block; background-color:cyan; float:left;
+.sizeRadioButt{
+  width:16px;
+  height:16px;
 }
+
+.even{
+    color:black;
+    background-color: lightgrey;
+  }
+  
+.odd{
+    color:black;
+    background-color: rgb(206, 169, 169)
+  }
+.evenTwo{
+    color:black;
+    background-color: rgb(206, 169, 169)
+  }
+  
+.oddTwo{
+    color:black;
+    background-color: lightgrey;
+  }  
+
+.colorOdd{
+    background-color:rgb(185, 212, 221);
+  }
+  
+.colorEven{
+    background-color:rgb(219, 224, 226);
+  }
+
+.oddColor{
+  background-color: cyan;
+}
+
+.evenColor{
+  background-color:lightblue;
+}
+
+.radioContainer{
+  border:0px solid blue;  display:block; 
+  font-size: 15px; font-weight: bold;
+  
+}
+.radioStyle{
+  height:30px; display:block; float:left; 
+}
+
+.radioLabel{
+  margin-left:10px; width:220px;  padding-top:2px;
+  border:0px solid blue;
+}
+
+.radioSelect{
+   width:170px;  
+}
+
+.radioSelectFiles{
+   width:423px;  
+   border:0px solid blue;
+
+}
+
 
 .GroundCyan{
   background-color: cyan;
@@ -490,15 +580,28 @@ div{
   float:left;
 } 
 
-.oddColor{
-  background-color: cyan;
+
+
+
+.sizeButtons{
+    width:80px;
+    height:25px;
+    font-size:12px;
+    margin-left:10px;
+    background-color:cyan;
+    border-radius: 5px;
+    background-image: linear-gradient(cyan, lightcyan);
+    box-shadow: 2px 2px blue;
+    border: solid 1px blue;
+    display:table-cell;
+    vertical-align:middle;
+    font-weight: bold;
 }
 
-.evenColor{
-  background-color:lightblue;
-}
-
-
+.sizeButtons:hover{
+    background-color:rgb(48, 89, 159);
+    background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+  }
 
     /*** ====================================== ***/
     /*** ============== @media 1010 ================ ***/

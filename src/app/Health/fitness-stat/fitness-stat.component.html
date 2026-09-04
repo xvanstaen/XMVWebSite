@@ -11,7 +11,7 @@
 -->
 <h2 style="margin-top:5px;"><br></h2>
 <div id="posFirstTitle" >
-<h1 style="color:red; font-size:26px; margin-top: 5px; display:block; text-align:center; width:100%">My Fitness Performance!</h1>
+    <h1 style="color:red; font-size:26px; border:solid rgb(2, 2, 13) 0px; margin-left:20px; display:block; text-align:center; width:850px;">My Fitness Performance!</h1>
 </div>  
 <div class="specialDiv">
     <span style="font-size:16px; color:red; margin-left:30px;"  >
@@ -20,60 +20,66 @@
 </div>
 
 
-<div [formGroup]="TheSelectDisplays" style="display:block; background-color:cyan; width:86.2%; height:140px; margin-left:20px; border:solid 2px blue; ">
+<div [formGroup]="TheSelectDisplays" style=" display:block; background-color:cyan; width:850px; height:100px; margin-left:20px; border:solid 2px blue; ">
 <!--    
     <div  >
         <div class="radioConfig">Performance figures </div>  
-        <input  (click)='SelRadio("Y-1")' class="theRadioButt" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
-        <input  (click)='SelRadio("N-1")' class="theRadioButt" style="margin-left:10px;" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
+        <input  (click)='SelRadio("Y-1")' class="sizeRadioButt" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span>  
+        <input  (click)='SelRadio("N-1")' class="sizeRadioButt" style="margin-left:10px;" type="radio" name="PerfFigures" formControlName="PerfFigures" id="PerfFigures"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
     </div>
 -->
-    <div  >
-        <div class="radioConfig">Create new file </div>  
-        <input  (click)='SelRadio("Y-5")' class="theRadioButt" type="radio" name="createNewFile" formControlName="createNewFile" id="createNewFile"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-5")' class="theRadioButt" style="margin-left:10px;" type="radio" name="createNewFile" formControlName="createNewFile" id="createNewFile"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
-    </div>
-    <div  >
-        <div class="radioConfig">Short display of performance </div>  
-        <input  (click)='SelRadio("Y-4")' class="theRadioButt" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-4")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
-    </div>
+    
+    <div class="radioContainer">
+        <div class="radioLabel radioStyle">Create new file  </div> 
+        <div class="radioSelect radioStyle">
+            <input  (click)='SelRadio("Y-5")' class="sizeRadioButt" type="radio" name="createNewFile" formControlName="createNewFile" id="createNewFile"  value="Y" > <span style="margin:0; padding-top:5px;">&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-5")' class="sizeRadioButt" style='margin-left:20px;'type="radio" name="createNewFile" formControlName="createNewFile" id="createNewFile"  value="N"> <span style="margin:0; padding-top:5px;" >&nbsp;&nbsp;No</span> 
+        </div>
 
-    <div  >
-        <div class="radioConfig">Performance chart (N/A)</div> 
-        <input  (click)='SelRadio("Y-2")' class="theRadioButt" type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-2")' class="theRadioButt" style="margin-left:10px;" type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="N"> <span class="YesNo">&nbsp;&nbsp;No</span> 
-    </div>
+        <div class="radioLabel radioStyle">Short display of performance </div> 
+        <div class="radioSelect radioStyle">
+            <input  (click)='SelRadio("Y-4")' class="sizeRadioButt" type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="Y" > <label style="font-size:16px; margin-top:-5px;">&nbsp;&nbsp;Yes</label> 
+            <input  (click)='SelRadio("N-4")' class="sizeRadioButt" style=' margin-left:20px;'type="radio" name="ShortScreen" formControlName="ShortScreen" id="ShortScreen"  value="N"> <span >&nbsp;&nbsp;No</span> 
+        </div>
 
-    <div  >
-        <div class="radioConfig">Configuration </div> 
-        <input  (click)='SelRadio("Y-3")' class="theRadioButt" type="radio" name="Config" formControlName="Config" id="Config" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
-        <input  (click)='SelRadio("N-3")' class="theRadioButt" style="margin-left:10px;" type="radio" name="Config" formControlName="Config" id="Config" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span> 
-    </div>
+        <div class="radioLabel radioStyle">Performance chart (N/A)</div> 
+        <div class="radioSelect radioStyle">
+            <input  (click)='SelRadio("Y-2")' class="sizeRadioButt" type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="Y" > <span >&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-2")' class="sizeRadioButt"  style='margin-left:20px;'type="radio" name="PerfChart" formControlName="PerfChart" id="PerfChart" value="N"> <span >&nbsp;&nbsp;No</span> 
+        </div>
 
+        <div class="radioLabel radioStyle">Configuration </div> 
+        <div class="radioSelect radioStyle">
+            <input  (click)='SelRadio("Y-3")' class="sizeRadioButt" type="radio" name="Config" formControlName="Config" id="Config" value="Y" > <span >&nbsp;&nbsp;Yes</span> 
+            <input  (click)='SelRadio("N-3")' class="sizeRadioButt" style='margin-left:20px;' type="radio" name="Config" formControlName="Config" id="Config" value="N" > <span >&nbsp;&nbsp;No</span> 
+        </div>
+    </div>
     <br><br>
 
 </div>
 
    <!--  ********************** File selection  ************************************************  -->   
 @if (DisplayListOfObjects() || isResetRadio()){
-    <div id="posListFiles" style="margin-top:20px; margin-left:-10px;">
-        <div class="objectHeader">Select the files for your chart performance</div>
+    <div id="posListFiles" style="margin-top:20px; margin-left:20px; width:850px; box-sizing: border-box;">
+        <div class="titleListFiles">Select the files for your chart performance</div>
+        <div style="border:2px solid blue; border-top:0px; box-sizing: border-box; display:inline-block;  width:850px;">
         <form  [formGroup]="ChartFileForm" >
             <div formArrayName="select_file"  *ngFor="let FormChart of ChartFileList.controls; let i=index">
-                <div [formGroupName]="i" >
-                    <li style="list-style-type: none;">
+                <div [formGroupName]="i"  >
+                    
+                    <li style="list-style-type: none;"class="radioStyle radioSelectFiles"  [class]="{'even': i % 4 === 0, 'odd':i % 4 === 1, 'evenTwo': i % 3 === 2, 'oddTwo':i % 4 === 3}" >
                         @if (FormChart.value.selected==='Y'){
-                            <input   class="radioButton" (click)='RadioSelection($event)' type="radio"  id="N-{{i}}" value="Y" checked >
-                            <span  [ngClass]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}"  class=" object"  >{{i+1}} - {{myListOfObjects.items[i].name}}</span>
+                            <input  class="sizeRadioButt posRadioButt"  (click)='RadioSelection($event)' type="radio"  id="N-{{i}}" value="Y" checked >
                         } @else {
-                            <input    class="radioButton" (click)='RadioSelection($event)'  type="radio" id="Y-{{i}}" value="Y" > 
-                            <span  [ngClass]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}" class="object" >{{i+1}} - {{myListOfObjects.items[i].name}}</span>
-                        }                           
+                            <input   class="sizeRadioButt  posRadioButt"  (click)='RadioSelection($event)'  type="radio" id="Y-{{i}}" value="Y" > 
+                        }  
+                        <label  style="margin-left:10px;  margin-top:2px;" >{{i+1}} - {{myListOfObjects.items[i].name}}</label>                        
                     </li>
+                    
                 </div>    
             </div>    
         </form>
+        </div>
         <div class="skipLine">&nbsp;</div>
         <div style='margin-top:10px;'>
             <input class="sizeButtons" style='margin-left:40px;' type='Submit' id="S2" (click)='ChartFileSelection()' value="Select">
@@ -82,7 +88,7 @@
         </div>
     </div>
 }
-<div  class="skipLine">&nbsp;</div>
+
 <div style="margin-top:20px;"></div>
 
 <!-- ==================================================================== -->
@@ -96,7 +102,7 @@
     @if (isnewTabDialog() && newTabDialog[newPrevDialog]===true){
             <div class="dropdown ">
                 <div class="newStraight-content"  [style.margin-left.px]="posLeftDropDown" [style.height.px]="theHeight" 
-                style="margin-top:130px ">
+                style="margin-top:38px ">
                     <div  class="newStraightDropDown "  style="background-color:yellow">
                         <div style="text-align: center; height:20px;">{{titleDropDownDate}}</div>
                         @if (titleDropDown!==""){
@@ -116,9 +122,9 @@
 
         @if (isInputDropDown() && lengthTabInput>0){
             <div class="dropdown ">
-                <div class="newStraight-content"  [style.margin-left.px]="posLeftDropDown" [style.height.px]="theHeight" 
-                style="margin-top:60px ">
-                    <div  class="newStraightDropDown "  >                        
+                <div class="newStraight-content"  [style.margin-left.px]="posLeftDropDown" 
+                style="margin-top:38px ">
+                    <div  class="newStraightDropDown " [style.height.px]="theHeight"  >                        
                         <li *ngFor="let tab of tabInputDropDown; let m=index;" 
                                 class="Straight-options"  [style.width.px]="280" [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                     (click)="afterTabInput($event)" id="{{m}}" [value]="m">{{m}}-{{tab.name}}  
@@ -145,8 +151,8 @@
 
 @if (isSelectObject() || isCreateNewFile() || (DisplayShortScreen===true && NewPerformanceFitness.Sport[0].Sport_name!=="")){
     
-    <div  style=" width:1120px;   display:flex; margin-left:20px; display:inline-block; " 
-                            [style.height.px]="mainTableHeight">
+    <div  style=" width:1150px;  display:flex; margin-left:20px; display:inline-block; " 
+                            >
         <div  class="theTitle" style="margin-top:5px;">
             <span class="emptyBoxAction" > &nbsp; </span>
             <span class="sportTitle" > Sport </span>
@@ -159,8 +165,8 @@
         
     
         
-        <div id="posTitle" style="overflow-y:scroll;  border:2px solid blue; "
-                                   [style.height.px]="subTableHeight">
+        <div id="posTitle" style="overflow-y:scroll; max-height:220px ; min-height:60px ;border:2px solid blue; "
+                                   >
                                 
             <div *ngFor="let theSport of NewPerformanceFitness.Sport; let i=index" >
                 <div  [class]="{ 'evenColor': i % 2 === 0, 'oddColor' : i % 2 !==0}" style="margin-top:2px;" >
