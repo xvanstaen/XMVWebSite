@@ -283,7 +283,7 @@
     <div *ngIf="GoToComponent===8; else CompoNine">
 
     <app-health  [identification]="identification"  [configServer]="configServer" 
-    [HealthAllData]="HealthAllData"  [ConfigCaloriesFat]="ConfigCaloriesFat" 
+    [HealthAllData]="HealthAllData"  [ConfigCaloriesFat]="ConfigCaloriesFat" [signalDataFS]="signalDataFS()"
      (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)">
     
   </app-health> <!-- (returnFile)="ReceiveFiles($event)" -->

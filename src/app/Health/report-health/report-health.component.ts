@@ -1,6 +1,6 @@
 import {
   Component, OnInit, Input, Output, ViewChild, HostListener, HostBinding, ChangeDetectionStrategy,
-  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, 
+  Signal, input, SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, 
   AfterContentChecked, Inject, LOCALE_ID, signal
 } from '@angular/core';
 
@@ -76,8 +76,6 @@ export class ReportHealthComponent implements OnInit {
   @Input() inFileParamChart = new classFileParamChart;
   @Input() configServer = new configServer;
 
-  @Input() triggerCheckToLimit:number=9000;
-
   //inData=new classAccessFile;
   //@Input() tabLock = new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
   @Input() tabLock: Array<classAccessFile> = [];
@@ -86,6 +84,11 @@ export class ReportHealthComponent implements OnInit {
   @Input() resultCheckLimitParamChart:number = 0;
   @Input() statusSaveFn:any;
   //@Input() callSaveFn:any;
+
+  triggerCheckToLimit=signal<number>(0);
+  triggerFileSystem=signal<number>(-1);
+  triggerReadFile=signal<number>(-1);
+  triggerSaveFile=signal<number>(-1);
 
   posSlider = new classPosSlider;
   posPalette = new classPosSlider;
@@ -98,8 +101,6 @@ export class ReportHealthComponent implements OnInit {
   @Output() cancelUpdates = new EventEmitter<any>();
 
   @ViewChild('baseChart', { static: true })
-
-  secondaryLevelFn:boolean=true;
 
   isSaveParamChart:boolean=false;
   isMustSaveFile:boolean=false;
@@ -585,12 +586,12 @@ export class ReportHealthComponent implements OnInit {
   openFileAccess=signal(false);
 
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
+      this.openFileAccess.set(false);
       window.cancelAnimationFrame(this.idAnimation);
       this.callTimeToGo();
       this.refDate=new Date();
       this.lastInputAt = strDateTime();
       if (theAction==="only"){
-        this.openFileAccess=signal(true);
         this.theEvent.checkLock.action='checkTO';
         this.theEvent.checkLock.iWait=iWait;
         this.theEvent.checkLock.isDataModified=isDataModified;
@@ -598,7 +599,8 @@ export class ReportHealthComponent implements OnInit {
         this.theEvent.checkLock.iCheck=true;
         this.theEvent.checkLock.lastInputAt=this.lastInputAt;
         this.theEvent.checkLock.nbCalls++;
-        this.triggerCheckToLimit++
+        this.triggerCheckToLimit.update(checkLimit => checkLimit + 1);
+        this.openFileAccess=signal(true);
         this.lockValueBeforeCheck=this.tabLock[5].lock;
         //this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt, iCheck:true,nbCalls:0,action:theAction});
       }
@@ -1711,6 +1713,7 @@ export class ReportHealthComponent implements OnInit {
   }
 
   SelRadio(event: any) {
+    this.openFileAccess.set(false);
     //console.log('event.target.id='+event.target.id+ "  event.currentTarget.id=" + event.currentTarget.id );
     if (this.tabLock[5].lock !== 2) {
       this.timeOutactivity(5, true, false,"only");
@@ -1965,12 +1968,14 @@ export class ReportHealthComponent implements OnInit {
   }
 
   cancelTheSave(){
+    this.openFileAccess.set(false);
     this.IsSaveConfirmed = signal(false);
     this.isMustSaveFile = false;
   }
 
 
   saveFn() {
+    this.openFileAccess.set(false);
     this.errorMsg = '';
     this.IsSaveConfirmed = signal(false);
     this.fillInTabOfCharts(this.selectedChart - 1);
@@ -2017,6 +2022,7 @@ export class ReportHealthComponent implements OnInit {
 
 
   resultAccessFile(theEvent:any){
+    this.openFileAccess.set(false);
     //this.openFileAccess=signal(false);
     if (this.lockValueBeforeCheck!==this.tabLock[5].lock){
       if (this.tabLock[5].lock===1){

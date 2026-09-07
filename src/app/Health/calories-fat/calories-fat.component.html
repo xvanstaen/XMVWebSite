@@ -2,11 +2,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
-    @if (openFileAccess===true){
+    @if (openFileAccess()){
         <app-file-access 
             [configServer]="configServer" [identification]="identification" 
-            [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit"
-            [secondaryLevelFn]="secondaryLevelFn"
+            [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit()"
+            [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
             (resultFileSystem)="resultAccessFile($event)"
         >
     
@@ -18,7 +18,7 @@
         =========================================================================
      -->
 <div class="skipLine">&nbsp;</div>  
-@if (isUserTimeOut===true){
+@if (isUserTimeOut()){
     <div style="margin-left:6px;">
         <div style="font-size:16px; color:blue; display:inline-block; 
                 text-align:center;  margin-top:5px;" [ngStyle]="{'min-width.px': HTMLCaloriesFat.minwidth , 'width.px': HTMLCaloriesFat.width}">
@@ -27,7 +27,7 @@
     </div>
 }
 
-@if (isInitComplete===true && isUserTimeOut===false && isNgStyleCompleted===true){
+@if (isInitComplete===true && !isUserTimeOut() && isNgStyleCompleted===true){
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
  
         @if (tabLock[1].lock===2){
@@ -81,7 +81,7 @@
             -->
         </div>  
     <!-- ================== DROPDOWN LIST : action =============== -->
-        <div class="dropdown" *ngIf="dialogueCalFat[1]===true && isDeleteRecipe===false && isDeleteRecipeFood===false">
+        <div class="dropdown" *ngIf="dialogueCalFat[1]===true && !isDeleteRecipe() && !isDeleteRecipeFood()">
             <div class="Straight-content"  > <!-- selectedPosition.y - 560  -->
                 <div  class="StraightDropDown "  style="height:250px; width:160px; overflow-y:hidden;" [ngStyle]="{ 'margin-top.px': titleHeight - 20 ,'margin-left.px': 50}"  >
                     <li *ngFor="let theTab of TabActionRecipe; let m=index;" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
@@ -119,22 +119,23 @@
         </div>
 
         <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH EXISTING FOOD STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputFood-->
-        <div class="dropdown " *ngIf="isRecipeFoodInput===true && tabInputRecipeFood.length>0">
+        @if (isRecipeFoodInput() && tabInputRecipeFood.length>0){    
+            <div class="dropdown ">
 
-            <div class="Straight-content"  > <!-- slectPosition.y - 560-->
-                <div  class="StraightDropDown-Cal" [ngClass]="{'yesScroll':tabInputRecipeFood.length > 9, 'noScroll':tabInputRecipeFood.length < 10}" [ngStyle]="{  'margin-top.px': titleHeight + 10  ,'margin-left.px':260, 'width.px':200, 'height.px':sizeBoxRecipeFood}" >
-            
-                    <li *ngFor="let tabFood of tabInputRecipeFood; let m=index;" 
-                            class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0, 'yesScroll':tabInputRecipeFood.length > 9, 'noScroll':tabInputRecipeFood.length < 10}" 
-                                (click)="onSelRecipeFood($event)" id="selRecipeFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{tabFood.name}}">
-                            {{tabFood.name}}
-                    </li>
-                </div>            
+                <div class="Straight-content"  > <!-- slectPosition.y - 560-->
+                    <div  class="StraightDropDown-Cal" [ngClass]="{'yesScroll':tabInputRecipeFood.length > 9, 'noScroll':tabInputRecipeFood.length < 10}" [ngStyle]="{  'margin-top.px': titleHeight + 10  ,'margin-left.px':260, 'width.px':200, 'height.px':sizeBoxRecipeFood}" >
+                
+                        <li *ngFor="let tabFood of tabInputRecipeFood; let m=index;" 
+                                class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0, 'yesScroll':tabInputRecipeFood.length > 9, 'noScroll':tabInputRecipeFood.length < 10}" 
+                                    (click)="onSelRecipeFood($event)" id="selRecipeFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{tabFood.name}}">
+                                {{tabFood.name}}
+                        </li>
+                    </div>            
+                </div>
             </div>
-        </div>
-
+        }
         <!-- ================== Confirm/Cancel delete of meal/food =============== -->
-        <div class="Straight-content"  *ngIf="(isDeleteRecipe===true || isDeleteRecipeFood===true)">
+        <div class="Straight-content"  *ngIf="(isDeleteRecipe() || isDeleteRecipeFood())">
             <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': selectedPosition.y - posDeletedItem - 90,'margin-left.px': 50}" >
                 <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion of {{ nameDeletedItem }}</div> 
                 <div  class="theRadio">
@@ -272,13 +273,13 @@
         <div class="posConfirm">
             <div class="skipLine">&nbsp;</div> 
             <div class="posConfirm">
-                <span *ngIf="isSaveRecipeConfirmed===false && isRecipeModified===true">
+                @if (!isSaveRecipeConfirmed() && isRecipeModified()){
                     <span class="msg"  >
                             Your recipe file has been updated. Do you want to
                     </span>
                     <button id='RecipeSave' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
                     <button id='RecipeCancel' class="sizeButtons"  style="width:120px" (click)="CancelUpdates($event)"> Cancel Updates</button>
-                </span>
+                }
                 @if (errorMsg!=='' && returnEmit.saveAction==='RecipeSave'){
                     <div class="skipLine">&nbsp;</div>  
                     <span style="color:red; margin-left:20px; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  >{{errorMsg}}</span>
@@ -286,7 +287,7 @@
                 } 
             </div>
         </div>
-        @if (isSaveRecipeConfirmed===true){
+        @if (isSaveRecipeConfirmed()){
             <form  [formGroup]="SpecificForm" >
                 <div class="msg"  >
                     Please enter the name of the recipe file to save  :
@@ -389,7 +390,8 @@
                 </div>
         </div>
             <!-- ================== DROPDOWN LIST : food =============== -->
-        <div class="dropdown "  *ngIf="filterFood===true">
+        @if (filterFood===true){
+            <div class="dropdown " >
                 <div class="Straight-content"  >
                     <div  class="StraightDropDown StraightDropDownOverflow" [ngStyle]="{  'margin-top.px': titleHeight  ,'margin-left.px':130, 'width':130}" >
                         <li *ngFor="let food of tabFood; let m=index;" 
@@ -398,9 +400,10 @@
                         </li>
                     </div>
                 </div>
-        </div>
+            </div>
+        }
         <!-- ================== DROPDOWN LIST : action =============== -->
-         @if (dialogueCalFat[0]===true && isDeleteType===false && isDeleteFood===false){
+         @if (dialogueCalFat[0]===true && !isDeleteType() && !isDeleteFood()){
             <div class="dropdown" >
                     <div class="Straight-content"  >
                                                             <!-- selectedPosition.y - tablePosTop - 450 -->
@@ -416,7 +419,7 @@
             </div>
         }
             <!-- ================== Confirm/Cancel delete of meal/food =============== selectedPosition.y - posDeletedItem + 50 -->
-        @if (isDeleteType===true || isDeleteFood===true){
+        @if (isDeleteType() || isDeleteFood()){
             <div class="Straight-content">
                     <div  class="StraightDropDown RadioDropDown"  [ngStyle]="{ 'margin-top.px': posItemAction,'margin-left.px': 50}" >
                         <div style="width:90%; color:blue; font-size:14px;">Confirm the deletion of {{ nameDeletedItem }}</div> 
@@ -479,7 +482,7 @@
         @if (tabLock[1].lock===1){
             <div class="skipLine">&nbsp;</div> 
             <div class="posConfirm">
-                @if (isSaveConfirmed===false && isCalFatModified===true){
+                @if (!isSaveConfirmed() && isCalFatModified()){
                     <span class="msg"  >
                         Configuration file is updated. Do you want to
                     </span>
@@ -492,7 +495,7 @@
                     <div class="skipLine">&nbsp;</div> 
                 }
             </div>
-            @if(isSaveConfirmed===true){
+            @if(isSaveConfirmed()){
                 <form  [formGroup]="SpecificForm" >
                     <div class="msg"  >
                         Please enter the name of the file 

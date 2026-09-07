@@ -1,4 +1,4 @@
-import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
+import { Component, OnInit , Input, input, effect, signal, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
 
   import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
@@ -22,20 +22,14 @@ import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnD
 
 })
 export class FileSystemServiceComponent {
-  constructor(
-    private ManageGoogleService: ManageGoogleService,
-    @Inject(LOCALE_ID) private locale: string,
-    ) { }
-
-
+  
   @Input() iWait:number=0;
   @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
   @Input() onInputAction:string="";
   @Input() credentialsFS = new classCredentials;
-  @Input() nbCallFileSystem:number=0;
-
+  nbCallFileSystem=input.required<number>();
   @Input() iWaitToRetrieve:Array<classRetrieveFile>=[];
 
   @Output() resultFileSystem = new EventEmitter<any>();
@@ -54,8 +48,22 @@ export class FileSystemServiceComponent {
 
   returnDataFS=new classHeaderReturnDataFS;
 
-ngOnInit(){
-       
+constructor(
+    private ManageGoogleService: ManageGoogleService,
+    @Inject(LOCALE_ID) private locale: string,
+    ) {effect (() => {this.processCallFS(this.nbCallFileSystem()); }) }
+
+
+processCallFS(event:any){
+  this.returnDataFS.onInputAction=this.onInputAction; 
+  for (var i=0; i< this.iWaitToRetrieve.length; i++){
+    if (this.iWaitToRetrieve[i].accessFS===true){
+        console.log('ngOnChanges nbCallFileSystem iWait=' + this.iWaitToRetrieve[i].iWait);
+        this.returnDataFS.iWait = this.iWaitToRetrieve[i].iWait;
+        this.iWait=this.iWaitToRetrieve[i].iWait;;
+        this.onFileSystem(this.iWaitToRetrieve[i].iWait);
+    }
+  }
 }
 
 onFileSystem(iWait: number) {
@@ -100,11 +108,9 @@ onFileSystem(iWait: number) {
             console.log('end of onFileSystem iWait=' +  + iWaitSave + ' dataFromFS.iWait=' + this.returnDataFS.iWait);
             this.resultFileSystem.emit(this.returnDataFS);
         })
-
     }
-    
-  }
 
+  }
 
   unlockFile(iWait: number) {
     this.tabLock[iWait].action = 'unlock';
@@ -131,7 +137,6 @@ onFileSystem(iWait: number) {
     this.onFileSystem(iWait);
   }
 
-  
   returnOnFileSystem(data: any, iWait: number, dataFromFS:any) {
     console.log('start returnOnFileSystem iWait=' + iWait);
     dataFromFS.reAccessFile=false;
@@ -234,18 +239,6 @@ onFileSystem(iWait: number) {
           seconds = theDate.getUTCSeconds();
         }
         console.log('2 seconds are over; iLoop='+iLoop + '  max iLoop=3000');
-        
-        // let the appropaite feature to call back onFileSystem(iWait)
-        /**
-        if (dataFromFS.nbRecall < 5) {
-          this.onFileSystem(iWait);
-        } else {
-          dataFromFS.nbRecall = 0;
-          if (this.tabLock[iWait].action === 'lock') {
-            this.tabLock[iWait].lock = 2;
-          }
-        }
-        **/
       } else if (data.status === 955) {
         dataFromFS.errorMsg = dataFromFS.errorMsg + 'status error=' + data.status;
         dataFromFS.theResetServer = true;
@@ -335,8 +328,9 @@ checkClock(refSecond:number){
   }
 }
 
-
-ngOnChanges(changes: SimpleChanges) { // TO BE REVIEWED 
+/*** SHOULD NOT BE USED ANYMORE  ***/
+/*** 'callUpdateSystemFile' seems to be from an old process ***/
+ngOnChangesOLD(changes: SimpleChanges) { // TO BE REVIEWED 
   // var nbCall=0;
   for (const  propName in changes){
     const j=changes[propName];
@@ -348,15 +342,17 @@ ngOnChanges(changes: SimpleChanges) { // TO BE REVIEWED
         this.onFileSystem(this.iWait);
       }
       else if (propName==='nbCallFileSystem'){
+        /*
           this.returnDataFS.onInputAction=this.onInputAction; 
-            for (var i=0; i< this.iWaitToRetrieve.length; i++){
+          for (var i=0; i< this.iWaitToRetrieve.length; i++){
               if (this.iWaitToRetrieve[i].accessFS===true){
                 console.log('ngOnChanges nbCallFileSystem iWait=' + this.iWaitToRetrieve[i].iWait);
                 this.returnDataFS.iWait = this.iWaitToRetrieve[i].iWait;
                 this.iWait=this.iWaitToRetrieve[i].iWait;;
                 this.onFileSystem(this.iWaitToRetrieve[i].iWait);
               }
-            }
+          }
+          */
       }
     }
     

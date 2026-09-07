@@ -1,6 +1,7 @@
 import {
   Component, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
-  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
+  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, 
+  input, Signal, effect, computed, Inject, LOCALE_ID, signal
 } from '@angular/core';
 
 import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
@@ -27,13 +28,6 @@ import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, fnCheckTimeOut, 
 })
 export class MainManageFileComponent {
 
-  constructor(
-    private ManageGoogleService: ManageGoogleService,
-    @Inject(LOCALE_ID) private locale: string,
-  ) { }
-
- 
-
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
   
@@ -44,13 +38,14 @@ export class MainManageFileComponent {
   @Input() iWaitToRetrieve:Array<classRetrieveFile>=[];
   @Input() eventCheckToLimit=new classtheEvent;
   @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-  @Input() triggerCheckToLimit:number=0;
-  @Input() triggerReadFile:number=0;
-  @Input() triggerSaveFile:number=0;
-  @Input() triggerFileSystem:number=0;
-  @Input() triggerFunction: number = 0;
+  
+  triggerCheckToLimit=input.required<number>();
+  triggerReadFile=input.required<number>();
+  triggerSaveFile=input.required<number>();
+  triggerFileSystem=input.required<number>();
+  //@Input() triggerFunction: number = 0;
 
-  @Input() secondaryLevelFn:boolean=false;
+  //@Input() secondaryLevelFn:boolean=false;
 
   @Output() returnFile = new EventEmitter<any>();
   @Output() returnSaveFn = new EventEmitter<any>();
@@ -102,8 +97,8 @@ export class MainManageFileComponent {
 
   isMustSaveFile:boolean=false;
   
-  callFileSystem:boolean=true;
-  nbCallFileSystem:number=0;
+  //callFileSystem:boolean=true;
+  nbCallFileSystem=signal<number>(0);
 
   
   theEvent = new classtheEvent;
@@ -119,64 +114,76 @@ export class MainManageFileComponent {
 
   iWait:number=0;
 
+  nbRecallFS:number=0;
 
-  ngOnInit(): void {
-    console.log('file-access - ngOnInit');
-    // used to open files in parallel using the google and mongo servers
-    if (this.secondaryLevelFn===false){
+  constructor(
+    private ManageGoogleService: ManageGoogleService,
+    @Inject(LOCALE_ID) private locale: string,) 
+    {effect (() => {this.processTriggerFS(this.triggerFileSystem()); 
+              this.processReadFile(this.triggerReadFile());
+              this.processCheckToLimit(this.triggerCheckToLimit());
+              this.processSaveFile(this.triggerSaveFile());
+            }) 
+    }
+
+  processTriggerFS(event:any){
+    if (this.triggerFileSystem()!==-1){
+      console.log('======= processTriggerFS -- ' + this.triggerFileSystem());
+      if (this.iWaitToRetrieve.length>0){
+        this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1)
+      }
+    }
+  }
+
+  processReadFile(event:any){
+    
+    
+    if (this.triggerReadFile()!==-1){
+      var accessToFS=0;
       for (var i=0; i<this.maxEventHTTPrequest; i++){
         this.EventHTTPReceived[i] = false;
         this.EventStopWaitHTTP[i] = false;
         this.TabLoop[i]=0;
       }
-    } else {
-      this.nbCallFileSystem=2;
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log('file-access - ngOnChanges');
-    var callSaveProcess=0;
-    var isChecked=false;
-    for (const propName in changes) {
-      if ((propName === 'eventCheckToLimit' || propName === 'triggerCheckToLimit') &&  isChecked===false && this.eventCheckToLimit.checkLock.action!=="firstLoop") {  
-        if (this.eventCheckToLimit.checkLock.iCheck===true){
-          isChecked=true;
-          this.nbRecallFS=0;
-          console.log('ngOnChanges file-access eventCheckToLimit iWait=' + this.eventCheckToLimit.iWait);
-          callSaveProcess++
-          this.checkLockLimit(this.eventCheckToLimit);
+      for (var i=0; i< this.iWaitToRetrieve.length; i++){
+        this.retrieveRecord(this.iWaitToRetrieve[i].iWait);
+        if (this.iWaitToRetrieve[i].accessFS===true){
+          accessToFS++;
         }
-      } else if (propName === 'triggerReadFile' ) {
-       
-        for (var i=0; i< this.iWaitToRetrieve.length; i++){
-          console.log('ngOnChanges file-access iWait=' + this.iWaitToRetrieve[i].iWait);
-          this.retrieveRecord(this.iWaitToRetrieve[i].iWait)
-        }
-        if (this.iWaitToRetrieve.length>0){
-          this.nbCallFileSystem++
-        }
-      } else if (propName === 'triggerFileSystem' ) {
-        if (this.iWaitToRetrieve.length>0){
-          this.nbCallFileSystem++
-        }
-      } else if ((propName === 'eventSaveRecord' || propName==='triggerSaveFile' || propName==='theTriggerSaveFile') && changes[propName].firstChange === false) {
-          if (callSaveProcess===0){
-            console.log('ngOnChanges file-access eventSaveRecord iWait=' + this.eventCheckToLimit.iWait);
-            this.mainSaveProcess(this.eventCheckToLimit);
-            callSaveProcess++
-          }
+      }
+      console.log('======= processReadFile -- ' + this.triggerReadFile());
+      console.log('======= processReadFile nb of files read -- ' + i);
+      if (this.iWaitToRetrieve.length > 0 && accessToFS > 0){
+        this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
       }
     }
   }
-  nbRecallFS:number=0;
+  loopCheckToLimit:number=0;
+  processCheckToLimit(event:any){
+    if (this.triggerCheckToLimit() !== -1){
+      if (this.eventCheckToLimit.checkLock.iCheck===true){
+          this.nbRecallFS=0;
+          this.loopCheckToLimit++;
+          console.log('PROCESS file-access eventCheckToLimit iWait=' + this.eventCheckToLimit.iWait);
+          //callSaveProcess++
+          this.checkLockLimit(this.eventCheckToLimit);
+      }
+    }
+  }
+
+  processSaveFile(event:any){
+    if (this.triggerSaveFile()!==-1){
+      this.SaveNewRecord(this.eventCheckToLimit.bucket, this.eventCheckToLimit.object, this.eventCheckToLimit.fileContent, this.eventCheckToLimit.iWait);
+    }
+  }
+
   resultFileSystemFn(event:any){
     console.log(' fileAccess process resultFS after emit from onFileSystem iWait=' + event.iWait +  '   returnDataFS=' + this.returnDataFS.iWait );
     if (this.returnDataFS.errorCode===666){
       console.log('this.returnDataFS.errorCode===666 this.nbRecallFS='+this.nbRecallFS );
       if (this.nbRecallFS<4){
         this.nbRecallFS++
-        this.nbCallFileSystem++;
+        this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
       } else {
         this.nbRecallFS=0;
       }
@@ -189,12 +196,13 @@ export class MainManageFileComponent {
 
   unlockFile(iWait:number){
     this.tabLock[iWait].action="unlock";
-    this.callFileSystem=true;
-    this.nbCallFileSystem++;
+    //this.callFileSystem=true;
+    this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
   }
   
   errCalcCalFat:string="";
   checkLockLimit(event:any) {
+    this.nbCallFileSystem.set(0);
     console.log('file-access - start checkLockLimit - this.nbCallFileSystem='+this.nbCallFileSystem+'  this.returnDataFS.nbRecall='+this.returnDataFS.nbRecall);
     var valueCheck = { action: '', lockValue: 0, lockAction: '' };
     var eventToCheck=new classtheEvent;
@@ -216,20 +224,16 @@ export class MainManageFileComponent {
         this.tabLock[event.checkLock.iWait].lock = valueCheck.lockValue;
       } else if (valueCheck.action === 'ProcessSave') {
         this.mainSaveProcess(this.eventCheckToLimit);
-        /*
-        this.returnDataFS.iWait=event.checkLock.iWait;
-        this.returnDataFS.processSave=true;
-        this.resultFileSystem.emit(this.returnDataFS);
-        */
-        // this.nbCallFileSystem++;
       } else {
         this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
         const theClass=new classRetrieveFile;
         this.iWaitToRetrieve.push(theClass);
         this.iWaitToRetrieve[0].iWait=event.checkLock.iWait;
         this.iWaitToRetrieve[0].accessFS=true;
-        this.callFileSystem=true; 
-        this.nbCallFileSystem++;
+        //this.callFileSystem=true; 
+        if (this.loopCheckToLimit<=1){
+          this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
+        }
         if (valueCheck.action === 'updateSystemFile') {
           this.tabLock[event.checkLock.iWait].action = valueCheck.lockAction;
         } else if (valueCheck.action === 'checkFile') {
@@ -251,7 +255,7 @@ export class MainManageFileComponent {
       this.resultFileSystem.emit(this.returnDataFS);
     }
 
-    console.log('file-access - end checkLockLimit - this.nbCallFileSystem='+this.nbCallFileSystem+'  this.returnDataFS.nbRecall='+this.returnDataFS.nbRecall);
+    console.log('file-access - end checkLockLimit - this.nbCallFileSystem='+this.nbCallFileSystem()+'  this.returnDataFS.nbRecall='+this.returnDataFS.nbRecall);
   }
   
   retrieveRecord(event:any){
@@ -280,7 +284,7 @@ export class MainManageFileComponent {
     }
     this.iWait=event;
     this.tabLock[this.iWait].action='check&update';
-    //this.nbCallFileSystem++
+    //this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1)
     //this.callFileSystem=true; 
   }
 
@@ -322,19 +326,6 @@ export class MainManageFileComponent {
   }
 
 
-/*
-  confirmSaveAction:boolean=false;
-
-  confirmSave(event: any) {
-    if (this.tabLock[event.checkLock.iWait].lock === 1) {
-      this.confirmSaveAction = true;
-      //this.checkLockLimit({iWait:event.checkLock.iWait,isDataModified:event.checkLock.isDataModified,isSaveFile:event.checkLock.isSaveFile, lastInputAt:event.checkLock.lastInputAt});
-      this.checkLockLimit(event);
-      this.confirmSaveAction = false;
-    } 
-  }
-*/
-
 
 
   mainSaveProcess(event:any){
@@ -345,6 +336,7 @@ export class MainManageFileComponent {
     //var file=new File ([JSON.stringify(this.HealthAllData)],GoogleObject, {type: 'application/json'});
     var file = new File([JSON.stringify(record)], GoogleObject, { type: 'application/json' });
     const iWaitSave=iWait;
+    this.nbCallFileSystem.set(0);
     if (GoogleObject === 'ConsoleLog.json') {
       const myTime = new Date();
       GoogleObject = 'ConsoleLog.json-' + myTime.toString().substring(4, 21);
@@ -352,8 +344,8 @@ export class MainManageFileComponent {
     }
     if (this.identification.triggerFileSystem !== "No") {
       this.tabLock[iWait].action='updatedAt';
-      this.callFileSystem=true;
-      this.nbCallFileSystem++;
+      //this.callFileSystem=true;
+      this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
     }
     console.log('SaveNewRecord of object=' + GoogleObject);
 
@@ -383,40 +375,7 @@ export class MainManageFileComponent {
         }
       )
   }
-/*
-  @HostListener('window:unload', ['$event'])
-  unloadHandler(event: any) {
-    this.ngOnDestroy();
-  }
 
-  @HostListener('window:beforeunload', ['$event'])
-  beforeUnloadHandler(event: any) {
-    this.ngOnDestroy();
-  }
-  
-  ngOnDestroy() {
-    this.passDestroy++
-    console.log('trigger ngOnDestroy  === pass=' + this.passDestroy);
-    if (this.processDestroy === false) {
-      this.processDestroy = true;
-      var trouve = false;
-      for (var i = 0; i < this.tabLock.length && trouve === false; i++) {
-        if (this.tabLock[i].lock === 1) {
-          trouve = true;
-          this.tabLock[0].action = 'onDestroy';
-          this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, this.iWait.toString())
-          .subscribe(
-            data => {
-              console.log('onDestroy: return from File System' + JSON.stringify(data));
-            },
-            err=>{
-              console.log('onDestroy: error, return from File System' + JSON.stringify(err))
-            })
-        }
-      }
-    }
-  }
-*/
   waitHTTP(loop: number, max_loop: number, eventNb: number) {
     const pas = 500;
     if (loop % pas === 0) {

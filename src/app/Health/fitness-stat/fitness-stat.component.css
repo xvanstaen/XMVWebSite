@@ -233,6 +233,11 @@ div{
   background-color:grey; 
 }
 
+.dropdown {
+    position: relative;
+    display: contents; 
+}
+
 .newStraight-content{
   position: absolute;
   z-index: 1;
@@ -365,16 +370,6 @@ div{
   background-color: rgb(75, 194, 237);
 }
 
-.topDiv{
-  /*
-  background-color:lightpink;
-  */
-  height:34px;
-  display:block;
-  float:left;
-  border:solid red 0px;
-}
-
 .divItem{
   display:inline-block; 
   width:99%; 
@@ -418,17 +413,6 @@ div{
   padding-left:10px;
 }
 
-.labelList{
-  margin-left: 15px;
-  width:95%;
-  display:inline-block;
-  border:solid blue 2px;
-  height: 30px;
-  text-align: center;
-  padding-top: 2px;
-  font-size: 16px;
-  background-color: cyan;
-}
 
 .iconSpace{
   float:left; width:4px;
@@ -580,8 +564,15 @@ div{
   float:left;
 } 
 
+.arrow_down{
+    cursor: pointer;
+    color:blue;
+}
 
-
+.arrow_down_size:hover{
+    color:red;
+    background-color: bisque;
+} 
 
 .sizeButtons{
     width:80px;

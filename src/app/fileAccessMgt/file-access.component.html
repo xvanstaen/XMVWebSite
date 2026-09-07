@@ -1,15 +1,14 @@
 
-<!--
-@if (callFileSystem===true){
--->
 
-<app-file-system-service
-        [iWait]="iWait" [tabLock]="tabLock" [nbCallFileSystem]="nbCallFileSystem"
+@if (nbCallFileSystem()>0){
+        <app-file-system-service
+        [iWait]="iWait" [tabLock]="tabLock" [nbCallFileSystem]="nbCallFileSystem()"
         [iWaitToRetrieve]="iWaitToRetrieve"
         [configServer]="configServer" [identification]="identification" [credentialsFS]="credentialsFS"
         (resultFileSystem)="resultFileSystemFn($event)"
         >
-</app-file-system-service>
+        </app-file-system-service>
+}
 <!--
 }
 -->

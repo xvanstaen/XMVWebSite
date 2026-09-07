@@ -1,6 +1,7 @@
 import {
   Component, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
-  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
+  signal, input, effect, SimpleChanges, EventEmitter, AfterViewInit, 
+  AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
 import { MatIconModule} from '@angular/material/icon';
@@ -37,11 +38,6 @@ import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSize
 
 })
 export class HealthComponent  {
-
-  constructor(
-    private scroller: ViewportScroller,
-    @Inject(LOCALE_ID) private locale: string,
-  ) { }
 
   @Output() initTrackRecord = new EventEmitter<any>();
   @Output() retrieveRecord = new EventEmitter<any>();
@@ -80,10 +76,16 @@ export class HealthComponent  {
     }
   ];
 
-  @Input() actionHealth:number=0;
   @Input() createDropDownCalFat:number=0;
+  actionHealth=input.required<number>();
+  previousSignalActionHealth:number=-1;
+  signalDataFS=input.required<number>();
+  previousSignalDataFS:number=-1;
 
-  @Input() triggerCheckToLimit:number=8000;
+  triggerCheckToLimit=signal<number>(-1);
+  triggerFileSystem=signal<number>(-1);
+  triggerReadFile=signal<number>(-1);
+  triggerSaveFile=signal<number>(-1);
 
   secondaryLevelFn:boolean=true;
 
@@ -246,6 +248,21 @@ export class HealthComponent  {
   }
   */
 
+  constructor(
+    private scroller: ViewportScroller,
+    @Inject(LOCALE_ID) private locale: string,
+    ) {effect (() => {
+          if (this.previousSignalDataFS!==this.signalDataFS()){
+            this.previousSignalDataFS=this.signalDataFS();
+            this.afterCheckFS(this.signalDataFS());
+          }
+              
+          if (this.previousSignalActionHealth!==this.actionHealth()){
+            this.previousSignalActionHealth=this.actionHealth();
+            this.processSignalFunctions (this.actionHealth());  
+          }
+           
+      }) }
 
   actionMouseUp(event:any){
     this.posDivAfterTitle = getPosDiv("posAfterTitle");
@@ -281,7 +298,7 @@ export class HealthComponent  {
   }
 
   ngOnInit(): void {
-
+    this.createDropDownCalFatFn();
     this.minNum = 0 ;
     this.maxNum = this.maxItemsPerPage;
     
@@ -552,7 +569,6 @@ export class HealthComponent  {
     this.callTimeToGo();
     this.refDate=new Date();
     this.lastInputAt = strDateTime();
-
     if (theAction==="only"){
       //this.openFileAccess=true;
       this.theEvent.checkLock.action='checkTO';
@@ -562,7 +578,7 @@ export class HealthComponent  {
       this.theEvent.checkLock.iCheck=true;
       this.theEvent.checkLock.lastInputAt=this.lastInputAt;
       this.theEvent.checkLock.nbCalls++;
-      this.triggerCheckToLimit++
+      this.triggerCheckToLimit.update(CheckLimit => CheckLimit + 1);
       this.lockValueBeforeCheck=this.tabLock[0].lock;
       //this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt, iCheck:true,nbCalls:0,action:theAction});
     }
@@ -573,8 +589,6 @@ export class HealthComponent  {
   displayMin:number=0;
   displayHour:number=0;
   idAnimation:any;
-
-
   callTimeToGo(){
     const currSeconds=this.refDate.getSeconds() ;
     const currMinutes=this.refDate.getMinutes();
@@ -917,7 +931,7 @@ export class HealthComponent  {
   }
 
   onDropDownAll(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+    // this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.theEvent.target.id = 'selAction-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
     this.theEvent.target.textContent = event.target.textContent;
     this.isSaveHealth=false;
@@ -925,6 +939,7 @@ export class HealthComponent  {
   }
 
   DelAfterConfirm(event: any) {
+    
     this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.resetBooleans();
     this.isDeleteItem = false;
@@ -1304,6 +1319,34 @@ export class HealthComponent  {
     this.errorMsg = '';
     this.errorFn = '';
   }
+
+  processSignalFunctions(data:any){
+    if (this.onInputAction === "saveHealth"){
+        this.isMustSaveFile = false;
+        this.isSaveHealth = false;
+        this.IsSaveConfirmedAll = false;
+        this.theEvent.checkLock.isDataModified = false;
+        this.theEvent.checkLock.isSaveFile = false;
+        this.theEvent.checkLock.iCheck = true;
+        this.resetBooleans();
+        if (this.statusSaveFn.status===200 || this.statusSaveFn.status===0){
+          this.errorMsg='File has been successfully saved';
+          this.isAllDataModified = false;
+        } else {
+          this.errorMsg=this.statusSaveFn.err;
+        }
+    } else  if (this.onInputAction === "cancelUpdateAll"){
+      if (this.filterHealth = true && (this.  TheSelectDisplays.controls['startRange'].value !== '' || this.TheSelectDisplays.controls['endRange'].value !== '')) {
+          this.theEvent.target.id === 'selectAllData';
+          this.dateRangeSelection(this.theEvent);
+      } else {
+          this.maxNum = this.maxItemsPerPage;
+          this.minNum = 0;
+          this.numPage = 1;
+      }
+    }
+      this.onInputAction="";
+  }
   
   cancelTheSave(){
     this.IsSaveConfirmedAll = false;
@@ -1312,59 +1355,54 @@ export class HealthComponent  {
 
 //  checkTimeOut:boolean=true;
 
-  afterCheckFS(){
-    console.log('Health component - afterCheckFS - this.onInputAction='+this.onInputAction);
-    if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){
-      this.errorMsg = this.returnDataFSHealth.errorMsg;
-    } 
-    else  if (this.tabLock[0].lock === 1 && this.onInputAction === "onInputDailyAll") {
-      this.onInputDailyAllA(this.theEvent);
-      this.onInputAction="";
-    } else if (this.tabLock[0].lock===1 && this.onInputAction === "onAction") {
-      //this.onActionA(this.theEvent);
-      this.onInputAction="";
-    //} else if (this.onInputAction === "confirmSave"){
-    //  this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-    //  this.IsSaveConfirmedAll = true;
-    //} else if (this.onInputAction === "saveHealth"){
-    //  this.saveHealthAfterCheckToLimit();
-    //  this.onInputAction='';
-    } else if (this.tabLock[0].action === 'check&update' && this.tabLock[0].status === 0 && this.isMustSaveFile === true) {
-      this.ConfirmSaveA(this.theEvent); 
-    } else if (this.tabLock[0].lock !== 1 && (this.onInputAction === "saveHealth" || this.onInputAction === "confirmSave")){
-      this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFSHealth.errorMsg + ")" + " status=" + this.tabLock[0].status;
-      this.isMustSaveFile = false;
-      this.isSaveHealth = false;
-  //    this.checkTimeOut = false;
-    } else if (this.tabLock[0].lock === 2) {
-          this.isAllDataModified = false; // is envionment reinitialised
-          this.isSaveHealth = false;
-    } else {
-      console.log('File is locked by this user; no specific action needed; user can update the data');
+  afterCheckFS(data:any){
+    if (this.signalDataFS()!==-1){
+      console.log('Health component - afterCheckFS - this.onInputAction='+this.onInputAction);
+      if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){
+        this.errorMsg = this.returnDataFSHealth.errorMsg;
+      } 
+      else  if (this.tabLock[0].lock === 1 && this.onInputAction === "onInputDailyAll") {
+        this.onInputDailyAllA(this.theEvent);
+        this.onInputAction="";
+      } else if (this.tabLock[0].lock===1 && this.onInputAction === "onAction") {
+        //this.onActionA(this.theEvent);
+        this.onInputAction="";
+      } else if (this.tabLock[0].action === 'check&update' && this.tabLock[0].status === 0 && this.isMustSaveFile === true) {
+        this.ConfirmSaveA(this.theEvent); 
+      } else if (this.tabLock[0].lock !== 1 && (this.onInputAction === "saveHealth" || this.onInputAction === "confirmSave")){
+        this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFSHealth.errorMsg + ")" + " status=" + this.tabLock[0].status;
+        this.isMustSaveFile = false;
+        this.isSaveHealth = false;
+      } else if (this.tabLock[0].lock === 2) {
+            this.isAllDataModified = false; // is envionment reinitialised
+            this.isSaveHealth = false;
+      } else {
+        console.log('File is locked by this user; no specific action needed; user can update the data');
+      }
     }
   }
 
-
+/****
   firstLoop:boolean=true;
   ngOnChanges(changes: SimpleChanges) {
     console.log('Health component - ngOnChanges - this.onInputAction='+this.onInputAction);
     var callAfterCheck=0;
     if (this.firstLoop===true){
       this.firstLoop=false;
-      for (const propName in changes) {
-        const j = changes[propName];
-        if (propName==='ConfigCaloriesFat') {
-          this.createDropDownCalFatFn();
-        }
-      }
+      //for (const propName in changes) {
+      //  const j = changes[propName];
+      //  if (propName==='ConfigCaloriesFat') {
+      //    //this.createDropDownCalFatFn();
+      //  }
+      // }
     }
     else {
       for (const propName in changes) {
         const j = changes[propName];
         if (propName === 'resultCheckLimitHealth' && changes[propName].firstChange === false) {
           if (callAfterCheck===0){
-            callAfterCheck++
-            this.afterCheckFS();
+            callAfterCheck++ ;
+            //this.afterCheckFS(1);
           }
         } else if (propName === 'actionHealth' && changes[propName].firstChange === false) {
           console.log("**** health component - ngOnChange - propName === 'actionHealth");
@@ -1391,17 +1429,17 @@ export class HealthComponent  {
               this.isUserTimeOut=false;
           }
           this.onInputAction="";
-        } else if (propName==='returnDataFSHealth' && changes[propName].firstChange === false) {
+        }  else if (propName==='returnDataFSHealth' && changes[propName].firstChange === false) {
           if (callAfterCheck===0){
-            callAfterCheck++  
-            this.afterCheckFS();
+            callAfterCheck++  ;
+            //this.afterCheckFS(1);
           }
-        } else if (propName === 'calculateHeight') {
+        }  else if (propName === 'calculateHeight') {
             console.log("**** health component - ngOnChange - propName === 'calculateHeight");
             this.calculateHeight();
         }  else if (propName === 'ConfigCaloriesFat') {
             this.createDropDownCalFatFn();
-        } else if (propName === 'callSaveFunction') {
+        }  else if (propName === 'callSaveFunction') {
             this.isMustSaveFile = false;
             this.isSaveHealth = false;
             this.IsSaveConfirmedAll = false;
@@ -1420,6 +1458,6 @@ export class HealthComponent  {
       }  
     }
   }
-
+*/
 
 }

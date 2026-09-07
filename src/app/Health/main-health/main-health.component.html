@@ -1,14 +1,16 @@
 
-@if (openFileAccess()){
+
+@if (openFileAccess() ){
     <app-file-access 
         [configServer]="configServer" [identification]="identification" [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
-        [iWaitToRetrieve]="iWaitToRetrieve" [tabLock]="tabLock" [eventCheckToLimit]="eventLockLimit"
-        [triggerFileSystem]="triggerFileSystem" [triggerReadFile]="triggerReadFile" [triggerSaveFile]="triggerSaveFile"
+        [iWaitToRetrieve]="iWaitToRetrieve" [tabLock]="tabLock" [eventCheckToLimit]="eventLockLimit" [triggerCheckToLimit]="triggerCheckToLimit()"
+        [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
         (returnFile)="resultGetRecord($event)" (returnSaveFn)="resultSaveRecord($event)" (resultFileSystem)="resultFileSystemFn($event)"
     >
-
     </app-file-access>
 }
+
+
 
     <div id='posTopHealth' [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:240px; margin-left:20px; border:solid 2px blue; ">
         <div class="skipLine">&nbsp;</div>  
@@ -54,6 +56,7 @@
         </div>
         <div class="skipLine">&nbsp;</div>
     </div>
+
     @if (createNewHealth===true){
         <div style="margin-left:20px; margin-top:10px; border: blue 2px double; background-color: silver;width:90%; max-width:500px;">
             <div class="skipLine">&nbsp;</div>
@@ -106,8 +109,9 @@
             [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
             [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
             [tabNewRecordAll]="tabNewRecordAll"  [createDropDownCalFat]="createDropDownCalFat"
-            [returnDataFSHealth]="returnDataFSHealth" [resultCheckLimitHealth]="resultCheckLimitHealth" [actionHealth]="actionHealth"
+            [returnDataFSHealth]="returnDataFSHealth" [resultCheckLimitHealth]="resultCheckLimitHealth" [actionHealth]="actionHealth()"
             [callSaveFunction]="callSaveFunctionHealth" [statusSaveFn]="statusSaveFnHealth"
+            [signalDataFS]="signalDataFS()"
             (initTrackRecord)="initTrackRecord()" (retrieveRecord)="retrieveRecord($event)"
             (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
             (cancelUpdates)="cancelUpdates($event)" (processSaveHealth)="processSaveHealth($event)"

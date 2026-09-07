@@ -26,6 +26,7 @@ import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
 import { MyDropDownComponent } from '../../Health/my-drop-down/my-drop-down.component';
 import { OneCalendarComponent } from '../../one-calendar/one-calendar.component';
 import { FitnessChartComponent } from '../../Health/fitness-chart/fitness-chart.component';
+import { FitnessConfig} from '../../Health/fitness-config/fitness-config';
 
 import {classPosDiv, getPosDiv} from '../../getPosDiv';
 
@@ -45,7 +46,7 @@ export class ClassFilesAlreadyMerged{
   templateUrl: './fitness-stat.component.html',
   styleUrls: ['./fitness-stat.component.css'],
   standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,OneCalendarComponent, FitnessChartComponent, MyDropDownComponent, ],
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,OneCalendarComponent, FitnessChartComponent, MyDropDownComponent, FitnessConfig],
   providers:[DatePipe]
 })
 
@@ -78,16 +79,11 @@ FormChart():FormGroup {
 }
 
 
-FillFSelected= {'selected':''};
+listObjects= {'selected':''};
 
 @Input() configServer = new configServer;
 @Input() identification= new LoginIdentif;
-
-//@Input() InNewPerformanceFitness=new PerformanceFitness;
-//@Input() InMergeFilesFitness:Array<PerformanceFitness>=[];
 @Input() InMyConfigFitness=new ConfigFitness;
-
-@Output() returnFile= new EventEmitter<any>();
 
 NewPerformanceFitness=new PerformanceFitness;
 MergeFilesFitness:Array<PerformanceFitness>=[];
@@ -99,9 +95,8 @@ TabBigData:Array<BigData>=[];
 
 myListOfObjects=new Bucket_List_Info;
 
-IsTestBoolean:boolean=true;
 
-DisplayConfig:boolean=true;
+selDisplayConfig=signal<boolean>(false);
 DisplayPerfFigures:boolean=true;
 DisplayPerfChart:boolean=true;
 DisplayShortScreen:boolean=true;
@@ -113,8 +108,8 @@ MergeFiles:boolean=false;
 
 TotalMergeFiles:number=0;
 NbWaitHTTP:number=0;
-BufferDisplay:Array<string>=[]; // initialised in onInit
-maxBuffer:number=5;
+//BufferDisplay:Array<string>=[]; // initialised in onInit
+//maxBuffer:number=5;
 
 FilesAlreadyMerged:Array<any>=[];
 ClassFilesAlreadyMerged={
@@ -123,7 +118,6 @@ ClassFilesAlreadyMerged={
   startTabBigData:1,
   endTabBigData:1
 }
-
 
 IsSaveConfirmed:boolean=false;
 SpecificForm=new FormGroup({
@@ -186,33 +180,35 @@ ref_format=new thedateformat;
 myObj=new eventoutput;
 Input_Travel_O_R:string='';
 
-
-kg_lbs:number=2.20462;
-lbs_kg:number=0.453592;
-
-
 prev_Dialogue:number=0;
 max_dialogue:number=30;
 TabPerfConfig:Array<number>=[];
 
-selectedIndex:number=0;
-
 getScreenWidth: any;
 getScreenHeight: any;
 device_type:string='';
+refMedia:number=1010;
 
 ClassActiv = new ClassSport;
 ClassBod = new ClassActivity;
 ClassExec = new ClassExercise;
+
+idText:string='';
+theConfig=new ConfigFitness;
 
 DisplayCalendar:boolean=true;
 ObjectIsRetrieved:boolean=false;
 
 // config fitness for this individual exists or not
 ConfigExist:boolean=false;
-isConfigConfirmed:boolean=false;
+
 OpenDialogue:Array<boolean>=[];
 isOpenDialogue=signal<boolean>(false);
+
+isDeleteFile=signal<boolean>(false);
+isConfirmedDelete=signal<boolean>(false);
+
+nbSelectedFiles:number=0;
 
 //Draw_Line:string='-';
 TabDisplayCalendar:Array<boolean>=[];
@@ -245,7 +241,7 @@ Error_OpenCalendar:string='close the calendar which is already open for another 
 
 @HostBinding("style.--posLeftDropdown")
 
-refMedia:number=1010;
+
 
 callingComponent:string='FitnessStat';
 
@@ -373,7 +369,6 @@ ngOnInit(){
   this.posLeftSeance=this.posLeftExercise+this.newTextWidth - 18;
   this.posLeftResult=this.posLeftExercise+this.newTextWidth+this.boxActionWidth + 200;
 
-  this.DisplayConfig=false;
   this.TheSelectDisplays.controls['Config'].setValue('N');
   this.DisplayPerfChart=false;
   this.TheSelectDisplays.controls['PerfChart'].setValue('N');
@@ -388,11 +383,11 @@ ngOnInit(){
   this.getScreenHeight = window.innerHeight;
   if (this.getScreenWidth<620){ this.nbToDisplay=2; this.nbSeanceDisplay=3;} 
   else { this.nbToDisplay=4; this.nbSeanceDisplay=5;}
-
+/*
   for (var i=0; i<this.maxBuffer; i++){
       this.BufferDisplay[i]='';
   }
-
+*/
   this.DisplayCalendarOnly=true;
   this.DisplayCalendar=false;
   this.ref_format.length_day=2;
@@ -719,6 +714,36 @@ afterDropDown(event:any){
   }
 }
 
+theArrow(event:any){
+  this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isOpenDialogue()){
+    this.isOpenDialogue.set(false);
+  }
+  this.manageIds(event.target.id);
+  if (  event.target.id.substring(0,5)==='Sport'){
+    this.myEvent.idString='lSpo-'+this.TabOfId[0];
+    this.prev_Dialogue=0;
+  } else if (  event.target.id.substring(0,8)==='Activity'){
+    this.myEvent.idString='lAct-'+this.TabOfId[0]+'-'+this.TabOfId[1];
+    this.prev_Dialogue=1;
+  } else if (  event.target.id.substring(0,12)==='ExerciseUnit'){
+    this.myEvent.idString='lExeUnit-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
+    this.prev_Dialogue=2;
+  } else if (  event.target.id.substring(0,8)==='PerfType'){
+    this.myEvent.idString='ltPerf-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2]+'-'+this.TabOfId[3];
+    this.prev_Dialogue=3;
+  } else if (  event.target.id.substring(0,8)==='PerfUnit'){
+    this.myEvent.idString='luPerf-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2]+'-'+this.TabOfId[3];
+    this.prev_Dialogue=4;
+  } else if (  event.target.id.substring(0,12)==='ExerciseName'){
+    this.myEvent.idString='lExeName-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
+    this.prev_Dialogue=5;
+  } 
+  this.OpenDialogue[this.prev_Dialogue]=true;
+  this.isOpenDialogue.set(true);
+  this.myEvent.dialogueNb=this.prev_Dialogue;
+  //this.cdr.detectChanges();
+}
 
 fillFiles(inFile:PerformanceFitness, outFile:PerformanceFitness){
 // const classOut=new PerformanceFitness;
@@ -763,9 +788,7 @@ for (var i=0; i<inFile.Sport.length; i++){
       }
     }
   }
-
 }
-
 
 
 SelRadio(event:any){
@@ -786,9 +809,9 @@ SelRadio(event:any){
       }
   } else if (i==='3'){
       if (NoYes==='Y'){
-        this.DisplayConfig=true;
+        this.selDisplayConfig.set(true);
       } else {
-        this.DisplayConfig=false;
+        this.selDisplayConfig.set(false);
       }
     } else if (i==='4'){
       if (NoYes==='Y'){
@@ -875,14 +898,16 @@ saveNewPerfFile(){
   }
 }
 
+isMergeAll=signal<boolean>(false);
 SelectAll(){
   this.isSelectObject.set(true);
-  var i=0;
-  for (i=0; i<this.ChartFileList.length; i++){
-    this.FillFSelected.selected='Y';
-    this.ChartFileList.controls[i].setValue(this.FillFSelected);
+  for (this.nbSelectedFiles=0; this.nbSelectedFiles<this.ChartFileList.length; this.nbSelectedFiles++){
+    this.listObjects.selected='Y';
+    this.ChartFileList.controls[this.nbSelectedFiles].setValue(this.listObjects);
   }
+  this.nbSelectedFiles = this.ChartFileList.length;
   this.ChartFileSelection();
+  this.isMergeAll.set(true)
   //this.cdr.detectChanges();
 }
 
@@ -901,6 +926,11 @@ CancelAll(){
   this.NewPerformanceFitness= new PerformanceFitness;
   this.saveNewPerformance= new PerformanceFitness;
   this.isResetRadio.set(true);
+  this.nbSelectedFiles=0;
+  this.isTabDisplayCalendar.set(false);
+  this.isnewTabDialog.set(false);
+  this.isModified.set(false);
+  this.isInputDropDown.set(false);
 }
 
 isResetRadio=signal<boolean>(false);
@@ -910,8 +940,8 @@ resetSelection(){
   this.isResetRadio.set(false);
   var i=0;
   for (i=0; i<this.ChartFileList.length; i++){
-    this.FillFSelected.selected='N';
-    this.ChartFileList.controls[i].setValue(this.FillFSelected);
+    this.listObjects.selected='N';
+    this.ChartFileList.controls[i].setValue(this.listObjects);
   }
   this.TabBigData.splice(0,this.TabBigData.length);
   this.DisplayMerge=false;
@@ -926,72 +956,175 @@ resetSelection(){
   if (this.isOpenDialogue()){
     this.isOpenDialogue.set(false);
   }
+
+
 }
+
+checkNbSelFiles(){
+  var nb=0;
+    for (var i=0; i<this.ChartFileList.controls.length; i++){
+      if (this.ChartFileList.controls[i].value.selected === "Y"){
+          nb++
+      }
+    }
+  return (nb);
+}
+
+findChartFileSel(){
+  for (var i=0; i<this.ChartFileList.controls.length && this.ChartFileList.controls[i].value.selected !== "Y"; i++){
+  }
+  return(i); 
+}
+
+findFileMerge(fileName:string){
+    if (this.FilesAlreadyMerged.length === 0){
+      return(-1);
+    }
+    for (var j=0; j<this.FilesAlreadyMerged.length && this.FilesAlreadyMerged[j].name !== fileName; j++){
+    }
+    if (j<this.FilesAlreadyMerged.length){
+      return(j);  
+    } else {
+      return(-1);
+    }
+}
+
+delSelectedFile(){
+  // check that only one file is selected
+  if (this.nbSelectedFiles===1){
+    this.isConfirmedDelete.set(true);
+    this.SpecificForm.controls['FileName'].setValue(this.myListOfObjects.items[this.findChartFileSel()].name);
+  }
+}
+
+confirmDelFile(){
+  this.message = "";
+  this.deleteGoogleObject(this.SpecificForm.controls['FileName'].value);
+}
+
+cancelDelFile(){
+  this.message = "";
+  this.isConfirmedDelete.set(false);
+}
+
+deleteGoogleObject(object:string){
+
+  this.ManageGoogleService.deleteObject(this.configServer, this.Google_Bucket_Name, object)
+  .subscribe(res => {
+          
+            this.message='File "'+ this.SpecificForm.controls['FileName'].value +'" is successfully deleted in the cloud';
+            
+            var i = this.findChartFileSel();
+            var j = this.findFileMerge(this.SpecificForm.controls['FileName'].value);
+            this.myListOfObjects.items.splice(i,1);
+            this.ChartFileList.controls.splice(i,1);
+            if ( j!== -1){
+              this.MergeFilesFitness.splice(j,1);
+              this.FilesAlreadyMerged.splice(j,1);
+              this.NbFilesMerged--
+            }
+            this.nbSelectedFiles--
+            this.NewPerformanceFitness = new PerformanceFitness;
+            this.isSelectObject.set(false);
+            this.isConfirmedDelete.set(false);
+            this.DisplayShortScreen=false;
+            this.TheSelectDisplays.controls['ShortScreen'].setValue('N');
+
+        },
+        error_handler => {
+          //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
+          this.message='File' + this.SpecificForm.controls['FileName'].value +' *** Delete action failed - status is '+error_handler.status;
+        } 
+      )
+}
+
 
 
 RadioSelection(event:any){
     const i=parseInt(event.target.id.substring(2));
     const val=event.target.id.substring(0,1);
-    this.FillFSelected.selected=val;
-    this.ChartFileList.controls[i].setValue(this.FillFSelected);
+    this.listObjects.selected="N";
+    this.nbSelectedFiles=0;
+    for (var j=0; j<this.ChartFileList.controls.length; j++){
+      this.ChartFileList.controls[j].setValue(this.listObjects);
+    }
+    this.listObjects.selected=val;
+    this.ChartFileList.controls[i].setValue(this.listObjects);
+    if (this.listObjects.selected === "Y"){
+      this.nbSelectedFiles++
+      this.ChartFileSelection();
+    } else {
+      this.nbSelectedFiles--
+    }
+    
 }
 
 ChartFileSelection(){
   // Files have been selected by the end user
   // time to consolidate all of them
+  this.message = "";
   if (this.isCreateNewFile()){
     this.saveCreateFile();
     this.isCreateNewFile.set(false);
     this.TheSelectDisplays.controls['createNewFile'].setValue('N');
   } 
-  if (this.DisplayShortScreen===false){
-    this.DisplayShortScreen=true;
-    this.TheSelectDisplays.controls['ShortScreen'].setValue('Y');
-  };
-        
-  var i=0;
-  var j=1;
-  var k=0;
-  var fileFound=false;
-  this.message="";
-  this.DisplayMerge=false;
-  this.NbFilesMerged=0;
-  //this.MergeFilesFitness.splice(0,this.MergeFilesFitness.length);
-  this.TabBigData.splice(0,this.TabBigData.length);
-  this.TotalMergeFiles=0;
-  this.TriggerChartChange++;
-  this.MergeFiles=true;
- 
-  for (i=0; i<this.ChartFileList.length; i++){
-         // if field is set to true then file is to be retrieved
-      if (this.ChartFileList.controls[i].value.selected==='Y'){
-          this.TotalMergeFiles++;
-          this.Google_Object_Name=this.myListOfObjects.items[i].name;
-          fileFound=false;
-          for (k=0; k<this.FilesAlreadyMerged.length && fileFound===false; k++){
-              if (this.FilesAlreadyMerged[k].name===this.myListOfObjects.items[i].name){
-                fileFound=true;
-              }
+  if (this.nbSelectedFiles>0){
+    if (this.DisplayShortScreen===false){
+      this.DisplayShortScreen=true;
+      this.TheSelectDisplays.controls['ShortScreen'].setValue('Y');
+    };
+          
+    var i=0;
+    var j=1;
+    var k=0;
+    var fileFound=false;
+    this.message="";
+    this.DisplayMerge=false;
+    //this.MergeFilesFitness.splice(0,this.MergeFilesFitness.length);
+    this.TabBigData.splice(0,this.TabBigData.length);
+    this.TriggerChartChange++;
+    this.MergeFiles=true;
+  
+    for (i=0; i<this.ChartFileList.length; i++){
+          // if field is set to true then file is to be retrieved
+        if (this.ChartFileList.controls[i].value.selected==='Y'){
+            
+            this.Google_Object_Name=this.myListOfObjects.items[i].name;
+            fileFound=false;
+            for (k=0; k<this.FilesAlreadyMerged.length && fileFound===false; k++){
+                if (this.FilesAlreadyMerged[k].name===this.myListOfObjects.items[i].name){
+                  fileFound=true;
+                }
+            }
+            if (fileFound===false){
+              const myClass=new ClassFilesAlreadyMerged;
+              this.FilesAlreadyMerged.push(myClass);
+              this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].name=this.myListOfObjects.items[i].name;
+              this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].refFileMerge=-1;
+              this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].startTabBigData=0;
+              this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].endTabBigData=0;
+              j++
+              this.isSelectObject.set(false);
+              this.GetRecord('data',j,this.FilesAlreadyMerged.length-1);
+            } else {
+              this.NewPerformanceFitness = new PerformanceFitness;
+              this.fillFiles(this.MergeFilesFitness[this.FilesAlreadyMerged[k-1].refFileMerge], this.NewPerformanceFitness);
+              // this.NewPerformanceFitness=this.MergeFilesFitness[this.FilesAlreadyMerged[k-1].refFileMerge];
+              console.log('ChartFileSelection() ===> File ' + this.myListOfObjects.items[i].name + " was already retrieved");
+              this.MergeAllFiles(k-1);
+              this.mainTableHeight=this.largeMainTableHeight;
+              this.subTableHeight=this.largeSubTableHeight;
+              this.isSelectObject.set(true);
+            }
           }
-          if (fileFound===false){
-            const myClass=new ClassFilesAlreadyMerged;
-            this.FilesAlreadyMerged.push(myClass);
-            this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].name=this.myListOfObjects.items[i].name;
-            this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].refFileMerge=-1;
-            this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].startTabBigData=0;
-            this.FilesAlreadyMerged[this.FilesAlreadyMerged.length-1].endTabBigData=0;
-            j++
-            this.GetRecord('data',j,this.FilesAlreadyMerged.length-1);
-          } else {
-            this.fillFiles(this.MergeFilesFitness[this.FilesAlreadyMerged[k-1].refFileMerge], this.NewPerformanceFitness);
-            // this.NewPerformanceFitness=this.MergeFilesFitness[this.FilesAlreadyMerged[k-1].refFileMerge];
-            console.log('ChartFileSelection() ===> File ' + this.myListOfObjects.items[i].name + " was already retrieved");
-            this.MergeAllFiles(k-1);
-            this.mainTableHeight=this.largeMainTableHeight;
-            this.subTableHeight=this.largeSubTableHeight;
-          }
-        }
-    }
+          
+      }
+  } else {
+    this.NewPerformanceFitness=new PerformanceFitness;
+    this.isSelectObject.set(false);
+    this.message = "Please select a file";
+  }
+  
    
 }
 
@@ -1032,9 +1165,10 @@ MergeAllFiles(fileNb:number){
   var dateDay:number=0;
   var theDate=new Date();
 
-  this.NbFilesMerged++;
+  
   const PerfFit=new PerformanceFitness;
   if (this.FilesAlreadyMerged[fileNb].refFileMerge===-1){
+    this.NbFilesMerged++;
     this.MergeFilesFitness.push(PerfFit);
     this.fillFiles(this.NewPerformanceFitness, this.MergeFilesFitness[this.MergeFilesFitness.length-1])
     // this.MergeFilesFitness[this.MergeFilesFitness.length-1]=this.NewPerformanceFitness;
@@ -1091,7 +1225,7 @@ MergeAllFiles(fileNb:number){
 
     this.FilesAlreadyMerged[fileNb].endTabBigData=this.TabBigData.length-1;
 
-  if (this.NbFilesMerged===this.TotalMergeFiles){
+  if (this.NbFilesMerged>1){
     // process to merge is over
     // display the chart
     this.DisplayMerge=true;
@@ -1146,69 +1280,6 @@ DropDownData(event:any){
           this.onInput(this.myEvent);
       }
   } // otherwise don't do anything as no data was selected
-}
-theArrow(event:any){
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  this.manageIds(event.target.id);
-  if (  event.target.id.substring(0,5)==='Sport'){
-    this.myEvent.idString='lSpo-'+this.TabOfId[0];
-    this.prev_Dialogue=0;
-  } else if (  event.target.id.substring(0,8)==='Activity'){
-    this.myEvent.idString='lAct-'+this.TabOfId[0]+'-'+this.TabOfId[1];
-    this.prev_Dialogue=1;
-  } else if (  event.target.id.substring(0,12)==='ExerciseUnit'){
-    this.myEvent.idString='lExeUnit-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
-    this.prev_Dialogue=2;
-  } else if (  event.target.id.substring(0,8)==='PerfType'){
-    this.myEvent.idString='ltPerf-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2]+'-'+this.TabOfId[3];
-    this.prev_Dialogue=3;
-  } else if (  event.target.id.substring(0,8)==='PerfUnit'){
-    this.myEvent.idString='luPerf-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2]+'-'+this.TabOfId[3];
-    this.prev_Dialogue=4;
-  } else if (  event.target.id.substring(0,12)==='ExerciseName'){
-    this.myEvent.idString='lExeName-'+this.TabOfId[0]+'-'+this.TabOfId[1]+'-'+this.TabOfId[2];
-    this.prev_Dialogue=5;
-  } 
-  this.OpenDialogue[this.prev_Dialogue]=true;
-  this.isOpenDialogue.set(true);
-  this.myEvent.dialogueNb=this.prev_Dialogue;
-  //this.cdr.detectChanges();
-}
-
-
-onArrow(event:any){
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  this.manageIds(event.target.id);
-  if (  event.target.id.substring(0,6)==='lSport'){
-    this.prev_Dialogue=6;
-  } else if (  event.target.id.substring(0,9)==='lActivity'){
-    this.prev_Dialogue=7;
-  } else if (  event.target.id.substring(0,5)==='lUnit'){
-    this.prev_Dialogue=8;
-  } else if (  event.target.id.substring(0,9)==='lPerfType'){
-    this.prev_Dialogue=9;
-  } else if (  event.target.id.substring(0,9)==='lPerfUnit'){
-    this.prev_Dialogue=10;
-  } else if (  event.target.id.substring(0,9)==='lExercise'){
-    this.prev_Dialogue=11;
-  } 
-  this.OpenDialogue[this.prev_Dialogue]=true;
-  this.isOpenDialogue.set(true);
-  //this.cdr.detectChanges();
-}
-
-cancelDropDown(){
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  //this.cdr.detectChanges();
 }
 
 onClick(event:any){
@@ -1380,78 +1451,6 @@ onInput(event:any){
 
   }
 
-onInputList(event:any){
-  // This is only used for myConfigFitness
-  
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  this.manageIds(event.target.id);
-  // configuration
-  if (event.target.id.substring(0,4)==='cSpo'){ // input sport (e.g. running)
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].sportName=event.target.value;
-  } else if (event.target.id.substring(0,4)==='cAct'){ // input activity (e.g intervals)
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName[this.TabOfId[1]]=event.target.value;
-  } else if (event.target.id.substring(0,4)==='cExe'){ // input activity (e.g intervals)
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise[this.TabOfId[1]]=event.target.value;
-  } else if (event.target.id.substring(0,4)==='cUni'){ // input unit (e.g. kg, km/h)
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit[this.TabOfId[1]]=event.target.value;
-  } else if (event.target.id.substring(0,8)==='cPerType'){ // input type of performance (e.g avg speed)
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerf[this.TabOfId[1]]=event.target.value;
-  } else if (event.target.id.substring(0,8)==='cPerUnit'){ // input unit of type of performance (e.g km/h)
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit[this.TabOfId[1]]=event.target.value;
-  }
-}
-
-onInputTab(event:any){
-    // This is only used for myConfigFitness
-   
-    this.OpenDialogue[this.prev_Dialogue]=false;
-    if (this.isOpenDialogue()){
-      this.isOpenDialogue.set(false);
-    }
-    this.manageIds(event.target.id);
-    // ==== management of the tables
-    // data coming from user input
-  if (event.target.id.substring(0,7)==='inSport'){
-    this.MyConfigFitness.TabSport[this.TabOfId[0]].name=event.target.value;
-  } else if (event.target.id.substring(0,5)==='inAct'){
-    this.MyConfigFitness.TabActivity[this.TabOfId[0]].name=event.target.value;
-  } else if (event.target.id.substring(0,5)==='inExe'){
-    this.MyConfigFitness.TabExercise[this.TabOfId[0]].name=event.target.value;
-  }else if (event.target.id.substring(0,10)==='inUnitPerf'){
-    this.MyConfigFitness.TabPerfUnit[this.TabOfId[0]].name=event.target.value;
-  } else if (event.target.id.substring(0,6)==='inUnit'){
-    this.MyConfigFitness.TabUnits[this.TabOfId[0]].name=event.target.value;
-  } else if (event.target.id.substring(0,6)==='inPerf'){
-    this.MyConfigFitness.TabPerfType[this.TabOfId[0]].name=event.target.value;
-  } 
-}
-
-onClickList(event:any){
- 
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  this.manageIds(event.target.id);
-    // ==== management of the tables
-    // data coming from dropdown list
-  if (event.target.id.substring(0,6)==='lSport'){ 
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].sportName=event.target.textContent;
-  } else if (event.target.id.substring(0,9)==='lActivity'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName[this.TabOfId[1]]=event.target.textContent;
-  }  else if (event.target.id.substring(0,9)==='lExercise'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise[this.TabOfId[1]]=event.target.textContent;
-  } else if (event.target.id.substring(0,9)==='lPerfType'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerf[this.TabOfId[1]]=event.target.textContent;
-  } else if (event.target.id.substring(0,9)==='lUnitPerf'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit[this.TabOfId[1]]=event.target.textContent;
-  } else if (event.target.id.substring(0,5)==='lUnit'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit[this.TabOfId[1]]=event.target.textContent;
-  }
-}
 
 // date entered manually
 CheckDate(event:any){
@@ -1563,114 +1562,6 @@ delItem(event:any){
 }
 
 
-// Add and Delete items related to ConfigFitness
-addConfig(event:any){
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  this.manageIds(event.target.id);
-  if (event.target.id.substring(0,4)==='aSpo'){
-    const TheSport=new ConfigSport;
-    this.MyConfigFitness.ListSport.push(TheSport);
-    const l=this.MyConfigFitness.ListSport.length-1;
-    this.MyConfigFitness.ListSport[l].sportName='';
-    this.MyConfigFitness.ListSport[l].activityName.push('');
-    this.MyConfigFitness.ListSport[l].activityExercise.push('');
-    this.MyConfigFitness.ListSport[l].activityUnit.push('');
-    this.MyConfigFitness.ListSport[l].activityPerf.push('');
-    this.MyConfigFitness.ListSport[l].activityPerfUnit.push('');
-  } else if (event.target.id.substring(0,4)==='aAct'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName.push('');
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName.length-1]='';
-  } else if (event.target.id.substring(0,4)==='aExe'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise.push('');
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise.length-1]='';
-  }else if (event.target.id.substring(0,4)==='aUni'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit.push('');
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit.length-1]='';
-  }  else if (event.target.id.substring(0,8)==='aPerType'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerf.push('');
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerf[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerf.length-1]='';
-  }  else if (event.target.id.substring(0,8)==='aPerUnit'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit.push('');
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit[this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit.length-1]='';
-  }
-}
-
-delConfig(event:any){
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  this.manageIds(event.target.id);
-  if (event.target.id.substring(0,4)==='dSpo'){
-    this.MyConfigFitness.ListSport.splice(this.TabOfId[0],1);
-  } else  if (event.target.id.substring(0,4)==='dAct'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityName.splice(this.TabOfId[1],1);
-  } else  if (event.target.id.substring(0,4)==='dExe'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityExercise.splice(this.TabOfId[1],1);
-  }else  if (event.target.id.substring(0,8)==='dUniExer'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityUnit.splice(this.TabOfId[1],1);
-  } else  if (event.target.id.substring(0,8)==='dPerType'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerf.splice(this.TabOfId[1],1);
-  }  else  if (event.target.id.substring(0,8)==='dPerUnit'){
-    this.MyConfigFitness.ListSport[this.TabOfId[0]].activityPerfUnit.splice(this.TabOfId[1],1);
-  } 
-}
-
-addList(event:any){
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  if (event.target.id.substring(0,4)==='aSpo'){
-    this.MyConfigFitness.TabSport.push({name:''});
-
-  } else if (event.target.id.substring(0,4)==='aAct'){
-    this.MyConfigFitness.TabActivity.push({name:''});
-
-  } else if (event.target.id.substring(0,4)==='aExe'){
-    this.MyConfigFitness.TabExercise.push({name:''});
-
-  }else if (event.target.id.substring(0,4)==='aPer'){
-    this.MyConfigFitness.TabPerfType.push({name:''});
-
-  } else if (event.target.id.substring(0,9)==='aUnitPerf'){
-    this.MyConfigFitness.TabPerfUnit.push({name:''});
-
-  } else if (event.target.id.substring(0,4)==='aUni'){
-    this.MyConfigFitness.TabUnits.push({name:''});
-  } 
-}
-
-delList(event:any){
-  this.OpenDialogue[this.prev_Dialogue]=false;
-  if (this.isOpenDialogue()){
-    this.isOpenDialogue.set(false);
-  }
-  this.manageIds(event.target.id);
-  if (event.target.id.substring(0,4)==='dSpo'){
-    this.MyConfigFitness.TabSport.splice(this.TabOfId[0],1);
-
-  } else if (event.target.id.substring(0,4)==='dAct'){
-    this.MyConfigFitness.TabActivity.splice(this.TabOfId[0],1);
-
-  } else if (event.target.id.substring(0,4)==='dExe'){
-    this.MyConfigFitness.TabExercise.splice(this.TabOfId[0],1);
-
-  }else if (event.target.id.substring(0,4)==='dPer'){
-    this.MyConfigFitness.TabPerfType.splice(this.TabOfId[0],1);
-
-  } else if (event.target.id.substring(0,8)==='dUniExer'){
-    this.MyConfigFitness.TabUnits.splice(this.TabOfId[0],1);
-
-  } else if (event.target.id.substring(0,9)==='dUnitPerf'){
-    this.MyConfigFitness.TabPerfUnit.splice(this.TabOfId[0],1);
-  } 
-}
-
-idText:string='';
 manageIds(theId:string){
   this.error_msg='';
   this.TabOfId.splice(0,this.TabOfId.length);
@@ -1728,9 +1619,9 @@ GetAllObjects(){
                 }
                 for (var i=0; i<data.length; i++){
                   if (data[i].items.name.substring(0,this.identification.fitness.files.fileStartLength)===this.identification.fitness.files.fileStartName){
-                    this.FillFSelected.selected='N';
+                    this.listObjects.selected='N';
                     this.ChartFileList.push(this.FormChart()); 
-                    this.ChartFileList.controls[this.ChartFileList.length-1].setValue(this.FillFSelected);
+                    this.ChartFileList.controls[this.ChartFileList.length-1].setValue(this.listObjects);
                     const KindAllObj=new OneBucketInfo;
                     this.myListOfObjects.items.push(KindAllObj);
                     this.myListOfObjects.items[this.myListOfObjects.items.length-1]=data[i].items;
@@ -1748,7 +1639,7 @@ GetAllObjects(){
     )
 }
 
-theConfig=new ConfigFitness;
+
 GetRecord(event:string, iWait:number, ref:number){
   // get object in Google Storage
   this.scroller.scrollToAnchor('theTop');
@@ -1814,7 +1705,7 @@ GetRecord(event:string, iWait:number, ref:number){
                   }
 
                   this.LinkPerfConfig();
-                  this.isSelectObject.set(true)
+                  this.isSelectObject.set(true);
                   //this.cdr.markForCheck();
                   
                 } else if (event==='config'){ 
@@ -1893,7 +1784,7 @@ GetRecord(event:string, iWait:number, ref:number){
                         this.InitTabConfig();
                       }
                     this.LinkPerfConfig();
-                    this.returnFile.emit(this.MyConfigFitness);
+                    // this.returnFile.emit(this.MyConfigFitness);
                   }
                 this.error_msg='';
                 this.scroller.scrollToAnchor('AccessToListFiles');
@@ -1930,6 +1821,9 @@ GetRecord(event:string, iWait:number, ref:number){
 
 ConfirmSave(){
   this.OpenDialogue[this.prev_Dialogue]=false;
+  if (this.isInputDropDown()){
+    this.isInputDropDown.set(false);
+  }
   if (this.isOpenDialogue()){
     this.isOpenDialogue.set(false);
   }
@@ -1988,16 +1882,18 @@ SaveNewRecord(){
                   const KindAllObj=new OneBucketInfo;
                   this.myListOfObjects.items.push(KindAllObj);
                   this.myListOfObjects.items[this.myListOfObjects.items.length-1].name=this.Google_Object_Name;
-                  this.FillFSelected.selected='N';
+                  this.listObjects.selected='N';
                   this.ChartFileList.push(this.FormChart()); 
                   // this.ChartFileList.push(this.FormChart);              
-                  this.ChartFileList.controls[this.ChartFileList.length-1].setValue(this.FillFSelected);
+                  this.ChartFileList.controls[this.ChartFileList.length-1].setValue(this.listObjects);
+                  
               }
               this.UpdateMergeFiles(this.Google_Object_Name);
               if (this.isCreateNewFile()) {
                 this.isCreateNewFile.set(false);
+                this.TheSelectDisplays.controls['createNewFile'].setValue('N');
                 this.createNewPerformance=new PerformanceFitness;
-                
+                this.NewPerformanceFitness=new PerformanceFitness;
               }
 
             this.isModified.set(false); 
@@ -2010,38 +1906,6 @@ SaveNewRecord(){
       )
   }
 
-ConfirmConfig(){
-this.isConfigConfirmed=true;
-this.SpecificForm.controls['FileName'].setValue(this.Google_Object_Fitness);
-}
-
-CancelConfig(){
-  this.isConfigConfirmed=false;
-}
-
-EventHTTPSave:boolean=false;
-SaveConfigFtiness(){
-  this.isConfigConfirmed=false;
-  this.EventHTTPSave=false;
-  var file=new File ([JSON.stringify(this.MyConfigFitness)],this.SpecificForm.controls['FileName'].value, {type: 'application/json'});
-                    
-  this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file , this.SpecificForm.controls['FileName'].value)
-  //this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
-  .subscribe(res => {
-    //**this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
-          this.message='File "'+ this.SpecificForm.controls['FileName'].value +'" is successfully stored in the cloud';
-            
-          if (this.EventHTTPSave===false){
-            this.returnFile.emit(this.MyConfigFitness);
-          } 
-          this.EventHTTPSave=true;
-          },
-        error_handler => {
-          //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
-          this.message='File' + this.SpecificForm.controls['FileName'].value +' *** Save action failed - status is '+error_handler.status;
-        } 
-      )
-}
 
 cancelUpdates(){
   this.NewPerformanceFitness = new PerformanceFitness;
@@ -2055,6 +1919,9 @@ cancelUpdates(){
   }
 
   this.isModified.set(false);
+  this.isInputDropDown.set(false);
+  this.isTabDisplayCalendar.set(false);
+  this.isnewTabDialog.set(false);
   this.message="cancel updates completed"
 }
 

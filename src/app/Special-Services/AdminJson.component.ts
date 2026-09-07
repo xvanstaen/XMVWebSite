@@ -1,5 +1,5 @@
 import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  SimpleChanges,signal, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
 
 import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -64,6 +64,8 @@ export class AdminJsonComponent {
 
   @Output() resetServer= new EventEmitter<any>();
   @Output() newCredentials= new EventEmitter<any>();
+
+  signalDataFS=signal<number>(-1);
 
   constructor(
     private scroller: ViewportScroller,

@@ -3,8 +3,8 @@
 @if (openFileAccess()){
     <app-file-access 
         [configServer]="configServer" [identification]="identification" 
-        [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit"
-        [secondaryLevelFn]="secondaryLevelFn"
+        [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit()"
+        [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
         (resultFileSystem)="resultAccessFile($event)"
     >
     </app-file-access>
