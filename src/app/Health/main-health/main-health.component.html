@@ -108,9 +108,9 @@
         <app-health
             [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
             [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
-            [tabNewRecordAll]="tabNewRecordAll"  [createDropDownCalFat]="createDropDownCalFat"
-            [returnDataFSHealth]="returnDataFSHealth" [resultCheckLimitHealth]="resultCheckLimitHealth" [actionHealth]="actionHealth()"
-            [callSaveFunction]="callSaveFunctionHealth" [statusSaveFn]="statusSaveFnHealth"
+            [tabNewRecordAll]="tabNewRecordAll" 
+            [returnDataFSHealth]="returnDataFSHealth"  [actionHealth]="actionHealth()"
+            [statusSaveFn]="statusSaveFnHealth"
             [signalDataFS]="signalDataFS()"
             (initTrackRecord)="initTrackRecord()" (retrieveRecord)="retrieveRecord($event)"
             (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
@@ -123,11 +123,12 @@
     }
     @if (isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true){
         <div id='posTopAppCalFat'>   <!--    && tabLock[1].lock!==3 -->
-            <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay" 
-                [actionCalFat]="actionCalFat" [actionRecipe]="actionRecipe" [calFatFileRetrieved]="calFatFileRetrieved" [recipeFileRetrieved]="recipeFileRetrieved"
+            <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay"
                 [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock" 
-                [returnDataFSRecipe]="returnDataFSRecipe" [returnDataFSCalFat]="returnDataFSCalFat" [resultCheckLimitCalFat]="resultCheckLimitCalFat"
-                [statusSaveFn]="statusSaveFnCalFat" [callSaveFunctionCalFat]="callSaveFunctionCalFat"
+                [returnDataFSRecipe]="returnDataFSRecipe" [returnDataFSCalFat]="returnDataFSCalFat" 
+                [recipeFileRetrieved]="recipeFileRetrieved()" [calFatFileRetrieved]="calFatFileRetrieved()"
+                [resultCheckLimitCalFat]="resultCheckLimitCalFat()" [configHTMLRetrieved]="configHTMLRetrieved()"
+                [statusSaveFn]="statusSaveFnCalFat" [triggerCalFatSave]="triggerCalFatSave()"
                 (processSave)="SaveCaloriesFat($event)" (checkLockLimit)="checkLockLimitFn($event)" 
             >
             </app-calories-fat>

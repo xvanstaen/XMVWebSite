@@ -113,15 +113,21 @@ export class MainManageFileComponent {
   }
 
   iWait:number=0;
-
+  loopCheckToLimit:number=0;
   nbRecallFS:number=0;
+  previousTriggerCheckToLimit:number=-1;
 
   constructor(
     private ManageGoogleService: ManageGoogleService,
     @Inject(LOCALE_ID) private locale: string,) 
     {effect (() => {this.processTriggerFS(this.triggerFileSystem()); 
               this.processReadFile(this.triggerReadFile());
-              this.processCheckToLimit(this.triggerCheckToLimit());
+              if (this.previousTriggerCheckToLimit!==this.triggerCheckToLimit()){
+                this.previousTriggerCheckToLimit=this.triggerCheckToLimit();
+                this.loopCheckToLimit=0;
+                this.processCheckToLimit(this.triggerCheckToLimit());
+              }
+              
               this.processSaveFile(this.triggerSaveFile());
             }) 
     }
@@ -136,8 +142,6 @@ export class MainManageFileComponent {
   }
 
   processReadFile(event:any){
-    
-    
     if (this.triggerReadFile()!==-1){
       var accessToFS=0;
       for (var i=0; i<this.maxEventHTTPrequest; i++){
@@ -158,7 +162,6 @@ export class MainManageFileComponent {
       }
     }
   }
-  loopCheckToLimit:number=0;
   processCheckToLimit(event:any){
     if (this.triggerCheckToLimit() !== -1){
       if (this.eventCheckToLimit.checkLock.iCheck===true){

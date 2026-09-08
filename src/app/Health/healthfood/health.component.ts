@@ -52,8 +52,8 @@ export class HealthComponent  {
   @Input() identification = new LoginIdentif;
 
   @Input() returnDataFSHealth = new classHeaderReturnDataFS;
-  @Input() resultCheckLimitHealth:number =0;
-  @Input() callSaveFunction:number =0;
+  //@Input() resultCheckLimitHealth:number =0;
+  //@Input() callSaveFunction:number =0;
   @Input() statusSaveFn:any;
 
   @Input() HealthAllData = new mainDailyReport;
@@ -86,6 +86,8 @@ export class HealthComponent  {
   triggerFileSystem=signal<number>(-1);
   triggerReadFile=signal<number>(-1);
   triggerSaveFile=signal<number>(-1);
+
+  signalTime=signal<number>(0); // to get count down of the timeout
 
   secondaryLevelFn:boolean=true;
 
@@ -562,7 +564,7 @@ export class HealthComponent  {
 
 
 
-  isUserTimeOut:boolean=false;
+  isUserTimeOut=signal<boolean>(false);
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
     console.log('Health component - timeOutactivity');
     window.cancelAnimationFrame(this.idAnimation);
@@ -604,24 +606,25 @@ export class HealthComponent  {
     const currentDateSec = theDate.getHours()*3600+theDate.getMinutes()*60+theDate.getSeconds();
     const timeSpent = Number(currentDateSec) - Number(refDateSec);
     const timeLeft= timeOutSec - timeSpent;
+
+    if (timeSpent > Number(timeOutSec)) {
+        this.isUserTimeOut.set(true);
+        return;
+      }
+    if (this.isUserTimeOut()){
+      this.isUserTimeOut.set(false);
+    }
     if (timeLeft <= 0 && this.isAllDataModified===true){
         this.errorMsg = "your modifications are going to be lost if you don't save them";
-        /*
-        window.cancelAnimationFrame(this.idAnimation);
-        this.isUserTimeOut=true;
-        this.unlockFile.emit(0);
-        this.isForceReset === true;
-        this.resetBooleans();
-        */
-    } else {
-        this.displayHour = Math.floor(timeLeft / 3600);
-        const minSec = timeLeft % 3600 ;
-        this.displayMin = Math.floor(minSec / 60);
-        this.displaySec = minSec % 60 ;
-        this.idAnimation=window.requestAnimationFrame(() => this.timeToGo(refDateSec,timeOutSec));
-    }
+    } 
+    this.displayHour = Math.floor(timeLeft / 3600);
+    const minSec = timeLeft % 3600 ;
+    this.displayMin = Math.floor(minSec / 60);
+    this.displaySec = minSec % 60 ;
+    this.signalTime.update(time => time + 1);
+    this.idAnimation=window.requestAnimationFrame(() => this.timeToGo(refDateSec,timeOutSec));
   }
-
+ 
   resultAccessFile(event:any){
     console.log('Health component - resultAccessFile');
     if (this.lockValueBeforeCheck!==this.tabLock[0].lock){
@@ -658,7 +661,7 @@ export class HealthComponent  {
       this.isDeleteConfirmed = false;
       this.IsSaveConfirmedAll = false;
       this.isAllDataModified = false;
-      if (this.isUserTimeOut===false){
+      if (!this.isUserTimeOut()){
         this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
         this.initTrackRecord.emit();
       }

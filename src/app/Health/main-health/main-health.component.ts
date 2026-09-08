@@ -41,6 +41,10 @@ import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
 import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
 import { FillHealthAllInOut } from '../../copyFilesFunction';
 
+export class returnSignal{
+  nb:number=-1;
+  function:string="";
+}
 
 @Component({
   selector: 'app-main-health',
@@ -68,12 +72,22 @@ export class MainHealthComponent {
   openFileAccess=signal<boolean>(true);
   signalDataFS=signal<number>(-1);
   actionHealth=signal<number>(-1);
+  //actionCalFat:number=-1;
+  //triggerCalFat=signal<returnSignal>({nb:-1, function:""});
+
+  actionRecipe=signal<number>(-1);
+
+  recipeFileRetrieved=signal<number>(-1);
+  calFatFileRetrieved=signal<number>(-1);
+  triggerCalFatSave=signal<number>(-1);
+
+  configHTMLRetrieved=signal<number>(-1);
 
   isRetrieveFile :boolean=false;
   iWaitToRetrieve:Array<classRetrieveFile>=[];
 
   resultCheckLimitHealth:number =0;
-  resultCheckLimitCalFat:number=0;
+  resultCheckLimitCalFat=signal<number>(-1);
   resultCheckLimitParamChart:number=0;
   resultCheckLimitRecipe:number=0;
 
@@ -186,17 +200,17 @@ export class MainHealthComponent {
   eventLockLimit= new classtheEvent;
 
   // used by ngChange on selected component
-  healthFileRetrieved:number=0;
-  recipeFileRetrieved:number=0;
-  calFatFileRetrieved:number=0;
+  //healthFileRetrieved:number=0;
+  //recipeFileRetrieved:number=0;  // used by app-calc-fat
+  //calFatFileRetrieved:number=0;  // used by app-calc-fat
   
   // used by ngChange on health component
-  createDropDownCalFat:number=0;
-  calculateHeight:number=0;
+  //createDropDownCalFat:number=0;
+  //calculateHeight:number=0;
 
  
-  actionCalFat:number=0;
-  actionRecipe:number=0;
+  //actionCalFat:number=0;
+  //actionRecipe:number=0;
 
   resultFileSystemHealth:number=0;
   resultFileSystemCalFath:number=0;
@@ -213,9 +227,9 @@ export class MainHealthComponent {
 
   firstAccessOtherFiles:boolean=false;
 
-  callSaveFunctionHealth:number=0;
+  //callSaveFunctionHealth:number=0;
   statusSaveFnHealth:any;
-  callSaveFunctionCalFat:number=0;
+  //callSaveFunctionCalFat:number=0;
   statusSaveFnCalFat:any;
   //callSaveFunctionParamChart:number=0;
   statusSaveFnParamChart:any;
@@ -292,14 +306,18 @@ export class MainHealthComponent {
       this.resultCheckLimitHealth++
     } else if (event.iWait===1){
       this.returnDataFSCalFat = event;
-      this.resultCheckLimitCalFat++
+      this.resultCheckLimitCalFat.update(check => check + 1);
+      //this.actionCalFat++
+      //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"resultCheckLimitCalFat"}));
     } else if (event.iWait===5){
       this.returnDataFSParamChart = event;
       this.resultCheckLimitParamChart++
     }  else if (event.iWait===6){
       this.returnDataFSRecipe = event;
       //this.resultCheckLimitRecipe++
-      this.resultCheckLimitCalFat++
+      this.resultCheckLimitCalFat.update(check => check + 1);
+      //this.actionCalFat++
+      //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"resultCheckLimitCalFat"}));
       
     } 
     //this.resetSignal();
@@ -331,18 +349,21 @@ export class MainHealthComponent {
           this.InHealthAllData = FillHealthAllInOut(this.InHealthAllData,  this.HealthAllData);
           this.initTrackRecord();
         }
-        this.callSaveFunctionHealth++;
+        //this.callSaveFunctionHealth++;
         this.actionHealth.update (saveFn => saveFn + 1);
       }
     } else if (event.iWait===1 || event.iWait===6){
       this.statusSaveFnCalFat=event;
-      this.callSaveFunctionCalFat++;
+      //this.callSaveFunctionCalFat++;
+      this.triggerCalFatSave.update(calFatS => calFatS + 1)
     } else if (event.iWait===5){
       this.statusSaveFnParamChart=event;
       //this.callSaveFunctionParamChart++;
     } 
     //this.resetSignal();
   }
+
+ 
 
   resultGetRecord(event:any){
     const iWait=event.iWait;
@@ -367,7 +388,7 @@ export class MainHealthComponent {
         }
         this.initTrackRecord();
         this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-        this.healthFileRetrieved++
+        //this.healthFileRetrieved++
         //****************** iWait === 1 *************************/
       } else if (iWait === 1) {
         this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length)
@@ -382,9 +403,12 @@ export class MainHealthComponent {
           this.ConfigCaloriesFat.updatedAt = '';
         }
         this.ConfigCaloriesFat.tabCaloriesFat = event.content.tabCaloriesFat;
-        this.calFatFileRetrieved++
+        this.calFatFileRetrieved.update( calFatF => calFatF + 1);
+        
+        //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"calFatFileRetrieved"}));
+        
         //this.CreateDropDownCalFat();
-        this.createDropDownCalFat++
+        //this.createDropDownCalFat++
         //****************** iWait === 2 *************************/
       } else if (iWait === 2) {
         this.ConvertUnit.tabConv.splice(0, this.ConvertUnit.tabConv.length);
@@ -423,8 +447,7 @@ export class MainHealthComponent {
         this.ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat = event.content.ConfigCalFat.confCaloriesFat;
 
         this.confTableAll = this.ConfigHTMLFitHealth.ConfigHealth.confTableAll;
-        //this.calculateHeight();
-        this.calculateHeight++
+        this.configHTMLRetrieved.update(HTML => HTML + 1);
       //****************** iWait === 4 *************************/
       } else if (iWait === 4) {
         this.configServer.googleServer=this.saveServer.google;
@@ -455,8 +478,8 @@ export class MainHealthComponent {
           this.fileRecipe.updatedAt = '';
         }
         this.fileRecipe.tabCaloriesFat = event.content.tabCaloriesFat;
-        this.recipeFileRetrieved++
-        //****************** iWait === 7 ** SHOULD IT BE DELETED - SEEMS TO BE OLD CODE ***********************/
+        this.recipeFileRetrieved.update( recipeF => recipeF + 1);
+        //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"recipeFileRetrieved"}));
       } else if (iWait === 10) { 
         this.convToDisplay=event.content;
       }
@@ -469,7 +492,6 @@ export class MainHealthComponent {
             this.processCalculateCalFat();
           }
       } 
-      //this.resetSignal();
   }
 
   processCalculateCalFat(){
@@ -512,13 +534,6 @@ export class MainHealthComponent {
 
   triggerCalculateCalFat:boolean=false;
   tabSelRadio:Array<string>=[];
-
-  resetSignal(){
-  this.triggerCheckToLimit.set(-1);
-  this.triggerFileSystem.set(-1);
-  this.triggerReadFile.set(-1);
-  this.triggerSaveFile.set(-1);
-  }
 
   SelRadio(event: any) {
     // this.checkLockLimit(0);
