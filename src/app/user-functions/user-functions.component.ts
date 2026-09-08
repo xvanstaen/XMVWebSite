@@ -21,7 +21,7 @@ import { SportReportsComponent } from '../Sport/sport-reports/sport-reports.comp
 import { SportAnalysisComponent } from '../Sport/sport-analysis/sport-analysis.component';
 import { SportPerfRawDataMgtComponent } from '../Sport/sport-perf-raw-data-mgt/sport-perf-raw-data-mgt.component';
 import { SportPerformanceComponent } from '../Sport/sport-performance/sport-performance.component';
-import { KioskAbdConfigComponent } from '../kiosk-abd-config/kiosk-abd-config.component';
+//import { KioskAbdConfigComponent } from '../kiosk-abd-config/kiosk-abd-config.component';
 import { RunningClockComponent } from '../Health/running-clock/running-clock.component';
 import { MyCanvasComponent } from '../my-canvas/my-canvas.component';
 import { Event27AugComponent}  from '../Special-Services/Event-27AUG2022.component';
@@ -49,8 +49,8 @@ export class classTabApps{
   imports:[CommonModule, FormsModule, ReactiveFormsModule, RoutingAppComponent, SelectServerComponent, MainHealthComponent, 
     ConverterComponent, RecipeComponent, TestServerJSComponent, ManageCircuitsComponent, ManagePointOfRefComponent, SportPerformanceComponent,
     SportReportsComponent, SportAnalysisComponent, SportPerfRawDataMgtComponent, FitnessStatComponent, 
-    KioskAbdConfigComponent, RunningClockComponent, MyCanvasComponent, Event27AugComponent, GetImagesComponent
-  ],
+     RunningClockComponent, MyCanvasComponent, Event27AugComponent, GetImagesComponent
+  ], //KioskAbdConfigComponent,
 
 })
 

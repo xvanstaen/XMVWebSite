@@ -82,12 +82,7 @@ export class classFileRecipe{
 })
 
 export class RecipeComponent {
-  constructor(
-    private scroller: ViewportScroller,
-    private ManageGoogleService: ManageGoogleService,
-    @Inject(LOCALE_ID) private locale: string,
-    private cdr: ChangeDetectorRef
-    ) { }
+
 
 @Input() configServer = new configServer;
 @Input() identification= new LoginIdentif;
@@ -331,6 +326,13 @@ tabWordsIn:Array<any>=[];
 tabWordsOut:Array<any>=[];
 dicEnFr:Array<any>=[];
 dicFrEn:Array<any>=[];
+
+constructor(
+    private scroller: ViewportScroller,
+    private ManageGoogleService: ManageGoogleService,
+    @Inject(LOCALE_ID) private locale: string,
+    private cdr: ChangeDetectorRef
+    ) { }
 
 ngOnInit(){
   this.googleBucketName=this.identification.recipe.bucket;

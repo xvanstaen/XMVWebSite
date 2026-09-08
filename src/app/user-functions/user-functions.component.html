@@ -72,7 +72,7 @@
             @if (tabApps[16].display===true){<span class="options" >26. 27AUG2022</span>}
             @if (tabApps[6].display===true){<span class="options" >27. Canvas</span>}
             @if (tabApps[0].display===true){<span class="options" >28. Clock</span>}
-            @if (tabApps[17].display===true){<span class="options" >29. XML Test</span>}
+            <!-- @if (tabApps[17].display===true){<span class="options" >29. XML Test</span>}-->
 
             <br><br>
         </span>
@@ -163,10 +163,11 @@
     }  @else if (selectApps===28){
         <app-running-clock [posSizeClock]="posSizeClock"> </app-running-clock>
             <br><br>
-    }  @else if (selectApps===29){
+    }  <!-- @else if (selectApps===29){
         <app-kiosk-abd-config [identification]="identification"  [configServer]="configServer" 
                 [devMode]="devMode"> 
         </app-kiosk-abd-config>
-    }
+    
+    } -->
 }
 </body>
