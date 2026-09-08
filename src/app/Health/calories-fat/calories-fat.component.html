@@ -522,10 +522,12 @@
         <div class="skipLine">&nbsp;</div> 
     </div>
 } @else {
-<div style="font-size:22px; color:blue; display:inline; width:200px; text-align:center; 
-            background:lightyellow; ">
-        UNDER CONSTRUCTION
-</div>
+    @if (isUserTimeOut()){
+        <div style="font-size:22px; color:blue; display:inline; width:200px; text-align:center; 
+                    background:lightyellow; ">
+            UNDER CONSTRUCTION 
+        </div>
+    }
 }
 
 </body>
