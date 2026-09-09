@@ -30,6 +30,7 @@ export class FileSystemServiceComponent {
   @Input() onInputAction:string="";
   @Input() credentialsFS = new classCredentials;
   nbCallFileSystem=input.required<number>();
+  previousNbCallFileSystem:number=-1;
   @Input() iWaitToRetrieve:Array<classRetrieveFile>=[];
 
   @Output() resultFileSystem = new EventEmitter<any>();
@@ -51,8 +52,13 @@ export class FileSystemServiceComponent {
 constructor(
     private ManageGoogleService: ManageGoogleService,
     @Inject(LOCALE_ID) private locale: string,
-    ) {effect (() => {this.processCallFS(this.nbCallFileSystem()); }) }
-
+    ) {effect (() => {
+        if (this.previousNbCallFileSystem!==this.nbCallFileSystem()){
+            this.previousNbCallFileSystem=this.nbCallFileSystem()      
+            this.processCallFS(this.nbCallFileSystem()); 
+          }
+    }) }
+  
 
 processCallFS(event:any){
   this.returnDataFS.onInputAction=this.onInputAction; 

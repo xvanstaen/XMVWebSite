@@ -1373,7 +1373,7 @@ iRecipeSave:number=0;
 
 
   resultAccessFile(theEvent:any){
-    if (this.returnDataFSCalFat.errorCode!==0 && this.returnDataFSCalFat.errorCode!==200){
+    if (this. returnDataFSCalFat.errorCode!==0 && this.returnDataFSCalFat.errorCode!==200){
       this.errorMsg = this.returnDataFSCalFat.errorMsg;
     } else if (this.returnDataFSRecipe.errorCode!==0 && this.returnDataFSRecipe.errorCode!==200){ //  
       this.errorMsg = this.returnDataFSRecipe.errorMsg;

@@ -40,9 +40,13 @@ export class MainManageFileComponent {
   @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
   
   triggerCheckToLimit=input.required<number>();
+  previousTriggerCheckToLimit:number=-1;
   triggerReadFile=input.required<number>();
+  previousTriggerReadFile:number=-1;
   triggerSaveFile=input.required<number>();
+  previousTriggerSaveFile:number=-1;
   triggerFileSystem=input.required<number>();
+  previousTriggerFileSystem:number=-1;
   //@Input() triggerFunction: number = 0;
 
   //@Input() secondaryLevelFn:boolean=false;
@@ -115,34 +119,42 @@ export class MainManageFileComponent {
   iWait:number=0;
   loopCheckToLimit:number=0;
   nbRecallFS:number=0;
-  previousTriggerCheckToLimit:number=-1;
+
 
   constructor(
     private ManageGoogleService: ManageGoogleService,
     @Inject(LOCALE_ID) private locale: string,) 
-    {effect (() => {this.processTriggerFS(this.triggerFileSystem()); 
+    {effect (() => {
+            if (this.previousTriggerFileSystem!==this.triggerFileSystem()){
+              this.previousTriggerFileSystem=this.triggerFileSystem();
+              this.processTriggerFS(this.triggerFileSystem()); 
+          }
+          if (this.previousTriggerReadFile!==this.triggerReadFile()){
+              this.previousTriggerReadFile=this.triggerReadFile();
               this.processReadFile(this.triggerReadFile());
-              if (this.previousTriggerCheckToLimit!==this.triggerCheckToLimit()){
-                this.previousTriggerCheckToLimit=this.triggerCheckToLimit();
-                this.loopCheckToLimit=0;
-                this.processCheckToLimit(this.triggerCheckToLimit());
-              }
+          }
+          if (this.previousTriggerCheckToLimit!==this.triggerCheckToLimit()){
+              this.previousTriggerCheckToLimit=this.triggerCheckToLimit();
+              this.loopCheckToLimit=0;
+              this.processCheckToLimit(this.triggerCheckToLimit());
+          }
               
-              this.processSaveFile(this.triggerSaveFile());
-            }) 
+          if (this.previousTriggerSaveFile!==this.triggerSaveFile()){
+              this.previousTriggerSaveFile = this.triggerSaveFile();    
+              this.SaveNewRecord(this.eventCheckToLimit.bucket, this.eventCheckToLimit.object, this.eventCheckToLimit.fileContent, this.eventCheckToLimit.iWait);
+          }
+        }) 
     }
 
   processTriggerFS(event:any){
-    if (this.triggerFileSystem()!==-1){
       console.log('======= processTriggerFS -- ' + this.triggerFileSystem());
       if (this.iWaitToRetrieve.length>0){
         this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1)
       }
-    }
   }
 
   processReadFile(event:any){
-    if (this.triggerReadFile()!==-1){
+
       var accessToFS=0;
       for (var i=0; i<this.maxEventHTTPrequest; i++){
         this.EventHTTPReceived[i] = false;
@@ -160,10 +172,8 @@ export class MainManageFileComponent {
       if (this.iWaitToRetrieve.length > 0 && accessToFS > 0){
         this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
       }
-    }
   }
   processCheckToLimit(event:any){
-    if (this.triggerCheckToLimit() !== -1){
       if (this.eventCheckToLimit.checkLock.iCheck===true){
           this.nbRecallFS=0;
           this.loopCheckToLimit++;
@@ -171,14 +181,8 @@ export class MainManageFileComponent {
           //callSaveProcess++
           this.checkLockLimit(this.eventCheckToLimit);
       }
-    }
   }
 
-  processSaveFile(event:any){
-    if (this.triggerSaveFile()!==-1){
-      this.SaveNewRecord(this.eventCheckToLimit.bucket, this.eventCheckToLimit.object, this.eventCheckToLimit.fileContent, this.eventCheckToLimit.iWait);
-    }
-  }
 
   resultFileSystemFn(event:any){
     console.log(' fileAccess process resultFS after emit from onFileSystem iWait=' + event.iWait +  '   returnDataFS=' + this.returnDataFS.iWait );
