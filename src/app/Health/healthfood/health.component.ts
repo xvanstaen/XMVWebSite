@@ -683,6 +683,7 @@ export class HealthComponent  {
 
   checkText: string = '';
   SearchText(event: any) {
+    this.errorMsg="";
     this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.resetBooleans();
     if (event.currentTarget.id === 'search' && event.currentTarget.value !== '') {
@@ -870,6 +871,7 @@ export class HealthComponent  {
   }
 
   onInputDailyAll(event: any) {
+    this.errorMsg="";
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.textContent = event.target.textContent;
     this.theEvent.target.value = event.target.value;
@@ -886,7 +888,6 @@ export class HealthComponent  {
       this.resetBooleans();
       this.isAllDataModified = true;
       this.IsSaveConfirmedAll = false;
-      this.errorMsg = '';
       var i = 0;
       const fieldName = event.target.id.substring(0, 7);
       this.manageIds(event.target.id);
@@ -965,6 +966,7 @@ export class HealthComponent  {
   }
 
   onAction(event: any) {
+    this.errorMsg="";
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.textContent = event.target.textContent;
     this.onInputAction = 'onAction';
