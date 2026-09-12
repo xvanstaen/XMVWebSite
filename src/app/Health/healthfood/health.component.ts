@@ -300,6 +300,7 @@ export class HealthComponent  {
   }
 
   ngOnInit(): void {
+    console.log("Health -- server google = " + this.configServer.googleServer);
     this.createDropDownCalFatFn();
     this.minNum = 0 ;
     this.maxNum = this.maxItemsPerPage;
@@ -651,6 +652,8 @@ export class HealthComponent  {
   }
 
   resetBooleans() {
+    this.errorFn="";
+    this.errorMsg="";
     console.log('Health component - resetBooleans');
     this.isDeleteItem = false;
     this.dialogue[this.prevDialogue] = false;
@@ -1277,6 +1280,7 @@ export class HealthComponent  {
 
   ConfirmSaveA(event: any) {
     this.errorMsg = '';
+    this.errorFn="";
     this.resetBooleans();
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.value = event.target.value;
@@ -1292,6 +1296,7 @@ export class HealthComponent  {
 
   SaveHealth(event: any) {
     this.errorMsg = '';
+    this.errorFn="";
     this.isSaveHealth = true;
     this.IsSaveConfirmedAll = false;
     this.theEvent.target.id = event.target.id;
@@ -1361,6 +1366,7 @@ export class HealthComponent  {
 //  checkTimeOut:boolean=true;
 
   afterCheckFS(data:any){
+    this.errorFn="";
     if (this.signalDataFS()!==-1){
       console.log('Health component - afterCheckFS - this.onInputAction='+this.onInputAction);
       if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){

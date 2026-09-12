@@ -100,7 +100,7 @@ export class UserFunctionsComponent {
     errMsg:string="";
 
 ngOnInit(){
-  //console.log('user-functions - init --- configServer.google='+this.configServer.googleServer);
+  console.log('user-functions - init --- configServer.google='+this.configServer.googleServer);
   this.initTabLock();
       
   // TO BE DELETED
@@ -288,6 +288,7 @@ onSelectApps(){
 }
 
 getServerNames(event:any){
+  console.log("User functions - getServerName -- server google = " + this.configServer.googleServer);
   if (this.configServer.googleServer!==event.google){
     this.configServer.googleServer=event.google;
     //console.log('user-functions - getServerNames --- configServer.google='+this.configServer.googleServer);

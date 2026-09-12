@@ -7,7 +7,7 @@
             [configServer]="configServer" [identification]="identification" 
             [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit()"
             [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
-            (resultFileSystem)="resultAccessFile($event)"
+            (resultFileSystem)="resultFileSystemFn($event)"
         >
     
         </app-file-access>
@@ -27,13 +27,14 @@
     </div>
 }
 
+
 @if (isInitComplete() && !isUserTimeOut() && isNgStyleCompleted()){
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
- 
-        @if (tabLock[1].lock===2){
+         @if (isErrorFS() && errorMsgFS!==""){
+            <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">{{errorMsgFS}}</div>
+        } @else if (tabLock[1].lock===2){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
-        }
-        @if (tabLock[1].lock===3){
+        } @else if (tabLock[1].lock===3 ){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
         }
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+13}">
@@ -66,7 +67,7 @@
             </div>
             <div [ngStyle]="divClassHeader[2]">Food (Filter)
                 <button class="theArrow"  style="margin-left:35px;"  id='RecipeFood' (click)="onFilter($event)">
-                    <mat-icon class="material-symbols-outlined"  id='RecipeFood' (click)="onFilter($event)">
+                    <mat-icon class="material-symbols-outlined"  id='RecipeFood' >
                         arrow_drop_down
                     </mat-icon>
                 </button>  
@@ -308,10 +309,11 @@
     <div class="skipLine">&nbsp;</div>  
     <div style="border:solid 2px blue; background-color: lightskyblue;display:inline-block; " [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
     
-        @if (tabLock[1].lock===2){
+        @if (isErrorFS() && errorMsgFS !==""){
+            <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">{{errorMsgFS}}</div>
+        } @else if (tabLock[1].lock===2){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">File is locked by another user; you cannot update the parameters</div>
-        }
-        @if (tabLock[1].lock===3){
+        } @else if (tabLock[1].lock===3){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
         }
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [ngStyle]="{'width.px': HTMLCaloriesFat.width+10}">
@@ -360,14 +362,14 @@
                 <div [ngStyle]="divClassHeader[0]">Action</div>
                 <div [ngStyle]="divClassHeader[1]">Type
                     <button class="theArrow"   id='Type' (click)="onFilter($event)">
-                        <mat-icon class="material-symbols-outlined"  id='Type' (click)="onFilter($event)">
+                        <mat-icon class="material-symbols-outlined"  id='Type'>
                             arrow_drop_down
                         </mat-icon>
                     </button>  
                 </div>
                 <div [ngStyle]="divClassHeader[2]">Food (Filter)
                     <button class="theArrow"  style="margin-left:35px;"  id='Food' (click)="onFilter($event)">
-                        <mat-icon class="material-symbols-outlined"  id='Food' (click)="onFilter($event)">
+                        <mat-icon class="material-symbols-outlined"  id='Food'>
                             arrow_drop_down
                         </mat-icon>
                     </button>  

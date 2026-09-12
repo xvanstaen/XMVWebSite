@@ -267,6 +267,7 @@ export class MainHealthComponent {
 
   ngOnInit(): void {
     // used to open files in parallel using the google and mongo servers
+    console.log("Main-health -- server google = " + this.configServer.googleServer);
     this.saveServer.google=this.configServer.googleServer;
     this.saveServer.mongo=this.configServer.mongoServer;
     this.saveServer.FS=this.configServer.fileSystemServer;
@@ -364,15 +365,17 @@ export class MainHealthComponent {
   }
 
  
-
+  isErrorMsg=signal<boolean>(false);
   resultGetRecord(event:any){
     const iWait=event.iWait;
     this.EventStopWaitHTTP[iWait]=true;
     var noPb=true;
     if (event.status!==undefined && (event.status!==200 && event.status!==0)){
-      this.errorMsg = event.err;
+      this.isErrorMsg.set(true);
+      this.errorMsg = this.errorMsg + " error:" + event.status + " when retrieving the file " + this.tabLock[iWait].object;
       noPb=false;
     } else
+      this.isErrorMsg.set(false);
       if (iWait === 0) {
         console.log('file HealthAllData received');
         this.configServer.googleServer=this.saveServer.google;
@@ -1100,10 +1103,10 @@ export class MainHealthComponent {
           this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, this.iWait.toString())
           .subscribe(
             data => {
-              console.log('onDestroy: return from File System' + JSON.stringify(data));
+              console.log('ngOnDestroy: successfull return from File System' );
             },
             err=>{
-              console.log('onDestroy: error, return from File System' + JSON.stringify(err))
+              console.log('ngOnDestroy: error from File System. Status=' + JSON.stringify(err))
             })
         }
       }

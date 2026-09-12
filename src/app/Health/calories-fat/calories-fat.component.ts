@@ -241,8 +241,13 @@ constructor(
           }
           this.processCheckLimitCalFat(this.resultCheckLimitCalFat());
         } 
-        if (this.previousCalFatFileRetrieved!==this.calFatFileRetrieved()){
+          if (this.previousCalFatFileRetrieved!==this.calFatFileRetrieved()){
             this.previousCalFatFileRetrieved=this.calFatFileRetrieved();
+            if (this.tabLock[1].lock===1){
+                this.inputReadOnly=false;
+            } else {
+                this.inputReadOnly=true;
+            }
             this.theEvent.target.id='RecipeCancel';
             this.CancelUpdates(this.theEvent);
         }
@@ -427,6 +432,24 @@ constructor(
         this.signalTime.update(time => time + 1);
         this.idAnimation=window.requestAnimationFrame(() => this.timeToGo(refDateSec,timeOutSec));
     }
+  }
+
+
+  resultFileSystemFn(event:any){
+    console.log('calories - return from file-access/fileSystem event.iWait='+event.iWait);
+
+    event.nbRecall++
+    if (event.iWait===1){
+      this.returnDataFSCalFat = event;
+    }  else if (event.iWait===6){
+      this.returnDataFSRecipe = event;
+    } 
+    if (this.tabLock[1].lock===1){
+        this.inputReadOnly=false;
+    } else {
+        this.inputReadOnly=true;
+    }
+    this.processCheckLimitCalFat(this.resultCheckLimitCalFat());
   }
 
   initialiseFiles(theFunction:string){
@@ -1112,6 +1135,7 @@ calculateTotal( iRecipe:number){
 
   SearchText(event:any){
     this.openFileAccess.set(false);
+    this.timeOutactivity(1,true,false,"only");
     this.returnEmit.saveAction="";
     if (event.currentTarget.id==='search' && event.currentTarget.value!==''){
       this.checkText=event.currentTarget.value.toLowerCase().trim();
@@ -1121,6 +1145,7 @@ calculateTotal( iRecipe:number){
   }
   onFilter(event:any){
     this.openFileAccess.set(false);
+    this.timeOutactivity(1,true,false,"only");
     this.returnEmit.saveAction="";
     this.filterType=false;
     this.filterFood=false;
@@ -1373,10 +1398,10 @@ iRecipeSave:number=0;
 
 
   resultAccessFile(theEvent:any){
-    if (this. returnDataFSCalFat.errorCode!==0 && this.returnDataFSCalFat.errorCode!==200){
-      this.errorMsg = this.returnDataFSCalFat.errorMsg;
-    } else if (this.returnDataFSRecipe.errorCode!==0 && this.returnDataFSRecipe.errorCode!==200){ //  
-      this.errorMsg = this.returnDataFSRecipe.errorMsg;
+    if (theEvent.errorCode!==0 && theEvent.errorCode!==200){
+      this.errorMsg = theEvent.errorMsg;
+    } else if (theEvent.errorCode!==0 && theEvent.errorCode!==200){ //  
+      this.errorMsg = theEvent.errorMsg;
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "onAction") {
       this.onInputAction="";
       this.onActionA(this.theEvent);
@@ -1405,13 +1430,29 @@ iRecipeSave:number=0;
     console.log(theEvent);
   }
 
+  isErrorFS=signal<boolean>(false);
+  errorMsgFS:string="";
+
   processCheckLimitCalFat(data:any){
     this.errorMsg = "";
+    this.isErrorFS.set(false);
     if (this.returnDataFSCalFat.errorCode!==0 && this.returnDataFSCalFat.errorCode!==200){
-        this.errorMsg = this.returnDataFSCalFat.errorMsg;
-    } else if (this.returnDataFSRecipe.errorCode!==0 && this.returnDataFSRecipe.errorCode!==200){ //  
-        this.errorMsg = this.returnDataFSRecipe.errorMsg;
-    } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "onAction") {
+        this.errorMsgFS = this.returnDataFSCalFat.errorMsg;
+        this.isErrorFS.set(true);
+        return;
+    } 
+    if (this.returnDataFSRecipe.errorCode!==0 && this.returnDataFSRecipe.errorCode!==200){ //  
+        this.errorMsgFS = this.returnDataFSRecipe.errorMsg;
+        this.isErrorFS.set(true);
+        return;
+    }
+    if (this.returnDataFSCalFat.errorCode===0 || this.returnDataFSCalFat.errorCode===200 ||
+      this.returnDataFSRecipe.errorCode===0 || this.returnDataFSRecipe.errorCode===200)
+    {
+        this.errorMsgFS = "";
+        this.isErrorFS.set(true);
+    }
+    if (this.tabLock[1].lock === 1 && this.onInputAction === "onAction") {
         this.onInputAction="";
         this.onActionA(this.theEvent);
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "onInput") {

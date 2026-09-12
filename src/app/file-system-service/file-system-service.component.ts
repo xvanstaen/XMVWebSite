@@ -226,7 +226,7 @@ onFileSystem(iWait: number) {
         }
         dataFromFS.errorCode=data.status;
       } else if (data.status === 666) {
-        dataFromFS.errorMsg="server cannot process file system because is processed by another user; apps retries once more after 2 seconds";
+        dataFromFS.errorMsg="server cannot process file system because it is already processed by another user; apps will rettry once more after 2 seconds";
         console.log(dataFromFS.errorMsg);
         dataFromFS.nbRecall++;
         dataFromFS.status=666;
@@ -277,17 +277,30 @@ onFileSystem(iWait: number) {
          
         } else {
           this.tabLock[iWait].status = 999;
-          dataFromFS.errorMsg= "status " + data.status + " - unknown error "
-          console.log('which type of data is it????' + JSON.stringify(data) + '  on action ' + this.tabLock[iWait].action);
-        }
-        dataFromFS.errorCode=999;
+          dataFromFS.errorCode=999;
+          if (data.message.substring(0,21)==="Http failure response"){
+              dataFromFS.errorMsg="FS Server HTTP failure";
+              console.log('*** FS Server HTTP failure' + '  on action ' + this.tabLock[iWait].action);
+          } else {
+              dataFromFS.errorMsg= "status " + data.status + " - unknown error ";
+              console.log('*** Which type of error is it????' + JSON.stringify(data) + '  on action ' + this.tabLock[iWait].action);
+          }
+          
+        } 
       }
     } else {
-      console.log('which type of data is it???? : ' + JSON.stringify(data));
+      if (data.message.substring(0,21)==="Http failure response"){
+          dataFromFS.errorMsg="FS Server HTTP failure";
+          console.log('====> FS Server HTTP failure');
+      } else {
+          dataFromFS.errorMsg="";
+          console.log('====> From FS : which type of error???? : ' + JSON.stringify(data));
+      }
+      
       this.tabLock[iWait].status = 999;
       dataFromFS.errorCode=999;
       if (this.tabLock[iWait].action === 'lock') {
-        dataFromFS.errorMsg= "status  999 - record is locked ";
+        dataFromFS.errorMsg= dataFromFS.errorMsg + " status  999 - record is locked ";
         this.tabLock[iWait].lock = 2;
       }
     }

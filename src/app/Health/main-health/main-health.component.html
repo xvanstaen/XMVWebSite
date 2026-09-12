@@ -57,6 +57,17 @@
         <div class="skipLine">&nbsp;</div>
     </div>
 
+    @if (isErrorMsg() && errorMsg!==""){
+        <div style="display:block;">
+            <span style="margin-top:10px; padding-top:5px; padding-left:20px; margin-left:20px; width:500px;  background-color: cyan; color:blue; font-size:14px; display:inline-block; text-align: left; min-height:30px;">
+                {{errorMsg}}
+                @if (errCalcCalFat!==''){
+                    <br>{{errCalcCalFat}}
+                }
+            </span>
+        </div>
+    }
+
     @if (createNewHealth===true){
         <div style="margin-left:20px; margin-top:10px; border: blue 2px double; background-color: silver;width:90%; max-width:500px;">
             <div class="skipLine">&nbsp;</div>
@@ -95,7 +106,7 @@
         </div>
     }
     @if (iWait===0 && errorMsg!==''){
-            <div style="display:block;">
+        <div style="display:block;">
             <span style="margin-top:10px; padding-top:5px; padding-left:20px; margin-left:20px; width:500px;  background-color: cyan; color:blue; font-size:14px; display:inline-block; text-align: left; min-height:30px;">
                 {{errorMsg}}
                 @if (errCalcCalFat!==''){

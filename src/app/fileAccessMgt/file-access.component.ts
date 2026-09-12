@@ -103,7 +103,7 @@ export class MainManageFileComponent {
   
   //callFileSystem:boolean=true;
   nbCallFileSystem=signal<number>(0);
-
+  isCallFS=signal<boolean>(false);
   
   theEvent = new classtheEvent;
 
@@ -119,13 +119,15 @@ export class MainManageFileComponent {
   iWait:number=0;
   loopCheckToLimit:number=0;
   nbRecallFS:number=0;
-
+  nbAccessFS:number=-1;
+  
 
   constructor(
     private ManageGoogleService: ManageGoogleService,
     @Inject(LOCALE_ID) private locale: string,) 
     {effect (() => {
-            if (this.previousTriggerFileSystem!==this.triggerFileSystem()){
+         
+          if (this.previousTriggerFileSystem!==this.triggerFileSystem()){
               this.previousTriggerFileSystem=this.triggerFileSystem();
               this.processTriggerFS(this.triggerFileSystem()); 
           }
@@ -149,12 +151,12 @@ export class MainManageFileComponent {
   processTriggerFS(event:any){
       console.log('======= processTriggerFS -- ' + this.triggerFileSystem());
       if (this.iWaitToRetrieve.length>0){
-        this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1)
+        this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
+        this.isCallFS.set(true);
       }
   }
 
   processReadFile(event:any){
-
       var accessToFS=0;
       for (var i=0; i<this.maxEventHTTPrequest; i++){
         this.EventHTTPReceived[i] = false;
@@ -171,6 +173,7 @@ export class MainManageFileComponent {
       console.log('======= processReadFile nb of files read -- ' + i);
       if (this.iWaitToRetrieve.length > 0 && accessToFS > 0){
         this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
+        this.isCallFS.set(true);
       }
   }
   processCheckToLimit(event:any){
@@ -191,6 +194,7 @@ export class MainManageFileComponent {
       if (this.nbRecallFS<4){
         this.nbRecallFS++
         this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
+        this.isCallFS.set(true);
       } else {
         this.nbRecallFS=0;
       }
@@ -199,12 +203,6 @@ export class MainManageFileComponent {
       console.log(' fileAccess end process resultFS; emit returnDataFS to calling apps (mainHealth) event.checkLock.iWait=' + event.iWait +  '   returnDataFS=' + this.returnDataFS.iWait);
       this.resultFileSystem.emit(this.returnDataFS);
     }
-  }
-
-  unlockFile(iWait:number){
-    this.tabLock[iWait].action="unlock";
-    //this.callFileSystem=true;
-    this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
   }
   
   errCalcCalFat:string="";
@@ -238,8 +236,9 @@ export class MainManageFileComponent {
         this.iWaitToRetrieve[0].iWait=event.checkLock.iWait;
         this.iWaitToRetrieve[0].accessFS=true;
         //this.callFileSystem=true; 
-        if (this.loopCheckToLimit<=1){
+        if (this.loopCheckToLimit<=2){
           this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
+          this.isCallFS.set(true);
         }
         if (valueCheck.action === 'updateSystemFile') {
           this.tabLock[event.checkLock.iWait].action = valueCheck.lockAction;
@@ -325,8 +324,14 @@ export class MainManageFileComponent {
           this.returnGetRecord.iWait = iWait;
           this.returnGetRecord.content = "";
           this.returnGetRecord.status = 700;
-          this.returnGetRecord.err=err;
-          console.log('get record ' + " error="+JSON.stringify(err));
+          if (err.message.substring(0,21)==="Http failure response"){
+              this.returnGetRecord.err="Server HTTP failure";
+              console.log('*** Server HTTP failure' + '  on file iWait=' + iWait);
+          } else {
+              this.returnGetRecord.err=err;
+              console.log('get record ' + " error="+JSON.stringify(err));
+          }
+          
           this.returnFile.emit(this.returnGetRecord);
         }
       )
@@ -353,6 +358,7 @@ export class MainManageFileComponent {
       this.tabLock[iWait].action='updatedAt';
       //this.callFileSystem=true;
       this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
+      this.isCallFS.set(true);
     }
     console.log('SaveNewRecord of object=' + GoogleObject);
 
