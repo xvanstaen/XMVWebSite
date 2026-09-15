@@ -298,7 +298,7 @@ export class MainManageFileComponent {
     this.waitHTTP(this.TabLoop[iWait], 3000, iWait);
     this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject)
       .subscribe((data) => {
-            console.log('getRecord - data received for iWait='+iWait);
+              console.log('getRecord - data received for iWait='+iWait);
           this.EventStopWaitHTTP[iWait]=true;
           this.returnGetRecord.iWait = iWait;
           var noPb=true;
