@@ -407,7 +407,6 @@ export class MainHealthComponent {
         }
         this.ConfigCaloriesFat.tabCaloriesFat = event.content.tabCaloriesFat;
         this.calFatFileRetrieved.update( calFatF => calFatF + 1);
-        
         //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"calFatFileRetrieved"}));
         
         //this.CreateDropDownCalFat();
@@ -558,7 +557,7 @@ export class MainHealthComponent {
           this.createNewHealth = false;
         };
         this.isDisplayAll = true;
-        if (this.tabLock[0].lock !== 1) {
+        if (this.tabLock[0].lock !== 1 || this.EventHTTPReceived[0]===false) {
           this.tabLock[0].action='lock';
           this.iWait=0;
           const theClass=new classRetrieveFile;
@@ -609,7 +608,10 @@ export class MainHealthComponent {
     } else if (i === '5') {
       if (NoYes === 'Y') {
         this.isMgtCaloriesFat = true;
-        if (this.tabLock[1].lock !== 1) {
+        //if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
+        //    this.tabLock[1].lock === 1;
+        //}
+        if (this.tabLock[1].lock !== 1 || this.EventHTTPReceived[1]===false) {
           this.EventHTTPReceived[1]=false;
           this.tabLock[1].action='lock';
           this.iWait=1;
@@ -617,16 +619,7 @@ export class MainHealthComponent {
           this.iWaitToRetrieve.push(theClass);
           this.iWaitToRetrieve[0].iWait=1;
           this.iWaitToRetrieve[0].accessFS=true;
-        } else { 
-            if (this.identification.triggerFileSystem.toUpperCase() !=='YES' && this.tabLock[1].lock === 1) {
-              this.iWait=1;
-              this.EventHTTPReceived[1]=false;
-              const theClass=new classRetrieveFile;
-              this.iWaitToRetrieve.push(theClass);
-              this.iWaitToRetrieve[0].iWait=1;
-              this.iWaitToRetrieve[0].accessFS=true;
-            }
-          }
+        } 
         
         if (this.EventHTTPReceived[3]===false){
             const theClass=new classRetrieveFile;
@@ -650,54 +643,65 @@ export class MainHealthComponent {
 
       } else {
         this.isMgtCaloriesFat = false;
-   
-        if (this.tabLock[1].lock === 1) {
-          this.tabLock[1].action='unlock';
-          this.iWaitToRetrieveFn(1);
-        }
-        if (this.tabLock[6].lock === 1) {
-          this.tabLock[6].action='unlock';
-          this.iWaitToRetrieveFn(6);
-        }
-        if (this.tabLock[0].lock === 1 && this.tabSelRadio[3]==="N"){
-          this.tabLock[0].action='unlock';
-          this.iWaitToRetrieveFn(0);
-        }
+        //if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
+        //    this.tabLock[1].lock === 1;
+        //    this.tabLock[6].lock === 1;
+        //} else {
+          if (this.tabLock[1].lock === 1) {
+            this.tabLock[1].action='unlock';
+            this.iWaitToRetrieveFn(1);
+          }
+          if (this.tabLock[6].lock === 1) {
+            this.tabLock[6].action='unlock';
+            this.iWaitToRetrieveFn(6);
+          }
+          if (this.tabLock[0].lock === 1 && this.tabSelRadio[3]==="N"){
+            this.tabLock[0].action='unlock';
+            this.iWaitToRetrieveFn(0);
+          }
 
-        if (this.iWaitToRetrieve.length>0){
-            this.triggerFileSystem.update (fs => fs + 1);
-            this.openFileAccess.set(true);
-        }
-
+          if (this.iWaitToRetrieve.length>0){
+              this.triggerFileSystem.update (fs => fs + 1);
+              this.openFileAccess.set(true);
+          }
+        //}
       }
     } else if (i === '6') { // Calculate Calories & Fat
       if (NoYes === 'Y') {
-        if (this.tabLock[0].lock !== 1) {
-          this.EventHTTPReceived[0]=false;
-          this.tabLock[0].action='lock';
-          this.iWait=0;
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=0;
-        }
-        if (this.EventHTTPReceived[1]===false){
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=1;
-        }
-        if (this.EventHTTPReceived[2]===false){
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=2;
-        }
-        this.openFileAccess.set(true);
-        if (this.iWaitToRetrieve.length>0){
-          this.triggerReadFile.update (rf => rf + 1);
-          this.triggerCalculateCalFat=true;
-        } else { // all files have already been retrieved and have the right status
-          this.triggerFileSystem.update (fs => fs + 1);
+        //if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
+        //    this.tabLock[0].lock === 1;
+        //    this.tabLock[1].lock === 1;
+        //    this.tabLock[6].lock === 1;
+        //} else {
+            if (this.tabLock[0].lock !== 1 || this.EventHTTPReceived[0]===false) {
+              this.EventHTTPReceived[0]=false;
+              this.tabLock[0].action='lock';
+              this.iWait=0;
+              const theClass=new classRetrieveFile;
+              this.iWaitToRetrieve.push(theClass);
+              this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=0;
+            }
+            if (this.EventHTTPReceived[1]===false){
+              const theClass=new classRetrieveFile;
+              this.iWaitToRetrieve.push(theClass);
+              this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=1;
+            }
+            if (this.EventHTTPReceived[2]===false){
+              const theClass=new classRetrieveFile;
+              this.iWaitToRetrieve.push(theClass);
+              this.iWaitToRetrieve[0].iWait=2;
+            }
+            this.openFileAccess.set(true);
+            if (this.iWaitToRetrieve.length>0){
+              this.triggerReadFile.update (rf => rf + 1);
+              this.triggerCalculateCalFat=true;
+            } else { // all files have already been retrieved and have the right status
+              //if (this.identification.triggerFileSystem==="Yes"){
+                  this.triggerFileSystem.update (fs => fs + 1);
+              //}
+            }
           this.processCalculateCalFat();
-        }
+        //}
       } else { // just to be safe
         this.triggerCalculateCalFat=true;
       }
@@ -716,8 +720,11 @@ export class MainHealthComponent {
     } else if (i === '7') { // Display chart
       if (NoYes === 'Y') {
         var maxItems=3;
+        //if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
+        //  this.tabLock[5].lock === 1;
+        //}
         this.isDisplayChart = true;
-        if (this.tabLock[5].lock !== 1|| this.fileParamChart.data.length===0) {
+        if (this.tabLock[5].lock !== 1|| this.fileParamChart.data.length===0 || this.EventHTTPReceived[5]===false) {
           this.EventHTTPReceived[5]=false;
           this.tabLock[5].action='lock';
           this.iWait=5;
@@ -742,7 +749,7 @@ export class MainHealthComponent {
         }
       } else {
         this.isDisplayChart = false;
-        if (this.tabLock[5].lock === 1) {
+        if (this.tabLock[5].lock === 1 && this.identification.triggerFileSystem.toUpperCase()==="YES") {
           this.tabLock[5].action='unlock';
           this.iWait=5;
           const theClass=new classRetrieveFile;
@@ -787,7 +794,12 @@ export class MainHealthComponent {
     const theClass=new classRetrieveFile;
           this.iWaitToRetrieve.push(theClass);
           this.iWaitToRetrieve[0].iWait=iWait;
-          this.iWaitToRetrieve[0].accessFS=true;
+          if (this.identification.triggerFileSystem.toUpperCase()==="YES"){ 
+              this.iWaitToRetrieve[0].accessFS=true;    
+          } else {
+            this.iWaitToRetrieve[0].accessFS=false;
+          }
+          
   }
 
   confirmCreateNewHealthFile(event:any){
@@ -863,7 +875,10 @@ export class MainHealthComponent {
     } else {
       this.iWaitToRetrieve[0].accessFS=false;
     }
-    this.triggerFileSystem.update (fs => fs + 1);
+    if (this.identification.triggerFileSystem.toUpperCase()==="YES"){
+        this.triggerFileSystem.update (fs => fs + 1); 
+    }
+    
     this.isRetrieveFile = true;
     this.triggerReadFile.update (rf => rf + 1);
     this.openFileAccess.set(true);

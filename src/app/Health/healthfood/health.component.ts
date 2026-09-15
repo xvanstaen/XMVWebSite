@@ -570,6 +570,9 @@ export class HealthComponent  {
     console.log('Health component - timeOutactivity');
     window.cancelAnimationFrame(this.idAnimation);
     this.callTimeToGo();
+    if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
+      this.isUserTimeOut.set(false);
+    }
     this.refDate=new Date();
     this.lastInputAt = strDateTime();
     if (theAction==="only"){
@@ -1367,6 +1370,9 @@ export class HealthComponent  {
 
   afterCheckFS(data:any){
     this.errorFn="";
+    if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
+      this.tabLock[0].lock = 1;
+    }
     if (this.signalDataFS()!==-1){
       console.log('Health component - afterCheckFS - this.onInputAction='+this.onInputAction);
       if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){

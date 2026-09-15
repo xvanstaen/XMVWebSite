@@ -165,16 +165,11 @@ export class MainManageFileComponent {
       }
       for (var i=0; i< this.iWaitToRetrieve.length; i++){
         this.retrieveRecord(this.iWaitToRetrieve[i].iWait);
-        if (this.iWaitToRetrieve[i].accessFS===true){
-          accessToFS++;
-        }
+        accessToFS++;
       }
       console.log('======= processReadFile -- ' + this.triggerReadFile());
       console.log('======= processReadFile nb of files read -- ' + i);
-      if (this.iWaitToRetrieve.length > 0 && accessToFS > 0){
-        this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
-        this.isCallFS.set(true);
-      }
+      this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
   }
   processCheckToLimit(event:any){
       if (this.eventCheckToLimit.checkLock.iCheck===true){
@@ -213,7 +208,7 @@ export class MainManageFileComponent {
     var eventToCheck=new classtheEvent;
     eventToCheck=this.eventCheckToLimit;
     this.errCalcCalFat="";
-    if (this.identification.triggerFileSystem === "No") { //"No"
+    if (this.identification.triggerFileSystem.toUpperCase()!=="YES") { //"No"
       if (eventToCheck.checkLock.isSaveFile===true ){
         valueCheck.action = "ProcessSave";
       }
@@ -236,7 +231,7 @@ export class MainManageFileComponent {
         this.iWaitToRetrieve[0].iWait=event.checkLock.iWait;
         this.iWaitToRetrieve[0].accessFS=true;
         //this.callFileSystem=true; 
-        if (this.loopCheckToLimit<=2){
+        if (this.loopCheckToLimit<=2 ){
           this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
           this.isCallFS.set(true);
         }
@@ -354,7 +349,7 @@ export class MainManageFileComponent {
       GoogleObject = 'ConsoleLog.json-' + myTime.toString().substring(4, 21);
       file = new File([JSON.stringify(this.myConsole)], GoogleObject, { type: 'application/json' });
     }
-    if (this.identification.triggerFileSystem !== "No") {
+    if (this.identification.triggerFileSystem.toUpperCase()==="YES") {
       this.tabLock[iWait].action='updatedAt';
       //this.callFileSystem=true;
       this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);

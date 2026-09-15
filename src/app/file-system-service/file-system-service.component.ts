@@ -79,9 +79,10 @@ onFileSystem(iWait: number) {
   const dataFromFS = this.returnDataFS;
   this.tabLock[iWait].status = 0;
   this.returnDataFS.errorMsg = "";
-  if (this.identification.triggerFileSystem === "No") {
+  if (this.identification.triggerFileSystem.toUpperCase()!=="YES") {
     this.tabLock[iWait].lock = 1;
     this.tabLock[iWait].action = "";
+    this.returnDataFS.errorCode=0;
     this.resultFileSystem.emit(this.returnDataFS);
     
   } else {
