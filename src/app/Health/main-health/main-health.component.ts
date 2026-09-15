@@ -72,6 +72,7 @@ export class MainHealthComponent {
   openFileAccess=signal<boolean>(true);
   signalDataFS=signal<number>(-1);
   actionHealth=signal<number>(-1);
+  displayHealthAll=signal<boolean>(false);
   //actionCalFat:number=-1;
   //triggerCalFat=signal<returnSignal>({nb:-1, function:""});
 
@@ -391,6 +392,9 @@ export class MainHealthComponent {
         }
         this.initTrackRecord();
         this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+        if (this.isDisplayAll===true){
+          this.displayHealthAll.set(true);
+        }
         //this.healthFileRetrieved++
         //****************** iWait === 1 *************************/
       } else if (iWait === 1) {
