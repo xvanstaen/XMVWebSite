@@ -528,9 +528,9 @@ export class MainHealthComponent {
   SelectDisplay() {
     this.errorMsg="";
     if (this.TheSelectDisplays.controls['DisplayAll'].value === 'Y') {
-      this.isDisplayAll = true;
+      //this.isDisplayAll = true;
     } else {
-      this.isDisplayAll = false;
+      //this.isDisplayAll = false;
     }
   }
 
@@ -875,9 +875,9 @@ export class MainHealthComponent {
     } else {
       this.iWaitToRetrieve[0].accessFS=false;
     }
-    if (this.identification.triggerFileSystem.toUpperCase()==="YES"){
+    //if (this.identification.triggerFileSystem.toUpperCase()==="YES"){
         this.triggerFileSystem.update (fs => fs + 1); 
-    }
+    //}
     
     this.isRetrieveFile = true;
     this.triggerReadFile.update (rf => rf + 1);
