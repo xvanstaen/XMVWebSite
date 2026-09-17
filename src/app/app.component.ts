@@ -188,7 +188,7 @@ console.log('devMode='+this.devMode);
     this.configServer.mongoServer = this.initConfigServer.mongoServer;
     this.configServer.fileSystemServer = this.initConfigServer.fileSystemServer;
     this.configServerChanges++;
-  }
+  } 
   
   RetrieveConfig(){
     console.log('RetrieveConfig()');
