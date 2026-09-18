@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
+  Component, OnInit, Input, signal, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
@@ -22,6 +22,7 @@ import { configServer, classFilesToCache,  UserParam, LoginIdentif, msgConsole }
 import { classAccessFile, classFileSystem } from '../classFileSystem';
 
 import { fillConfig } from '../copyFilesFunction';
+
 @Component({
   selector: 'app-test-server-js',
   templateUrl: './test-server-js.component.html',
@@ -33,16 +34,6 @@ import { fillConfig } from '../copyFilesFunction';
 })
 export class TestServerJSComponent {
 
-  constructor(
-    private http: HttpClient,
-    private ManageSecuredGoogleService: ManageSecuredGoogleService,
-    private ManageMongoDBService: ManageMongoDBService,
-    private ManageGoogleService: ManageGoogleService,
-    //public auth: AuthService,
-
-    @Inject(LOCALE_ID) private locale: string,
-  ) { }
-
   @Input() configServer = new configServer;
   @Input() credentials = new classCredentials;
   @Input() credentialsMongo = new classCredentials;
@@ -52,6 +43,24 @@ export class TestServerJSComponent {
   @Input() serverTest:string=""; // server or tutorials
 
   @Output() serverChange=  new EventEmitter<any>();
+
+  isGetListObjects=signal<boolean>(false);
+  isGetFileContent=signal<boolean>(false);
+  isGetListBuckets=signal<boolean>(false);
+  isUserIdForFS=signal<boolean>(false);
+  isGetMetaOneObject=signal<boolean>(false);
+  isGetCacheConsole=signal<boolean>(false);
+  isGetCacheConsoleBis=signal<boolean>(false);
+  isMemoryFS=signal<boolean>(false);
+  isGetListMetaObject=signal<boolean>(false);
+  isDisplayAction=signal<boolean>(false);
+  isErrorConfig=signal<boolean>(false);
+  isDataConfigServer=signal<boolean>(false);
+  isGetDefaultCredentials=signal<boolean>(false);
+  isManageCacheFile=signal<boolean>(false);
+  isError=signal<boolean>(false);
+
+  saveActionResetFS:string="";
 
   initData={
     getRecord:false,
@@ -182,9 +191,19 @@ export class TestServerJSComponent {
   stringCredentials:string='';
   serverVersion:string="";
 
-  isDisplayAction:boolean=false;
+  
 
   selectOneServer:boolean=false;
+
+    constructor(
+    private http: HttpClient,
+    private ManageSecuredGoogleService: ManageSecuredGoogleService,
+    private ManageMongoDBService: ManageMongoDBService,
+    private ManageGoogleService: ManageGoogleService,
+    //public auth: AuthService,
+
+    @Inject(LOCALE_ID) private locale: string,
+  ) { }
 
   ngOnInit() {
     
@@ -258,6 +277,8 @@ export class TestServerJSComponent {
     this.currentAction = "";
     this.isConfirmedDelete= false;
     this.isConfirmedSave= false;
+    this.isGetFileContent.set(false);
+    this.isGetListObjects.set(false);
   }
 
 /*
@@ -343,17 +364,22 @@ initBeforeCallAPI(numEvent:number){
     this.EventStopWaitHTTP[numEvent]=false;    
     this.waitHTTP(this.TabLoop[numEvent], this.maxLoop, numEvent);
     this.error="";
+    this.message="";
+    this.isMsg.set(false);
+    this.isError.set(false);
 }
 
   tabVersionServer:Array<string>=['','','','',''];
-  isGetServerFunction:boolean=false;
+  isGetServerFunction=signal<boolean>(false);
   getServerVersion(i:number){
     this.initBeforeCallAPI(15);
+    this.isGetServerFunction.set(false);
+    this.isError.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.getServerVersion(this.newConfigServer)
         .subscribe(
           (data) => {
-          this.isGetServerFunction=true;
+          this.isGetServerFunction.set(true);
           this.tabVersionServer[i]=data.version;
           this.serverVersion=data.version;
           this.EventHTTPReceived[15] = true;
@@ -363,6 +389,7 @@ initBeforeCallAPI(numEvent:number){
           this.EventStopWaitHTTP[15]=true;
           this.serverVersion="";
           this.error = "status:" +err.err.status + " - " + err.err.message;
+          this.isError.set(true);
           console.log('error');
         })
   }
@@ -395,22 +422,24 @@ storeTitle(event:any){
     if (event.target.textContent.trim() !== "cancel") {
       this.theForm.controls['action'].setValue(event.target.textContent.trim());
       if (event.target.textContent.trim() === 'list all buckets') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);
         this.getListBuckets();
 
       } else if (event.target.textContent.trim() === 'list all objects') {
         if (this.theForm.controls['srcBucket'].value==="" ){
           this.error="Field srcBucket is empty";
+          this.isError.set(true);
         } else {
-          this.isDisplayAction=false;
+          this.isDisplayAction.set(false);
           this.getListObjects(this.theForm.controls['srcBucket'].value);
         }
 
       } else if (event.target.textContent.trim() === 'get file content') {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value===""){
           this.error="At least one field (srcBucket/srcObject) is empty";
+          this.isError.set(true);
         } else {
-          this.isDisplayAction=true;
+          this.isDisplayAction.set(true);
           if (this.theForm.controls['server'].value === 'HTTP') {
             this.getFileContentHTTP(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value);
           } else {
@@ -421,22 +450,25 @@ storeTitle(event:any){
       } else if (event.target.textContent.trim() === 'get list metadata for all objects') {
         if (this.theForm.controls['srcBucket'].value==="" ){
           this.error="Field srcBucket is empty";
+          this.isError.set(true);
         } else {
-          this.isDisplayAction=true;
+          this.isDisplayAction.set(true);
           this.listMetaDataObject(this.theForm.controls['srcBucket'].value);
         }
         
       } else if (event.target.textContent.trim() === 'get metadata for one object') {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value===""){
           this.error="At least one field (srcBucket/srcObject) is empty";
+          this.isError.set(true);
         } else {
-          this.isDisplayAction=true;
+          this.isDisplayAction.set(true);
           this.getMetaData(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value);
         }
         
       } else if (event.target.textContent.trim() === 'create & save metadata') {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value===""){
           this.error="At least one field (srcBucket/srcObject) is empty";
+          this.isError.set(true);
         } else {
           this.inputMetaData();     
         }
@@ -444,6 +476,7 @@ storeTitle(event:any){
       } else if (event.target.textContent.trim() === 'update metadata for one object') {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value===""){
           this.error="At least one field (srcBucket/srcObject) is empty";
+          this.isError.set(true);
         } else {
           this.modifyMetaData();     
         }
@@ -451,30 +484,34 @@ storeTitle(event:any){
       } else if (event.target.textContent.trim() === 'copy object') {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value==="" || this.theForm.controls['destBucket'].value==="" || this.theForm.controls['destObject'].value===""){
           this.error="At least one field (srcBucket/srcObject/destBucket/destObject) is empty";
+          this.isError.set(true);
         } else {
-          this.isDisplayAction=false;
+          this.isDisplayAction.set(false);;
           this.copyObject(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value, this.theForm.controls['destBucket'].value, this.theForm.controls['destObject'].value);
         }
         
       } else if (event.target.textContent.trim() === 'move object') {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value==="" || this.theForm.controls['destBucket'].value==="" || this.theForm.controls['destObject'].value===""){
           this.error="At least one field (srcBucket/srcObject/destBucket/destObject) is empty";
+          this.isError.set(true);
         } else {
-          this.isDisplayAction=false;
+          this.isDisplayAction.set(false);;
           this.moveObject(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value, this.theForm.controls['destBucket'].value, this.theForm.controls['destObject'].value);
         }
         
       } else if (event.target.textContent.trim() === 'rename object') {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value==="" || this.theForm.controls['destObject'].value===""){
           this.error="At least one field (srcBucket/srcObject/destObject) is empty";
+          this.isError.set(true);
         } else {
-          this.isDisplayAction=false;
+          this.isDisplayAction.set(false);;
           this.renameObject(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value, this.theForm.controls['destObject'].value);
         }
         
       }  else if (event.target.textContent.trim() === 'delete object'  ) {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value===""){
           this.error="At least one field (srcBucket/srcObject) is empty";
+          this.isError.set(true);
         } else {
           this.isConfirmedDelete = true;
         }
@@ -482,6 +519,7 @@ storeTitle(event:any){
       } else if (event.target.textContent.trim() === 'save object' ) {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value==="" || this.theForm.controls['fileContent'].value===""){
           this.error="At least one field (srcBucket/srcObject/Content) is empty";
+          this.isError.set(true);
         } else {
           this.isConfirmedSave = true;
         }
@@ -489,73 +527,73 @@ storeTitle(event:any){
       } else if (event.target.textContent.trim() === 'save object with meta perso' ) {
         if (this.theForm.controls['srcBucket'].value==="" || this.theForm.controls['srcObject'].value==="" || this.theForm.controls['fileContent'].value===""){
           this.error="At least one field (srcBucket/srcObject/Content) is empty";
+          this.isError.set(true);
         } else {
           this.isConfirmedSave = true;
         }
        
       } else if (event.target.textContent.trim() === 'get cache console') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.getCacheConsole(); 
 
       } else if (event.target.textContent.trim() === 'reset cache console') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.resetCacheConsole();
 
       } else if (event.target.textContent.trim() === 'enable cache console') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.enableCacheConsole();
 
       } else if (event.target.textContent.trim() === 'disable cache console') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.disableCacheConsole();
 
       }  else if (event.target.textContent.trim() === 'get memory File System') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.getMemoryFS();
 
       } else if (event.target.textContent.trim() === 'reset memory File System') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.saveActionResetFS='reset memory File System';
-        this.isUserIdForFS=true;
+        this.isUserIdForFS.set(true);
         //this.resetMemoryFS(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value);
       } else if (event.target.textContent.trim() === 'reset memory all FS') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.saveActionResetFS='reset memory all FS';
-        this.isUserIdForFS=true;
+        this.isUserIdForFS.set(true);
         //this.onResetFS();
       }  else if (event.target.textContent.trim() === 'reset cache file') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.resetCacheFile();
 
       } else if (event.target.textContent.trim() === 'get cache file') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.getCacheFile();
 
       }else if (event.target.textContent.trim() === 'reload cache file') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.reloadCacheFile();
 
       } else if (event.target.textContent.trim() === 'manage config') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         this.manageConfig();
 
       } else if (event.target.textContent.trim() === 'get credentials') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         //this.getDefaultCredentials();
         this.getCredentials();
 
       } else if (event.target.textContent.trim() === 'get FS credentials') {
-        this.isDisplayAction=false;
+        this.isDisplayAction.set(false);;
         //this.getFSCredentials();
 
       }else if (event.target.textContent.trim() === 'get server version') {
         for (var i=0; i<this.tabServers.length;i++){
           this.getServerVersion(i);
         }
-        
-
       } else {
         this.error = 'ACTION UNKNOWN';
+        this.isError.set(true);
       }
     }
   }
@@ -579,6 +617,8 @@ storeTitle(event:any){
 
   resetCacheFile(){
     this.resetObjectCacheFile();
+    this.isError.set(false);
+    this.isManageCacheFile.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.resetCacheFile(this.newConfigServer, "All" )
       .subscribe((data ) => {  
@@ -590,20 +630,24 @@ storeTitle(event:any){
         if (data.content!==undefined){
           this.msgCacheFile.content=data.content;
         }
+        this.isManageCacheFile.set(true);
       } else {
         this.error=data.msg;
+        this.isError.set(true);
       }
       }, 
       err => {
         this.error="Cache file could not be reset";
         this.manageErrorMsg(err);
         this.EventStopWaitHTTP[16]=true;
+        this.isError.set(true);
       });
   }
 
   getCacheFile(){
     this.resetObjectCacheFile();
-
+    this.isError.set(false);
+    this.isManageCacheFile.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.getCacheFile(this.newConfigServer )
     .subscribe((data ) => {  
@@ -613,14 +657,17 @@ storeTitle(event:any){
       this.msgCacheFile.status=data.status;
       this.msgCacheFile.msg=data.msg;
       this.msgCacheFile.content=data.cacheFiles;
+      this.isManageCacheFile.set(true);
     } else {
       this.error=data.msg;
+      this.isError.set(true);
     }
     }, 
     err => {
       this.error="Cache file could not be retrieved" ;
       this.manageErrorMsg(err);
       this.EventStopWaitHTTP[16]=true;
+      this.isError.set(true);
       
     });
   }
@@ -635,6 +682,8 @@ storeTitle(event:any){
 
   reloadCacheFile(){
     this.resetObjectCacheFile();
+    this.isError.set(false);
+    this.isManageCacheFile.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.reloadCacheFile(this.newConfigServer )
     .subscribe((data ) => {  
@@ -644,14 +693,17 @@ storeTitle(event:any){
       this.msgCacheFile.status=data.status;
       this.msgCacheFile.msg=data.msg;
       this.msgCacheFile.content=data.cacheFiles;
+      this.isManageCacheFile.set(true);
     } else {
       this.error=data.msg;
+      this.isError.set(true);
     }
     }, 
     err => {
       this.error="Cache file has not been reloaded";
       this.manageErrorMsg(err);
       this.EventStopWaitHTTP[16]=true;
+      this.isError.set(true);
 
     });
   }
@@ -728,6 +780,8 @@ this.theForm.controls['idRecord'].setValue("");
 dataConfigServer = new configServer;
 findCacheConfig(){
   this.initBeforeCallAPI(18);
+  this.isErrorConfig.set(false);
+  this.isDataConfigServer.set(false);
   this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
   this.ManageMongoDBService.findConfig(this.newConfigServer,'configServer' )
   .subscribe((data ) => { 
@@ -738,18 +792,23 @@ findCacheConfig(){
       this.dataConfigServer = this.responseConfig(data, this.dataConfigServer);
       this.EventHTTPReceived[18]=true;
       this.EventStopWaitHTTP[18]=true;
+      this.isDataConfigServer.set(true);
     } else {
       this.errorConfig=data.msg;
+      this.isErrorConfig.set(true);
     }
   }, 
   err => {
     this.errorConfig="Cache config has not been reset, error:" + err;
+    this.isErrorConfig.set(true);
     this.EventStopWaitHTTP[18]=true;
   });
 }
 
 findAllConfig(){
   this.initBeforeCallAPI(18);
+  this.isErrorConfig.set(false);
+  this.isDataConfigServer.set(false);
   this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
   this.ManageMongoDBService.findAllConfig(this.newConfigServer,'configServer' )
   .subscribe((data ) => { 
@@ -758,10 +817,12 @@ findAllConfig(){
     console.log(data);
     this.EventHTTPReceived[18]=true;
     this.EventStopWaitHTTP[18]=true;
+    this.isDataConfigServer.set(true);
   }, 
   err => {
     this.errorConfig="Find all config, error:" + err;
     this.EventStopWaitHTTP[18]=true;
+    this.isErrorConfig.set(true);
   });
 }
 
@@ -819,12 +880,16 @@ confActionCancel(event:any){
   this.isConfConfigSave=false;
   this.isConfConfigUpdate=false;
   this.isConfConfigDelete=false;
+  this.isErrorConfig.set(false);
+  this.isDataConfigServer.set(false);
 }
 
 
 findConfigByString(){
   if (this.theForm.controls['searchField'].value!=="" && this.theForm.controls['searchCriteria'].value!==""){
     this.initBeforeCallAPI(18);
+    this.isErrorConfig.set(false);
+    this.isDataConfigServer.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageMongoDBService.findConfigByString(this.newConfigServer, 'configServer', this.theForm.controls['searchField'].value, this.theForm.controls['searchCriteria'].value )
     .subscribe((data ) => { 
@@ -833,13 +898,16 @@ findConfigByString(){
       console.log(data);
       this.EventHTTPReceived[18]=true;
       this.EventStopWaitHTTP[18]=true;
+      this.isDataConfigServer.set(true);
     }, 
     err => {
       this.errorConfig="Find config by string, error:" + err;
       this.EventStopWaitHTTP[18]=true;
+      this.isErrorConfig.set(true);
     });
   } else {
     this.errorConfig="search field & criteria are mandatory";
+    this.isErrorConfig.set(true);
   }
   
 }
@@ -850,25 +918,32 @@ updateConfigById(){
     this.tabOfConfig[i]=fillConfig(this.dataConfigServer);
   }
   this.initBeforeCallAPI(18);
+  this.isErrorConfig.set(false);
+  this.isDataConfigServer.set(false);
   this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
   this.ManageMongoDBService.updateConfig(this.newConfigServer,  'configServer', this.theForm.controls['idRecord'].value, this.dataConfigServer)
   .subscribe((data ) => { 
     if (data.status===200){
       this.errorConfig="Config has been successfully updated" ; 
       console.log(data.data);
+      this.isDataConfigServer.set(true);
     } else {
       this.errorConfig=data.msg;
+      this.isErrorConfig.set(true);
     }
     this.EventStopWaitHTTP[18]=true;
   }, 
   err => {
     this.errorConfig="Config has not been updated, error:" + err;
     this.EventStopWaitHTTP[18]=true;
+    this.isErrorConfig.set(true);
   });
 }
 
 deleteConfigById(){
   this.initBeforeCallAPI(18);
+  this.isErrorConfig.set(false);
+  this.isDataConfigServer.set(false);
   this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
   this.ManageMongoDBService.delConfigById(this.newConfigServer,  'configServer', this.theForm.controls['idRecord'].value)
   .subscribe((data ) => { 
@@ -877,19 +952,24 @@ deleteConfigById(){
       this.findAllConfig();
       console.log(data.data);
       this.EventHTTPReceived[18]=true;
+      this.isDataConfigServer.set(true);
     } else {
       this.errorConfig=data.msg;
+      this.isErrorConfig.set(true);
     }
     this.EventStopWaitHTTP[18]=true;
   }, 
   err => {
     this.errorConfig="Config has not been deleted, error:" + err;
     this.EventStopWaitHTTP[18]=true;
+    this.isErrorConfig.set(true);
   });
 }
 
 uploadConfig(){
   this.initBeforeCallAPI(18);
+  this.isErrorConfig.set(false);
+  this.isDataConfigServer.set(false);
   this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
   this.ManageMongoDBService.uploadConfig(this.newConfigServer, 'configServer', this.dataConfigServer)
   .subscribe((data ) => { 
@@ -898,26 +978,32 @@ uploadConfig(){
       this.errorConfig="Config has been successfully uploaded" ; 
       this.findAllConfig();
       this.EventHTTPReceived[18]=true;
+      this.isDataConfigServer.set(true);
       console.log(data.data);
     } else {
       this.errorConfig=data.msg;
+      this.isErrorConfig.set(true);
     }
   }, 
   err => {
     this.EventStopWaitHTTP[18]=true;
     this.errorConfig="Config has not been uploaded, error:" + err;
+    this.isErrorConfig.set(true);
   });
 }
 
 resetCacheConfig(){
+  this.isErrorConfig.set(false);
   this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
   this.ManageMongoDBService.resetCacheConfig(this.newConfigServer,'configServer')
   .subscribe((data ) => { 
     this.errorConfig=data.msg; 
     console.log(data);
+    this.isErrorConfig.set(true);
   }, 
   err => {
     this.errorConfig=err.msg; 
+    this.isErrorConfig.set(true);
   });
 }
 onInputTabConfig(event:any){
@@ -1074,6 +1160,7 @@ listConfig(){
 
   getListBuckets() {
     this.initBeforeCallAPI(0);
+    this.isGetListBuckets.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.getListBuckets(this.newConfigServer)
       .subscribe((data) => {
@@ -1082,18 +1169,22 @@ listConfig(){
           this.returnFileContent = JSON.stringify(data);
           this.TabBuckets = data;
           this.EventHTTPReceived[0] = true;
+          this.isGetListBuckets.set(true);
         } else { 
           this.error=data.msg;
+          this.isError.set(true);
         }
       },
         err => {
           this.EventStopWaitHTTP[0]=true;
+          this.isError.set(true);
           this.manageErrorMsg(err);
         });
   }
 
   getListObjects(bucket: any) {
     this.initBeforeCallAPI(1);
+    this.isGetListObjects.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.getListObjects(this.newConfigServer, bucket)
       .subscribe((data) => {
@@ -1101,30 +1192,36 @@ listConfig(){
         this.returnFileContent = JSON.stringify(data);
         this.EventHTTPReceived[1] = true;
         this.EventStopWaitHTTP[1]=true;
+        this.isGetListObjects.set(true);
       },
         err => {
           this.EventStopWaitHTTP[1]=true;
+          this.isError.set(true);
           this.manageErrorMsg(err);
         });
   }
 
   getFileContent(bucket: any, object: any) {
     this.initBeforeCallAPI(1);
+    this.isGetFileContent.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.getContentObject(this.newConfigServer, bucket, object)
       .subscribe((data) => {
         this.returnFileContent = JSON.stringify(data);
         this.EventHTTPReceived[2] = true;
         this.EventStopWaitHTTP[2]=true;
+        this.isGetFileContent.set(true);
       },
         err => {
           this.error = "cannot retrieve file " + object + "   error==> " + JSON.stringify(err);
           this.EventStopWaitHTTP[2]=true;
+          this.isError.set(true);
         });
   }
 
   getFileContentHTTP(bucket: any, object: any) {
     this.initBeforeCallAPI(2);
+    this.isGetFileContent.set(false);
     this.HTTP_Address = 'https://storage.googleapis.com/download/storage/v1/b/' + bucket + '/o/' + object + '?alt=media';
     //this.HTTP_Address=this.Google_Bucket_Access_Root+bucket+this.GoogleObject_Option+object;
     this.http.get(this.HTTP_Address, { headers: this.theHeadersAll })
@@ -1133,16 +1230,19 @@ listConfig(){
         this.returnFileContent = JSON.stringify(data);
         this.EventHTTPReceived[2] = true;
         this.EventStopWaitHTTP[2]=true;
+        this.isGetFileContent.set(true);
       },
         err => {
           //console.log('Metaobject not retrieved ' + err.status);
           this.manageErrorMsg(err);
           this.EventStopWaitHTTP[2]=true;
+          this.isError.set(true);
         });
   }
 
   deleteObject(srcbucket: any, srcobject: any) {
-    this.returnFileContent="";
+    const sourceBucket=srcbucket;
+    const sourceObject=srcobject
     this.initBeforeCallAPI(7);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.deleteObject(this.newConfigServer, srcbucket, srcobject)
@@ -1152,21 +1252,28 @@ listConfig(){
           var theResp:any;
           theResp=data;
           if (theResp.status===undefined || theResp.status===200){
-            this.returnFileContent = JSON.stringify(data);
+            this.message = "Object " + sourceObject + " is deleted " +  " from bucket " + sourceBucket;
             this.EventHTTPReceived[7] = true;
+            this.error="";
+            this.isMsg.set(true);
           } else {
             this.error=theResp.msg;
+            this.isError.set(true);
           }
         },
         err => {
           this.manageErrorMsg(err);
           this.EventStopWaitHTTP[7]=true;
+          this.isError.set(true);
         });
   }
 
-
+  isMsg=signal<boolean>(false);
+  message:string="";
   renameObject(srcbucket: any, srcobject: any, destobject: any) {
-    this.returnFileContent="";
+    const sourceBucket=srcbucket;
+    const sourceObject=srcobject;
+    const destObject=destobject;
     this.initBeforeCallAPI(7);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.renameObject(this.newConfigServer, srcbucket, srcobject, destobject)
@@ -1176,21 +1283,28 @@ listConfig(){
           var theResp:any;
           theResp=data;
           if (theResp.status===undefined || theResp.status===200){
-            this.returnFileContent = JSON.stringify(data);
+            this.message = "Object " + sourceObject + " is renamed as " + destObject + " in bucket " + sourceBucket;
             this.EventHTTPReceived[7] = true;
+            this.error="";
+            this.isMsg.set(true);
           } else {
             this.error=theResp.msg;
+            this.isError.set(true);
           } 
         },
         err => {
           this.manageErrorMsg(err);
           this.EventStopWaitHTTP[7]=true;
+          this.isError.set(true);
         });
   }
 
   moveObject(srcbucket: any, srcobject: any, destbucket: any, destobject: any) {
-    this.returnFileContent="";
-    this.initBeforeCallAPI(7);
+    const sourceBucket=srcbucket;
+    const destinbucket=destbucket;
+    const sourceObject=srcobject;
+    const destObject=destobject;
+    this.initBeforeCallAPI(7);  
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;    
     this.ManageGoogleService.moveObject(this.newConfigServer,srcbucket, destbucket, srcobject, destobject)
       .subscribe(
@@ -1200,21 +1314,29 @@ listConfig(){
           var theResp:any;
           theResp=data;
           if (theResp.status===undefined || theResp.status===200){
-            this.returnFileContent = JSON.stringify(data);
+            this.message = "Object " + sourceObject + " in bucket " + sourceBucket + " is moved as " + destObject +
+                    " into bucket " + destinbucket;
             this.EventHTTPReceived[7] = true;
+            this.error="";
+            this.isMsg.set(true);
           } else {
             this.error=theResp.msg;
+            this.isError.set(true);
           }
         },
         err => {
           this.EventStopWaitHTTP[7]=true;
           this.manageErrorMsg(err);
+          this.isError.set(true);
         });
   }
 
   copyObject(srcbucket: any, srcobject: any, destbucket: any, destobject: any) {
+    const sourceBucket=srcbucket;
+    const destinbucket=destbucket;
+    const sourceObject=srcobject;
+    const destObject=destobject;
     this.initBeforeCallAPI(6);
-    this.returnFileContent="";
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.copyObject(this.newConfigServer, srcbucket, destbucket, srcobject, destobject)
       .subscribe(
@@ -1223,15 +1345,20 @@ listConfig(){
           var theResp:any;
           theResp=data;
           if (theResp.status===undefined || theResp.status===200){
-            this.returnFileContent = JSON.stringify(data);
+            this.message = "Object " + sourceObject + " in bucket " + sourceBucket + " is copied as " + destObject +
+                    " into bucket " + destinbucket;
+            this.error="";
+            this.isMsg.set(true);
             this.EventHTTPReceived[6] = true;
           } else {
             this.error=theResp.msg;
+            this.isError.set(true);
           }
         },
         err => {
           this.EventStopWaitHTTP[6]=true;
           this.manageErrorMsg(err);
+          this.isError.set(true);
         });
   }
 
@@ -1249,6 +1376,7 @@ listConfig(){
         this.getMetaData(this.theForm.controls['srcBucket'].value, this.theForm.controls['srcObject'].value);
     } else {
       this.error="enter SrcBucket/srcObject"
+      this.isError.set(true);
     }
   }
 
@@ -1287,17 +1415,20 @@ listConfig(){
             var response:any;
             response=data;
             this.error=response.msg;
+            this.isError.set(true);
         }
         },
         err => {
           this.EventStopWaitHTTP[5]=true;
           this.manageErrorMsg(err);
+          this.isError.set(true);
         });
   }
 
 
   listMetaDataObject(bucket: any) {
     this.initBeforeCallAPI(3);
+    this.isGetListMetaObject.set(false);
     this.myListOfObjects.items.splice(0, this.myListOfObjects.items.length);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.getListMetaObjects(this.newConfigServer, bucket)
@@ -1316,10 +1447,12 @@ listConfig(){
         }
         this.returnFileContent = JSON.stringify(data);
         this.EventHTTPReceived[3] = true;
+        this.isGetListMetaObject.set(true);
       },
         err => {
           this.EventStopWaitHTTP[3]=true;
           this.manageErrorMsg(err);
+          this.isError.set(true);
         });
   }
 
@@ -1333,6 +1466,7 @@ listConfig(){
 
   getMetaData(bucket: any, object: any) {
     this.returnFileContent="";
+    this.isGetMetaOneObject.set(false);
     this.initBeforeCallAPI(4);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.strMetaDataPerso = "";
@@ -1373,15 +1507,19 @@ listConfig(){
           }
           this.oneMetadata = data;
           this.EventHTTPReceived[4] = true;
+          this.isGetMetaOneObject.set(true);
         },
         err => {
           this.EventStopWaitHTTP[3]=true;
+          this.isError.set(true);
           this.manageErrorMsg(err);
         });
   }
 
   uploadMetaPerso(srcbucket: any, srcobject: any, record: any) {
     this.returnFileContent="";
+    this.error="";
+    this.isError.set(false);
     var myObject: any;
     if (record.substring(0, 1) === "{") {
       myObject = JSON.parse(record);
@@ -1402,17 +1540,19 @@ listConfig(){
             var response:any;
             response=data;
             this.error=response.msg;
+            this.isError.set(true);
         }
       },
         err => {
           this.EventStopWaitHTTP[8]=true;
           console.log('Upload of object and meaPerso failed ' + err.status);
+          this.isError.set(true);
           this.manageErrorMsg(err);
         });
   }
 
   /* =================== CACHE CONSOLE  =============*/
-  gotoGetCacheConsole:boolean=false;
+
   reTriggerFn:number=0;
   getCacheConsole() {
     this.initData.getRecord=true;
@@ -1421,12 +1561,15 @@ listConfig(){
     this.initData.nbCalls++
     this.reTriggerFn++
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
-    this.gotoGetCacheConsole=true;
+    this.isGetCacheConsole.set(true);
+    this.isError.set(false);
+    this.error="";
   }
 
   appReturnError(event:any){
     if (event.app==="getCacheConsole"){
       this.error=event.error;
+      this.isError.set(true);
       //this.gotoGetCacheConsole=false;;
     }
     
@@ -1434,6 +1577,7 @@ listConfig(){
 
   getCacheConsoleBis() {
     this.initBeforeCallAPI(10);
+    this.isGetCacheConsoleBis.set(false);
     this.memoryCacheConsole.splice(0,this.memoryCacheConsole.length);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.getCacheConsole(this.newConfigServer)
@@ -1463,13 +1607,16 @@ listConfig(){
               }
             }
             this.EventHTTPReceived[10] = true;
+            this.isGetCacheConsoleBis.set(true);
           } else {
             this.error=data.msg;
+            this.isError.set(true);
           }
         },
         err => {
           this.EventStopWaitHTTP[10]=true;
           this.error = JSON.stringify(err);
+          this.isError.set(true);
         });
   }
 
@@ -1482,34 +1629,42 @@ listConfig(){
         (data) => {
           this.EventStopWaitHTTP[10]=true;
           this.error=data.msg;
+          this.isError.set(true);
         },
         err => {
           this.EventStopWaitHTTP[10]=true;
           this.manageErrorMsg(err);
+          this.isError.set(true);
         })
   }
 
   enableCacheConsole() {
+    this.isError.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.enableCacheConsole(this.newConfigServer)
       .subscribe(
         (data) => {
           this.error="cache control is enabled";
+          this.isError.set(true);
         },
         err => {
           this.error="could not enable cache control";
+          this.isError.set(true);
         })
       }
     
   disableCacheConsole() {
+    this.isError.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.disableCacheConsole(this.newConfigServer)
       .subscribe(
         (data) => {
           this.error="cache control is disabled";
+          this.isError.set(true);
         },
         err => {
           this.error="could not disable cache control";
+          this.isError.set(true);
         })
   }
 
@@ -1518,14 +1673,16 @@ listConfig(){
   manageErrorMsg(err:any){
     if (err.message!==undefined){
       this.error = 'Server may be down  '; // + + err.message;
+      this.isError.set(true);
     } else if (err.err.msg!==undefined){
       this.error = err.msg;
+      this.isError.set(true);
     }
   }
 
   getMemoryFS() {
     this.error="";
-    this.isUserIdForFS=false;  
+    this.isUserIdForFS.set(false);
     this.initBeforeCallAPI(11);
     this.memoryFS.splice(0,this.memoryFS.length);
     this.newConfigServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
@@ -1536,6 +1693,7 @@ listConfig(){
           if (data.status===undefined || data.status===200){
             if (data.data.length===0){
               this.error='Memory file system is empty on server ' + this.newConfigServer.fileSystemServer;
+              this.isError.set(true);
             } else {
               for (var i=0; i<data.data.length; i++){
                 this.memoryFS.push({fileName:"",record:[]});
@@ -1543,8 +1701,10 @@ listConfig(){
                 if (data.data[i].content.length===0){
                   if (this.error!==""){
                     this.error=this.error + " --- " + "File System " + this.memoryFS[i].fileName+ " memory is empty";
+                    this.isError.set(true);
                   } else {
                     this.error='server ' + this.newConfigServer.fileSystemServer + " ==> File System " + this.memoryFS[i].fileName+ " memory is empty";
+                    this.isError.set(true);
                   }
                   
                 } else {
@@ -1557,28 +1717,30 @@ listConfig(){
               }
               if (this.memoryFS.length!==0){
                 this.EventHTTPReceived[11]=true;
+                this.isMemoryFS.set(true);
               }
             }
           } else { 
             this.error=data.msg + ' on server ' + this.newConfigServer.fileSystemServer;
+            this.isError.set(true);
+            this.isMemoryFS.set(false);
           }
         },
         err => {
           this.EventStopWaitHTTP[11]=true;
+          this.isError.set(true);
+          this.isMemoryFS.set(false);
           this.manageErrorMsg(err);
         });
   }
 
-  isUserIdForFS:boolean=false;
-  saveActionResetFS:string="";
   manageResetFS(){
     this.tabLock.splice(0,this.tabLock.length);
     for (var i = 0; i < 7; i++) {
       const thePush = new classAccessFile;
       this.tabLock.push(thePush);
     }
-    this.error="";
-    this.isUserIdForFS=false;   
+    this.isUserIdForFS.set(false);  
     if (this.theForm.controls['iWait'].value ==="") {
       this.theForm.controls['iWait'].setValue(0);
     }
@@ -1593,16 +1755,20 @@ listConfig(){
   }
 
   resetMemoryFS() {
+    this.isError.set(false);
+    this.error="";
    // const saveGoogleServer=this.configServer.fileSystemServer;
     this.newConfigServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.resetFS(this.newConfigServer, this.theForm.controls['srcBucket'].value,this.theForm.controls['srcObject'].value,this.tabLock,this.theForm.controls['iWait'].value)
       .subscribe(
         (data) => {
           this.EventStopWaitHTTP[12]=true;
+          this.isError.set(true);
           this.error=data.msg + ' on server ' + this.newConfigServer.fileSystemServer;
         },
         err => {
           this.EventStopWaitHTTP[12]=true;
+          this.isError.set(true);
           this.manageErrorMsg(err);
         });
   }
@@ -1610,6 +1776,8 @@ listConfig(){
 
   onResetFS(){ // this is to reset file system memory either all or only one FS
     // THIS NEEDS TO BE CODED
+    this.isError.set(false);
+    this.error="";
     const iWait=this.theForm.controls['iWait'].value;
     this.newConfigServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
     if (this.theForm.controls['action'].value==='reset memory all FS'){
@@ -1619,22 +1787,25 @@ listConfig(){
     }
     this.ManageSecuredGoogleService.resetFS(this.newConfigServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, this.theForm.controls['iWait'].value)
     .subscribe(
-      (data ) => {   
-        this.EventStopWaitHTTP[12]=true;
-        if (data.status===undefined ){
-          console.log('resetFS reponse is : ' + JSON.stringify(data));
-          this.error="FS has been reset" + ' on server ' + this.newConfigServer.fileSystemServer;
-        } else {
-          this.error=data.msg + ' on server ' + this.newConfigServer.fileSystemServer;
+        (data ) => {   
+          this.EventStopWaitHTTP[12]=true;
+          if (data.status===undefined ){
+            console.log('resetFS reponse is : ' + JSON.stringify(data));
+            this.error="FS has been reset" + ' on server ' + this.newConfigServer.fileSystemServer;
+            this.isMemoryFS.set(true);
+          } else {
+            this.error=data.msg + ' on server ' + this.newConfigServer.fileSystemServer;
+          }
+          this.isError.set(true);
+        },
+        err => {
+          this.EventStopWaitHTTP[12]=true;
+          console.log('error from resetFS : ' + JSON.stringify(err));
+          this.isError.set(true);
+          this.manageErrorMsg(err);
         }
-      },
-      err => {
-        this.EventStopWaitHTTP[12]=true;
-        console.log('error from resetFS : ' + JSON.stringify(err));
-        this.manageErrorMsg(err);
-      }
       )
-      }
+  }
 
   /* =================== CREDENTIALS  =============*/
 
@@ -1642,6 +1813,7 @@ listConfig(){
     this.stringCredentials="";
     this.credentials = new classCredentials;
     const reset=false;
+    this.isGetDefaultCredentials.set(false);
     this.initBeforeCallAPI(17);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.getDefaultCredentials(this.newConfigServer, reset)
@@ -1657,12 +1829,14 @@ listConfig(){
             this.credentials.creationDate=data.credentials.creationDate;
             this.EventHTTPReceived[17]=true;
             this.EventStopWaitHTTP[17]=true;
+            this.isGetDefaultCredentials.set(true);
         },
         err => {
           //this.configServer.googleServer=saveGoogleServer;
           console.log(' error request credentials = '+ JSON.stringify(err));
           this.EventStopWaitHTTP[17]=true;
           this.manageErrorMsg(err);
+          this.isError.set(true);
         });
   }
 
@@ -1671,24 +1845,27 @@ listConfig(){
     this.credentials = new classCredentials;
     const reset=false;
     this.initBeforeCallAPI(17);
+    this.isGetDefaultCredentials.set(false);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.getCredentials(this.newConfigServer, reset )
     .subscribe(
         (data ) => {
-          this.EventStopWaitHTTP[17]=true;
-          this.credentials.access_token=data.credentials.access_token;
-          this.credentials.id_token=data.credentials.id_token
-          this.credentials.refresh_token=data.credentials.refresh_token
-          this.credentials.token_type=data.credentials.token_type;
-          this.credentials.userServerId=data.credentials.userServerId;
-          this.credentials.creationDate=data.credentials.creationDate.substring(0,4)+'/'+data.credentials.creationDate.substring(4,6)+'/'+data.credentials.creationDate.substring(6,8)+' '+data.credentials.creationDate.substring(8,10)+':'+data.credentials.creationDate.substring(10,12)+':'+data.credentials.creationDate.substring(12,14)+' '+data.credentials.creationDate.substring(14);
-          this.returnFileContent=JSON.stringify(data);
-          this.EventHTTPReceived[17]=true;
+            this.EventStopWaitHTTP[17]=true;
+            this.credentials.access_token=data.credentials.access_token;
+            this.credentials.id_token=data.credentials.id_token
+            this.credentials.refresh_token=data.credentials.refresh_token
+            this.credentials.token_type=data.credentials.token_type;
+            this.credentials.userServerId=data.credentials.userServerId;
+            this.credentials.creationDate=data.credentials.creationDate.substring(0,4)+'/'+data.credentials.creationDate.substring(4,6)+'/'+data.credentials.creationDate.substring(6,8)+' '+data.credentials.creationDate.substring(8,10)+':'+data.credentials.creationDate.substring(10,12)+':'+data.credentials.creationDate.substring(12,14)+' '+data.credentials.creationDate.substring(14);
+            this.returnFileContent=JSON.stringify(data);
+            this.EventHTTPReceived[17]=true;
+            this.isGetDefaultCredentials.set(true);
         },
         err => {
             this.EventStopWaitHTTP[17]=true;
-          this.manageErrorMsg(err);
-          console.log('return from requestToken() with error = '+ JSON.stringify(err));
+            this.manageErrorMsg(err);
+            this.isError.set(true);
+            console.log('return from requestToken() with error = '+ JSON.stringify(err));
           });
   }
 
@@ -1765,6 +1942,7 @@ listConfig(){
         if (data.type === 4 && data.status === 200) {
           console.log(JSON.stringify(data));
           this.returnFileContent = JSON.stringify(data);
+          this.isGetFileContent.set(true);
           this.EventHTTPReceived[8] = true;
         }
       },

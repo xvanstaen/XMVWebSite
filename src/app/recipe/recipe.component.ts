@@ -353,7 +353,7 @@ ngOnInit(){
     'z-index': '1'
   }
 
-  this.styleBoxOptionAction = {
+  this.styleBoxOptionAction = { 
     'background-color':'lightgrey',
     'width': 150 + 'px',
     'height':HeightAction + 'px',
@@ -725,7 +725,7 @@ afterDropDownRecipe(event:any){
         'background-color':'cyan',
         'width': 240 + 'px',
         'height':90 + 'px',
-        'margin-top' :  0 + 'px',
+        'margin-top' :  20 + 'px',
         'margin-left': 0 + 'px',
         'overflow-x': 'hidden',
         'overflow-y': 'hidden',
@@ -923,7 +923,7 @@ filterCalFat(ingr:string){
       this.scrollY='hidden';
     }
     this.styleBox=getStyleDropDownContent(this.heightDropDown, 230 );
-    this.styleBoxOption=getStyleDropDownBox(this.heightDropDown, 230, 0 , 0, this.scrollY);
+    this.styleBoxOption=getStyleDropDownBox(this.heightDropDown, 230, 0 , 30, this.scrollY);
   } else {
     this.isIngrDropDown.set(false);
   }
