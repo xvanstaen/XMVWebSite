@@ -93,7 +93,7 @@ export class HealthComponent  {
 
   lockValueBeforeCheck:number=0;
 
-  //openFileAccess:boolean=false;
+  openFileAccess=signal<boolean>(false);
 
   myLogConsole: boolean = false;
   myConsole: Array<msgConsole> = [];
@@ -586,6 +586,7 @@ export class HealthComponent  {
       this.theEvent.checkLock.nbCalls++;
       this.triggerCheckToLimit.update(CheckLimit => CheckLimit + 1);
       this.lockValueBeforeCheck=this.tabLock[0].lock;
+      this.openFileAccess.set(true);
       //this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt, iCheck:true,nbCalls:0,action:theAction});
     }
   }
@@ -630,6 +631,7 @@ export class HealthComponent  {
   }
  
   resultAccessFile(event:any){
+    this.openFileAccess.set(false);
     console.log('Health component - resultAccessFile');
     if (this.lockValueBeforeCheck!==this.tabLock[0].lock){
       if (this.tabLock[0].lock===1){
@@ -877,6 +879,7 @@ export class HealthComponent  {
   }
 
   onInputDailyAll(event: any) {
+    this.openFileAccess.set(false);
     this.errorMsg="";
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.textContent = event.target.textContent;
@@ -889,6 +892,7 @@ export class HealthComponent  {
   }
 
   onInputDailyAllA(event: any) {
+    this.openFileAccess.set(false);
     var found=true;
     if (this.tabLock[0].lock !== 2) {
       this.resetBooleans();
@@ -933,6 +937,7 @@ export class HealthComponent  {
   }
 
   findAction(idString: string) {
+    this.openFileAccess.set(false);
     this.errorMsg = '';
     var j = -1;
     for (var i = 1; i < idString.length && idString.substring(i, i + 1) !== ':'; i++) {}
@@ -941,6 +946,7 @@ export class HealthComponent  {
   }
 
   onDropDownAll(event: any) {
+    this.openFileAccess.set(false);
     // this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.theEvent.target.id = 'selAction-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
     this.theEvent.target.textContent = event.target.textContent;
@@ -949,7 +955,7 @@ export class HealthComponent  {
   }
 
   DelAfterConfirm(event: any) {
-    
+    this.openFileAccess.set(false);
     this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
     this.resetBooleans();
     this.isDeleteItem = false;
@@ -972,6 +978,7 @@ export class HealthComponent  {
   }
 
   onAction(event: any) {
+    this.openFileAccess.set(false);
     this.errorMsg="";
     this.theEvent.target.id = event.target.id;
     this.theEvent.target.textContent = event.target.textContent;
@@ -1267,6 +1274,7 @@ export class HealthComponent  {
   }
 
   ConfirmDelDate() {
+
     const theDate = this.HealthAllData.tabDailyReport[this.recordToDelete].date;
     this.HealthAllData.tabDailyReport.splice(this.recordToDelete, 1);
     this.tabNewRecordAll.splice(this.recordToDelete, 1);
@@ -1282,6 +1290,7 @@ export class HealthComponent  {
   }
 
   ConfirmSaveA(event: any) {
+    this.openFileAccess.set(false);
     this.errorMsg = '';
     this.errorFn="";
     this.resetBooleans();
@@ -1369,6 +1378,7 @@ export class HealthComponent  {
 //  checkTimeOut:boolean=true;
 
   afterCheckFS(data:any){
+    this.openFileAccess.set(false);
     this.errorFn="";
     if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
       this.tabLock[0].lock = 1;

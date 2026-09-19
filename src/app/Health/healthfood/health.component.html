@@ -3,18 +3,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
-    <div >
+
        
-        @if (!(triggerFileSystem()===-1 && triggerReadFile()===-1 && triggerSaveFile()===-1 && triggerCheckToLimit()===-1)){    
-            <app-file-access 
+    @if (!(triggerFileSystem()===-1 && triggerReadFile()===-1 && triggerSaveFile()===-1 && triggerCheckToLimit()===-1)){    
+        <app-file-access 
                 [configServer]="configServer" [identification]="identification" 
                 [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit()"
                 [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
                 (resultFileSystem)="resultAccessFile($event)"
-            >
-            </app-file-access>
-        }
-    </div>
+        >
+        </app-file-access>
+    }
 
     <div style="border:solid green 2px; display:inline-block;margin-top:8px; margin-left:20px; background-color: lightskyblue;">
         @if(errorMsg!==''&& errorFn==='' ){
