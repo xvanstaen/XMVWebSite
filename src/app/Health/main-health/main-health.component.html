@@ -116,7 +116,10 @@
             </span>
         </div>
     }
+displayHealthAll() = {{displayHealthAll()}}
+&& EventHTTPReceived[0]==={{EventHTTPReceived[0]}} && EventHTTPReceived[3]==={{EventHTTPReceived[3]}} && isDisplayAll==={{isDisplayAll}} && createNewHealth==={{createNewHealth}}
     @if (displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false){
+        Bonjour app-health
         <app-health
             [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
             [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"

@@ -4,8 +4,8 @@
 </head> 
 <body>
 
-       
-    @if (!(triggerFileSystem()===-1 && triggerReadFile()===-1 && triggerSaveFile()===-1 && triggerCheckToLimit()===-1)){    
+tabLock[0].lock={{tabLock[0].lock}} ---- !isUserTimeOut()={{!isUserTimeOut()}}
+    @if (openFileAccess()){    
         <app-file-access 
                 [configServer]="configServer" [identification]="identification" 
                 [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit()"
