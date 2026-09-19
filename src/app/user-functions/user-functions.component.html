@@ -126,7 +126,8 @@
             >
         </app-recipe>
     } @else if ((selectApps===16 || selectApps===17) && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')){
-            <app-test-server-js   [serverTest]="serverTest" [configServer]="configServer" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges" >
+            <app-test-server-js   [serverTest]="serverTest" [configServer]="configServer" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" 
+            [configServerChanges]="configServerChanges" [isConfigServerChanges]="isConfigServerChanges()">
             </app-test-server-js>
     }  @else if (selectApps===18){
         <app-sport-performance   [configServer]="configServer" [identification]="identification"  >

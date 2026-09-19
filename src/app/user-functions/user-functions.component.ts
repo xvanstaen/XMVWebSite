@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
-  Output, Input, HostListener, EventEmitter, ElementRef, } from '@angular/core';
+  signal, Output, Input, HostListener, EventEmitter, ElementRef, } from '@angular/core';
 
 import { CommonModule,  DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -62,6 +62,7 @@ export class UserFunctionsComponent {
     @Input() credentialsMongo = new classCredentials;
     @Input() credentialsFS = new classCredentials;
     @Input() configServerChanges:number=0;
+    isConfigServerChanges=signal<number>(-1);
 
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
@@ -306,6 +307,7 @@ getServerNames(event:any){
   }
   this.selectApps=0;
   this.configServerChanges++;
+  this.isConfigServerChanges.update(ConSer => ConSer + 1);
 }
 
 
