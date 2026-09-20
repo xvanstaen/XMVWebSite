@@ -4,7 +4,6 @@
 </head> 
 <body>
 
-tabLock[0].lock={{tabLock[0].lock}} ---- !isUserTimeOut()={{!isUserTimeOut()}}
     @if (openFileAccess()){    
         <app-file-access 
                 [configServer]="configServer" [identification]="identification" 
@@ -144,6 +143,10 @@ tabLock[0].lock={{tabLock[0].lock}} ---- !isUserTimeOut()={{!isUserTimeOut()}}
                 <div [ngStyle]="divClassHeader[5]">
                     <input [ngStyle]="tabHeader[5]" type="text" value="Chol."></div>
                 <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Protein"></div>
+                <div [ngStyle]="divClassHeader[5]">
+                    <input [ngStyle]="tabHeader[5]" type="text" value="Carbs"></div>
+                <div [ngStyle]="divClassHeader[5]">
                     <input [ngStyle]="tabHeader[5]" type="text" value="Gly"></div>
                 <div [ngStyle]="divClassHeader[5]">
                     <input [ngStyle]="tabHeader[5]" type="text" value="Sugar"></div>
@@ -151,10 +154,7 @@ tabLock[0].lock={{tabLock[0].lock}} ---- !isUserTimeOut()={{!isUserTimeOut()}}
                     <input [ngStyle]="tabHeader[5]" type="text" value="Sat."></div>
                 <div [ngStyle]="divClassHeader[5]">
                     <input [ngStyle]="tabHeader[5]" type="text" value="Tot.Fat"></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Protein"></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Carbs"></div>
+
  
             </div>
 
@@ -311,6 +311,16 @@ tabLock[0].lock={{tabLock[0].lock}} ---- !isUserTimeOut()={{!isUserTimeOut()}}
                                     <div [ngStyle]="tabDivContent[5]"> 
                                         <input type="text" 
                                             [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            value="{{theIngred.calFat.Protein | number:'1.1-1' }}"  >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]">
+                                        <input type="text"  
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" [ngClass]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                            value="{{theIngred.calFat.Carbs  | number:'1.1-1'}}"  >
+                                    </div>
+                                    <div [ngStyle]="tabDivContent[5]"> 
+                                        <input type="text" 
+                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
                                             value="{{theIngred.calFat.GlyIndex  | number:'1.1-1'}}"  >
                                     </div>
                                     <div [ngStyle]="tabDivContent[5]">
@@ -328,16 +338,6 @@ tabLock[0].lock={{tabLock[0].lock}} ---- !isUserTimeOut()={{!isUserTimeOut()}}
                                             [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
                                             value="{{theIngred.calFat.Fat.Total  | number:'1.1-1'}}" >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]"> 
-                                        <input type="text" 
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
-                                            value="{{theIngred.calFat.Protein | number:'1.1-1' }}"  >
-                                    </div>
-                                    <div [ngStyle]="tabDivContent[5]">
-                                        <input type="text"  
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" [ngClass]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
-                                            value="{{theIngred.calFat.Carbs  | number:'1.1-1'}}"  >
-                                    </div>
                                 </div>
                                 }
                                 <!-- sub-TOTAL-->
@@ -353,12 +353,13 @@ tabLock[0].lock={{tabLock[0].lock}} ---- !isUserTimeOut()={{!isUserTimeOut()}}
                                         <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
                                         <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Calories  | number:'1.0-0'}}</span></div>                                
                                         <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Cholesterol | number:'1.1-1'}}</span></div> 
+                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Protein | number:'1.1-1'}}</span></div> 
+                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Carbs | number:'1.1-1'}}</span></div> 
                                         <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
                                         <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
                                         <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
                                         <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Protein | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Carbs | number:'1.1-1'}}</span></div> 
+
                                     </div>
                                 }
                                 <!-- TOTAL-->
@@ -377,13 +378,12 @@ tabLock[0].lock={{tabLock[0].lock}} ---- !isUserTimeOut()={{!isUserTimeOut()}}
                                         <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
                                         <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Calories  | number:'1.0-0'}}</span></div>                                
                                         <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Cholesterol | number:'1.1-1'}}</span></div> 
+                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Protein | number:'1.1-1'}}</span></div> 
+                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Carbs | number:'1.1-1'}}</span></div> 
                                         <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
                                         <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
                                         <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
                                         <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Total | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Protein | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Carbs | number:'1.1-1'}}</span></div> 
-                        
                                         <div class="skipLine"></div>
                                     </div>
                                 }

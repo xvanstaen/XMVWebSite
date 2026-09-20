@@ -1545,6 +1545,10 @@ iRecipeSave:number=0;
     this.divClassHeader[2]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.ingr);
     this.divClassHeader[3]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.other);
 
+    this.tabHeader[0]=this.createClassHeader(this.HTMLCaloriesFat.colWidth.action);
+    this.tabHeader[1]=this.createClassHeader(this.HTMLCaloriesFat.colWidth.type);
+    this.tabHeader[2]=this.createClassHeader(this.HTMLCaloriesFat.colWidth.ingr);
+    this.tabHeader[3]=this.createClassHeader(this.HTMLCaloriesFat.colWidth.other);
 
     this.tabDivContent[0]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.action,0);
     this.tabDivContent[1]=this.createDivClassContent(this.HTMLCaloriesFat.colWidth.type,1);
@@ -1563,15 +1567,15 @@ iRecipeSave:number=0;
     }
     
     for (var i=0; i<3; i++){
-      var iWidth=-2;
-      var iHeight=0;
+      var iWidth=-2;//-2
+      var iHeight=2;//0
       this.tabStyleInput[i]=[];
       this.tabStyleInput[i][0]=this.createStyle(this.HTMLCaloriesFat.colWidth.action,iWidth,iHeight,i,'center');
       this.tabStyleInput[i][1]=this.createStyle(this.HTMLCaloriesFat.colWidth.type,iWidth,iHeight,i,'center');
       this.tabStyleInput[i][2]=this.createStyle(this.HTMLCaloriesFat.colWidth.ingr,iWidth,iHeight,i,'left');
       this.tabStyleInput[i][3]=this.createStyle(this.HTMLCaloriesFat.colWidth.other,iWidth,iHeight,i,'center');
       iWidth=0;
-      iHeight=1;
+      iHeight=0;//1
       this.tabStyleBox[i]=[];
       this.tabStyleBox[i][0]=this.createStyle(this.HTMLCaloriesFat.colWidth.action,2,2,i,'center');
       this.tabStyleBox[i][1]=this.createStyle(this.HTMLCaloriesFat.colWidth.type,iWidth,iHeight,i,'center');
@@ -1596,25 +1600,47 @@ iRecipeSave:number=0;
 
   createDivClassHeader(width:any){
     var style:any;
-    
-      return style = {
+    return style = {
         'width.px': width,
+        'max-width.px': width,
         'height.px':  Number(this.HTMLCaloriesFat.title.height) ,
         'display':'block',
         'float':'left',
-        'text-align': 'center', 
-        'font-size.px':13,
+        
+        /*
+        'padding-top.px':10,
+        'background-color':this.HTMLCaloriesFat.title.background,
+        'color': this.HTMLCaloriesFat.title.color,  
+        'text-align': 'center',
         'word-wrap':'normal',
-        'word-break':' keep-all',
+        
+        */
+      }
+  } 
+
+  createClassHeader(width:string){
+    var style:any;
+    return style = {
+        
+        'width.px': width,
+        'max-width':width,
+        'height.px':  Number(this.HTMLCaloriesFat.title.height) ,
+        'padding-top.px':0,
+        'background-color':this.HTMLCaloriesFat.title.background,
+        'border':'1px white solid',
+        'display':'inline-block',
+        'text-align': 'center',
+        'overflow-wrap':'break-word',
+        'word-break':' break-all',
+        'color': this.HTMLCaloriesFat.title.color,  
+        'font-size.px':12,
+      
         'border-top':'1px grey solid',
         'border-left':'1px grey solid', 
         'border-right':'1px rgb(251, 249, 249) solid',
         'border-bottom':'1px rgb(251, 249, 249) solid', 
-        'padding-top.px':10,
-        'background':this.HTMLCaloriesFat.title.background,
-        'color':this.HTMLCaloriesFat.title.color
-      }
-    
+      
+    }
   } 
 
 
@@ -1627,7 +1653,7 @@ iRecipeSave:number=0;
       //theBlock="inline-Block";
     //} 
     return style = {
-      'width.px': width+2,
+      'width.px': width,
       'height.px':  Number(this.HTMLCaloriesFat.row.height) + addHeight,
       'display':theBlock,
       'float':'left',
@@ -1706,7 +1732,7 @@ iRecipeSave:number=0;
   createDivClassTotal(width:any){
     var style:any;
     return style = {
-        'width.px': Number(width)+2,
+        'width.px': Number(width), //+2
         'display':'inline-block',
     }
   }
