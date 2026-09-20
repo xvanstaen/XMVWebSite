@@ -1748,7 +1748,7 @@ iRecipeSave:number=0;
       backColor=this.HTMLCaloriesFat.row.odd;
     } 
     return style = {
-        'width':Number(width)-2,
+        'width':Number(width)-1,
         'background-color':backColor,
         'color': "red",  
         'text-align': align,
@@ -1762,7 +1762,7 @@ iRecipeSave:number=0;
         'border-left':'none',
         */
        'border':'none',
-       'border-right':'1px white solid',
+       'border-right':'1px backColor solid',
     }
   }
 }
