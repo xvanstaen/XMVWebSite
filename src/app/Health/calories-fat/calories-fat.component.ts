@@ -182,8 +182,6 @@ export class CaloriesFatComponent implements OnInit {
   posFood=660;
   nameDeletedItem:string='';
 
-  theHeight:number=0;
- 
   RecipetheHeight:number=0;
     
   // get position of pointer/cursor
@@ -1591,30 +1589,23 @@ iRecipeSave:number=0;
 
     for (var i=0; i<2; i++){
       this.tabTotal[i]=[];
-      this.tabTotal[i][0]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.action),i,'left');
-      this.tabTotal[i][1]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.type),i,'left');
-      this.tabTotal[i][2]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.ingr),i,'right');
-      this.tabTotal[i][3]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.meal),i,'center');
+      this.tabTotal[i][0]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.action),i,0,'left');
+      this.tabTotal[i][1]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.type),i,0,'left');
+      this.tabTotal[i][2]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.ingr),i,-2,'center');
+      this.tabTotal[i][3]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.other),i,-2,'center');
     }
+    
   }
 
   createDivClassHeader(width:any){
     var style:any;
     return style = {
-        'width.px': width,
-        'max-width.px': width,
-        'height.px':  Number(this.HTMLCaloriesFat.title.height) ,
+        'width': width + 'px',
+        'max-width': width+ 'px',
+        'height':  Number(this.HTMLCaloriesFat.title.height)+ 'px' ,
         'display':'block',
         'float':'left',
         
-        /*
-        'padding-top.px':10,
-        'background-color':this.HTMLCaloriesFat.title.background,
-        'color': this.HTMLCaloriesFat.title.color,  
-        'text-align': 'center',
-        'word-wrap':'normal',
-        
-        */
       }
   } 
 
@@ -1622,10 +1613,10 @@ iRecipeSave:number=0;
     var style:any;
     return style = {
         
-        'width.px': width,
-        'max-width':width,
-        'height.px':  Number(this.HTMLCaloriesFat.title.height) ,
-        'padding-top.px':0,
+        'width': width+ 'px',
+        'max-width':width+ 'px',
+        'height':  Number(this.HTMLCaloriesFat.title.height) + 'px',
+        'padding-top':0+ 'px',
         'background-color':this.HTMLCaloriesFat.title.background,
         'border':'1px white solid',
         'display':'inline-block',
@@ -1633,7 +1624,7 @@ iRecipeSave:number=0;
         'overflow-wrap':'break-word',
         'word-break':' break-all',
         'color': this.HTMLCaloriesFat.title.color,  
-        'font-size.px':12,
+        'font-size':12+ 'px',
       
         'border-top':'1px grey solid',
         'border-left':'1px grey solid', 
@@ -1648,13 +1639,10 @@ iRecipeSave:number=0;
     var style:any;
     var addHeight=0;
     var theBlock="block";
-    //if (iTab===0){
-      //addHeight=0;
-      //theBlock="inline-Block";
-    //} 
+
     return style = {
-      'width.px': width,
-      'height.px':  Number(this.HTMLCaloriesFat.row.height) + addHeight,
+      'width': width+ 'px',
+      'height':  (Number(this.HTMLCaloriesFat.row.height) + addHeight) + 'px',
       'display':theBlock,
       'float':'left',
     }
@@ -1677,8 +1665,8 @@ iRecipeSave:number=0;
       addHeight=2;
       return style = {
         'background-color':backColor,
-        'width.px': width,
-        'height.px': Number(this.HTMLCaloriesFat.row.height) + addHeight ,
+        'width': width+ 'px',
+        'height': (Number(this.HTMLCaloriesFat.row.height) + addHeight) + 'px',
         'color': theColor,  
         'text-align': align,
         'display':'block',
@@ -1688,8 +1676,8 @@ iRecipeSave:number=0;
         addHeight=2;
         return style = {
           'background-color':backColor,
-          'width.px': width,
-          'height.px': Number(this.HTMLCaloriesFat.row.height)  + addHeight,
+          'width': width+ 'px',
+          'height': Number(this.HTMLCaloriesFat.row.height)  + addHeight+ 'px',
           'display':'block',
           'float':'left',
           'pointer-events':'none',
@@ -1698,8 +1686,8 @@ iRecipeSave:number=0;
     } else {
         return style = {
           'background-color':backColor,
-          'width.px': width,
-          'height.px': Number(this.HTMLCaloriesFat.row.height)  + addHeight,
+          'width': width+ 'px',
+          'height': (Number(this.HTMLCaloriesFat.row.height)  + addHeight) + 'px',
           'color': theColor,  
           'text-align': align,
 
@@ -1719,50 +1707,47 @@ iRecipeSave:number=0;
     }       
     return style = {
         'background-color':backColor,
-        'width.px': width + iWidth,
-        'height.px': Number(this.HTMLCaloriesFat.row.height) + iHeight,
+        'width': width + iWidth+ 'px',
+        'height': (Number(this.HTMLCaloriesFat.row.height) + iHeight) + 'px',
         'color': theColor,  
         'text-align': align,
         'border':'none',
         'display':'inline-block',
       }
   }
-
-
+  
   createDivClassTotal(width:any){
     var style:any;
     return style = {
-        'width.px': Number(width), //+2
+        'width': Number(width) + 'px', //+2
         //'display':'inline-block',
-        'height.px':  Number(this.HTMLCaloriesFat.row.height),
+        'height':  (Number(this.HTMLCaloriesFat.row.height) + 10) + 'px',
         'display':"block",
         'float':'left',
     }
   }
 
-  createTotal(width:Number,backGround:number, align:string){
+  createTotal(width:Number,backGround:number, iWidth:number, align:string){
     //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
     var style:any;
     var backColor=this.HTMLCaloriesFat.row.even;
     if (backGround===1){
       backColor=this.HTMLCaloriesFat.row.odd;
     } 
+    const theWidth=Number(width) + iWidth;
     return style = {
-        'width':Number(width)-1,
+        'width':theWidth + 'px',
+        'max-width':theWidth + 'px',
+        'height': (Number(this.HTMLCaloriesFat.row.height) + 10) + 'px',
         'background-color':backColor,
-        'color': "red",  
+        'color': 'red',  
         'text-align': align,
-        'font-size.px':'13',
+        'font-size':'14' + 'px',
         'font-weight':'bolder',
-        "padding-top.px":7,
-        'height.px':  Number(this.HTMLCaloriesFat.row.height) + 10 ,
-        /*
-        'border-top':'1px white solid',
-        
-        'border-left':'none',
-        */
-       'border':'none',
-       'border-right':'1px backColor solid',
+        "padding-top":7 + 'px',
+        'border':'none',
+        'display':'inline-block',
     }
+
   }
 }
