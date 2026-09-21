@@ -1505,7 +1505,7 @@ iRecipeSave:number=0;
         this.tabFood.splice(0,0,{name:'cancel'});
     }
   }
-
+/*
   ngOnChanges(changes: SimpleChanges) {
     
       var i = 0;
@@ -1535,7 +1535,7 @@ iRecipeSave:number=0;
       }
   }
 
-
+*/
 
   fillClassHeader(){
     this.divClassHeader[0]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.action);
@@ -1715,7 +1715,7 @@ iRecipeSave:number=0;
         'display':'inline-block',
       }
   }
-  
+
   createDivClassTotal(width:any){
     var style:any;
     return style = {

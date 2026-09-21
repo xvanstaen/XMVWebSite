@@ -195,7 +195,7 @@
                             <div  style="display:inline-block; margin-top:0px;"> <!-- all items below will be next to each other-->
 
                                 <div [style]="tabDivContent[0]" >
-                                    <div [style]="tabStyleBox[tabNewRecord[i].ngStyle][0]" >
+                                    <div [style]="i % 2 === 0 ? tabStyleInput[0][0] : tabStyleInput[1][0]">
                                         <div style="padding-left:0px;" > 
                                             <div id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
                                                 <div style="margin-top:2px;">A</div>
@@ -205,28 +205,28 @@
                                 </div>
                                 <div [style]="tabDivContent[1]">
                                     @if (j===0){
-                                        <input [style]="tabStyleInput[tabNewRecord[i].ngStyle][1]" class="textHover" [readonly]='inputReadOnly'  type="text" (input)="onInputRecipe($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
+                                        <input [style]="i % 2 === 0 ? tabStyleInput[0][1] : tabStyleInput[1][1]" class="textHover" [readonly]='inputReadOnly'  type="text" (input)="onInputRecipe($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
                                     } @else {  
-                                        <input [style]="tabStyleInput[tabNewRecord[i].ngStyle][1]" [readonly]='inputReadOnly'  type="text" style="pointer-events:none; background-color: white !important;" value="&nbsp;">
+                                        <input [style]="i % 2 === 0 ? tabStyleInput[0][1] : tabStyleInput[1][1]" [readonly]='inputReadOnly'  type="text" style="pointer-events:none; background-color: white !important;" value="&nbsp;">
                                     }
                                 </div>
                                 <div [style]="tabDivContent[2]">
-                                    <input [style]="tabStyleInput[tabNewRecord[i].ngStyle][2]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="name-{{i}}-{{j}}"  value="&nbsp;{{content.Name}}"   >
+                                    <input [style]="i % 2 === 0 ? tabStyleInput[0][2] : tabStyleInput[1][2]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="name-{{i}}-{{j}}"  value="&nbsp;{{content.Name}}"   >
                                 </div>
                                 <div [style]="tabDivContent[3]">    
-                                    <input [style]="tabStyleInput[tabNewRecord[i].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
+                                    <input [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="unit-{{i}}-{{j}}" value="{{content.ServingUnit}}" >
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="unit-{{i}}-{{j}}" value="{{content.ServingUnit}}" >
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="calo-{{i}}-{{j}}" value="{{content.Calories | number:'1.0-0'}}" >
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="calo-{{i}}-{{j}}" value="{{content.Calories | number:'1.0-0'}}" >
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="prot-{{i}}-{{j}}" value="{{content.Protein | number:'1.0-0'}}" >
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="prot-{{i}}-{{j}}" value="{{content.Protein | number:'1.0-0'}}" >
                                 </div>
                                 <div [style]="tabDivContent[3]">                    
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="carb-{{i}}-{{j}}" value="{{content.Carbs | number:'1.0-0'}}" >
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="carb-{{i}}-{{j}}" value="{{content.Carbs | number:'1.0-0'}}" >
                                 <!--
                                 </div>
                                 <div [style]="tabDivContent[3]">
@@ -234,74 +234,74 @@
                                 -->
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" value="{{content.Sugar | number:'1.0-0'}}" >                     
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" value="{{content.Sugar | number:'1.0-0'}}" >                     
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="naturalSuga-{{i}}-{{j}}" value="{{content.naturalSugar | number:'1.0-0'}}" >                     
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="naturalSuga-{{i}}-{{j}}" value="{{content.naturalSugar | number:'1.0-0'}}" >                     
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="addedSuga-{{i}}-{{j}}" value="{{content.addedSugar | number:'1.0-0'}}" >                     
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="addedSuga-{{i}}-{{j}}" value="{{content.addedSugar | number:'1.0-0'}}" >                     
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" value="{{content.Cholesterol | number:'1.0-0'}}" >                       
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" value="{{content.Cholesterol | number:'1.0-0'}}" >                       
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="satu-{{i}}-{{j}}" value="{{content.Fat.Saturated | number:'1.0-0'}}" >
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="satu-{{i}}-{{j}}" value="{{content.Fat.Saturated | number:'1.0-0'}}" >
                                 </div>
                                 <div [style]="tabDivContent[3]">
-                                    <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="tota-{{i}}-{{j}}" value="{{content.Fat.Total | number:'1.0-0'}}" >
+                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="tota-{{i}}-{{j}}" value="{{content.Fat.Total | number:'1.0-0'}}" >
                                 </div>
                             </div>
                         <!-- ============== TOTAL OF THE RECIPE ================== -->
         
                             @if (outFileRecipe.tabCaloriesFat[i].Content.length-1===j){
                                 <div >
-                                    <div  [style]="tabDivTotal[0]" >
-                                        <input  [style]="tabTotal[tabNewRecord[i].even][0]"   [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="&nbsp;" > 
+                                    <div  [style]="tabDivTotal[0]" >  
+                                        <input  [style]="i % 2 === 0 ? tabTotal[0][0] : tabTotal[1][0]"  [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="&nbsp;" > 
                                     </div>
                                     <div  [style]="tabDivTotal[1]" >
-                                        <input  [style]="tabTotal[tabNewRecord[i].even][1]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="&nbsp;" > 
+                                        <input  [style]="i % 2 === 0 ? tabTotal[0][1] : tabTotal[1][1]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="&nbsp;" > 
                                     </div>
                                     <div [style]="tabDivTotal[2]" >
-                                        <input  [style]="tabTotal[tabNewRecord[i].even][2]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="Total" > 
+                                        <input  [style]="i % 2 === 0 ? tabTotal[0][2] : tabTotal[1][2]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="Total" > 
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input  [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Serving  | number:'1.0-0'}}" > 
+                                        <input  [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Serving  | number:'1.0-0'}}" > 
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.ServingUnit}}" > 
+                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.ServingUnit}}" > 
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Calories  | number:'1.0-0'}}" > 
+                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Calories  | number:'1.0-0'}}" > 
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input  [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Protein  | number:'1.0-0'}}" > 
+                                        <input  [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Protein  | number:'1.0-0'}}" > 
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input  [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Carbs  | number:'1.0-0'}}" > 
+                                        <input  [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Carbs  | number:'1.0-0'}}" > 
                                     </div>
                                     <!--
                                     <div [style]="tabDivContent[3]" >
-                                        <div [style]="tabTotal[tabNewRecord[i].even][3]"  > {{tab.Total.GlyIndex  | number:'1.0-0'}}</div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]"  > {{tab.Total.GlyIndex  | number:'1.0-0'}}</div>
                                     </div>
                                     -->
                                     <div [style]="tabDivTotal[3]" >
-                                       <input  [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Sugar  | number:'1.0-0'}}" >                  
+                                       <input  [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Sugar  | number:'1.0-0'}}" >                  
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.naturalSugar  | number:'1.0-0'}}" >                  
+                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.naturalSugar  | number:'1.0-0'}}" >                  
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.addedSugar  | number:'1.0-0'}}" >                      
+                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.addedSugar  | number:'1.0-0'}}" >                      
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Cholesterol  | number:'1.0-0'}}" > 
+                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Cholesterol  | number:'1.0-0'}}" > 
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                        <input [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}" >
+                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}" >
                                     </div>
                                     <div [style]="tabDivTotal[3]" >
-                                         <input [style]="tabTotal[tabNewRecord[i].even][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Fat.Total  | number:'1.0-0'}}" >
+                                         <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Fat.Total  | number:'1.0-0'}}" >
                                     </div>
                                                                     
                                 </div>
