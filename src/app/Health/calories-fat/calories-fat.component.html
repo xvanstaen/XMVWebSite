@@ -28,7 +28,7 @@
 }
 
 
-@if (isInitComplete() && !isUserTimeOut() && isNgStyleCompleted()){
+@if (isInitComplete() && !isUserTimeOut() && isNgStyleCompleted() && tabTotal.length>0){
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [style]="{'width': (HTMLCaloriesFat.width+10) + 'px'}">
          @if (isErrorFS() && errorMsgFS!==""){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">{{errorMsgFS}}</div>

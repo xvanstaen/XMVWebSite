@@ -239,7 +239,13 @@ constructor(
           }
           this.processCheckLimitCalFat(this.resultCheckLimitCalFat());
         } 
-          if (this.previousCalFatFileRetrieved!==this.calFatFileRetrieved()){
+        if (this.previousConfigHTMLRetrieved!==this.configHTMLRetrieved()){
+            this.previousConfigHTMLRetrieved=this.configHTMLRetrieved();
+            this.fillClassHeader();
+            console.log("=====>  this.isNgStyleCompleted.set(true) ")
+            this.isNgStyleCompleted.set(true);
+        }
+        if (this.previousCalFatFileRetrieved!==this.calFatFileRetrieved()){
             this.previousCalFatFileRetrieved=this.calFatFileRetrieved();
             if (this.tabLock[1].lock===1){
                 this.inputReadOnly=false;
@@ -258,11 +264,7 @@ constructor(
             this.previousTriggerCalFatSave=this.triggerCalFatSave();
             this.processCalFatSave(this.triggerCalFatSave())
         }
-        if (this.previousConfigHTMLRetrieved!==this.configHTMLRetrieved()){
-            this.previousConfigHTMLRetrieved=this.configHTMLRetrieved();
-            this.fillClassHeader();
-            this.isNgStyleCompleted.set(true);
-        }
+
         
       }) }
 
@@ -1385,12 +1387,6 @@ iRecipeSave:number=0;
       this.tabFood.sort((a, b) => (a.name < b.name) ? -1 : 1);
       this.tabType.splice(0,0,{name:'cancel'});
       this.tabFood.splice(0,0,{name:'cancel'});
-      //this.tabType[0].name='cancel';
-      //this.tabFood[0].name='cancel';
-      //this.tabNewRecord.splice(0, this.tabNewRecord.length);
-      //this.initTrackRecord();
-      //this.myEmit.emit(this.SpecificForm.controls['FileName'].value);
-      //this.myEmit.emit(this.outConfigCaloriesFat);
     }
   }
 
@@ -1505,37 +1501,6 @@ iRecipeSave:number=0;
         this.tabFood.splice(0,0,{name:'cancel'});
     }
   }
-/*
-  ngOnChanges(changes: SimpleChanges) {
-    
-      var i = 0;
-      for (const propName in changes) {
-        const j = changes[propName];
-        if (propName === 'actionCalFat'  ) {
-            if (this.onInputAction==='saveCalFat'){
-              if ( this.actionCalFat > 0) {
-                  this.errorMsg = 'File '+ this.SpecificForm.controls['FileName'].value + ' is saved';
-                  this.isCalFatModified.set(false);
-              } else {
-                  this.errorMsg = 'Error when trying to save file '+ this.SpecificForm.controls['FileName'].value + ', try again';
-              }
-              this.onInputAction = "";
-            }
-        } else if (propName === 'actionRecipe' && changes[propName].firstChange === false) {
-            if (this.onInputAction==='saveRecipe'){
-              if ( this.actionRecipe > 0) {
-                  this.errorMsg = 'File '+ this.SpecificForm.controls['FileNameRecipe'].value + ' is saved';
-                  this.isRecipeModified.set(false);
-              } else {
-                  this.errorMsg = 'Error when trying to save file '+ this.SpecificForm.controls['FileNameRecipe'].value + ', try again';
-              }
-              this.onInputAction = "";
-            }
-        }
-      }
-  }
-
-*/
 
   fillClassHeader(){
     this.divClassHeader[0]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.action);

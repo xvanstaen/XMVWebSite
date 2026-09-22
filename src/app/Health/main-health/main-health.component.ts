@@ -568,6 +568,8 @@ export class MainHealthComponent {
           this.iWaitToRetrieve.push(theClass);
           this.iWaitToRetrieve[0].iWait=0;
           this.iWaitToRetrieve[0].accessFS=true;
+        } else if (this.EventHTTPReceived[0]===true) {
+          this.displayHealthAll.set(true);
         }
         if (this.EventHTTPReceived[1]===false){
             const theClass=new classRetrieveFile;
@@ -600,6 +602,7 @@ export class MainHealthComponent {
           this.openFileAccess.set(true);
         }
         this.isDisplayAll = false;
+        this.displayHealthAll.set(false);
       }
     } else if (i === '4') {
       if (NoYes === 'Y') {
@@ -639,6 +642,11 @@ export class MainHealthComponent {
             const theClass=new classRetrieveFile;
             this.iWaitToRetrieve.push(theClass);
             this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=2;
+        } 
+        if (this.EventHTTPReceived[10]===false){
+            const theClass=new classRetrieveFile;
+            this.iWaitToRetrieve.push(theClass);
+            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=10;
         } 
         if (this.iWaitToRetrieve.length>0){
           this.triggerReadFile.update (rf => rf + 1);
