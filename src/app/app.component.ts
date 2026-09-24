@@ -115,8 +115,8 @@ export class AppComponent {
    // http://localhost:4200/?server=XMV&scope=prod 
    // devMode=local
 
-  this.initConfigServer.googleServer=this.tabServers[1];     //this.tabServers[1]; 
-  this.initConfigServer.mongoServer=this.tabServers[1];      //this.tabServers[1];
+  this.initConfigServer.googleServer=this.tabServers[0];     //this.tabServers[1]; 
+  this.initConfigServer.mongoServer=this.tabServers[0];      //this.tabServers[1];
   this.initConfigServer.fileSystemServer=this.tabServers[0]; // this.tabServers[2];
 
 
@@ -299,6 +299,11 @@ console.log('devMode='+this.devMode);
       this.currentFunction="getLogin";
       this.theFn="Login";
       //this.cdr.detectChanges.mark()
+
+
+      //=============
+      this.configServer.timeoutFileSystem.userTimeOut.mn=1;
+      this.configServer.timeoutFileSystem.userTimeOut.ss=20;
     }
 
   }

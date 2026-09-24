@@ -1,4 +1,4 @@
-import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding,  
+import { Component, OnInit , signal, Input, Output, HostListener, OnChanges, HostBinding,  
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
 
 import { MatIconModule} from '@angular/material/icon';
@@ -41,7 +41,7 @@ export class LoginComponent {
 
     @Input() identification=new LoginIdentif; 
 
-
+    isValidateData=signal<boolean>(false);
     ConfigTestProd=new XMVTestProd;
 
     userLogin=new classUserLogin;
@@ -115,12 +115,7 @@ export class LoginComponent {
       this.getScreenHeight = window.innerHeight;
       this.device_type = navigator.userAgent;
       this.device_type = this.device_type.substring(10, 48);
-    /*
-      this.myHeader=new HttpHeaders({
-        'content-type': 'application/json',
-        'cache-control': 'private, max-age=0'
-      });
-      */
+
       for (let i=0; i<10; i++){
         this.EventHTTPReceived.push(false);
         this.id_Animation.push(0);
@@ -161,33 +156,6 @@ decryptAllPSW(){
       this.myForm.controls['password'].setValue("");
     })
 }
-/*
-getLogin(){
- // this.configServer.googleServer=this.tabServers[0];
- if (this.myForm.controls['userId'].value!==this.configServer.userLogin.id || this.myForm.controls['password'].value !== this.savePsw){
-    this.ManageGoogleService.encryptAllFn(this.configServer,this.myForm.controls['password'].value, 1, 'AES', 'Yes')
-    .subscribe((data ) => { 
-        if (data.status===undefined){
-          this.configServer.userLogin.id=this.myForm.controls['userId'].value;
-          this.configServer.userLogin.psw=data.response;
-          this.configServer.userLogin.accessLevel="";
-          this.checkLogin();
-        } else {
-          this.error = data.msg;
-        }
-      },
-      err => {
-        this.error = err.msg;
-        this.isValidateData=false;
-      })
-  } else {
-    this.routing_code=1;
-    this.identification.userServerId=this.credentialsFS.userServerId;
-    this.identification.credentialDate=this.credentialsFS.creationDate;
-    this.identification.IpAddress=this.configServer.IpAddress;
-  }
-}
-*/
 
 checkLogin(){
     // this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject )
@@ -195,6 +163,7 @@ checkLogin(){
     this.configServer.userLogin.id=this.myForm.controls['userId'].value;
     this.configServer.userLogin.psw=this.myForm.controls['password'].value;
     this.configServer.userLogin.accessLevel="";
+    this.isValidateData.set(true);
     this.ManageGoogleService.checkLogin(this.configServer )
         .subscribe((data ) => {    
             if (data.status===undefined){              
@@ -211,7 +180,7 @@ checkLogin(){
   //            this.my_output2.emit(this.routing_code.toString());
             } else {
               this.error=data.msg;
-              this.isValidateData=false;
+              this.isValidateData.set(false);
             }
       },
         err=> {
@@ -221,7 +190,7 @@ checkLogin(){
             this.error=err.msg;
             console.log('error to checkLogin - error status=' + err.status + ' '+ err.message );
           }
-          this.isValidateData=false;
+          this.isValidateData.set(false);
         })
   } else {
     this.routing_code=1;
@@ -233,7 +202,8 @@ checkLogin(){
   }
 }
 
-  getUserAccessLevel(){
+/*
+getUserAccessLevel(){
     this.ManageGoogleService.getSecurityAccess(this.configServer )
       .subscribe((data ) => {  
           if (data.status===200){
@@ -248,22 +218,17 @@ checkLogin(){
           this.error="Server problem. Lower level of access has been assigned"
       });
   }
-isValidateData:boolean=false;
+*/
 
 ValidateData(){
-  //console.log('validateData()');
   if (this.myForm.controls['userId'].value==='')  {
     this.error=" provide your user id";
-  }
-  else
-  if (this.myForm.controls['password'].value==='')  {
+    this.isValidateData.set(false);
+  } else if (this.myForm.controls['password'].value==='')  {
     this.error=" provide your password";
-  }
-  else
-  {
-    this.isValidateData=true;
+    this.isValidateData.set(false);
+  } else {
     this.error='';
-    //this.getLogin();
     this.checkLogin();
   }
 }
@@ -290,7 +255,7 @@ fnNewCredentials(credentials:any){
   this.identification.credentialDate=credentials.creationDate;
   this.newCredentials.emit(credentials);
 }
-
+/*
 @Output() serverChange=  new EventEmitter<any>();
 changeServerName(event:any){
   if (event==='FS'){
@@ -303,8 +268,7 @@ changeServerName(event:any){
   }
 
 }
-
-
+*/
 ngOnChanges(changes: SimpleChanges) { 
   for (const propName in changes){
     const j=changes[propName];

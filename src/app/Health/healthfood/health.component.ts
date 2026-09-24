@@ -34,7 +34,7 @@ import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSize
   templateUrl: './health.component.html',
   styleUrls: ['./health.component.css'],
   standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,  MainManageFileComponent, RunningClockComponent ], //RunningClockComponent
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,  MainManageFileComponent ], //RunningClockComponent
 
 })
 export class HealthComponent  {
@@ -389,194 +389,23 @@ export class HealthComponent  {
     //this.userActivity = defineMyDate();
     this.lastInputAt = strDateTime();
     this.refDate=new Date();
-    this.callTimeToGo();
+    //this.callTimeToGo();
   }
 
-
-  fillClassHeader(){
-    this.divClassHeader[0]=this.createDivClassHeader(this.confTableAll.colWidth.action);
-    this.divClassHeader[1]=this.createDivClassHeader(this.confTableAll.colWidth.date);
-    this.divClassHeader[2]=this.createDivClassHeader(this.confTableAll.colWidth.calBurnt);
-    this.divClassHeader[3]=this.createDivClassHeader(this.confTableAll.colWidth.meal);
-    this.divClassHeader[4]=this.createDivClassHeader(this.confTableAll.colWidth.ingr);
-    this.divClassHeader[5]=this.createDivClassHeader(this.confTableAll.colWidth.other);
-    
-    this.tabHeader[0]=this.createClassHeader(this.confTableAll.colWidth.action);
-    this.tabHeader[1]=this.createClassHeader(this.confTableAll.colWidth.date);
-    this.tabHeader[2]=this.createClassHeader(this.confTableAll.colWidth.calBurnt);
-    this.tabHeader[3]=this.createClassHeader(this.confTableAll.colWidth.meal);
-    this.tabHeader[4]=this.createClassHeader(this.confTableAll.colWidth.ingr);
-    this.tabHeader[5]=this.createClassHeader(this.confTableAll.colWidth.other);
-
-    this.tabDivContent[0]=this.createDivClassContent(this.confTableAll.colWidth.action);
-    this.tabDivContent[1]=this.createDivClassContent(this.confTableAll.colWidth.date);
-    this.tabDivContent[2]=this.createDivClassContent(this.confTableAll.colWidth.calBurnt);
-    this.tabDivContent[3]=this.createDivClassContent(this.confTableAll.colWidth.meal);
-    this.tabDivContent[4]=this.createDivClassContent(this.confTableAll.colWidth.ingr);
-    this.tabDivContent[5]=this.createDivClassContent(this.confTableAll.colWidth.other);
-    
-    this.tabDivEmptyContent[0]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.action));
-    this.tabDivEmptyContent[1]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.date));
-    this.tabDivEmptyContent[2]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.calBurnt));
-    this.tabDivEmptyContent[3]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.meal));
-    this.tabDivEmptyContent[4]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.ingr));
-    this.tabDivEmptyContent[5]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.other));
-
-    
-    for (var i=0; i<3; i++){
-      this.tabContent[i]=[];
-      this.tabContent[i][0]=this.createClassContent(this.confTableAll.colWidth.action,i,'center');
-      this.tabContent[i][1]=this.createClassContent(this.confTableAll.colWidth.date,i,'left');
-      this.tabContent[i][2]=this.createClassContent(this.confTableAll.colWidth.calBurnt,i,'center');
-      this.tabContent[i][3]=this.createClassContent(this.confTableAll.colWidth.meal,i,'center');
-      this.tabContent[i][4]=this.createClassContent(this.confTableAll.colWidth.ingr,i,'left');
-      this.tabContent[i][5]=this.createClassContent(this.confTableAll.colWidth.other,i,'center');
-    }
-    for (var i=0; i<2; i++){
-      this.tabSubTotal[i]=[];
-      this.tabSubTotal[i][0]=this.createSubTotal(Number(this.confTableAll.colWidth.action),i);
-      this.tabSubTotal[i][1]=this.createSubTotal(Number(this.confTableAll.colWidth.date),i);
-      this.tabSubTotal[i][2]=this.createSubTotal(Number(this.confTableAll.colWidth.calBurnt),i);
-      this.tabSubTotal[i][3]=this.createSubTotal(Number(this.confTableAll.colWidth.meal),i);
-      this.tabSubTotal[i][4]=this.createSubTotal(Number(this.confTableAll.colWidth.ingr),i);
-      this.tabSubTotal[i][5]=this.createSubTotal(Number(this.confTableAll.colWidth.other),i);
-    }
-    for (var i=0; i<2; i++){
-      this.tabTotal[i]=[];
-      this.tabTotal[i][0]=this.createTotal(Number(this.confTableAll.colWidth.action),i);
-      this.tabTotal[i][1]=this.createTotal(Number(this.confTableAll.colWidth.date),i);
-      this.tabTotal[i][2]=this.createTotal(Number(this.confTableAll.colWidth.calBurnt),i);
-      this.tabTotal[i][3]=this.createTotal(Number(this.confTableAll.colWidth.meal),i);
-      this.tabTotal[i][4]=this.createTotal(Number(this.confTableAll.colWidth.ingr),i);
-      this.tabTotal[i][5]=this.createTotal(Number(this.confTableAll.colWidth.other),i);
-    }
-  }
-
-  createSubTotal(width:Number,backGround:number){
-    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
-    var style:any;
-    var backColor=this.confTableAll.row.even;
-    if (backGround===1){
-      backColor=this.confTableAll.row.odd;
-    } 
-    width=Number(width)-0.3;
-    return style = {
-        'background-color':backColor,
-        'width.px': width,
-        'height.px':  Number(this.confTableAll.subTotal.height) ,
-        'color': this.confTableAll.subTotal.color,  
-        'font-size.px':Number(this.confTableAll.subTotal.fontSize),
-        'font-weight':this.confTableAll.subTotal.fontWeight,
-        'text-align': 'center',
-        'display':'inline-block',
-        
-    }
-  }
-
-  createTotal(width:Number,backGround:number){
-    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
-    var style:any;
-    var backColor=this.confTableAll.row.even;
-    if (backGround===1){
-      backColor=this.confTableAll.row.odd;
-    } 
-    width=Number(width)-0.3;
-    return style = {
-        'background-color':backColor,
-        'width.px': width,
-        'height.px':  Number(this.confTableAll.Total.height) ,
-        'color': this.confTableAll.Total.color,  
-        'font-size.px':Number(this.confTableAll.Total.fontSize),
-        'font-weight':this.confTableAll.Total.fontWeight,
-        'text-align': 'center',
-        'display':'inline-block',
-        
-    }
-  }
-
-  createClassHeader(width:string){
-    var style:any;
-    return style = {
-        'background-color':this.confTableAll.title.background,
-        'width.px': width,
-        'height.px':  Number(this.confTableAll.row.height) ,
-        'padding-top.px':2,
-        'color': this.confTableAll.title.color,  
-        'border':'1px white solid',
-        'text-align': 'center',
-        'display':'inline-block',
-    }
-  } 
-
-  createClassContent(width:any, backGround:number, align:string){
-    var style:any;
-    var backColor=this.confTableAll.row.even;
-    var theColor=this.confTableAll.row.color;
-    if (backGround===1){
-      backColor=this.confTableAll.row.odd;
-    } else if (backGround===2){
-      backColor=this.confTableAll.rowNew.background;
-      theColor=this.confTableAll.rowNew.color;
-    } 
-    return style = {
-        'background-color':backColor,
-        'width.px': width,
-        'height.px': Number(this.confTableAll.row.height) ,
-        'color': theColor,  
-        'border':'none',
-        'text-align': align,
-        'display':'inline-block',
-    }
-  }
-
-  createDivClassHeader(width:any){
-    var style:any;
-    return style = {
-        'width.px': width,
-        'height.px':  Number(this.confTableAll.row.height)+5 ,
-        'border':'none',
-        'display':'block',
-        'float':'left'
-    }
-  } 
-
-  createDivClassContent(width:any){
-    var style:any;
-    return style = {
-        'width.px': width,
-        'height.px':  Number(this.confTableAll.row.height)+5 ,
-        'border':'none',
-        'display':'block',
-        'float':'left'
-    }
-  }
-
-  createEmptyDivClassContent(width:number){
-    var style:any;
-    return style = {
-        'width.px': width,
-        'height.px':  Number(this.confTableAll.row.height)+5 ,
-        'border':'none',
-        'display':'block',
-        'float':'left'
-    }
-  }
-
-
-
-
+  firstLoopInit:boolean=true;
   isUserTimeOut=signal<boolean>(false);
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
     console.log('Health component - timeOutactivity');
+    this.firstLoopInit=false;
     window.cancelAnimationFrame(this.idAnimation);
     this.callTimeToGo();
     if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
       this.isUserTimeOut.set(false);
+      return;
     }
     this.refDate=new Date();
     this.lastInputAt = strDateTime();
-    if (theAction==="only"){
-      //this.openFileAccess=true;
+    if (theAction==="only" ){
       this.theEvent.checkLock.action='checkTO';
       this.theEvent.checkLock.iWait=iWait;
       this.theEvent.checkLock.isDataModified=isDataModified;
@@ -596,7 +425,11 @@ export class HealthComponent  {
   displayMin:number=0;
   displayHour:number=0;
   idAnimation:any;
+  
   callTimeToGo(){
+    if (this.isUserTimeOut()){
+        this.isUserTimeOut.set(false);
+    }
     const currSeconds=this.refDate.getSeconds() ;
     const currMinutes=this.refDate.getMinutes();
     const currHour=this.refDate.getHours();
@@ -612,13 +445,31 @@ export class HealthComponent  {
     const timeSpent = Number(currentDateSec) - Number(refDateSec);
     const timeLeft= timeOutSec - timeSpent;
 
-    if (timeSpent > Number(timeOutSec)) {
-        this.isUserTimeOut.set(true);
-        return;
-      }
-    if (this.isUserTimeOut()){
-      this.isUserTimeOut.set(false);
+    if (this.tabLock[0].lock===3){
+      this.tabLock[0].action="unlock";
+      this.tabLock[0].updatedAt=this.lastInputAt;
     }
+
+      if (timeSpent > Number(timeOutSec) ) {
+        this.isUserTimeOut.set(true);
+        this.tabLock[0].action="unlock";
+        this.tabLock[0].updatedAt=this.lastInputAt;
+        //if (this.firstLoopInit===true){    
+          //this.unlockFile.emit(0);
+          this.theEvent.checkLock.action='unlock';
+          this.theEvent.checkLock.iWait=0;
+          this.theEvent.checkLock.isDataModified=false;
+          this.theEvent.checkLock.isSaveFile=false;
+          this.theEvent.checkLock.iCheck=true;
+          this.theEvent.checkLock.lastInputAt=this.lastInputAt;
+          this.theEvent.checkLock.nbCalls++;
+          this.triggerCheckToLimit.update(CheckLimit => CheckLimit + 1);
+          this.lockValueBeforeCheck=this.tabLock[0].lock;
+          this.openFileAccess.set(true);
+        //}
+        return;
+    }
+
     if (timeLeft <= 0 && this.isAllDataModified===true){
         this.errorMsg = "your modifications are going to be lost if you don't save them";
     } 
@@ -634,11 +485,20 @@ export class HealthComponent  {
     this.openFileAccess.set(false);
     console.log('Health component - resultAccessFile');
     if (this.lockValueBeforeCheck!==this.tabLock[0].lock){
+
       if (this.tabLock[0].lock===1){
         this.errorMsg = "You can now update the file";
+
+      } else if (this.tabLock[0].action==="unlock"){
+        this.errorMsg = "File has been unlocked. Relaunch the application";
+        this.isUserTimeOut.set(false);
       } else {
         this.errorMsg = "File is locked by another user";
+        this.isUserTimeOut.set(false);
       }
+      this.lastInputAt = strDateTime();
+      this.refDate=new Date();
+      this.callTimeToGo();
     }
     if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){
       this.errorMsg = this.returnDataFSHealth.errorMsg;
@@ -1379,6 +1239,12 @@ export class HealthComponent  {
 
   afterCheckFS(data:any){
     this.openFileAccess.set(false);
+    if (this.firstLoopInit===true && this.tabLock[0].lock === 1){
+      this.firstLoopInit=false;
+      this.lastInputAt = strDateTime();
+      this.refDate=new Date();
+      this.callTimeToGo();
+    }
     this.errorFn="";
     if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
       this.tabLock[0].lock = 1;
@@ -1409,82 +1275,171 @@ export class HealthComponent  {
     }
   }
 
-/****
-  firstLoop:boolean=true;
-  ngOnChanges(changes: SimpleChanges) {
-    console.log('Health component - ngOnChanges - this.onInputAction='+this.onInputAction);
-    var callAfterCheck=0;
-    if (this.firstLoop===true){
-      this.firstLoop=false;
-      //for (const propName in changes) {
-      //  const j = changes[propName];
-      //  if (propName==='ConfigCaloriesFat') {
-      //    //this.createDropDownCalFatFn();
-      //  }
-      // }
-    }
-    else {
-      for (const propName in changes) {
-        const j = changes[propName];
-        if (propName === 'resultCheckLimitHealth' && changes[propName].firstChange === false) {
-          if (callAfterCheck===0){
-            callAfterCheck++ ;
-            //this.afterCheckFS(1);
-          }
-        } else if (propName === 'actionHealth' && changes[propName].firstChange === false) {
-          console.log("**** health component - ngOnChange - propName === 'actionHealth");
-          if (this.onInputAction === "onInputDailyAll") {
-            this.onInputDailyAllA(this.theEvent);
-          } else if (this.onInputAction === "onAction") {
-//            this.onActionA(this.theEvent);
-          } else if (this.onInputAction === "confirmSave"){
-            this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-            this.IsSaveConfirmedAll = true;
-          } else if (this.onInputAction === "saveHealth"){
-              console.log("**** health component - ngOnChange - this.onInputAction === saveHealth");
-          } else if (this.onInputAction==="cancelUpdateAll"){
-            if (this.filterHealth = true && (this.  TheSelectDisplays.controls['startRange'].value !== '' || this.TheSelectDisplays.controls['endRange'].value !== '')) {
-              this.theEvent.target.id === 'selectAllData';
-              this.dateRangeSelection(this.theEvent);
-            } else {
-              this.maxNum = this.maxItemsPerPage;
-              this.minNum = 0;
-              this.numPage = 1;
-            }
-          } else if (this.onInputAction==="userTimeOut"){ // the corresponding feature has been removed
-              this.errorMsg='Application has been reinitialised';
-              this.isUserTimeOut=false;
-          }
-          this.onInputAction="";
-        }  else if (propName==='returnDataFSHealth' && changes[propName].firstChange === false) {
-          if (callAfterCheck===0){
-            callAfterCheck++  ;
-            //this.afterCheckFS(1);
-          }
-        }  else if (propName === 'calculateHeight') {
-            console.log("**** health component - ngOnChange - propName === 'calculateHeight");
-            this.calculateHeight();
-        }  else if (propName === 'ConfigCaloriesFat') {
-            this.createDropDownCalFatFn();
-        }  else if (propName === 'callSaveFunction') {
-            this.isMustSaveFile = false;
-            this.isSaveHealth = false;
-            this.IsSaveConfirmedAll = false;
-            this.theEvent.checkLock.isDataModified = false;
-            this.theEvent.checkLock.isSaveFile = false;
-            this.theEvent.checkLock.iCheck = true;
-            this.resetBooleans();
+  fillClassHeader(){
+    this.divClassHeader[0]=this.createDivClassHeader(this.confTableAll.colWidth.action);
+    this.divClassHeader[1]=this.createDivClassHeader(this.confTableAll.colWidth.date);
+    this.divClassHeader[2]=this.createDivClassHeader(this.confTableAll.colWidth.calBurnt);
+    this.divClassHeader[3]=this.createDivClassHeader(this.confTableAll.colWidth.meal);
+    this.divClassHeader[4]=this.createDivClassHeader(this.confTableAll.colWidth.ingr);
+    this.divClassHeader[5]=this.createDivClassHeader(this.confTableAll.colWidth.other);
+    
+    this.tabHeader[0]=this.createClassHeader(this.confTableAll.colWidth.action);
+    this.tabHeader[1]=this.createClassHeader(this.confTableAll.colWidth.date);
+    this.tabHeader[2]=this.createClassHeader(this.confTableAll.colWidth.calBurnt);
+    this.tabHeader[3]=this.createClassHeader(this.confTableAll.colWidth.meal);
+    this.tabHeader[4]=this.createClassHeader(this.confTableAll.colWidth.ingr);
+    this.tabHeader[5]=this.createClassHeader(this.confTableAll.colWidth.other);
 
-            if (this.statusSaveFn.status===200 || this.statusSaveFn.status===0){
-              this.errorMsg='File has been successfully saved';
-              this.isAllDataModified = false;
-            } else {
-              this.errorMsg=this.statusSaveFn.err;
-            }
-        } 
-      }  
+    this.tabDivContent[0]=this.createDivClassContent(this.confTableAll.colWidth.action);
+    this.tabDivContent[1]=this.createDivClassContent(this.confTableAll.colWidth.date);
+    this.tabDivContent[2]=this.createDivClassContent(this.confTableAll.colWidth.calBurnt);
+    this.tabDivContent[3]=this.createDivClassContent(this.confTableAll.colWidth.meal);
+    this.tabDivContent[4]=this.createDivClassContent(this.confTableAll.colWidth.ingr);
+    this.tabDivContent[5]=this.createDivClassContent(this.confTableAll.colWidth.other);
+    
+    this.tabDivEmptyContent[0]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.action));
+    this.tabDivEmptyContent[1]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.date));
+    this.tabDivEmptyContent[2]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.calBurnt));
+    this.tabDivEmptyContent[3]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.meal));
+    this.tabDivEmptyContent[4]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.ingr));
+    this.tabDivEmptyContent[5]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.other));
+
+    
+    for (var i=0; i<3; i++){
+      this.tabContent[i]=[];
+      this.tabContent[i][0]=this.createClassContent(this.confTableAll.colWidth.action,i,'center');
+      this.tabContent[i][1]=this.createClassContent(this.confTableAll.colWidth.date,i,'left');
+      this.tabContent[i][2]=this.createClassContent(this.confTableAll.colWidth.calBurnt,i,'center');
+      this.tabContent[i][3]=this.createClassContent(this.confTableAll.colWidth.meal,i,'center');
+      this.tabContent[i][4]=this.createClassContent(this.confTableAll.colWidth.ingr,i,'left');
+      this.tabContent[i][5]=this.createClassContent(this.confTableAll.colWidth.other,i,'center');
+    }
+    for (var i=0; i<2; i++){
+      this.tabSubTotal[i]=[];
+      this.tabSubTotal[i][0]=this.createSubTotal(Number(this.confTableAll.colWidth.action),i);
+      this.tabSubTotal[i][1]=this.createSubTotal(Number(this.confTableAll.colWidth.date),i);
+      this.tabSubTotal[i][2]=this.createSubTotal(Number(this.confTableAll.colWidth.calBurnt),i);
+      this.tabSubTotal[i][3]=this.createSubTotal(Number(this.confTableAll.colWidth.meal),i);
+      this.tabSubTotal[i][4]=this.createSubTotal(Number(this.confTableAll.colWidth.ingr),i);
+      this.tabSubTotal[i][5]=this.createSubTotal(Number(this.confTableAll.colWidth.other),i);
+    }
+    for (var i=0; i<2; i++){
+      this.tabTotal[i]=[];
+      this.tabTotal[i][0]=this.createTotal(Number(this.confTableAll.colWidth.action),i);
+      this.tabTotal[i][1]=this.createTotal(Number(this.confTableAll.colWidth.date),i);
+      this.tabTotal[i][2]=this.createTotal(Number(this.confTableAll.colWidth.calBurnt),i);
+      this.tabTotal[i][3]=this.createTotal(Number(this.confTableAll.colWidth.meal),i);
+      this.tabTotal[i][4]=this.createTotal(Number(this.confTableAll.colWidth.ingr),i);
+      this.tabTotal[i][5]=this.createTotal(Number(this.confTableAll.colWidth.other),i);
     }
   }
-*/
+
+  createSubTotal(width:Number,backGround:number){
+    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
+    var style:any;
+    var backColor=this.confTableAll.row.even;
+    if (backGround===1){
+      backColor=this.confTableAll.row.odd;
+    } 
+    width=Number(width)-0.3;
+    return style = {
+        'background-color':backColor,
+        'width': width + 'px',
+        'height':  Number(this.confTableAll.subTotal.height)  + 'px',
+        'color': this.confTableAll.subTotal.color,  
+        'font-size':Number(this.confTableAll.subTotal.fontSize) + 'px',
+        'font-weight':this.confTableAll.subTotal.fontWeight,
+        'text-align': 'center',
+        'display':'inline-block', 
+    }
+  }
+
+  createTotal(width:Number,backGround:number){
+    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
+    var style:any;
+    var backColor=this.confTableAll.row.even;
+    if (backGround===1){
+      backColor=this.confTableAll.row.odd;
+    } 
+    width=Number(width)-0.3;
+    return style = {
+        'background-color':backColor,
+        'width': width + 'px',
+        'height':  Number(this.confTableAll.Total.height)  + 'px',
+        'color': this.confTableAll.Total.color,  
+        'font-size':Number(this.confTableAll.Total.fontSize) + 'px',
+        'font-weight':this.confTableAll.Total.fontWeight,
+        'text-align': 'center',
+        'display':'inline-block',
+    }
+  }
+
+  createClassHeader(width:string){
+    var style:any;
+    return style = {
+        'background-color':this.confTableAll.title.background,
+        'width': width + 'px',
+        'height':  Number(this.confTableAll.row.height) + 'px' ,
+        'padding-top':2 + 'px',
+        'color': this.confTableAll.title.color,  
+        'border':'1px white solid',
+        'text-align': 'center',
+        'display':'inline-block',
+    }
+  } 
+
+  createClassContent(width:any, backGround:number, align:string){
+    var style:any;
+    var backColor=this.confTableAll.row.even;
+    var theColor=this.confTableAll.row.color;
+    if (backGround===1){
+      backColor=this.confTableAll.row.odd;
+    } else if (backGround===2){
+      backColor=this.confTableAll.rowNew.background;
+      theColor=this.confTableAll.rowNew.color;
+    } 
+    return style = {
+        'background-color':backColor,
+        'width': width + 'px',
+        'height': Number(this.confTableAll.row.height) + 'px' ,
+        'color': theColor,  
+        'border':'none',
+        'text-align': align,
+        'display':'inline-block',
+    }
+  }
+
+  createDivClassHeader(width:any){
+    var style:any;
+    return style = {
+        'width': width + 'px',
+        'height':  (Number(this.confTableAll.row.height)+5)  + 'px',
+        'border':'none',
+        'display':'block',
+        'float':'left'
+    }
+  } 
+
+  createDivClassContent(width:any){ 
+    var style:any;
+    return style = {
+        'width': width + 'px',
+        'height':  (Number(this.confTableAll.row.height)+5 ) + 'px',
+        'border':'none',
+        'display':'block',
+        'float':'left'
+    }
+  }
+
+  createEmptyDivClassContent(width:number){
+    var style:any;
+    return style = {
+        'width': width + 'px',
+        'height':  (Number(this.confTableAll.row.height)+5)  + 'px',
+        'border':'none',
+        'display':'block',
+        'float':'left'
+    }
+  }
 
 }

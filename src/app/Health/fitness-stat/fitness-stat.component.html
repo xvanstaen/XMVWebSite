@@ -156,7 +156,7 @@
 
         @if (isTabDisplayCalendar() && TabDisplayCalendar[TabOfId[0]]===true){
             <div class="dropdown" >
-                <div class="Straight-content" [style]="{'margin-top.px': selectedPosition.y - this.posDivTitle.Top - 249 }" >
+                <div class="Straight-content" [style]="{'margin-top': (selectedPosition.y - this.posDivTitle.Top - 249)  + 'px' }" >
                     <div class="StraightDropDown" >
                         <div class="skipLine">&nbsp;</div>
                         <app-one-calendar [Input_MinDate]="minDate" [Input_MaxDate]="maxDate" [DisplayCalendarOnly]="DisplayCalendarOnly"

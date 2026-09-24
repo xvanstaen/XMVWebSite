@@ -45,7 +45,7 @@
             <div class="skipLine">&nbsp;</div>
         }
 
-        @if(tabLock[0].lock === 2){
+        @if(tabLock[0].lock === 2 && this.errorMsg === ""){
             <div style="font-size:16px; color:red; margin-left:20px; height:40px; padding-top:12px; display:inline-block; width:500px; background-color:lightskyblue; margin-top:10px;">
             <span >
                     Sorry, this file is locked by another user - updates are not possible
@@ -53,28 +53,31 @@
             </div>
         }
 
-        @if(tabLock[0].lock === 3){
+        @if(tabLock[0].lock === 3 && this.errorMsg === "" ){
             <div style="font-size:16px; color:red; margin-left:20px; height:40px; padding-top:12px; display:inline-block; width:500px; background-color:lightskyblue; margin-top:10px;">
-            <span >
-                    Checking if this file is locked by another user 
-            </span> 
+                <span >
+                        Checking if this file is locked by another user 
+                </span> 
             </div>
         }
        
 
         <!--------------- DISPLAY ALL -->
 
-        @if(!isUserTimeOut()){
+        <!-- @if(!isUserTimeOut()){ -->
         <div  style="margin-left:6px;">
             <div style="font-size:16px; color:blue; display:inline-block; 
                      text-align:center;  margin-top:5px;  width:100%;" >
                     HEALTH DATA MANAGEMENT
 
+                    <!-- 
                     <app-running-clock [posSizeClock]="posSizeClock">
                     </app-running-clock>
+                    -->
                   
-                    
-                    @if (signalTime()>0){
+                @if (signalTime()>0 && this.identification.triggerFileSystem.toUpperCase()==="YES"){
+                    <div class="skipLine">&nbsp;</div>
+                    <div style="margin-left:30px; width:100%; display:inline-block">                
                         Time out will occur in 
                         <span style="border: black double 2px; margin-left:5px;"> 
                                 @if(displayHour!==0) { 
@@ -82,7 +85,9 @@
                                 }
                                 {{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec
                         </span>
-                    }
+                    </div>
+                }
+                <div class="skipLine">&nbsp;</div>
             </div>
 
             <div id="ListAll">&nbsp;</div> 
@@ -91,7 +96,6 @@
                     <div class="skipLine">&nbsp;</div>
                     <div class="error" >{{errorMsg}}</div>
                 }
-                
                 <div class="skipLine">&nbsp;</div>
                 <div class="posConfirm">
                     <button id='Del-1' class="sizeButtons" (click)="ConfirmDelDate()">Confirm</button>
@@ -122,40 +126,38 @@
                 <button id='clear' class="sizeButtons" style="margin-left:10px;" (click)="actionSearchText($event)">Clear</button>
             </form>
             <div class="skipLine">&nbsp;</div>
-            <div style="margin-top:5px; width:99%; min-width:99%;"></div>
-            <div   id="posAfterTitle"  [ngStyle]="{'height.px':37, 'min-width.px': confTableAll.minwidth-20 , 'width.px': confTableAll.width-20}" >
-                <div [ngStyle]="divClassHeader[0]">
-                    <input [ngStyle]="tabHeader[0]" type="text" value="Action"></div>
-                <div [ngStyle]="divClassHeader[1]">
-                    <input [ngStyle]="tabHeader[1]" type="text" value="Date"></div>
-                <div [ngStyle]="divClassHeader[2]">
-                    <input [ngStyle]="tabHeader[2]" type="text" value="Cal. Burnt"></div>
-                <div [ngStyle]="divClassHeader[3]">
-                    <input [ngStyle]="tabHeader[3]" type="text" value="Meal"></div>
-                <div [ngStyle]="divClassHeader[4]">
-                    <input [ngStyle]="tabHeader[4]" type="text" value="Ingredient"></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Quant."></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Unit"></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Cal."></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Chol."></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Protein"></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Carbs"></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Gly"></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Sugar"></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Sat."></div>
-                <div [ngStyle]="divClassHeader[5]">
-                    <input [ngStyle]="tabHeader[5]" type="text" value="Tot.Fat"></div>
-
- 
+            <div style="margin-top:5px; "></div> <!-- width:99%; min-width:99%; -->
+            <div   id="posAfterTitle"  [style]="{'height':37 + 'px', 'min-width': (confTableAll.minwidth-20)  + 'px' , 'width': (confTableAll.width-20)  + 'px'}" >
+                <div [style]="divClassHeader[0]">
+                    <input [style]="tabHeader[0]" type="text" value="Action"></div>
+                <div [style]="divClassHeader[1]">
+                    <input [style]="tabHeader[1]" type="text" value="Date"></div>
+                <div [style]="divClassHeader[2]">
+                    <input [style]="tabHeader[2]" type="text" value="Cal. Burnt"></div>
+                <div [style]="divClassHeader[3]">
+                    <input [style]="tabHeader[3]" type="text" value="Meal"></div>
+                <div [style]="divClassHeader[4]">
+                    <input [style]="tabHeader[4]" type="text" value="Ingredient"></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Quant."></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Unit"></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Cal."></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Chol."></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Protein"></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Carbs"></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Gly"></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Sugar"></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Sat."></div>
+                <div [style]="divClassHeader[5]">
+                    <input [style]="tabHeader[5]" type="text" value="Tot.Fat"></div>
             </div>
 
             <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
@@ -164,8 +166,8 @@
             <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
             @if(dialogue[6]===true){
                 <div class="dropdown ">
-                    <div  [ngStyle]="styleBox" >
-                        <div  [ngStyle]="styleBoxOption">       
+                    <div  [style]="styleBox" >
+                        <div  [style]="styleBoxOption">       
                             <li *ngFor="let action of NewTabAction; let m=index;" 
                                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onDropDownAll($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{action.type}}-{{action.name}}">
@@ -177,8 +179,8 @@
                 </div>
             }
             @if (isDeleteItem===true){
-                <div [ngStyle]="styleBox">
-                    <div [ngStyle]="styleBoxOption" style="  background: cyan; ">
+                <div [style]="styleBox">
+                    <div [style]="styleBoxOption" style="  background: cyan; ">
                         <div style="width:100%; color:blue; font-size:14px; text-align: center; ">Confirm the deletion of {{delMsg}}</div> 
                             <div  class="theRadio" style='margin-left:40px; margin-top:8px;'>
                                 <input   style='margin-left:18px;'(click)='DelAfterConfirm($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="Y" > &nbsp;&nbsp;Yes 
@@ -192,8 +194,8 @@
             <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH MEALS STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputMeal-->
             @if (tabInputMeal.length>0){    
                 <div class="dropdown ">
-                    <div  [ngStyle]="styleBoxMeal" >
-                        <div   [ngStyle]="styleBoxOptionMeal">  
+                    <div  [style]="styleBoxMeal" >
+                        <div   [style]="styleBoxOptionMeal">  
                             <li *ngFor="let tabMeal of tabInputMeal; let m=index;" 
                                     class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onSelMealFood($event)" id="selMeal-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{tabMeal}}">
@@ -206,10 +208,10 @@
             <!--  GENERATE AUTOMATICALLY A DROPDOWN WINDOW WITH EXISTING FOOD STARTING WITHT THE SAME LETTERS  --- REFER TO tabInputFood-->
             @if (isInputFood===true && tabInputFood.length>0){    
                 <div class="dropdown " >
-                    <div [ngStyle]="styleBoxFood" >
-                        <div   [ngStyle]="styleBoxOptionFood">
+                    <div [style]="styleBoxFood" >
+                        <div   [style]="styleBoxOptionFood">
                             <li *ngFor="let tabFood of tabInputFood; let m=index;" 
-                                    class="Straight-options" [ngStyle]="{'width.px':sizeBox.widthOptions}" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    class="Straight-options" [style]="{'width':sizeBox.widthOptions + 'px'}" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onSelMealFood($event)" id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="m">
                                         {{tabFood.name}} - serving: {{tabFood.serving | number:'1.0-0'}}  {{tabFood.unit}}   
                             </li>
@@ -219,8 +221,8 @@
             }
             <!-----   MANAGEMENT OF ALL HEALTH DATA  -->
 
-            <div [ngStyle]="{ 'min-width.px': confTableAll.minwidth-15 ,  'width.px': confTableAll.width-15, 'color':confTableAll.color, 
-                        'height.px': confTableAll.height, 'background-color':confTableAll.background, 'overflow-y':'scroll'}"> 
+            <div [style]="{ 'min-width': confTableAll.minwidth-20 + 'px' ,  'width': (confTableAll.width-20) + 'px', 'color':confTableAll.color, 
+                        'height': (confTableAll.height) + 'px', 'background-color':confTableAll.background, 'overflow-y':'scroll'}"> 
 
                 <div *ngFor="let myDaily of HealthAllData.tabDailyReport; let i=index">
                     @if ((i >= minNum && i<=maxNum) || checkText!==''){
@@ -232,110 +234,103 @@
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))){
                                 @if (checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
                                 <div  style="display:inline-block; width:100%; border:none; ">
-                                    <div    [ngStyle]="tabDivContent[0]" >
-                                        <span class="boxHover" [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][0]"
-                                              id="openAction-{{i}}-{{k}}-{{j}}" (click)="onAction($event)" style="height:30px;">
+                                    <div    [style]="tabDivContent[0]" >
+                                        <span class="boxHover" [style]="i % 2 === 0 ? tabContent[0][0] : tabContent[1][0]"
+                                              id="openAction-{{i}}-{{k}}-{{j}}" (click)="onAction($event)" > <!-- style="height:30px;" -->
                                             <span  id="openAction-{{i}}-{{k}}-{{j}}" class="circle" >A</span>
                                         </span>
                                     </div>
-                                    @if (k===0 && j===0){
-                                        <div [ngStyle]="tabDivContent[1]">
+                                    <div [style]="tabDivEmptyContent[1]" >  
+                                        @if (k===0 && j===0){
                                             <input  type="date" class="boxHover"
-                                                [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]" 
+                                                [style]="i % 2 === 0 ? tabContent[0][1] : tabContent[1][1]" 
                                                 id="dateAll-{{i}}"   (input)="onInputDailyAll($event)" value="{{myDaily.date}}" >
-                                        </div>
-                                    }
-                                    @if (k!==0 || j!==0){
-                                        <div [ngStyle]="tabDivEmptyContent[1]" >  
+                                        } @else if (k!==0 || j!==0){
                                             @if (j===0){
                                                 <input  ng-readonly=&nbsp; type="date" value="{{myDaily.date}}"
-                                                    [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]"
+                                                    [style]="i % 2 === 0 ? tabContent[0][1] : tabContent[1][1]"
                                                     style="pointer-events: none;"  >
                                             } @else {    
                                                 <input ng-readonly=&nbsp; type="text" value=&nbsp;
-                                                    [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][1]"
+                                                    [style]="i % 2 === 0 ? tabContent[0][1] : tabContent[1][1]"
                                                     style="pointer-events: none;"  >
                                             }
-                                        </div>
-                                    }
-                                    @if (k===0 && j===0){
-                                        <div [ngStyle]="tabDivContent[2]" >
-                                            <input  type="text"  class="boxHover"
-                                                [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][2]" 
-                                                id="burnAll-{{i}}"  (input)="onInputDailyAll($event)" 
-                                                value="{{ myDaily.burntCalories }}"   > 
-                                        </div>
-                                    }
-                                    @if (k!==0 || j!==0){
-                                        <div [ngStyle]="tabDivEmptyContent[2]">
-                                            <input ng-readonly=&nbsp; [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][2]" 
-                                                >
-                                        </div>
-                                    }
-                                    @if (j===0){
-                                        <div [ngStyle]="tabDivContent[3]" >
-                                            <input type="text" class="boxHover"
-                                                [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][3]" 
-                                                id="mealAll-{{i}}-{{k}}"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{meal.name }}"   >
-                                        </div>
-                                    } @else {
-                                        <div [ngStyle]="tabDivEmptyContent[3]"  >    
-                                            <input ng-readonly=&nbsp; [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][3]" >
-                                        </div>
-                                    }
-                                    <div [ngStyle]="tabDivContent[4]">
+                                        }
+                                    </div>
+                                    <div [style]="tabDivContent[2]" >
+                                        @if (k===0 && j===0){
+                                                <input  type="text"  class="boxHover"
+                                                    [style]="i % 2 === 0 ? tabContent[0][2] : tabContent[1][2]" 
+                                                    id="burnAll-{{i}}"  (input)="onInputDailyAll($event)" 
+                                                    value="{{ myDaily.burntCalories }}"   > 
+                                        } @else if (k!==0 || j!==0){
+                                                <input ng-readonly=&nbsp; [style]="i % 2 === 0 ? tabContent[0][2] : tabContent[1][2]" 
+                                                    >
+                                        }
+                                    </div>
+                                    <div [style]="tabDivContent[3]" >
+                                        @if (j===0){
+                                            <input type="text" class="boxHover" 
+                                                [style]="i % 2 === 0 ? tabContent[0][3] : tabContent[1][3]"
+                                                    id="mealAll-{{i}}-{{k}}"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{meal.name }}"   >
+                                        } @else { 
+                                            <input ng-readonly=&nbsp; 
+                                                [style]="i % 2 === 0 ? tabContent[0][3] : tabContent[1][3]" >
+                                        }
+                                    </div>
+                                    <div [style]="tabDivContent[4]">
                                         <input type="text" class="boxHover padLeft" 
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][4]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][4] : tabContent[1][4]" 
                                             id="ingrAll-{{i}}-{{k}}-{{j}}"    (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" value="{{theIngred.name }}"  >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]">
+                                    <div [style]="tabDivContent[5]">
                                         <input type="text"  class="boxHover" 
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]"
                                             value="{{theIngred.quantity}}" id="quanAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)"  >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]">  
+                                    <div [style]="tabDivContent[5]">  
                                         <input type="text"  class="boxHover"  
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]"
                                             value="{{theIngred.unit }}" id="unitAll-{{i}}-{{k}}-{{j}}" (input)="onInputDailyAll($event)" >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]">  
+                                    <div [style]="tabDivContent[5]">  
                                         <input type="text"      
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]"
                                             value="{{theIngred.calFat.Calories  | number:'1.0-0'}}"  >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]">   
+                                    <div [style]="tabDivContent[5]">   
                                         <input type="text"   
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]" 
                                             value="{{theIngred.calFat.Cholesterol  | number:'1.1-1'}}"  >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]"> 
+                                    <div [style]="tabDivContent[5]"> 
                                         <input type="text" 
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]" 
                                             value="{{theIngred.calFat.Protein | number:'1.1-1' }}"  >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]">
+                                    <div [style]="tabDivContent[5]">
                                         <input type="text"  
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" [ngClass]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]" [ngClass]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                             value="{{theIngred.calFat.Carbs  | number:'1.1-1'}}"  >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]"> 
+                                    <div [style]="tabDivContent[5]"> 
                                         <input type="text" 
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]"
                                             value="{{theIngred.calFat.GlyIndex  | number:'1.1-1'}}"  >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]">
+                                    <div [style]="tabDivContent[5]">
                                         <input type="text"  
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]" 
                                             value="{{theIngred.calFat.Sugar  | number:'1.1-1'}}" >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]">  
+                                    <div [style]="tabDivContent[5]">  
                                         <input type="text"  
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]" 
                                             value="{{theIngred.calFat.Fat.Saturated  | number:'1.1-1' }}" >
                                     </div>
-                                    <div [ngStyle]="tabDivContent[5]">
+                                    <div [style]="tabDivContent[5]">
                                         <input type="text"  
-                                            [ngStyle]="tabContent[tabNewRecordAll[i].ngStyle][5]" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]" 
                                             value="{{theIngred.calFat.Fat.Total  | number:'1.1-1'}}" >
                                     </div>
                                 </div>
@@ -343,22 +338,21 @@
                                 <!-- sub-TOTAL-->
                                 @if (HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''){
                                     <div style="display:inline-block; width:100%;">
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][0]">&nbsp;</div>
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][1]">&nbsp;</div>
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][2]">&nbsp;</div>
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][3]">&nbsp;</div>
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][4]"
-                                            ><span style=" text-align:right;">sub-Total</span></div>
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Calories  | number:'1.0-0'}}</span></div>                                
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Cholesterol | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Protein | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Carbs | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabSubTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][0] : tabSubTotal[1][0]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][1] : tabSubTotal[1][1]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][2] : tabSubTotal[1][2]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][3] : tabSubTotal[1][3]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][4] : tabSubTotal[1][4]" ><span style=" text-align:right;">sub-Total</span></div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Calories  | number:'1.0-0'}}</span></div>                                
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Cholesterol | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Protein | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Carbs | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
 
                                     </div>
                                 }
@@ -368,22 +362,21 @@
                                 -->
                                 @if (HealthAllData.tabDailyReport[i].meal.length-1===k && HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''){
                                     <div style="display:inline-block; width:100%;">
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][0]">&nbsp;</div>
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][1]">&nbsp;</div>
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][2]">&nbsp;</div>
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][3]">&nbsp;</div>
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][4]"
-                                            ><span style=" text-align:right; font-size:18;">Total</span></div>
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]">&nbsp;</div>
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Calories  | number:'1.0-0'}}</span></div>                                
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Cholesterol | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Protein | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Carbs | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
-                                        <div [ngStyle]="tabTotal[tabNewRecordAll[i].even][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Total | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][0] : tabTotal[1][0]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][1] : tabTotal[1][1]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][2] : tabTotal[1][2]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][4] : tabTotal[1][4]" ><span style=" text-align:right; font-size:18px;">Total</span></div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Calories  | number:'1.0-0'}}</span></div>                                
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Cholesterol | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Protein | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Carbs | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Total | number:'1.1-1'}}</span></div> 
                                         <div class="skipLine"></div>
                                     </div>
                                 }
@@ -393,7 +386,7 @@
                     }
                 </div>
             </div> 
-
+        <!--
             <div style="width:100%; display:inline-block; margin-top:5px;">
                 @if (minNum>1){
                     <button  id='prev' class="sizeButtons"  style="width:80px;" (click)="pagePrev()"> Prev page</button>
@@ -401,8 +394,9 @@
                 <button id='next' class="sizeButtons"  style="width:80px; margin-left:20px;" (click)="pageNext()"> Next page</button>
                 <span style="margin-left:80px; width:100px; height:22px; display:inline-block; color:blue; font-size:16px; vertical-align:middle;"> page#&nbsp;{{numPage}} </span>
             </div>
+        -->
             <div class="skipLine">&nbsp;</div>
-                @if (isAllDataModified===true && tabLock[0].lock !==2){
+                @if (isAllDataModified===true && tabLock[0].lock ===1){
                     @if (IsSaveConfirmedAll===false && isSaveHealth===false){
                         <div class="msg"  style="margin-left:10px;">
                                 File has been modified
@@ -432,14 +426,16 @@
                     <div class="skipLine">&nbsp;</div>
                 }
                 <div class="skipLine">&nbsp;</div>
-                @if (tabLock[0].lock !==2){
+                @if (tabLock[0].lock ===1){
                     <div class="msg"  style="margin-left:10px;">
-                            Do you want to clean your Health file?
-                            <button id='cleanFile' class="sizeButtons" (click)="cleanFile()"> Yes</button>
+                        Do you want to clean your Health file?
+                        <button id='cleanFile' class="sizeButtons" (click)="cleanFile()"> Yes</button>
                     </div>
                 }
             </div>
-        } @else {
+        <!-- } @else {
+        -->
+        @if(isUserTimeOut()){
             <div style="margin-left:6px">
                 <div style="font-size:16px; color:blue; display:inline-block; 
                         text-align:center;  margin-top:5px; width:100%;">

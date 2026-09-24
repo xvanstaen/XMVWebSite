@@ -82,13 +82,13 @@
 
 </div>
 
-<div [ngStyle]="{'width.px':posSize.width, 'height.px':posSize.height, 'margin-top.px':posSize.margTop, 'margin-left.px':posSize.margLeft}"
+<div [style]="{'width':posSize.width + 'px', 'height':posSize.height + 'px', 'margin-top':posSize.margTop + 'px', 'margin-left':posSize.margLeft + 'px'}"
     >CANVAS ELEM
     <canvas 
     #baseCanvas 
     id='canvasElem' 
     class="position" 
-    [ngStyle]="{'width.px':posSize.width, 'height.px':posSize.height}" 
+    [style]="{'width':posSize.width + 'px', 'height':posSize.height + 'px'}" 
     >
     </canvas>
 </div>
@@ -109,13 +109,13 @@
     </form>
 </div>
 @if (this.posSizeClock.displayAnalog===true || this.posSizeClock.displayDigital===true){
-    <div  [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.width, 'margin-top.px':posSizeClock.margTop, 'margin-left.px':posSizeClock.margLeft}">
+    <div  [style]="{'width':posSizeClock.width + 'px', 'height':posSizeClock.width + 'px', 'margin-top':posSizeClock.margTop + 'px', 'margin-left':posSizeClock.margLeft + 'px'}">
         @if(this.posSizeClock.displayAnalog===true){   CLOCK CANVAS
             <canvas 
             #baseCanvas 
                 id='clockCanvas' 
                 class="position" 
-                [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.height}" 
+                [style]="{'width.px':posSizeClock.width + 'px', 'height':posSizeClock.height + 'px'}" 
             >
             </canvas>
         }
@@ -156,13 +156,13 @@
     </form>
     <div style="display:inline-block; height:10px; width:100%;"></div>
 </div>
-<div [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.height, 'margin-top.px':posSizeSunEarth.margTop, 'margin-left.px':posSizeSunEarth.margLeft}">
+<div [style]="{'width':posSizeSunEarth.width + 'px', 'height':posSizeSunEarth.height + 'px', 'margin-top':posSizeSunEarth.margTop + 'px', 'margin-left':posSizeSunEarth.margLeft + 'px'}">
     SunEarth Canvas    
     <canvas 
         #baseCanvas 
             id='SunEarthCanvas' 
             class="position" 
-            [ngStyle]="{'width.px':posSizeSunEarth.width, 'height.px':posSizeSunEarth.height, 'background-color':'black'}" 
+            [style]="{'width':posSizeSunEarth.width + 'px', 'height':posSizeSunEarth.height + 'px', 'background-color':'black'}" 
         >
         </canvas>
  </div>
@@ -183,13 +183,13 @@
         </div>
     </form>
 </div>
- <div [ngStyle]="{'width.px':posSizeCircleRotation.width, 'height.px':posSizeCircleRotation.height, 'margin-top.px':posSizeCircleRotation.margTop, 'margin-left.px':posSizeCircleRotation.margLeft}">
+ <div [style]="{'width':posSizeCircleRotation.width + 'px', 'height':posSizeCircleRotation.height + 'px', 'margin-top':posSizeCircleRotation.margTop + 'px', 'margin-left':posSizeCircleRotation.margLeft + 'px'}">
     circleRotationCanvas
     <canvas 
     #baseCanvas 
         id='circleRotationCanvas' 
         class="position" 
-        [ngStyle]="{'width.px':posSizeCircleRotation.width, 'height.px':posSizeCircleRotation.height}" 
+        [style]="{'width':posSizeCircleRotation.width + 'px', 'height':posSizeCircleRotation.height + 'px'}" 
     >
     </canvas>
 </div>

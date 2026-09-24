@@ -1,8 +1,8 @@
 
 
 <div *ngIf="isFilterNeeded===true || isSortNeeded===true" class="dropdown">
-    <div class="Straight-content" [ngStyle]="{'height.px': this.sizeBoxContent}">
-        <div  class=" StraightDropDown" style="margin-top:0px; margin-left:20px;"[ngStyle]="{'height.px': this.sizeBox}" >
+    <div class="Straight-content" [style]="{'height': this.sizeBoxContent + 'px'}">
+        <div  class=" StraightDropDown" style="margin-top:0px; margin-left:20px;"[style]="{'height': this.sizeBox + 'px'}" >
             <span  >
                 <span class="Straight-options colorOdd" (click)="Cancel($event)">Cancel</span>
                 <span *ngIf="isSortNeeded===true">
@@ -21,8 +21,8 @@
     </div>
 </div>
 <div *ngIf="callingComponent==='FitnessStat'" class="dropdown">
-    <div class="Straight-content" [ngStyle]="{'height.px': this.sizeBoxContent}">
-        <div  class=" StraightDropDown" style="margin-left:var(--posArrow); margin-top:20px;" [ngStyle]="{'height.px': this.sizeBox}" >
+    <div class="Straight-content" [style]="{'height': this.sizeBoxContent + 'px'}">
+        <div  class=" StraightDropDown" style="margin-left:var(--posArrow); margin-top:20px;" [style]="{'height': this.sizeBox + 'px'}" >
            
             <span class="Straight-options colorOdd" (click)="Cancel($event)">Cancel</span>
            

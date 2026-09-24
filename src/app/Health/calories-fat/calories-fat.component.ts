@@ -50,7 +50,7 @@ export class returnSignal{
   templateUrl: './calories-fat.component.html',
   styleUrls: ['./calories-fat.component.css'],
   standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, MainManageFileComponent, RunningClockComponent],
+  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, MainManageFileComponent], //  RunningClockComponent
 })
 
 
@@ -116,6 +116,7 @@ export class CaloriesFatComponent implements OnInit {
   isRecipeFoodInput=signal<boolean>(false);
   signalTime=signal<number>(0); // to get count down of the timeout
   isUserTimeOut=signal<boolean>(false);
+  firstLoopInit:boolean=true;
 
   SpecificForm=new FormGroup({
         FileName: new FormControl('', { nonNullable: true }),
@@ -372,16 +373,21 @@ constructor(
 
     this.lastInputAt = strDateTime();
     this.refDate=new Date();
-    this.callTimeToGo();
+    //this.callTimeToGo();
   }
 
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
 
       window.cancelAnimationFrame(this.idAnimation);
+      this.firstLoopInit=false;
       this.callTimeToGo();
+      if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
+        this.isUserTimeOut.set(false);
+        return;
+      }
       this.refDate=new Date();
       this.lastInputAt = strDateTime();
-
+      
       if (theAction==="only"){
         this.theEvent.checkLock.action='checkTO';
         this.theEvent.checkLock.iWait=iWait;
@@ -390,6 +396,7 @@ constructor(
         this.theEvent.checkLock.iCheck=true;
         this.theEvent.checkLock.lastInputAt=this.lastInputAt;
         this.theEvent.checkLock.nbCalls++;
+        //this.lockValueBeforeCheck=this.tabLock[1].lock;
         this.triggerCheckToLimit.update(checkLimit => checkLimit + 1);
         this.openFileAccess.set(true);
 
@@ -404,8 +411,10 @@ constructor(
     const currMinutes=this.refDate.getMinutes();
     const currHour=this.refDate.getHours();
     const currentDateSec = currHour*3600+currMinutes*60+currSeconds;
+    if (this.isUserTimeOut()){
+      this.isUserTimeOut.set(false);
+    }
     this.timeToGo(currentDateSec,this.configServer.timeoutFileSystem.userTimeOut.hh * 3600 +this.configServer.timeoutFileSystem.userTimeOut.mn * 60 + this.configServer.timeoutFileSystem.userTimeOut.ss);
-    
   }
 
   timeToGo(refDateSec:any, timeOutSec:any){
@@ -416,12 +425,25 @@ constructor(
     const timeLeft= timeOutSec - timeSpent;
 
      if (timeSpent > Number(timeOutSec)) {
-            this.isUserTimeOut.set(true);
-            return;
+          this.isUserTimeOut.set(true);
+          this.tabLock[1].action="unlock";
+          this.lastInputAt=this.lastInputAt;
+          this.unlockFile.emit(1);
+          if (this.isRecipeModified() ){
+            this.isSaveRecipeConfirmed.set(false);
+            this.isRecipeModified.set(false);
+            this.initialiseFiles('recipe');
+          //===== file should be reset
+          } 
+          if (this.isCalFatModified()){
+            this.isSaveConfirmed.set(false);
+            this.isCalFatModified.set(false);
+            this.initialiseFiles('calFat');
+            this.reInitBackground();
+          }
+          return;
       }
-    if (this.isUserTimeOut()){
-      this.isUserTimeOut.set(false);
-    }
+
     if (timeLeft <= 0 && (this.isRecipeModified() || this.isCalFatModified()) ){
         this.errorMsg = "Your modifications are going to be lost if you don't save them.";
     } else {
@@ -434,21 +456,30 @@ constructor(
     }
   }
 
-
   resultFileSystemFn(event:any){
     console.log('calories - return from file-access/fileSystem event.iWait='+event.iWait);
-
+    this.openFileAccess.set(false);
     event.nbRecall++
+    this.isUserTimeOut.set(false);
     if (event.iWait===1){
       this.returnDataFSCalFat = event;
     }  else if (event.iWait===6){
       this.returnDataFSRecipe = event;
     } 
     if (this.tabLock[1].lock===1){
-        this.inputReadOnly=false;
+      this.errorMsg = "You can now update the file";
+      this.inputReadOnly=false;
     } else {
-        this.inputReadOnly=true;
+      this.inputReadOnly=true;
+      if (this.tabLock[0].action==="unlock"){
+        this.errorMsg = "File has been unlocked. Relaunch the application";
+      } else {
+        this.errorMsg = "File is locked by another user. Relaunch the application later.";
+      }
     }
+    this.lastInputAt = strDateTime();
+    this.refDate=new Date();
+    this.callTimeToGo();
     this.processCheckLimitCalFat(this.resultCheckLimitCalFat());
   }
 
@@ -1428,7 +1459,7 @@ iRecipeSave:number=0;
   errorMsgFS:string="";
 
   processCheckLimitCalFat(data:any){
-    this.errorMsg = "";
+    this.errorMsgFS = "";
     this.isErrorFS.set(false);
     if (this.returnDataFSCalFat.errorCode!==0 && this.returnDataFSCalFat.errorCode!==200){
         this.errorMsgFS = this.returnDataFSCalFat.errorMsg;
@@ -1447,28 +1478,28 @@ iRecipeSave:number=0;
         this.isErrorFS.set(true);
     }
     if (this.tabLock[1].lock === 1 && this.onInputAction === "onAction") {
-        this.onInputAction="";
+        //this.onInputAction="";
         this.onActionA(this.theEvent);
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "onInput") {
         this.onInputA(this.theEvent);
-        this.onInputAction="";
+        //this.onInputAction="";
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "transferToCalFat") {
         this.transferToCalFatA();
-        this.onInputAction="";
+        //this.onInputAction="";
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "onInputRecipe") {
         this.onInputRecipeA(this.theEvent);
-        this.onInputAction="";
+        //this.onInputAction="";
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "onSelRecipeFood") {
         this.onSelRecipeFoodA(this.theEvent);
-        this.onInputAction="";
+        //this.onInputAction="";
     }  else  if (this.tabLock[1].lock === 1 && this.onInputAction === "saveCalFat") {
-        this.onInputAction="";
+        //this.onInputAction="";
         this.saveCalFatRecipeAfterCheckToLimit();
     }  else  if (this.tabLock[1].lock === 1 && this.onInputAction === "saveRecipe") {
-        this.onInputAction="";
+        //this.onInputAction="";
         this.saveCalFatRecipeAfterCheckToLimit();
     }
-   
+    this.onInputAction="";
   }
 
   processCalFatSave(data:any){

@@ -72,7 +72,7 @@ export class MainHealthComponent {
   openFileAccess=signal<boolean>(true);
   signalDataFS=signal<number>(-1);
   actionHealth=signal<number>(-1);
-  displayHealthAll=signal<boolean>(false);
+  displayHealthAll=signal<number>(0);
   //actionCalFat:number=-1;
   //triggerCalFat=signal<returnSignal>({nb:-1, function:""});
 
@@ -298,7 +298,7 @@ export class MainHealthComponent {
   }
   
   resultFileSystemFn(event:any){
-    console.log('mainHealth - return from file-access/fileSystem event.iWait='+event.iWait);
+      console.log('mainHealth - return from file-access/fileSystem event.iWait='+event.iWait);
     this.eventLockLimit.checkLock.iCheck=false;
     this.errorMsg="";
     this.signalDataFS.update(dataFS => dataFS + 1);
@@ -393,7 +393,7 @@ export class MainHealthComponent {
         this.initTrackRecord();
         this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
         if (this.isDisplayAll===true){
-          this.displayHealthAll.set(true);
+          this.displayHealthAll.update(dHealth => dHealth + 1);
         }
         //this.healthFileRetrieved++
         //****************** iWait === 1 *************************/
@@ -569,7 +569,7 @@ export class MainHealthComponent {
           this.iWaitToRetrieve[0].iWait=0;
           this.iWaitToRetrieve[0].accessFS=true;
         } else if (this.EventHTTPReceived[0]===true) {
-          this.displayHealthAll.set(true);
+          this.displayHealthAll.update(dHealth => dHealth + 1);
         }
         if (this.EventHTTPReceived[1]===false){
             const theClass=new classRetrieveFile;
@@ -602,7 +602,7 @@ export class MainHealthComponent {
           this.openFileAccess.set(true);
         }
         this.isDisplayAll = false;
-        this.displayHealthAll.set(false);
+        //this.displayHealthAll.set(false);
       }
     } else if (i === '4') {
       if (NoYes === 'Y') {

@@ -120,7 +120,7 @@
                         style="box-sizing: border-box; margin-left:10px; width:120px; height:25px; color:blue; ">
                     <button id='cancel' class="sizeButtons" style="margin-left:10px;" (click)="searchText($event)" >Cancel</button>
                     <div class="skipLine">&nbsp;</div>
-                    <div [style]="{'height.px':heightSearchDropdown, 'max-height.px': 150, 'overflow-y':searchScroll}">
+                    <div [style]="{'height':heightSearchDropdown + 'px', 'max-height': 150 + 'px', 'overflow-y':searchScroll}">
                         <li *ngFor="let tab of tabSearch; let m=index;" class="recipeStraight-options " style="margin-left:5px;"
                                         [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="afterDropDownSel($event)" id="selText-{{m}}" >
@@ -311,8 +311,7 @@
                            
                         </div>
                     </div>
-                 
-            
+                            
                     @if ((j===0 && theStdPersoDisplay[0]==='Y') || (j===1 && theStdPersoDisplay[1]==='Y')){
                          
                         <div   class="container" [class]=" {'colorPerso': j ===1 , 'colorStd': j ===0}"
@@ -329,14 +328,12 @@
                                     <div id="posAfterTitle" >
                                         @if (tabDialog[prevDialog]===true && i===idNb && idText==='Action'){
                                             <div class="dropdown ">
-                                                <div class="Straight-content"  [style]="{ 'width.px':50, 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':posTopDropDown }">
                                                     <div  class="StraightDropDown " [style.height.px]="theHeight" [style.margin-left.px]=5 >
                                                         <li *ngFor="let tab of listActions; let m=index;" 
                                                                 class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                                                     (click)="afterDropDown($event)" id="Action" [value]="m">{{tab}}   
                                                         </li>
                                                     </div>
-                                                </div>
                                             </div>
                                         }
                                         <!-- ====== DROPDOWN - CHANGE VALUE ====== -->
@@ -408,7 +405,7 @@
                                 <div  >
                     
                                     <textarea  class="input inputArea colorStd" (input)="modifInput($event)"  
-                                            [style]="{'height.px':recipeFile.recipe[recordRecipe].materielBox, 'max-height.px':maxHeightCommBox}" id="materiel" value="{{recipeFile.recipe[recordRecipe].materiel}}">
+                                            [style]="{'height':recipeFile.recipe[recordRecipe].materielBox + 'px', 'max-height':maxHeightCommBox + 'px'}" id="materiel" value="{{recipeFile.recipe[recordRecipe].materiel}}">
                                     </textarea>
                                 </div>
                                 <div style ="text-align: left;">
@@ -490,8 +487,8 @@
 
                                     @if (tabDialog[prevDialog]===true && i===idNb && idText==='ActionPerso'){
                                         <div class="dropdown ">
-                                            <div class="Straight-content"  [style]="{ 'width.px':50, 'height.px': theHeight  ,'margin-left.px': posLeftDropDown, 'margin-top.px':posTopDropDown }">
-                                                <div  class="StraightDropDown " [style]="{ 'height.px': theHeight  ,'margin-left.px': 5}"  >
+                                            <div class="Straight-content"  [style]="{ 'width':50 + 'px', 'height': theHeight + 'px' ,'margin-left': posLeftDropDown + 'px', 'margin-top':posTopDropDown + 'px' }">
+                                                <div  class="StraightDropDown " [style]="{ 'height': theHeight + 'px' ,'margin-left': 5 + 'px'}"  >
                                                     <li *ngFor="let tab of listActions; let m=index;" 
                                                             class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                                                 (click)="afterDropDownPerso($event)" id="ActionPerso" [value]="m">{{tab}}   
@@ -550,9 +547,10 @@
                                     </div>
                                 </div>
                             </div> <!-- *ngFor --> 
-                            <div  style ="margin-left:240px; color:green; font-weight: bold;">Ustensiles Perso</div>                            <div >
+                            <div  style ="margin-left:240px; color:green; font-weight: bold;">Ustensiles Perso</div> 
+                            <div>                          
                                 <textarea  class="input inputArea colorPerso" (input)="modifInput($event)" 
-                                    [style]="{'height.px':recipeFile.recipe[recordRecipe].materielPersoBox, 'max-height.px':maxHeightCommBox}"
+                                    [style]="{'height':recipeFile.recipe[recordRecipe].materielPersoBox + 'px', 'max-height':maxHeightCommBox + 'px'}"
                                                 id="materielPerso" value="{{recipeFile.recipe[recordRecipe].materielPerso}}">
                                 </textarea>
                             </div>
@@ -575,7 +573,7 @@
                             </div>
                             <div style="margin-top:10px;">
                                 <textarea  class="input inputArea colorPerso" (input)="modifInput($event)" 
-                                            [style]="{'height.px':recipeFile.recipe[this.recordRecipe].commentsPersoBox, 'max-height.px':maxHeightCommBox}" id="commentsPerso" value="{{recipeFile.recipe[recordRecipe].commentsPerso}}">
+                                            [style]="{'height':recipeFile.recipe[this.recordRecipe].commentsPersoBox + 'px', 'max-height':maxHeightCommBox + 'px'}" id="commentsPerso" value="{{recipeFile.recipe[recordRecipe].commentsPerso}}">
                                 </textarea>
                             </div>
                             <!-- ====== NUTRITION FACTS FOR PERSO ====== -->

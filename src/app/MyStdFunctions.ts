@@ -334,7 +334,7 @@
               returnValue.lockAction="updatedAt";
 
             } else  if (Number(currentTime) > Number(timeOutValue) ){ // timeout is reached
-                
+
                 if (tabLock[iWait].lock === 1 && isRecordModified === true){
                     //checkFile(iWait); // check if it is possible to still trigger the changes 
                     returnValue.action="checkFile";
@@ -342,7 +342,11 @@
                 } else if (tabLock[iWait].lock === 1){
                     //tabLock[iWait].lock = 0; // user has not done anything until timeout;  
                     // returnValue.action="changeTabLock"; // WHY DOING THAT?
-                    returnValue.action="checkFile";
+                    if (tabLock[iWait].action==="unlock"){
+                      returnValue.action="unlock";
+                    } else {
+                      returnValue.action="checkFile";
+                    }
                 } else if (tabLock[iWait].lock===0 && isRecordModified === true) {
                     //lockFile(iWait); // user is trying to do something but file was not locked
                     returnValue.action="updateSystemFile";

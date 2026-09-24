@@ -589,6 +589,7 @@ export class ReportHealthComponent implements OnInit {
       this.openFileAccess.set(false);
       window.cancelAnimationFrame(this.idAnimation);
       this.callTimeToGo();
+      if (this.isUserTimeOut=true){return;};
       this.refDate=new Date();
       this.lastInputAt = strDateTime();
       if (theAction==="only"){

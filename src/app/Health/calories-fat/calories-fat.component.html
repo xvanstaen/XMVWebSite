@@ -22,13 +22,12 @@
     <div style="margin-left:6px;">
         <div style="font-size:16px; color:blue; display:inline-block; 
                 text-align:center;  margin-top:5px;" [style]="{'min-width': HTMLCaloriesFat.minwidth + 'px' , 'width': HTMLCaloriesFat.width + 'px'}">
-                You have been inactive for too long so your updates are lost. Reselect the function
+                You have been inactive for too long so your updates are lost. Reaccess the application CalFat & Recipe
         </div>
     </div>
 }
 
-
-@if (isInitComplete() && !isUserTimeOut() && isNgStyleCompleted() && tabTotal.length>0){
+@if (isInitComplete() && !isUserTimeOut() && isNgStyleCompleted()   ){  <!-- && tabTotal.length>0 -->
     <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [style]="{'width': (HTMLCaloriesFat.width+10) + 'px'}">
          @if (isErrorFS() && errorMsgFS!==""){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">{{errorMsgFS}}</div>
@@ -39,13 +38,13 @@
         }
         <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [style]="{'width': (HTMLCaloriesFat.width+13) + 'px'}">
             MANAGE RECIPE
- 
+            <!-- 
             <app-running-clock [posSizeClock]="posSizeClock">
             </app-running-clock>
-
+            -->
             
-            <div style="padding-left:700px; font-size:13px; ">
-                @if (signalTime()>0){
+            <div style="width:100%; margin-top:10px; padding-left:500px; font-size:13px; ">
+                @if (signalTime()>0  && this.identification.triggerFileSystem.toUpperCase()==="YES"){
                     <span >Time out will occur in</span> 
                     <span style="border: black double 2px; margin-left:5px;"> 
                         @if(displayHour!==0) { 
@@ -626,7 +625,7 @@
     @if (isUserTimeOut()){
         <div style="font-size:22px; color:blue; display:inline; width:200px; text-align:center; 
                     background:lightyellow; ">
-            UNDER CONSTRUCTION 
+            <!-- UNDER CONSTRUCTION --> 
         </div>
     }
 }

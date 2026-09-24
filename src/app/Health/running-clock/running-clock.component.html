@@ -1,18 +1,21 @@
 
-<div *ngIf="posSizeClock.displayAnalog===true || posSizeClock.displayDigital===true" 
-                [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.height, 'margin-top.px':posSizeClock.margTop, 'margin-left.px':posSizeClock.margLeft}">
-    @if (posSizeClock.displayAnalog===true){ 
+     
+@if (posSizeClock.displayAnalog===true){ 
+    <div [style]="{'width':posSizeClock.width + 'px', 'height':posSizeClock.height + 'px', 'margin-top':posSizeClock.margTop + 'px', 'margin-left':posSizeClock.margLeft + 'px'}">
         <canvas 
             #clockCanvas 
             id='canvasElem' 
             class="position" 
-            [ngStyle]="{'width.px':posSizeClock.width, 'height.px':posSizeClock.height}" 
+            [style]="{'width':posSizeClock.width + 'px', 'height':posSizeClock.height + 'px'}" 
         >
         </canvas>
-    }
-    @if (posSizeClock.displayDigital===true){
-        <div style="width:100%; display:inline-block; text-align: center; margin-top:2px; ">
-            {{theHours | number:'2.0-0'}}:{{theMinutes | number:'2.0-0'}}:{{theSeconds | number:'2.0-0'}}</div>
-    }
-</div>
+    </div>
+}
+     
+@if (posSizeClock.displayDigital===true){
+    <div style="width:100%; display:inline-block; text-align: center; margin-top:2px; ">
+            {{theHours | number:'2.0-0'}}:{{theMinutes | number:'2.0-0'}}:{{theSeconds | number:'2.0-0'}}
+    </div>
+}
+
 

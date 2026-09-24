@@ -86,7 +86,7 @@ onFileSystem(iWait: number) {
     this.resultFileSystem.emit(this.returnDataFS);
     
   } else {
-      this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, iWait.toString())
+      this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, this.tabLock[iWait].objectName, this.tabLock, iWait.toString())
         .subscribe(
           data => {
             this.returnDataFS = dataFromFS;
@@ -146,43 +146,32 @@ onFileSystem(iWait: number) {
 
   returnOnFileSystem(data: any, iWait: number, dataFromFS:any) {
     console.log('start returnOnFileSystem iWait=' + iWait);
+    var statusCode=0;
     dataFromFS.reAccessFile=false;
     if (data.status !== undefined && data.status === 200 && data.tabLock !== undefined) { // tabLock is returned
       console.log('server response: ' + data.tabLock[iWait].object + ' createdAt=' + data.tabLock[iWait].createdAt + '  & updatedAt=' + data.tabLock[iWait].updatedAt + '  & lock value =' + data.tabLock[iWait].lock);
-      if (data.tabLock[iWait].credentialDate !== this.credentialsFS.creationDate) { // server was reinitialised
+      //if (data.tabLock[iWait].credentialDate !== this.credentialsFS.creationDate) { // server was reinitialised
+      //  this.tabLock[iWait] = data.tabLock[iWait];
+      //}
+
+        if (data.tabLock[iWait].lock === 1 && this.tabLock[iWait].lock !== 1) {
+          // file is now locked for this user; need to retrieve the file to ensure we have the latest version
+          statusCode=220;
+          if (iWait === 5) {
+            statusCode = data.status.tabLockItem;
+          }
+        } else if (data.tabLock[iWait].lock !== 1 && this.tabLock[iWait].lock === 1) {
+          // file is now locked by another user, reaccess the file in locked mode
+          if (iWait !== 0) {
+            statusCode = 300;
+          } else { statusCode=230; }
+        }
+        
         this.tabLock[iWait] = data.tabLock[iWait];
-      }
-      // record is locked by another user; no actions can take place for this user so reset
-      if (data.tabLock[iWait].createdAt !== undefined) {
+        dataFromFS.onInputAction = "";
+        dataFromFS.reAccessFile=true;
         dataFromFS.errorMsg = " data returned on file " + data.tabLock[iWait].objectName + " ==> action = " + data.tabLock[iWait].action + '  lock = ' + data.tabLock[iWait].lock + "  & status = " + data.tabLock[iWait].status;
         console.log(dataFromFS.errorMsg);
-        if (this.tabLock[iWait].action === 'unlock') {
-          this.tabLock[iWait].lock = 3;
-          dataFromFS.onInputAction = "";
-          this.tabLock[iWait].createdAt = "";
-          this.tabLock[iWait].updatedAt = "";
-        }
-        else if (data.tabLock[iWait].lock === 1 && this.tabLock[iWait].lock === 2) {
-          // file is now locked for this user; need to retrieve the file to ensure we have the latest version
-          this.tabLock[iWait] = data.tabLock[iWait];
-          this.tabLock[iWait].status=220;
-          dataFromFS.onInputAction = "";
-          dataFromFS.reAccessFile=true;
-          if (iWait === 5) {
-            this.tabLock[iWait].status = data.status.tabLockItem;
-          }
-        } else if (data.tabLock[iWait].lock === 2 && this.tabLock[iWait].lock === 1) {
-          // file is now locked by another user, reaccess the file in locked mode
-          this.tabLock[iWait].status=230;
-          this.tabLock[iWait].lock = data.tabLock[iWait];
-          dataFromFS.reAccessFile=true;
-          if (iWait !== 0) {
-            this.tabLock[iWait].status = 300;
-          } else { this.tabLock[iWait].status=230; }
-        } else {
-          this.tabLock[iWait] = data.tabLock[iWait];
-        }
-      }
 
     } else if (data.status !== undefined && data.status.tabLockItem !== undefined && (this.tabLock[iWait].action === 'check' || this.tabLock[iWait].action === 'check&update') && data.status.tabLockItem.createdAt !== undefined) { // tabLock[iWait] is returned
       if (data.status.tabLockItem.status === 810 || data.status.tabLockItem.status === 800) { // record found and belongs to same user or record not found or file empty
@@ -204,7 +193,7 @@ onFileSystem(iWait: number) {
       if (data.status === 300 || data.status === 720) { // 300 record already locked; 720 updatedAt on record locked by another user
         console.log('error = ' + data.status + '  ; data returned =' + JSON.stringify(data));
         //this.nbCallCredentials = 0;
-        this.tabLock[iWait].lock = 2;
+        this.tabLock[iWait].lock = 3;
         dataFromFS.onInputAction = "";
         if (data.status === 720) {
           this.tabLock[iWait].status = 720;
