@@ -1,7 +1,7 @@
 import {
   Component, OnInit, Input, input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID,
-  signal } from '@angular/core';
+  signal, ChangeDetectorRef  } from '@angular/core';
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -58,6 +58,7 @@ export class MainHealthComponent {
 
   constructor(
     private ManageGoogleService: ManageGoogleService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   @Input() configServer = new configServer;
@@ -72,7 +73,7 @@ export class MainHealthComponent {
   openFileAccess=signal<boolean>(true);
   signalDataFS=signal<number>(-1);
   actionHealth=signal<number>(-1);
-  displayHealthAll=signal<number>(0);
+  displayHealthAll=signal<boolean>(false);
   //actionCalFat:number=-1;
   //triggerCalFat=signal<returnSignal>({nb:-1, function:""});
 
@@ -81,6 +82,7 @@ export class MainHealthComponent {
   recipeFileRetrieved=signal<number>(-1);
   calFatFileRetrieved=signal<number>(-1);
   triggerCalFatSave=signal<number>(-1);
+  healthFileRetrieved=signal<number>(0);
 
   configHTMLRetrieved=signal<number>(-1);
 
@@ -301,11 +303,13 @@ export class MainHealthComponent {
       console.log('mainHealth - return from file-access/fileSystem event.iWait='+event.iWait);
     this.eventLockLimit.checkLock.iCheck=false;
     this.errorMsg="";
-    this.signalDataFS.update(dataFS => dataFS + 1);
+    
     event.nbRecall++
     if (event.iWait===0){
       this.returnDataFSHealth = event;
       this.resultCheckLimitHealth++
+      this.displayHealthAll.set(true);
+      this.signalDataFS.update(dataFS => dataFS + 1);
     } else if (event.iWait===1){
       this.returnDataFSCalFat = event;
       this.resultCheckLimitCalFat.update(check => check + 1);
@@ -393,9 +397,10 @@ export class MainHealthComponent {
         this.initTrackRecord();
         this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
         if (this.isDisplayAll===true){
-          this.displayHealthAll.update(dHealth => dHealth + 1);
+          this.displayHealthAll.set(true);
+          //this.cdr.markForCheck();
         }
-        //this.healthFileRetrieved++
+        this.healthFileRetrieved.update(fHealth => fHealth + 1);
         //****************** iWait === 1 *************************/
       } else if (iWait === 1) {
         this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length)
@@ -560,7 +565,7 @@ export class MainHealthComponent {
           this.TheSelectDisplays.controls["CreateNewHealthCheckFile"].setValue("N");
           this.createNewHealth = false;
         };
-        this.isDisplayAll = true;
+        
         if (this.tabLock[0].lock !== 1 || this.EventHTTPReceived[0]===false) {
           this.tabLock[0].action='lock';
           this.iWait=0;
@@ -568,8 +573,13 @@ export class MainHealthComponent {
           this.iWaitToRetrieve.push(theClass);
           this.iWaitToRetrieve[0].iWait=0;
           this.iWaitToRetrieve[0].accessFS=true;
-        } else if (this.EventHTTPReceived[0]===true) {
-          this.displayHealthAll.update(dHealth => dHealth + 1);
+        } 
+        this.isDisplayAll = true;
+        if (this.EventHTTPReceived[0]===true) {
+          this.displayHealthAll.set(true);
+          //this.cdr.markForCheck();
+        } else {
+          this.displayHealthAll.set(false);
         }
         if (this.EventHTTPReceived[1]===false){
             const theClass=new classRetrieveFile;
@@ -602,7 +612,8 @@ export class MainHealthComponent {
           this.openFileAccess.set(true);
         }
         this.isDisplayAll = false;
-        //this.displayHealthAll.set(false);
+        this.displayHealthAll.set(false);
+        //this.cdr.markForCheck();
       }
     } else if (i === '4') {
       if (NoYes === 'Y') {

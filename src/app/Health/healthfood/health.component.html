@@ -3,6 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
+HealthAllData.tabDailyReport.length={{HealthAllData.tabDailyReport.length}}
 
     @if (openFileAccess()){    
         <app-file-access 
@@ -61,7 +62,7 @@
             </div>
         }
        
-
+@if (HealthAllData.tabDailyReport.length>0){
         <!--------------- DISPLAY ALL -->
 
         <!-- @if(!isUserTimeOut()){ -->
@@ -444,6 +445,7 @@
             </div>
         }
         <div class="skipLine">&nbsp;</div>
+    }
     </div>
 
 </body>

@@ -115,9 +115,9 @@ export class AppComponent {
    // http://localhost:4200/?server=XMV&scope=prod 
    // devMode=local
 
-  this.initConfigServer.googleServer=this.tabServers[0];     //this.tabServers[1]; 
-  this.initConfigServer.mongoServer=this.tabServers[0];      //this.tabServers[1];
-  this.initConfigServer.fileSystemServer=this.tabServers[0]; // this.tabServers[2];
+  this.initConfigServer.googleServer=this.tabServers[1];     //this.tabServers[1]; 
+  this.initConfigServer.mongoServer=this.tabServers[1];      //this.tabServers[1];
+  this.initConfigServer.fileSystemServer=this.tabServers[1]; // this.tabServers[2];
 
 
   this.route.queryParams.subscribe(params => {
@@ -302,8 +302,8 @@ console.log('devMode='+this.devMode);
 
 
       //=============
-      this.configServer.timeoutFileSystem.userTimeOut.mn=1;
-      this.configServer.timeoutFileSystem.userTimeOut.ss=20;
+      //this.configServer.timeoutFileSystem.userTimeOut.mn=10;
+      //this.configServer.timeoutFileSystem.userTimeOut.ss=20;
     }
 
   }

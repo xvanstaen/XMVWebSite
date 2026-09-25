@@ -116,15 +116,18 @@
             </span>
         </div>
     }
-displayHealthAll()={{displayHealthAll()}} && createNewHealth==={{createNewHealth}}
-    @if (displayHealthAll() && createNewHealth===false){ <!-- && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
+displayHealthAll()={{displayHealthAll()}} --- EventHTTPReceived[0]={{EventHTTPReceived[0]}}
+@@@@ healthFileRetrieved()={{healthFileRetrieved()}} ---- signalDataFS={{signalDataFS()}}
+>>>> signalDataFS={{signalDataFS()}}
+tabLock[iWait].action={{tabLock[iWait].action}} --- tabLock[iWait].lock={{tabLock[iWait].lock}}
+     @if (healthFileRetrieved()){<!--displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
         <app-health
             [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
             [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
             [tabNewRecordAll]="tabNewRecordAll" 
             [returnDataFSHealth]="returnDataFSHealth"  [actionHealth]="actionHealth()"
             [statusSaveFn]="statusSaveFnHealth"
-            [signalDataFS]="signalDataFS()"
+            [signalDataFS]="signalDataFS()" [healthFileRetrieved]="healthFileRetrieved()"
             (initTrackRecord)="initTrackRecord()" (retrieveRecord)="retrieveRecord($event)"
             (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
             (cancelUpdates)="cancelUpdates($event)" (processSaveHealth)="processSaveHealth($event)"
@@ -132,8 +135,7 @@ displayHealthAll()={{displayHealthAll()}} && createNewHealth==={{createNewHealth
             (saveCopy)="saveCopy()" (unlockFile)="unlockFile($event)"
         >
         </app-health>
-<!--  (confirmSave)="confirmSave($event)" -->
-    }
+    } 
     @if (isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true &&  EventHTTPReceived[3]===true){
         <div id='posTopAppCalFat'>   <!--    && tabLock[1].lock!==3 -->
             <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay"
