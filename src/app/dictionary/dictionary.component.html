@@ -7,13 +7,13 @@
     <span style="margin-left:20px; color:blue; font-size:14px;">{{msg}}</span>
 
     <div style="margin-top:5px; width:100%; display:inline-block;" ></div>
-    <div [ngStyle]="{'width.px':circleWidth,'margin-left.px':circleMarginLeft}" style="display:inline-block;"></div>
+    <div [style]="{'width':circleWidth + 'px','margin-left':circleMarginLeft + 'px'}" style="display:inline-block;"></div>
     <div class="boxLan" style="margin-left:19px;">Français</div> 
     <div class="boxLan"style="margin-left:4px;" >English </div>
-    @if (EventHTTPReceived[0]===true){
-        <div  [ngStyle]="{'max-height.px':tabMaxHeight, 'height.px':tabFreEngHeight}" style="overflow-y:auto">
+    @if (isDicoReceived()){ <!-- EventHTTPReceived[0]===true -->
+        <div  [style]="{'max-height':tabMaxHeight + 'px', 'height':tabFreEngHeight + 'px'}" style="overflow-y:auto">
             <div *ngFor="let tab of tabFreEng; let i=index;">
-                <div class="circle" [ngStyle]="{'width.px':circleWidth,'height.px':circleHeight, 'margin-left.px':circleMarginLeft,'margin-top.px': 4 + (tab.inputHeight - inputMinHeight) / 2}" (click)="onAction($event)"  id="{{i}}">
+                <div class="circle" [style]="{'width':circleWidth + 'px','height':circleHeight + 'px', 'margin-left':circleMarginLeft + 'px','margin-top':(4 + (tab.inputHeight - inputMinHeight) / 2) + 'px'}" (click)="onAction($event)"  id="{{i}}">
                     <div style="padding-top:3px;">A</div></div>
                 <div class="input" style="margin-left:18px;">
                     <textarea style="padding-left:5px;" (input)="onInput($event)" id="French-{{i}}" [ngClass]="{'FrEven': i % 2 === 0, 'FrOdd':i % 2 !== 0}"  value="{{tab.French}}"> 
@@ -25,10 +25,10 @@
                 </div>
                 @if (isAction===true && iRecord===i){
                     <div class="dropdown">
-                    <div [ngStyle]="styleBoxAction">
-                        <div   [ngStyle]="styleBoxOptionAction"  >
+                    <div [style]="styleBoxAction">
+                        <div   [style]="styleBoxOptionAction"  >
                             <li *ngFor="let tab of tabAction; let m=index;" 
-                                    class="Straight-options "  [ngClass]=" {'even': m % 2 ===0, 'odd': m % 2 !==0}" 
+                                    class="Straight-options "  [class]=" {'even': m % 2 ===0, 'odd': m % 2 !==0}" 
                                         (click)="afterDropDown($event)" id="Action" [value]="m">{{tab}}   
                             </li>
                         </div>
@@ -45,8 +45,8 @@
 </div>
 <br>
 @if (isConfirmedSave===false && EventHTTPReceived[0]===true){
-    <button id='but_1' class="sizeButtons"  [ngStyle]="{'width.px':90, 'height.px':40,'margin-left.px':80,'margin-top:px':20}"  (click)="onSave()"> Save</button> &nbsp;&nbsp;
-    <button id='but_2' class="sizeButtons"  [ngStyle]="{'width.px':140, 'height.px':40}" (click)="onCancel()"> Cancel all updates</button>
+    <button id='but_1' class="sizeButtons"  [style]="{'width':90 + 'px', 'height':40 + 'px','margin-left':80 + 'px','margin-top':20 + 'px'}"  (click)="onSave()"> Save</button> &nbsp;&nbsp;
+    <button id='but_2' class="sizeButtons"  [style]="{'width':140 + 'px', 'height':40 + 'px'}" (click)="onCancel()"> Cancel all updates</button>
 }
 @if (isConfirmedSave===true && EventHTTPReceived[0]===true){
     <div class="msg" style="margin-left:20px; color:blue;" >
@@ -55,8 +55,8 @@
     <form  [formGroup]="SpecificForm" >
         <input type='text' style='margin-left:100px; margin-top:20px; background-color:lightgrey;' formControlName="FileName" >
         <br><br>
-        <button id='but_3' class="sizeButtons" [ngStyle]="{'width.px':100, 'height.px':40,'margin-left.px':80}" (click)="SaveRecord()">Confirm</button>
-        <button id='but_4' class="sizeButtons"  [ngStyle]="{'width.px':100, 'height.px':40}" (click)="CancelSave()"> Cancel</button>
+        <button id='but_3' class="sizeButtons" [style]="{'width':100 + 'px', 'height':40 + 'px','margin-left':80 + 'px'}" (click)="SaveRecord()">Confirm</button>
+        <button id='but_4' class="sizeButtons"  [style]="{'width':100 + 'px', 'height':40 + 'px'}" (click)="CancelSave()"> Cancel</button>
     </form>
     <br><br>
 }

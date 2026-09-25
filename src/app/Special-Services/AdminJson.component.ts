@@ -65,8 +65,8 @@ export class AdminJsonComponent {
   @Output() resetServer= new EventEmitter<any>();
   @Output() newCredentials= new EventEmitter<any>();
 
-  signalDataFS=signal<number>(-1);
-  actionHealth=signal<number>(-1);
+  @Input() resultCheckLimitHealth:number=-1; //=signal<number>(-1);
+  @Input() actionHealth:number=-1; //=signal<number>(-1);
   constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,

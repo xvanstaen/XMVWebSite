@@ -40,29 +40,21 @@ import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSize
 export class HealthComponent  {
 
   @Output() initTrackRecord = new EventEmitter<any>();
-  @Output() retrieveRecord = new EventEmitter<any>();
+  //@Output() retrieveRecord = new EventEmitter<any>();
 
   @Output() checkLockLimit = new EventEmitter<any>();
   @Output() cancelUpdates = new EventEmitter<any>();
   @Output() processSaveHealth = new EventEmitter<any>();
   @Output() calculateCalFat= new EventEmitter<any>();
-  @Output() unlockFile = new EventEmitter<any>();
+  //@Output() unlockFile = new EventEmitter<any>();
 
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
-
-  @Input() returnDataFSHealth = new classHeaderReturnDataFS;
-  //@Input() resultCheckLimitHealth:number =0;
-  //@Input() callSaveFunction:number =0;
-  @Input() statusSaveFn:any;
-
-  @Input() HealthAllData = new mainDailyReport;
-  @Input() ConfigCaloriesFat = new mainClassCaloriesFat;
-
-  @Input() confTableAll = new classConfTableAll;
   @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-  
-  iWaitToRetrieve:Array<classRetrieveFile>=[];
+
+  @Input() ConfigCaloriesFat = new mainClassCaloriesFat;
+  @Input() HealthAllData = new mainDailyReport;
+  @Input() confTableAll = new classConfTableAll;
   @Input() tabNewRecordAll: Array<any> = [
     {
       ngStyle:0,
@@ -76,25 +68,31 @@ export class HealthComponent  {
     }
   ];
 
-  @Input() createDropDownCalFat:number=0;
-  actionHealth=input.required<number>();
+  @Input() returnDataFSHealth = new classHeaderReturnDataFS;
+  @Input() statusSaveFn:any;
+
+  //actionHealth=input.required<number>();
+  @Input() actionHealth:number = -1;
   previousSignalActionHealth:number=-1;
-  signalDataFS=input.required<number>();
+  //resultCheckLimitHealth=input.required<number>();
+  @Input() resultCheckLimitHealth:number = -1;
   //healthFileRetrieved=input.required<number>();
-  previousSignalDataFS:number=-1;
+  previousresultCheckLimitHealth:number=-1;
+
+  iWaitToRetrieve:Array<classRetrieveFile>=[];
+
+  openFileAccess=signal<boolean>(false);
+  isUserTimeOut=signal<boolean>(false);
+  signalTime=signal<number>(0); // to get count down of the timeout
 
   triggerCheckToLimit=signal<number>(-1);
   triggerFileSystem=signal<number>(-1);
   triggerReadFile=signal<number>(-1);
-  triggerSaveFile=signal<number>(-1);
-
-  signalTime=signal<number>(0); // to get count down of the timeout
+  triggerSaveFile=signal<number>(-1); // required by OpenAccessFile thought not needed by Health component
+  
 
   secondaryLevelFn:boolean=true;
-
   lockValueBeforeCheck:number=0;
-
-  openFileAccess=signal<boolean>(false);
 
   myLogConsole: boolean = false;
   myConsole: Array<msgConsole> = [];
@@ -255,14 +253,14 @@ export class HealthComponent  {
     private scroller: ViewportScroller,
     @Inject(LOCALE_ID) private locale: string,
     ) {effect (() => {
-          if (this.previousSignalDataFS!==this.signalDataFS()){
-            this.previousSignalDataFS=this.signalDataFS();
-            this.afterCheckFS(this.signalDataFS());
+          if (this.previousresultCheckLimitHealth!==this.resultCheckLimitHealth){
+            this.previousresultCheckLimitHealth=this.resultCheckLimitHealth;
+            this.afterCheckFS(this.resultCheckLimitHealth);
           }
               
-          if (this.previousSignalActionHealth!==this.actionHealth()){
-            this.previousSignalActionHealth=this.actionHealth();
-            this.processSignalFunctions (this.actionHealth());  
+          if (this.previousSignalActionHealth!==this.actionHealth){
+            this.previousSignalActionHealth=this.actionHealth;
+            this.processSignalFunctions (this.actionHealth);  
           }
            
       }) }
@@ -375,14 +373,14 @@ export class HealthComponent  {
 
     this.TheSelectDisplays.controls['startRange'].setValue('');
     this.TheSelectDisplays.controls['endRange'].setValue('');
-
+/*
     this.posSizeClock.margLeft = 840;
     this.posSizeClock.margTop = -20;
     this.posSizeClock.width = 60;
     this.posSizeClock.height = 60;
     this.posSizeClock.displayAnalog = false;
     this.posSizeClock.displayDigital = true;
-
+*/
     this.fillClassHeader();
 
     //this.configServer.timeoutFileSystem.userTimeOut.mn=2;
@@ -394,7 +392,7 @@ export class HealthComponent  {
   }
 
   firstLoopInit:boolean=true;
-  isUserTimeOut=signal<boolean>(false);
+  
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
     console.log('Health component - timeOutactivity');
     this.firstLoopInit=false;
@@ -426,7 +424,6 @@ export class HealthComponent  {
   displayMin:number=0;
   displayHour:number=0;
   idAnimation:any;
-  
   callTimeToGo(){
     if (this.isUserTimeOut()){
         this.isUserTimeOut.set(false);
@@ -1250,7 +1247,7 @@ export class HealthComponent  {
     if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
       this.tabLock[0].lock = 1;
     }
-    if (this.signalDataFS()!==-1){
+    if (this.resultCheckLimitHealth!==-1){
       console.log('Health component - afterCheckFS - this.onInputAction='+this.onInputAction);
       if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){
         this.errorMsg = this.returnDataFSHealth.errorMsg;

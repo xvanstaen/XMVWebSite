@@ -1,5 +1,5 @@
 import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  SimpleChanges,signal, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
 
 import { CommonModule,  DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -29,6 +29,7 @@ export class DictionaryComponent {
 @Input() configServer = new configServer;
 @Input() identification= new LoginIdentif;
 
+isDicoReceived=signal<boolean>(false);
 
 EventHTTPReceived:Array<boolean>=[];
 Error_Access_Server:string='';
@@ -310,6 +311,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                 if (this.tabFreEngHeight>this.tabMaxHeight){
                   this.tabFreEngHeight=this.tabMaxHeight;
                 }
+                this.isDicoReceived.set(true);
             },
             (error_handler) => {
               this.EventHTTPReceived[iWait]=true;

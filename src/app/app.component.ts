@@ -117,7 +117,7 @@ export class AppComponent {
 
   this.initConfigServer.googleServer=this.tabServers[1];     //this.tabServers[1]; 
   this.initConfigServer.mongoServer=this.tabServers[1];      //this.tabServers[1];
-  this.initConfigServer.fileSystemServer=this.tabServers[1]; // this.tabServers[2];
+  this.initConfigServer.fileSystemServer=this.tabServers[2]; // this.tabServers[2];
 
 
   this.route.queryParams.subscribe(params => {

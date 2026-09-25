@@ -73,7 +73,7 @@ export class CaloriesFatComponent implements OnInit {
   @Input() returnDataFSRecipe = new classHeaderReturnDataFS;
   @Input() statusSaveFn:any;
 
-  resultCheckLimitCalFat=input.required<number>();
+  @Input() resultCheckLimitCalFat:number=-1; //=input.required<number>();
   previousResultCheckLimitCalFat:number=-1;
   triggerCalFatSave=input.required<number>();
   previousTriggerCalFatSave:number=-1;
@@ -81,7 +81,7 @@ export class CaloriesFatComponent implements OnInit {
   previousCalFatFileRetrieved:number=-1;
   recipeFileRetrieved=input.required<number>();
   previousRecipeFileRetrieved:number=-1;
-  configHTMLRetrieved=input.required<number>();
+  @Input() configHTMLRetrieved:number=-1; //=input.required<number>();
   previousConfigHTMLRetrieved:number=-1;
 
   triggerCheckToLimit=signal<number>(0);
@@ -231,17 +231,17 @@ export class CaloriesFatComponent implements OnInit {
 constructor(
     private scroller: ViewportScroller,
     ) {effect (() => {
-        if (this.previousResultCheckLimitCalFat!==this.resultCheckLimitCalFat()){
-          this.previousResultCheckLimitCalFat=this.resultCheckLimitCalFat();
+        if (this.previousResultCheckLimitCalFat!==this.resultCheckLimitCalFat){
+          this.previousResultCheckLimitCalFat=this.resultCheckLimitCalFat;
           if (this.tabLock[1].lock===1){
               this.inputReadOnly=false;
           } else {
               this.inputReadOnly=true;
           }
-          this.processCheckLimitCalFat(this.resultCheckLimitCalFat());
+          this.processCheckLimitCalFat(this.resultCheckLimitCalFat);
         } 
-        if (this.previousConfigHTMLRetrieved!==this.configHTMLRetrieved()){
-            this.previousConfigHTMLRetrieved=this.configHTMLRetrieved();
+        if (this.previousConfigHTMLRetrieved!==this.configHTMLRetrieved){
+            this.previousConfigHTMLRetrieved=this.configHTMLRetrieved;
             this.fillClassHeader();
             console.log("=====>  this.isNgStyleCompleted.set(true) ")
             this.isNgStyleCompleted.set(true);
@@ -480,7 +480,7 @@ constructor(
     this.lastInputAt = strDateTime();
     this.refDate=new Date();
     this.callTimeToGo();
-    this.processCheckLimitCalFat(this.resultCheckLimitCalFat());
+    this.processCheckLimitCalFat(this.resultCheckLimitCalFat);
   }
 
   initialiseFiles(theFunction:string){

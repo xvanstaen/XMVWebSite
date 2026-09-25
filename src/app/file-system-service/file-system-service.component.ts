@@ -165,9 +165,12 @@ onFileSystem(iWait: number) {
           if (iWait !== 0) {
             statusCode = 300;
           } else { statusCode=230; }
+        } else {
+          statusCode=200;
         }
         
         this.tabLock[iWait] = data.tabLock[iWait];
+        dataFromFS.status=statusCode;
         dataFromFS.onInputAction = "";
         dataFromFS.reAccessFile=true;
         dataFromFS.errorMsg = " data returned on file " + data.tabLock[iWait].objectName + " ==> action = " + data.tabLock[iWait].action + '  lock = ' + data.tabLock[iWait].lock + "  & status = " + data.tabLock[iWait].status;

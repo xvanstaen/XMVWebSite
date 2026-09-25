@@ -2,17 +2,32 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
+<!--
+theTableLock={{theTabLock}}
+<br>
 
+displayHealthAll()={{displayHealthAll()}} --- EventHTTPReceived[0]={{EventHTTPReceived[0]}}
+<br>
+>>>> resultCheckLimitHealth={{resultCheckLimitHealth}}
+tabLock[0].action={{tabLock[0].action}} --- tabLock[0].lock={{tabLock[0].lock}}
+<br>
+tabLock[1].action={{tabLock[1].action}} --- tabLock[1].lock={{tabLock[1].lock}}
+<br>
+triggerFileSystem()={{triggerFileSystem()}} --- triggerCheckToLimit()={{triggerCheckToLimit()}}
+<br>
+tabSelRadio[3]={{tabSelRadio[3]}}
+<br>
+-->
 
-@if (openFileAccess() ){
-    <app-file-access 
-        [configServer]="configServer" [identification]="identification" [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
-        [iWaitToRetrieve]="iWaitToRetrieve" [tabLock]="tabLock" [eventCheckToLimit]="eventLockLimit" [triggerCheckToLimit]="triggerCheckToLimit()"
-        [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
-        (returnFile)="resultGetRecord($event)" (returnSaveFn)="resultSaveRecord($event)" (resultFileSystem)="resultFileSystemFn($event)"
-    >
-    </app-file-access>
-}
+    @if (openFileAccess() ){
+        <app-file-access 
+            [configServer]="configServer" [identification]="identification" [credentials]="credentials" [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS"
+            [iWaitToRetrieve]="iWaitToRetrieve" [tabLock]="tabLock" [eventCheckToLimit]="eventLockLimit" [triggerCheckToLimit]="triggerCheckToLimit()"
+            [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
+            (returnFile)="resultGetRecord($event)" (returnSaveFn)="resultSaveRecord($event)" (resultFileSystem)="resultFileSystemFn($event)"
+        >
+        </app-file-access>
+    }
     <div id='posTopHealth' [formGroup]="TheSelectDisplays" style="display:block; background-color:lightgrey; width:90%; max-width:410px; height:240px; margin-left:20px; border:solid 2px blue; ">
         <div class="skipLine">&nbsp;</div>  
         <div  >
@@ -68,8 +83,30 @@
             </span>
         </div>
     }
-
-    @if (createNewHealth===true){
+    @if (displayHealthAll()>0){ <!--displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
+        <!--
+        <app-dictionary [configServer]="configServer" [identification]="identification"
+        ></app-dictionary>
+      -->
+         <app-health
+            [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
+            [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
+            [tabNewRecordAll]="tabNewRecordAll" 
+            [returnDataFSHealth]="returnDataFSHealth"  
+            [statusSaveFn]="statusSaveFnHealth"
+            [resultCheckLimitHealth]="resultCheckLimitHealth" [actionHealth]="actionHealth"
+            (initTrackRecord)="initTrackRecord()" (calculateCalFat)="calculateCalFat($event)"
+            (checkLockLimit)="checkLockLimitFn($event)" (processSaveHealth)="processSaveHealth($event)"
+            (cancelUpdates)="cancelUpdates($event)" 
+        >
+        </app-health>
+        <!--
+        (retrieveRecord)="retrieveRecord($event)"
+            (returnFile)="resultGetRecord($event)" 
+            (saveCopy)="saveCopy()" (unlockFile)="unlockFile($event)"
+        -->
+  
+    } @else if (createNewHealth===true){
         <div style="margin-left:20px; margin-top:10px; border: blue 2px double; background-color: silver;width:90%; max-width:500px;">
             <div class="skipLine">&nbsp;</div>
             <form  [formGroup]="SpecificForm" >
@@ -86,9 +123,7 @@
             </form>
             <div class="skipLine">&nbsp;</div>
         </div>
-    }
-    <!--    Create COPY OF HealthAllData file -->
-    @if (isCopyFile===true){
+    } @else if (isCopyFile===true){ <!--    Create COPY OF HealthAllData file -->
         <div style="margin-left:20px; margin-top:10px; border: blue 2px double; background-color: silver;width:90%; max-width:500px;">
             <div class="skipLine">&nbsp;</div>
             <form  [formGroup]="SpecificForm" >
@@ -105,44 +140,15 @@
             </form>
             <div class="skipLine">&nbsp;</div>
         </div>
-    }
-    @if (iWait===0 && errorMsg!==''){
-        <div style="display:block;">
-            <span style="margin-top:10px; padding-top:5px; padding-left:20px; margin-left:20px; width:500px;  background-color: cyan; color:blue; font-size:14px; display:inline-block; text-align: left; min-height:30px;">
-                {{errorMsg}}
-                @if (errCalcCalFat!==''){
-                    <br>{{errCalcCalFat}}
-                }
-            </span>
-        </div>
-    }
-displayHealthAll()={{displayHealthAll()}} --- EventHTTPReceived[0]={{EventHTTPReceived[0]}}
-@@@@ signalDataFS={{signalDataFS()}}
->>>> signalDataFS={{signalDataFS()}}
-tabLock[iWait].action={{tabLock[iWait].action}} --- tabLock[iWait].lock={{tabLock[iWait].lock}}
-     @if (displayHealthAll()){<!--displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
-        <app-health
-            [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
-            [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
-            [tabNewRecordAll]="tabNewRecordAll" 
-            [returnDataFSHealth]="returnDataFSHealth"  [actionHealth]="actionHealth()"
-            [statusSaveFn]="statusSaveFnHealth"
-            [signalDataFS]="signalDataFS()" 
-            (initTrackRecord)="initTrackRecord()" (retrieveRecord)="retrieveRecord($event)"
-            (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
-            (cancelUpdates)="cancelUpdates($event)" (processSaveHealth)="processSaveHealth($event)"
-            (calculateCalFat)="calculateCalFat($event)",
-            (saveCopy)="saveCopy()" (unlockFile)="unlockFile($event)"
-        >
-        </app-health>
     } 
+ <br>
     @if (isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true &&  EventHTTPReceived[3]===true){
         <div id='posTopAppCalFat'>   <!--    && tabLock[1].lock!==3 -->
             <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay"
                 [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock" 
                 [returnDataFSRecipe]="returnDataFSRecipe" [returnDataFSCalFat]="returnDataFSCalFat" 
                 [recipeFileRetrieved]="recipeFileRetrieved()" [calFatFileRetrieved]="calFatFileRetrieved()"
-                [resultCheckLimitCalFat]="resultCheckLimitCalFat()" [configHTMLRetrieved]="configHTMLRetrieved()"
+                [resultCheckLimitCalFat]="resultCheckLimitCalFat" [configHTMLRetrieved]="configHTMLRetrieved"
                 [statusSaveFn]="statusSaveFnCalFat" [triggerCalFatSave]="triggerCalFatSave()"
                 (processSave)="SaveCaloriesFat($event)" (checkLockLimit)="checkLockLimitFn($event)" 
             >
@@ -162,7 +168,6 @@ tabLock[iWait].action={{tabLock[iWait].action}} --- tabLock[iWait].lock={{tabLoc
                 (processSave)="saveParamChart($event)" (retrieveRecord)="retrieveRecord($event)"  (unlockFile)="unlockFile($event)"
                 (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
                 >
-            
             </app-report-health>
             <!-- (checkLockLimit)="checkLockLimit($event)"-->
             <div class="skipLine">&nbsp;</div>

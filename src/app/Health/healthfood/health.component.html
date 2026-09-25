@@ -3,7 +3,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body>
-HealthAllData.tabDailyReport.length={{HealthAllData.tabDailyReport.length}}
 
     @if (openFileAccess()){    
         <app-file-access 
@@ -61,7 +60,7 @@ HealthAllData.tabDailyReport.length={{HealthAllData.tabDailyReport.length}}
                 </span> 
             </div>
         }
-       
+
 @if (HealthAllData.tabDailyReport.length>0){
         <!--------------- DISPLAY ALL -->
 
@@ -170,7 +169,7 @@ HealthAllData.tabDailyReport.length={{HealthAllData.tabDailyReport.length}}
                     <div  [style]="styleBox" >
                         <div  [style]="styleBoxOption">       
                             <li *ngFor="let action of NewTabAction; let m=index;" 
-                                    class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onDropDownAll($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{action.type}}-{{action.name}}">
                                         @if(m>1){&nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}
                                         } @else { &nbsp;&nbsp;{{action.name}}}
@@ -198,7 +197,7 @@ HealthAllData.tabDailyReport.length={{HealthAllData.tabDailyReport.length}}
                     <div  [style]="styleBoxMeal" >
                         <div   [style]="styleBoxOptionMeal">  
                             <li *ngFor="let tabMeal of tabInputMeal; let m=index;" 
-                                    class="Straight-options"  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onSelMealFood($event)" id="selMeal-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{tabMeal}}">
                                     {{tabMeal}}
                             </li>
@@ -212,7 +211,7 @@ HealthAllData.tabDailyReport.length={{HealthAllData.tabDailyReport.length}}
                     <div [style]="styleBoxFood" >
                         <div   [style]="styleBoxOptionFood">
                             <li *ngFor="let tabFood of tabInputFood; let m=index;" 
-                                    class="Straight-options" [style]="{'width':sizeBox.widthOptions + 'px'}" [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                    class="Straight-options" [style]="{'width':sizeBox.widthOptions + 'px'}" [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                         (click)="onSelMealFood($event)" id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="m">
                                         {{tabFood.name}} - serving: {{tabFood.serving | number:'1.0-0'}}  {{tabFood.unit}}   
                             </li>
@@ -311,7 +310,7 @@ HealthAllData.tabDailyReport.length={{HealthAllData.tabDailyReport.length}}
                                     </div>
                                     <div [style]="tabDivContent[5]">
                                         <input type="text"  
-                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]" [ngClass]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
+                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]" [class]="{'background-color':i % 2===0 ? confTableAll.row.even : confTableAll.row.odd}" 
                                             value="{{theIngred.calFat.Carbs  | number:'1.1-1'}}"  >
                                     </div>
                                     <div [style]="tabDivContent[5]"> 
@@ -445,7 +444,7 @@ HealthAllData.tabDailyReport.length={{HealthAllData.tabDailyReport.length}}
             </div>
         }
         <div class="skipLine">&nbsp;</div>
-    }
+}
     </div>
 
 </body>
