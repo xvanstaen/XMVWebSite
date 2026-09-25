@@ -82,7 +82,7 @@ export class MainHealthComponent {
   recipeFileRetrieved=signal<number>(-1);
   calFatFileRetrieved=signal<number>(-1);
   triggerCalFatSave=signal<number>(-1);
-  healthFileRetrieved=signal<number>(0);
+  //healthFileRetrieved=signal<number>(0);
 
   configHTMLRetrieved=signal<number>(-1);
 
@@ -400,7 +400,7 @@ export class MainHealthComponent {
           this.displayHealthAll.set(true);
           //this.cdr.markForCheck();
         }
-        this.healthFileRetrieved.update(fHealth => fHealth + 1);
+        //this.healthFileRetrieved.update(fHealth => fHealth + 1);
         //****************** iWait === 1 *************************/
       } else if (iWait === 1) {
         this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length)

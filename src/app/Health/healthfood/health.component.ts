@@ -80,7 +80,7 @@ export class HealthComponent  {
   actionHealth=input.required<number>();
   previousSignalActionHealth:number=-1;
   signalDataFS=input.required<number>();
-  healthFileRetrieved=input.required<number>();
+  //healthFileRetrieved=input.required<number>();
   previousSignalDataFS:number=-1;
 
   triggerCheckToLimit=signal<number>(-1);

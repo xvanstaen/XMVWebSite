@@ -117,17 +117,17 @@
         </div>
     }
 displayHealthAll()={{displayHealthAll()}} --- EventHTTPReceived[0]={{EventHTTPReceived[0]}}
-@@@@ healthFileRetrieved()={{healthFileRetrieved()}} ---- signalDataFS={{signalDataFS()}}
+@@@@ signalDataFS={{signalDataFS()}}
 >>>> signalDataFS={{signalDataFS()}}
 tabLock[iWait].action={{tabLock[iWait].action}} --- tabLock[iWait].lock={{tabLock[iWait].lock}}
-     @if (healthFileRetrieved()){<!--displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
+     @if (displayHealthAll()){<!--displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
         <app-health
             [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
             [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
             [tabNewRecordAll]="tabNewRecordAll" 
             [returnDataFSHealth]="returnDataFSHealth"  [actionHealth]="actionHealth()"
             [statusSaveFn]="statusSaveFnHealth"
-            [signalDataFS]="signalDataFS()" [healthFileRetrieved]="healthFileRetrieved()"
+            [signalDataFS]="signalDataFS()" 
             (initTrackRecord)="initTrackRecord()" (retrieveRecord)="retrieveRecord($event)"
             (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
             (cancelUpdates)="cancelUpdates($event)" (processSaveHealth)="processSaveHealth($event)"
