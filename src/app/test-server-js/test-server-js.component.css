@@ -8,7 +8,7 @@ text-align: center;
 
 .mainBlock{
   margin-left:20px; width:450px; max-width:650px; max-height:100px; background-color:skyblue; 
-  display:inline-block;  border:solid 2px green;
+  display:inline-block;  border:solid 2px green; margin-top:20px;
 }
 
 .mainBlockOverride{
@@ -97,7 +97,8 @@ h2{
 }
 
 .response{
-    display:inline-block; width:80%; height:10px; color:blue; margin-left:20px; 
+    display:inline-block; width:80%; height:220px; max-height:220px; color:blue; margin-left:20px; 
+    margin-top:20px;
 }
 
 .blockAction{

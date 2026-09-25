@@ -103,21 +103,7 @@
         
         </div>
     </div>  
-    <!-- 
-    @if (isUserIdForFS()){
-        <div style="display:block">
-            <div class="mainBlock" style="border:solid 2px green; margin-top:5px;">
-                <form [formGroup]="theForm"  >
-                    <span class="theLine">
-                        <label class="label" style="width:180px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
-                        <label class="label" style="width:180px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
-                        <button class="button" (click)="manageResetFS()">Submit</button>
-                    </span>
-                </form>
-            </div>
-        </div>
-    }
-    -->
+
     @if (isError() && error!==""){
         <div style="display:block"  >
             <div class="mainBlock" style="border:solid 2px green; margin-top:5px;">
@@ -153,11 +139,9 @@
             <div class="skipLine"></div>
         </div>
     }
-<!--
-<br>EventHTTPReceived[0]==={{EventHTTPReceived}} && isGetListBuckets()==={{isGetListBuckets()}}
-<br>
--->
+
     <!-- currentAction==='list all buckets' &&  -->
+     
     @if (isGetListBuckets()){ <!--EventHTTPReceived[0]===true &&  -->
         <div class="response">
             <span class='blockAction'> List all buckets</span> 
@@ -170,6 +154,7 @@
     }
     <!-- currentAction==='list all objects'  &&  -->
 <br><br>
+
     @if (isGetListObjects()){ <!-- EventHTTPReceived[1]===true &&  -->
         <div  class="response">
             <span class='blockAction'> List all objects from bucket :  {{theForm.controls['srcBucket'].value}}</span> 
@@ -181,11 +166,24 @@
             </div>
         </div>
     }
+    @if (isDisplayAction() && isGetFileContent() && currentAction!==''){
+         <div class="response">
+        <div class="mainBlock mainBlockOverride" style="height:330px; max-height:330px; background-color:cyan; margin-left:0px;">
+            <div style="height:30px; font-size:18px; text-align:center; width:100%; display:inline-block;"> Response on action {{currentAction}}</div> 
+                <div style="width:100%;display:inline-block; "  id="comment" (click)="copySelection($event)">
+                    <div id="comment" style=' word-break:break-all;  font-size:14px; width:100%; height:300px;  overflow-y:scroll; font-style: normal; padding-left:10px; padding-top:5px; padding-right:20px; text-align: left;'>{{returnFileContent}} 
+                        <br><br>
+                    </div>
+                </div>
+        </div>
+    </div>
+    }
     <!-- currentAction==='get metadata for one object'  && -->
+     
     @if (isGetMetaOneObject()){ <!-- EventHTTPReceived[4]===true  -->
         <div class="response">
             <div style=' width:450px; display:inline-block; border: solid 2px blue;'>
-                <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; padding-top:15px; text-align: center;'> Metadata for object </span>
+                <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; padding-top:5px; text-align: center;'> Metadata for object </span>
                 <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; text-align: center;'>{{theForm.controls['srcObject'].value}}</span> 
                 <div class="skipLine"></div>
                 <span class="theLine"><span class='label'>Bucket</span><span class='theMetadata'>{{oneMetadata.bucket}}</span></span>
@@ -201,12 +199,13 @@
             </div>
         </div>
     }
+    
     <!-- currentAction==='get list metadata for all objects'  &&  -->
     @if (isGetListMetaObject()){ <!-- EventHTTPReceived[3]===true -->
         <div class="response">
-            <div style='font-size:20px; font-style: italic; width:450px; display:inline-block; padding-top:15px; margin-left:150px;' > List metadata for all objects</div> 
-            <div class="skipLine"></div>
-            <div style=' width:450px; display:block; border: solid 2px blue;  max-height:300px;  overflow-y:scroll; '>
+            <div style='font-size:20px; font-style: italic; width:450px; display:inline-block;  margin-left:100px;' > List metadata for all objects</div> 
+        
+            <div style=' width:450px; display:block; border: solid 2px blue;  max-height:320px;  overflow-y:scroll; '>
 
                 <li *ngFor="let Metadata of myListOfObjects.items; let i=index; " >
                 
@@ -321,17 +320,6 @@
             </div>
         </div>
     }
-    @if (isDisplayAction() && isGetFileContent() && currentAction!==''){
-        <div class="mainBlock mainBlockOverride" style="height:330px; max-height:330px; background-color:cyan; ">
-            <div style="height:30px; font-size:18px; text-align:center; width:100%; display:inline-block;"> Response on action {{currentAction}}</div> 
-                <div style="width:100%;display:inline-block; "  id="comment" (click)="copySelection($event)">
-                    <div id="comment" style=' word-break:break-all;  font-size:14px; width:100%; height:300px;  overflow-y:scroll; font-style: normal; padding-left:10px; padding-top:5px; padding-right:20px; text-align: left;'>{{returnFileContent}} 
-                        <br><br>
-                    </div>
-                </div>
-        </div>
-    }
-
     <div class="skipLine"></div>
     @if (isInputMetadata===true){
         <div style=' width:450px; display:inline-block;  margin-left:20px; border: solid 2px blue;'> <!--  if="currentAction==='updateMetadata' -->
@@ -411,17 +399,17 @@
         </div>
     }
     @if (isManageConfig===true){
-        <div class="mainBlock" style="height:170px; max-height:200px; background-color: rgb(23, 220, 167); border-bottom:0px;">
+        <div  style="margin-left:20px; width:450px;  border:solid 2px green; background-color: rgb(23, 220, 167); ">
             <h2>Manage config </h2>
             <div style=" margin-top:4px; width:400px; display:inline-block;  margin-left:25px;">
                     <li *ngFor="let action of tabConfig; let m=index;" 
-                            class="Straight-options "  style="width:45%; display:inline-block; margin-left:5px; margin-top:3px; " [ngClass]=" {'even': m % 4 ===0, 'odd': m % 4 ===1, 'evenBis': m % 4 ===2, 'oddBis': m % 4 ===3}" 
+                            class="Straight-options "  style="width:45%; display:inline-block; margin-left:5px; margin-top:3px; " [class]=" {'even': m % 4 ===0, 'odd': m % 4 ===1, 'evenBis': m % 4 ===2, 'oddBis': m % 4 ===3}" 
                             (click)="selectActionConfig($event)" id="selectedAction" >
                         {{action}}
                     </li>
             </div>
-        </div>
-        <form [formGroup]="theForm" class="mainBlock" style="max-height:200px; background-color: rgb(23, 220, 167); border-top:0px;">
+       <div style=" margin-top:10px;   ">
+        <form [formGroup]="theForm"  style="max-height:200px; background-color: rgb(23, 220, 167); border-top:0px;">
             <div class="label" style="margin-top:3px; margin-left:10px; width:120px;">Search field</div> 
             <input type="text" class="theInput" formControlName="searchField" >
             <div class="label" style="margin-top:3px; margin-left:10px; width:120px;">Search criteria</div> 
@@ -430,6 +418,8 @@
             <input type="text" class="theInput" formControlName="idRecord" >
             <div class="skipLine"></div>
         </form>
+        </div>
+    </div>
         <div style="display:block;">
             @if (isConfConfigSave===true || isConfConfigUpdate===true || isConfConfigDelete===true){
                 <div style=' width:450px; display:inline-block;  margin-left:20px; border: solid 2px blue; background-color: lightblue;'>
@@ -466,8 +456,10 @@
                 <div class="labelMid" style="text-align: right; padding-right:5px;">db</div> <input type="text" class="theInputShort" value="configDB" (input)="onInputConfig($event)"  id='dbConfig'>
             </div>
             <div class="subBlock">
-                <div class="labelMid">Project Id</div> <input type="text" class="theInput"  value="{{dataConfigServer.GoogleProjectId}}" (input)="onInputConfig($event)"  id='projectId'>
-                <div class="labelMid">Project </div> <input type="text" class="theInput" value="{{dataConfigServer.project}}" (input)="onInputConfig($event)"  id='project'>
+                <div class="labelMid">Project Id</div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.GoogleProjectId}}" (input)="onInputConfig($event)"  id='projectId'>
+            </div>
+            <div class="subBlock">    
+                <div class="labelMid">Project </div> <input type="text" class="theInput" style="width:310px;" value="{{dataConfigServer.project}}" (input)="onInputConfig($event)"  id='project'>
 
             </div>
             <div class="subBlock">
@@ -523,7 +515,7 @@
             <div class="subBlock"  style="height:15px;"> <span class='label'>User specific</span></div>
             <div style="max-height:80px; overflow-y:scroll;" >
                 <div *ngFor="let tab of dataConfigServer.UserSpecific; let i=index">
-                    <input class="inputA" value="A" id="usrSpec-{{i}}" (click)="onActionConfig($event)">
+                    <input class="inputA" style="margin-left:10px;" value="A" id="usrSpec-{{i}}" (click)="onActionConfig($event)">
                     <span class='labelShort'  style="margin-left:10px; width:50px;" > Id:</span><input type="text"  class='configInput' style="width:100px;" value={{tab.theId}}  (input)="onInputTabConfig($event)" id="idxx-{{i}}"> 
                     <span class='labelShort' style="margin-left:1px; width:50px;">Type: </span><input type="text"  class='configInput'  style="width:80px;"  value={{tab.theType}} (input)="onInputTabConfig($event)" id="type-{{i}}"> 
                     <span class='labelShort' style="margin-left:1px; width:50px;"> Log:</span> <input type="text"  class='configInputShort'    value={{tab.log}} (input)="onInputTabConfig($event)" id="logx-{{i}}"> 
@@ -549,7 +541,7 @@
                 </div>
                 <div style="max-height:80px; overflow-y:scroll;" >
                     <div *ngFor="let tab of dataConfigServer.filesToCache; let i=index" >
-                        <input class="inputA" value="A" id="fileToCache-{{i}}" (click)="onActionConfig($event)">
+                        <input class="inputA" style="margin-left:10px;" value="A" id="fileToCache-{{i}}" (click)="onActionConfig($event)">
                         <input type="text"  class='configInput'  style='height:25px; margin-left:30px; width:180px;' value={{dataConfigServer.filesToCache[i].bucket}}  (input)="onInputTabConfig($event)" id="buck-{{i}}"> 
                         <input type="text"  class='configInput'  style='height:25px; margin-left:10px; width:180px;' value={{dataConfigServer.filesToCache[i].object}}  (input)="onInputTabConfig($event)" id="obje-{{i}}"> 
                         @if (itemFileToCache!==-1 && itemFileToCache===i && isDisplayTabActionField===true){
