@@ -2060,8 +2060,8 @@ listConfig(){
 
 
   manageAuth() {
-    const OAUTH_CLIENT = '699868766266-iimi67j8gvpnogsq45jul0fbuelecp4i.apps.googleusercontent.com';
-    const OAUTH_SECRET = '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';
+    const OAUTH_CLIENT = '';
+    const OAUTH_SECRET = '';
     const API_URL = "https://accounts.google.com/o/oauth2/v2/auth";
     const HTTP_OPTIONSA = {
       headers: new HttpHeaders({
