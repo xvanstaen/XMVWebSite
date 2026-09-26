@@ -2060,7 +2060,7 @@ listConfig(){
 
 
   manageAuth() {
-    const OAUTH_CLIENT = '';
+    const OAUTH_CLIENT = ''; 
     const OAUTH_SECRET = '';
     const API_URL = "https://accounts.google.com/o/oauth2/v2/auth";
     const HTTP_OPTIONSA = {
