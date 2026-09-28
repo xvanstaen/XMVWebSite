@@ -53,7 +53,7 @@ export class returnSignal{
   styleUrls: ['./main-health.component.css'],
   standalone:true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,
-    MainManageFileComponent, CaloriesFatComponent, ReportHealthComponent, HealthComponent, DictionaryComponent]
+    MainManageFileComponent, CaloriesFatComponent, ReportHealthComponent, HealthComponent]
   })
 export class MainHealthComponent {
 
@@ -71,12 +71,14 @@ export class MainHealthComponent {
   @Input() credentialsMongo = new classCredentials;
   @Input() credentialsFS = new classCredentials;
 
-  @Output()  onTriggerSave = new EventEmitter<any>();
+  @Output() onTriggerSave = new EventEmitter<any>();
+
 
   openFileAccess=signal<boolean>(true);
-  //actionHealth=signal<number>(-1);
+  signalActionHealth=signal<number>(-1);
   actionHealth:number=-1;
-  displayHealthAll=signal<number>(0);
+  //displayHealthAll=signal<number>(0);
+  displayHealthAll=signal<boolean>(false);
   //actionCalFat:number=-1;
   //triggerCalFat=signal<returnSignal>({nb:-1, function:""});
 
@@ -315,8 +317,8 @@ export class MainHealthComponent {
       //this.theTabLock = this.theTabLock + 'new tabLock[0].lock=' + this.tabLock[0].lock+ " -- " + JSON.stringify(event);
       //this.resultCheckLimitHealth.update(dataFS => dataFS + 1);
       this.resultCheckLimitHealth++
-      //this.displayHealthAll.set(true);
-      // this.displayHealthAll.update(HealthAll => HealthAll + 1);
+      this.displayHealthAll.set(true);
+      //this.displayHealthAll.update(HealthAll => HealthAll + 1);
     } else if (event.iWait===1){
       this.returnDataFSCalFat = event;
       //this.resultCheckLimitCalFat.update(check => check + 1);
@@ -365,8 +367,9 @@ export class MainHealthComponent {
           this.initTrackRecord();
         }
         //this.callSaveFunctionHealth++;
-        //this.actionHealth.update (aHealth => aHealth + 1);
+        this.signalActionHealth.update (aHealth => aHealth + 1);
         this.actionHealth++
+        
       }
     } else if (event.iWait===1 || event.iWait===6){
       this.statusSaveFnCalFat=event;
@@ -407,8 +410,8 @@ export class MainHealthComponent {
         this.initTrackRecord();
         this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
         if (this.isDisplayAll===true){
-          //this.displayHealthAll.set(true);
-          this.displayHealthAll.update(HealthAll => HealthAll + 1);
+          this.displayHealthAll.set(true);
+          //this.displayHealthAll.update(HealthAll => HealthAll + 1);
           //this.cdr.markForCheck();
         }
         //this.healthFileRetrieved.update(fHealth => fHealth + 1);
@@ -591,12 +594,12 @@ export class MainHealthComponent {
         } 
         this.isDisplayAll = true;
         if (this.EventHTTPReceived[0]===true) {
-          //this.displayHealthAll.set(true);
-          this.displayHealthAll.update(HealthAll => HealthAll + 1);
+          this.displayHealthAll.set(true);
+          //this.displayHealthAll.update(HealthAll => HealthAll + 1);
           //this.cdr.markForCheck();
         } else {
-          this.displayHealthAll.set(0);
-          //this.displayHealthAll.set(false);
+          //this.displayHealthAll.set(0);
+          this.displayHealthAll.set(false);
         }
         if (this.EventHTTPReceived[1]===false){
             const theClass=new classRetrieveFile;
@@ -630,8 +633,8 @@ export class MainHealthComponent {
           //this.theTabLock=" Before calling FS -> tabLock[0].lock=" + this.tabLock[0].lock + " action=" + this.tabLock[0].action
         }
         this.isDisplayAll = false;
-        //this.displayHealthAll.set(false);
-        this.displayHealthAll.set(0);
+        this.displayHealthAll.set(false);
+        //this.displayHealthAll.set(0);
         //this.cdr.markForCheck();
       }
     } else if (i === '4') {

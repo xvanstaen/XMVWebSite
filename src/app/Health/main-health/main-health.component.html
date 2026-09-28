@@ -83,7 +83,7 @@ tabSelRadio[3]={{tabSelRadio[3]}}
             </span>
         </div>
     }
-    @if (displayHealthAll()>0){ <!--displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
+    @if (displayHealthAll()){ <!--displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
         <!--
         <app-dictionary [configServer]="configServer" [identification]="identification"
         ></app-dictionary>
@@ -93,8 +93,8 @@ tabSelRadio[3]={{tabSelRadio[3]}}
             [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
             [tabNewRecordAll]="tabNewRecordAll" 
             [returnDataFSHealth]="returnDataFSHealth"  
-            [statusSaveFn]="statusSaveFnHealth"
-            [resultCheckLimitHealth]="resultCheckLimitHealth" [actionHealth]="actionHealth"
+            [statusSaveFn]="statusSaveFnHealth" 
+            [resultCheckLimitHealth]="resultCheckLimitHealth" [actionHealth]="actionHealth" [signalActionHealth]="signalActionHealth()"
             (initTrackRecord)="initTrackRecord()" (calculateCalFat)="calculateCalFat($event)"
             (checkLockLimit)="checkLockLimitFn($event)" (processSaveHealth)="processSaveHealth($event)"
             (cancelUpdates)="cancelUpdates($event)" 

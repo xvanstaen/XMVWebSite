@@ -71,7 +71,7 @@ export class HealthComponent  {
   @Input() returnDataFSHealth = new classHeaderReturnDataFS;
   @Input() statusSaveFn:any;
 
-  //actionHealth=input.required<number>();
+  signalActionHealth=input.required<number>();
   @Input() actionHealth:number = -1;
   previousSignalActionHealth:number=-1;
   //resultCheckLimitHealth=input.required<number>();
@@ -258,9 +258,9 @@ export class HealthComponent  {
             this.afterCheckFS(this.resultCheckLimitHealth);
           }
               
-          if (this.previousSignalActionHealth!==this.actionHealth){
-            this.previousSignalActionHealth=this.actionHealth;
-            this.processSignalFunctions (this.actionHealth);  
+          if (this.previousSignalActionHealth!==this.signalActionHealth()){
+            this.previousSignalActionHealth=this.signalActionHealth();
+            this.processSignalFunctions();  
           }
            
       }) }
@@ -1200,7 +1200,7 @@ export class HealthComponent  {
     this.errorFn = '';
   }
 
-  processSignalFunctions(data:any){
+  processSignalFunctions(){
     if (this.onInputAction === "saveHealth"){
         this.isMustSaveFile = false;
         this.isSaveHealth = false;
