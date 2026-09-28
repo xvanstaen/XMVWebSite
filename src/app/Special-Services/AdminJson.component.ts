@@ -1,5 +1,5 @@
 import { Component, OnInit , Input, Output, HostListener, OnChanges, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,signal, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+  SimpleChanges,signal, input, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
 
 import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -67,6 +67,8 @@ export class AdminJsonComponent {
 
   @Input() resultCheckLimitHealth:number=-1; //=signal<number>(-1);
   @Input() actionHealth:number=-1; //=signal<number>(-1);
+
+  signalActionHealth=signal<number>(-1);
   constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
