@@ -72,7 +72,7 @@ export class HealthComponent  {
   @Input() statusSaveFn:any;
 
   signalActionHealth=input.required<number>();
-  @Input() actionHealth:number = -1;
+  //@Input() actionHealth:number = -1;
   previousSignalActionHealth:number=-1;
   //resultCheckLimitHealth=input.required<number>();
   @Input() resultCheckLimitHealth:number = -1;

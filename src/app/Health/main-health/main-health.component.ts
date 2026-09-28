@@ -76,7 +76,7 @@ export class MainHealthComponent {
 
   openFileAccess=signal<boolean>(true);
   signalActionHealth=signal<number>(-1);
-  actionHealth:number=-1;
+  //actionHealth:number=-1;
   //displayHealthAll=signal<number>(0);
   displayHealthAll=signal<boolean>(false);
   //actionCalFat:number=-1;
@@ -368,7 +368,7 @@ export class MainHealthComponent {
         }
         //this.callSaveFunctionHealth++;
         this.signalActionHealth.update (aHealth => aHealth + 1);
-        this.actionHealth++
+        //this.actionHealth++
         
       }
     } else if (event.iWait===1 || event.iWait===6){
@@ -1072,8 +1072,8 @@ export class MainHealthComponent {
       //this.IsSaveConfirmedAll = false;
     } 
     this.counterActions++;
-    //this.actionHealth.update (aHealth => aHealth + 1);
-    this.actionHealth++;
+    this.signalActionHealth.update (aHealth => aHealth + 1);
+    //this.actionHealth++;
   }
 
   calculateCalFat(event: any){

@@ -66,7 +66,7 @@ export class AdminJsonComponent {
   @Output() newCredentials= new EventEmitter<any>();
 
   @Input() resultCheckLimitHealth:number=-1; //=signal<number>(-1);
-  @Input() actionHealth:number=-1; //=signal<number>(-1);
+  //@Input() actionHealth:number=-1; //=signal<number>(-1);
 
   signalActionHealth=signal<number>(-1);
   constructor(
