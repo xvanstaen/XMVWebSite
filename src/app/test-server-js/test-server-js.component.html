@@ -187,10 +187,9 @@
      
     @if (isGetMetaOneObject()){ <!-- EventHTTPReceived[4]===true  -->
         <div class="response">
-            <div style=' width:450px; display:inline-block; border: solid 2px blue;'>
+            <div style=' width:450px; max-width:450px; display:inline-block; border: solid 2px blue;'>
                 <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; padding-top:5px; text-align: center;'> Metadata for object </span>
                 <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; text-align: center;'>{{theForm.controls['srcObject'].value}}</span> 
-                <div class="skipLine"></div>
                 <span class="theLine"><span class='label'>Bucket</span><span class='theMetadata'>{{oneMetadata.bucket}}</span></span>
                 <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{oneMetadata.name}}</span></span>
                 <span class="theLine"><span class='label'>contentType</span><span class='theMetadata'>{{oneMetadata.contentType}}</span></span>
@@ -210,12 +209,11 @@
         <div class="response">
             <div style='font-size:20px; font-style: italic; width:450px; display:inline-block;  margin-left:100px;' > List metadata for all objects</div> 
         
-            <div style=' width:450px; display:block; border: solid 2px blue;  max-height:280px;  overflow-y:scroll; '>
+            <div style=' width:450px; display:block; border: solid 2px blue;  max-height:300px; overflow-y: scroll; '>
 
                 <li *ngFor="let Metadata of myListOfObjects.items; let i=index; " >
                 
-                    <span style=' width:100%; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
-                        
+                    <span style='width:860px; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
                         <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
                         <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>
                         <span class="theLine"><span class='label'>contentType</span><span class='theMetadata'>{{Metadata.contentType}}</span></span>
@@ -295,7 +293,7 @@
                     </div>
                 
                     <li *ngFor="let record of memoryFS[i].record; let j=index " style=' width:100%; display:inline-block;'>
-                        <div style=' width:470px; display:inline-block; '>
+                        <div style=' width:470px; max-width:470px; display:inline-block; '>
                             <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{record.bucket}}</span></span>
                             <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{record.object}}</span></span>
                             <span class="theLine"><span class='label'>By user</span><span class='theMetadata'>{{record.byUser}}</span></span>

@@ -52,11 +52,11 @@ h2{
 
 
 .theMetadata{
-    width:60%; color:blue; font-size:14px; display:inline-block; 
+    width:290px; color:blue; font-size:14px; display:inline-block; max-width:290px;
 }
 
 .theLine{
-    width:100%; color:blue; font-size:12px; display:inline-block;  margin-top:5px;
+    width:445px;max-width:445px; color:blue; font-size:12px; display:inline-block;  margin-top:5px;
 }
 
 .configInput{
