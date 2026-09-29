@@ -12,19 +12,19 @@
     </div>
 
     <div style="display:block">
-        <div class="mainBlock"  style=" height:320px; max-height:320px; border-top:solid 0px green; overflow-y:scroll; ">
+        <div class="mainBlock"  style="  max-height:380px; border-top:solid 2px green; overflow-y:scroll; overflow-x:hidden">
             <form [formGroup]="theForm" >
                 <span class="theLine" style="margin-top:5px;">
-                    <label class="label" style="width:220px; ">Test or Prod</label> <input type="text" class="theInputMid" formControlName="testProd">
+                    <label class="label" style="width:180px; ">Test or Prod</label> <input type="text" class="theInputMid" formControlName="testProd">
                 </span>
                 <span class="theLine"> 
-                    <label class="label" style="width:220px; ">server or HTTP</label> <input type="text" class="theInputMid" formControlName="server">
+                    <label class="label" style="width:180px; ">server or HTTP</label> <input type="text" class="theInputMid" formControlName="server">
                 </span>
                 <span class="theLine">
-                    <label class="label" style="width:220px; ">Google</label> <input type="text" class="theInputMid" formControlName="dataBase">
+                    <label class="label" style="width:180px; ">Google</label> <input type="text" class="theInputMid" formControlName="dataBase">
                 </span>
                 <span class="theLine">
-                    <label class="label" style="width:220px; " >
+                    <label class="label" style="width:180px; " >
                         <span class="spanAction"> srcBucket </span>
                         <input class="inputA" value="P"  id="srcBucket" (click)="pasteAction($event)"> 
                         <input class="inputA" value="C"  id="srcBucket" (click)="clearField($event)">
@@ -33,14 +33,14 @@
                 </span>
             
                 <span class="theLine">
-                    <label class="label" style="width:220px; " ><span class="spanAction"> srcObject</span><input class="inputA" value="P" id="srcObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="srcObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="srcObject" >
+                    <label class="label" style="width:180px; " ><span class="spanAction"> srcObject</span><input class="inputA" value="P" id="srcObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="srcObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="srcObject" >
                 </span>
 
                 <span class="theLine" style="margin-top:8px;">
-                    <label class="label" style="width:220px; " ><span class="spanAction"> destBucket</span><input class="inputA" value="P" id="destBucket" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destBucket" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destBucket" >
+                    <label class="label" style="width:180px; " ><span class="spanAction"> destBucket</span><input class="inputA" value="P" id="destBucket" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destBucket" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destBucket" >
                 </span>
                 <span class="theLine">
-                    <label class="label" style="width:220px; " ><span class="spanAction"> destObject</span><input class="inputA" value="P" id="destObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destObject" >
+                    <label class="label" style="width:180px; " ><span class="spanAction"> destObject</span><input class="inputA" value="P" id="destObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destObject" >
                 </span>
                 <span class="theLine" style="margin-top:5px; margin-left:180px;"> (<span style="font-weight: bolder;" >P</span>&nbsp;&nbsp;paste <span style="margin-left:10px;"><span style="font-weight: bolder;" >C</span> &nbsp;&nbsp;clear</span>)</span>
                 @if (theForm.controls['fileContent'].value.length<200){
@@ -186,19 +186,20 @@
     <!-- currentAction==='get metadata for one object'  && -->
      
     @if (isGetMetaOneObject()){ <!-- EventHTTPReceived[4]===true  -->
+        <br><br>
         <div class="response">
             <div style=' width:450px; max-width:450px; display:inline-block; border: solid 2px blue;'>
                 <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; padding-top:5px; text-align: center;'> Metadata for object </span>
                 <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; text-align: center;'>{{theForm.controls['srcObject'].value}}</span> 
-                <span class="theLine"><span class='label'>Bucket</span><span class='theMetadata'>{{oneMetadata.bucket}}</span></span>
-                <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{oneMetadata.name}}</span></span>
-                <span class="theLine"><span class='label'>contentType</span><span class='theMetadata'>{{oneMetadata.contentType}}</span></span>
-                <span class="theLine"><span class='label'>cacheControl</span><span class='theMetadata'>{{oneMetadata.cacheControl}}</span></span>
-                <span class="theLine"> <span class='label'>generation</span><span class='theMetadata'>{{oneMetadata.generation}}</span></span>
-                <span class="theLine"><span class='label'>id</span><span class='theMetadata'>{{oneMetadata.id}}</span></span>
-                <span class="theLine"><span class='label'>mediaLink</span><span class='theMetadata' style=" word-break:break-all;">{{oneMetadata.mediaLink}}</span></span>
-                <span class="theLine"><span class='label'>size</span><span class='theMetadata'>{{oneMetadata.size}}</span></span>
-                <span class="theLine"><span class='label'>metadataPerso</span><span class='theMetadata'>{{strMetaDataPerso}}</span></span>
+                <span class="theLine"><span class='label' style="width:150px;">Bucket</span><span class='theMetadata'>{{oneMetadata.bucket}}</span></span>
+                <span class="theLine"><span class='label' style="width:150px;">Object</span><span class='theMetadata'>{{oneMetadata.name}}</span></span>
+                <span class="theLine"><span class='label' style="width:150px;">contentType</span><span class='theMetadata'>{{oneMetadata.contentType}}</span></span>
+                <span class="theLine"><span class='label' style="width:150px;">cacheControl</span><span class='theMetadata'>{{oneMetadata.cacheControl}}</span></span>
+                <span class="theLine"> <span class='label' style="width:150px;">generation</span><span class='theMetadata'>{{oneMetadata.generation}}</span></span>
+                <span class="theLine"><span class='label' style="width:150px;">id</span><span class='theMetadata'>{{oneMetadata.id}}</span></span>
+                <span class="theLine"><span class='label' style="width:150px;">mediaLink</span><span class='theMetadata' style=" word-break:break-all;">{{oneMetadata.mediaLink}}</span></span>
+                <span class="theLine"><span class='label' style="width:150px;">size</span><span class='theMetadata'>{{oneMetadata.size}}</span></span>
+                <span class="theLine"><span class='label' style="width:150px;">metadataPerso</span><span class='theMetadata'>{{strMetaDataPerso}}</span></span>
                 <div class="skipLine"></div>
             </div>
         </div>
@@ -206,6 +207,7 @@
     
     <!-- currentAction==='get list metadata for all objects'  &&  -->
     @if (isGetListMetaObject()){ <!-- EventHTTPReceived[3]===true -->
+        <br><br>
         <div class="response">
             <div style='font-size:20px; font-style: italic; width:450px; display:inline-block;  margin-left:100px;' > List metadata for all objects</div> 
         
@@ -214,15 +216,15 @@
                 <li *ngFor="let Metadata of myListOfObjects.items; let i=index; " >
                 
                     <span style='width:860px; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
-                        <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
-                        <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>
-                        <span class="theLine"><span class='label'>contentType</span><span class='theMetadata'>{{Metadata.contentType}}</span></span>
-                        <span class="theLine"><span class='label'>cacheControl</span><span class='theMetadata'>{{Metadata.cacheControl}}</span></span>
-                        <span class="theLine"><span class='label'>generation</span><span class='theMetadata'>{{Metadata.generation}}</span></span>
-                        <span class="theLine"><span class='label'>id</span><span class='theMetadata'>{{Metadata.id}}</span></span>
-                        <span class="theLine"><span class='label'>mediaLink</span><span class='theMetadata'>{{Metadata.mediaLink}}</span></span>
-                        <span class="theLine"><span class='label'>size</span><span class='theMetadata'>{{Metadata.size}}</span></span>
-                        <span class="theLine"><span class='label'>metadataPerso</span><span class='theMetadata'>{{tabListMetaPerso[i]}}</span></span>
+                        <span class="theLine"> <span class='label' style="width:150px;">Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
+                        <span class="theLine"><span class='label' style="width:150px;">Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>
+                        <span class="theLine"><span class='label' style="width:150px;">contentType</span><span class='theMetadata'>{{Metadata.contentType}}</span></span>
+                        <span class="theLine"><span class='label' style="width:150px;">cacheControl</span><span class='theMetadata'>{{Metadata.cacheControl}}</span></span>
+                        <span class="theLine"><span class='label' style="width:150px;">generation</span><span class='theMetadata'>{{Metadata.generation}}</span></span>
+                        <span class="theLine"><span class='label' style="width:150px;">id</span><span class='theMetadata'>{{Metadata.id}}</span></span>
+                        <span class="theLine"><span class='label' style="width:150px;">mediaLink</span><span class='theMetadata'>{{Metadata.mediaLink}}</span></span>
+                        <span class="theLine"><span class='label' style="width:150px;">size</span><span class='theMetadata'>{{Metadata.size}}</span></span>
+                        <span class="theLine"><span class='label' style="width:150px;">metadataPerso</span><span class='theMetadata'>{{tabListMetaPerso[i]}}</span></span>
                         <div class="skipLine"></div>
                     </span>
                 </li>
@@ -231,6 +233,7 @@
         </div>
     }
     @if (isGetCacheConsole()){
+        <br><br>
         <app-cache-console [configServer]="newConfigServer" [initData]="initData" [reTriggerFn]="reTriggerFn"
         (returnError)="appReturnError($event)"
         >
@@ -239,6 +242,7 @@
     }
 
     @if (isGetCacheConsoleBis()){ <!-- this.EventHTTPReceived[10]===true -->
+        <br><br><br>
         <div style="margin-left:20px; width:450px; display:block; ">
             <div style='font-size:20px; font-weight: bolder; width:100%; display:inline-block; padding-top:15px; text-align: center;' > Cache Console</div> 
             <div style='font-size:20px; font-weight: bolder; width:100%; display:inline-block; padding-top:15px; text-align: center;' > server: {{theForm.controls['serverForAction'].value}}</div> 
@@ -281,7 +285,8 @@
     }
 <!-- FILE SYSTEM-->
     @if (isMemoryFS()){ <!-- this.EventHTTPReceived[11]===true || this.EventHTTPReceived[12]===true -->
-        <div style="margin-top:20px; margin-left:20px; width:450px; display:inline-block; border:green solid 2px;  overflow-y:scroll;" 
+        <br><br><br><br>
+        <div style="margin-left:20px; width:450px; display:block; float:left; border:black solid 5px;  overflow-y:scroll;" 
                 [style.height.px]="isMemoryFSempty === 0 ? 180 : 480">
             
             <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; color:blue; font-weight:bolder; padding-top:5px; text-align: center;' > Memory File System</div> 
