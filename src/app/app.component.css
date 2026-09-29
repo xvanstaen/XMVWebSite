@@ -63,13 +63,11 @@
    
   }
 
-
 .dropdown {
     position: relative;
     display: contents; 
   }
   
-
 .Straight-content{
     position: absolute;
     z-index: 1;

@@ -1714,24 +1714,14 @@ isMemoryFSempty:number=0;
           this.EventStopWaitHTTP[11]=true;
           if (data.status===undefined || data.status===200){
             if (data.data.length===0){
-            //  this.message='Memory file system is empty on server ' + this.newConfigServer.fileSystemServer;
-            //  this.isMsg.set(true);
+              this.message='Memory file system is empty on server ' + this.newConfigServer.fileSystemServer;
+              this.isMsg.set(true);
             } else {
               for (var i=0; i<data.data.length; i++){
                 this.memoryFS.push({fileName:"",record:[]});
                 this.memoryFS[i].fileName=data.data[i].fileName;
                
-                if (data.data[i].content.length===0){
-                   /*
-                  if (this.message!==""){
-                    this.message=this.message + " --- " + "File System " + this.memoryFS[i].fileName+ " memory is empty";
-                    this.isMsg.set(true);
-                  } else {
-                    this.message='server ' + this.newConfigServer.fileSystemServer + " ==> File System " + this.memoryFS[i].fileName+ " memory is empty";
-                    this.isMsg.set(true);
-                  }
-                  */
-                } else {
+                if (data.data[i].content.length!==0){
                   for (var j=0; j<data.data[i].content.length; j++){
                     const theClass=new classFileSystem;
                     this.memoryFS[i].record.push(theClass);
@@ -1752,8 +1742,8 @@ isMemoryFSempty:number=0;
               }
             }
           } else { 
-            //this.message=data.msg + ' on server ' + this.newConfigServer.fileSystemServer;
-            //this.isMsg.set(true);
+            this.message=data.msg + ' on server ' + this.newConfigServer.fileSystemServer;
+            this.isMsg.set(true);
           }
         },
         err => {

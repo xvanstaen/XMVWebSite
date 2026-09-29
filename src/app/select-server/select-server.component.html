@@ -1,5 +1,5 @@
   @if (isSelectServer===false){
-        <form [formGroup]="theForm" class="mainBlock"  style=" margin-top:15px; ">
+        <form [formGroup]="theForm" class="mainBlock"  >
             
             <div class="label labelOverr"  style="margin-top:15px;">Google</div> 
             <input type="text" class="theInput" style="margin-top:15px;" id="google" formControlName="googleServer" (click)="onActionServer($event)">
@@ -14,9 +14,9 @@
         </form>
 } @else {
     <div class="dropdown" >
-        <div  class="Straight-content" style="margin-left:15px; width:400px; height:178px; background-color: white; margin-top:5px;">
-            <div  class="StraightDropDown StraightDropDownOverride"  style="width:300px; height:150px; background-color: cyan; margin-top:10px;">
-                <span style="text-align: center; font-size:16px; width:100%; display:inline-block; height:35px;">Select the server</span>
+        <div  class="Straight-content" style="margin-left:15px; width:100%; height:200px; background-color: white; ">
+            <div  class="straightDropDown"  >
+                <span style="text-align: center; font-size:18px; width:100%; color:blue; font-weight:bolder; padding-top:6px;display:inline-block; height:34px;">Select the server</span>
                 <li *ngFor="let server of tabServers; let m=index;" 
                         class="Straight-options "  [ngClass]=" {'even': m % 2 ===0, 'odd': m % 2 !==0}" 
                             (click)="selectServer($event)" id="selectedServer" [value]="server" >{{server}}
