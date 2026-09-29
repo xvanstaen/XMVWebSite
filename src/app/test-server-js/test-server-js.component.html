@@ -191,15 +191,15 @@
             <div style=' width:450px; max-width:450px; display:inline-block; border: solid 2px blue;'>
                 <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; padding-top:5px; text-align: center;'> Metadata for object </span>
                 <span style='font-size:20px; font-style:italic; width:100%; display:inline-block; text-align: center;'>{{theForm.controls['srcObject'].value}}</span> 
-                <span class="theLine"><span class='label' style="width:150px;">Bucket</span><span class='theMetadata'>{{oneMetadata.bucket}}</span></span>
-                <span class="theLine"><span class='label' style="width:150px;">Object</span><span class='theMetadata'>{{oneMetadata.name}}</span></span>
-                <span class="theLine"><span class='label' style="width:150px;">contentType</span><span class='theMetadata'>{{oneMetadata.contentType}}</span></span>
-                <span class="theLine"><span class='label' style="width:150px;">cacheControl</span><span class='theMetadata'>{{oneMetadata.cacheControl}}</span></span>
-                <span class="theLine"> <span class='label' style="width:150px;">generation</span><span class='theMetadata'>{{oneMetadata.generation}}</span></span>
-                <span class="theLine"><span class='label' style="width:150px;">id</span><span class='theMetadata'>{{oneMetadata.id}}</span></span>
-                <span class="theLine"><span class='label' style="width:150px;">mediaLink</span><span class='theMetadata' style=" word-break:break-all;">{{oneMetadata.mediaLink}}</span></span>
-                <span class="theLine"><span class='label' style="width:150px;">size</span><span class='theMetadata'>{{oneMetadata.size}}</span></span>
-                <span class="theLine"><span class='label' style="width:150px;">metadataPerso</span><span class='theMetadata'>{{strMetaDataPerso}}</span></span>
+                <span class="theLine"><span class='label' style="width:110px;">Bucket</span><span class='theMetadata'>{{oneMetadata.bucket}}</span></span>
+                <span class="theLine"><span class='label' style="width:110px;">Object</span><span class='theMetadata'>{{oneMetadata.name}}</span></span>
+                <span class="theLine"><span class='label' style="width:110px;">contentType</span><span class='theMetadata'>{{oneMetadata.contentType}}</span></span>
+                <span class="theLine"><span class='label' style="width:110px;">cacheControl</span><span class='theMetadata'>{{oneMetadata.cacheControl}}</span></span>
+                <span class="theLine"> <span class='label' style="width:110px;">generation</span><span class='theMetadata'>{{oneMetadata.generation}}</span></span>
+                <span class="theLine"><span class='label' style="width:110px;">id</span><span class='theMetadata'>{{oneMetadata.id}}</span></span>
+                <span class="theLine"><span class='label' style="width:110px;">mediaLink</span><span class='theMetadata' style=" word-break:break-all;">{{oneMetadata.mediaLink}}</span></span>
+                <span class="theLine"><span class='label' style="width:110px;">size</span><span class='theMetadata'>{{oneMetadata.size}}</span></span>
+                <span class="theLine"><span class='label' style="width:110px;">Perso</span><span class='theMetadata'>{{strMetaDataPerso}}</span></span>
                 <div class="skipLine"></div>
             </div>
         </div>
@@ -207,29 +207,26 @@
     
     <!-- currentAction==='get list metadata for all objects'  &&  -->
     @if (isGetListMetaObject()){ <!-- EventHTTPReceived[3]===true -->
-        <br><br>
+        <br><br><br>
+        <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:5px; text-align: center; ' > List metadata for all objects</div> 
         <div class="response">
-            <div style='font-size:20px; font-style: italic; width:450px; display:inline-block;  margin-left:100px;' > List metadata for all objects</div> 
-        
-            <div style=' width:450px; display:block; border: solid 2px blue;  max-height:300px; overflow-y: scroll; '>
+            <div style=' margin-top:-20px;width:450px; max-width:450px; display:inline-block; border: solid 2px blue; max-height:300px; overflow-y: scroll;'>
 
                 <li *ngFor="let Metadata of myListOfObjects.items; let i=index; " >
-                
-                    <span style='width:860px; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
-                        <span class="theLine"> <span class='label' style="width:150px;">Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
-                        <span class="theLine"><span class='label' style="width:150px;">Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>
-                        <span class="theLine"><span class='label' style="width:150px;">contentType</span><span class='theMetadata'>{{Metadata.contentType}}</span></span>
-                        <span class="theLine"><span class='label' style="width:150px;">cacheControl</span><span class='theMetadata'>{{Metadata.cacheControl}}</span></span>
-                        <span class="theLine"><span class='label' style="width:150px;">generation</span><span class='theMetadata'>{{Metadata.generation}}</span></span>
-                        <span class="theLine"><span class='label' style="width:150px;">id</span><span class='theMetadata'>{{Metadata.id}}</span></span>
-                        <span class="theLine"><span class='label' style="width:150px;">mediaLink</span><span class='theMetadata'>{{Metadata.mediaLink}}</span></span>
-                        <span class="theLine"><span class='label' style="width:150px;">size</span><span class='theMetadata'>{{Metadata.size}}</span></span>
-                        <span class="theLine"><span class='label' style="width:150px;">metadataPerso</span><span class='theMetadata'>{{tabListMetaPerso[i]}}</span></span>
+                    <span style='width:100%; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
+                        <span class="theLine"> <span class='label' style="width:110px;">Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">contentType</span><span class='theMetadata'>{{Metadata.contentType}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">cacheControl</span><span class='theMetadata'>{{Metadata.cacheControl}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">generation</span><span class='theMetadata'>{{Metadata.generation}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">id</span><span class='theMetadata'>{{Metadata.id}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">mediaLink</span><span class='theMetadata'>{{Metadata.mediaLink}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">size</span><span class='theMetadata'>{{Metadata.size}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">Perso</span><span class='theMetadata'>{{tabListMetaPerso[i]}}</span></span>
                         <div class="skipLine"></div>
                     </span>
                 </li>
             </div>
-            
         </div>
     }
     @if (isGetCacheConsole()){
