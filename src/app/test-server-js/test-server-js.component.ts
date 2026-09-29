@@ -1700,11 +1700,12 @@ listConfig(){
       this.isError.set(true);
     }
   }
-
+isMemoryFSempty:number=0;
   getMemoryFS() {
     //this.isUserIdForFS.set(false);
     this.initBeforeCallAPI(11);
     this.isMemoryFS.set(false);
+    this.isMemoryFSempty=0;
     this.memoryFS.splice(0,this.memoryFS.length);
     this.newConfigServer.fileSystemServer=this.theForm.controls['serverForAction'].value;
     this.ManageSecuredGoogleService.getMemoryFS(this.newConfigServer)
@@ -1734,7 +1735,10 @@ listConfig(){
                   for (var j=0; j<data.data[i].content.length; j++){
                     const theClass=new classFileSystem;
                     this.memoryFS[i].record.push(theClass);
-                    this.memoryFS[i].record[this.memoryFS[i].record.length-1]=data.data[i].content[j];                   
+                    this.memoryFS[i].record[this.memoryFS[i].record.length-1]=data.data[i].content[j];  
+                    if (this.memoryFS[i].record.length!==0){
+                        this.isMemoryFSempty++
+                    }                 
                   }
                 }
               }

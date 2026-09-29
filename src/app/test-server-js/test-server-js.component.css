@@ -33,6 +33,10 @@ h2{
   font-size:18px; height:20px; color:blue;
 }
 
+.label{
+  color:blue; font-size:14px; display:inline-block; text-align: left; padding-left:10px;
+}
+
 .inputA{
   width:28px; display:inline-block; background-color: green;
   text-align: center;
@@ -97,7 +101,7 @@ h2{
 }
 
 .response{
-    display:inline-block; width:80%; height:220px; max-height:220px; color:blue; margin-left:20px; 
+    display:inline-block; width:80%; height:285px; max-height:285px; color:blue; margin-left:20px; 
     margin-top:20px;
 }
 
@@ -108,7 +112,7 @@ h2{
 
 .blockScroll{
   width:450px; display:block; border: solid 2px blue; 
-  overflow-y:scroll; max-height:200px;
+  overflow-y:scroll; max-height:280px;
 }
 
 .selTitle{

@@ -15,27 +15,32 @@
         <div class="mainBlock"  style=" height:320px; max-height:320px; border-top:solid 0px green; overflow-y:scroll; ">
             <form [formGroup]="theForm" >
                 <span class="theLine" style="margin-top:5px;">
-                    <label class="label" style="width:180px; ">Test or Prod</label> <input type="text" class="theInputMid" formControlName="testProd">
+                    <label class="label" style="width:220px; ">Test or Prod</label> <input type="text" class="theInputMid" formControlName="testProd">
                 </span>
                 <span class="theLine"> 
-                    <label class="label" style="width:180px; ">server or HTTP</label> <input type="text" class="theInputMid" formControlName="server">
+                    <label class="label" style="width:220px; ">server or HTTP</label> <input type="text" class="theInputMid" formControlName="server">
                 </span>
                 <span class="theLine">
-                    <label class="label" style="width:180px; ">Google</label> <input type="text" class="theInputMid" formControlName="dataBase">
+                    <label class="label" style="width:220px; ">Google</label> <input type="text" class="theInputMid" formControlName="dataBase">
                 </span>
                 <span class="theLine">
-                    <label class="label" style="width:180px; " ><span class="spanAction"> srcBucket </span><input class="inputA" value="P"  id="srcBucket" (click)="pasteAction($event)"> <input class="inputA" value="C"  id="srcBucket" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="srcBucket"  >
+                    <label class="label" style="width:220px; " >
+                        <span class="spanAction"> srcBucket </span>
+                        <input class="inputA" value="P"  id="srcBucket" (click)="pasteAction($event)"> 
+                        <input class="inputA" value="C"  id="srcBucket" (click)="clearField($event)">
+                    </label> 
+                    <input type="text" class="theInputMid" formControlName="srcBucket"  >
                 </span>
             
                 <span class="theLine">
-                    <label class="label" style="width:180px; " ><span class="spanAction"> srcObject</span><input class="inputA" value="P" id="srcObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="srcObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="srcObject" >
+                    <label class="label" style="width:220px; " ><span class="spanAction"> srcObject</span><input class="inputA" value="P" id="srcObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="srcObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="srcObject" >
                 </span>
 
                 <span class="theLine" style="margin-top:8px;">
-                    <label class="label" style="width:180px; " ><span class="spanAction"> destBucket</span><input class="inputA" value="P" id="destBucket" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destBucket" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destBucket" >
+                    <label class="label" style="width:220px; " ><span class="spanAction"> destBucket</span><input class="inputA" value="P" id="destBucket" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destBucket" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destBucket" >
                 </span>
                 <span class="theLine">
-                    <label class="label" style="width:180px; " ><span class="spanAction"> destObject</span><input class="inputA" value="P" id="destObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destObject" >
+                    <label class="label" style="width:220px; " ><span class="spanAction"> destObject</span><input class="inputA" value="P" id="destObject" (click)="pasteAction($event)"> <input class="inputA" value="C" id="destObject" (click)="clearField($event)"></label> <input type="text" class="theInputMid" formControlName="destObject" >
                 </span>
                 <span class="theLine" style="margin-top:5px; margin-left:180px;"> (<span style="font-weight: bolder;" >P</span>&nbsp;&nbsp;paste <span style="margin-left:10px;"><span style="font-weight: bolder;" >C</span> &nbsp;&nbsp;clear</span>)</span>
                 @if (theForm.controls['fileContent'].value.length<200){
@@ -48,8 +53,8 @@
                 <!-- 
                 @if (isUserIdForFS()){
                     <span class="theLine">
-                        <label class="label" style="width:180px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
-                        <label class="label" style="width:180px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
+                        <label class="label" style="width:220px; " > userId</label><input type="text" class="theInputMid" formControlName="userId" >
+                        <label class="label" style="width:220px; " > iWait</label><input type="text" class="theInputMid" formControlName="iWait" >
                         <button class="button" (click)="manageResetFS()">Submit</button>
                     </span>
                 }
@@ -62,7 +67,7 @@
         <div style="display:block; margin-top:5px;">
             <div *ngFor="let tab of tabServers; let i=index">
                 <span class="theLine" style="margin-top:5px;">
-                    <label class="label" style="width:180px; ">{{tab}} - {{tabVersionServer[i]}}</label> 
+                    <label class="label" style="width:220px; ">{{tab}} - {{tabVersionServer[i]}}</label> 
                 </span>
             </div>
         </div>
@@ -144,7 +149,7 @@
      
     @if (isGetListBuckets()){ <!--EventHTTPReceived[0]===true &&  -->
         <div class="response">
-            <span class='blockAction'> List all buckets</span> 
+            <span style='font-size:20px; font-style: italic; width:450px; display:inline-block;  text-align: center;'> List all buckets</span> 
             <div class='blockScroll'>
                 <li style="list-style-type: none;" *ngFor="let listBucket of  TabBuckets; let i=index" id="bucket-{{listBucket.name}}" (click)="copySelection($event)">
                     <span id="bucket-{{listBucket.name}}" class="theList" [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">{{listBucket.name}}</span>
@@ -205,12 +210,12 @@
         <div class="response">
             <div style='font-size:20px; font-style: italic; width:450px; display:inline-block;  margin-left:100px;' > List metadata for all objects</div> 
         
-            <div style=' width:450px; display:block; border: solid 2px blue;  max-height:320px;  overflow-y:scroll; '>
+            <div style=' width:450px; display:block; border: solid 2px blue;  max-height:280px;  overflow-y:scroll; '>
 
                 <li *ngFor="let Metadata of myListOfObjects.items; let i=index; " >
                 
                     <span style=' width:100%; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
-                        <div class="skipLine"></div>
+                        
                         <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
                         <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>
                         <span class="theLine"><span class='label'>contentType</span><span class='theMetadata'>{{Metadata.contentType}}</span></span>
@@ -278,19 +283,19 @@
     }
 <!-- FILE SYSTEM-->
     @if (isMemoryFS()){ <!-- this.EventHTTPReceived[11]===true || this.EventHTTPReceived[12]===true -->
-        <div style="margin-left:20px; width:450px; display:inline-block; max-height:480px;height:460px; border:green solid 2px;  overflow-y:scroll;">
+        <div style="margin-top:20px; margin-left:20px; width:450px; display:inline-block; border:green solid 2px;  overflow-y:scroll;" 
+                [style.height.px]="isMemoryFSempty === 0 ? 180 : 480">
             
-            <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:15px; text-align: center;' > Memory File System</div> 
-            <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:15px; text-align: center;' > server: {{theForm.controls['serverForAction'].value}}</div> 
+            <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; color:blue; font-weight:bolder; padding-top:5px; text-align: center;' > Memory File System</div> 
+            <div style='font-size:16px; font-style: italic; width:100%; display:inline-block;  color:blue; text-align: center;' > server: {{theForm.controls['serverForAction'].value}}</div> 
             <div style=" width:100%; display:inline-block; overflow-y:scroll;">    
                 <div *ngFor="let tab of memoryFS; let i=index ">
                     <div style=' width:100%; display:inline-block;'>
-                        <span style=' width:470px; display:inline-block; border: solid 2px red; text-align: center;'>{{tab.fileName}} </span>
+                        <span style=' width:470px; display:inline-block; color:green; border-top: solid 2px red; border-left: none; border-right: none;text-align: center;' [style.border-bottom]="i !== memoryFS.length - 1 ? 'none' : 'solid 2px red' "> {{tab.fileName}} </span>
                     </div>
                 
                     <li *ngFor="let record of memoryFS[i].record; let j=index " style=' width:100%; display:inline-block;'>
-                        <div style=' width:470px; display:inline-block; border: solid 2px red; '>
-                            <div class="skipLine"></div>
+                        <div style=' width:470px; display:inline-block; '>
                             <span class="theLine"> <span class='label'>Bucket</span><span class='theMetadata'>{{record.bucket}}</span></span>
                             <span class="theLine"><span class='label'>Object</span><span class='theMetadata'>{{record.object}}</span></span>
                             <span class="theLine"><span class='label'>By user</span><span class='theMetadata'>{{record.byUser}}</span></span>
@@ -311,9 +316,9 @@
                                  }
                             </span>
                             <div class="skipLine"></div>
-                            <button class="button" (click)="resetMemoryFS(i)">Reset</button>
+                            <button class="button" style="margin-left:150px;" (click)="resetMemoryFS(i)">Reset</button>
                             <div class="skipLine"></div>
-                            <div class="skipLine"></div>
+
                         </div>
                     </li>
                 </div>
