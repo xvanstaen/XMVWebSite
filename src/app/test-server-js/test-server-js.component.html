@@ -209,22 +209,22 @@
     @if (isGetListMetaObject()){ <!-- EventHTTPReceived[3]===true -->
         <br><br><br>
         <div style='font-size:20px; font-style: italic; width:100%; display:inline-block; padding-top:5px; text-align: center; ' > List metadata for all objects</div> 
-        <div class="response">
-            <div style=' margin-top:-20px;width:450px; max-width:450px; display:inline-block; border: solid 2px blue; max-height:300px; overflow-y: scroll;'>
+        <div class="response"   >
+            <div style=' margin-top:-20px;width:450px; max-width:450px; display:inline-block; border: solid 2px blue; max-height:300px; box-sizing: border-box; overflow-y: scroll; overflow-x: hidden;'>
 
                 <li *ngFor="let Metadata of myListOfObjects.items; let i=index; " >
-                    <span style='width:100%; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
+                    <div style='box-sizing: border-box; width:450px; max-width:450px; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
                         <span class="theLine"> <span class='label' style="width:110px;">Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
                         <span class="theLine"><span class='label' style="width:110px;">Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>
                         <span class="theLine"><span class='label' style="width:110px;">contentType</span><span class='theMetadata'>{{Metadata.contentType}}</span></span>
                         <span class="theLine"><span class='label' style="width:110px;">cacheControl</span><span class='theMetadata'>{{Metadata.cacheControl}}</span></span>
                         <span class="theLine"><span class='label' style="width:110px;">generation</span><span class='theMetadata'>{{Metadata.generation}}</span></span>
-                        <span class="theLine"><span class='label' style="width:110px;">id</span><span class='theMetadata'>{{Metadata.id}}</span></span>
-                        <span class="theLine"><span class='label' style="width:110px;">mediaLink</span><span class='theMetadata'>{{Metadata.mediaLink}}</span></span>
+                        <span class="theLine"><span class='label' style="width:110px;">id</span><div class='theMetadata'>{{Metadata.id}}</div></span>
+                        <span class="theLine"><span class='label' style="width:110px;">mediaLink</span><span class='theMetadata'  style=" word-break:break-all;">{{Metadata.mediaLink}}</span></span>
                         <span class="theLine"><span class='label' style="width:110px;">size</span><span class='theMetadata'>{{Metadata.size}}</span></span>
                         <span class="theLine"><span class='label' style="width:110px;">Perso</span><span class='theMetadata'>{{tabListMetaPerso[i]}}</span></span>
                         <div class="skipLine"></div>
-                    </span>
+                    </div>
                 </li>
             </div>
         </div>

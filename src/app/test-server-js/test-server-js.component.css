@@ -52,7 +52,7 @@ h2{
 
 
 .theMetadata{
-    width:290px; color:blue; font-size:14px; display:inline-block; max-width:290px;
+    width:280px; color:blue; font-size:14px; display:inline-block; max-width:280px; box-sizing: border-box;
 }
 
 .theLine{
