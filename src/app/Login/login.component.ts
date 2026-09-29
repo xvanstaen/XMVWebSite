@@ -179,17 +179,18 @@ checkLogin(){
               this.triggerUserFunction.emit(true);
   //            this.my_output2.emit(this.routing_code.toString());
             } else {
-              this.error=data.msg;
+              console.log("Message returned after login is: " + data.msg);
+              this.error='invalid user-id/password';
               this.isValidateData.set(false);
             }
       },
         err=> {
           if (err.error.status!==undefined && err.error.status==520){
-            this.error='invalid user-id/password';
+            console.log('error to checkLogin - error status=' + err.error.status + ' '+ err.message );
           } else {
-            this.error=err.msg;
             console.log('error to checkLogin - error status=' + err.status + ' '+ err.message );
           }
+          this.error='invalid user-id/password';
           this.isValidateData.set(false);
         })
   } else {

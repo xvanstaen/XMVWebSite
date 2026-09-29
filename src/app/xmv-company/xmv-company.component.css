@@ -256,9 +256,7 @@ body{
     /*** ============== @media 800 ================ ***/
     /*** ====================================== ***/
     @media only screen and (max-width:800px) {
-    .sizeMap{
-        width:450px;
-        }
+
     .Main_Page_Size{
         width:450px;
     }
@@ -273,17 +271,15 @@ body{
     /*** ============== @media 800 ================ ***/
     /*** ====================================== ***/
     @media only screen and (max-width:550px) {
-        .sizeMap{
-            width:380px;
-            }
+
         .Main_Page_Size{
-            width:380px;
+            width:400px;
         }
         .Main_Page_Text{
             font-size:14px;
         }
         .Main_Page_Title{
-            font-size:22px;
+            font-size:18px;
         }
         .textIcon:hover{
             font-size:12px;

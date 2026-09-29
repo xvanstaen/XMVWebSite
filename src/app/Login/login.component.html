@@ -13,17 +13,20 @@
       </div>
       -->
   @if (configServer.devMode!=='local'){
-
+ 
     <img  class="sizeMap" src="./assets/Lavender.JPG" >
     
-    <div class="main_box">
-      
+      <div class="main_box">
       <h2 class="title "> Welcome!  </h2>
-      <h3 > <br>Log-in to access your specific features </h3>
+      <h4 > <br>Log-in to access your specific features </h4>
 
       <form class="form_box" [formGroup]="myForm" >
           <div>
-              <label class="error_msg">  {{error}}</label>
+            @if (error!==""){
+                <label class="error_msg">  {{error}}</label>
+            } @else {
+              <label class="noError_msg">  {{error}}</label>
+            } 
           </div>
           <div>
               <label class="field-name">user-id</label>
@@ -61,7 +64,7 @@
 
   <!-- ======== FOOTER ======== -->
 @if (routing_code!==5){
-  <div class='myfooter'>
+  <div class='thefooter'>
     <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
         <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
         <br> 
