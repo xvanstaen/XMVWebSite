@@ -28,7 +28,7 @@
 }
 
 @if (isInitComplete() && !isUserTimeOut() && isNgStyleCompleted()   ){  <!-- && tabTotal.length>0 -->
-    <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; " [style]="{'width': (HTMLCaloriesFat.width+10) + 'px'}">
+    <div style="border:solid 2px blue; background-color: lightgreen; display:inline-block; width:865px;" >
          @if (isErrorFS() && errorMsgFS!==""){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">{{errorMsgFS}}</div>
         } @else if (tabLock[1].lock===2){
@@ -55,22 +55,22 @@
                 }
             </div>  
         </div>
-        <div class="skipLine">&nbsp;</div>
-        <div style="margin-left:5px; display:inline-block; overflow:hidden;" [style]="{'height':HTMLCaloriesFat.title.height + 'px', 'min-width': HTMLCaloriesFat.minwidth + 'px', 
-                'width': HTMLCaloriesFat.width  + 'px', 'max-width': HTMLCaloriesFat.width  + 'px'}" >
-            <div [style]="divClassHeader[0]">
-                 <input [style]="tabHeader[0]" type="text" value="Action">
+
+        <div style="width:850px; margin-left:5px; display:inline-block; overflow:hidden;" [style.height.px]="35"
+                [style.background-color]='HTMLCaloriesFat.title.background'>
+            <div class="divHeader" >
+                 <input [style.width.px]="HTMLCaloriesFat.colWidth.action" class="contentHeader"  type="text" value="Action">
             </div>
-            <div [style]="divClassHeader[1]">
-                <div [style]="tabHeader[1]">Recipe          <button class="theArrow"   id='Recipe'    (click)="onFilter($event)">
+            <div class="divHeader" >
+                <div class="contentHeader" style="margin-top:0px;" [style.width.px]="HTMLCaloriesFat.colWidth.type">Recipe   <button class="theArrow" id='Recipe' (click)="onFilter($event)">
                         <mat-icon class="material-symbols-outlined"  id='Recipe' (click)="onFilter($event)">
                             arrow_drop_down
                         </mat-icon>
                     </button>  
                 </div>
             </div>
-            <div [style]="divClassHeader[2]">
-                <div [style]="tabHeader[2]">Food (Filter)
+            <div class="divHeader" >
+                <div class="contentHeader"  style="margin-top:0px;" [style.width.px]="HTMLCaloriesFat.colWidth.ingr">Food (Filter)
                     <button class="theArrow"  style="margin-left:35px;"  id='RecipeFood' (click)="onFilter($event)">
                         <mat-icon class="material-symbols-outlined"  id='RecipeFood' >
                             arrow_drop_down
@@ -78,33 +78,33 @@
                     </button>  
                 </div>
             </div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Serving"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Unit"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Serving"></div>
+            <div class="divHeader">
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Unit"></div>
                 
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Calories"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Protein"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Carbs"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Calories"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Protein"></div>
+            <div class="divHeader" >
+                <input class="contentHeader"[style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Carbs"></div>
             <!--
             <div [style]="divClassHeader[3]">
                 <input [style]="tabHeader[3]" type="text" value="Glycemic Index"></div>
             -->
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Sugar"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Natural"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Added"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Cholest."></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Sat. fat"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Total fat"></div>
+            <div class="divHeader">
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Sugar"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Natural"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Added"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Cholest."></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Sat. fat"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Total fat"></div>
             <!--
             <div [style]="divClassHeader[3]"> style="padding-top:3px;  border-right:2px solid darkcyan;">Lock </div>
             -->
@@ -183,128 +183,139 @@
                 </div>
             </div>
         }
-        <div id="posStartTable" [style]="{'overflow-y':'scroll', 'margin-top':0.2 + 'px', 'margin-left':5 + 'px', 'display':'inline-block', 
-            'height':HTMLCaloriesFat.height+'px', 'min-width': HTMLCaloriesFat.minwidth+'px' , 
-            'width': HTMLCaloriesFat.width+'px', 'max-width': HTMLCaloriesFat.width+'px', 'color':HTMLCaloriesFat.color }" 
+        <div id="posStartTable" class="tableContainer" [style.height.px]="HTMLCaloriesFat.height"  
+             [style.color]="HTMLCaloriesFat.color" 
                    >
         <!-- ================== display of the table =============== -->
             <div *ngFor="let tab of outFileRecipe.tabCaloriesFat; let i=index ">
                 @if (RecipeSel==='' || (RecipeSel.toLowerCase().trim()!=='' && RecipeSel.toLowerCase().trim()===tab.Type.toLowerCase().trim())){}
-                    <div *ngFor="let content of outFileRecipe.tabCaloriesFat[i].Content; let j=index">
+                    <div *ngFor="let content of outFileRecipe.tabCaloriesFat[i].Content; let j=index"
+                                class="recipeRow"
+                                 [style.background-color]="i % 2 === 0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd" >
                         @if (RecipeSelFood==='' ||  (RecipeSelFood.toLowerCase().trim()!=='' && RecipeSelFood.toLowerCase().trim()===content.Name.toLowerCase().trim())){
                             
-                            <div  style="width:100%; height:35px; border:3px red solid; border-bottom:2px blue solid;"
-                                    [style.background-color]="i % 2 === 0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd"> <!-- all items below will be next to each other-->
-                                <div [style]="tabDivContent[0]" [style.width.px]="HTMLCaloriesFat.colWidth.action" >
-                                   
-                                        <div id='RecipeOpenAction-{{i}}-{{j}}'  class="circle" style="margin-left:10px;" (click)="onAction($event)">
-                                            <div style="margin-top:0px;">A</div>
-                                        </div>
-                                   
+                            <div  style="width:850px; box-sizing: border-box; height:22px; border:0px red solid; border-bottom:0px blue solid;"
+                            [style.background-color]="i % 2 === 0 ? HTMLCaloriesFat.row.even : HTMLCaloriesFat.row.odd"
+                                   > <!-- all items below will be next to each other-->
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.action">
+                                     <div id="'RecipeOpenAction-'+i'-'+j"  class="circle" style="margin-left:10px;" (click)="onAction($event)">
+                                        <div>A</div>
+                                    </div>       
                                 </div>
-                                <div [style]="tabDivContent[1]">
-                                    @if (j===0){
-                                        <input [style]="i % 2 === 0 ? tabStyleInput[0][1] : tabStyleInput[1][1]" class="textHover" [readonly]='inputReadOnly'  type="text" (input)="onInputRecipe($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
-                                    } @else {  
-                                        <input [style]="i % 2 === 0 ? tabStyleInput[0][1] : tabStyleInput[1][1]" [readonly]='inputReadOnly'  type="text" style="pointer-events:none; " value="&nbsp;">
-                                    }
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.type">
+                                        <input class="styleInput textHover" 
+                                            [style.color]="HTMLCaloriesFat.row.color" [style.pointer-events]="j === 0 ? 'auto' : 'none'"
+                                            [readonly]='inputReadOnly'  type="text" (input)="onInputRecipe($event)" id="'type-' + i" placeholder="meat/fish/oil"   
+                                            [value]="j === 0 ? tab.Type : '&nbsp;'" >
                                 </div>
-                                <div [style]="tabDivContent[2]">
-                                    <input [style]="i % 2 === 0 ? tabStyleInput[0][2] : tabStyleInput[1][2]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="name-{{i}}-{{j}}"  value="&nbsp;{{content.Name}}"   >
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.ingr">
+                                    <input class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color" style="text-align: left;"
+                                    [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'name-' + i + '-' + j"  [value]="'&nbsp;' + content.Name" >
                                 </div>
-                                <div [style]="tabDivContent[3]">    
-                                    <input [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">    
+                                    <input class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'serv-' + i + '-' + j"  value="{{content.Serving}}"    >
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="unit-{{i}}-{{j}}" value="{{content.ServingUnit}}" >
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'unit-' + i + '-' + j" value="{{content.ServingUnit}}" >
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="calo-{{i}}-{{j}}" value="{{content.Calories | number:'1.0-0'}}" >
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'calo-' + i + '-' + j" value="{{content.Calories | number:'1.0-0'}}" >
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="prot-{{i}}-{{j}}" value="{{content.Protein | number:'1.0-0'}}" >
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color" [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'prot-' + i + '-' + j" value="{{content.Protein | number:'1.0-0'}}" >
                                 </div>
-                                <div [style]="tabDivContent[3]">                    
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="carb-{{i}}-{{j}}" value="{{content.Carbs | number:'1.0-0'}}" >
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">                    
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'carb-'' + i + '-' + j" value="{{content.Carbs | number:'1.0-0'}}" >
                                 <!--
                                 </div>
                                 <div [style]="tabDivContent[3]">
                                     <input  [style]="tabStyleInput[tabNewRecord[i].even][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="glyi-{{i}}-{{j}}" value="{{content.GlyIndex | number:'1.0-0'}}" >
                                 -->
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="suga-{{i}}-{{j}}" value="{{content.Sugar | number:'1.0-0'}}" >                     
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'suga-' + i + '-' + j" value="{{content.Sugar | number:'1.0-0'}}" >                     
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="naturalSuga-{{i}}-{{j}}" value="{{content.naturalSugar | number:'1.0-0'}}" >                     
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'naturalSuga-'' + i + '-' + j" value="{{content.naturalSugar | number:'1.0-0'}}" >                     
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="addedSuga-{{i}}-{{j}}" value="{{content.addedSugar | number:'1.0-0'}}" >                     
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'addedSuga-'' + i + '-' + j" value="{{content.addedSugar | number:'1.0-0'}}" >                     
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="chol-{{i}}-{{j}}" value="{{content.Cholesterol | number:'1.0-0'}}" >                       
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'chol-'' + i + '-' + j" value="{{content.Cholesterol | number:'1.0-0'}}" >                       
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="satu-{{i}}-{{j}}" value="{{content.Fat.Saturated | number:'1.0-0'}}" >
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover"  
+                                    [style.color]="HTMLCaloriesFat.row.color"   [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'satu-' + i + '-' + j" value="{{content.Fat.Saturated | number:'1.0-0'}}" >
                                 </div>
-                                <div [style]="tabDivContent[3]">
-                                    <input  [style]="i % 2 === 0 ? tabStyleInput[0][3] : tabStyleInput[1][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="tota-{{i}}-{{j}}" value="{{content.Fat.Total | number:'1.0-0'}}" >
+                                <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                    <input  class="styleInput textHover" 
+                                    [style.color]="HTMLCaloriesFat.row.color"  [readonly]='inputReadOnly' type="text" (input)="onInputRecipe($event)" id="'tota-' + i + '-' + j" value="{{content.Fat.Total | number:'1.0-0'}}" >
                                 </div>
                             </div>
                         <!-- ============== TOTAL OF THE RECIPE ================== -->
         
                             @if (outFileRecipe.tabCaloriesFat[i].Content.length-1===j){
-                                <div >
-                                    <div  [style]="tabDivTotal[0]" >  
-                                        <input  [style]="i % 2 === 0 ? tabTotal[0][0] : tabTotal[1][0]"  [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="&nbsp;" > 
+                                <div style="height:35px; padding-top:5px;">
+                                    <div  class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.action" >  
+                                        <input  class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="&nbsp;" > 
                                     </div>
-                                    <div  [style]="tabDivTotal[1]" >
-                                        <input  [style]="i % 2 === 0 ? tabTotal[0][1] : tabTotal[1][1]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="&nbsp;" > 
+                                    <div  class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.type"  >
+                                        <input  class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="&nbsp;" > 
                                     </div>
-                                    <div [style]="tabDivTotal[2]" >
-                                        <input  [style]="i % 2 === 0 ? tabTotal[0][2] : tabTotal[1][2]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="Total" > 
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.ingr"  >
+                                        <input class="styleInput styleTotal"  [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="Total" > 
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input  [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Serving  | number:'1.0-0'}}" > 
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other"  >
+                                        <input  class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.Serving  | number:'1.0-0'}}" > 
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.ServingUnit}}" > 
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                        <input class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.ServingUnit}}" > 
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Calories  | number:'1.0-0'}}" > 
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                        <input class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.Calories  | number:'1.0-0'}}" > 
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input  [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Protein  | number:'1.0-0'}}" > 
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                        <input class="styleInput styleTotal"  [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.Protein  | number:'1.0-0'}}" > 
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input  [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Carbs  | number:'1.0-0'}}" > 
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                        <input  class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.Carbs  | number:'1.0-0'}}" > 
                                     </div>
                                     <!--
                                     <div [style]="tabDivContent[3]" >
                                         <div [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]"  > {{tab.Total.GlyIndex  | number:'1.0-0'}}</div>
                                     </div>
                                     -->
-                                    <div [style]="tabDivTotal[3]" >
-                                       <input  [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Sugar  | number:'1.0-0'}}" >                  
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                       <input  class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.Sugar  | number:'1.0-0'}}" >                  
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.naturalSugar  | number:'1.0-0'}}" >                  
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                        <input class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.naturalSugar  | number:'1.0-0'}}" >                  
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.addedSugar  | number:'1.0-0'}}" >                      
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                        <input class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.addedSugar  | number:'1.0-0'}}" >                      
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Cholesterol  | number:'1.0-0'}}" > 
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                        <input class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.Cholesterol  | number:'1.0-0'}}" > 
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                        <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}" >
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                        <input class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.Fat.Saturated  | number:'1.0-0'}}" >
                                     </div>
-                                    <div [style]="tabDivTotal[3]" >
-                                         <input [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]" [readonly]='inputReadOnly' type="text" id="tota-{{i}}-{{j}}" value="{{tab.Total.Fat.Total  | number:'1.0-0'}}" >
+                                    <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other" >
+                                         <input class="styleInput styleTotal" [readonly]='inputReadOnly' type="text" id="'tota-' + i + '-' + j" value="{{tab.Total.Fat.Total  | number:'1.0-0'}}" >
                                     </div>
                                                                     
                                 </div>
-                                <div style="display:inline-block; width:100%; ">&nbsp;</div> 
                             }
                         }
                     </div>
@@ -577,7 +588,7 @@
                                             <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]"  class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}"  value="{{content.Fat.Saturated}}"  >
                                         </div>
                                         <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="tota-{{i}}-{{j}}"  value="{{content.Fat.Total}}" >                                
+                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="'tota-' + i + '-' + j"  value="{{content.Fat.Total}}" >                                
                                         </div>
                                     </div>
                             }

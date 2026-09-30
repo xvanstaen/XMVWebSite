@@ -7,14 +7,6 @@ input {
   outline: none;
   border:none;
 }
-/*
-    textarea:focus {
-        outline: none;
-    }
-
-s*/
-
-
 
 body{
   margin-left:20px;
@@ -22,6 +14,67 @@ body{
 
 div{
     --bufferW:60%;
+}
+
+.divContent{
+  display:inline-block;
+  border:0px red solid;
+}
+.divHeader{
+  display:block;
+  float:left;
+  
+}
+
+.contentHeader{
+        margin-top:8px;
+        border:0px white solid;
+        display:inline-block;
+        text-align:center;
+        overflow-wrap:break-word;
+        word-break: break-all;
+        font-size:12px;
+        color:white;
+        background-color: transparent !important;
+        /*
+        border-top:1px grey solid;
+        border-left:1px grey solid; 
+        border-right:1px rgb(251, 249, 249) solid;
+        border-bottom:1px rgb(251, 249, 249) solid; 
+        */
+}
+
+.styleInput{
+  display:flex;
+  /*border:0px red solid;*/
+  gap:2px;
+  justify-content: space-between;
+  flex-direction: row; 
+  text-align: center;
+  background-color: transparent !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.styleTotal{
+  font-size: 16px;
+  color:red;
+  font-weight: bolder;
+}
+
+.tableContainer{
+  overflow-y:scroll; margin-top:-2px; 
+  margin-left:5px;
+  display:inline-block;
+}
+
+.recipe-row {
+  width: 870px; 
+  height: 35px; 
+  border: 3px solid red; 
+  border-bottom: 2px solid blue;
+  display: flex; /* Ensures the columns line up next to each other */
+  align-items: center;
 }
 
 
