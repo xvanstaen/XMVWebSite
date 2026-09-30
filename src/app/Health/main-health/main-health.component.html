@@ -141,14 +141,14 @@ tabSelRadio[3]={{tabSelRadio[3]}}
             <div class="skipLine">&nbsp;</div>
         </div>
     } 
- <br>
+
     @if ( displayCalFat()){ <!-- isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true &&  EventHTTPReceived[3]===true || -->
         <div id='posTopAppCalFat'>   <!--    && tabLock[1].lock!==3 -->
             <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay"
                 [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock" 
                 [returnDataFSRecipe]="returnDataFSRecipe" [returnDataFSCalFat]="returnDataFSCalFat" 
                 [recipeFileRetrieved]="recipeFileRetrieved()" [calFatFileRetrieved]="calFatFileRetrieved()"
-                [resultCheckLimitCalFat]="resultCheckLimitCalFat" [configHTMLRetrieved]="configHTMLRetrieved"
+                [resultCheckLimitCalFat]="resultCheckLimitCalFat()" [configHTMLRetrieved]="configHTMLRetrieved"
                 [statusSaveFn]="statusSaveFnCalFat" [triggerCalFatSave]="triggerCalFatSave()"
                 (processSave)="SaveCaloriesFat($event)" (checkLockLimit)="checkLockLimitFn($event)" 
             >

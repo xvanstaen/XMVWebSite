@@ -73,7 +73,8 @@ export class CaloriesFatComponent implements OnInit {
   @Input() returnDataFSRecipe = new classHeaderReturnDataFS;
   @Input() statusSaveFn:any;
 
-  @Input() resultCheckLimitCalFat:number=-1;
+  // @Input() resultCheckLimitCalFat:number=-1;
+  resultCheckLimitCalFat = input<number>();
   previousResultCheckLimitCalFat:number=-1;
   triggerCalFatSave=input.required<number>();
   previousTriggerCalFatSave:number=-1;
@@ -231,39 +232,33 @@ export class CaloriesFatComponent implements OnInit {
 constructor(
     private scroller: ViewportScroller,
     ) {effect (() => {
+      console.log("Effect CalFat => tabLock[1].lock=" + this.tabLock[1].lock);
         if (this.tabLock[1].lock===1){
               this.inputReadOnly=false;
         } else {
               this.inputReadOnly=true;
         }
-        if (this.previousResultCheckLimitCalFat!==this.resultCheckLimitCalFat){
-          this.previousResultCheckLimitCalFat=this.resultCheckLimitCalFat;
-          if (this.tabLock[1].lock===1){
-              this.inputReadOnly=false;
-          } else {
-              this.inputReadOnly=true;
-          }
+        if (this.previousResultCheckLimitCalFat!==this.resultCheckLimitCalFat()){ 
+          this.previousResultCheckLimitCalFat=Number(this.resultCheckLimitCalFat());
+          console.log("Effect CalFat => processCheckLimitCalFat" );
           this.processCheckLimitCalFat(this.resultCheckLimitCalFat);
         } 
         if (this.previousConfigHTMLRetrieved!==this.configHTMLRetrieved){
             this.previousConfigHTMLRetrieved=this.configHTMLRetrieved;
-            this.fillClassHeader();
+            //this.fillClassHeader();
             console.log("=====>  this.isNgStyleCompleted.set(true) ")
             this.isNgStyleCompleted.set(true);
         }
         if (this.previousCalFatFileRetrieved!==this.calFatFileRetrieved()){
             this.previousCalFatFileRetrieved=this.calFatFileRetrieved();
-            if (this.tabLock[1].lock===1){
-                this.inputReadOnly=false;
-            } else {
-                this.inputReadOnly=true;
-            }
+            console.log("Effect CalFat => calFatFileRetrieved" );
             this.initialiseFiles("calFat");
             this.theEvent.target.id='RecipeCancel';
             this.CancelUpdates(this.theEvent);
         }
         if (this.previousRecipeFileRetrieved!==this.recipeFileRetrieved()){
             this.previousRecipeFileRetrieved=this.recipeFileRetrieved();
+            console.log("Effect CalFat => recipeFileRetrieved" );
             this.initialiseFiles("recipe");
             this.theEvent.target.id='calFatCancel';
             this.CancelUpdates(this.theEvent);

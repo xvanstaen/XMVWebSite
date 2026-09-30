@@ -97,7 +97,8 @@ export class MainHealthComponent {
 
   //resultCheckLimitHealth=signal<number>(-1);
   resultCheckLimitHealth:number=-1;
-  resultCheckLimitCalFat:number=-1;
+  //resultCheckLimitCalFat:number=-1;
+  resultCheckLimitCalFat=signal<number>(-1);
   resultCheckLimitParamChart:number=0;
   resultCheckLimitRecipe:number=0;
 
@@ -314,30 +315,26 @@ export class MainHealthComponent {
     event.nbRecall++
     if (event.iWait===0){
       this.returnDataFSHealth = event;
-      //this.theTabLock = this.theTabLock + 'new tabLock[0].lock=' + this.tabLock[0].lock+ " -- " + JSON.stringify(event);
-      //this.resultCheckLimitHealth.update(dataFS => dataFS + 1);
       this.resultCheckLimitHealth++
       this.displayHealthAll.set(true);
-      //this.displayHealthAll.update(HealthAll => HealthAll + 1);
     } else if (event.iWait===1){
       this.returnDataFSCalFat = event;
-      //this.resultCheckLimitCalFat.update(check => check + 1);
-      this.resultCheckLimitCalFat++;
+      console.log ('Return file system in mainHealth iWait=1 - returnDataFSCalFat=' + this.returnDataFSCalFat);
+      console.log ('Return file system in mainHealth iWait=1 - resultCheckLimitCalFat=' + this.resultCheckLimitCalFat) 
+      //this.resultCheckLimitCalFat++;
+      this.resultCheckLimitCalFat.update(checkCF => checkCF + 1);
       this.displayCalFat.set(true);
-      //this.actionCalFat++
-      //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"resultCheckLimitCalFat"}));
+      console.log ('Return file system in mainHealth iWait=1 - new value resultCheckLimitCalFat=' + this.resultCheckLimitCalFat) 
     } else if (event.iWait===5){
       this.returnDataFSParamChart = event;
-      this.resultCheckLimitParamChart++
+      //this.resultCheckLimitParamChart++;
+      this.resultCheckLimitCalFat.update(checkCF => checkCF + 1);
+      
     }  else if (event.iWait===6){
       this.returnDataFSRecipe = event;
-      //this.resultCheckLimitRecipe++
-      //this.resultCheckLimitCalFat.update(check => check + 1);
-      this.resultCheckLimitCalFat++;
+      //this.resultCheckLimitCalFat++;
+      this.resultCheckLimitCalFat.update(checkCF => checkCF + 1);
       this.displayCalFat.set(true);
-      //this.actionCalFat++
-      //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"resultCheckLimitCalFat"}));
-      
     } 
     //this.resetSignal();
   }
