@@ -52,6 +52,7 @@
                         }
                         {{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec
                     </span>
+                    <br><br>
                 }
             </div>  
         </div>
@@ -359,7 +360,7 @@
 
 
     <div class="skipLine">&nbsp;</div>  
-    <div style="border:solid 2px blue; background-color: lightskyblue;display:inline-block; " [style]="{'width': (HTMLCaloriesFat.width+10) + 'px'}">
+    <div style="border:solid 2px blue; background-color: lightskyblue; display:inline-block; width:865px; max-height:470px;" >
     
         @if (isErrorFS() && errorMsgFS !==""){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">{{errorMsgFS}}</div>
@@ -375,8 +376,8 @@
             </app-running-clock>
             -->
 
-            <div style="padding-left:700px; font-size:13px; ">
-                @if (signalTime()>0){
+            <div style="width:100%; margin-top:10px; padding-left:500px; font-size:13px; ">
+                @if (signalTime()>0  && this.identification.triggerFileSystem.toUpperCase()==="YES"){
                     <span >Time out will occur in</span> 
                     <span style="border: black double 2px;margin-left:5px;"> 
                         @if(displayHour!==0) { 
@@ -388,7 +389,6 @@
             </div>  
             
         </div>
-        <div class="skipLine">&nbsp;</div>
             <!-- =======================================================
                 ================     Search function    ================ 
                 ========================================================
@@ -406,24 +406,22 @@
                 ================ Display and Manage Calories & Fat table ================ 
                 =========================================================================
             -->
-
-        <div [style]="{'height':HTMLCaloriesFat.title.height + 'px', 'min-width': HTMLCaloriesFat.minwidth + 'px' , 'width': HTMLCaloriesFat.width + 'px', 
-                'margin-left':5 + 'px', 'display':'inline-block', 'overflow':'hidden'}" 
-            >
-            <!-- ================== TITLE =============== -->
-                <div [style]="divClassHeader[0]">
-                 <input [style]="tabHeader[0]" type="text" value="Action">
+            
+        <div style="width:850px; margin-left:5px; display:inline-block; overflow:hidden; height:35px;" 
+                [style.background-color]='HTMLCaloriesFat.title.background'>
+            <div class="divHeader" >
+                 <input [style.width.px]="HTMLCaloriesFat.colWidth.action" class="contentHeader"  type="text" value="Action">
             </div>
-            <div [style]="divClassHeader[1]">
-                <div [style]="tabHeader[1]">Recipe          <button class="theArrow"   id='Recipe'    (click)="onFilter($event)">
+            <div class="divHeader" >
+                <div class="contentHeader" style="margin-top:0px;" [style.width.px]="HTMLCaloriesFat.colWidth.type">Recipe   <button class="theArrow" id='Recipe' (click)="onFilter($event)">
                         <mat-icon class="material-symbols-outlined"  id='Recipe' (click)="onFilter($event)">
                             arrow_drop_down
                         </mat-icon>
                     </button>  
                 </div>
             </div>
-            <div [style]="divClassHeader[2]">
-                <div [style]="tabHeader[2]">Food (Filter)
+            <div class="divHeader" >
+                <div class="contentHeader"  style="margin-top:0px;" [style.width.px]="HTMLCaloriesFat.colWidth.ingr">Food (Filter)
                     <button class="theArrow"  style="margin-left:35px;"  id='RecipeFood' (click)="onFilter($event)">
                         <mat-icon class="material-symbols-outlined"  id='RecipeFood' >
                             arrow_drop_down
@@ -431,37 +429,37 @@
                     </button>  
                 </div>
             </div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Serving"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Unit"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Serving"></div>
+            <div class="divHeader">
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Unit"></div>
                 
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Calories"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Protein"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Carbs"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Calories"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Protein"></div>
+            <div class="divHeader" >
+                <input class="contentHeader"[style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Carbs"></div>
             <!--
             <div [style]="divClassHeader[3]">
                 <input [style]="tabHeader[3]" type="text" value="Glycemic Index"></div>
             -->
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Sugar"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Natural"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Added"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Cholest."></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Sat. fat"></div>
-            <div [style]="divClassHeader[3]">
-                <input [style]="tabHeader[3]" type="text" value="Total fat"></div>
+            <div class="divHeader">
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Sugar"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Natural"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Added"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Cholest."></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Sat. fat"></div>
+            <div class="divHeader" >
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Total fat"></div>
             <!--
             <div [style]="divClassHeader[3]"> style="padding-top:3px;  border-right:2px solid darkcyan;">Lock </div>
             -->
-        </div>
+        </div>  
                 <!-- ================== DROPDOWN LIST : type =============== -->
         @if (filterType){
             <div class="dropdown ">
@@ -523,72 +521,68 @@
             </div>
         }
 
-        <div id="posStartTable" [style]="{'margin-top':0.1 + 'px', 'overflow-y':'scroll', 'overflow-x':'hidden', 'display':'inline-block','max-height':HTMLCaloriesFat.height + 'px', 
-                    'min-width': HTMLCaloriesFat.minwidth  + 'px', 'width': HTMLCaloriesFat.width + 'px', 'color':HTMLCaloriesFat.color, 'margin-left':5 + 'px'}" >
+        <div id="posStartTable" style="margin-top:0.1px; max-height:300px; overflow-y:scroll; overflow-x:hidden; display:inline-block; margin-left:5px;"
+                    [style.width.px]="HTMLCaloriesFat.width" [style.color]="HTMLCaloriesFat.color">
             <!-- ================== display of the table =============== -->
             <div *ngFor="let tab of outConfigCaloriesFat.tabCaloriesFat; let i=index ">
                 @if (selType==='' || (selType.toLowerCase().trim()!=='' && selType.toLowerCase().trim()===tab.Type.toLowerCase().trim())){
                     <div *ngFor="let content of outConfigCaloriesFat.tabCaloriesFat[i].Content; let j=index">
                         @if (selFood==='' ||  (selFood.toLowerCase().trim()!=='' && selFood.toLowerCase().trim()===content.Name.toLowerCase().trim())){
                             @if (checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
-                                <div  style="display:inline-block; width:100%;" >
+                                <div  style="width:850px; box-sizing: border-box; height:25px; border:0px red solid; border-bottom:0px blue solid;"
+                                        [style.background-color]="HTMLCaloriesFat.row.even" [style.color]="HTMLCaloriesFat.row.color" >
                                     <!-- all items below will be next to each other-->    
-                                        <div [style]="tabDivContent[0]">
-                                            <div [style]="tabStyleBox[tabNewRecord[i].ngStyle][0]" >
-                                                <div style="padding-left:0px;">
-                                                    <div id='openAction-{{i}}-{{j}}'  class="circle" (click)="onAction($event)">
-                                                        <div style="margin-top:2px;">A</div>
-                                                    </div>
+                                        <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.action">
+                                            <div class="styleInput textHover" [style.pointer-events]="j === 0 ? 'auto' : 'none'" style="margin-left:15px">
+                                                <div id="'openAction-' 'i + '-' + j"  class="circle" (click)="onAction($event)">
+                                                    <div style="margin-top:2px;">A</div>
                                                 </div>
                                             </div>            
                                         </div>
-                                        <div [style]="tabDivContent[1]">
-                                            @if (j===0){ 
-                                                <input [style]="tabStyleInput[tabNewRecord[i].ngStyle][1]" class="textHover" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="type-{{i}}" placeholder="meat/fish/oil"   value="{{tab.Type}}" >
-                                            } @else{    
-                                                <input [style]="tabStyleInput[tabNewRecord[i].ngStyle][1]" [readonly]='inputReadOnly'  type="text" style="pointer-events:none; background-color: white !important;" value="&nbsp;">
-                                            }   
+                                        <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.type">
+                                            <input class="styleInput textHover" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="'type-' + i" placeholder="meat/fish/oil"  
+                                                 [value]="j === 0 ? tab.Type : '&nbsp;'" > 
                                         </div>
-                                        <div [style]="tabDivContent[2]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][2]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}"  value="&nbsp;{{content.Name}}"   >
+                                        <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.ingr">
+                                            <input class="styleInput textHover"  style="text-align:left;" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="name-{{i}}-{{j}}"  value="&nbsp;{{content.Name}}"   >
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
+                                        <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="serv-{{i}}-{{j}}"  value="{{content.Serving}}"    >
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}"  value="{{content.ServingUnit}}"  >
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="unit-{{i}}-{{j}}"  value="{{content.ServingUnit}}"  >
                                         </div>
-                                        <div [style]="tabDivContent[3]"> 
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="calo-{{i}}-{{j}}"  value="{{content.Calories}}"  >
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other"> 
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="calo-{{i}}-{{j}}"  value="{{content.Calories}}"  >
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="prot-{{i}}-{{j}}"  value="{{content.Protein}}" >
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="prot-{{i}}-{{j}}"  value="{{content.Protein}}" >
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="carb-{{i}}-{{j}}"  value="{{content.Carbs}}"  >
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="carb-{{i}}-{{j}}"  value="{{content.Carbs}}"  >
                                             <!--
                                         </div>
                                         <div [style]="tabDivContent[3]">
                                             <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="glyi-{{i}}-{{j}}"  value="{{content.GlyIndex}}"  >
                                             -->
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}"  value="{{content.Sugar}}" >                     
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="suga-{{i}}-{{j}}"  value="{{content.Sugar}}" >                     
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="naturalSuga-{{i}}-{{j}}"  value="{{content.naturalSugar}}" >                     
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="naturalSuga-{{i}}-{{j}}"  value="{{content.naturalSugar}}" >                     
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]"  class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="addedSuga-{{i}}-{{j}}" value="{{content.addedSugar}}" >                     
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="addedSuga-{{i}}-{{j}}" value="{{content.addedSugar}}" >                     
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}"  value="{{content.Cholesterol}}">
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="chol-{{i}}-{{j}}"  value="{{content.Cholesterol}}">
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]"  class="textHover" [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}"  value="{{content.Fat.Saturated}}"  >
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="satu-{{i}}-{{j}}"  value="{{content.Fat.Saturated}}"  >
                                         </div>
-                                        <div [style]="tabDivContent[3]">
-                                            <input [style]="tabStyleInput[tabNewRecord[i].food[j].ngStyle][3]" class="textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="'tota-' + i + '-' + j"  value="{{content.Fat.Total}}" >                                
+                                        <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" id="'tota-' + i + '-' + j"  value="{{content.Fat.Total}}" >                                
                                         </div>
                                     </div>
                             }
