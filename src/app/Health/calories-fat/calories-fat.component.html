@@ -520,7 +520,6 @@
                     </div>
             </div>
         }
-
         <div id="posStartTable" style="margin-top:0.1px; max-height:300px; overflow-y:scroll; overflow-x:hidden; display:inline-block; margin-left:5px;"
                     [style.width.px]="HTMLCaloriesFat.width" [style.color]="HTMLCaloriesFat.color">
             <!-- ================== display of the table =============== -->
@@ -530,7 +529,7 @@
                         @if (selFood==='' ||  (selFood.toLowerCase().trim()!=='' && selFood.toLowerCase().trim()===content.Name.toLowerCase().trim())){
                             @if (checkText==='' || (checkText!=='' && content.Name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
                                 <div  style="width:850px; box-sizing: border-box; height:25px; border:0px red solid; border-bottom:0px blue solid;"
-                                        [style.background-color]="HTMLCaloriesFat.row.even" [style.color]="HTMLCaloriesFat.row.color" >
+                                        [style.background-color]="HTMLCaloriesFat.row.even" [style.color]="'white'" >
                                     <!-- all items below will be next to each other-->    
                                         <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.action">
                                             <div class="styleInput textHover" [style.pointer-events]="j === 0 ? 'auto' : 'none'" style="margin-left:15px">

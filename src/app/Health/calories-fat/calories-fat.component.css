@@ -54,11 +54,12 @@ div{
   background-color: transparent !important;
   width: 100%;
   box-sizing: border-box;
+  color:white ;
 }
 
 .styleTotal{
   font-size: 16px;
-  color:red;
+  color:red ;
   font-weight: bolder;
 }
 
@@ -136,9 +137,9 @@ div{
 }
 
 .textHover:hover{
-  color:red ;
+  color:red !important;
   font-weight: bold;
-  background-color:white ;
+  background-color:white !important;
 }
 
 .theRadio{
