@@ -212,7 +212,7 @@
         <div class="response"   >
             <div style=' margin-top:-20px;width:450px; max-width:450px; display:inline-block; border: solid 2px blue; max-height:300px; box-sizing: border-box; overflow-y: scroll; overflow-x: hidden;'>
 
-                <li *ngFor="let Metadata of myListOfObjects.items; let i=index; " >
+                <li *ngFor="let Metadata of myListOfMeta.items; let i=index; " >
                     <div style='box-sizing: border-box; width:450px; max-width:450px; display:inline-block; border: solid 2px red; '  [ngClass]="{'even': i % 2 ===0, 'odd': i % 2 !==0}">
                         <span class="theLine"> <span class='label' style="width:110px;">Bucket</span><span class='theMetadata'>{{Metadata.bucket}}</span></span>
                         <span class="theLine"><span class='label' style="width:110px;">Object</span><span class='theMetadata'>{{Metadata.name}}</span></span>

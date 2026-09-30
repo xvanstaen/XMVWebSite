@@ -1561,21 +1561,20 @@ iRecipeSave:number=0;
     }
     
     for (var i=0; i<3; i++){
-      var iWidth=-2;//-2
-      var iHeight=2;//0
+      var iWidth=0;//-2
+      var iHeight=0;//2
       this.tabStyleInput[i]=[];
       this.tabStyleInput[i][0]=this.createStyle(this.HTMLCaloriesFat.colWidth.action,iWidth,iHeight,i,'center');
       this.tabStyleInput[i][1]=this.createStyle(this.HTMLCaloriesFat.colWidth.type,iWidth,iHeight,i,'center');
       this.tabStyleInput[i][2]=this.createStyle(this.HTMLCaloriesFat.colWidth.ingr,iWidth,iHeight,i,'left');
       this.tabStyleInput[i][3]=this.createStyle(this.HTMLCaloriesFat.colWidth.other,iWidth,iHeight,i,'center');
       iWidth=0;
-      iHeight=0;//1
+      iHeight=0;
       this.tabStyleBox[i]=[];
       this.tabStyleBox[i][0]=this.createStyle(this.HTMLCaloriesFat.colWidth.action,2,2,i,'center');
       this.tabStyleBox[i][1]=this.createStyle(this.HTMLCaloriesFat.colWidth.type,iWidth,iHeight,i,'center');
       this.tabStyleBox[i][2]=this.createStyle(this.HTMLCaloriesFat.colWidth.ingr,iWidth,iHeight,i,'left');
       this.tabStyleBox[i][3]=this.createStyle(this.HTMLCaloriesFat.colWidth.other,iWidth,iHeight,i,'center');
-
     }
 
     this.tabDivTotal[0]=this.createDivClassTotal(this.HTMLCaloriesFat.colWidth.action);
@@ -1590,7 +1589,6 @@ iRecipeSave:number=0;
       this.tabTotal[i][2]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.ingr),i,-2,'center');
       this.tabTotal[i][3]=this.createTotal(Number(this.HTMLCaloriesFat.colWidth.other),i,-2,'center');
     }
-    
   }
 
   createDivClassHeader(width:any){
@@ -1601,7 +1599,6 @@ iRecipeSave:number=0;
         'height':  Number(this.HTMLCaloriesFat.title.height)+ 'px' ,
         'display':'block',
         'float':'left',
-        
       }
   } 
 
@@ -1626,21 +1623,20 @@ iRecipeSave:number=0;
         'border-left':'1px grey solid', 
         'border-right':'1px rgb(251, 249, 249) solid',
         'border-bottom':'1px rgb(251, 249, 249) solid', 
-      
     }
   } 
-
 
   createDivClassContent(width:any, iTab:number){
     var style:any;
     var addHeight=0;
-    var theBlock="block";
-
+    var theBlock="inline-block";  // "block";
     return style = {
       'width': width+ 'px',
       'height':  (Number(this.HTMLCaloriesFat.row.height) + addHeight) + 'px',
       'display':theBlock,
-      'float':'left',
+      'border':'0px red solid', 
+
+      //'float':'left',
     }
   }
 
@@ -1655,7 +1651,7 @@ iRecipeSave:number=0;
       theColor=this.HTMLCaloriesFat.rowNew.color;
     } 
     var addHeight=0;
-    var theBlock="inline-block";
+    var theBlock="inline-block"; 
 
     if (iTab===0 ){
       addHeight=2;
@@ -1665,28 +1661,30 @@ iRecipeSave:number=0;
         'height': (Number(this.HTMLCaloriesFat.row.height) + addHeight) + 'px',
         'color': theColor,  
         'text-align': align,
-        'display':'block',
-        'float':'left',
+        'display':theBlock,
+        'border':'1px yellow solid', 
+        //'float':'left',
       }
     } else if (iTab===4){
         addHeight=2;
         return style = {
-          'background-color':backColor,
+          'background-color':'cyan', //backColor,
           'width': width+ 'px',
           'height': Number(this.HTMLCaloriesFat.row.height)  + addHeight+ 'px',
-          'display':'block',
-          'float':'left',
+          'display':theBlock,
+          //'float':'left',
           'pointer-events':'none',
           'text-align': align,
+          'border':'0px yellow solid', 
         }
     } else {
         return style = {
-          'background-color':backColor,
+          'background-color':'pink', //backColor,
           'width': width+ 'px',
           'height': (Number(this.HTMLCaloriesFat.row.height)  + addHeight) + 'px',
           'color': theColor,  
           'text-align': align,
-
+          'border':'0px red solid', 
         }
     }
   }
@@ -1707,8 +1705,11 @@ iRecipeSave:number=0;
         'height': (Number(this.HTMLCaloriesFat.row.height) + iHeight) + 'px',
         'color': theColor,  
         'text-align': align,
-        'border':'none',
-        'display':'inline-block',
+        'border':'0px green solid', //'none',
+        'display':"flex", //'inline-block',
+        'gap':'2px',
+        'justify-content': 'space-between',
+        'flex-direction': 'row', 
       }
   }
 

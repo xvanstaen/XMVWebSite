@@ -98,6 +98,7 @@ export class TestServerJSComponent {
 
   TabBuckets = [{ name: '' }];
   myListOfObjects = new Bucket_List_Info;
+  myListOfMeta = new Bucket_List_Info;
   oneMetadata = new OneBucketInfo;
 
   bucket_data: string = '';
@@ -1450,7 +1451,7 @@ listConfig(){
   listMetaDataObject(bucket: any) {
     this.initBeforeCallAPI(3);
     this.isGetListMetaObject.set(false);
-    this.myListOfObjects.items.splice(0, this.myListOfObjects.items.length);
+    this.myListOfMeta.items.splice(0, this.myListOfMeta.items.length);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
     this.ManageGoogleService.getListMetaObjects(this.newConfigServer, bucket)
       .subscribe((data) => {
@@ -1458,8 +1459,8 @@ listConfig(){
         this.tabListMetaPerso.splice(0,this.tabListMetaPerso.length);
         for (var i = 0; i < data.length; i++) {
           const metadata = new OneBucketInfo;
-          this.myListOfObjects.items.push(metadata);
-          this.myListOfObjects.items[i] = data[i].items;
+          this.myListOfMeta.items.push(metadata);
+          this.myListOfMeta.items[i] = data[i].items;
           if (data[i].items.metadata!==undefined){
             this.tabListMetaPerso[i]=JSON.stringify(data[i].items.metadata);
           } else {
@@ -1486,7 +1487,7 @@ listConfig(){
 
 
   getMetaData(bucket: any, object: any) {
-    this.returnFileContent="";
+    //this.returnFileContent="";
     this.isGetMetaOneObject.set(false);
     this.initBeforeCallAPI(4);
     this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
@@ -1497,7 +1498,7 @@ listConfig(){
           this.EventStopWaitHTTP[4]=true;
           //this.configServer.googleServer=saveGoogleServer;
           var k=0;
-          this.returnFileContent = JSON.stringify(data);
+          //this.returnFileContent = JSON.stringify(data);
           this.theForm.controls['metaControl'].setValue(data.cacheControl);
           this.theForm.controls['metaType'].setValue(data.contentType);
           this.strMetaDataPerso = JSON.stringify(data.metadata);
