@@ -63,7 +63,7 @@
                  <input [style.width.px]="HTMLCaloriesFat.colWidth.action" class="contentHeader"  type="text" value="Action">
             </div>
             <div class="divHeader" >
-                <div class="contentHeader" style="margin-top:0px;" [style.width.px]="HTMLCaloriesFat.colWidth.type">Recipe   <button class="theArrow" id='Recipe' (click)="onFilter($event)">
+                <div class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.type">Recipe   <button class="theArrow" id='Recipe' (click)="onFilter($event)">
                         <mat-icon class="material-symbols-outlined"  id='Recipe' (click)="onFilter($event)">
                             arrow_drop_down
                         </mat-icon>
@@ -71,7 +71,7 @@
                 </div>
             </div>
             <div class="divHeader" >
-                <div class="contentHeader"  style="margin-top:0px;" [style.width.px]="HTMLCaloriesFat.colWidth.ingr">Food (Filter)
+                <div class="contentHeader"  [style.width.px]="HTMLCaloriesFat.colWidth.ingr">Food (Filter)
                     <button class="theArrow"  style="margin-left:35px;"  id='RecipeFood' (click)="onFilter($event)">
                         <mat-icon class="material-symbols-outlined"  id='RecipeFood' >
                             arrow_drop_down
@@ -80,14 +80,14 @@
                 </div>
             </div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Serving"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Serv."></div>
             <div class="divHeader">
                 <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Unit"></div>
                 
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Calories"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Cal."></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Protein"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Prot."></div>
             <div class="divHeader" >
                 <input class="contentHeader"[style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Carbs"></div>
             <!--
@@ -97,15 +97,15 @@
             <div class="divHeader">
                 <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Sugar"></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Natural"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Nat."></div>
             <div class="divHeader" >
                 <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Added"></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Cholest."></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Chol."></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Sat. fat"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Sat."></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Total fat"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Total"></div>
             <!--
             <div [style]="divClassHeader[3]"> style="padding-top:3px;  border-right:2px solid darkcyan;">Lock </div>
             -->
@@ -204,7 +204,7 @@
                                     </div>       
                                 </div>
                                 <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.type">
-                                        <input class="styleInput textHover" 
+                                        <input class="styleInput textHover"  style="text-align:left" 
                                             [style.color]="HTMLCaloriesFat.row.color" [style.pointer-events]="j === 0 ? 'auto' : 'none'"
                                             [readonly]='inputReadOnly'  type="text" (input)="onInputRecipe($event)" id="'type-' + i" placeholder="meat/fish/oil"   
                                             [value]="j === 0 ? tab.Type : '&nbsp;'" >
@@ -430,14 +430,14 @@
                 </div>
             </div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Serving"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Serv."></div>
             <div class="divHeader">
                 <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Unit"></div>
                 
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Calories"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Cal."></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Protein"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Prot."></div>
             <div class="divHeader" >
                 <input class="contentHeader"[style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Carbs"></div>
             <!--
@@ -447,15 +447,15 @@
             <div class="divHeader">
                 <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Sugar"></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Natural"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other" type="text" value="Nat."></div>
             <div class="divHeader" >
                 <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Added"></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Cholest."></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Chol."></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Sat. fat"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Sat."></div>
             <div class="divHeader" >
-                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Total fat"></div>
+                <input class="contentHeader" [style.width.px]="HTMLCaloriesFat.colWidth.other"type="text" value="Total"></div>
             <!--
             <div [style]="divClassHeader[3]"> style="padding-top:3px;  border-right:2px solid darkcyan;">Lock </div>
             -->
@@ -539,7 +539,7 @@
                                             </div>            
                                         </div>
                                         <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.type">
-                                            <input class="styleInput textHover" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="'type-' + i" placeholder="meat/fish/oil"  
+                                            <input class="styleInput textHover"  style="text-align:left" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" id="'type-' + i" placeholder="meat/fish/oil"  
                                                  [value]="j === 0 ? tab.Type : '&nbsp;'" > 
                                         </div>
                                         <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.ingr">

@@ -142,7 +142,7 @@ tabSelRadio[3]={{tabSelRadio[3]}}
         </div>
     } 
  <br>
-    @if (isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true &&  EventHTTPReceived[3]===true){
+    @if ( displayCalFat()){ <!-- isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true &&  EventHTTPReceived[3]===true || -->
         <div id='posTopAppCalFat'>   <!--    && tabLock[1].lock!==3 -->
             <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay"
                 [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock" 

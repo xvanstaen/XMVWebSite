@@ -79,6 +79,7 @@ export class MainHealthComponent {
   //actionHealth:number=-1;
   //displayHealthAll=signal<number>(0);
   displayHealthAll=signal<boolean>(false);
+   displayCalFat=signal<boolean>(false);
   //actionCalFat:number=-1;
   //triggerCalFat=signal<returnSignal>({nb:-1, function:""});
 
@@ -96,7 +97,6 @@ export class MainHealthComponent {
 
   //resultCheckLimitHealth=signal<number>(-1);
   resultCheckLimitHealth:number=-1;
-  //resultCheckLimitCalFat=signal<number>(-1);
   resultCheckLimitCalFat:number=-1;
   resultCheckLimitParamChart:number=0;
   resultCheckLimitRecipe:number=0;
@@ -323,6 +323,7 @@ export class MainHealthComponent {
       this.returnDataFSCalFat = event;
       //this.resultCheckLimitCalFat.update(check => check + 1);
       this.resultCheckLimitCalFat++;
+      this.displayCalFat.set(true);
       //this.actionCalFat++
       //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"resultCheckLimitCalFat"}));
     } else if (event.iWait===5){
@@ -333,6 +334,7 @@ export class MainHealthComponent {
       //this.resultCheckLimitRecipe++
       //this.resultCheckLimitCalFat.update(check => check + 1);
       this.resultCheckLimitCalFat++;
+      this.displayCalFat.set(true);
       //this.actionCalFat++
       //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"resultCheckLimitCalFat"}));
       
@@ -429,6 +431,7 @@ export class MainHealthComponent {
           this.ConfigCaloriesFat.updatedAt = '';
         }
         this.ConfigCaloriesFat.tabCaloriesFat = event.content.tabCaloriesFat;
+        this.displayCalFat.set(true);
         this.calFatFileRetrieved.update( calFatF => calFatF + 1);
         //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"calFatFileRetrieved"}));
         
@@ -504,6 +507,7 @@ export class MainHealthComponent {
           this.fileRecipe.updatedAt = '';
         }
         this.fileRecipe.tabCaloriesFat = event.content.tabCaloriesFat;
+        this.displayCalFat.set(true);
         this.recipeFileRetrieved.update( recipeF => recipeF + 1);
         //this.triggerCalFat.update((ad) => ({...ad, nb:this.actionCalFat, function:"recipeFileRetrieved"}));
       } else if (iWait === 10) { 
@@ -660,7 +664,12 @@ export class MainHealthComponent {
           this.iWaitToRetrieve[0].iWait=1;
           this.iWaitToRetrieve[0].accessFS=true;
         } 
-        
+                this.isDisplayAll = true;
+        if (this.EventHTTPReceived[1]===true) {
+          this.displayCalFat.set(true);
+        } else {
+          this.displayCalFat.set(false);
+        }
         if (this.EventHTTPReceived[3]===false){
             const theClass=new classRetrieveFile;
             this.iWaitToRetrieve.push(theClass);
@@ -688,6 +697,7 @@ export class MainHealthComponent {
 
       } else {
         this.isMgtCaloriesFat = false;
+        this.displayCalFat.set(false);
         //if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
         //    this.tabLock[1].lock === 1;
         //    this.tabLock[6].lock === 1;

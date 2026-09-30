@@ -73,7 +73,7 @@ export class CaloriesFatComponent implements OnInit {
   @Input() returnDataFSRecipe = new classHeaderReturnDataFS;
   @Input() statusSaveFn:any;
 
-  @Input() resultCheckLimitCalFat:number=-1; //=input.required<number>();
+  @Input() resultCheckLimitCalFat:number=-1;
   previousResultCheckLimitCalFat:number=-1;
   triggerCalFatSave=input.required<number>();
   previousTriggerCalFatSave:number=-1;
@@ -231,6 +231,11 @@ export class CaloriesFatComponent implements OnInit {
 constructor(
     private scroller: ViewportScroller,
     ) {effect (() => {
+        if (this.tabLock[1].lock===1){
+              this.inputReadOnly=false;
+        } else {
+              this.inputReadOnly=true;
+        }
         if (this.previousResultCheckLimitCalFat!==this.resultCheckLimitCalFat){
           this.previousResultCheckLimitCalFat=this.resultCheckLimitCalFat;
           if (this.tabLock[1].lock===1){
@@ -253,11 +258,13 @@ constructor(
             } else {
                 this.inputReadOnly=true;
             }
+            this.initialiseFiles("calFat");
             this.theEvent.target.id='RecipeCancel';
             this.CancelUpdates(this.theEvent);
         }
         if (this.previousRecipeFileRetrieved!==this.recipeFileRetrieved()){
             this.previousRecipeFileRetrieved=this.recipeFileRetrieved();
+            this.initialiseFiles("recipe");
             this.theEvent.target.id='calFatCancel';
             this.CancelUpdates(this.theEvent);
         }
@@ -1532,8 +1539,8 @@ iRecipeSave:number=0;
         this.tabFood.splice(0,0,{name:'cancel'});
     }
   }
-
-  fillClassHeader(){
+  fillClassHeader(){} 
+  fillClassHeaderA(){
     this.divClassHeader[0]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.action);
     this.divClassHeader[1]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.type);
     this.divClassHeader[2]=this.createDivClassHeader(this.HTMLCaloriesFat.colWidth.ingr);
