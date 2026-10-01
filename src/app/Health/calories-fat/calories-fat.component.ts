@@ -669,7 +669,7 @@ onActionA(event:any){
           } else if (this.TabActionRecipe[iAction].action==='add after'){
               this.createAfterBefore(this.TabOfId[0]+1,'Recipe');
           }  else if (this.TabActionRecipe[iAction].action==='delete'){
-          if (this.outFileRecipe.tabCaloriesFat.length==1 ){
+          if (this.outFileRecipe.tabCaloriesFat.length===1 ){
               this.nameDeletedItem='';
               this.errorMsg='only one item - cannot be deleted';
           } else {
