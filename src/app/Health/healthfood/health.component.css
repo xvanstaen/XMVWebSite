@@ -72,13 +72,19 @@ input[type="date"] {
 .contentHeader{
   margin-top:4px;
   border:0px white solid;
-  display:inline-block;
   text-align:center;
   overflow-wrap:break-word;
   word-break: break-all;
   font-size:12px;
-  color:white;
   background-color: transparent !important;
+  display:flex;
+  /*border:0px red solid;*/
+  gap:2px;
+  justify-content: space-between;
+  flex-direction: row; 
+  width: 100%;
+  box-sizing: border-box;
+  color:white;
 }
 
 .alignL{
@@ -115,8 +121,8 @@ input[type="date"] {
 .healthRow {
   width: 920px; 
   height: 35px; 
-  border: 3px solid red; 
-  border-bottom: 2px solid blue;
+  border: 0px solid red; 
+  border-bottom: 0px solid blue;
   display: flex; /* Ensures the columns line up next to each other */
   align-items: center;
 }

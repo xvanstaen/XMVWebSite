@@ -118,38 +118,38 @@
             <div   class="healthRow" id="posAfterTitle" style="  margin-top:15px;  margin-left:5px; " 
                     [style.height.px]="confTableAll.row.height+6" [style.background-color]="confTableAll.title.background"
                     >
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.action" type="text" value="Action"></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.date" type="text" value="Date"></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.calBurnt" type="text" value="Burnt"></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.meal" type="text" value="Meal"></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.ingr" type="text" value="Ingr."></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Quant."></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Unit"></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Cal."></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Chol."></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Prot."></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Carbs"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.action">
+                    <input class="contentHeader"  type="text" value="Action"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.date">
+                    <input class="contentHeader"  type="text" value="Date"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.calBurnt">
+                    <input class="contentHeader"  type="text" value="Burnt"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.meal">
+                    <input class="contentHeader"  type="text" value="Meal"></div>
+                <div class="divHeader"[style.width.px]="confTableAll.colWidth.ingr">
+                    <input class="contentHeader"  type="text" value="Ingr."></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Quant."></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Unit"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Cal."></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Chol."></div>
+                <div class="divHeader"  [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader" type="text" value="Prot."></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Carbs"></div>
                 <!--
                     <div [style]="divClassHeader[5]">
                     <input [style]="tabHeader[5]" type="text" value="Gly"></div>
                 -->
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Sugar"></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Sat."></div>
-                <div class="divHeader">
-                    <input class="contentHeader" [style.width.px]="confTableAll.colWidth.other" type="text" value="Total"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Sugar"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Sat."></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader" type="text" value="Total"></div>
             </div>
 
             <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
@@ -230,13 +230,8 @@
             }
             <!-----   MANAGEMENT OF ALL HEALTH DATA - DISPLAY OF THE TABLE -->
 
-            <div class="tableContainer" [style.width.px]="920" [style.color]="confTableAll.row.color" [style.height.px]="confTableAll.height"
-                    
-                > <!--[style.width.px]="confTableAll.width-20" [style.height.px]="confTableAll.height"
-                     [style.color]="confTableAll.color" [style.background-color]="confTableAll.background" -->
-                <!--
-                <div ngfor="myDaily of HealthAllData.tabDailyReport; let i=index"  [style.background-color]="i % 2 === 0 ? confTableAll.row.even : confTableAll.row.odd"> 
-                -->
+            <div class="tableContainer" [style.width.px]="920" [style.color]="confTableAll.row.color" 
+                        [style.height.px]="confTableAll.height"> 
                 @for (myDaily of HealthAllData.tabDailyReport; track $index; let i = $index) {
                     @let rowColor = i % 2 === 0 ? confTableAll.row.even : confTableAll.row.odd;
                     <div [style.background-color]="rowColor">
@@ -248,7 +243,7 @@
                             @if (searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))){
                                 @if (checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
-                                <div class="healthRow" [style.background-color]="rowColor">
+                                <div class="healthRow" >
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.action">
                                         <div class="circle" 
                                               [id]="'openAction-'  + i + '-' + k + '-' + j" (click)="onAction($event)" >
