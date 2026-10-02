@@ -285,8 +285,6 @@ export class MainManageFileComponent {
     }
     this.iWait=event;
     this.tabLock[this.iWait].action='check&update';
-    //this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1)
-    //this.callFileSystem=true; 
   }
 
   getRecord(Bucket: string, GoogleObject: string, iWait: number) {

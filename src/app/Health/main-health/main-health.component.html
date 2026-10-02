@@ -84,10 +84,6 @@ tabSelRadio[3]={{tabSelRadio[3]}}
         </div>
     }
     @if (displayHealthAll()){ <!--displayHealthAll() && EventHTTPReceived[0]===true && EventHTTPReceived[3]===true && isDisplayAll===true && createNewHealth===false) -->
-        <!--
-        <app-dictionary [configServer]="configServer" [identification]="identification"
-        ></app-dictionary>
-      -->
          <app-health
             [configServer]="configServer" [identification]="identification" [tabLock]="tabLock"
             [confTableAll]="confTableAll" [HealthAllData]="HealthAllData" [ConfigCaloriesFat]="ConfigCaloriesFat"
@@ -162,9 +158,9 @@ tabSelRadio[3]={{tabSelRadio[3]}}
         <div id='posTopAppReportHealth'> <!--  && tabLock[5].lock!==3 -->
             
             <app-report-health [identification]="identification"  [configServer]="configServer"  [inFileParamChart]="fileParamChart" [tabLock]="tabLock"
-                [ConfigChartHealth]="ConfigChart.chartHealth"  [HealthAllData]="HealthAllData"  [actionParamChart]="actionParamChart" 
+                [ConfigChartHealth]="ConfigChart.chartHealth"  [HealthAllData]="HealthAllData" 
                 [resultCheckLimitParamChart]="resultCheckLimitParamChart" [returnDataFSParamChart]="returnDataFSParamChart"
-                [statusSaveFn]="statusSaveFnParamChart" 
+                [statusSaveFn]="statusSaveFnParamChart" [triggerParamSave]=" triggerParamSave()"
                 (processSave)="saveParamChart($event)" (retrieveRecord)="retrieveRecord($event)"  (unlockFile)="unlockFile($event)"
                 (returnFile)="resultGetRecord($event)" (checkLockLimit)="checkLockLimitFn($event)"
                 >

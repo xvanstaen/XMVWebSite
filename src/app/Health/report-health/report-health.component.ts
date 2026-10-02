@@ -80,11 +80,11 @@ export class ReportHealthComponent implements OnInit {
   //@Input() tabLock = new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
   @Input() tabLock: Array<classAccessFile> = [];
   @Input() returnDataFSParamChart = new classHeaderReturnDataFS;
-  @Input() actionParamChart:number = 0;
+
   @Input() resultCheckLimitParamChart:number = 0;
   @Input() statusSaveFn:any;
-  //@Input() callSaveFn:any;
 
+  triggerParamSave=input.required<number>();
   triggerCheckToLimit=signal<number>(0);
   triggerFileSystem=signal<number>(-1);
   triggerReadFile=signal<number>(-1);

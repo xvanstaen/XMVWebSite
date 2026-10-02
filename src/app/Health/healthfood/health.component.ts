@@ -253,6 +253,10 @@ export class HealthComponent  {
     private scroller: ViewportScroller,
     @Inject(LOCALE_ID) private locale: string,
     ) {effect (() => {
+          //if (this.tabLock[0].lock===1 && this.onInputAction!==""){
+          //    this.errorMsg="";
+          //}
+
           if (this.previousresultCheckLimitHealth!==this.resultCheckLimitHealth){
             this.previousresultCheckLimitHealth=this.resultCheckLimitHealth;
             this.afterCheckFS(this.resultCheckLimitHealth);
@@ -481,16 +485,17 @@ export class HealthComponent  {
  
   resultAccessFile(event:any){
     this.openFileAccess.set(false);
+    this.returnDataFSHealth=event;
     console.log('Health component - resultAccessFile');
-    if (this.lockValueBeforeCheck!==this.tabLock[0].lock){
+    if (this.lockValueBeforeCheck!==this.tabLock[0].lock || this.onInputAction!==''){
 
-      if (this.tabLock[0].lock===1){
+      if (this.tabLock[0].lock===1 && this.lockValueBeforeCheck!==this.tabLock[0].lock){
         this.errorMsg = "You can now update the file";
 
       } else if (this.tabLock[0].action==="unlock"){
         this.errorMsg = "File has been unlocked. Relaunch the application";
         this.isUserTimeOut.set(false);
-      } else {
+      } else if (this.tabLock[0].lock!==1){
         this.errorMsg = "File is locked by another user";
         this.isUserTimeOut.set(false);
       }
@@ -1274,6 +1279,7 @@ export class HealthComponent  {
   }
 
   fillClassHeader(){
+    /*
     this.divClassHeader[0]=this.createDivClassHeader(this.confTableAll.colWidth.action);
     this.divClassHeader[1]=this.createDivClassHeader(this.confTableAll.colWidth.date);
     this.divClassHeader[2]=this.createDivClassHeader(this.confTableAll.colWidth.calBurnt);
@@ -1312,6 +1318,7 @@ export class HealthComponent  {
       this.tabContent[i][4]=this.createClassContent(this.confTableAll.colWidth.ingr,i,'left');
       this.tabContent[i][5]=this.createClassContent(this.confTableAll.colWidth.other,i,'center');
     }
+      */
     for (var i=0; i<2; i++){
       this.tabSubTotal[i]=[];
       this.tabSubTotal[i][0]=this.createSubTotal(Number(this.confTableAll.colWidth.action),i);

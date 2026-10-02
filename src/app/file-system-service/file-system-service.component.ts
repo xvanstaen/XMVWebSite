@@ -244,7 +244,10 @@ onFileSystem(iWait: number) {
         dataFromFS.errorCode=955;
         this.tabLock[iWait].lock = 3;
 
-      } else if (data.status === 956) {  // record is locked by another user
+      } else if (data.status === 404) {
+        dataFromFS.errorMsg = dataFromFS.errorMsg + 'status error=' + data.status;
+        dataFromFS.errorCode=404;
+      }else if (data.status === 956) {  // record is locked by another user
         dataFromFS.errorMsg = "status " + data.status + " " + data.msg;
         dataFromFS.theResetServer = true;
         this.tabLock[iWait].lock = 3;

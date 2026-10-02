@@ -36,22 +36,22 @@
         } @else if (tabLock[1].lock===3 ){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
         }
-        <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [style]="{'width': (HTMLCaloriesFat.width+13) + 'px'}">
-            MANAGE RECIPE
+        <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder; width:100%;">
+            <span style="width:100%"> MANAGE RECIPE</span>
             <!-- 
             <app-running-clock [posSizeClock]="posSizeClock">
             </app-running-clock>
             -->
             
-            <div style="width:100%; margin-top:10px; padding-left:500px; font-size:13px; ">
+            <div style="width:100%; display:inline-block; font-size:13px; ">
                 @if (signalTime()>0  && this.identification.triggerFileSystem.toUpperCase()==="YES"){
-                    <span >Time out will occur in</span> 
-                    <span style="border: black double 2px; margin-left:5px;"> 
-                        @if(displayHour!==0) { 
-                            {{displayHour |number:'2.0-0'}} hour(s)
-                        }
-                        {{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec
-                    </span>
+                    <div style="display:block; float:right;  margin-right:10px; border: green double 2px; width:250px;">
+                        Time out will occur in&nbsp; 
+                            @if(displayHour!==0) { 
+                                {{displayHour |number:'2.0-0'}} hour(s)
+                            }
+                            {{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec
+                    </div>
                     <br><br>
                 }
             </div>  
@@ -369,25 +369,25 @@
         } @else if (tabLock[1].lock===3){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">Checking if file is locked by another user</div>
         }
-        <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder;" [style]="{'width': (HTMLCaloriesFat.width+10) + 'px'}">
-            MANAGE CALORIES & FAT
-            <!--
+        <div style="margin-top:5px; font-size:18px; color:blue; display:inline-block; text-align:center; font-weight:bolder; width:100%;">
+            <span style="width:100%"> MANAGE CALORIES & FAT</span>
+            <!-- 
             <app-running-clock [posSizeClock]="posSizeClock">
             </app-running-clock>
             -->
-
-            <div style="width:100%; margin-top:10px; padding-left:500px; font-size:13px; ">
+            
+            <div style="width:100%; display:inline-block; font-size:13px; ">
                 @if (signalTime()>0  && this.identification.triggerFileSystem.toUpperCase()==="YES"){
-                    <span >Time out will occur in</span> 
-                    <span style="border: black double 2px;margin-left:5px;"> 
-                        @if(displayHour!==0) { 
-                            {{displayHour |number:'2.0-0'}} hour(s)
-                        }
-                        {{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec
-                    </span>
+                    <div style="display:block; float:right;  margin-right:10px; border: green double 2px; width:250px;">
+                        Time out will occur in&nbsp; 
+                            @if(displayHour!==0) { 
+                                {{displayHour |number:'2.0-0'}} hour(s)
+                            }
+                            {{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec
+                    </div>
+                    <br><br>
                 }
             </div>  
-            
         </div>
             <!-- =======================================================
                 ================     Search function    ================ 

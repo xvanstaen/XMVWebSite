@@ -4,6 +4,19 @@ input:focus {
   outline: none;
 }
 
+input {
+  border: none;       /* Removes the initial default border */
+  outline: none;    /* Removes the default focus ring/highlight */
+}
+
+input[type="date"] {
+  /* Forces the browser to render the native calendar icon and UI in dark mode */
+  color-scheme: dark; 
+  
+  /* Your custom colors for the input box text and background */
+  background-color: white;
+  color: #ffffff;
+}
 ::placeholder{
   font-size:12px;
   color:red;
@@ -11,13 +24,11 @@ input:focus {
 }
 
 .boxHover{
-  background-color: cyan;
+  text-align: center;
 }
 
 .boxHover:hover{
-  background-color: cyan !important;
-  color:blue  !important;
-  border:0px green solid  !important;
+  background-color: blue !important;
 }
 
 .circle{
@@ -26,21 +37,25 @@ input:focus {
   width:18px;
   height:18px;
   border: solid 1px rgb(4, 4, 124);
-  margin-left:8px;
-  font-size:10px;
   font-weight:bold;
   background-color: #8e8c8b;
   text-align: center;
-  padding-top:0px;
+  vertical-align: middle;
   display:inline-block;
+  margin-top:0px;
+  margin-left:14px;
+
+}
+
+.circlLetter{
+  font-size: 16px;
+  margin-top:-3px;
+
 }
 
 .circle:hover{
-  color:red;
-  background-color:cyan;
-  width:22px;
-  height:22px;
-  border: solid 2px rgb(4, 4, 124);
+  color:white !important;
+  background-color:blue !important;
 }
 
 .posConfirm{
@@ -48,36 +63,44 @@ input:focus {
   width:80%;
 }
 
-/*** ====================================== ***/
-/*** ============== @media 1010 ================ ***/
-/*** ====================================== ***/
-/*
-@media only screen and (max-width:830px) {
-  body{
-    max-width: 620px;
-  }
-
-  div{
-    --margLeft: 10px;
-    --LabWidth: 80px;
-    --textWidth:130px;
-  }
+.divHeader{
+  display:block;
+  float:left;
   
-  td {
-    font-size:10px;
-  }
-  th {
-    font-size:10px;
-  }
-
-  .mealBlock{
-    max-width:420px; 
-  }
-
-  .posConfirm{
-    margin-left:90px; 
-  }
-
 }
 
-*/
+.contentHeader{
+  margin-top:4px;
+  border:0px white solid;
+  display:inline-block;
+  text-align:center;
+  overflow-wrap:break-word;
+  word-break: break-all;
+  font-size:14px;
+  color:white;
+  background-color: transparent !important;
+}
+
+.alignL{
+  text-align: left;
+}
+
+.alignC{
+  text-align: center;
+}
+
+.tableContainer{
+  overflow-y:scroll;
+  margin-top:-2px; 
+  margin-left:5px;
+  display:inline-block;
+  border:0px red solid;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+
+.divContent{
+  display:inline-block;
+  box-sizing: border-box;
+  height:25px;
+}

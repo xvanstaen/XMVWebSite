@@ -14,20 +14,18 @@
       -->
   @if (configServer.devMode!=='local'){
  
-    <img  class="sizeMap" src="./assets/Lavender.JPG" >
     
-      <div class="main_box">
-      <h2 class="title "> Welcome!  </h2>
-      <h4 > <br>Log-in to access your specific features </h4>
+     
+    <div class="main_box">
+     
+      <div class="myh2" > Welcome!  </div>
+      <div class="myh4" > Log-in to access your specific features </div>
+      <div style="margin-top:5px;">
+         
+              <label class="error_msg" [style.background-color]="error==='' ? 'rgb(16, 146, 211)' : 'cyan'">  {{error}}</label>
 
+      </div>
       <form class="form_box" [formGroup]="myForm" >
-          <div>
-            @if (error!==""){
-                <label class="error_msg">  {{error}}</label>
-            } @else {
-              <label class="noError_msg">  {{error}}</label>
-            } 
-          </div>
           <div>
               <label class="field-name">user-id</label>
               <input  class="input_field first-label" formControlName="userId" id="UserId" type="text"  >
@@ -52,6 +50,7 @@
 
       </form>
     </div>
+  <div ><img  class="sizeMap" src="./assets/Lavender.JPG" ></div>
   }
 } @else if (routing_code===99){
   <!-- THIS IS TO MANAGE THE DIFFERENT JSON OBJECTS STORED IN GOOGLE CLOUD OR ./assets -->
@@ -64,13 +63,15 @@
 
   <!-- ======== FOOTER ======== -->
 @if (routing_code!==5){
-  <div class='thefooter'>
-    <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
-        <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
-        <br> 
-        <div class='copyright' >No rights intended or owned in them </div>
-        <br>
-      </div>
+  <div style="width:100%; display:inline-block;">
+    <div class='thefooter'>
+      <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
+          <br> Disclaimer : All copyrights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
+          <br> 
+          <div class='copyright' >No rights intended or owned in them </div>
+          <br>
+        </div>
+    </div>
   </div>
 }
 
