@@ -156,18 +156,17 @@
             @if(dialogue[6]===true){
                 <div class="dropdown ">
                     <div  [style]="styleBox" >
-                        <div  [style]="styleBoxOption">       
+                        <div  [style]="styleBoxOption" >       
                             @for (action of NewTabAction; track action; let m = $index) {
                                 <li class="Straight-options" 
                                     [class]="{'colorEven': m % 2 === 0, 'colorOdd': m % 2 !== 0}" 
                                     (click)="onDropDownAll($event)" 
-                                    id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" 
+                                    [id]="'selAction-' + TabOfId[0] + '-' + TabOfId[1] + '-' + TabOfId[2] + '-' + m" 
                                     value="{{action.type}}-{{action.name}}">
-                                    
                                     @if (m > 1) {
-                                    &nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}
+                                        &nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}
                                     } @else { 
-                                    &nbsp;&nbsp;{{action.name}}
+                                        &nbsp;&nbsp;{{action.name}}
                                     }
                                 </li>
                             }               
@@ -181,8 +180,8 @@
                     <div [style]="styleBoxOption" style="  background: cyan; ">
                         <div style="width:100%; color:blue; font-size:14px; text-align: center; ">Confirm the deletion of {{delMsg}}</div> 
                             <div  class="theRadio" style='margin-left:40px; margin-top:8px;'>
-                                <input   style='margin-left:18px;'(click)='DelAfterConfirm($event)' type="radio"   id="YesDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="Y" > &nbsp;&nbsp;Yes 
-                                <input  style='margin-left:10px;' (click)='DelAfterConfirm($event)' type="radio"   id="NoDelConfirm-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}"  value="N">  &nbsp;&nbsp; No 
+                                <input   style='margin-left:18px;'(click)='DelAfterConfirm($event)' type="radio"   [id]="'YesDelConfirm-' + TabOfId[0] + '-' + TabOfId[1] + '-' + TabOfId[2]"  value="Y" > &nbsp;&nbsp;Yes 
+                                <input  style='margin-left:10px;' (click)='DelAfterConfirm($event)' type="radio"   [id]="'NoDelConfirm-' + TabOfId[0] + '-' + TabOfId[1] + '-' + TabOfId[2]"  value="N">  &nbsp;&nbsp; No 
                                 <div class="skipLine">&nbsp; </div>  
                             </div>
                     </div>
@@ -200,7 +199,7 @@
                                     [class.colorEven]="m % 2 === 0" 
                                     [class.colorOdd]="m % 2 !== 0" 
                                     (click)="onSelMealFood($event)" 
-                                    id="selMeal-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" 
+                                    [id]="'selMeal-' + TabOfId[0] + '-' + TabOfId[1] + '-' + m" 
                                     [value]="tabMeal"> 
                                     {{tabMeal}} 
                                 </li>
@@ -219,7 +218,7 @@
                                     [style]="{'width':sizeBox.widthOptions + 'px'}" 
                                     [class]="{'colorEven': m % 2 === 0, 'colorOdd': m % 2 !== 0}" 
                                     (click)="onSelMealFood($event)" 
-                                    id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" 
+                                    [id]="'selFood-' + TabOfId[0] + '-' + TabOfId[1] + '-' + TabOfId[2] + '-' + m" 
                                     [value]="m"> 
                                     {{tabFood.name}} - serving: {{tabFood.serving | number:'1.0-0'}} {{tabFood.unit}} 
                                 </li>
@@ -247,7 +246,7 @@
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.action">
                                         <div class="circle" 
                                               [id]="'openAction-'  + i + '-' + k + '-' + j" (click)="onAction($event)" >
-                                            <div   >A</div>
+                                            <div  [id]="'openAction-'  + i + '-' + k + '-' + j"  >A</div>
                                         </div>
                                        
                                     </div>
@@ -297,7 +296,7 @@
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
                                         <input type="text"  class="styleInput  alignC" 
                                            
-                                            [value]="theIngred.unit" id="'unitAll-''  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
+                                            [value]="theIngred.unit" [id]="'unitAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
                                         <input type="text" class="styleInput  alignC" 
@@ -393,15 +392,6 @@
                     </div>
                 }
             </div> 
-        <!--
-            <div style="width:100%; display:inline-block; margin-top:5px;">
-                @if (minNum>1){
-                    <button  id='prev' class="sizeButtons"  style="width:80px;" (click)="pagePrev()"> Prev page</button>
-                }
-                <button id='next' class="sizeButtons"  style="width:80px; margin-left:20px;" (click)="pageNext()"> Next page</button>
-                <span style="margin-left:80px; width:100px; height:22px; display:inline-block; color:blue; font-size:16px; vertical-align:middle;"> page#&nbsp;{{numPage}} </span>
-            </div>
-        -->
             <div class="skipLine">&nbsp;</div>
                 @if (isAllDataModified===true && tabLock[0].lock ===1){
                     @if (IsSaveConfirmedAll===false && isSaveHealth===false){

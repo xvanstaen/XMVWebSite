@@ -127,7 +127,7 @@ export class MainManageFileComponent {
     @Inject(LOCALE_ID) private locale: string,) 
     {effect (() => {
          
-          if (this.previousTriggerFileSystem!==this.triggerFileSystem()){
+            if (this.previousTriggerFileSystem!==this.triggerFileSystem()){
               this.previousTriggerFileSystem=this.triggerFileSystem();
               this.processTriggerFS(this.triggerFileSystem()); 
           }
