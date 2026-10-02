@@ -265,20 +265,21 @@
                                                 [id]="'dateAll-' + i "   (input)="onInputDailyAll($event)" [value]="myDaily.date" >
                                         } @else if (j===0){
                                             <input   readonly type="date" 
-                                                class="styleInput'
+                                                class="styleInput"
                                                 [value]="myDaily.date" style="pointer-events: none; padding-left:8px;"  >
                                         } @else {
-                                            <input  class="styleInput' readonly type="text" 
+                                            <input  class="styleInput" readonly type="text" 
                                                 [value]="&nbsp;" style="pointer-events: none;"  >
                                         }
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.calBurnt" >
                                         @if (k===0 && j===0){
                                             <input  type="text"  class="styleInput boxHover" 
-                                                class="styleInput' [id]="'burnAll-' + i"  (input)="onInputDailyAll($event)" 
+                                                [id]="'burnAll-' + i"  (input)="onInputDailyAll($event)" 
                                                 [value]="myDaily.burntCalories"   > 
                                         } @else {
-                                            <input   readonly>
+                                            <input  class="styleInput" readonly type="text" 
+                                                [value]="&nbsp;" style="pointer-events: none;"  >
                                         }
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.meal" >
