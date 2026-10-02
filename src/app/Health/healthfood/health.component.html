@@ -115,7 +115,7 @@
                 </div>
             }
 
-            <div   id="posAfterTitle" style="border: solid 0px green;  margin-top:15px; width:920px; margin-left:5px; display:inline-block; overflow:hidden;" 
+            <div   class="healthRow" id="posAfterTitle" style="  margin-top:15px;  margin-left:5px; " 
                     [style.height.px]="confTableAll.row.height+6" [style.background-color]="confTableAll.title.background"
                     >
                 <div class="divHeader">
@@ -248,9 +248,9 @@
                             @if (searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))){
                                 @if (checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
-                                <div class="recipeRow" [style.background-color]="rowColor">
+                                <div class="healthRow" [style.background-color]="rowColor">
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.action">
-                                        <div class="styleInput boxHover circle" 
+                                        <div class="circle" 
                                               [id]="'openAction-'  + i + '-' + k + '-' + j" (click)="onAction($event)" >
                                             <div   >A</div>
                                         </div>
@@ -259,13 +259,10 @@
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.date">  
                                         @if (k===0 && j===0){
                                             <input  style="text-align:left; padding-left:8px;" 
-                                                 type="date" class="boxHover" 
-                                                
-                                                class="styleInput"
+                                                 type="date" class="styleInput boxHover"
                                                 [id]="'dateAll-' + i "   (input)="onInputDailyAll($event)" [value]="myDaily.date" >
                                         } @else if (j===0){
-                                            <input   readonly type="date" 
-                                                class="styleInput"
+                                            <input   readonly type="date" class="styleInput"
                                                 [value]="myDaily.date" style="pointer-events: none; padding-left:8px;"  >
                                         } @else {
                                             <input  class="styleInput" readonly type="text" 
@@ -288,65 +285,59 @@
                                                     [id]="'mealAll-' + i + '-' + k"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                                     [value]="meal.name"   >
                                         } @else { 
-                                            <input   readonly>
+                                             <input  class="styleInput" readonly type="text" 
+                                                [value]="&nbsp;" style="pointer-events: none;"  >
                                         }
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.ingr" >
-                                        <input type="text" class="styleInput boxHover alignL" 
-                                            
+                                        <input type="text" class="styleInput boxHover " 
+                                        style="text-align:left; padding-left:4px;" 
                                             [id]="'ingrAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                             [value]="theIngred.name"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other" >
                                         <input type="text"  class="styleInput  boxHover" 
-                                            
                                             [value]="theIngred.quantity" [id]="'quanAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
                                         <input type="text"  class="styleInput  alignC" 
-                                            [style.background-color]="rowColor"
+                                           
                                             [value]="theIngred.unit" id="'unitAll-''  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
-                                    <div class="divContent" >  
-                                        <input type="text" class="styleInput  alignC" [style.width.px]="confTableAll.colWidth.other"
-                                            [style.background-color]="rowColor"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
+                                        <input type="text" class="styleInput  alignC" 
+                                            
                                             [value]="theIngred.calFat.Calories  | number:'1.0-0'"  >
                                     </div>
-                                    <div class="divContent" >   
-                                        <input type="text" class="alignC" [style.width.px]="confTableAll.colWidth.other"
-                                            [style.background-color]="rowColor"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other" >   
+                                        <input type="text" class="styleInput  alignC"  
+                                            
                                             [value]="theIngred.calFat.Cholesterol  | number:'1.1-1'"  >
                                     </div>
-                                    <div class="divContent" > 
-                                        <input type="text" class="alignC" [style.width.px]="confTableAll.colWidth.other"
-                                            [style.background-color]="rowColor"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other"> 
+                                        <input type="text" class="styleInput  alignC"  
+                                            
                                             [value]="theIngred.calFat.Protein | number:'1.1-1'"  >
                                     </div>
-                                    <div class="divContent" >
-                                        <input type="text"  class="alignC" [style.width.px]="confTableAll.colWidth.other"
-                                            [style.background-color]="rowColor"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
+                                        <input type="text"  class="styleInput  alignC"  
+                                          
                                             [value]="theIngred.calFat.Carbs  | number:'1.1-1'"  >
                                     </div>
-                                    <!--
-                                    <div [style]="tabDivContent[5]"> 
-                                        <input type="text" 
-                                            [style]="i % 2 === 0 ? tabContent[0][5] : tabContent[1][5]"
-                                            value="{{theIngred.calFat.GlyIndex  | number:'1.1-1'}}"  >
-                                    </div>
-                                    -->
-                                    <div class="divContent" >
-                                        <input type="text" class="alignC" [style.width.px]="confTableAll.colWidth.other"
-                                            [style.background-color]="rowColor"
+
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
+                                        <input type="text" class="styleInput  alignC"  
+                                            
                                             [value]="theIngred.calFat.Sugar  | number:'1.1-1'" >
                                     </div>
-                                    <div class="divContent" >  
-                                        <input type="text"  class="alignC"[style.width.px]="confTableAll.colWidth.other"
-                                            [style.background-color]="rowColor"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
+                                        <input type="text"  class="styleInput  alignC" 
+                                            
                                             [value]="theIngred.calFat.Fat.Saturated  | number:'1.1-1'" >
                                     </div>
-                                    <div class="divContent" >
-                                        <input type="text" class="alignC"[style.width.px]="confTableAll.colWidth.other"
-                                            [style.background-color]="rowColor"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
+                                        <input type="text" class="styleInput  alignC"   
+                                           
                                             [value]="theIngred.calFat.Fat.Total  | number:'1.1-1'" >
                                     </div>
                                 </div>
