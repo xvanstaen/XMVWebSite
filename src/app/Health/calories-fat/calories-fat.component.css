@@ -27,21 +27,38 @@ div{
 }
 
 .contentHeader{
-        margin-top:8px;
-        border:0px white solid;
-        display:inline-block;
-        text-align:center;
-        overflow-wrap:break-word;
-        word-break: break-all;
-        font-size:12px;
-        color:white;
-        background-color: transparent !important;
-        /*
-        border-top:1px grey solid;
-        border-left:1px grey solid; 
-        border-right:1px rgb(251, 249, 249) solid;
-        border-bottom:1px rgb(251, 249, 249) solid; 
-        */
+  margin-top:8px;
+  border:0px white solid;
+  text-align:center;
+  overflow-wrap:break-word;
+  word-break: break-all;
+  font-size:12px;
+  background-color: transparent !important;
+  display:flex;
+  /*border:0px red solid;*/
+  gap:2px;
+  justify-content: space-between;
+  flex-direction: row; 
+  width: 100%;
+  box-sizing: border-box;
+  color:white;
+}
+
+.headerFilter{
+  margin-top:1px;
+  border:0px white solid;
+  text-align:center;
+  overflow-wrap:break-word;
+  word-break: break-all;
+  font-size:12px;
+  background-color: transparent !important;
+  display:flex;
+  gap:2px;
+  justify-content: space-between;
+  flex-direction: row; 
+  width: 100%;
+  box-sizing: border-box;
+  color:white;
 }
 
 .styleInput{
