@@ -109,6 +109,16 @@ input[type="date"] {
   background-color: transparent !important;
   width: 100%;
   box-sizing: border-box;
+  color:white;
+}
+
+.healthRow {
+  width: 870px; 
+  height: 35px; 
+  border: 3px solid red; 
+  border-bottom: 2px solid blue;
+  display: flex; /* Ensures the columns line up next to each other */
+  align-items: center;
 }
 
 .divContent{

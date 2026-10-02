@@ -248,53 +248,57 @@
                             @if (searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))){
                                 @if (checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
-                                
+                                <div class="recipeRow" [style.background-color]="rowColor">
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.action">
-                                        <div > <div class="boxHover circle" 
+                                        <div class="styleInput boxHover circle" 
                                               [id]="'openAction-'  + i + '-' + k + '-' + j" (click)="onAction($event)" >
                                             <div   >A</div>
                                         </div>
                                        
                                     </div>
-                                    <div class="divContent" >  
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.date">  
                                         @if (k===0 && j===0){
-                                            <input  style="text-align:left; padding-left:8px;" [style.background-color]="rowColor" type="date" class="boxHover" [style.width.px]="confTableAll.colWidth.date"
-                                                [id]="'dateAll-' + i"   (input)="onInputDailyAll($event)" [value]="myDaily.date" >
+                                            <input  style="text-align:left; padding-left:8px;" 
+                                                 type="date" class="boxHover" 
+                                                
+                                                class="styleInput"
+                                                [id]="'dateAll-' + i "   (input)="onInputDailyAll($event)" [value]="myDaily.date" >
                                         } @else if (j===0){
-                                            <input  [style.background-color]="rowColor" readonly type="date" [style.width.px]="confTableAll.colWidth.date"
+                                            <input   readonly type="date" 
+                                                class="styleInput'
                                                 [value]="myDaily.date" style="pointer-events: none; padding-left:8px;"  >
                                         } @else {
-                                            <input  [style.background-color]="rowColor" readonly type="text" [style.width.px]="confTableAll.colWidth.date"
+                                            <input  class="styleInput' readonly type="text" 
                                                 [value]="&nbsp;" style="pointer-events: none;"  >
                                         }
                                     </div>
-                                    <div class="divContent"  >
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.calBurnt" >
                                         @if (k===0 && j===0){
-                                            <input  type="text" [style.background-color]="rowColor" class="styleInput boxHover" [style.width.px]="confTableAll.colWidth.calBurnt"
-                                                [id]="'burnAll-' + i"  (input)="onInputDailyAll($event)" 
+                                            <input  type="text"  class="styleInput boxHover" 
+                                                class="styleInput' [id]="'burnAll-' + i"  (input)="onInputDailyAll($event)" 
                                                 [value]="myDaily.burntCalories"   > 
                                         } @else {
-                                            <input [style.background-color]="rowColor" [style.width.px]="confTableAll.colWidth.calBurnt" readonly>
+                                            <input   readonly>
                                         }
                                     </div>
-                                    <div class="divContent"  >
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.meal" >
                                         @if (j===0){
-                                            <input [style.background-color]="rowColor" type="text" class="styleInput boxHover alignL" [style.width.px]="confTableAll.colWidth.meal"
+                                            <input  type="text" class="styleInput boxHover alignL" 
                                                     [id]="'mealAll-' + i + '-' + k"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                                     [value]="meal.name"   >
                                         } @else { 
-                                            <input [style.background-color]="rowColor" [style.width.px]="confTableAll.colWidth.meal" readonly>
+                                            <input   readonly>
                                         }
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.ingr" >
                                         <input type="text" class="styleInput boxHover alignL" 
-                                            [style.background-color]="rowColor"
+                                            
                                             [id]="'ingrAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                             [value]="theIngred.name"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other" >
                                         <input type="text"  class="styleInput  boxHover" 
-                                            [style.background-color]="rowColor"
+                                            
                                             [value]="theIngred.quantity" [id]="'quanAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
@@ -344,7 +348,7 @@
                                             [style.background-color]="rowColor"
                                             [value]="theIngred.calFat.Fat.Total  | number:'1.1-1'" >
                                     </div>
-
+                                </div>
                                 }
                                 <!-- sub-TOTAL-->
                                 @if (HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''){
