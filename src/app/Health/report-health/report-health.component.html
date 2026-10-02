@@ -33,11 +33,11 @@
                     </div>
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Border color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldXColorBorder')" formControlName="borderColor"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_XBorderColor}" class="trow myColor" (click)="selectColorAxis('xBorderColor')" >&nbsp;</span>
+                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color': selected_XBorderColor}" class="trow myColor" (click)="selectColorAxis('xBorderColor')" >&nbsp;</span>
                     </div>
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Ticks color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldXTicksColor')" formControlName="ticksColor"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_XTicksColor}" class="trow myColor" (click)="selectColorAxis('xTicksColor')" >&nbsp;</span>
+                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color': selected_XTicksColor}" class="trow myColor" (click)="selectColorAxis('xTicksColor')" >&nbsp;</span>
                     </div>
                 </form>
                 <form  [formGroup]="selectAxisY" style="margin-left:20px;">
@@ -53,11 +53,11 @@
                     </div>
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Border color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldYColorBorder')" formControlName="borderColor"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_YBorderColor}" class="trow myColor" (click)="selectColorAxis('yBorderColor')" >&nbsp;</span>
+                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color': selected_YBorderColor}" class="trow myColor" (click)="selectColorAxis('yBorderColor')" >&nbsp;</span>
                     </div>
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Ticks color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldYTicksColor')" formControlName="ticksColor"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_YTicksColor}" class="trow myColor" (click)="selectColorAxis('yTicksColor')" >&nbsp;</span>
+                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color': selected_YTicksColor}" class="trow myColor" (click)="selectColorAxis('yTicksColor')" >&nbsp;</span>
                     </div>
                 </form>
                 <div class="skipLine">&nbsp;</div>
@@ -93,11 +93,12 @@
                         @if (isTitleDisplay() && tabLock[5].lock===1){
                             <div class="dropdown " >
                                 <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
-                                    <div  class="StraightDropDown "  [ngStyle]="{'height.px':tabDisplay.length * 26, 'width.px':80}">
-                                        <li *ngFor="let action of tabDisplay; let m=index;" 
-                                                class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                    (click)="selectType($event)" id="selectedTitleDisplay" [value]="action" >{{action}}
-                                        </li>
+                                    <div  class="StraightDropDown "  [style]="{'height.px':tabDisplay.length * 26, 'width.px':80}">
+                                        @for (action of tabDisplay; track action; let m=$index;){    
+                                            <li  class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                        (click)="selectType($event)" id="selectedTitleDisplay" [value]="action" >{{action}}
+                                            </li>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -125,11 +126,12 @@
 
                             <div class="dropdown " >
                                 <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
-                                    <div  class="StraightDropDown "  [ngStyle]="{'height.px':tabTitlePosition.length * 26, 'width.px':80}">
-                                        <li  *ngFor="let action of tabTitlePosition; let m=index;" 
-                                                class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                    (click)="selectType($event)" id="selectedTitlePosition" [value]="action" >{{action}}
-                                        </li>
+                                    <div  class="StraightDropDown "  [style]="{'height.px':tabTitlePosition.length * 26, 'width.px':80}">
+                                        @for (action of tabTitlePosition; track action; let m=$index;){    
+                                            <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                        (click)="selectType($event)" id="selectedTitlePosition" [value]="action" >{{action}}
+                                            </li>
+                                        }   
                                     </div>
                                 </div>
                             </div>
@@ -144,11 +146,12 @@
 
                             <div class="dropdown " >
                                 <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
-                                    <div  class="StraightDropDown "  [ngStyle]="{'height.px':tabTextAlign.length * 26, 'width.px':80}">
-                                        <li *ngFor="let action of tabTextAlign; let m=index;" 
-                                                class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                    (click)="selectType($event)" id="selectedTextAlign" [value]="action" >{{action}}
-                                        </li>
+                                    <div  class="StraightDropDown "  [style]="{'height.px':tabTextAlign.length * 26, 'width.px':80}">
+                                        @for (action of tabTextAlign; track action; let m=$index;){    
+                                            <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                        (click)="selectType($event)" id="selectedTextAlign" [value]="action" >{{action}}>
+                                            </li>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +159,7 @@
                     </div> 
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
                         <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldColorTitle')" formControlName="color"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color': selected_colorTitle}" class="trow myColor" (click)="selectColor('colorTitle')" >&nbsp;</span>
+                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color': selected_colorTitle}" class="trow myColor" (click)="selectColor('colorTitle')" >&nbsp;</span>
 
                     </div>  
                     <div style="width:100%; display:inline-block;  margin-top:5px;">
@@ -170,11 +173,12 @@
                         @if (isFontWeight()){
                             <div class="dropdown " >
                                 <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
-                                    <div  class="StraightDropDown "  [ngStyle]="{'height.px':150, 'width.px':80}" style="overflow-x:hidden; overflow-y:scroll">
-                                        <li *ngFor="let action of tabFontWeight; let m=index;" 
-                                                class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" style="overflow-x:hidden; overflow-y:scroll"
-                                                    (click)="selectType($event)" id="selectedFontWeight" [value]="action" >{{action}}
-                                        </li>
+                                    <div  class="StraightDropDown "  [style]="{'height.px':150, 'width.px':80}" style="overflow-x:hidden; overflow-y:scroll">
+                                        @for (action of tabFontWeight; track action; let m=$index;){    
+                                            <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" style="overflow-x:hidden; overflow-y:scroll"
+                                                        (click)="selectType($event)" id="selectedFontWeight" [value]="action" >{{action}}
+                                            </li>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -212,8 +216,8 @@
                 <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
                 </app-color-slider>
                 <div style="margin-top:80px;">
-                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:55px;" [ngStyle]="{'background-color':my_input_child2}"></span>
-                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [ngStyle]="{'background-color':temporaryColor}"></span>
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:55px;" [style]="{'background-color':my_input_child2}"></span>
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [style]="{'background-color':temporaryColor}"></span>
                     <div style="margin-left:200px; margin-top:-40px;">
                         <button (click)="fnExitPalette('Save')" > Save</button>
                         <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
@@ -269,11 +273,12 @@
                 @if (isTypeSelected()){
                     <div class="dropdown " >
                         <div class="Straight-content" style="margin-left:50px;">
-                            <div  class="StraightDropDown "  [ngStyle]="{'height.px':lineChartType.length * 30, 'width.px':80}">
-                                <li *ngFor="let action of lineChartType; let m=index;" 
-                                        class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                            (click)="selectType($event)" id="selectedType" [value]="action" >{{action}}
-                                </li>
+                            <div  class="StraightDropDown "  [style]="{'height.px':lineChartType.length * 30, 'width.px':80}">
+                                @for (action of lineChartType; track action; let m=$index;){
+                                    <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                (click)="selectType($event)" id="selectedType" [value]="action" >{{action}}
+                                    </li>
+                                }
                             </div>
                         </div>
                     </div>
@@ -285,7 +290,7 @@
                 
                 <div style="width:100%; display:inline-block;  margin-top:5px;">
                     <span class="trow" style="width:25%;"> Color</span><input   class='inputText' type="text" style="width:40%;"   (input)="selectColor('fieldColorChartTitle')" formControlName="colorChartTitle"  > 
-                    <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_chartTitleColor}" class="trow myColor" (click)="selectColor('colorChartTitle')" >&nbsp;</span>
+                    <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color':selected_chartTitleColor}" class="trow myColor" (click)="selectColor('colorChartTitle')" >&nbsp;</span>
                 </div>
                 
             </div> 
@@ -305,7 +310,7 @@
             <div style="width:100%; display:inline-block;  margin-top:5px;">
                 <span class="trow" style="width:25%;"> Background</span>
                 <input  class='inputText' type="text"  style="width:40%;" formControlName="canvasBackground" (input)="selectColor('fieldCanvasColor')" > 
-                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_canvasColor}" class="trow myColor" (click)="selectColor('canvasColor')" >&nbsp;</span>
+                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color':selected_canvasColor}" class="trow myColor" (click)="selectColor('canvasColor')" >&nbsp;</span>
                 
             </div> 
 
@@ -317,7 +322,7 @@
             </div>
             <div style="width:100%; display:inline-block;  margin-top:5px;">
                 <span class="trow" style="width:25%;"> Color</span><input class='inputText' type="text" style="width:40%;"   (input)="selectColor('fieldLegendColor')" formControlName="colorLegendTitle"  > 
-                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_legendColor}" class="trow myColor" (click)="selectColor('legendColor')" >&nbsp;</span>
+                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color':selected_legendColor}" class="trow myColor" (click)="selectColor('legendColor')" >&nbsp;</span>
                 
             </div> 
 
@@ -333,7 +338,7 @@
             </div>
             <div style="width:100%; display:inline-block;  margin-top:5px;">
                 <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:22%;"  (input)="selectColor('fieldBoxColor')" formControlName="boxcolor"  > 
-                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [ngStyle]="{'background-color':selected_boxColor}" class="trow myColor" (click)="selectColor('boxColor')" >&nbsp;</span>
+                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style]="{'background-color':selected_boxColor}" class="trow myColor" (click)="selectColor('boxColor')" >&nbsp;</span>
                 
 
             </div>
@@ -366,16 +371,16 @@
                 @if (isPeriodSelected()  && tabLock[5].lock===1){
                     <div class="dropdown" >
                         <div class="Straight-content" style="margin-left:90px;">
-                            <div  class="StraightDropDown " [ngStyle]="{'height.px':tabPeriod.length * 30}" >
-                                <li *ngFor="let action of tabPeriod; let m=index;" 
-                                        class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                            (click)="selectPeriod($event)" id="selectedPeriod" [value]="action" >{{action}}
-                                </li>
+                            <div  class="StraightDropDown " [style]="{'height.px':tabPeriod.length * 30}" >
+                                @for (action of tabPeriod; track action; let m=$index;){    
+                                    <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                (click)="selectPeriod($event)" id="selectedPeriod" [value]="action" >{{action}}
+                                    </li>
+                                }
                             </div>
                         </div>
                     </div>
                 }
-            
             </div> 
             @if (selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'){
                 <div style="width:100%; display:inline-block; margin-top:5px;">
@@ -394,45 +399,45 @@
         <!-- ************* SELECTION OF LABELS FOR THIS CHART ************* -->
         <div class="skipLine">&nbsp;</div>
         <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the items to consider for this chart</div>
-        <span *ngFor="let tab of ConfigChartHealth.barDefault.datasets.labels; let i=index;">
+       @for (tab of ConfigChartHealth.barDefault.datasets.labels; track tab; let i=$index;){
             @if (ConfigChartHealth.barDefault.datasets.fieldsToSelect[i]===true){
                 <span  style="width:47%; display:inline-block; margin-left:10px;">
                     <span style="width:5%;">
                         @if (selectedFields[i]==='N'){
-                            <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y"  >  
+                            <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  [id]="'A-' + i"  value="Y"  >  
                         } @else {
-                             <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="A-{{i}}"  value="Y" checked="checked" >
+                             <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  [id]="'A-' + i"  value="Y" checked="checked" >
                         }
                     </span>
                     <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
                     @if (selectedFields[i]==='Y'){
-                        <span style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelColor-{{i}}" [ngStyle]="{'background-color':tabOfLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
+                        <span style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [id]="'labelColor-' + i" [style]="{'background-color':tabOfLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
                     }
                 </span>
             }
-        </span>
+        }
 
         <!-- ************* SELECTION OF LIMIT LABELS FOR THIS CHART ************* -->
         <div class="skipLine">&nbsp;</div>
         <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the 'LIMIT' items to consider for this chart</div>
-        <span *ngFor="let tab of ConfigChartHealth.barDefault.datasets.labelsLimits; let i=index;">
+        @for (tab of ConfigChartHealth.barDefault.datasets.labelsLimits; track tab; let i=$index;){
             @if (ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[i]===true){   
                 <span style="width:47%; display:inline-block; margin-left:10px;">
                     <span style="width:5%;">
                         @if (selectedLimitFields[i]==='N'){
-                            <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"   class="theRadioButt" type="radio"  id="L-{{i}}"  value="Y"  >  
+                            <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"   class="theRadioButt" type="radio"  [id]="'L-' + i"  value="Y"  >  
                         } @else {
-                             <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  id="L-{{i}}"  value="Y" checked="checked" >
+                             <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  [id]="'L-' + i"  value="Y" checked="checked" >
                         }
                     </span>
                 
                     <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
                     @if (selectedLimitFields[i]==='Y'){    
-                        <span style="width:20px; height:20px; margin-left:10px; border:1px solid black;" id="labelLimitColor-{{i}}" [ngStyle]="{'background-color':tabOfLimitLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
+                        <span style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [id]="'labelLimitColor-' + i" [style]="{'background-color':tabOfLimitLabelsColor[i]}" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
                     }
                 </span>
             }
-        </span>
+        }
         
         <div class="skipLine">&nbsp;</div>
         @if (errorMsg!==''){
@@ -496,11 +501,12 @@
                 @if (isPeriodSelected()  && tabLock[5].lock===1){
                     <div class="dropdown" >
                         <div class="Straight-content" style="margin-left:90px;">
-                            <div  class="StraightDropDown " [ngStyle]="{'height.px':tabPeriod.length * 30}" >
-                                <li *ngFor="let action of tabPeriod; let m=index;" 
-                                        class="Straight-options "  [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                            (click)="selectPeriodAll($event)" id="selectedPeriod" [value]="action" >{{action}}
-                                </li>
+                            <div  class="StraightDropDown " [style]="{'height.px':tabPeriod.length * 30}" >
+                                @for (action of tabPeriod; track action; let m=$index;){
+                                    <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                (click)="selectPeriodAll($event)" id="selectedPeriod" [value]="action" >{{action}}
+                                    </li>
+                                }
                             </div>
                         </div>
                     </div>
@@ -528,11 +534,11 @@
 
 <!--   **************************** CANVAS **************************** -->
 
-    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style="overflow-x:scroll; display:inline-block;" [style]="{'max-width.px ': 900, 'max-height.px ': 900}">
         <div style=" border:1px blue solid; padding-top:50px;" 
-                [ngStyle]="{'background-color': canvas[0].background, 'margin-left.px':canvas[0].marginLeft,
+                [style]="{'background-color': canvas[0].background, 'margin-left.px':canvas[0].marginLeft,
                 'width.px': canvas[0].width, 'height.px ': canvas[0].height}">
-            <canvas #baseChart id="{{tabCanvasId[0]}}"
+            <canvas #baseChart [id]="tabCanvasId[0]"
         
             >
             </canvas>
@@ -540,11 +546,11 @@
     </div>
 
     <div class="skipLine">&nbsp;</div>
-    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style="overflow-x:scroll; display:inline-block;" [style]="{'max-width.px ': 900, 'max-height.px ': 900}">
         <div style=" border:1px blue solid; padding-top:50px;" 
-                [ngStyle]="{'background-color': canvas[1].background, 'margin-left.px':canvas[1].marginLeft,
+                [style]="{'background-color': canvas[1].background, 'margin-left.px':canvas[1].marginLeft,
                 'width.px': canvas[1].width, 'height.px ': canvas[1].height}">
-            <canvas #baseChart id="{{tabCanvasId[1]}}"
+            <canvas #baseChart [id]="tabCanvasId[1]"
         
             >
             </canvas>
@@ -552,11 +558,11 @@
     </div>
 
     <div class="skipLine">&nbsp;</div>
-    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style="overflow-x:scroll; display:inline-block;" [style]="{'max-width.px ': 900, 'max-height.px ': 900}">
         <div style=" border:1px blue solid; padding-top:50px;" 
-                [ngStyle]="{'background-color': canvas[2].background, 'margin-left.px':canvas[2].marginLeft,
+                [style]="{'background-color': canvas[2].background, 'margin-left.px':canvas[2].marginLeft,
                 'width.px': canvas[2].width, 'height.px ': canvas[2].height}">
-            <canvas #baseChart id="{{tabCanvasId[2]}}"
+            <canvas #baseChart [id]="tabCanvasId[2]"
         
             >
             </canvas>
@@ -564,11 +570,11 @@
     </div>
 
     <div class="skipLine">&nbsp;</div>
-    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style="overflow-x:scroll; display:inline-block;" [style]="{'max-width.px ': 900, 'max-height.px ': 900}">
         <div style=" border:1px blue solid; padding-top:50px;" 
-                [ngStyle]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
+                [style]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
                 'width.px': canvas[3].width, 'height.px ': canvas[3].height}">
-            <canvas #baseChart id="{{tabCanvasId[3]}}"
+            <canvas #baseChart [id]="tabCanvasId[3]"
         
             >
             </canvas>
@@ -576,9 +582,9 @@
     </div>
     <div class="skipLine">&nbsp;</div>
     @if (isTestLineChart===true){
-        <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+        <div style="overflow-x:scroll; display:inline-block;" [style]="{'max-width.px ': 900, 'max-height.px ': 900}">
             <div style=" border:1px blue solid; padding-top:50px;" 
-                    [ngStyle]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
+                    [style]="{'background-color': canvas[3].background, 'margin-left.px':canvas[3].marginLeft,
                     'width.px': canvas[3].width, 'height.px ': canvas[3].height}">
                 <canvas #baseChart id="myLineCanvas"
             
@@ -588,11 +594,11 @@
         </div>
     }
     <div class="skipLine">&nbsp;</div>
-    <div style="overflow-x:scroll; display:inline-block;" [ngStyle]="{'max-width.px ': 900, 'max-height.px ': 900}">
+    <div style="overflow-x:scroll; display:inline-block;" [style]="{'max-width.px ': 900, 'max-height.px ': 900}">
         <div style=" border:1px blue solid; padding-top:50px;" 
-                [ngStyle]="{'background-color': canvas[2].background, 'margin-left.px':canvas[2].marginLeft,
+                [style]="{'background-color': canvas[2].background, 'margin-left.px':canvas[2].marginLeft,
                 'width.px': canvas[2].width, 'height.px ': canvas[2].height}">
-            <canvas #baseChart id="{{tabCanvasId[4]}}"
+            <canvas #baseChart [id]="tabCanvasId[4]"
         
             >
             </canvas>

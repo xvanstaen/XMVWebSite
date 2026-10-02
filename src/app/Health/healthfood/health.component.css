@@ -76,7 +76,7 @@ input[type="date"] {
   text-align:center;
   overflow-wrap:break-word;
   word-break: break-all;
-  font-size:14px;
+  font-size:12px;
   color:white;
   background-color: transparent !important;
 }
@@ -97,6 +97,18 @@ input[type="date"] {
   border:0px red solid;
   box-sizing: border-box;
   font-size: 13px;
+}
+
+.styleInput{
+  display:flex;
+  /*border:0px red solid;*/
+  gap:2px;
+  justify-content: space-between;
+  flex-direction: row; 
+  text-align: center;
+  background-color: transparent !important;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .divContent{

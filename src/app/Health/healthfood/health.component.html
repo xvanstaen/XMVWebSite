@@ -157,12 +157,21 @@
                 <div class="dropdown ">
                     <div  [style]="styleBox" >
                         <div  [style]="styleBoxOption">       
-                            <li *ngFor="let action of NewTabAction; let m=index;" 
-                                class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                    (click)="onDropDownAll($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="{{action.type}}-{{action.name}}">
-                                    @if(m>1){&nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}
-                                    } @else { &nbsp;&nbsp;{{action.name}}}
-                            </li>
+                            @for (action of NewTabAction; track action; let m = $index) {
+                                <li class="Straight-options" 
+                                    [class]="{'colorEven': m % 2 === 0, 'colorOdd': m % 2 !== 0}" 
+                                    (click)="onDropDownAll($event)" 
+                                    id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" 
+                                    value="{{action.type}}-{{action.name}}">
+                                    
+                                    @if (m > 1) {
+                                    &nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}
+                                    } @else { 
+                                    &nbsp;&nbsp;{{action.name}}
+                                    }
+                                </li>
+                            }               
+
                         </div>                   
                     </div>
                 </div>
@@ -185,11 +194,17 @@
                 <div class="dropdown ">
                     <div  [style]="styleBoxMeal" >
                         <div   [style]="styleBoxOptionMeal">  
-                            <li *ngFor="let tabMeal of tabInputMeal; let m=index;" 
-                                    class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                        (click)="onSelMealFood($event)" id="selMeal-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" value="{{tabMeal}}">
-                                    {{tabMeal}}
-                            </li>
+                            @for (tabMeal of tabInputMeal; track tabMeal; let m = $index) {
+                                <li 
+                                    class="Straight-options" 
+                                    [class.colorEven]="m % 2 === 0" 
+                                    [class.colorOdd]="m % 2 !== 0" 
+                                    (click)="onSelMealFood($event)" 
+                                    id="selMeal-{{TabOfId[0]}}-{{TabOfId[1]}}-{{m}}" 
+                                    [value]="tabMeal"> 
+                                    {{tabMeal}} 
+                                </li>
+                                }
                         </div>             
                     </div>
                 </div>
@@ -199,11 +214,16 @@
                 <div class="dropdown " >
                     <div [style]="styleBoxFood" >
                         <div   [style]="styleBoxOptionFood">
-                            <li *ngFor="let tabFood of tabInputFood; let m=index;" 
-                                    class="Straight-options" [style]="{'width':sizeBox.widthOptions + 'px'}" [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                        (click)="onSelMealFood($event)" id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" value="m">
-                                        {{tabFood.name}} - serving: {{tabFood.serving | number:'1.0-0'}}  {{tabFood.unit}}   
-                            </li>
+                            @for (tabFood of tabInputFood; track tabFood.id || m; let m = $index) {
+                                <li class="Straight-options" 
+                                    [style]="{'width':sizeBox.widthOptions + 'px'}" 
+                                    [class]="{'colorEven': m % 2 === 0, 'colorOdd': m % 2 !== 0}" 
+                                    (click)="onSelMealFood($event)" 
+                                    id="selFood-{{TabOfId[0]}}-{{TabOfId[1]}}-{{TabOfId[2]}}-{{m}}" 
+                                    [value]="m"> 
+                                    {{tabFood.name}} - serving: {{tabFood.serving | number:'1.0-0'}} {{tabFood.unit}} 
+                                </li>
+                            }
                         </div>            
                     </div>
                 </div>
@@ -229,13 +249,12 @@
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))){
                                 @if (checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
                                 
-                                    <div class="divContent" >
-                                        <div [style.width.px]="confTableAll.colWidth.action">
-                                        <div class="boxHover circle" 
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.action">
+                                        <div > <div class="boxHover circle" 
                                               [id]="'openAction-'  + i + '-' + k + '-' + j" (click)="onAction($event)" >
-                                            <div  [id]="'openAction-'  + i + '-' + k + '-' + j" class="circlLetter" >A</div>
+                                            <div   >A</div>
                                         </div>
-                                        </div>
+                                       
                                     </div>
                                     <div class="divContent" >  
                                         @if (k===0 && j===0){
@@ -251,7 +270,7 @@
                                     </div>
                                     <div class="divContent"  >
                                         @if (k===0 && j===0){
-                                            <input  type="text" [style.background-color]="rowColor" class="boxHover" [style.width.px]="confTableAll.colWidth.calBurnt"
+                                            <input  type="text" [style.background-color]="rowColor" class="styleInput boxHover" [style.width.px]="confTableAll.colWidth.calBurnt"
                                                 [id]="'burnAll-' + i"  (input)="onInputDailyAll($event)" 
                                                 [value]="myDaily.burntCalories"   > 
                                         } @else {
@@ -260,31 +279,31 @@
                                     </div>
                                     <div class="divContent"  >
                                         @if (j===0){
-                                            <input [style.background-color]="rowColor" type="text" class="boxHover alignL" [style.width.px]="confTableAll.colWidth.meal"
+                                            <input [style.background-color]="rowColor" type="text" class="styleInput boxHover alignL" [style.width.px]="confTableAll.colWidth.meal"
                                                     [id]="'mealAll-' + i + '-' + k"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                                     [value]="meal.name"   >
                                         } @else { 
                                             <input [style.background-color]="rowColor" [style.width.px]="confTableAll.colWidth.meal" readonly>
                                         }
                                     </div>
-                                    <div class="divContent" >
-                                        <input type="text" class="boxHover alignL" [style.width.px]="confTableAll.colWidth.ingr"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.ingr" >
+                                        <input type="text" class="styleInput boxHover alignL" 
                                             [style.background-color]="rowColor"
                                             [id]="'ingrAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                             [value]="theIngred.name"  >
                                     </div>
-                                    <div class="divContent"  >
-                                        <input type="text"  class="boxHover" [style.width.px]="confTableAll.colWidth.other"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other" >
+                                        <input type="text"  class="styleInput  boxHover" 
                                             [style.background-color]="rowColor"
                                             [value]="theIngred.quantity" [id]="'quanAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)"  >
                                     </div>
-                                    <div class="divContent" >  
-                                        <input type="text"  class="alignC" [style.width.px]="confTableAll.colWidth.other"
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
+                                        <input type="text"  class="styleInput  alignC" 
                                             [style.background-color]="rowColor"
                                             [value]="theIngred.unit" id="'unitAll-''  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
                                     <div class="divContent" >  
-                                        <input type="text" class="alignC" [style.width.px]="confTableAll.colWidth.other"
+                                        <input type="text" class="styleInput  alignC" [style.width.px]="confTableAll.colWidth.other"
                                             [style.background-color]="rowColor"
                                             [value]="theIngred.calFat.Calories  | number:'1.0-0'"  >
                                     </div>
