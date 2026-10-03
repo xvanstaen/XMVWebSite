@@ -1,6 +1,6 @@
 
 
-@if (this.EventHTTPReceived[0]===true ){
+@if (isCacheToDisplay() ){ <!-- this.EventHTTPReceived[0]===true  -->
     <div style="margin-left:20px; width:500px; display:block;"> 
     <div class="theTitle" > Cache Console</div> 
     <div class="theTitle" > server: {{configServer.googleServer}}</div> 

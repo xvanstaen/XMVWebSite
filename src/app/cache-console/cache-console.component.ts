@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
+  Component, signal, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
 } from '@angular/core';
 
@@ -177,16 +177,16 @@ export class CacheConsoleComponent {
     }
   }
 
-
+  isCacheToDisplay=signal<boolean>(false);
   getCacheConsole() {
     this.memoryCacheConsole.splice(0,this.memoryCacheConsole.length);
     this.ManageSecuredGoogleService.getCacheConsole(this.configServer)
       .subscribe(
         (data) => {
-          this.EventStopWaitHTTP[0]=true;
           if (Array.isArray(data.msg)=== true){
             this.manageRecord(data);
             this.EventHTTPReceived[0] = true;
+            this.isCacheToDisplay.set(true);
           } else {
             this.event.error=data.msg;
             this.event.status=220;

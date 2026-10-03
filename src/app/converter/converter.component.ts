@@ -1,4 +1,4 @@
-import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
+import { signal, Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
   SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
   
 import { formatDate, ViewportScroller } from '@angular/common'; 
@@ -1315,14 +1315,18 @@ CancelConvert(){
       this.fillDisplayTabUnit('', '', this.FilterTabOfUnitsTo,'To');
     }
   
+nbGetRecord:number=0;
+nbReceivedRecord:number=0;
+displayConvert=signal<boolean>(false);
 GetRecord(Bucket:string,GoogleObject:string, iWait:number){
   
       this.EventHTTPReceived[iWait]=false;
       this.NbWaitHTTP++;
       this.waitHTTP(this.TabLoop[iWait],30000,iWait);
-    
+      this.nbGetRecord++
       this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject )
                 .subscribe((data ) => {
+                    this.nbReceivedRecord++;
                     this.EventHTTPReceived[iWait]=true;
                     if (GoogleObject=== this.identification.configFitness.files.tabOfUnits){ // 'ConvertTabOfUnits.json'){
                       this.theTabOfUnits=data;
@@ -1383,7 +1387,9 @@ GetRecord(Bucket:string,GoogleObject:string, iWait:number){
                         this.WeightRefTable.tabRecordConvert =data.tabRecordConvert;
                         this.returnFile.emit(this.WeightRefTable);
                     }
-
+                    if (this.nbGetRecord === this.nbReceivedRecord){
+                      this.displayConvert.set(true);
+                    }
 
                   },
                   error_handler => {

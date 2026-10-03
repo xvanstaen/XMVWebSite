@@ -2,7 +2,7 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { Inject,Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-
+import { HttpParams } from '@angular/common/http';
 import { HttpClient, HttpRequest, HttpEvent,  HttpErrorResponse, HttpHeaders, HttpContext } from '@angular/common/http';
 
 import { configServer, classUserLogin } from '../JsonServerClass';
@@ -20,12 +20,18 @@ export class ManageGoogleService {
        
 
 checkLogin(config:configServer): Observable<any> {
-    const http_get=config.googleServer+'/checkLogin/'+config.GoogleProjectId+'/'+config.test_prod+'/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw); // "/"+myArray+"/"+encodeURIComponent(JSON.stringify(TableCryptKey.theFour))
-    return this.http.get<any>(http_get);                      
+    const http_get=config.googleServer+'/checkLogin/'+config.GoogleProjectId+'/'+config.test_prod+'/'+config.userLogin.id;
+    const params = new HttpParams()
+        .set('userPSW', config.userLogin.psw);
+    return this.http.get<any>(http_get, {params}); 
+    //return this.http.get<any>(http_get);                      
 }  
 
 getListBuckets(config:configServer): Observable<any> {
-    return this.http.get<any>(config.googleServer+'/lBucket/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod);                       
+    const http_get=config.googleServer+'/lBucket/'+config.userLogin.id+'/'+config.GoogleProjectId+'/'+config.test_prod;     
+    const params = new HttpParams()
+        .set('userPSW', config.userLogin.psw);
+    return this.http.get<any>(http_get, {params});                   
 }
 
 getListObjects(config:configServer, bucket:string): Observable<any> {
@@ -124,26 +130,41 @@ updateMetaData(config:configServer, bucket:string, objectN:string, metaCache:str
 }
 
 deleteObject(config:configServer, bucket:string, objectN:string): Observable<HttpEvent<any>> {
-        const http_get=config.googleServer+'/delete/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+objectN+'?bucket='+bucket;
+        const http_get=config.googleServer+'/delete/'+config.userLogin.id+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+objectN+'?bucket='+bucket;
         //const req = new HttpRequest('GET', objectN);
+        const params = new HttpParams()
+        .set('userPSW', config.userLogin.psw);
+        return this.http.get<any>(http_get, {params}); //
         return this.http.get<any>(http_get);
     }
 
 renameObject(config:configServer, bucket:string, SRCobject:string, DESTobject:string): Observable<HttpEvent<any>> {
-        const http_get=config.googleServer+'/rename/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+SRCobject+'/'+DESTobject+'?bucket='+bucket;
+        const http_get=config.googleServer+'/rename/'+config.userLogin.id+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+SRCobject+'/'+DESTobject;
         //const req = new HttpRequest('GET', objectN);
-        return this.http.get<any>(http_get);
+        const params = new HttpParams()
+        .set ('bucket', bucket)
+        .set('userPSW', config.userLogin.psw);
+        return this.http.get<any>(http_get, {params}); 
+        //return this.http.get<any>(http_get);
     }
 
 moveObject(config:configServer, bucket:string, DESTbucket:string,  SRCobject:string, DESTobject:string): Observable<HttpEvent<any>> {
-        const http_get=config.googleServer+'/move/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+DESTbucket+'/'+ SRCobject+'/'+ DESTobject+'?bucket='+bucket;
+        const http_get=config.googleServer+'/move/'+config.userLogin.id+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+DESTbucket+'/'+ SRCobject+'/'+ DESTobject;
         //const req = new HttpRequest('GET', objectN);
-        return this.http.get<any>(http_get);
+        const params = new HttpParams()
+        .set ('bucket', bucket)
+        .set('userPSW', config.userLogin.psw);
+        return this.http.get<any>(http_get, {params}); 
+        //return this.http.get<any>(http_get);
     }
 copyObject(config:configServer, bucket:string, DESTbucket:string, SRCobject:string, DESTobject:string): Observable<HttpEvent<any>> {
-        const http_post=config.googleServer+'/copy/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+DESTbucket+'/'+SRCobject+'/'+DESTobject+'?bucket='+bucket;
+        const http_post=config.googleServer+'/copy/'+config.userLogin.id+'/'+config.GoogleProjectId+'/'+config.test_prod+'/'+DESTbucket+'/'+SRCobject+'/'+DESTobject;
         //const req = new HttpRequest('GET', objectN);
-        return this.http.get<any>(http_post);
+        const params = new HttpParams()
+        .set ('bucket', bucket)
+        .set('userPSW', config.userLogin.psw);
+        return this.http.get<any>(http_post, {params});  
+        //return this.http.get<any>(http_post);
     }
 
 getNewServerUsrId(config:configServer): Observable<any> {
@@ -161,8 +182,10 @@ getCredentials(config:configServer,reset:boolean): Observable<any> {
     return this.http.get<any>(http_get);                      
 }  
 getFSCredentials(config:configServer): Observable<any> {
-    const http_get=config.fileSystemServer+'/credentialsFS/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(config.fileSystemServer);
-    return this.http.get<any>(http_get);                      
+    const http_get=config.fileSystemServer+'/credentialsFS/'+config.GoogleProjectId+'/'+config.test_prod;
+    const params = new HttpParams()
+        .set('server', config.fileSystemServer);
+    return this.http.get<any>(http_get, {params});                      
 }  
 
 getServerVersion(config:configServer): Observable<any> {
@@ -172,25 +195,38 @@ getServerVersion(config:configServer): Observable<any> {
 
 
 onFileSystem(config:configServer, bucket:string, object:string, tabLock:Array<classAccessFile>, iWait:string): Observable<any> {
-    const http_get=config.fileSystemServer+'/onFileSystem/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(config.fileSystemServer)+'/'+object+'/'+JSON.stringify(tabLock)+'/'+iWait+'?bucket='+bucket;
-    return this.http.get<any>(http_get);                       
+   const url=config.fileSystemServer+'/onFileSystem/'+config.GoogleProjectId+'/'+config.test_prod+'/'+object+'/'+iWait;
+    const params = new HttpParams()
+        .set('bucket', bucket)
+        .set('server', config.fileSystemServer)
+        .set('tabLock', JSON.stringify(tabLock));
+    //const http_get=config.fileSystemServer+'/onFileSystem/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(config.fileSystemServer)+'/'+object+'/'+JSON.stringify(tabLock)+'/'+iWait+'?bucket='+bucket;
+    return this.http.get<any>(url, {params});                       
 }
 
 getSecurityAccess(config:configServer){
-    const http_get=config.googleServer+'/getSecurity/'+config.userLogin.id+'/'+encodeURIComponent(config.userLogin.psw)+'/'+config.GoogleProjectId+'/'+config.test_prod;
-    return this.http.get<any>(http_get);
+    const http_get=config.googleServer+'/getSecurity/'+config.userLogin.id+'/'+config.GoogleProjectId+'/'+config.test_prod;
+    const params = new HttpParams()
+        .set('userPSW', config.userLogin.psw);
+    return this.http.get<any>(http_get, {params});   
+    //return this.http.get<any>(http_get);
 }
 
 encryptAllFn(config:configServer,data:string,key:number,method:string,iFour:number, authoriz:string): Observable<any> {
     //const myArray=encodeURIComponent(JSON.stringify(TableCryptKey.tab));
-    const http_get=config.googleServer+'/encryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+iFour+'/'+authoriz;
-    return this.http.get<any>(http_get);                      
+    const http_get=config.googleServer+'/encryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+key.toString()+'/'+method+'/'+iFour+'/'+authoriz;
+    const params = new HttpParams()
+        .set('inData', data);
+    return this.http.get<any>(http_get, {params});   
+    //return this.http.get<any>(http_get);                      
 }  
 
 decryptAllFn(config:configServer,data:string,key:number,method:string,iFour:number, authoriz:string): Observable<any> {
-    const http_get=config.googleServer+'/decryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+encodeURIComponent(data)+'/'+key.toString()+'/'+method+'/'+iFour+'/'+authoriz;
-  
-    return this.http.get<any>(http_get);                      
+    const http_get=config.googleServer+'/decryptAllFn/'+config.GoogleProjectId+'/'+config.test_prod+'/'+key.toString()+'/'+method+'/'+iFour+'/'+authoriz;
+    const params = new HttpParams()
+        .set('inData', data);
+    return this.http.get<any>(http_get, {params});   
+    //return this.http.get<any>(http_get);                      
 }  
 
 }

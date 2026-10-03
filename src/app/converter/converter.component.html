@@ -7,7 +7,8 @@
           ================ Conversion of two units ================ 
           =========================================================
      -->
-<div style="margin-left:10px; margin-top:15px;" *ngIf="(EventHTTPReceived[1]===true || (EventHTTPReceived[2]===true && EventHTTPReceived[3]===true))">
+@if (displayConvert()){
+    <div style="margin-left:10px; margin-top:15px;" > <!-- *ngIf="(EventHTTPReceived[1]===true || (EventHTTPReceived[2]===true && EventHTTPReceived[3]===true))" -->
    
     <!-- CONVERSION OF TWO UNITS -->
      <div style="border: blue solid 2px; width: var(--tableW); max-width: var(--tableMaxW); margin-left:10px; height:150px; font-size:18px; float:none; ">
@@ -301,8 +302,8 @@
             <span style='color:red; font-size:12px; width:100%' >{{message}}</span>
         }  
     }    
- </div>
-
+    </div>
+}
 
 
 </body>

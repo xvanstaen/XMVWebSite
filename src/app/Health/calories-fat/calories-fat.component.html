@@ -28,7 +28,7 @@
 }
 
 @if (isInitComplete() && !isUserTimeOut() && isNgStyleCompleted() && outFileRecipe.tabCaloriesFat.length>1 && outConfigCaloriesFat.tabCaloriesFat.length>1){  <!-- && tabTotal.length>0 -->
-    <div style="border:solid 2px blue; max-height:480px; background-color: lightgreen; display:inline-block; width:865px;" >
+    <div style="border:solid 2px blue; height:430px; background-color: lightgreen; display:inline-block; width:865px;" >
          @if (isErrorFS() && errorMsgFS!==""){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">{{errorMsgFS}}</div>
         } @else if (tabLock[1].lock===2){
@@ -223,7 +223,7 @@
                                 <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.type">
                                         <input class="styleInput textHover"  style="text-align:left" 
                                             [style.color]="HTMLCaloriesFat.row.color" [style.pointer-events]="j === 0 ? 'auto' : 'none'"
-                                            [readonly]='inputReadOnly'  type="text" (input)="onInputRecipe($event)" [id]="'type-' + i" placeholder="meat/fish/oil"   
+                                            [readonly]='inputReadOnly'  type="text" (input)="onInputRecipe($event)" [id]="'Recipe-' + i" placeholder="meat/fish/oil"   
                                             [value]="j === 0 ? tab.Type : '&nbsp;'" >
                                 </div>
                                 <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.ingr">
@@ -330,17 +330,30 @@
                     }
                 }
             } 
-        </div>
 
-        <div class="posConfirm">
-            <div class="skipLine">&nbsp;</div> 
-            <div class="posConfirm">
+        </div>
+        @if ((!isSaveRecipeConfirmed() && isRecipeModified() || isSaveRecipeConfirmed())){
+            <div  style="margin-top:20px; border:solid 2px blue;  padding-top:10px; padding-bottom:10px; background-color: lightgreen; display:inline-block; width:865px;">
                 @if (!isSaveRecipeConfirmed() && isRecipeModified()){
-                    <span class="msg"  >
+                    <span class="msg"  style="font-size:14px; font-weight: bolder;">
                             Your recipe file has been updated. Do you want to
                     </span>
                     <button id='RecipeSave' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
                     <button id='RecipeCancel' class="sizeButtons"  style="width:120px" (click)="CancelUpdates($event)"> Cancel Updates</button>
+                } @else {
+                    <form  [formGroup]="SpecificForm" >
+                        <div class="msg"  style="font-size:14px; font-weight: bolder;">
+                            Please enter the name of the recipe file to save  :
+                            <input type='text' style='width:250px;' formControlName="FileNameRecipe" >
+                        </div>                        
+                        <div class="skipLine">&nbsp;</div>
+                        <div style="width:500px; display:inline-block; margin-left:20px; ">
+                            <span style="width:240px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
+
+                            <button id='RecipeSave' class="sizeButtons" (click)="SaveFile($event)">Yes</button>
+                            <button id='RecipeCancel' class="sizeButtons" (click)="CancelTheSave($event)"> No</button>
+                        </div>
+                    </form>       
                 }
                 @if (errorMsg!=='' && returnEmit.saveAction==='RecipeSave'){
                     <div class="skipLine">&nbsp;</div>  
@@ -348,28 +361,10 @@
                     <div class="skipLine">&nbsp;</div> 
                 } 
             </div>
-        </div>
-        @if (isSaveRecipeConfirmed()){
-            <form  [formGroup]="SpecificForm" >
-                <div class="msg"  >
-                    Please enter the name of the recipe file to save  :
-                    <input type='text' style='width:250px;' formControlName="FileNameRecipe" >
-                </div>                        
-                <div class="skipLine">&nbsp;</div>
-                <div style="width:500px; display:inline-block; margin-left:20px; ">
-                    <span style="width:240px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
-
-                    <button id='RecipeSave' class="sizeButtons" (click)="SaveFile($event)">Yes</button>
-                    <button id='RecipeCancel' class="sizeButtons" (click)="CancelTheSave($event)"> No</button>
-                </div>
-            </form>       
         }
-        <div class="skipLine">&nbsp;</div> 
+    </div>
 
-
-    <div class="skipLine">&nbsp;</div>  
-    <div style="margin-top:10px; border:solid 2px blue; background-color: lightskyblue; display:inline-block; width:865px; max-height:470px;" >
-    
+    <div style="margin-top:20px; border:solid 2px red; background-color: lightskyblue; display:inline-block; width:865px; height:470px;" >
         @if (isErrorFS() && errorMsgFS !==""){
             <div style="color:red; margin-top:10px; margin-left:10px; display:block; font-size: 16px;">{{errorMsgFS}}</div>
         } @else if (tabLock[1].lock===2){
@@ -564,31 +559,31 @@
                                             <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'unit-' + i + '-' + j"  value="{{content.ServingUnit}}"  >
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other"> 
-                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'calo-' + i + '-' + j"  value="{{content.Calories}}"  >
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'calo-' + i + '-' + j"  value="{{content.Calories | number:'1.0-0'}}" >
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
-                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'prot-' + i + '-' + j"  value="{{content.Protein}}" >
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'prot-' + i + '-' + j"  value="{{content.Protein | number:'1.0-0'}}" >
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
-                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'carb-' + i + '-' + j"  value="{{content.Carbs}}"  >
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'carb-' + i + '-' + j"  value="{{content.Carbs | number:'1.0-0'}}" >
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
-                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'suga-' + i + '-' + j"  value="{{content.Sugar}}" >                     
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'suga-' + i + '-' + j"  value="{{content.Sugar | number:'1.0-0'}}" >                 
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
-                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'naturalSuga-' + i + '-' + j"  value="{{content.naturalSugar}}" >                     
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'naturalSuga-' + i + '-' + j"  value="{{content.naturalSugar | number:'1.0-0'}}" >                    
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
-                                            <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'addedSuga-' + i + '-' + j" value="{{content.addedSugar}}" >                     
+                                            <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'addedSuga-' + i + '-' + j" value="{{content.addedSugar | number:'1.0-0'}}" >                    
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
-                                            <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'chol-' + i + '-' + j"  value="{{content.Cholesterol}}">
+                                            <input class="styleInput textHover"  [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'chol-' + i + '-' + j"  value="{{content.Cholesterol | number:'1.0-0'}}" >
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
-                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'satu-' + i + '-' + j"  value="{{content.Fat.Saturated}}"  >
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'satu-' + i + '-' + j"  value="{{content.Fat.Saturated | number:'1.0-0'}}" > 
                                         </div>
                                         <div class="divContent"  [style.width.px]="HTMLCaloriesFat.colWidth.other">
-                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'tota-' + i + '-' + j"  value="{{content.Fat.Total}}" >                                
+                                            <input class="styleInput textHover"   [readonly]='inputReadOnly' type="text" (input)="onInput($event)" [id]="'tota-' + i + '-' + j"  value="{{content.Fat.Total | number:'1.0-0'}}" >                                 
                                         </div>
                                 </div>
                             }
@@ -599,39 +594,39 @@
 
         </div>
 
-        @if (tabLock[1].lock===1){
-            <div class="skipLine">&nbsp;</div> 
-            <div class="posConfirm">
+        @if (tabLock[1].lock===1 && ((!isSaveConfirmed() && isCalFatModified()) || isSaveConfirmed())){
+            <div style="margin-top:20px; border:solid 2px blue;  padding-top:10px; padding-bottom:10px; background-color: lightgreen; display:inline-block; width:865px;">
+
                 @if (!isSaveConfirmed() && isCalFatModified()){
-                    <span class="msg"  >
+                    <span class="msg" style="font-size: 14px; font-weight:bolder;" >
                         Configuration file is updated. Do you want to
                     </span>
                     <button id='Cal-1' class="sizeButtons" (click)="ConfirmSave($event)"> Save</button>
                     <button id='Cal-2' class="sizeButtons"  style="width:120px" (click)="CancelUpdates($event)"> Cancel Updates</button>
+                }  @else {
+                    <form  [formGroup]="SpecificForm" >
+                        <div class="msg"  style="font-size: 14px; font-weight:bolder;">
+                            Please enter the name of the file 
+                            <input type='text' style="width:250px;" formControlName="FileName" >
+                        </div>                        
+                        <div class="skipLine">&nbsp;</div>
+                        <div style="width:500px; display:inline-block; margin-left:20px; ">
+                            <span style="width:240px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
+                            <button id='ConfigCalSave' class="sizeButtons" (click)="SaveFile($event)">Yes</button>
+                            <button id='Cal-4' class="sizeButtons" (click)="CancelTheSave($event)"> No</button>
+                        </div>
+                    </form>
                 }
                 @if (errorMsg!=='' && returnEmit.saveAction==='ConfigCalSave'){
                     <div class="skipLine">&nbsp;</div>  
                     <span style="color:red; margin-left:20px; font-weight: bold; width:430px; display:inline-block; background: lightgrey;"  >{{errorMsg}}</span>
                     <div class="skipLine">&nbsp;</div> 
                 }
-            </div>
-            @if(isSaveConfirmed()){
-                <form  [formGroup]="SpecificForm" >
-                    <div class="msg"  >
-                        Please enter the name of the file 
-                        <input type='text' style="width:250px;" formControlName="FileName" >
-                    </div>                        
-                    <div class="skipLine">&nbsp;</div>
-                    <div style="width:500px; display:inline-block; margin-left:20px; ">
-                        <span style="width:240px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
-                        <button id='ConfigCalSave' class="sizeButtons" (click)="SaveFile($event)">Yes</button>
-                        <button id='Cal-4' class="sizeButtons" (click)="CancelTheSave($event)"> No</button>
-                    </div>
-                </form>
-            }
+
+               
+            </div> 
         }
         <div class="skipLine">&nbsp;</div> 
-    </div>
     </div>
 } @else {
     @if (isUserTimeOut()){

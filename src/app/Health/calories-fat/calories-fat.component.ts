@@ -192,7 +192,6 @@ export class CaloriesFatComponent implements OnInit {
     x: 0,
     y: 0} ;
 
-    
   titleHeight:number=0;
 
   returnEmit={
@@ -267,10 +266,7 @@ constructor(
             this.previousTriggerCalFatSave=this.triggerCalFatSave();
             this.processCalFatSave(this.triggerCalFatSave())
         }
-
-        
       }) }
-
 
 @HostListener('window:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
@@ -487,6 +483,7 @@ constructor(
 
   initialiseFiles(theFunction:string){
     if (theFunction==="calFat"){
+      if (this.ConfigCaloriesFat.tabCaloriesFat===undefined){return;}
       this.outConfigCaloriesFat.tabCaloriesFat.splice(0,this.outConfigCaloriesFat.tabCaloriesFat.length);
       this.outFileRecipe.tabCaloriesFat.splice(this.outFileRecipe.tabCaloriesFat.length);
       if (this.ConfigCaloriesFat.tabCaloriesFat.length>0){
@@ -496,6 +493,7 @@ constructor(
       }
       this.initTrackRecord();
     } else if (theFunction==="recipe"){
+      if (this.inFileRecipe.tabCaloriesFat===undefined){return;}
       if (this.inFileRecipe.tabCaloriesFat.length>0){
         this.fillConfig(this.outFileRecipe, this.inFileRecipe, 'Recipe');
       } else { 
@@ -927,8 +925,7 @@ reCalculateValues(){
       this.searchFoodCalories(this.outFileRecipe.tabCaloriesFat[iRecipe].Content[jRecipe].Name,iRecipe,jRecipe);
     }
     this.calculateTotal(iRecipe);
-    this.iRecipeSave=iRecipe;
-    this.transferToCalFatA();
+    this.transferToCalFat(iRecipe);
   }
 }
 
@@ -1214,18 +1211,11 @@ calculateTotal( iRecipe:number){
       }   
     }
   }
-iRecipeSave:number=0;
   transferToCalFat(iRecipe:number){
     // check if name of recipe already exists under Type='recipe'
-    this.iRecipeSave = iRecipe;
     this.isCalFatModified.set(true);
     this.onInputAction="transferToCalFat";
-    this.timeOutactivity(1,true,false,"only");
-  }
-
-  transferToCalFatA(){
     this.openFileAccess.set(false);
-    const iRecipe = this.iRecipeSave;
     var j=0;
     for (var i=0; i< this.outConfigCaloriesFat.tabCaloriesFat.length && this.outConfigCaloriesFat.tabCaloriesFat[i].Type!=='Recipe'; i++){
     }
@@ -1249,10 +1239,9 @@ iRecipeSave:number=0;
       }
     }
     this.copyContent(this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j],this.outFileRecipe.tabCaloriesFat[iRecipe].Total);
-  // name of the recipe
+    // name of the recipe
     this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].Name=this.outFileRecipe.tabCaloriesFat[iRecipe].Type;
   }
-
 
   manageIds(theId: string) {
     this.errorMsg = '';
@@ -1378,52 +1367,6 @@ iRecipeSave:number=0;
   //this.processSaveCalFatRecipe.emit(this.theEvent);    
   }
 
-  SaveFileOld(event:any){
-    this.returnEmit.saveAction=event.target.id;
-    this.theEvent.target.id = event.target.id;
-    this.theEvent.checkLock.isDataModified=true;
-    this.theEvent.checkLock.isSaveFile=true;
-    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
-  
-    if (event.target.id==='RecipeSave'){
-      this.fillConfig(this.inFileRecipe, this.outFileRecipe, 'Recipe');
-      this.theEvent.checkLock.iWait=6;
-      this.onInputAction = "saveRecipe";
-      this.theEvent.fileName = this.SpecificForm.controls['FileNameRecipe'].value
-      this.processSave.emit(this.theEvent);
-      this.isSaveRecipeConfirmed.set(false);
-
-    } else {
-      this.fillConfig(this.ConfigCaloriesFat,this.outConfigCaloriesFat, 'Calories');
-      this.theEvent.fileName = this.SpecificForm.controls['FileName'].value;
-      this.outConfigCaloriesFat.updatedAt=strDateTime();
-      this.theEvent.checkLock.iWait=1;
-      this.onInputAction = "saveCalFat";
-      this.processSave.emit(this.theEvent);
-      this.initTrackRecord();
-      this.isSaveConfirmed.set(false);
-      // rebuild the filter tabs
-      this.tabType.splice(0,this.tabType.length);
-      this.tabFood.splice(0,this.tabFood.length);
-      //var iFood=0;
-
-      for (var i=0; i<this.outConfigCaloriesFat.tabCaloriesFat.length; i++){
-        this.tabType.push({name:''});
-        this.tabType[this.tabType.length-1].name=this.outConfigCaloriesFat.tabCaloriesFat[i].Type.toLowerCase().trim();
-        for (var j=0; j<this.outConfigCaloriesFat.tabCaloriesFat[i].Content.length; j++){
-          //iFood++
-          this.tabFood.push({name:''});
-          this.tabFood[this.tabFood.length-1].name=this.outConfigCaloriesFat.tabCaloriesFat[i].Content[j].Name.toLowerCase().trim();;
-          }
-      }
-      this.tabType.sort((a, b) => (a.name < b.name) ? -1 : 1);
-      this.tabFood.sort((a, b) => (a.name < b.name) ? -1 : 1);
-      this.tabType.splice(0,0,{name:'cancel'});
-      this.tabFood.splice(0,0,{name:'cancel'});
-    }
-  }
-
-
   resultAccessFile(theEvent:any){
     if (theEvent.errorCode!==0 && theEvent.errorCode!==200){
       this.errorMsg = theEvent.errorMsg;
@@ -1437,7 +1380,7 @@ iRecipeSave:number=0;
       this.onInputA(this.theEvent);
       this.onInputAction="";
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "transferToCalFat") {
-      this.transferToCalFatA();
+      this.transferToCalFat(this.TabOfId[0]);
       this.onInputAction="";
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "onInputRecipe") {
       this.onInputRecipeA(this.theEvent);
@@ -1486,7 +1429,7 @@ iRecipeSave:number=0;
         this.onInputA(this.theEvent);
         //this.onInputAction="";
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "transferToCalFat") {
-        this.transferToCalFatA();
+        this.transferToCalFat(this.TabOfId[0]);
         //this.onInputAction="";
     } else  if (this.tabLock[1].lock === 1 && this.onInputAction === "onInputRecipe") {
         this.onInputRecipeA(this.theEvent);
@@ -1505,7 +1448,7 @@ iRecipeSave:number=0;
   }
 
   processCalFatSave(data:any){
-    if (this.statusSaveFn.status===200 || this.statusSaveFn.status===0){
+    if (this. statusSaveFn.status===200 || this.statusSaveFn.status===0){
         this.errorMsg='File has been successfully saved';
     } else {
         this.errorMsg=this.statusSaveFn.err;

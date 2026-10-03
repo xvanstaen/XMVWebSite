@@ -1586,6 +1586,7 @@ listConfig(){
     this.isGetCacheConsole.set(true);
     this.isError.set(false);
     this.error="";
+    this.isGetCacheConsoleBis.set(false);
   }
 
   appReturnError(event:any){
@@ -1594,8 +1595,8 @@ listConfig(){
       this.isError.set(true);
       //this.gotoGetCacheConsole=false;;
     }
-    
   }
+
 
   getCacheConsoleBis() {
     this.initBeforeCallAPI(10);
