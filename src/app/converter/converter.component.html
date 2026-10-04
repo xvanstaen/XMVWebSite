@@ -24,40 +24,37 @@
                 </option>
          </datalist>
          -->
-         <div class="dropdown" *ngIf="dialogueFromTo[0]===true">
-            <div  [ngStyle]="styleDataListFromContent" >
-                <div  [ngStyle]="styleDataListFromOptions" >
+         @if (dialogueFromTo[0]===true){
+            <div class="dropdown">
+                <div  [ngStyle]="styleDataListFromContent" >
+                    <div  [ngStyle]="styleDataListFromOptions" >
 
-                    <li *ngFor="let unit of DisplayTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="From-{{m}}" (click)="onAction($event)"
-                            class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
-                            {{unit.name}}-{{unit.type}}
-                    </li>
+                        <li *ngFor="let unit of DisplayTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="From-{{m}}" (click)="onAction($event)"
+                                class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                {{unit.name}}-{{unit.type}}
+                        </li>
 
+                    </div>
                 </div>
             </div>
-        </div>
-
+         }
          <input type="text" placeholder='Value ' class="inputText overrideInput" style=" margin-top:3px; "  id="ValueFrom-{{0}}" (input)="ConvertValues($event)"  [value]="ValuesToConvert.valueFrom">
          <input type="text"  placeholder='to' class="inputText overrideInput"  id="To-{{1}}" (input)="ConvertValues($event)"  (click)="ConvertValues($event)" [value]="ValuesToConvert.To">
-         <!-- 
-         <datalist id="l2" >
-         <option *ngFor="let unit of DisplayTabOfUnitsTo;" value='{{unit.name}}-{{unit.type}}' >
-            </option>
-         </datalist>
-        -->
-        <div class="dropdown" *ngIf="dialogueFromTo[1]===true">
-            <div  [ngStyle]="styleDataListToContent" >
-                <div  [ngStyle]="styleDataListToOptions" >
 
-                    <li *ngFor="let unit of DisplayTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="To-{{m}}" (click)="onAction($event)"
-                            class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
-                            {{unit.name}}-{{unit.type}}
-                    </li>
+        @if (dialogueFromTo[1]===true){
+            <div class="dropdown" >
+                <div  [ngStyle]="styleDataListToContent" >
+                    <div  [ngStyle]="styleDataListToOptions" >
 
+                        <li *ngFor="let unit of DisplayTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="To-{{m}}" (click)="onAction($event)"
+                                class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                {{unit.name}}-{{unit.type}}
+                        </li>
+
+                    </div>
                 </div>
             </div>
-        </div>
-
+        }
 
          <input type="text" placeholder='Value to convert' class="inputText overrideInput" style=" margin-top:3px; ;"  id="ValueTo-{{0}}" (input)="ConvertValues($event)" [value]="ValuesToConvert.valueTo">
         
@@ -69,6 +66,7 @@
             <button class="sizeButtons sizeButtonsOverride"  id='CancelConvert' (click)="CancelConvertValues()">Cancel</button>
         </div>
      </div>
+     <br><br>
 
     <!-- =============================================================================
          ================ DISPLAY & MANAGE TABLE OF ALL CONVERSIONS  ================= 
@@ -85,20 +83,20 @@
                     <th class="tableCol"> Conversion </th>
                     <th class="tableCol" style="width:35%"   > From &nbsp;
                         <input type="text"  list='ff1' class="inputText" style="width:60px; height:15px; margin-left:10px;" placeholder='Filter' id="FilterFrom"  (click)="onFilter($event)"  (input)="onFilter($event)" value="{{TabFilter[0]}}" >
-                        
-                        <div class="dropdown" *ngIf="dialogueFromTo[4]===true">
-                            <div  [ngStyle]="styleDataListFromContent" >
-                                <div  [ngStyle]="styleDataListFromOptions"  style="margin-left:0px; margin-top:10px;">
-                
-                                    <li *ngFor="let unit of FilterTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FilterFrom-{{m}}" (click)="onAction($event)"
-                                            class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
-                                            {{unit.name}}-{{unit.type}}
-                                    </li>
-                
+                        @if (dialogueFromTo[4]===true){
+                            <div class="dropdown">
+                                <div  [ngStyle]="styleDataListFromContent" >
+                                    <div  [ngStyle]="styleDataListFromOptions"  style="margin-left:0px; margin-top:10px;">
+                    
+                                        <li *ngFor="let unit of FilterTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FilterFrom-{{m}}" (click)="onAction($event)"
+                                                class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                                {{unit.name}}-{{unit.type}}
+                                        </li>
+                    
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
+                        }
                         <!--
                         <datalist id='ff1' style="margin-left:15px;" >
                             <option *ngFor="let unit of FilterTabOfUnitsFrom;"  value="{{unit.name}}-{{unit.type}}">{{unit.name}}-({{unit.type}})</option>
@@ -107,18 +105,20 @@
                     </th>
                     <th class="tableCol" style="width:35%"  > to &nbsp;
                         <input type="text"  list='ff2' class="inputText" style="width:60px; height:15px; margin-left:10px;" placeholder='Filter' id="FilterTo"  (click)="onFilter($event)" (input)="onFilter($event)" value="{{TabFilter[1]}}" >
-                        <div class="dropdown" *ngIf="dialogueFromTo[5]===true">
-                            <div  [ngStyle]="styleDataListToContent" >
-                                <div  [ngStyle]="styleDataListToOptions" >
-                
-                                    <li *ngFor="let unit of FilterTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FilterTo-{{m}}" (click)="onAction($event)"
-                                            class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
-                                            {{unit.name}}-{{unit.type}}
-                                    </li>
-                
+                        @if (dialogueFromTo[5]===true){    
+                            <div class="dropdown">
+                                <div  [ngStyle]="styleDataListToContent" >
+                                    <div  [ngStyle]="styleDataListToOptions" >
+                    
+                                        <li *ngFor="let unit of FilterTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FilterTo-{{m}}" (click)="onAction($event)"
+                                                class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                                {{unit.name}}-{{unit.type}}
+                                        </li>
+                    
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                         <!--
                         <datalist id='ff2' style="margin-left:15px;"   >
                             <option *ngFor="let unit of FilterTabOfUnitsTo;" value="{{unit.name}}-{{unit.type}}">{{unit.name}}-({{unit.type}})</option>
@@ -161,16 +161,27 @@
     
         </table>
             <div class="skipLine">&nbsp;</div>
-            <span  class=" arrow_down divPage" *ngIf="PageToDisplay.length===itemPerPage && displayNewRow===false && displayToModify===false  && displayToDelete===false">
-                <button class="page prevPage" (click)="prevPage()" *ngIf="PageToDisplay[0].refMainTable!==0"> Prev page</button>
-                <span style="margin-left:10px; width:80px; display:inline-block" *ngIf="PageToDisplay[0].refMainTable===0"> &nbsp;</span>
-            </span>
+            @if (PageToDisplay.length===itemPerPage && displayNewRow===false && displayToModify===false  && displayToDelete===false){
+                <span  class=" arrow_down divPage">
+                    @if (PageToDisplay[0].refMainTable!==0){
+                        <button class="page prevPage" (click)="prevPage()"> Prev page</button>
+                    } @else if (PageToDisplay[0].refMainTable===0){
+                        <span style="margin-left:10px; width:80px; display:inline-block"> &nbsp;</span>
+                    }
+                </span>
+            }
+            @if (displayNewRow===false){
+                <button class="page prevPage" style="margin-left:80px; " (click)="addRow()" >Add a row</button>         
+            }
+            @if (PageToDisplay.length===itemPerPage && displayNewRow===false && displayToModify===false  && displayToDelete===false){
+                <span  class=" arrow_down ">
+                    @if (PageToDisplay[itemPerPage-1].refMainTable<ConvToDisplay.tabConvItem.length-1){
+                        <button class="page " style="margin-left:80px; " (click)="nextPage()"> Next page</button>
+                    }  
+                </span>
+            }
             
-            <button *ngIf="displayNewRow===false" class="page prevPage" style="margin-left:80px; " (click)="addRow()" >Add a row</button>
-        
-            <span  class=" arrow_down " *ngIf="PageToDisplay.length===itemPerPage && displayNewRow===false && displayToModify===false  && displayToDelete===false">
-                <button class="page " style="margin-left:80px; " (click)="nextPage()" *ngIf="PageToDisplay[itemPerPage-1].refMainTable<ConvToDisplay.tabConvItem.length-1" > Next page</button>
-            </span>
+                
         
 
             <div class="skipLine">&nbsp;</div>
@@ -182,9 +193,7 @@
         @if(displayNewRow===true || displayToModify===true || displayToDelete===true ){
             <div class="skipLine">&nbsp;</div>
     
-            <th class="tableCol" style="margin-left:10px; font-size:14px; width:var(--tableW); max-width:var(--tableMaxW); color:blue; background-color:rgb(174, 174, 242); display:inline-block;"> {{tableTitle}} </th>
-    
-    
+            <th class="tableCol" style="margin-left:10px; font-size:14px; width:var(--tableW); max-width:var(--tableMaxW); color:blue; background-color:rgb(174, 174, 242); display:inline-block;"> {{tableTitle}} </th>    
             <table >
                 <thead>
     
@@ -200,40 +209,41 @@
                         <td class="tableCol" style="text-align: center; font-size:14px; font-weight:bold;">{{newRecord.type}}</td>
                         <td class="tableCol " > 
     
-                                <mat-icon class="material-symbols-rounded backGround "    >
-                                        <span class="arrow_down_size" (click)="arrowAction($event)" id="UnitType">
-                                            expand_circle_down
-                                        </span>
-                                </mat-icon>
-                            
-                            <div  *ngIf="displayUnitType===true" class="dropdown" >
-                                <div [ngStyle]="styleBoxContent">
-                                    <div  [ngStyle]="styleBoxOptions"  >        
-                                        <li *ngFor="let action of TabUnitType; let m=index;" [value]='action' (click)="inputNewRow($event)" id="UnitType-{{m}}" 
-                                                class='Straight-options'   [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
-                                        {{action}}
-                                        </li>
+                            <mat-icon class="material-symbols-rounded backGround "    >
+                                    <span class="arrow_down_size" (click)="arrowAction($event)" id="UnitType">
+                                        expand_circle_down
+                                    </span>
+                            </mat-icon>
+                            @if (displayUnitType===true){
+                                <div class="dropdown" >
+                                    <div [ngStyle]="styleBoxContent">
+                                        <div  [ngStyle]="styleBoxOptions"  >        
+                                            <li *ngFor="let action of TabUnitType; let m=index;" [value]='action' (click)="inputNewRow($event)" id="UnitType-{{m}}" 
+                                                    class='Straight-options'   [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                            {{action}}
+                                            </li>
 
+                                        </div>
                                     </div>
-                                </div>
-                            </div>  
+                                </div>  
+                            }
                         </td>
                         <td class="tableCol" > <input type="text"  class="inputText" style="width:95%" id="FromTo" name="valueFromTo" (input)="inputNewRow($event)" [value]="newRecord.valueFromTo"></td>
                         <td class="tableCol" > <input list='l3' type="text"  class="inputText" style="width:95%" id="From" name="From" (input)="inputNewRow($event)" (click)="inputNewRow($event)" [value]="newRecord.From">
+                            @if (dialogueFromTo[2]===true){
+                                <div class="dropdown">
+                                    <div  [ngStyle]="styleDataListFromContent" >
+                                        <div  [ngStyle]="styleDataListFromOptions" >
                         
-                            <div class="dropdown" *ngIf="dialogueFromTo[2]===true">
-                                <div  [ngStyle]="styleDataListFromContent" >
-                                    <div  [ngStyle]="styleDataListFromOptions" >
-                    
-                                        <li *ngFor="let unit of NewRowTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FromNewRow-{{m}}" (click)="onAction($event)"
-                                                class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
-                                                {{unit.name}}-{{unit.type}}
-                                        </li>
-                    
+                                            <li *ngFor="let unit of NewRowTabOfUnitsFrom; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="FromNewRow-{{m}}" (click)="onAction($event)"
+                                                    class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                                    {{unit.name}}-{{unit.type}}
+                                            </li>
+                        
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        
+                            }
                             <!--
                             <datalist id="l3">
                                 <option *ngFor="let unit of NewRowTabOfUnitsFrom;" [value]='unit.name' style="width:40px; height:15px;">
@@ -242,19 +252,20 @@
                             -->
                         </td>
                         <td class="tableCol" > <input list='l4' type="text" class="inputText" style="width:95%" id="To" name="To" (input)="inputNewRow($event)"  (click)="inputNewRow($event)" [value]="newRecord.To">
+                            @if (dialogueFromTo[3]===true){
+                                <div class="dropdown">
+                                    <div  [ngStyle]="styleDataListToContent" >
+                                        <div  [ngStyle]="styleDataListToOptions" >
                         
-                            <div class="dropdown" *ngIf="dialogueFromTo[3]===true">
-                                <div  [ngStyle]="styleDataListToContent" >
-                                    <div  [ngStyle]="styleDataListToOptions" >
-                    
-                                        <li *ngFor="let unit of NewRowTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="ToNewRow-{{m}}" (click)="onAction($event)"
-                                                class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
-                                                {{unit.name}}-{{unit.type}}
-                                        </li>
-                    
+                                            <li *ngFor="let unit of NewRowTabOfUnitsTo; let m=index;" value='{{unit.name}}-{{unit.type}}'  id="ToNewRow-{{m}}" (click)="onAction($event)"
+                                                    class='Straight-options Straight-optionsOverride' [ngClass]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" >
+                                                    {{unit.name}}-{{unit.type}}
+                                            </li>
+                        
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            }
                             <!--
                             <datalist id="l4">
                                 <option *ngFor="let unit of NewRowTabOfUnitsTo;" [value]='unit.name' style="width:40px; height:15px;">
