@@ -22,7 +22,7 @@ import { Bucket_List_Info } from '../JsonServerClass';
 // it is stored in MongoDB and accessed via ManageMongoDBService
 import { configServer, LoginIdentif  } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
-import {msginLogConsole} from '../consoleLog'
+import { msginLogConsole } from '../consoleLog'
 import { environment } from '../../environments/environment';
 
 import {manage_input} from '../manageinput';
@@ -309,11 +309,11 @@ export class ConverterComponent implements OnInit {
     }
     if (FromTo==='From'){
       this.styleDataListFromContent=getStyleDropDownContent(this.dataList.heightContent, this.dataList.widthContent);
-      this.styleDataListFromOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 10, 5, this.dataList.scrollY);
+      this.styleDataListFromOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 10, -20, this.dataList.scrollY);
     } else if (FromTo==='To'){
       
       this.styleDataListToContent=getStyleDropDownContent(this.dataList.heightContent, this.dataList.widthContent);
-      this.styleDataListToOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 200, 5, this.dataList.scrollY);
+      this.styleDataListToOptions=getStyleDropDownBox(this.dataList.heightOptions, this.dataList.widthOptions, 270, -20, this.dataList.scrollY);
 
     }
   }

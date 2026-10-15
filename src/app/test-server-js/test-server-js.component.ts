@@ -806,7 +806,7 @@ findCacheConfig(){
   this.newConfigServer.googleServer=this.theForm.controls['serverForAction'].value;
   this.ManageMongoDBService.findConfig(this.newConfigServer,'configServer' )
   .subscribe((data ) => { 
-    if (data.status ===200){
+    if (data.status === undefined){
       this.error="Cache config has been successfully reset" ; 
       console.log(data);
       this.dataConfigServer = new configServer;

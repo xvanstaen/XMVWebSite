@@ -129,6 +129,7 @@ export class MainManageFileComponent {
          
             if (this.previousTriggerFileSystem!==this.triggerFileSystem()){
               this.previousTriggerFileSystem=this.triggerFileSystem();
+              console.log("file-access calls 'processTriggerFS'")
               this.processTriggerFS(this.triggerFileSystem()); 
           }
           if (this.previousTriggerReadFile!==this.triggerReadFile()){

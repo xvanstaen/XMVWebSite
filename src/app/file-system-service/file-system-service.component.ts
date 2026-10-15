@@ -53,6 +53,7 @@ constructor(
     private ManageGoogleService: ManageGoogleService,
     @Inject(LOCALE_ID) private locale: string,
     ) {effect (() => {
+        console.log("Access in file system for iWait=" + this.iWait);
         if (this.previousNbCallFileSystem!==this.nbCallFileSystem()){
             this.previousNbCallFileSystem=this.nbCallFileSystem()      
             this.processCallFS(this.nbCallFileSystem()); 

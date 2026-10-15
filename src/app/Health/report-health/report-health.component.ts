@@ -1850,7 +1850,7 @@ export class ReportHealthComponent implements OnInit {
         labelName = 'Carbs limit';
         labLimit = 3;
       } else if (datasetsSpecialBar[i].label === 'Sugar') {
-        labelName = 'Sugar limit';
+        labelName = 'Add. Sugar limit';
         labLimit = 4;
         dataValue = Number(this.identification.health.Sugar);
       }
