@@ -120,7 +120,7 @@ input[type="date"] {
 
 .healthRow {
   width: 920px; 
-  height: 35px; 
+  height: 27px; 
   border: 0px solid red; 
   border-bottom: 0px solid blue;
   display: flex; /* Ensures the columns line up next to each other */

@@ -393,6 +393,8 @@ export class HealthComponent  {
     this.lastInputAt = strDateTime();
     this.refDate=new Date();
     //this.callTimeToGo();
+
+    //this.confTableAll.row.height='20';
   }
 
   firstLoopInit:boolean=true;
@@ -1370,7 +1372,7 @@ export class HealthComponent  {
     return style = {
         'background-color':backColor,
         'width': width + 'px',
-        'height':  Number(this.confTableAll.Total.height)  + 'px',
+        'height':  Number(this.confTableAll.Total.height)-14  + 'px',
         'color': this.confTableAll.Total.color,  
         'font-size':Number(this.confTableAll.Total.fontSize) + 'px',
         'font-weight':this.confTableAll.Total.fontWeight,
