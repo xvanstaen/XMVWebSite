@@ -867,7 +867,7 @@ export class HealthComponent  {
           this.sizeBox.heightOptions = this.sizeBox.heightItem * (this.NewTabAction.length) + 10;
           this.sizeBox.heightContent = this.sizeBox.heightOptions;
           this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
-          this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 60, 0, this.sizeBox.scrollY);
+          this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 60, 0, "scroll");
         } else if (event.target.id.substring(0, 9) === 'selAction') {
           if (event.target.textContent.indexOf('cancel') !== -1) {
           } else {
