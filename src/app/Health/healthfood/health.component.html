@@ -163,7 +163,7 @@
                                     (click)="onDropDownAll($event)" 
                                     [id]="'selAction-' + TabOfId[0] + '-' + TabOfId[1] + '-' + TabOfId[2] + '-' + m" 
                                     value="{{action.type}}-{{action.name}}">
-                                    @if (m > 1) {
+                                    @if (m > 2) {
                                         &nbsp;&nbsp;{{action.type}}:&nbsp;{{action.name}}
                                     } @else { 
                                         &nbsp;&nbsp;{{action.name}}
@@ -255,7 +255,7 @@
                                             <input  style="text-align:left; padding-left:8px;" 
                                                  type="date" class="styleInput boxHover"
                                                 [id]="'dateAll-' + i "   (input)="onInputDailyAll($event)" [value]="myDaily.date" >
-                                        } @else if (j===0){
+                                        } @else if (j===0 || checkText!==""){
                                             <input   readonly type="date" class="styleInput"
                                                 [value]="myDaily.date" style="pointer-events: none; padding-left:8px;"  >
                                         } @else {

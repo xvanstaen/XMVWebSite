@@ -331,34 +331,32 @@ export class HealthComponent  {
       this.TabOfId[i] = 0;
     }
     this.TabAction[0].name = 'cancel';
-    const A = { name: 'A' };
+    const A = { name: 'calCalFat' };
     this.TabAction.push(A);
-    this.TabAction[1].name = 'calCalFat';
-    const B = { name: 'A' };
+    const E = { name: 'detailNutFacts' };
+    this.TabAction.push(E);
+    const B = { name: 'insert before' };
     this.TabAction.push(B);
-    this.TabAction[2].name = 'insert before';
-    const C = { name: 'A' };
+    const C = { name: 'insert after' };
     this.TabAction.push(C);
-    this.TabAction[3].name = 'insert after';
-    const D = { name: 'A' };
+    const D = { name: 'delete' };
     this.TabAction.push(D);
-    this.TabAction[4].name = 'delete';
     const tabItems = ['date', 'meal', 'food'];
 
     this.NewTabAction[0].type = '';
     this.NewTabAction[0].name = 'cancel';
-    const E1 = { type: 'a', name: 'A' };
+    const E1 = { type: '', name: 'calCalFat' };
     this.NewTabAction.push(E1);
-    this.NewTabAction[1].type = '';
-    this.NewTabAction[1].name = 'calCalFat';
-    var k = 1;
+    const E2 = { type: '', name: 'detailNutFacts' };
+    this.NewTabAction.push(E2);
+    var k = 2;
     for (i = 0; i < tabItems.length; i++) {
       for (var j = 0; j < 3; j++) {
         k++;
         const E = { type: 'a', name: 'A' };
         this.NewTabAction.push(E);
         this.NewTabAction[k].type = tabItems[i];
-        this.NewTabAction[k].name = this.TabAction[j + 2].name;
+        this.NewTabAction[k].name = this.TabAction[j + 3].name;
       }
     }
 
@@ -546,6 +544,17 @@ export class HealthComponent  {
 
   calFatCalculation(i:number){
     this.calculateCalFat.emit(i)
+  }
+
+  tabNutritionFacts=["calories","proteins", "carbs","sugar", "natural sugar", "sat.fat", "total fat"];
+  detailNutFacts(j:number){
+    var k=this.TabOfId[2];
+    for (var i=0; i<this.tabNutritionFacts.length; i++){
+      this.TabOfId[2]=k+i;
+      this.theEvent.target.id = 'AllIngrA-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
+      this.CreateIngredient(this.theEvent);
+      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]+1].name=this.tabNutritionFacts[i];
+    }
   }
 
   calculateHeight() {
@@ -865,6 +874,9 @@ export class HealthComponent  {
           this.prevDialogue = 6;
           this.dialogue[this.prevDialogue] = true;
           this.sizeBox.heightOptions = this.sizeBox.heightItem * (this.NewTabAction.length) + 10;
+          if (this.sizeBox.heightOptions>250){
+            this.sizeBox.heightOptions=250;
+          }
           this.sizeBox.heightContent = this.sizeBox.heightOptions;
           this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
           this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 60, 0, "scroll");
@@ -917,6 +929,8 @@ export class HealthComponent  {
               }
             } else if (this.myType.trim() === "calCalFat") {
               this.calFatCalculation(this.TabOfId[0]);
+            } else if (this.myType.trim() === "detailNutFacts") {
+              this.detailNutFacts(this.TabOfId[0]);
             }
           }
         } else if (event.target.id.substring(0, 10) === 'ActionDate') {
