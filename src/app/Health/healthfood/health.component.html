@@ -55,7 +55,7 @@
         @if (HealthAllData.tabDailyReport.length>0){
                 <!--------------- DISPLAY ALL -->
             <div style="font-size:16px; border:solid 0px red;  display:inline-block; 
-                              margin-top:5px;  width:935px;" >
+                              margin-top:5px;  width:955px;" >
                 <div style="width:100%; padding-top:10px; font-size:18px;font-weight:bolder; text-align:center; color:blue; display:inline-block;"> HEALTH DATA MANAGEMENT</div>
                     
                     <!-- 
@@ -150,6 +150,8 @@
                     <input class="contentHeader"  type="text" value="Sat."></div>
                 <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
                     <input class="contentHeader" type="text" value="Total"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader" type="text" value="Lock"></div>
             </div>
 
             <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
@@ -333,6 +335,10 @@
                                         <input type="text" class="styleInput  alignC"   
                                            
                                             [value]="theIngred.calFat.Fat.Total  | number:'1.1-1'" >
+                                    </div>
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
+                                        <input type="text" class="styleInput  alignC"   
+                                            [value]="theIngred.calFat.lockData"  [id]="'lockDataAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
                                 </div>
                                 }

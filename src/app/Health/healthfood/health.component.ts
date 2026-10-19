@@ -802,6 +802,16 @@ export class HealthComponent  {
       } else if (fieldName === 'burnAll') {
         this.HealthAllData.tabDailyReport[this.TabOfId[0]].burntCalories = event.target.value;
         this.tabNewRecordAll[this.TabOfId[0]].nb = 1;
+      } else if (fieldName === 'lockDat') {
+        if (event.target.value.toUpperCase().trim()==="N" || event.target.value.toUpperCase().trim()==="Y"){
+          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.lockData = event.target.value.toUpperCase().trim();
+        } else {
+          this.errorMsg="Enter 'N' or 'Y' only"
+          this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.lockData = "N";
+        }
+        
+
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
       } else { found=false}
       if (found===true){
         this.tabNewRecordAll[this.TabOfId[0]].change=true;
