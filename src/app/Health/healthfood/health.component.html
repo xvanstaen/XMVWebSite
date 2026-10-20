@@ -52,7 +52,8 @@
             </div>
         }
 
-        @if (HealthAllData.tabDailyReport.length>0){
+        @if (HealthAllData.tabDailyReport.length>0 || signalUpdateHealth()){
+            lockData={{HealthAllData.tabDailyReport[0].meal[0].dish[0].calFat.lockData}}
                 <!--------------- DISPLAY ALL -->
             <div style="font-size:16px; border:solid 0px red;  display:inline-block; 
                               margin-top:5px;  width:955px;" >
@@ -302,43 +303,44 @@
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
                                         <input type="text" class="styleInput  alignC" 
-                                            
+                                            [id]="'caloAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Calories  | number:'1.0-0'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other" >   
                                         <input type="text" class="styleInput  alignC"  
-                                            
+                                            [id]="'cholAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Cholesterol  | number:'1.1-1'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other"> 
                                         <input type="text" class="styleInput  alignC"  
-                                            
+                                            [id]="'protAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Protein | number:'1.1-1'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
                                         <input type="text"  class="styleInput  alignC"  
-                                          
+                                            [id]="'carbAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Carbs  | number:'1.1-1'"  >
                                     </div>
 
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
                                         <input type="text" class="styleInput  alignC"  
-                                            
+                                            [id]="'sugaAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Sugar  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
                                         <input type="text"  class="styleInput  alignC" 
-                                            
+                                            [id]="'satuAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Fat.Saturated  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
                                         <input type="text" class="styleInput  alignC"   
-                                           
+                                            [id]="'tFatAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Fat.Total  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
                                         <input type="text" class="styleInput  alignC"   
-                                            [value]="theIngred.calFat.lockData"  [id]="'lockDataAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
+
+                                            [value]="HealthAllData.tabDailyReport[i].meal[k].dish[j].calFat.lockData"  [id]="'lockAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
                                 </div>
                                 }

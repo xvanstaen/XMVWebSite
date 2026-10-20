@@ -71,6 +71,8 @@ export class HealthComponent  {
   @Input() returnDataFSHealth = new classHeaderReturnDataFS;
   @Input() statusSaveFn:any;
 
+  signalUpdateHealth=signal<boolean>(false);
+
   signalActionHealth=input.required<number>();
   //@Input() actionHealth:number = -1;
   previousSignalActionHealth:number=-1;
@@ -802,18 +804,49 @@ export class HealthComponent  {
       } else if (fieldName === 'burnAll') {
         this.HealthAllData.tabDailyReport[this.TabOfId[0]].burntCalories = event.target.value;
         this.tabNewRecordAll[this.TabOfId[0]].nb = 1;
-      } else if (fieldName === 'lockDat') {
+      } else if (fieldName === 'caloAll') {
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Calories = event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
+      } else if (fieldName === 'protAll') {
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Protein = event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
+      } else if (fieldName === 'cholAll') {
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Cholesterol = event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
+      } else if (fieldName === 'sugaAll') {
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar = event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
+      } else if (fieldName === 'carbAll') {
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Carbs = event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
+      } else if (fieldName === 'satuAll') {
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Fat.Saturated = event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
+      } else if (fieldName === 'tFatAll') {
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Fat.Total = event.target.value;
+        this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
+      } else if (fieldName === 'lockAll') {
         if (event.target.value.toUpperCase().trim()==="N" || event.target.value.toUpperCase().trim()==="Y"){
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.lockData = event.target.value.toUpperCase().trim();
         } else {
-          this.errorMsg="Enter 'N' or 'Y' only"
+          this.errorMsg="Enter 'N' or 'Y' only";
+          // 1. Update your TypeScript model data
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.lockData = "N";
-        }
-        
 
+          // 2. Generate the exact same ID your HTML template uses
+          const targetId = `lockAll-${this.TabOfId[0]}-${this.TabOfId[1]}-${this.TabOfId[2]}`;
+
+          // 3. Directly target the native HTML input element and force the value
+          const nativeInput = document.getElementById(targetId) as HTMLInputElement;
+          if (nativeInput) {
+            nativeInput.value = "N";
+          }
+
+        }
         this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
-      } else { found=false}
+      } else { found=false; this.signalUpdateHealth.set(false);}
       if (found===true){
+        this.signalUpdateHealth.set(true);
         this.tabNewRecordAll[this.TabOfId[0]].change=true;
         this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
       }
