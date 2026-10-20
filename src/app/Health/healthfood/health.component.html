@@ -342,27 +342,29 @@
                                             [value]="HealthAllData.tabDailyReport[i].meal[k].dish[j].calFat.lockData"  [id]="'lockAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
                                 </div>
-                                }
+                                }   
                                 <!-- sub-TOTAL-->
                                 @if (HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''){
                                     <div style="display:inline-block; width:100%;">
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][0] : tabSubTotal[1][0]">&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][1] : tabSubTotal[1][1]">&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][2] : tabSubTotal[1][2]">&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][3] : tabSubTotal[1][3]">&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][0] : tabSubTotal[1][0]" >&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][1] : tabSubTotal[1][1]" >&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][2] : tabSubTotal[1][2]" >&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][3] : tabSubTotal[1][3]" >&nbsp;</div>
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][4] : tabSubTotal[1][4]" >sub-Total</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]">&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]">&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Calories  | number:'1.0-0'}}</span></div>                                
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Cholesterol | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Protein | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Carbs | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" >&nbsp;</div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" >&nbsp;</div>
+                 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" style="margin-left:-7px;"><span >{{meal.total.Calories  | number:'1.0-0'}}</span></div>  
+                                                                      
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" style="margin-left:-7px;"><span >{{meal.total.Cholesterol | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Protein | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Carbs | number:'1.1-1'}}</span></div> 
                                         <!--
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
                                         -->
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
                                        
 
                                     </div>
@@ -377,19 +379,19 @@
                                         <div [style]="i % 2 === 0 ? tabTotal[0][1] : tabTotal[1][1]">&nbsp;</div>
                                         <div [style]="i % 2 === 0 ? tabTotal[0][2] : tabTotal[1][2]">&nbsp;</div>
                                         <div [style]="i % 2 === 0 ? tabTotal[0][3] : tabTotal[1][3]">&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabTotal[0][4] : tabTotal[1][4]" ><span style=" text-align:right; font-size:18px;">Total</span></div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][4] : tabTotal[1][4]" ><span >Total</span></div>
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]">&nbsp;</div>
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]">&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Calories  | number:'1.0-0'}}</span></div>                                
-                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Cholesterol | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Protein | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Carbs | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Calories  | number:'1.0-0'}}</span></div>                                
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-11px;">{{myDaily.total.Cholesterol | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Protein | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Carbs | number:'1.1-1'}}</span></div> 
                                         <!--
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
                                         -->
-                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
-                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Total | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Fat.Total | number:'1.1-1'}}</span></div> 
 
                                         <div class="skipLine"></div>
                                     </div>

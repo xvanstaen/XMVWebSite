@@ -548,7 +548,7 @@ export class HealthComponent  {
     this.calculateCalFat.emit(i)
   }
 
-  tabNutritionFacts=["calories","proteins", "carbs","sugar", "natural sugar", "sat.fat", "total fat"];
+  tabNutritionFacts=["calories","proteins", "carbs","sugar", "natural sugar","added sugar", "sat.fat", "total fat"];
   detailNutFacts(j:number){
     var k=this.TabOfId[2];
     for (var i=0; i<this.tabNutritionFacts.length; i++){
@@ -833,7 +833,7 @@ export class HealthComponent  {
         if (event.target.value.toUpperCase().trim()==="N" || event.target.value.toUpperCase().trim()==="Y" || event.target.value.toUpperCase().trim()===""){
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.lockData = event.target.value.toUpperCase().trim();
         } else {
-          this.errorMsg="Enter 'N' or 'Y' only";
+          this.errorMsg=" Value " + event.target.value + " is incorrect. Enter 'N' or 'Y' only";
           // 1. Update your TypeScript model data
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.lockData = "N";
 
@@ -1417,8 +1417,10 @@ export class HealthComponent  {
         'color': this.confTableAll.subTotal.color,  
         'font-size':Number(this.confTableAll.subTotal.fontSize) + 'px',
         'font-weight':this.confTableAll.subTotal.fontWeight,
-        'text-align': 'center',
-        'display':'inline-block', 
+        'text-align': 'left',
+        'display':'block',
+        'float':'left',
+        'border':'0px white solid', 
     }
   }
 
@@ -1437,8 +1439,10 @@ export class HealthComponent  {
         'color': this.confTableAll.Total.color,  
         'font-size':Number(this.confTableAll.Total.fontSize) + 'px',
         'font-weight':this.confTableAll.Total.fontWeight,
-        'text-align': 'center',
-        'display':'inline-block',
+        'text-align': 'left',
+        'display':'block',
+        'float':'left',
+        'border':'0px white solid', 
     }
   }
 
