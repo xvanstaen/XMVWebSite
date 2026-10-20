@@ -140,7 +140,11 @@ export function fillConfig(inFile:configServer){
             outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.Fat.Total = inFile.tabDailyReport[i].meal[j].dish[k].calFat.Fat.Total;
             outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.naturalSugar = inFile.tabDailyReport[i].meal[j].dish[k].calFat.naturalSugar;
             outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.addedSugar = inFile.tabDailyReport[i].meal[j].dish[k].calFat.addedSugar;
-            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.lockData = inFile.tabDailyReport[i].meal[j].dish[k].calFat.lockData;
+            if (inFile.tabDailyReport[i].meal[j].dish[k].calFat.lockData.toUpperCase().trim()!=="N" && inFile.tabDailyReport[i].meal[j].dish[k].calFat.lockData.toUpperCase().trim()!=="Y"){
+              outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.lockData = "N";
+            } else {
+              outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.lockData = inFile.tabDailyReport[i].meal[j].dish[k].calFat.lockData.toUpperCase().trim();
+            }
           } else {
             const theIngr = new ClassDish;
             outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);

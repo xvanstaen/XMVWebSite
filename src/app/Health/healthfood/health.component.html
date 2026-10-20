@@ -350,7 +350,7 @@
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][1] : tabSubTotal[1][1]">&nbsp;</div>
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][2] : tabSubTotal[1][2]">&nbsp;</div>
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][3] : tabSubTotal[1][3]">&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][4] : tabSubTotal[1][4]" ><span style=" text-align:right;">sub-Total</span></div>
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][4] : tabSubTotal[1][4]" >sub-Total</div>
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]">&nbsp;</div>
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]">&nbsp;</div>
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Calories  | number:'1.0-0'}}</span></div>                                
@@ -363,6 +363,7 @@
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
+                                       
 
                                     </div>
                                 }
@@ -389,6 +390,7 @@
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.Fat.Total | number:'1.1-1'}}</span></div> 
+
                                         <div class="skipLine"></div>
                                     </div>
                                 }

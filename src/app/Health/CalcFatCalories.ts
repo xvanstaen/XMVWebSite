@@ -59,7 +59,7 @@ for (j=0; j< dayHealth.meal.length ; j++){
         returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].name =dayHealth.meal[j].dish[k].name.toLowerCase().trim();
         trouve=false;
         iLoop=false;
-        if (dayHealth.meal[j].dish[k].calFat.lockData.toUpperCase().trim()==="N"){
+        if (dayHealth.meal[j].dish[k].calFat.lockData.toUpperCase().trim()!=="Y" ){
             for (iType=0; iType<tabCalFat.tabCaloriesFat.length && trouve===false && iLoop===false; iType++){
                 for (iFood=0; iFood<tabCalFat.tabCaloriesFat[iType].Content.length && trouve===false && iLoop===false; iFood++){
                     if (dayHealth.meal[j].dish[k].name.toLowerCase().trim()=== tabCalFat.tabCaloriesFat[iType].Content[iFood].Name.toLowerCase().trim()){

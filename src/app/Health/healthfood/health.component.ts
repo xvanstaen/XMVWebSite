@@ -830,7 +830,7 @@ export class HealthComponent  {
         this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Fat.Total = event.target.value;
         this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
       } else if (fieldName === 'lockAll') {
-        if (event.target.value.toUpperCase().trim()==="N" || event.target.value.toUpperCase().trim()==="Y"){
+        if (event.target.value.toUpperCase().trim()==="N" || event.target.value.toUpperCase().trim()==="Y" || event.target.value.toUpperCase().trim()===""){
           this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.lockData = event.target.value.toUpperCase().trim();
         } else {
           this.errorMsg="Enter 'N' or 'Y' only";
