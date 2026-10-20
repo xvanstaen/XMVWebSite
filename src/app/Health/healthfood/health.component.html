@@ -55,7 +55,7 @@
         @if (HealthAllData.tabDailyReport.length>0 || signalUpdateHealth()){
                 <!--------------- DISPLAY ALL -->
             <div style="font-size:16px; border:solid 0px red;  display:inline-block; 
-                              margin-top:5px;  width:955px;" >
+                              margin-top:5px;  width:990px;" >
                 <div style="width:100%; padding-top:10px; font-size:18px;font-weight:bolder; text-align:center; color:blue; display:inline-block;"> HEALTH DATA MANAGEMENT</div>
                     
                     <!-- 
@@ -147,6 +147,10 @@
                 <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
                     <input class="contentHeader"  type="text" value="Sugar"></div>
                 <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Add. S"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                    <input class="contentHeader"  type="text" value="Nat. S"></div>
+                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
                     <input class="contentHeader"  type="text" value="Sat."></div>
                 <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
                     <input class="contentHeader" type="text" value="Total"></div>
@@ -231,7 +235,7 @@
             }
             <!-----   MANAGEMENT OF ALL HEALTH DATA - DISPLAY OF THE TABLE -->
 
-            <div class="tableContainer" [style.width.px]="920" [style.color]="confTableAll.row.color" 
+            <div class="tableContainer" [style.width.px]="970" [style.color]="confTableAll.row.color" 
                         [style.height.px]="confTableAll.height"> 
                 @for (myDaily of HealthAllData.tabDailyReport; track $index; let i = $index) {
                     @let rowColor = i % 2 === 0 ? confTableAll.row.even : confTableAll.row.odd;
@@ -326,9 +330,19 @@
                                             [id]="'sugaAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Sugar  | number:'1.1-1'" >
                                     </div>
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
+                                        <input type="text" class="styleInput  alignC"  
+                                            [id]="'sugaAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
+                                            [value]="theIngred.calFat.addedSugar  | number:'1.1-1'" >
+                                    </div>
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
+                                        <input type="text" class="styleInput  alignC"  
+                                            [id]="'addSAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
+                                            [value]="theIngred.calFat.naturalSugar  | number:'1.1-1'" >
+                                    </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
                                         <input type="text"  class="styleInput  alignC" 
-                                            [id]="'satuAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
+                                            [id]="'natSAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Fat.Saturated  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
@@ -363,6 +377,8 @@
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
                                         -->
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.addedSugar | number:'1.1-1'}} </span></div> 
+                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.naturalSugar | number:'1.1-1'}} </span></div> 
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
                                         <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
                                        
@@ -390,6 +406,8 @@
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
                                         -->
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.addedSugar | number:'1.1-1'}} </span></div>
+                                        <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.naturalSugar | number:'1.1-1'}} </span></div>
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Fat.Total | number:'1.1-1'}}</span></div> 
 
