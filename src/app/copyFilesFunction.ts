@@ -131,7 +131,16 @@ export function fillConfig(inFile:configServer){
             outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].name = inFile.tabDailyReport[i].meal[j].dish[k].name;
             outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].quantity = inFile.tabDailyReport[i].meal[j].dish[k].quantity;
             outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].unit = inFile.tabDailyReport[i].meal[j].dish[k].unit;
-            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat = inFile.tabDailyReport[i].meal[j].dish[k].calFat;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.Calories = inFile.tabDailyReport[i].meal[j].dish[k].calFat.Calories;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.Protein = inFile.tabDailyReport[i].meal[j].dish[k].calFat.Protein;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.Carbs = inFile.tabDailyReport[i].meal[j].dish[k].calFat.Carbs;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.Cholesterol = inFile.tabDailyReport[i].meal[j].dish[k].calFat.Cholesterol;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.Sugar = inFile.tabDailyReport[i].meal[j].dish[k].calFat.Sugar;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.Fat.Saturated = inFile.tabDailyReport[i].meal[j].dish[k].calFat.Fat.Saturated;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.Fat.Total = inFile.tabDailyReport[i].meal[j].dish[k].calFat.Fat.Total;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.naturalSugar = inFile.tabDailyReport[i].meal[j].dish[k].calFat.naturalSugar;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.addedSugar = inFile.tabDailyReport[i].meal[j].dish[k].calFat.addedSugar;
+            outFile.tabDailyReport[iOut].meal[jOut].dish[lOut].calFat.lockData = inFile.tabDailyReport[i].meal[j].dish[k].calFat.lockData;
           } else {
             const theIngr = new ClassDish;
             outFile.tabDailyReport[iOut].meal[jOut].dish.push(theIngr);
