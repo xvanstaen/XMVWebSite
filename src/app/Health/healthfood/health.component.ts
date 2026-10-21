@@ -814,18 +814,20 @@ export class HealthComponent  {
         this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Cholesterol = event.target.value;
         this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
       } else if (fieldName === 'sugaAll') {
-        //const addedPercent=this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.addedSugar / this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar;
-        //const naturalPercent=this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.naturalSugar / this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar;
-        //this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar = event.target.value;
-        //this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.addedSugar = event.target.value * addedPercent;
-        //this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.naturalSugar = event.target.value * naturalPercent;
-        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar = event.target.value
+        const addedPercent=this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.addedSugar / this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar;
+        const naturalPercent=this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.naturalSugar / this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar;
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar = event.target.value;
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.addedSugar = event.target.value * addedPercent;
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.naturalSugar = event.target.value * naturalPercent;
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar = Number(event.target.value)
         this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
       } else if (fieldName === 'addSAll') {
-        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.addedSugar = event.target.value;
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.addedSugar = Number(event.target.value);
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar=Number(this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.naturalSugar) + Number(event.target.value);
         this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
       } else if (fieldName === 'natSAll') {
-        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.naturalSugar = event.target.value;
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.naturalSugar = Number(event.target.value);
+        this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Sugar=Number(this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.addedSugar) + Number(event.target.value);
         this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food[this.TabOfId[2]].nb = 1;
       } else if (fieldName === 'carbAll') {
         this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].calFat.Carbs = event.target.value;
@@ -1388,7 +1390,8 @@ export class HealthComponent  {
       this.tabContent[i][4]=this.createClassContent(this.confTableAll.colWidth.ingr,i,'left');
       this.tabContent[i][5]=this.createClassContent(this.confTableAll.colWidth.other,i,'center');
     }
-      */
+      
+
     for (var i=0; i<2; i++){
       this.tabSubTotal[i]=[];
       this.tabSubTotal[i][0]=this.createSubTotal(Number(this.confTableAll.colWidth.action),i);
@@ -1396,6 +1399,7 @@ export class HealthComponent  {
       this.tabSubTotal[i][2]=this.createSubTotal(Number(this.confTableAll.colWidth.calBurnt),i);
       this.tabSubTotal[i][3]=this.createSubTotal(Number(this.confTableAll.colWidth.meal),i);
       this.tabSubTotal[i][4]=this.createSubTotal(Number(this.confTableAll.colWidth.ingr),i);
+
       this.tabSubTotal[i][5]=this.createSubTotal(Number(this.confTableAll.colWidth.other),i);
     }
     for (var i=0; i<2; i++){
@@ -1407,6 +1411,7 @@ export class HealthComponent  {
       this.tabTotal[i][4]=this.createTotal(Number(this.confTableAll.colWidth.ingr),i);
       this.tabTotal[i][5]=this.createTotal(Number(this.confTableAll.colWidth.other),i);
     }
+      */
   }
 
   createSubTotal(width:Number,backGround:number){

@@ -14,7 +14,7 @@
         </app-file-access>
     }
 
-    <div style="border:solid green 2px; display:inline-block;margin-top:8px; margin-left:20px; background-color: lightskyblue;">
+    <div class="widthBox" style="border:solid green 2px; display:inline-block; margin-top:8px; margin-left:20px; background-color: lightskyblue;">
 
         @if(errCalcCalFat!==''){
             <div class="skipLine">&nbsp;</div>
@@ -54,8 +54,8 @@
 
         @if (HealthAllData.tabDailyReport.length>0 || signalUpdateHealth()){
                 <!--------------- DISPLAY ALL -->
-            <div style="font-size:16px; border:solid 0px red;  display:inline-block; 
-                              margin-top:5px;  width:990px;" >
+            <div class="widthBox" style="font-size:16px;  display:inline-block; 
+                              margin-top:5px;  " >
                 <div style="width:100%; padding-top:10px; font-size:18px;font-weight:bolder; text-align:center; color:blue; display:inline-block;"> HEALTH DATA MANAGEMENT</div>
                     
                     <!-- 
@@ -115,7 +115,7 @@
                 </div>
             }
 
-            <div   class="healthRow" id="posAfterTitle" style="  margin-top:15px;  margin-left:5px; " 
+            <div   class="healthRow widthRow" id="posAfterTitle" style="  margin-top:15px;  margin-left:5px; " 
                     [style.height.px]="confTableAll.row.height" [style.background-color]="confTableAll.title.background"
                     >
                 <div class="divHeader" [style.width.px]="confTableAll.colWidth.action">
@@ -128,34 +128,36 @@
                     <input class="contentHeader"  type="text" value="Meal"></div>
                 <div class="divHeader"[style.width.px]="confTableAll.colWidth.ingr">
                     <input class="contentHeader"  type="text" value="Ingr."></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Quant."></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Unit"></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Cal."></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Chol."></div>
-                <div class="divHeader"  [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader"  [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader" type="text" value="Prot."></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Carbs"></div>
                 <!--
                     <div [style]="divClassHeader[5]">
                     <input [style]="tabHeader[5]" type="text" value="Gly"></div>
                 -->
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Sugar"></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Add. S"></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Nat. S"></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader"  type="text" value="Sat."></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader" type="text" value="Total"></div>
-                <div class="divHeader" [style.width.px]="confTableAll.colWidth.other">
+                <div class="divHeader" [style.width.px]=confTableAll.colWidth.other>
                     <input class="contentHeader" type="text" value="Lock"></div>
+
+                
             </div>
 
             <!-----   DROPDOWN LIST outside ngFor because of overflow:scroll-->
@@ -235,7 +237,7 @@
             }
             <!-----   MANAGEMENT OF ALL HEALTH DATA - DISPLAY OF THE TABLE -->
 
-            <div class="tableContainer" [style.width.px]="970" [style.color]="confTableAll.row.color" 
+            <div class="tableContainer widthRow"  [style.color]="confTableAll.row.color" 
                         [style.height.px]="confTableAll.height"> 
                 @for (myDaily of HealthAllData.tabDailyReport; track $index; let i = $index) {
                     @let rowColor = i % 2 === 0 ? confTableAll.row.even : confTableAll.row.odd;
@@ -248,7 +250,7 @@
                             @if (searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))){
                                 @if (checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
-                                <div class="healthRow" >
+                                <div class="healthRow widthRow" >
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.action">
                                         <div class="circle" 
                                               [id]="'openAction-'  + i + '-' + k + '-' + j" (click)="onAction($event)" >
@@ -256,19 +258,35 @@
                                         </div>
                                        
                                     </div>
-                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.date">  
-                                        @if (k===0 && j===0){
-                                            <input  style="text-align:left; padding-left:8px;" 
-                                                 type="date" class="styleInput boxHover"
-                                                [id]="'dateAll-' + i "   (input)="onInputDailyAll($event)" [value]="myDaily.date" >
-                                        } @else if (j===0 || checkText!==""){
-                                            <input   readonly type="date" class="styleInput"
-                                                [value]="myDaily.date" style="pointer-events: none; padding-left:8px;"  >
-                                        } @else {
-                                            <input  class="styleInput" readonly type="text" 
-                                                [value]="&nbsp;" style="pointer-events: none;"  >
+                                    
+                                    <ng-container>
+                                        @let hasMatch = (k === 0 && j === 0) || (j === 0 || checkText !== "");
+                                        <div class="divContent" [style.width.px]="confTableAll.colWidth.date">  
+                                            
+                                             @if (k===0 && j===0){
+                                               
+                                                <input  style="text-align:left; padding-left:8px;" 
+                                                    type="date" class="styleInput boxHover"
+                                                    [id]="'dateAll-' + i "   (input)="onInputDailyAll($event)" [value]="myDaily.date" >
+                                            } @else if (j===0 || checkText!==""){
+                                                
+                                                <input   readonly type="date" class="styleInput"
+                                                    [value]="myDaily.date" style="pointer-events: none; padding-left:8px;"  >
+                                            } @else {
+                                                
+                                                <input  class="styleInput" readonly type="text" 
+                                                    [value]="&nbsp;" style="pointer-events: none;"  >                                
+                                            }
+
+                                        </div>
+                                        @if (!hasMatch) {
+                                            <div class="divContent" [style.width.px]=0> 
+                                                <input  class="styleInput" readonly type="text" 
+                                                    [value]="&nbsp;" style="pointer-events: none;"  >  
+                                            </div>
                                         }
-                                    </div>
+                                    </ng-container>
+
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.calBurnt" >
                                         @if (k===0 && j===0){
                                             <input  type="text"  class="styleInput boxHover" 
@@ -289,7 +307,7 @@
                                                 [value]="&nbsp;" style="pointer-events: none;"  >
                                         }
                                     </div>
-                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.ingr" >
+                                    <div class="divContent" [style.width.px]=confTableAll.colWidth.ingr >
                                         <input type="text" class="styleInput boxHover " 
                                         style="text-align:left; padding-left:4px;" 
                                             [id]="'ingrAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
@@ -300,95 +318,170 @@
                                             [value]="theIngred.quantity" [id]="'quanAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
-                                        <input type="text"  class="styleInput  alignC" 
+                                        <input type="text"  class="styleInput  alignC boxHover" 
                                            
                                             [value]="theIngred.unit" [id]="'unitAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
-                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
-                                        <input type="text" class="styleInput  alignC" 
+                                    <div class="divContent" [style.width.px]=confTableAll.colWidth.other>  
+                                        <input type="text" class="styleInput  alignC boxHover" 
                                             [id]="'caloAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Calories  | number:'1.0-0'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other" >   
-                                        <input type="text" class="styleInput  alignC"  
+                                        <input type="text" class="styleInput  alignC boxHover"  
                                             [id]="'cholAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Cholesterol  | number:'1.1-1'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other"> 
-                                        <input type="text" class="styleInput  alignC"  
+                                        <input type="text" class="styleInput  alignC boxHover"  
                                             [id]="'protAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Protein | number:'1.1-1'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text"  class="styleInput  alignC"  
+                                        <input type="text"  class="styleInput  alignC boxHover"  
                                             [id]="'carbAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Carbs  | number:'1.1-1'"  >
                                     </div>
 
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC"  
+                                        <input type="text" class="styleInput  alignC boxHover"  
                                             [id]="'sugaAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Sugar  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC"  
-                                            [id]="'sugaAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
+                                        <input type="text" class="styleInput  alignC boxHover"  
+                                            [id]="'addSAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.addedSugar  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC"  
-                                            [id]="'addSAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
+                                        <input type="text" class="styleInput  alignC boxHover"  
+                                            [id]="'natSAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.naturalSugar  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
-                                        <input type="text"  class="styleInput  alignC" 
-                                            [id]="'natSAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
+                                        <input type="text"  class="styleInput  alignC boxHover" 
+                                            [id]="'satuAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Fat.Saturated  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC"   
+                                        <input type="text" class="styleInput  alignC boxHover"   
                                             [id]="'tFatAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Fat.Total  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC"   
+                                        <input type="text" class="styleInput  alignC boxHover"   
 
                                             [value]="HealthAllData.tabDailyReport[i].meal[k].dish[j].calFat.lockData"  [id]="'lockAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
                                 </div>
                                 }   
                                 <!-- sub-TOTAL-->
-                                @if (HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''){
-                                    <div style="display:inline-block; width:100%;">
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][0] : tabSubTotal[1][0]" >&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][1] : tabSubTotal[1][1]" >&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][2] : tabSubTotal[1][2]" >&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][3] : tabSubTotal[1][3]" >&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][4] : tabSubTotal[1][4]" >sub-Total</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" >&nbsp;</div>
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" >&nbsp;</div>
-                 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" style="margin-left:-7px;"><span >{{meal.total.Calories  | number:'1.0-0'}}</span></div>  
-                                                                      
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" style="margin-left:-7px;"><span >{{meal.total.Cholesterol | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Protein | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Carbs | number:'1.1-1'}}</span></div> 
-                                        <!--
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
-                                        -->
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Sugar | number:'1.1-1'}} </span></div>  
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.addedSugar | number:'1.1-1'}} </span></div> 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.naturalSugar | number:'1.1-1'}} </span></div> 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Fat.Saturated | number:'1.1-1'}}</span></div> 
-                                        <div [style]="i % 2 === 0 ? tabSubTotal[0][5] : tabSubTotal[1][5]" ><span >{{meal.total.Fat.Total | number:'1.1-1'}}</span></div> 
-                                       
+                                @let isSubTotal = HealthAllData.tabDailyReport[i].meal[k].dish.length - 1 === j && checkText==="";
+                                @let isTotal=HealthAllData.tabDailyReport[i].meal.length - 1 === k && HealthAllData.tabDailyReport[i].meal[k].dish.length - 1 === j && checkText==="";
+                                @if ({
+                                    isSub: (HealthAllData.tabDailyReport[i].meal[k].dish.length - 1 === j && checkText===""),
+                                    isTot: (HealthAllData.tabDailyReport[i].meal.length - 1 === k && HealthAllData.tabDailyReport[i].meal[k].dish.length - 1 === j && checkText==="")
+                                    }; as cond) {
+                                <!--
+                                @if ((HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText==='') || (HealthAllData.tabDailyReport[i].meal.length-1===k && HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText==='')){
+                                -->
+                                @if (isSubTotal || isTotal){    
+                                    @for (renderType of (
+                                    (cond.isSub && cond.isTot) ? [1, 2] : 
+                                    cond.isSub ? [1] : 
+                                    cond.isTot ? [2] : [] ); track renderType) {
+                                    <div class="healthRow widthRow">
+                                        <div class="divContent" [style.width.px]="confTableAll.colWidth.action" >
+                                            &nbsp;
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.date > 
+                                                <input  class="styleInput" readonly type="text" 
+                                                    [value]="&nbsp;" style="pointer-events: none;"  >  
+                                        </div>
+                                        <div class="divContent" [style.width.px]=0 > 
+                                                <input  class="styleInput" readonly type="text" 
+                                                    [value]="&nbsp;" style="pointer-events: none;"  >  
+                                        </div>
+                                        <div class="divContent" [style.width.px]="confTableAll.colWidth.calBurnt"> 
+                                                <input  class="styleInput" readonly type="text" 
+                                                    [value]="&nbsp;" style="pointer-events: none;"  >  
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.meal  >
+                                             <input  class="styleInput" readonly type="text" 
+                                                [value]="&nbsp;" style="pointer-events: none;"  >
+                                        </div>
+
+                                        <div class="divContent " [style.width.px]=confTableAll.colWidth.ingr  >
+                                                <input type="text"  class="styleInput"  [style.color]="renderType === 1 ? renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color : confTableAll.Total.color" style="text-align: left;"
+                                                    [style.font-size.px]="confTableAll.subTotal.fontSize + 2" [style.font-weight]="confTableAll.subTotal.fontWeight"
+                                                    [value]="renderType === 1 ? 'sub-Total' : 'Total'"  >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>  
+                                            <input type="text" class="styleInput" 
+                                                [value]="&nbsp;"  >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>  
+                                            <input type="text" class="styleInput" 
+                                                [value]="&nbsp;"  >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>  
+                                            <input type="text" class="styleInput" [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color" 
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight"
+                                                [value]="(renderType === 1 ? meal.total.Calories : myDaily.total.Calories) | number:'1.0-0'"  >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other >   
+                                            <input type="text" class="styleInput " [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color"
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight"  
+                                                [value]="(renderType === 1 ? meal.total.Cholesterol : myDaily.total.Cholesterol) | number:'1.1-1'"  >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other > 
+                                            <input type="text" class="styleInput" [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color"
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight"  
+                                                [value]="(renderType === 1 ? meal.total.Protein : myDaily.total.Protein) | number:'1.1-1'"  >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>
+                                            <input type="text"  class="styleInput" [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color"
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight"  
+                                                [value]="(renderType === 1 ? meal.total.Carbs : myDaily.total.Carbs)  | number:'1.1-1'"  >
+                                        </div>
+
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>
+                                            <input type="text" class="styleInput" [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color"
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight"  
+                                                [value]="(renderType === 1 ? meal.total.Sugar : myDaily.total.Sugar)  | number:'1.1-1'" >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>
+                                            <input type="text" class="styleInput" [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color"
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight"  
+                                                [value]="(renderType === 1 ? meal.total.addedSugar : myDaily.total.addedSugar) | number:'1.1-1'" >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>
+                                            <input type="text" class="styleInput" [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color"
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight"  
+                                                [value]="(renderType === 1 ? meal.total.naturalSugar : myDaily.total.naturalSugar)  | number:'1.1-1'" >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>  
+                                            <input type="text"  class="styleInput " [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color"
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight" 
+                                                [value]="(renderType === 1 ? meal.total.Fat.Saturated : myDaily.total.Fat.Saturated)  | number:'1.1-1'" >
+                                        </div>
+                                        <div class="divContent" [style.width.px]=confTableAll.colWidth.other>
+                                            <input type="text" class="styleInput " [style.color]="renderType === 1 ? confTableAll.subTotal.color : confTableAll.Total.color"
+                                                [style.font-size.px]="confTableAll.subTotal.fontSize" [style.font-weight]="confTableAll.subTotal.fontWeight"
+                                                [value]="(renderType === 1 ? meal.total.Fat.Total : myDaily.total.Fat.Total)  | number:'1.1-1'" >
+                                        </div> 
 
                                     </div>
+                                    }
                                 }
+                                }
+
+                                
                                 <!-- TOTAL-->
                                 <!--
                                     style="--Tcol:{{confTableAll.Total.color}}; --TfontW:{{confTableAll.Total.fontWeight}}; --Theight:{{confTableAll.Total.height}}"
                                 -->
+                                <!--
                                 @if (HealthAllData.tabDailyReport[i].meal.length-1===k && HealthAllData.tabDailyReport[i].meal[k].dish.length-1===j && checkText===''){
                                     <div style="display:inline-block; width:100%;">
                                         <div [style]="i % 2 === 0 ? tabTotal[0][0] : tabTotal[1][0]">&nbsp;</div>
@@ -402,9 +495,11 @@
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-11px;">{{myDaily.total.Cholesterol | number:'1.1-1'}}</span></div> 
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Protein | number:'1.1-1'}}</span></div> 
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Carbs | number:'1.1-1'}}</span></div> 
+                                     -->
                                         <!--
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="padding-left:7px;">{{myDaily.total.GlyIndex | number:'1.1-1'}}</span></div> 
                                         -->
+                                     <!--
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.Sugar | number:'1.1-1'}} </span></div>  
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.addedSugar | number:'1.1-1'}} </span></div>
                                         <div [style]="i % 2 === 0 ? tabTotal[0][5] : tabTotal[1][5]" ><span style="margin-left:-9px;">{{myDaily.total.naturalSugar | number:'1.1-1'}} </span></div>
@@ -413,7 +508,9 @@
 
                                         <div class="skipLine"></div>
                                     </div>
+                                    
                                 }
+                                    -->
                             }
                         }
                     }
