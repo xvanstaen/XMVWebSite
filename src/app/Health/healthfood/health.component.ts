@@ -276,9 +276,8 @@ export class HealthComponent  {
     this.eventClientY = event.clientY;
   }
 
-
   findPosItem(sizeBox: any) {
-    this.foodPos = Math.trunc(Number(this.eventClientY) - Number(this.posDivAfterTitle.ClientRect.Top) - Number(this.titleHeight)) ;
+    this.foodPos = Math.trunc(Number(this.eventClientY) - Number(this.posDivAfterTitle.ClientRect.Top) - this.confTableAll.title.height) ;
     this.posItem =  this.foodPos - Number(sizeBox) / 2 + 10;
   }
 
@@ -557,12 +556,6 @@ export class HealthComponent  {
       this.CreateIngredient(this.theEvent);
       this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]+1].name=this.tabNutritionFacts[i];
     }
-  }
-
-  calculateHeight() {
-    var i = 0;
-    i = this.confTableAll.title.height.indexOf('px');
-    this.titleHeight = Number(this.confTableAll.title.height.substring(0, i));
   }
 
   checkText: string = '';

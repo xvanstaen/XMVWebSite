@@ -15,47 +15,51 @@ export class classConfHTMLFitHealth{
   }
 
 export class classConfTableAll{
-    width:number=980;
-    minwidth:number=980;
-    height:number=600;
-    background:string='rgb(43, 34, 34)';
-    color:string='white';
+    width:number=0;
+    height:number=0;
+    background:string='';
+    color:string='';
+    fontSize:number=0;
+    fontWeight:number=0;
     overF:string="scroll";
     title={
-        height:'40',
-        color:'white',
-        background:'blue'
+        height:0,
+        color:'',
+        background:'',
+        fontSize:0,
+        fontWeight:0,
     }
     colWidth={
-        action:'60',
-        date:'135',
-        calBurnt:'60',
-        meal:'90',
-        ingr:'124',
-        other:'50',
+        action:0,
+        date:0,
+        calBurnt:0,
+        meal:90,
+        ingr:0,
+        other:0,
     };
     row={
-        height:'22',
-        color:'white',
-        even:'black',
-        odd:'rgb(43, 34, 34)',
-        background:'blue',
+        height:0,
+        color:'',
+        even:'',
+        odd:'',
+        background:'',
+        fontSize:0,
     };
     rowNew={
-        color:'black',
-        background:'rgb(75, 159, 103)',
+        color:'',
+        background:'',
     };
     subTotal={
-        height:'25',
-        color:'green',
-        fontWeight:'bolder',
-        fontSize:'16',
+        height:0,
+        color:'',
+        fontWeight:'',
+        fontSize:0,
     };
     Total={
-        height:'25',
-        color:'red',
-        fontWeight:'bolder',
-        fontSize:'16',
+        height:0,
+        color:'',
+        fontWeight:'',
+        fontSize:0,
     };
   }
 

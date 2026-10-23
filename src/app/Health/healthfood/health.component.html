@@ -54,10 +54,11 @@
 
         @if (HealthAllData.tabDailyReport.length>0 || signalUpdateHealth()){
                 <!--------------- DISPLAY ALL -->
-            <div [style.width.px]="confTableAll.width"  [style.height.px]="confTableAll.height" [style.background-color]="confTableAll.background"
-                        style="font-size:16px;  display:inline-block; margin-top:5px;" >
-                <div [style.color]="confTableAll.color" 
-                    style="width:100%; padding-top:10px; font-size:18px;font-weight:bolder; text-align:center; display:inline-block;"> HEALTH DATA MANAGEMENT</div>
+            <div [style.width.px]="confTableAll.width"  [style.height.px]="confTableAll.height" 
+                        style="display:inline-block; margin-top:5px;" >
+                <div [style.color]="confTableAll.color" [style.background-color]="confTableAll.background"
+                    [style.font-size.px]="confTableAll.fontSize" [style.font-weight.px]="confTableAll.fontWeight"
+                    style="width:100%; padding-top:10px; text-align:center; display:inline-block;"> HEALTH DATA MANAGEMENT</div>
                     
                     <!-- 
                     <app-running-clock [posSizeClock]="posSizeClock">
@@ -116,9 +117,10 @@
                 </div>
             }
 
-            <div   class="healthRow widthRow" id="posAfterTitle" style="  margin-top:15px;  margin-left:5px; " 
+            <div  id="posAfterTitle" class="healthRow widthRow"  style="  margin-top:15px;  margin-left:5px; " 
                     [style.height.px]="confTableAll.title.height" [style.background-color]="confTableAll.title.background"
-                    [style.color]="confTableAll.title.color" 
+                    [style.color]="confTableAll.title.color" [style.font-size.px]="confTableAll.title.fontSize"
+                    [style.font-weight.px]="confTableAll.title.fontWeight"
                     >
                 <div class="divHeader" [style.width.px]="confTableAll.colWidth.action">
                     <input class="contentHeader"  type="text" value="Action"></div>
@@ -252,7 +254,7 @@
                             @if (searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))){
                                 @if (checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
-                                <div class="healthRow widthRow" >
+                                <div class="healthRow widthRow"  [style.color]="confTableAll.row.color">
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.action">
                                         <div class="circle" 
                                               [id]="'openAction-'  + i + '-' + k + '-' + j" (click)="onAction($event)" >
@@ -263,16 +265,16 @@
                                     
                                     <ng-container>
                                         @let hasMatch = (k === 0 && j === 0) || (j === 0 || checkText !== "");
-                                        <div class="divContent" [style.width.px]="confTableAll.colWidth.date">  
+                                        <div class="divContent" [style.width.px]="confTableAll.colWidth.date" [style.color]="confTableAll.row.color">  
                                             
                                              @if (k===0 && j===0){
                                                
-                                                <input  style="text-align:left; padding-left:8px;" 
-                                                    type="date" class="styleInput boxHover"
+                                                <input  style="text-align:left; padding-left:8px;" [style.color]="confTableAll.row.color"
+                                                    type="date" class="styleInput boxHover" 
                                                     [id]="'dateAll-' + i "   (input)="onInputDailyAll($event)" [value]="myDaily.date" >
                                             } @else if (j===0 || checkText!==""){
                                                 
-                                                <input   readonly type="date" class="styleInput"
+                                                <input   readonly type="date" class="styleInput" [style.color]="confTableAll.row.color"
                                                     [value]="myDaily.date" style="pointer-events: none; padding-left:8px;"  >
                                             } @else {
                                                 
@@ -291,7 +293,7 @@
 
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.calBurnt" >
                                         @if (k===0 && j===0){
-                                            <input  type="text"  class="styleInput boxHover" 
+                                            <input  type="text"  class="styleInput boxHover" [style.color]="confTableAll.row.color"
                                                 [id]="'burnAll-' + i"  (input)="onInputDailyAll($event)" 
                                                 [value]="myDaily.burntCalories"   > 
                                         } @else {
@@ -301,7 +303,7 @@
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.meal" >
                                         @if (j===0){
-                                            <input  type="text" class="styleInput boxHover alignL" 
+                                            <input  type="text" class="styleInput boxHover alignL" [style.color]="confTableAll.row.color"
                                                     [id]="'mealAll-' + i + '-' + k"   (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                                     [value]="meal.name"   >
                                         } @else { 
@@ -310,13 +312,13 @@
                                         }
                                     </div>
                                     <div class="divContent" [style.width.px]=confTableAll.colWidth.ingr >
-                                        <input type="text" class="styleInput boxHover " [style.color]="confTableAll.row.color" 
+                                        <input type="text" class="styleInput boxHover " [style.color]="confTableAll.row.color"
                                         style="text-align:left; padding-left:4px;" 
                                             [id]="'ingrAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                             [value]="theIngred.name"  >
                                     </div>
-                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other" [style.color]="confTableAll.row.color"  >
-                                        <input type="text"  class="styleInput  boxHover" 
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other"  >
+                                        <input type="text"  class="styleInput  boxHover"  [style.color]="confTableAll.row.color"
                                             [value]="theIngred.quantity" [id]="'quanAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  

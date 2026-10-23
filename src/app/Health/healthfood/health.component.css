@@ -75,10 +75,8 @@ input[type="date"] {
   text-align:center;
   overflow-wrap:break-word;
   word-break: break-all;
-  font-size:14px;
   background-color: transparent !important;
   display:flex;
-  /*border:0px red solid;*/
   gap:2px;
   justify-content: space-between;
   flex-direction: row; 
@@ -103,6 +101,7 @@ input[type="date"] {
   border:0px red solid;
   box-sizing: border-box;
   font-size: 13px;
+  background-color: transparent !important;
 }
 
 .styleInput{
@@ -133,12 +132,14 @@ width: 1300px;
   border-bottom: 0px solid blue;
   display: inline-block; /* Ensures the columns line up next to each other */
   align-items: center;
+  
 }
 
 .divContent{
   display:inline-block;
   box-sizing: border-box;
   height:25px;
+ 
 }
 
 .subTotal{
