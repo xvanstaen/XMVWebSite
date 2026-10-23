@@ -45,6 +45,10 @@ export class classConfTableAll{
         background:'',
         fontSize:0,
     };
+    rowHover={
+      color:'',
+      background:'',
+    };
     rowNew={
         color:'',
         background:'',

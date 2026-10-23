@@ -71,6 +71,10 @@ export class HealthComponent  {
   @Input() returnDataFSHealth = new classHeaderReturnDataFS;
   @Input() statusSaveFn:any;
 
+  isHovered: boolean = false;
+  dynamicHoverColor = signal<string>('red');
+  dynamicHoverBackgColor = signal<string>('green');
+
   signalUpdateHealth=signal<boolean>(false);
 
   signalActionHealth=input.required<number>();
@@ -376,14 +380,7 @@ export class HealthComponent  {
 
     this.TheSelectDisplays.controls['startRange'].setValue('');
     this.TheSelectDisplays.controls['endRange'].setValue('');
-/*
-    this.posSizeClock.margLeft = 840;
-    this.posSizeClock.margTop = -20;
-    this.posSizeClock.width = 60;
-    this.posSizeClock.height = 60;
-    this.posSizeClock.displayAnalog = false;
-    this.posSizeClock.displayDigital = true;
-*/
+
     this.fillClassHeader();
 
     //this.configServer.timeoutFileSystem.userTimeOut.mn=2;
@@ -391,9 +388,10 @@ export class HealthComponent  {
     //this.userActivity = defineMyDate();
     this.lastInputAt = strDateTime();
     this.refDate=new Date();
-    //this.callTimeToGo();
+  
 
-    //this.confTableAll.row.height='20';
+    this.dynamicHoverColor.set(this.confTableAll.rowHover.color);
+    this.dynamicHoverBackgColor.set(this.confTableAll.rowHover.background);
   }
 
   firstLoopInit:boolean=true;
