@@ -84,7 +84,7 @@ input[type="date"] {
   flex-direction: row; 
   width: 100%;
   box-sizing: border-box;
-  color:white;
+  
 }
 
 .alignL{
@@ -114,7 +114,6 @@ input[type="date"] {
   background-color: transparent !important;
   width: 100%;
   box-sizing: border-box;
-  color:white;
   border:0px red solid;
 }
 
@@ -129,7 +128,7 @@ width: 1300px;
 
 .healthRow {
   
-  height: 27px; 
+  /* height: 27px;  */
   border: 0px solid red; 
   border-bottom: 0px solid blue;
   display: inline-block; /* Ensures the columns line up next to each other */

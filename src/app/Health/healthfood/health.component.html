@@ -54,9 +54,10 @@
 
         @if (HealthAllData.tabDailyReport.length>0 || signalUpdateHealth()){
                 <!--------------- DISPLAY ALL -->
-            <div class="widthBox" style="font-size:16px;  display:inline-block; 
-                              margin-top:5px;  " >
-                <div style="width:100%; padding-top:10px; font-size:18px;font-weight:bolder; text-align:center; color:blue; display:inline-block;"> HEALTH DATA MANAGEMENT</div>
+            <div [style.width.px]="confTableAll.width"  [style.height.px]="confTableAll.height" [style.background-color]="confTableAll.background"
+                        style="font-size:16px;  display:inline-block; margin-top:5px;" >
+                <div [style.color]="confTableAll.color" 
+                    style="width:100%; padding-top:10px; font-size:18px;font-weight:bolder; text-align:center; display:inline-block;"> HEALTH DATA MANAGEMENT</div>
                     
                     <!-- 
                     <app-running-clock [posSizeClock]="posSizeClock">
@@ -116,7 +117,8 @@
             }
 
             <div   class="healthRow widthRow" id="posAfterTitle" style="  margin-top:15px;  margin-left:5px; " 
-                    [style.height.px]="confTableAll.row.height" [style.background-color]="confTableAll.title.background"
+                    [style.height.px]="confTableAll.title.height" [style.background-color]="confTableAll.title.background"
+                    [style.color]="confTableAll.title.color" 
                     >
                 <div class="divHeader" [style.width.px]="confTableAll.colWidth.action">
                     <input class="contentHeader"  type="text" value="Action"></div>
@@ -223,7 +225,7 @@
                         <div   [style]="styleBoxOptionFood">
                             @for (tabFood of tabInputFood; track tabFood.id || m; let m = $index) {
                                 <li class="Straight-options" 
-                                    [style]="{'width':sizeBox.widthOptions + 'px'}" 
+                                    [style.width.px]="sizeBox.widthOptions" 
                                     [class]="{'colorEven': m % 2 === 0, 'colorOdd': m % 2 !== 0}" 
                                     (click)="onSelMealFood($event)" 
                                     [id]="'selFood-' + TabOfId[0] + '-' + TabOfId[1] + '-' + TabOfId[2] + '-' + m" 
@@ -308,68 +310,68 @@
                                         }
                                     </div>
                                     <div class="divContent" [style.width.px]=confTableAll.colWidth.ingr >
-                                        <input type="text" class="styleInput boxHover " 
+                                        <input type="text" class="styleInput boxHover " [style.color]="confTableAll.row.color" 
                                         style="text-align:left; padding-left:4px;" 
                                             [id]="'ingrAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" (mouseup)="actionMouseUp($event)" 
                                             [value]="theIngred.name"  >
                                     </div>
-                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other" >
+                                    <div class="divContent" [style.width.px]="confTableAll.colWidth.other" [style.color]="confTableAll.row.color"  >
                                         <input type="text"  class="styleInput  boxHover" 
                                             [value]="theIngred.quantity" [id]="'quanAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
-                                        <input type="text"  class="styleInput  alignC boxHover" 
+                                        <input type="text"  class="styleInput  alignC boxHover" [style.color]="confTableAll.row.color" 
                                            
                                             [value]="theIngred.unit" [id]="'unitAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
                                     <div class="divContent" [style.width.px]=confTableAll.colWidth.other>  
-                                        <input type="text" class="styleInput  alignC boxHover" 
+                                        <input type="text" class="styleInput  alignC boxHover" [style.color]="confTableAll.row.color" 
                                             [id]="'caloAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Calories  | number:'1.0-0'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other" >   
-                                        <input type="text" class="styleInput  alignC boxHover"  
+                                        <input type="text" class="styleInput  alignC boxHover"  [style.color]="confTableAll.row.color" 
                                             [id]="'cholAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Cholesterol  | number:'1.1-1'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other"> 
-                                        <input type="text" class="styleInput  alignC boxHover"  
+                                        <input type="text" class="styleInput  alignC boxHover"  [style.color]="confTableAll.row.color" 
                                             [id]="'protAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Protein | number:'1.1-1'"  >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text"  class="styleInput  alignC boxHover"  
+                                        <input type="text"  class="styleInput  alignC boxHover"  [style.color]="confTableAll.row.color" 
                                             [id]="'carbAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Carbs  | number:'1.1-1'"  >
                                     </div>
 
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC boxHover"  
+                                        <input type="text" class="styleInput  alignC boxHover"  [style.color]="confTableAll.row.color" 
                                             [id]="'sugaAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Sugar  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC boxHover"  
+                                        <input type="text" class="styleInput  alignC boxHover"  [style.color]="confTableAll.row.color" 
                                             [id]="'addSAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.addedSugar  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC boxHover"  
+                                        <input type="text" class="styleInput  alignC boxHover"  [style.color]="confTableAll.row.color" 
                                             [id]="'natSAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.naturalSugar  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">  
-                                        <input type="text"  class="styleInput  alignC boxHover" 
+                                        <input type="text"  class="styleInput  alignC boxHover" [style.color]="confTableAll.row.color" 
                                             [id]="'satuAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Fat.Saturated  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC boxHover"   
+                                        <input type="text" class="styleInput  alignC boxHover"   [style.color]="confTableAll.row.color" 
                                             [id]="'tFatAll-'  + i + '-' + k + '-' + j"    (input)="onInputDailyAll($event)" 
                                             [value]="theIngred.calFat.Fat.Total  | number:'1.1-1'" >
                                     </div>
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.other">
-                                        <input type="text" class="styleInput  alignC boxHover"   
+                                        <input type="text" class="styleInput  alignC boxHover"   [style.color]="confTableAll.row.color" 
 
                                             [value]="HealthAllData.tabDailyReport[i].meal[k].dish[j].calFat.lockData"  [id]="'lockAll-'  + i + '-' + k + '-' + j" (input)="onInputDailyAll($event)" >
                                     </div>
