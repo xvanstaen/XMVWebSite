@@ -23,15 +23,6 @@ input[type="date"] {
   font-weight: bold;
 }
 
-.boxHover{
-  text-align: center;
-}
-
-.boxHover:hover{
-  background-color: blue !important;
-}
-
-
 .circle{
   border-radius: 50% 50%;
   color:blue;
@@ -102,7 +93,7 @@ input[type="date"] {
   border:0px red solid;
   box-sizing: border-box;
   font-size: 13px;
-  background-color: transparent !important;
+
 }
 
 .widthBox{
@@ -155,8 +146,8 @@ width: 1300px;
 }
 
 .styleInput:hover {
-  background-color: var(--hover-background) !important;; 
-  color: var(--hover-color) !important;; 
+  background-color: var(--hover-background) !important;
+  color: var(--hover-color) !important;
 }
 
 .subTotal{

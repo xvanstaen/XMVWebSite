@@ -74,6 +74,7 @@ export class HealthComponent  {
   isHovered: boolean = false;
   dynamicHoverColor = signal<string>('red');
   dynamicHoverBackgColor = signal<string>('green');
+  healthTableW:number=0;
 
   signalUpdateHealth=signal<boolean>(false);
 
@@ -392,6 +393,7 @@ export class HealthComponent  {
 
     this.dynamicHoverColor.set(this.confTableAll.rowHover.color);
     this.dynamicHoverBackgColor.set(this.confTableAll.rowHover.background);
+    this.healthTableW=this.confTableAll.width - 20;
   }
 
   firstLoopInit:boolean=true;

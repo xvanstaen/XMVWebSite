@@ -14,7 +14,7 @@
         </app-file-access>
     }
 
-    <div class="widthBox" style="border:solid green 2px; display:inline-block; margin-top:8px; margin-left:20px; background-color: lightskyblue;">
+    <div [style.width.px]="confTableAll.width"  [style.background-color]="confTableAll.background" style="border:solid green 2px; display:inline-block; margin-top:8px; margin-left:20px;">
 
         @if(errCalcCalFat!==''){
             <div class="skipLine">&nbsp;</div>
@@ -54,9 +54,10 @@
 
         @if (HealthAllData.tabDailyReport.length>0 || signalUpdateHealth()){
                 <!--------------- DISPLAY ALL -->
-            <div [style.width.px]="confTableAll.width"  [style.height.px]="confTableAll.height" 
-                        style="display:inline-block; margin-top:5px;" >
-                <div [style.color]="confTableAll.color" [style.background-color]="confTableAll.background"
+
+            <div [style.width.px]="healthTableW"  [style.height.px]="confTableAll.height" 
+                        style="display:inline-block; margin-top:5px;" [style.background-color]="confTableAll.background">
+                <div [style.color]="confTableAll.color" 
                     [style.font-size.px]="confTableAll.fontSize" [style.font-weight.px]="confTableAll.fontWeight"
                     style="width:100%; padding-top:10px; text-align:center; display:inline-block;"> HEALTH DATA MANAGEMENT</div>
                     
@@ -117,7 +118,7 @@
                 </div>
             }
 
-            <div  id="posAfterTitle" class="healthRow widthRow"  style="  margin-top:15px;  margin-left:5px; " 
+            <div  id="posAfterTitle" class="healthRow " [style.width.px]="healthTableW"  style="  margin-top:15px;  margin-left:5px; " 
                     [style.height.px]="confTableAll.title.height" [style.background-color]="confTableAll.title.background"
                     [style.color]="confTableAll.title.color" [style.font-size.px]="confTableAll.title.fontSize"
                     [style.font-weight.px]="confTableAll.title.fontWeight"
@@ -241,7 +242,7 @@
             }
             <!-----   MANAGEMENT OF ALL HEALTH DATA - DISPLAY OF THE TABLE -->
 
-            <div class="tableContainer widthRow"  [style.color]="confTableAll.row.color" 
+            <div class="tableContainer  " [style.width.px]="healthTableW" [style.color]="confTableAll.row.color" 
                         [style.height.px]="confTableAll.height"> 
                 @for (myDaily of HealthAllData.tabDailyReport; track $index; let i = $index) {
                     @let rowColor = i % 2 === 0 ? confTableAll.row.even : confTableAll.row.odd;
@@ -254,7 +255,7 @@
                             @if (searchOneDateHealth===0 || (searchOneDateHealth===1 && myDaily.date===dateRangeStartHealth) || 
                                     (searchOneDateHealth===2 && myDaily.date>=dateRangeStartHealth && (myDaily.date< dateRangeEndHealth || myDaily.date=== dateRangeEndHealth))){
                                 @if (checkText==='' || (checkText!=='' && theIngred.name.toLowerCase().trim().indexOf(checkText.toLowerCase().trim())!==-1)){
-                                <div class="healthRow widthRow" >
+                                <div class="healthRow " >
                                     <div class="divContent" [style.width.px]="confTableAll.colWidth.action">
                                         <div class="circle" 
                                               [id]="'openAction-'  + i + '-' + k + '-' + j" (click)="onAction($event)" >
@@ -421,7 +422,7 @@
                                     (cond.isSub && cond.isTot) ? [1, 2] : 
                                     cond.isSub ? [1] : 
                                     cond.isTot ? [2] : [] ); track renderType) {
-                                    <div class="healthRow widthRow">
+                                    <div class="healthRow ">
                                         <div class="divContent" [style.width.px]="confTableAll.colWidth.action" >
                                             &nbsp;
                                         </div>
