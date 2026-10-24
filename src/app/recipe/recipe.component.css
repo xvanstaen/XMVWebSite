@@ -20,6 +20,15 @@ div{
   --rowH:22px;
 }
 
+.StraightDropDown{
+    width:205px;
+    max-height: 120px;
+    border: 2px solid green;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: lightgrey;
+  }
+
 .container{
     width:100%; 
     display:flex;
@@ -62,20 +71,19 @@ div{
 .titleHeaderFlex{
     color:blue; text-align: center; display:flex;
      height:var(--headerH); padding:3px;
-    justify-content: center; 
-    border-top:solid 1px blue;
+      font-size:14px;
+    border-top:solid 0px blue;
 }
 
 
 .tabIngr{
-  height:32px; 
+  height:26px; 
   background-color: lightblue;
+  /*
   border-bottom:solid 1px blue; border-left:solid 1px blue;
+  */
   box-sizing: border-box;
   display:flex;
-  vertical-align: middle;
-  font-size:14px;
-  text-align: center;
 }
 
 .borderBot{
@@ -109,13 +117,10 @@ div{
   padding-top:3px; padding-left:15px;
 }
 
-
-
 .mainMenu:hover{
   color:white;
   background-color:rgb(113, 113, 247);
-  font-size:14px;
-  
+  font-size:14px;  
 }
 
 .fileInput{
@@ -155,8 +160,6 @@ div{
   background-color:rgb(98, 97, 97);
 }
 
-
-
 .eye {
   width:50%; padding-left:28px;  vertical-align:text-bottom;
 }
@@ -187,12 +190,10 @@ div{
     font-size:18px; height:40px; padding-top:5px; 
 }
 
-
 .titleHeader{
     color:blue; display:inline-block;  text-align: center; 
      height:var(--headerH); padding-top:6px; 
 }
-
 
 .rightBorder{
   border-right:blue solid 1px;
@@ -246,7 +247,6 @@ div{
     height:28px;
   }
 
-
   .input{
     height:var(--rowH);
     font-size:14px;
@@ -263,11 +263,10 @@ div{
   .inputRow{
     height:var(--rowH);
     font-size:14px;
-
-
-
-
+    margin-top:4px;
+    background-color: lightgrey;
   }
+
   .inputRow:Hover{
     background-color: rgb(60, 167, 244);
     color:darkblue;
@@ -296,7 +295,7 @@ div{
 
 
   .stdInline{
-    width:100%; display:inline-block;
+    width:95%; display:inline-block;
   }
 
   .nutriFacts{
