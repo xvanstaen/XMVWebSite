@@ -15,7 +15,8 @@ import { MainManageFileComponent } from '../../fileAccessMgt/file-access.compone
 import { HealthComponent } from '../../Health/healthfood/health.component';``
 import { CaloriesFatComponent } from '../../Health/calories-fat/calories-fat.component';
 import { ReportHealthComponent } from '../../Health/report-health/report-health.component';
-
+import { ConfigHTMLHealthComponent } from '../../config-htmlhealth/config-htmlhealth.component';
+import { ManageCacheFiles } from '../../manage-cache-files/manage-cache-files';
 import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
@@ -53,7 +54,7 @@ export class returnSignal{
   styleUrls: ['./main-health.component.css'],
   standalone:true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,
-    MainManageFileComponent, CaloriesFatComponent, ReportHealthComponent, HealthComponent]
+    MainManageFileComponent, CaloriesFatComponent, ReportHealthComponent, HealthComponent, ConfigHTMLHealthComponent,ManageCacheFiles ]
   })
 export class MainHealthComponent {
 
@@ -85,6 +86,8 @@ export class MainHealthComponent {
   calFatFileRetrieved=signal<number>(-1);
   triggerCalFatSave=signal<number>(-1);
   triggerParamSave=signal<number>(-1);
+
+  isConfigHealth=signal<boolean>(false);
 
   configHTMLRetrieved:number=-1; 
 
@@ -707,7 +710,8 @@ export class MainHealthComponent {
         //this.triggerCalculateCalFat=true;
       //}
     } else if (i === '8') {
-      if (NoYes === 'Y') { // HTML file reload file
+      if (NoYes === 'Y') { //Manage HTML file 
+        /*
         this.iWait=3;
         if (this.EventHTTPReceived[3]===false){
           const theClass=new classRetrieveFile;
@@ -717,7 +721,11 @@ export class MainHealthComponent {
           this.triggerReadFile.update (rf => rf + 1);
           this.openFileAccess.set(true);
         }
-      } 
+        */
+       this.isConfigHealth.set(true);
+      } else {
+        this.isConfigHealth.set(false);
+      }
     } else if (i === '7') { // Display chart
       if (NoYes === 'Y') {
         var maxItems=3;

@@ -2,22 +2,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
-<!--
-theTableLock={{theTabLock}}
-<br>
 
-displayHealthAll()={{displayHealthAll()}} --- EventHTTPReceived[0]={{EventHTTPReceived[0]}}
-<br>
->>>> resultCheckLimitHealth={{resultCheckLimitHealth}}
-tabLock[0].action={{tabLock[0].action}} --- tabLock[0].lock={{tabLock[0].lock}}
-<br>
-tabLock[1].action={{tabLock[1].action}} --- tabLock[1].lock={{tabLock[1].lock}}
-<br>
-triggerFileSystem()={{triggerFileSystem()}} --- triggerCheckToLimit()={{triggerCheckToLimit()}}
-<br>
-tabSelRadio[3]={{tabSelRadio[3]}}
-<br>
--->
 
     @if (openFileAccess() ){
         <app-file-access 
@@ -55,8 +40,8 @@ tabSelRadio[3]={{tabSelRadio[3]}}
             <input  (click)='SelRadio("Y-7")' class="theRadioButt" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
             <input  (click)='SelRadio("N-7")' class="theRadioButt" style="margin-left:10px;" type="radio" name="DisplayChart" formControlName="DisplayChart" id="DisplayChart" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
         </div>
-        <div >
-            <div class="theRadio" style="margin-left:10px;">Re-load HTML configuration file </div> 
+         <div >
+            <div class="theRadio" style="margin-left:10px;">Manage HTML configuration file </div> 
             <input  (click)='SelRadio("Y-8")' class="theRadioButt" type="radio" name="ReloadHTML"  id="ReloadHTML" formControlName="ReloadHTML" value="Y" > <span class="YesNo">&nbsp;&nbsp;Yes</span> 
             <input  (click)='SelRadio("N-8")' class="theRadioButt" style="margin-left:10px;" type="radio" name="ReloadHTML" formControlName="ReloadHTML" id="ReloadHTML" value="N" > <span class="YesNo">&nbsp;&nbsp;No</span>
         </div>
@@ -168,4 +153,18 @@ tabSelRadio[3]={{tabSelRadio[3]}}
             <!-- (checkLockLimit)="checkLockLimit($event)"-->
             <div class="skipLine">&nbsp;</div>
         </div>
+    }
+
+    @if (isConfigHealth()){
+        <div style="margin-left:20px; width:550px; ">
+            <app-config-htmlhealth
+                    [configServer]="configServer" [ConfigHTMLFitHealth]="ConfigHTMLFitHealth" [bucketName]="identification.configFitness.bucket" 
+                    [fileName]="identification.configFitness.files.confHTML">
+            </app-config-htmlhealth>
+            <app-manage-cache-files [configServer]="configServer" >
+
+        </app-manage-cache-files>
+        </div>
+        
+        <br><br>
     }

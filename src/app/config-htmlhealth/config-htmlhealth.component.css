@@ -1,0 +1,59 @@
+
+.mainTitle{
+    color:blue; font-size: 16px; font-weight: bolder;
+    display:inline-block; width:100%; 
+    margin-top:10px; text-align: center;
+
+}
+
+.label{
+    width:140px; text-align:left;
+    color:blue; font-size: 14px; display:inline-block;
+}
+
+.label2{
+    margin-left:20px;
+}
+
+.theInput{
+    width:100px;
+    color:black; background-color: rgb(152, 210, 210); font-size:12px;
+}
+
+.theInput:hover{
+    color:red; background-color: white; font-size:14px;
+}
+
+.theRow{
+    width:100%; margin-left:10px;
+    display:inline-block;
+}
+
+.title{
+    color:red; font-size: 14px; font-weight: bolder; margin-left:40px;
+}
+
+.butt{
+    width:120px;
+    height:25px;
+    font-size:14px;
+    margin-left:10px;
+    background-color:cyan;
+    border-radius: 5px;
+    background-image: linear-gradient(cyan, lightcyan);
+    box-shadow: 2px 2px blue;
+    border: solid 1px blue;
+    display:table-cell;
+    vertical-align:middle;
+  }
+  .butt:hover{
+    background-color:rgb(48, 89, 159);
+    background-image: linear-gradient(rgb(97, 166, 206), rgb(63, 153, 206));
+  }
+
+  .msg{
+    color:blue; font-size:16px; display:inline-block; width: 90%;
+    margin-left:22px; margin-top:15px; font-weight: bolder; height:30px;
+    background-color: cyan; padding-left:20px;
+
+  }

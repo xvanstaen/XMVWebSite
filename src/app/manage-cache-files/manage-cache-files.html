@@ -1,0 +1,35 @@
+
+
+    
+    <div style="width:100%;  background-color: cyan ;  margin-left:20px; margin-top:10px;  border: solid 2px blue;">
+        <div class="title" >Cache file(s) <br>
+        on server<br> {{newConfigServer.googleServer}}</div> 
+        <div style="display:inline-block; height:4px; width:100%;"></div>
+
+        <button class="largeButtons"  id="getCache" style="margin-left:15px;" (click)="getCacheFile()">Get cache file</button> 
+        <button class="largeButtons"  id="resetCache" (click)="resetCacheFile()">Reset cache file</button> 
+        <button class="largeButtons"  id="reloadCache" (click)="reloadCacheFile()">Reload cache file</button> 
+         <div style="color:red; width:90%; display:block; margin-top:4px; margin-left:10px;"> note: Reload of the cache file should occur after a reset of the configuration file
+        </div>
+        @if (isManageCacheFile()){
+            <div style="margin-left:10px; margin-top:10px; width:95%; border: solid 2px blue;">
+                <label class="label">Response on cache File</label> 
+                <div style="display:inline-block; height:4px; width:100%;"></div>
+                <div style="width:30%; display:inline-block; margin-left:10px;">Status</div><div style="width:60%; display:inline-block;">{{msgCacheFile.status}}</div>        
+                @if (msgCacheFile.msg!==''){
+                    <div style="width:30%; display:inline-block;  margin-left:10px;">Msg</div><div style="width:60%; display:inline-block;">{{msgCacheFile.msg}}</div>
+                }
+                @if (msgCacheFile.content.length>0){
+                    <div style="width:100%; display:inline-block;"> 
+                        @for (list of msgCacheFile.content; track list; let i=$index){
+                            <span style="width:40%; display:inline-block;  margin-left:10px;">{{msgCacheFile.content[i].file}}</span>
+                            <span style="width:30%; display:inline-block;  margin-left:10px;">{{msgCacheFile.content[i].bucket}}</span>
+                            <span style="width:10%; display:inline-block;  margin-left:10px;">{{msgCacheFile.content[i].updated}}</span>
+                        }
+                    </div>
+                    <div class="skipLine">&nbsp;</div>
+                }
+            </div>
+        }
+        <div class="skipLine">&nbsp;</div>
+    </div>

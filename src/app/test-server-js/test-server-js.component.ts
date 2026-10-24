@@ -214,7 +214,7 @@ export class TestServerJSComponent {
     ) {effect (() => {
           if (this.previousIsConfigServerChanges!==this.isConfigServerChanges()){
             this.previousIsConfigServerChanges=this.isConfigServerChanges();
-            this.newConfigServer=fillConfig(this.configServer);;
+            this.newConfigServer=fillConfig(this.configServer);
            
           } }
         )}

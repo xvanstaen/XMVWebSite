@@ -1,0 +1,117 @@
+
+<div style="display:inline-block; background-color: cyan; border:2px solid blue; width:100%; margin-left:20px;">
+    <div class="mainTitle" >Manage HTML configuration for file {{fileName}}</div>
+    <div class="mainTitle" >File type:  {{newConfigHTMLFitHealth.ConfigHealth.fileType}}</div>
+    <div style="overflow-y:auto;  overflow-x:hidden; width:98%; padding-top:10px; max-height:250px; margin-top:15px;background-color: lightblue; margin-left:5px; ; ">
+        <div class="theRow" >
+            <div class="label ">Width</div> <input class="theInput" id="width" (input)="inputData($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.width}}"> 
+            <div class="label label2">Height</div> <input class="theInput" id="height" (input)="inputData($event)"  type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.height}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label ">Font size</div> <input class="theInput" id="fontS" (input)="inputData($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.fontSize}}"> 
+            <div class="label label2">Font weight</div> <input class="theInput" id="fontW" (input)="inputData($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.fontWeight}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label ">Overflow</div> <input class="theInput" id="overF" (input)="inputData($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.overF}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label ">Color</div> <input class="theInput" id="color" (input)="inputData($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.color}}"> 
+            <div class="label label2">Background</div> <input class="theInput" id="background" (input)="inputData($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.background}}"> 
+        </div>
+        <div class="theRow" style="margin-top:8px;">
+            <div class="title">TITLE</div>
+        </div>
+        <div class="theRow">
+            <div class="label">Height</div> <input class="theInput" id="titleHeight" (input)="inputData($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.title.height}}"> 
+        </div>
+        <div class="theRow">    
+            <div class="label ">Color</div> <input class="theInput" id="titleColor" (input)="inputData($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.title.color}}"> 
+            <div class="label label2">Background</div> <input class="theInput" id="titleBackground" (input)="inputData($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.title.background}}"> 
+        </div>
+        <div class="theRow">    
+            <div class="label ">Font size</div> <input class="theInput" id="titleFontS" (input)="inputData($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.title.fontSize}}"> 
+            <div class="label label2">Font weight</div> <input class="theInput" id="titleFontW" (input)="inputData($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.title.fontWeight}}"> 
+        </div>
+        <div class="theRow" style="margin-top:8px;">
+            <div class="title">colWidth</div>
+        </div>
+        <div class="theRow">
+            <div class="label">Action</div> <input class="theInput" id="action" (input)="inputColWidth($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.colWidth.action}}"> 
+            <div class="label label2">Date</div> <input class="theInput" id="date" (input)="inputColWidth($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.colWidth.date}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label">Cal. burnt</div> <input class="theInput" id="calBurnt" (input)="inputColWidth($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.colWidth.calBurnt}}"> 
+            <div class="label label2">Mealr</div> <input class="theInput" id="meal" (input)="inputColWidth($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.colWidth.meal}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label">Ingr</div> <input class="theInput" id="ingr" (input)="inputColWidth($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.colWidth.ingr}}"> 
+            <div class="label label2">Others</div> <input class="theInput" id="other" (input)="inputColWidth($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.colWidth.other}}"> 
+        </div>
+        <div class="theRow" style="margin-top:8px;">
+            <div class="title">Row & new row</div>
+        </div>
+        <div class="theRow">
+            <div class="label">Backg.</div> <input class="theInput" id="rowBack" (input)="inputRow($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.row.background}}"> 
+            <div class="label label2">Color</div> <input class="theInput" id="rowColor" (input)="inputRow($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.row.color}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label">Even</div> <input class="theInput" id="rowEven" (input)="inputRow($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.row.even}}"> 
+            <div class="label label2">Odd</div> <input class="theInput" id="rowOdd" (input)="inputRow($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.row.odd}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label">Height</div> <input class="theInput" id="rowHeight" (input)="inputRow($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.row.height}}"> 
+            <div class="label label2">Font size</div> <input class="theInput" id="rowFontS" (input)="inputRow($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.row.fontSize}}"> 
+        </div>
+            <div class="theRow">
+            <div class="label">Hover row: Backg.</div> <input class="theInput" id="rowHbackg" (input)="inputRow($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.rowHover.background}}"> 
+            <div class="label label2">Hover row: color</div> <input class="theInput" id="rowHcolor" (input)="inputRow($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.rowHover.color}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label">New row: Backg.</div> <input class="theInput" id="newRowBack" (input)="inputRow($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.rowNew.background}}"> 
+            <div class="label label2">New row: color</div> <input class="theInput" id="newRowColor" (input)="inputRow($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.rowNew.color}}"> 
+        </div>
+        <div class="theRow" style="margin-top:8px;">
+            <div class="title">Sub-Total & Total</div>
+        </div>
+        <div class="theRow">
+            <div class="label">Sub. color</div> <input class="theInput" id="subColor" (input)="inputTotal($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.subTotal.color}}"> 
+            <div class="label label2">Sub. height</div> <input class="theInput" id="subHeight" (input)="inputTotal($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.subTotal.height}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label">Sub. font size</div> <input class="theInput" id="subFontS" (input)="inputTotal($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.subTotal.fontSize}}"> 
+            <div class="label label2">Sub. font weight</div> <input class="theInput" id="subFontW" (input)="inputTotal($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.subTotal.fontWeight}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label">Tot. color</div> <input class="theInput" id="totColor" (input)="inputTotal($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.Total.color}}"> 
+            <div class="label label2">Tot. height</div> <input class="theInput" id="totHeight" (input)="inputTotal($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.Total.height}}"> 
+        </div>
+        <div class="theRow">
+            <div class="label">Tot. font size</div> <input class="theInput" id="totFontS" (input)="inputTotal($event)" type="number" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.Total.fontSize}}"> 
+            <div class="label label2">Tot. font weight</div> <input class="theInput" id="totFontW" (input)="inputTotal($event)" type="text" value="{{newConfigHTMLFitHealth.ConfigHealth.confTableAll.Total.fontWeight}}"> 
+        </div>
+    <br><br>
+    </div>
+
+    @if (isMsg()){
+        <div class="msg">
+            {{msg}}
+        </div>
+    }
+
+    @if (isModified && !isConfirmSave()) {
+        <div style="margin-left:100px; margin-top:15px;">
+            <button class="butt" id="butt1" (click)="confirmSave()">Save</button>
+            <button class="butt" id="butt2" (click)="cancelUpdates()">Cancel updates </button>
+        </div>
+    }
+
+    @if (isConfirmSave()) {
+        <div style="margin-left:30px; color:blue; font-size:14px; margin-top:15px;">Name of the file to save <input style="width:180px;" type="text" value="{{newFileName}}" (input)="onInput($event)"> </div>
+        <div style="margin-left:100px; margin-top:15px;">
+            <button class="butt" id="butt1" (click)="saveConfirmed()">Confirm Save</button>
+            <button class="butt" id="butt2" (click)="cancelSave()">Cancel save </button>
+        </div>
+    }
+   <br>
+</div>
+
