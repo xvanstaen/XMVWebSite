@@ -263,7 +263,7 @@ styleBoxOptionListRecipe = signal ({
       'margin-top' :   0 + 'px',
       'margin-left':140 + 'px',
       'overflow-x': 'hidden',
-      'overflow-y': 'hidden',
+      'overflow-y': 'auto',
       'border':'1px black solid',
       'display':'inline-block'
       })
@@ -283,7 +283,7 @@ styleBoxOptionChangeAll = {
         'margin-top' :  '0px',
         'margin-left': 20 + 'px',
         'overflow-x': 'hidden',
-        'overflow-y': 'hidden',
+        'overflow-y': 'auto',
         'border':'1px blue solid',
         'display':'inline-block'
         }
@@ -304,7 +304,7 @@ styleBoxChangeName = signal({
           'margin-top' :  '0px',
           'margin-left': 20 + 'px',
           'overflow-x': 'hidden',
-          'overflow-y': 'hidden',
+          'overflow-y': 'auto',
           'border':'1px blue solid',
           'display':'inline-block'
       })                 
@@ -360,7 +360,7 @@ ngOnInit(){
     'margin-top' :  0 + 'px',
     'margin-left': 0 + 'px',
     'overflow-x': 'hidden',
-    'overflow-y': 'hidden',
+    'overflow-y': 'auto',
     'border':'1px blue solid'
     }
 
@@ -728,7 +728,7 @@ afterDropDownRecipe(event:any){
         'margin-top' :  20 + 'px',
         'margin-left': 0 + 'px',
         'overflow-x': 'hidden',
-        'overflow-y': 'hidden',
+        'overflow-y': 'auto',
         'border':'1px blue solid'
         }
 
