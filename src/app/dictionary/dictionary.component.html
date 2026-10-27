@@ -2,62 +2,82 @@
 
 
 
-<div style="margin-top:10px; background-color: white; margin-left:10px; width:450px; border:solid 2px blue; display:block;">
-    
-    <span style="margin-left:20px; color:blue; font-size:14px;">{{msg}}</span>
-
+<div style="margin-top:10px; background-color: white; margin-left:10px; width:790px; border:solid 2px blue; display:block;">
+    @if (isMsg()){
+        <span style="margin-left:40px; font-weight: bolder; height:30px; color:blue; font-size:16px;">{{msg}}</span>
+    }
     <div style="margin-top:5px; width:100%; display:inline-block;" ></div>
-    <div [style]="{'width':circleWidth + 'px','margin-left':circleMarginLeft + 'px'}" style="display:inline-block;"></div>
+    <div class="circleSize"   style="display:inline-block;"></div>
     <div class="boxLan" style="margin-left:19px;">Français</div> 
-    <div class="boxLan"style="margin-left:4px;" >English </div>
-    @if (isDicoReceived()){ <!-- EventHTTPReceived[0]===true -->
-        <div  [style]="{'max-height':tabMaxHeight + 'px', 'height':tabFreEngHeight + 'px'}" style="overflow-y:auto">
-            <div *ngFor="let tab of tabFreEng; let i=index;">
-                <div class="circle" [style]="{'width':circleWidth + 'px','height':circleHeight + 'px', 'margin-left':circleMarginLeft + 'px','margin-top':(4 + (tab.inputHeight - inputMinHeight) / 2) + 'px'}" (click)="onAction($event)"  id="{{i}}">
-                    <div style="padding-top:3px;">A</div></div>
-                <div class="input" style="margin-left:18px;">
-                    <textarea style="padding-left:5px;" (input)="onInput($event)" id="French-{{i}}" [ngClass]="{'FrEven': i % 2 === 0, 'FrOdd':i % 2 !== 0}"  value="{{tab.French}}"> 
-                    </textarea>
+    <div class="boxLan"style="margin-left:4px; background-color:lightblue;" >English </div>
+    @if (isAction()){
+        <div class="dropdown">
+            <div class="styleBoxAction"  [style.height.px]="heightTabAction">
+                <div   class="styleBoxOptionAction"  [style.height.px]="heightTabAction">
+                    @for (tab of tabAction; track $index;){
+                        @let m=$index; 
+                        <li class="Straight-options "  [class]=" {'even': m % 2 ===0, 'odd': m % 2 !==0}" 
+                                (click)="afterDropDown($event)" id="Action" [value]="m">{{tab}}   
+                        </li>
+                    }
                 </div>
-                <div class="input" style="margin-left:5px;">
-                    <textarea style="padding-left:5px;" (input)="onInput($event)" id="English-{{i}}"  [ngClass]="{'EnEven': i % 2 === 0, 'EnOdd':i % 2 !== 0}"  value="{{tab.English}}">
-                    </textarea>
-                </div>
-                @if (isAction===true && iRecord===i){
-                    <div class="dropdown">
-                    <div [style]="styleBoxAction">
-                        <div   [style]="styleBoxOptionAction"  >
-                            <li *ngFor="let tab of tabAction; let m=index;" 
-                                    class="Straight-options "  [class]=" {'even': m % 2 ===0, 'odd': m % 2 !==0}" 
-                                        (click)="afterDropDown($event)" id="Action" [value]="m">{{tab}}   
-                            </li>
-                        </div>
-                    </div>
-                    </div>
-                }
-                <br>
-
             </div>
-
         </div>
     }
-   
+    <br>
+    @if (isDicoReceived()){ 
+        <div  [style.height.px]="tabFreEngHeight" style="overflow-y:auto; margin-top:8px;">
+            @for (tab of tabFreEng; track $index; let i=$index;){
+                <div class="circle circleSize" [style.margin-top.px]="tab.margTopCircle">
+                    <div style="padding-top:-3px;" (click)="onAction($event)"  [id]="i">A</div>
+                </div>
+                <div class="input" style="margin-left:18px;" [style.height.px]="tab.inputHeight" >
+                    <textarea style="padding-left:5px; width:360px; max-width:360px;" [style.height.px]="tab.inputHeight"(input)="onInput($event)" [id]="'French-'+i" [ngClass]="{'FrEven': i % 2 === 0, 'FrOdd':i % 2 !== 0}"  value="{{tab.French}}"> 
+                    </textarea>
+                </div>
+                <div class="input" style="margin-left:5px;" [style.height.px]="tab.inputHeight">
+                    <textarea style="padding-left:5px; width:360px;"[style.height.px]="tab.inputHeight" (input)="onInput($event)" [id]="'English-'+i"  [ngClass]="{'EnEven': i % 2 === 0, 'EnOdd':i % 2 !== 0}"  value="{{tab.English}}">
+                    </textarea>
+                </div>
+
+            }
+        </div>
+    }
 </div>
 <br>
-@if (isConfirmedSave===false && EventHTTPReceived[0]===true){
-    <button id='but_1' class="sizeButtons"  [style]="{'width':90 + 'px', 'height':40 + 'px','margin-left':80 + 'px','margin-top':20 + 'px'}"  (click)="onSave()"> Save</button> &nbsp;&nbsp;
-    <button id='but_2' class="sizeButtons"  [style]="{'width':140 + 'px', 'height':40 + 'px'}" (click)="onCancel()"> Cancel all updates</button>
+<div style="margin-left:20px; font-size:15px; font-weight: bolder; color:blue;">Search a word/sentence: 
+    <input style="padding-left:10px; width:300px;" type="text" [value]="textToSearch" id='search' (input)="searchText($event)">
+    <span style="padding-left:10px;"> language (Fr or En) &nbsp;</span>
+    <input style="padding-left:10px; width:50px;" type="text" [value]="language" id='language' (input)="selLanguage($event)">
+    @if (textToSearch!==""){
+        <button id='but_2' class="sizeButtons"  style="width:140px; height:40px; " 
+        (click)="cancelSearch()"> Cancel search</button>
+    }
+</div>
+@if (isConfirmedSave===false && EventHTTPReceived[0]===true && isModified===true){
+    <div style="margin-top: 20px; display:inline-block; width:100%; margin-left:280px;">
+        <button id='but_1' class="sizeButtons"  style="width:90px; height:40px; font-size:15px;"  (click)="onSave()"> Save</button> &nbsp;&nbsp;
+        <button id='but_2' class="sizeButtons"  style="width:140px; height:40px;  font-size:15px;" 
+        (click)="onCancel()"> Cancel all updates</button>
+    </div>
+    <br><br>
 }
 @if (isConfirmedSave===true && EventHTTPReceived[0]===true){
-    <div class="msg" style="margin-left:20px; color:blue;" >
-        Please enter the name of the file you want to save your data in :
-    </div>
-    <form  [formGroup]="SpecificForm" >
-        <input type='text' style='margin-left:100px; margin-top:20px; background-color:lightgrey;' formControlName="FileName" >
+    <div style="max-width:800px; height:45px;  font-size:15px; margin-top:20px;  margin-left:20px;  display:inline-block;">
+        
+        
+        <form  [formGroup]="SpecificForm" style="display:inline-block;">
+            <div  style="max-width:500px; margin-left:5px; padding-top:10px;color:blue; font-size:15px;  display:inline-block;" >
+            Name of the file you want to save your data in :
+            <input type='text' style='margin-left:0px; width:120px; background-color:lightgrey;' formControlName="FileName" >
+            &nbsp;&nbsp;
+            </div>
+            <br><br>
+            <button id='but_3' class="sizeButtons" style="width:100px; height:40px;  font-size:15px; margin-left:80px; "  (click)="SaveRecord()">Confirm</button>
+            <button id='but_4' class="sizeButtons"  style="width:100px; height:40px;  font-size:15px; "  (click)="CancelSave()"> Cancel</button>
+        </form>
+        
         <br><br>
-        <button id='but_3' class="sizeButtons" [style]="{'width':100 + 'px', 'height':40 + 'px','margin-left':80 + 'px'}" (click)="SaveRecord()">Confirm</button>
-        <button id='but_4' class="sizeButtons"  [style]="{'width':100 + 'px', 'height':40 + 'px'}" (click)="CancelSave()"> Cancel</button>
-    </form>
-    <br><br>
+    </div>
 }
 <br>

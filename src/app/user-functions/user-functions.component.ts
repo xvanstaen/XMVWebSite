@@ -26,6 +26,7 @@ import { RunningClockComponent } from '../Health/running-clock/running-clock.com
 import { MyCanvasComponent } from '../my-canvas/my-canvas.component';
 import { Event27AugComponent}  from '../Special-Services/Event-27AUG2022.component';
 import { GetImagesComponent}  from '../Special-Services/GetImages.component';
+import { DictionaryComponent } from '../dictionary/dictionary.component';
 
 import { LoginIdentif , configServer, classUserLogin } from '../JsonServerClass';
 import { EventAug, configPhoto, StructurePhotos } from '../JsonServerClass';
@@ -34,6 +35,7 @@ import { classCredentials} from '../JsonServerClass';
 import { mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter';
 import { classAccessFile } from '../classFileSystem';
 import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../clockFunctions'
+import { classDicoRecord } from '../JsonServerClass';
 
 export class classTabApps{
   apps:string="";
@@ -49,7 +51,7 @@ export class classTabApps{
   imports:[CommonModule, FormsModule, ReactiveFormsModule, RoutingAppComponent, SelectServerComponent, MainHealthComponent, 
     ConverterComponent, RecipeComponent, TestServerJSComponent, ManageCircuitsComponent, ManagePointOfRefComponent, SportPerformanceComponent,
     SportReportsComponent, SportAnalysisComponent, SportPerfRawDataMgtComponent, FitnessStatComponent, 
-     RunningClockComponent, MyCanvasComponent, Event27AugComponent, GetImagesComponent
+     RunningClockComponent, MyCanvasComponent, Event27AugComponent, GetImagesComponent, DictionaryComponent
   ], //KioskAbdConfigComponent,
 
 })
@@ -75,6 +77,8 @@ export class UserFunctionsComponent {
     @Output() callUserFunction= new EventEmitter<any>();
 
     posSizeClock=new classPosSizeClock;
+
+    dicoRecord:Array<classDicoRecord>=[];
 
     tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
     maxEventHTTPrequest: number = 12;
@@ -308,6 +312,10 @@ getServerNames(event:any){
   this.selectApps=0;
   this.configServerChanges++;
   this.isConfigServerChanges.update(ConSer => ConSer + 1);
+}
+
+returnDicoFile(dico:any){
+  const a = dico;
 }
 
 

@@ -359,3 +359,12 @@ export class classCheckLock{
   action:string='';
 }
 
+export class classDicoRecord{
+  French:string="";
+  English:string="";
+  inputHeight:number=0;
+  margTopCircleNumber=0;
+  posInitFilenumber=0;
+  active:boolean=true;
+}
+

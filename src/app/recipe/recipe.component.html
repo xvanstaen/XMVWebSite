@@ -5,30 +5,32 @@
 
 
 <div style="margin-top:40px;"></div>
-@if (dictionaryOnly===true){
-    <app-dictionary [configServer]="configServer" [identification]="identification"  ></app-dictionary>
-} @else {
+
+   
+
     @if (EventHTTPReceived[0]===true && isCreateRecipeName() && isRecipeModified() && theListOfObjects.length>1){
         <div style="width:450px;  margin-top:5px; display:inline-block;" >
             <div class="objectHeader" style="margin-left:10px; font-size:18px; width:100%; display:inline-block;">Select the recipe file
-            </div>TOTOTO
-            <li   *ngFor="let listFile of theListOfObjects; let i=index" class="stdInline" style="list-style: none;" (click)='RadioSelection($event)' >
-                @if (fileNb===i){
-                    <input  class="radioButton"  type="radio"  name="theRadio" id="selFile-{{i}}" value="Y"  checked>
-                } @else {
-                    <input  class="radioButton"  type="radio"  name="theRadio" id="selFile-{{i}}" value="N"  >
-                }
-                <span [class]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}"   id="selFile-{{i}}" class=" object" style="margin-left:10px; padding-top:-25px; width:100%; " >
-                    <span id="selFile-{{i}}" style="margin-left:15px; display:inline-block;" >{{i+1}} - {{listFile.name}}</span>
-                </span>
-            </li>   
+            </div>
+            @for (listFile of theListOfObjects; track $index; let i = $index){
+                <li  class="stdInline" style="list-style: none;" (click)='RadioSelection($event, i)' >
+                    @if (fileNb===i){
+                        <input  class="radioButton"  type="radio"  name="theRadio" id="selFile-{{i}}" value="Y"  checked>
+                    } @else {
+                        <input  class="radioButton"  type="radio"  name="theRadio" id="selFile-{{i}}" value="N"  >
+                    }
+                    <span [class]="{'even': i % 2 === 0, 'odd':i % 2 !== 0}"   id="selFile-{{i}}" class=" object" style="margin-left:10px; padding-top:-25px; width:100%; " >
+                        <span id="selFile-{{i}}" style="margin-left:15px; display:inline-block;" >{{i+1}} - {{listFile.name}}</span>
+                    </span>
+                </li>  
+            }
         </div>
     }
     
-    <div style="width:var(--boxW); display:inline-block; margin-left:20px; background-color: white;">
-        @if (EventHTTPReceived[0]===true  && recipeFile.listTypeRecipe.length>1){
+    <div style="width:var(--boxW); display:inline-block; margin-left:20px; background-color: white; ">
+        @if ((EventHTTPReceived[0]===true  && recipeFile.listTypeRecipe.length>1) || isListTypeUpdated()){
             <div style="max-width:450px; width:100%; margin-top:5px; display:inline-block;" >
-                <div style=" margin-left:10px; font-size:14px; width:100%; border:blue solid 1px; background-color:cyan;">
+                <div style=" margin-left:10px; font-size:14px; width:100%;  background-color:cyan;">
                     <div class="objectHeader stdInline" style="margin-left:0px; font-size:16px;  border:0px solid blue;">
                         <span style="margin-left:-8%;">&nbsp;</span>
                         <span (click)="selLanguage('FR')"><img   style="width:20px; height:20px; margin:7px;"  src="./assets/FlagFrance.png" ></span>
@@ -37,69 +39,24 @@
                         <div  style="margin-top:-10px; display:inline-block; width:250px; margin-left:50px;">Select the type of recipe(s)</div>
                     
                     </div>
-                    <div style="margin-top:3px;"></div>
-
-                    <div class="theBox" >
-                        <div  [class]="{'typeRecipeLargeBox':recipeFile.listTypeRecipe.length>7, 'typeRecipeSmallBox':recipeFile.listTypeRecipe.length<8}" >
-                            <div style="margin-top:5px;"></div>
-                            <div  *ngFor="let listType of recipeFile.listTypeRecipe; let i=index"  >
-                                
-                                @if (i > 0 && i % 2=== 1){
-                                    <div class="mainBoxMenu"  >
-                                        <div  class="mainMenu "  id="TypeA-{{i}}" [class]="{'even1': i % 4 === 1 , 'even2': i % 4 === 3,'listObjSel':i===radioSelect}"  (click)='RadioSelection($event)'>
-                                            <div class="mainMenuItem"> 
-                                                
-                                                    <span id="TypeA-{{i}}"> 
-                                                        {{i+1}} 
-                                                        @if (yourLanguage==='FR'){ {{listType.Fr.trim()}}                                                }
-                                                        @else if (yourLanguage==='UK'){ {{listType.En.trim()}} }
-                                                    </span>
-                                            </div>
-                                        </div>
-                                    
-                                
-                                        @if (i < recipeFile.listTypeRecipe.length-1){
-                                            <div class="mainMenu" id="TypeB-{{i+1}}"  [class]="{'even2': (i + 1) % 4 === 2 , 'even1': (i + 1) % 4 === 0, 'listObjSel':i+1===radioSelect}"  (click)='RadioSelection($event)'>
-                                                <div class="mainMenuItem"> 
-                                                        <span id="TypeB-{{i+1}}"> 
-                                                            {{i+2}} - 
-                                                            @if (yourLanguage==='FR'){ {{recipeFile.listTypeRecipe[i+1].Fr.trim()}} 
-                                                            } @else if (yourLanguage==='UK'){ {{recipeFile.listTypeRecipe[i+1].En.trim()}} }
-
-                                                        </span>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                } @else if (i===0){
-                                    <div  class="mainBoxMenu" >
-                                        <div   id="TypeAll"  class="mainMenu even2" [class]="{'listObjSel':selectedTypeFr==='ALL'}"  (click)='RadioSelection($event)'>
-                                            <div class="mainMenuItem">
-                                                0 - 
-                                                
-                                                <span id="TypeAll"> 
-                                                    @if (yourLanguage==='FR'){  Tous (défaut)
-                                                    } @else if (yourLanguage==='UK'){ All (default) }
-                                                </span>
-                                            </div>       
-                                        </div>
-                                        <div   id="TypeA-{{i}}"  class="mainMenu even1" [class]="{'listObjSel':i===radioSelect}"  (click)='RadioSelection($event)'>
-                                            <div class="mainMenuItem"> 
-                                                {{i+1}} - 
-                                                <span id="TypeA-{{i}}"> 
-                                                     @if (yourLanguage==='FR'){ {{listType.Fr.trim()}} 
-                                                    } @else if (yourLanguage==='UK'){ {{listType.En.trim()}} }
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-
+                    <div class="theBox"> 
+                        @for (listType of listTypeName[yourLanguage]; track $index; let i = $index) {
+                            <div 
+                                class="mainMenu" 
+                                [id]="'Type-' + i" 
+                                [class.even0]="i % 4 === 0"
+                                [class.even1]="i % 4 === 1"
+                                [class.even2]="i % 4 === 2"
+                                [class.even3]="i % 4 === 3"
+                                [class.listObjSel]="i === radioSelect + 1"
+                                (click)="RadioSelection($event, i)"
+                            >
+                                <div class="mainMenuItem">{{ i + 1 }} - {{ listType }}
+                                </div>
                             </div>
-                        </div>
+                        }
+
                     </div>
-                    <div style="margin-top:5px;"></div>
-                    
                 </div>
                 <div style="margin-top:3px; margin-left:150px;">
                     <button id='but_2' class="sizeButtons" (click)="onRefresh()"> Refresh</button> 
@@ -118,17 +75,23 @@
                     <span style="color:blue; font-size:14px; width:60px; margin-left:10px;"> Search recipe </span>
                     <input type="text" [value]="textToSearch" id='search' (input)="searchText($event)" (click)="searchText($event)"
                         style="box-sizing: border-box; margin-left:10px; width:120px; height:25px; color:blue; ">
-                    <button id='cancel' class="sizeButtons" style="margin-left:10px;" (click)="searchText($event)" >Cancel</button>
-                    <div class="skipLine">&nbsp;</div>
-                    <div [style]="{'height':heightSearchDropdown + 'px', 'max-height': 150 + 'px', 'overflow-y':searchScroll}">
-                        <li *ngFor="let tab of tabSearch; let m=index;" class="recipeStraight-options " style="margin-left:5px;"
-                                        [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                        (click)="afterDropDownSel($event)" id="selText-{{m}}" >
-                                @if (m % 3 ===0){  <span id="selText-{{m}}"  >{{tab.name}}  </span>}
-                                @if (m % 3 ===1){   <span  id="selText-{{m}}"  >{{tab.name}} </span>}
-                                @if (m % 3 ===2){   <span  id="selText-{{m}}"  >{{tab.name}} </span>}
-                        </li>
-                    </div>
+
+                    @if (tabSearch.length>0){   
+                        <button id='cancel' class="sizeButtons" style="margin-left:10px;" (click)="searchText($event)" >Cancel</button>
+                        <div class="skipLine">&nbsp;</div>
+                        <div style="max-height: 150px; overflow-y:auto">
+                            @for (tab of tabSearch; track $index;){
+                                @let m=$index; 
+                                <li class="recipeStraight-options " style="margin-left:5px;"
+                                            [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                            (click)="afterDropDownSel($event)" id="selText-{{m}}" >
+                                    @if (m % 3 ===0){  <span id="selText-{{m}}"  >{{tab.name}}  </span>}
+                                    @if (m % 3 ===1){   <span  id="selText-{{m}}"  >{{tab.name}} </span>}
+                                    @if (m % 3 ===2){   <span  id="selText-{{m}}"  >{{tab.name}} </span>}
+                                </li>
+                            }
+                        </div>
+                    }
                     <div style="margin-top:8px;"></div>
                 </div>
                 <div style="margin-top:8px;"></div>
@@ -139,9 +102,12 @@
                         Recipe has been modified
                     <button id='but_1' class="sizeButtons"  (click)="ConfirmSave()"> Save</button> &nbsp;&nbsp;
                     <button id='but_2' class="sizeButtons" (click)="CancelRecord()"> Cancel</button>
-            
-                    <div class="msg" style="width:100%; display:inline-block;" ><br>{{message}} </div>
+                    <br><br>
+                    
                 </div>
+            }
+            @if (isMessage()){
+                <div class="msg" style="width:100%; display:inline-block; font-size:15px; font-weight:bolder;" ><br>{{message}} </div>
             }
             @if (IsSaveConfirmed()){
                 <div  style="margin-left:10px; width:400px; border:solid 2px green; background-color: lightgrey;">
@@ -177,22 +143,25 @@
             <div style="background-color:lightblue;">
                 <!-- TITLE-->
                 <div class="titleHeader" style="width:100%; "> 
-                    @if (yourLanguage==='FR'){
+                    @if (yourLanguage===0){
                         Type de recette: 
                         <input type="text" (input)="onInputType($event)" id='Fr' class='theType' style="box-sizing: border-box;" value="{{recipeFile.recipe[recordRecipe].typeFr}}">
-                    } @else if (yourLanguage==='UK') {
+                    } @else if (yourLanguage===1) {
                         Type of recipe: 
                         <input type="text" (input)="onInputType($event)" id='En' class='theType' style="box-sizing: border-box;" value="{{this.recipeFile.recipe[this.recordRecipe].typeEn}}">
+                    }
+                    @if (errType!==""){
+                        <div style="color:red; font-size:14px; ">{{errType}}</div>
                     }
                 </div>
                 <div class="titleName" style="border:solid 0px blue;"> 
                     @if (isListTypeFr===true || isListTypeEn===true){
                         <div class="dropdown">
-                            <div [style]="styleBoxListType()">
-                                <div   [style]="styleBoxOptionListType()"  >
+                            <div class="styleBoxListType">
+                                <div   class="styleBoxOptionListType" [style.height.px]="theHeight" >
                                     <li *ngFor="let tab of tabDropdownType; let m=index;" 
                                             class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                (click)="onDropdownListType($event)" id="listType" [value]="tab.name">{{tab.name}}   
+                                                (click)="onDropdownListType($event)" id="listType" [value]="tab.name">AAA{{tab.name}}   
                                     </li>
                                 </div>
                             </div>
@@ -201,8 +170,8 @@
                     <div class="circle"   style="margin-left:80px; " (click)="onAction($event)"  id='ActionRecipe'>A</div>  
                      @if (isActionRecipe()){ 
                         <div class="dropdown" >
-                            <div [style]="styleBoxAction">
-                                <div   [style]="styleBoxOptionAction"  > 
+                            <div class="styleBoxAction">
+                                <div   class="styleBoxOptionAction"  > 
                                     <li *ngFor="let tab of this.tabActionRecipe; let m=index;" {{m}}
                                             class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                             (click)="afterDropDownRecipe($event)" id="ActionRecipe" [value]="m">{{tab}}   
@@ -213,8 +182,8 @@
                     }
                     @if (isChangeRecipeName()){
                         <div class="dropdown ">
-                            <div  [style]="styleBoxChangeName()">
-                                <div  [style]="styleBoxOptionChangeName()" >
+                            <div  class="styleBoxChangeName">
+                                <div  class="styleBoxOptionChangeName" >
                                 
                                         <div class="changeAllItems" > Name to change#{{recipeFile.recipe[recordRecipe].name}}</div>
                                         <div class="changeAllItems">  New name: 
@@ -230,8 +199,8 @@
                     }
                     @if (isDeleteRecipe()){
                         <div class="dropdown" >
-                            <div [style]="styleBox" >
-                                <div  [style]="styleBoxOption ">
+                            <div class="styleBox" >
+                                <div  class="styleBoxOption"  style="height:70px; margin-left:0px; margin-top:-30px;" >
                         
                                     <div style="width:100%; color:blue; font-size:14px; text-align: center;">Confirm the deletion of recipe {{delMsg}}</div> 
                                     <div   style='margin-left:40px; margin-top:8px; width:60%; display:inline-block; 
@@ -246,77 +215,29 @@
                         </div>
                     }
                     <div style='margin-left:15px; display:inline-block; color:blue; font-weight:bold; margin-top:-20px;'>{{recipeFile.recipe[recordRecipe].name}} </div>
-                    
-                    <div class="menuBox" id="listRecipe" (click)="onAction($event)">
-                        <mat-icon  class="menu"  id="listRecipe"  >
-                                menu
-                        </mat-icon>
-                    </div>
-
                 </div>
+  
 
-                @if (isListRecipe()){
-                    <br>
-                    <div class="dropdown ">
-                        <div [style]="styleBoxListRecipe() ">          
-                            <div   [style]="styleBoxOptionListRecipe()"  >
-                                <li *ngFor="let tab of tabRecipe; let m=index;" 
-                                        class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                (click)="afterDropDownSel($event)" id="selRecipe" [value]="m">{{tab.name}}   
-                                </li>
-                            </div>
-                        </div>
-                    </div>
-                }
-                
-
-                @for (StdPer of theStdPersoDisplay; track StdPer; let j = $index;){                
-                                    <!-- Header table -->
-                    
-                    <div  >
-                        <div style='font-size:16px; padding-top:8px; border: solid 0px red;' [class]=" {'colorPerso': j ===1 , 'colorStd': j ===0}">
-                            @if (j===0){
-                                <!-- Display the title for STANDARD and Visibility on/off icon -->
-                                <div  class="titleStdPerso">
-                                    <span style="font-size:16px; font-weight:bold; color:blue; ">STANDARD RECIPE</span>
-                 
-                                        @if (theStdPersoDisplay[0]==="Y"){
-                                            <mat-icon style=" color: red;" class="eye" id="eyeStd" (click)='selStdPer($event)' >
-                                                visibility_off
-                                            </mat-icon>
-                                        } @else {
-                                            <mat-icon style=" color: blue;" class="eye" id="eyeStd"  (click)='selStdPer($event)' >
-                                                visibility
-                                            </mat-icon>
+                @for (StdPer of theStdPersoDisplay; track $index; let j = $index;){              
+                                    <!-- Header table -->        
+                    <div style='font-size:16px; padding-top:8px; border: solid 0px red;' [class]=" {'colorPerso': j ===1     , 'colorStd': j ===0}">
+                        <!-- Display the title for STANDARD and Visibility on/off icon -->
+                        <div  >
+                            <span style="font-size:16px; padding-left:220px; font-weight:bold; color:blue; ">{{ j === 0 ? 'STANDARD RECIPE' : 'RECIPE PERSO' }}</span>
+                            @if ((j===0 && theStdPersoDisplay[0]==='Y') || (j===1 && theStdPersoDisplay[1]==='Y')){
+                                <mat-icon style=" color: red;" class="eye" id="eyeStd" (click)='selStdPer(j)' >
+                                    visibility_off
+                                </mat-icon>
+                            } @else {
+                                <mat-icon style=" color: blue;" class="eye" id="eyeStd"  (click)='selStdPer(j)' >
+                                    visibility
+                                </mat-icon>
                                         }
-
-                                </div> 
-                            } @else if (j===1){
-                                    <!-- Display the title for PERSONNALIZED and Visibility on/off  icon-->
-                                <div  class="titleStdPerso colorPerso">
-                                    <div style=" font-size:16px;  font-weight:bold; color:green; margin-left:20px; height:40px;"> 
-                                        RECIPE PERSO 
-                                    
-                                        @if (theStdPersoDisplay[1]==="Y"){
-                                            <mat-icon style=" color: red;" class="eye" id="eyePerso" (click)='selStdPer($event)' >
-                                                visibility_off
-                                            </mat-icon>
-                                        } @else {
-                                            <mat-icon style=" color: blue;" class="eye" id="eyePerso"  (click)='selStdPer($event)' >
-                                                visibility
-                                            </mat-icon>
-                                        }
-                                        </div>
-                                </div>
-                            }
-                           
                         </div>
                     </div>
                     <div [class]=" {'colorPerso': j ===1 , 'colorStd': j ===0}">
                     @if ((j===0 && theStdPersoDisplay[0]==='Y') || (j===1 && theStdPersoDisplay[1]==='Y')){
-                         
-                        <div   style="margin-left:45px;" class="titleHeaderFlex" 
-                                >
+                        <div   style="margin-left:45px;" class="titleHeaderFlex" >
                                
                             <div padding-left:25px;width:var(--actionW); >Action</div>
                             <div style="width:var(--ingW); " >Ingredients</div>
@@ -327,51 +248,50 @@
                         <!-- ====== Display record related to STANDARD recipe ====== -->
                         @if (theStdPersoDisplay[0]==='Y' && j===0){
                             <div  style="margin-top:0px; "> <!-- stdInline -->
-                                @for (theRecipe of recipeFile.recipe[recordRecipe].data; track theRecipe; let i = $index){
-                                    <div id="posAfterTitle" >
-                                        @if (tabDialog[prevDialog]===true && i===idNb && idText==='Action'){
-                                            j={{0}}
+                                @for (theRecipe of recipeFile.recipe[recordRecipe].data; track theRecipe.id;){
+                                    @let i = $index; 
+                                    <div id="posAfterTitle_' + i" >
+                                        @if (shouldShowDropdownStd[i]){
                                             <div class="Straight-content " style="margin-left:80px;">
-                                                    <div  class="StraightDropDown " [style.height.px]="theHeight" [style.margin-left.px]=5 >
-                                                         @for (tab of listActions; track $index; let m = $index;){ 
-                                                            <div
-                                                                class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                                    (click)="afterDropDown($event)" id="Action" [attr.data-value]="m">{{tab}}   
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                
+                                                <div  class="StraightDropDown " [style.height.px]="theHeight" [style.margin-left.px]=5 >
+                                                     @for (tab of listActions; track $index;){ 
+                                                        @let m = $index; 
+                                                        <div class="Straight-options "  [class.colorEven]="m % 2 === 0" 
+                                                                                        [class.colorOdd]="m % 2 !== 0"
+                                                                (click)="afterDropDown($event)" id="Action" [attr.data-value]="m">{{tab}}   
+                                                        </div>
+                                                    }
+                                                </div>
                                             </div>
                                         }
                                         <!-- ====== DROPDOWN - CHANGE VALUE ====== -->
                                         @if (isChangeValueForAll() && i===idNb){
                                             <div class="dropdown ">
-                                                <div  [style]="styleBoxChangeAll">
-                                                    <div  [style]="styleBoxOptionChangeAll" >
+                                                <div  class="styleBoxChangeAll">
+                                                    <div  class="styleBoxOptionChangeAll" >
                                                         <form  [formGroup]="SpecificForm" >
-                                                                <div class="changeAllItems" style="text-align: center;"> item#{{idNb+1}}: {{currentIngr}}</div>
-                                                                <div class="changeAllItems"> Current value :
-                                                                    <span class="changeAllCurrentValue"> {{currentValue}}</span>
-                                                                </div>
-                                                                <div class="changeAllItems">  New value: 
-                                                                        <input type="text" formControlName="changeValue" class="changeAllNewValue">
-                                                                </div>
-                                                                <br>
-                                                                <button id='but_3' id="save" class="sizeButtons"  style="margin-left:50px;" (click)="onChangeValues($event)">Confirm</button>
-                                                                <button id='but_4' id="cancel" class="sizeButtons" (click)="onChangeValues($event)"> Cancel</button>
+                                                            <div class="changeAllItems" style="text-align: center;"> item#{{idNb+1}}: {{currentIngr}}</div>
+                                                            <div class="changeAllItems"> Current value :
+                                                                <span class="changeAllCurrentValue"> {{currentValue}}</span>
+                                                            </div>
+                                                            <div class="changeAllItems">  New value: 
+                                                                    <input type="text" formControlName="changeValue" class="changeAllNewValue">
+                                                            </div>
+                                                            <br>
+                                                            <button id='but_3' id="save" class="sizeButtons"  style="margin-left:50px;" (click)="onChangeValues($event)">Confirm</button>
+                                                            <button id='but_4' id="cancel" class="sizeButtons" (click)="onChangeValues($event)"> Cancel</button>
                                                         </form>
                                                     </div>
                                                 </div>
                                             </div>
                                         }
-                                        
                                         <div   class="colorStd container" >
                                             <div  class="tabIngr" style="width:var(--actionW);  " >
-                                                    <div style="display:flex; margin-left:30px; margin-top:5px;" class="circleContainer">
-                                                        <span class="circleText"  (click)="onAction($event)"  id='Action-{{i}}' >
-                                                            A
-                                                        </span>  
-                                                    </div>
+                                                <div style="display:flex; margin-left:30px; margin-top:5px;" class="circleContainer">
+                                                <span class="circleText"  (click)="onAction($event)"  id='Action-{{i}}' >
+                                                        A
+                                                    </span>  
+                                                </div>
                                             </div>
                                                                     <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
                                             <div class="tabIngr" style="width:var(--ingW);  padding-left:3px; padding-top:3px;">
@@ -380,10 +300,10 @@
                                                 
                                                 @if (isIngrDropDown() && i===idNb && idText==='ingr'){
                                                     <div class="dropdown ">
-                                                        <div [style]="styleBox">
-                                                            <div  [style]="styleBoxOption">
+                                                        <div class="styleBox">
+                                                            <div  class="styleBoxOption" [style.height.px]="heightDropDown" [style.width.px]="280">
                                                                 <li *ngFor="let tab of tabListCalFat; let m=index;" 
-                                                                        class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                                        class="Straight-options "  style="width:100%;" [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
                                                                             (click)="modifInput($event)" id="sel{{ingrType}}-{{i}}" [value]="m">{{tab.name}} - serving: {{tab.serving | number:'1.0-0'}}  {{tab.unit}}   
                                                                 </li>
                                                             </div>
@@ -484,93 +404,96 @@
 
                         <!-- ====== Display record related to PERSONNALIZED recipe ====== -->
                         @if (theStdPersoDisplay[1]==='Y'&& j===1){
-                            <div >
-                                @for (theRecipe of recipeFile.recipe[recordRecipe].data;  track theRecipe; let i = $index){
-                                        @if (tabDialog[prevDialog]===true && i===idNb && idText==='ActionPerso'){
+                            @for (theRecipe of recipeFile.recipe[recordRecipe].dataPerso;  track theRecipe.id;){
+                                @let k = $index;
+                                
+                                @if (shouldShowDropdownPerso[k]){
+                                    <div class="dropdown ">
+                                        <div class="Straight-content"  [style.height.px]="theHeight " style="width:50px; margin-left: 90px; ">
+                                            <div  class="StraightDropDown " [style]="{ 'height': theHeight + 'px' ,'margin-left': 5 + 'px'}"  >
+                                                @for (tab of listActions; track $index;){
+                                                    @let m = $index; 
+                                                    <div class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                            (click)="afterDropDownPerso($event)" id="ActionPerso" [attr.data-value]="m">{{tab}}   
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @if (isChangeValueForAllPerso() && k===idNb){   
+                                    <div class="dropdown ">
+                                        <div  class="styleBoxChangeAll">
+                                            <div  class="styleBoxOptionChangeAll" >
+                                                <form  [formGroup]="SpecificForm" >
+                                                    <div class="changeAllItems" style="text-align: center;"> item#{{idNb+1}}: {{currentIngr}}</div>
+                                                    <div class="changeAllItems"> Current value :
+                                                        <span class="changeAllCurrentValue"> {{currentValue}}</span>
+                                                    </div>
+                                                    <div class="changeAllItems">  New value: 
+                                                        <input type="text" formControlName="changeValue" class="changeAllNewValue">
+                                                    </div>
+                                                    <br>
+                                                    <button id='but_3' id="save" class="sizeButtons"  style="margin-left:50px;" (click)="onChangeValues($event)">Confirm</button>
+                                                    <button id='but_4' id="cancel" class="sizeButtons" (click)="onChangeValues($event)"> Cancel</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div   class="container" >
+                                    <div  class="tabIngr colorPerso" style="width:var(--actionW);  " >
+                                        <div class="circleContainer" style="display:flex; margin-left:30px; margin-top:5px;" >
+                                            <span class="circleText"  (click)="onAction($event)"  id='ActionPerso-{{k}}' >
+                                                A
+                                            </span>  
+                                        </div>
+                                    </div>
+                                    <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
+                                    <div class="tabIngr colorPerso" >
+                                        <input class="inputRow " style=" width:var(--ingW); " type="text" id="ingrPerso-{{k}}" (mouseup)="onMouseUp($event)"  (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[k].ingr}}">
+                                        @if (isIngrDropDown() && k===idNb && idText==='ingrPerso'){
                                             <div class="dropdown ">
-                                                <div class="Straight-content"  [style.height.px]="theHeight " style="width:50px; margin-left: 90px; ">
-                                                    <div  class="StraightDropDown " [style]="{ 'height': theHeight + 'px' ,'margin-left': 5 + 'px'}"  >
-                                                        @for (tab of listActions; track $index; let m = $index;){ 
-                                                            <div class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                                    (click)="afterDropDownPerso($event)" id="ActionPerso" [attr.data-value]="m">{{tab}}   
-                                                            </div>
+                                                <div class="styleBox">
+                                                    <div  class="styleBoxOption"  [style.height.px]="heightDropDown">
+                                                        @for (tab of tabListCalFat; track $index;){
+                                                            @let m = $index; 
+                                                            <li    class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                                        (click)="modifInput($event)" id="sel{{ingrType}}-{{k}}"  [value]="m">{{tab.name}} - serving: {{tab.serving | number:'1.0-0'}}  {{tab.unit }}
+                                                            </li>
                                                         }
                                                     </div>
                                                 </div>
                                             </div>
                                         }
-                                        @if (isChangeValueForAllPerso() && i===idNb){   
-                                            <div class="dropdown ">
-                                                <div  [style]="styleBoxChangeAll">
-                                                    <div  [style]="styleBoxOptionChangeAll" >
-                                                        <form  [formGroup]="SpecificForm" >
-                                                            <div class="changeAllItems" style="text-align: center;"> item#{{idNb+1}}: {{currentIngr}}</div>
-                                                            <div class="changeAllItems"> Current value :
-                                                                <span class="changeAllCurrentValue"> {{currentValue}}</span>
-                                                            </div>
-                                                            <div class="changeAllItems">  New value: 
-                                                                    <input type="text" formControlName="changeValue" class="changeAllNewValue">
-                                                            </div>
-                                                            <br>
-                                                            <button id='but_3' id="save" class="sizeButtons"  style="margin-left:50px;" (click)="onChangeValues($event)">Confirm</button>
-                                                            <button id='but_4' id="cancel" class="sizeButtons" (click)="onChangeValues($event)"> Cancel</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                        <div   class="container" >
-                                            <div  class="tabIngr colorPerso" style="width:var(--actionW);  " >
-                                                <div class="circleContainer" style="display:flex; margin-left:30px; margin-top:5px;" >
-                                                        <span class="circleText"  (click)="onAction($event)"  id='ActionPerso-{{i}}' >
-                                                            A
-                                                        </span>  
-                                                </div>
-                                            </div>
-                                        <!-- ====== Display Ingredient and DROPDOWN with list of potential ingredients ====== -->
-                                        <div class="tabIngr colorPerso" >
-                                            <input class="inputRow " style=" width:var(--ingW); " type="text" id="ingrPerso-{{i}}" (mouseup)="onMouseUp($event)"  (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].ingr}}">
-                                            @if (isIngrDropDown() && i===idNb && idText==='ingrPerso'){
-                                                <div class="dropdown ">
-                                                    <div [style]="styleBox">
-                                                        <div  [style]="styleBoxOption">
-                                                            <li *ngFor="let tab of tabListCalFat; let m=index;" 
-                                                                    class="Straight-options"  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                                            (click)="modifInput($event)" id="sel{{ingrType}}-{{i}}"  [value]="m">{{tab.name}} - serving: {{tab.serving | number:'1.0-0'}}  {{tab.unit }}
-                                                            </li>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-                                        <div  class="tabIngr colorPerso"    >
-                                            <input class="inputRow " style=" width:var(--quanW); border-right: 0px;" type="text" id="quantityPerso-{{i}}"   (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].quantity}}">
-                                        </div>
-                                        <div class="tabIngr colorPerso"    >
-                                            <input class="inputRow " style=" width:var(--unitW); " type="text" id="unitPerso-{{i}}"  (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[i].unit}}">
-                                        </div>
                                     </div>
-                                } <!-- *ngFor --> 
-                                <div  style ="margin-left:240px; color:green; font-weight: bold;">Ustensiles Perso</div> 
-                                <div  style="width:99%;">                          
-                                    <textarea  class="input inputArea colorPerso" (input)="modifInput($event)" 
+                                    <div  class="tabIngr colorPerso"    >
+                                        <input class="inputRow " style=" width:var(--quanW); border-right: 0px;" type="text" id="quantityPerso-{{k}}"   (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[k].quantity}}">
+                                    </div>
+                                    <div class="tabIngr colorPerso"    >
+                                        <input class="inputRow " style=" width:var(--unitW); " type="text" id="unitPerso-{{k}}"  (input)="modifInput($event)" value="{{recipeFile.recipe[recordRecipe].dataPerso[k].unit}}">
+                                    </div>
+                                </div>
+                            } <!-- *ngFor --> 
+                            <div  style ="margin-left:240px; color:green; font-weight: bold;">Ustensiles Perso</div> 
+                            <div  style="width:99%;">                          
+                                <textarea  class="input inputArea colorPerso" (input)="modifInput($event)" 
                                         [style]="{'height':recipeFile.recipe[recordRecipe].materielPersoBox + 'px', 'max-height':maxHeightCommBox + 'px'}"
                                                     id="materielPerso" value="{{recipeFile.recipe[recordRecipe].materielPerso}}">
-                                    </textarea>
-                                </div>
-                        
-                                <div  style="text-align:left;">
-                                    <div style="margin-left:195px;" class="circle"  (click)="onAction($event)"  id='ActionCommentsPerso'>A</div>  
+                                </textarea>
+                            </div>
+                            <div  style="text-align:left;">
+                                <div style="margin-left:195px;" class="circle"  (click)="onAction($event)"  id='ActionCommentsPerso'>A</div>  
                                     <span style="margin-left:20px; color:green; font-weight: bold;">Comments Perso</span>
                                     @if (isActionComments() && idText==='ActionCommentsPerso'){
                                         <div class="dropdown ">
                                             <div class="Straight-content" style=" width:240px; margin-left: 200px;" [style.height.px]="theHeight" [style.margin-top.px]="posTopDropDown+40">
                                                 <div  class="StraightDropDown " style="overflow-y:scroll;  " [style.height.px]="theHeight  - 100"  >
-                                                        @for (tab of tabActionCommentsPerso; track $index; let m = $index;){ 
-                                                            <div class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                                    (click)="dropdownComments($event)" id="commentsPerso" [attr.data-value]="m">{{tab}}   
-                                                            </div>
-                                                        }
+                                                    @for (tab of tabActionCommentsPerso; track $index; let m = $index;){ 
+                                                        <div class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
+                                                                (click)="dropdownComments($event)" id="commentsPerso" [attr.data-value]="m">{{tab}}   
+                                                        </div>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -616,7 +539,6 @@
                                         }
                                     </div>
                                 }
-                            </div>
                         } <!-- if j===1-->
                     }<!-- if j==0 or j===1-->
                     </div>
@@ -624,7 +546,11 @@
             </div>
         }
     </div>
-    }
+      
 }
+<div style="margin-left:15px;">
+    <app-dictionary [configServer]="configServer" [identification]="identification" [inputFile]="tabFraEng" (returnDicoFile)="returnDicoFile($event)"  ></app-dictionary>
+</div>    
+ 
 <div class="skipLine">&nbsp;</div>
 <div class="skipLine">&nbsp;</div>

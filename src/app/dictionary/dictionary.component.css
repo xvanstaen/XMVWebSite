@@ -2,7 +2,7 @@
 
 .boxLan{
   color:blue; background-color:lightgreen; display:inline-block; 
-  text-align: center; height:35px; padding-top:10px; width:41%;  border:solid 1px black;
+  text-align: center; height:35px; padding-top:10px; width:360px;  border:solid 1px black;
 }
 
 .FrEven{
@@ -39,14 +39,18 @@
   .circle{
     border-radius: 50% 50%;
     color:blue;
-
     border: solid 1px rgb(4, 4, 124);
-
     font-size:14px;
     font-weight:bold;
     background-color: lightgreen;
     text-align: center;
-    padding-top:-5px;
+    padding-top:-10px;
+  }
+
+  .circleSize{
+    width:20px;
+    height:20px;
+    margin-left:5px;
     display:block;
     float:left;
   }
@@ -60,13 +64,28 @@
   }
 
   .input{
-    margin-left:8px; width:41%; display:inline-block; overflow-y:auto; height: 26px; 
-    border:solid 0.5px black;
+    margin-left:8px; width:360px; max-width:360px; display:inline-block; overflow-y:auto; height: 20px; 
+    border:solid 0.5px black; font-size:12px;
   }
 
   .input:hover{
     background-color:cyan;
   }
 
-
+.styleBoxAction{
+  width: 150px;
+  position: absolute;
+  margin-left:10px; 
+  margin-top:5px;
+  z-index: 1;
+}
+.styleBoxOptionAction{
+  background-color:lightgrey;
+  width: 150px;
+  margin-top: 0px;
+  margin-left: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  border:1px blue solid
+  }
 

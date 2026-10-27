@@ -8,7 +8,7 @@ import { CommonModule,  DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
 
-import { BucketList ,Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
+import { BucketList ,Bucket_List_Info, OneBucketInfo, classDicoRecord } from '../JsonServerClass';
 
 // configServer is needed to use ManageGoogleService
 // it is stored in MongoDB and accessed via ManageMongoDBService
@@ -30,6 +30,7 @@ import {ClassSubConv, mainConvItem, mainRecordConvert, mainClassUnit} from '../C
 import {mainClassConv, ClassConv, ClassUnit, ConvItem, recordConvert} from '../ClassConverter'
 
 export class classRecipe{
+  id:number=0;
   ingr:string='';
   quantity:number=0;
   unit:string='gram';
@@ -156,22 +157,22 @@ isDictionary:boolean=false; // @input to activate the management of the dictiona
 
 isListOfObjectsRetrieved:boolean=false; // list of objects containing the name of the files 
 isFileRetrieved:boolean=false;
-isFileUpdated:boolean=false;
-IsSaveConfirmed=signal(false);
+isMessage=signal<boolean>(false);
+IsSaveConfirmed=signal<boolean>(false);
 
-isActionComments=signal(false);  // used to trigger function dropdownComments()
-isActionRecipe=signal(false); // used to trigger function tabActionRecipe()
-isListRecipe=signal(false);
+isActionComments=signal<boolean>(false);  // used to trigger function dropdownComments()
+isActionRecipe=signal<boolean>(false); // used to trigger function tabActionRecipe()
 
-isCreateRecipeName=signal(false); // used to provide name of recipe on Create and Duplicate
-isChangeRecipeName=signal(false); // used to trigger function onChangeName()
-isDeleteRecipe=signal(false); // used to trigger function delRecipe()
-isDuplicate=signal(false); // used to update listTypeRecipe[].recipe[] 
+isCreateRecipeName=signal<boolean>(false); // used to provide name of recipe on Create and Duplicate
+isChangeRecipeName=signal<boolean>(false); // used to trigger function onChangeName()
+isDeleteRecipe=signal<boolean>(false); // used to trigger function delRecipe()
+isDuplicate=signal<boolean>(false); // used to update listTypeRecipe[].recipe[] 
 
-isChangeValueForAll=signal(false); // used to trigger the function onChangeValues()
-isChangeValueForAllPerso=signal(false); // used to trigger the function onChangeValues()
+isChangeValueForAll=signal<boolean>(false); // used to trigger the function onChangeValues()
+isChangeValueForAllPerso=signal<boolean>(false); // used to trigger the function onChangeValues()
 
-isRecipeModified=signal(false); 
+isRecipeModified=signal<boolean>(false); 
+isListTypeUpdated=signal<boolean>(false);
 
 isListTypeFr:boolean=false; //used to trigger function tabDropdownType()
 isListTypeEn:boolean=false; //used to trigger function tabDropdownType()
@@ -189,7 +190,7 @@ translateComment:string="";
 margLeftChangeAll:number=0;
 currentValue:number=0;
 
-yourLanguage:string="FR"; // UK or FR
+yourLanguage:number=0; // 0 for FR, 1 for EN
 theStdPersoDisplay:Array<string>=['Y','N'];
 
 eyeNutritionFact:Array<string>=['N','N'];
@@ -233,7 +234,7 @@ zoomOutRate:number=1.4;
 // Dropdown boxes
 heightActionRecipe:number=80;
 heightSearchDropdown:number=0;
-heightListRecipe:number=0;
+heightListRecipe:number=80;
 theHeight:number=0;
 //posLeftDropDown:number=40;
 posTopDropDown:number=-25;
@@ -243,76 +244,9 @@ maxHeightDropDown:number=200;
 heightItemDropDown:number=25;
 marginLeft:number=50;
 marginTop:number=20;
-styleBox:any;
-styleBoxOption:any;
-styleBoxAction:any;
-styleBoxOptionAction:any;
-styleBoxListRecipe=signal({
-      'width' : '250px',
-      'height' : '80px',
-      'position' : 'absolute',
-      'margin-left' :'15%', 
-      'margin-top' :'5px',
-      'display' :'inline-block',
-      'z-index' : '1'
-    });
-styleBoxOptionListRecipe = signal ({
-      'background-color':'red',
-      'width': 250 + 'px',
-      'height':80 + 'px',
-      'margin-top' :   0 + 'px',
-      'margin-left':140 + 'px',
-      'overflow-x': 'hidden',
-      'overflow-y': 'auto',
-      'border':'1px black solid',
-      'display':'inline-block'
-      })
-styleBoxChangeAll = {
-        'width': 220 + 'px',
-        'height': 150 + 'px',
-        'position': 'absolute',
-        'margin-left':'15%', 
-        'margin-top':'0px',
-        'display':'inline-block',
-        'z-index': '1'
-      }
-styleBoxOptionChangeAll = {
-        'background-color':'lightgreen',
-        'width': 220 + 'px',
-        'height':150 + 'px',
-        'margin-top' :  '0px',
-        'margin-left': 20 + 'px',
-        'overflow-x': 'hidden',
-        'overflow-y': 'auto',
-        'border':'1px blue solid',
-        'display':'inline-block'
-        }
-
-styleBoxChangeName = signal({
-          'width': 320 + 'px',
-          'height': 150 + 'px',
-          'position': 'absolute',
-          'margin-left':'15%', 
-          'margin-top':'0px',
-          'display':'inline-block',
-          'z-index': '1'
-      })
-  styleBoxOptionChangeName = signal({
-          'background-color':'lightgreen',
-          'width': 320 + 'px',
-          'height':150 + 'px',
-          'margin-top' :  '0px',
-          'margin-left': 20 + 'px',
-          'overflow-x': 'hidden',
-          'overflow-y': 'auto',
-          'border':'1px blue solid',
-          'display':'inline-block'
-      })                 
-styleBoxListType=signal({});
-styleBoxOptionListType=signal({});
 
 // used by translate function
-tabFreEng:Array<any>=[];
+tabFraEng:Array<any>=[];
 tabSpecChar:Array<any>=[];
 specialChar:string=" ,.-'{}[]()/?*@!:;<>\|";
 tabWordsFre:Array<any>=[];
@@ -326,6 +260,14 @@ tabWordsIn:Array<any>=[];
 tabWordsOut:Array<any>=[];
 dicEnFr:Array<any>=[];
 dicFrEn:Array<any>=[];
+
+tabLanguage=['Fr','En']
+
+listTypeName: string[][] = [
+  ['Tous'], // index 0
+  ['All']   // index 1
+];
+
 
 constructor(
     private scroller: ViewportScroller,
@@ -342,65 +284,39 @@ ngOnInit(){
   this.theHeight=(this.listActions.length + 1)* 25;
   this.getRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,2);
   this.getRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convertUnit,3);
-  this.getRecord(this.identification.dictionary.bucket,this.identification.dictionary.fileName,4);
-  const HeightAction= 25 * this.tabActionRecipe.length + 40;
-  this.styleBoxAction = {
-    'width': 150 + 'px',
-    'height': HeightAction + 'px',
-    'position': 'absolute',
-    'margin-left':'170px', 
-    'margin-top':'-32px',
-    'z-index': '1'
-  }
+  //this.getRecord(this.identification.dictionary.bucket,this.identification.dictionary.fileName,4);
+}
 
-  this.styleBoxOptionAction = { 
-    'background-color':'lightgrey',
-    'width': 150 + 'px',
-    'height':HeightAction + 'px',
-    'margin-top' :  0 + 'px',
-    'margin-left': 0 + 'px',
-    'overflow-x': 'hidden',
-    'overflow-y': 'auto',
-    'border':'1px blue solid'
-    }
-
-  
+returnDicoFile(inFile:any){
+  this.tabFraEng=inFile;
 }
 
 selLanguage(event:string){
   if (event==='FR'){
-    this.yourLanguage='FR';
+    this.yourLanguage=0;
   } if (event==='UK'){
-    this.yourLanguage='UK';
+    this.yourLanguage=1;
   } 
 }
 
-
-
-RadioSelection(event:any){
+RadioSelection(event:any, id:number){
 
 if (event.currentTarget.id!==''){
   this.findId(event.currentTarget.id);
 } else {
   this.findId(event.target.id);
 }
-
-// const i=parseInt(event.target.id.substring(2));
 const val=this.idNb;
-if (this.radioSelect!==this.idNb){
-  this.resetBooleans();
-  this.radioSelect=this.idNb;
-  //this.tabSearch.splice(0,this.tabSearch.length);
-  //this.textToSearch = "";
- if (this.idText==="selFile" ){
 
+  this.resetBooleans();
+ if (this.idText==="selFile" ){
+    this.radioSelect=this.idNb;
     if (  this.fileNb !== this.idNb){
       this.recipeFile.recipe.splice(0,this.recipeFile.recipe.length);
       this.recipeFile.listTypeRecipe.splice(0,this.recipeFile.listTypeRecipe.length);
       this.initialRecipeFile.recipe.splice(0,this.initialRecipeFile.recipe.length);
       this.initialRecipeFile.listTypeRecipe.splice(0,this.initialRecipeFile.listTypeRecipe.length);
       this.fileNb = this.radioSelect;
-      //this.getRecord(this.googleBucketName, this.myListOfObjects.items[this.fileNb].name,1);
       const nameOfFile=this.theListOfObjects[this.fileNb].header+this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json;
       this.getRecord(this.googleBucketName, nameOfFile,1);
       this.recordRecipe=0;
@@ -412,32 +328,33 @@ if (this.radioSelect!==this.idNb){
         this.fillFileRecord(this.initialRecipeFile,this.recipeFile);
         
     }
-  } else if (this.idText.substring(0,4)==="Type"){
-
-    if (this.idText==="TypeAll") {
+  } else if (this.idText==="Type"){
+    this.radioSelect=this.idNb-1;
+    if (this.idNb===0) {
       this.selectedTypeFr="ALL";
       this.recordListType=-1;
       this.radioSelect=-1;
     } else {
-      this.selectedTypeFr=this.recipeFile.listTypeRecipe[this.idNb].Fr.trim();
+      this.recordListType=this.idNb-1;
+      this.selectedTypeFr=this.recipeFile.listTypeRecipe[this.recordListType].Fr.trim();
   
-      this.recordListType=this.idNb;
       // search the first record of the selected Type
-      for (this.recordRecipe=0; this.recordRecipe<this.recipeFile.recipe.length && (this.recipeFile.recipe[this.recordRecipe].typeFr.trim()!==this.selectedTypeFr.trim()
-        || this.recipeFile.recipe[this.recordRecipe].typeEn.trim()!==this.recipeFile.listTypeRecipe[this.idNb].En.trim()); this.recordRecipe++){}
+      for (this.recordRecipe=0; this.recordRecipe<this.recipeFile.recipe.length && this.recipeFile.recipe[this.recordRecipe].typeFr.trim()!==this.selectedTypeFr.trim(); this.recordRecipe++){}
       
     }
-      if (this.isSearchText===true){
+    if (this.recordRecipe===this.recipeFile.recipe.length){ // pb with the file, no recipe was found
+      this.recordRecipe=0;
+    }
+    if (this.isSearchText===true){
         this.event.target.id='search';
         this.event.target.value=this.textToSearch;
         this.searchText(this.event);
-      };
+    };
   }
-}
+
 }
 
 resetBooleans(){
-  this.isListRecipe.set(false);
   if (this.isActionRecipe()){this.isActionRecipe.set(false)};
   this.isDeleteRecipe.set(false);
   this.isIngrDropDown.set(false);
@@ -451,25 +368,28 @@ resetBooleans(){
   this.isListTypeFr=false;
   this.isListTypeEn=false;
   this.isIngrDropDown.set(false);
+  this.shouldShowDropdownStd[this.prevDialog]=false;
+  this.shouldShowDropdownPerso[this.prevDialog]=false;
+  this.errType="";
+  this.isListTypeUpdated.set(true);
+  this.message="";
 }
 
 onAction(event:any){
-  
   this.resetBooleans();
-
   this.findId(event.target.id);
   if (this.idText==='Action'){
       this.prevDialog=this.idNb;
       this.tabDialog[this.prevDialog]=true;
       this.listActions[4]="Copy to perso";
       this.listActions[5]="Copy ALL to perso";
+      this.shouldShowDropdownStd[this.prevDialog]=true;
   } else  if (this.idText==='ActionPerso'){
       this.prevDialog=this.idNb;
       this.tabDialog[this.prevDialog]=true;
       this.listActions[4]="Copy to standard";
       this.listActions[5]="Copy ALL to standard";
-  } else if (event.target.id==='listRecipe'){
-      this.createDropDownRecipe();
+      this.shouldShowDropdownPerso[this.prevDialog]=true;
   } else if(event.target.id==='ActionRecipe'){
     this.isActionRecipe.set(true);
   } else if(event.target.id==='ActionComments' || event.target.id==='ActionCommentsPerso'){
@@ -477,65 +397,8 @@ onAction(event:any){
   }
 }
 
-createDropDownRecipe(){
-  this.tabRecipe.splice(0,this.tabRecipe.length);
-
-  var j = 0;
-  for (var i=0; i<this .recipeFile.recipe.length; i++){
-    if (this.textToSearch!==""){
-      j=this.recipeFile.recipe[i].name.toLowerCase().normalize('NFD').indexOf(this.textToSearch.toLowerCase());
-      if (j!==-1){
-        if (this.selectedTypeFr.toLowerCase().normalize('NFD')===this.recipeFile.recipe[i].typeFr.toLowerCase().normalize('NFD') || this.selectedTypeFr==="ALL" || this.selectedTypeFr===""){
-          this.tabRecipe.push({name:"",posRec:0});
-          this.tabRecipe[this.tabRecipe.length-1].name = this.recipeFile.recipe[i].name.trim();
-          this.tabRecipe[this.tabRecipe.length-1].posRec=i;
-        }
-      }
-    } else { 
-        if (this.selectedTypeFr.toLowerCase().normalize('NFD')===this.recipeFile.recipe[i].typeFr.toLowerCase().normalize('NFD') || this.selectedTypeFr==="ALL" || this.selectedTypeFr===""){
-          this.tabRecipe.push({name:"",posRec:0});
-          this.tabRecipe[this.tabRecipe.length-1].name = this.recipeFile.recipe[i].name.trim();
-          this.tabRecipe[this.tabRecipe.length-1].posRec=i;
-        }
-    }
-  }
-  if (this.tabRecipe.length>1){
-    this.tabRecipe.sort((a, b) => (a.name < b.name) ? -1 : 1);
-    this.tabRecipe.splice(0,0,{name:"",posRec:0});
-    this.tabRecipe[0].name='Cancel';
-    var scrollY='hidden';
-    if (this.tabRecipe.length>9){
-      this.heightListRecipe=210;
-      scrollY='scroll';
-    } else { 
-      this.heightListRecipe = this.tabRecipe.length * 25 + 15;
-    }
-    this.isListRecipe.set(true);
-
-    this.styleBoxListRecipe.set({
-      width : '205px',
-      'height' : this.heightListRecipe + 'px',
-      'position' : 'absolute',
-      'margin-left':140 + 'px', 
-      'margin-top': 5 + 'px',
-      'display' :'inline-block',
-      'z-index' : '1'
-    });
-        
-    this.styleBoxOptionListRecipe = signal({
-      'background-color':'lightgrey',
-      'width':180 + 'px',
-      'height':this.heightListRecipe + 'px',
-      'margin-top' :  -40 + 'px',
-      'margin-left': 80 + 'px',
-      'overflow-x': 'hidden',
-      'overflow-y': scrollY,
-      'border':'2px blue solid',
-      'display':'inline-block'
-    });
-  }
-}
-
+shouldShowDropdownStd:Array<boolean>=[];
+shouldShowDropdownPerso:Array<boolean>=[];
 
 afterDropDown(event:any){
   this.tabDialog[this.prevDialog]=false;
@@ -545,36 +408,37 @@ afterDropDown(event:any){
       if (event.target.textContent.trim()==="Cancel" ){
         this.idText="";
         this.isActionRecipe.set(false);
-        this.isListRecipe.set(false);
       } else 
       { this.isRecipeModified.set(true);
         if (event.target.textContent.trim()==="Delete" ){
           this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,1);
           this.tabUpdateRef.splice(this.idNb,1);
+          this.updateDataId(this.recipeFile.recipe[this.recordRecipe].data);
         } else if (event.target.textContent.trim()==="Add after" ){
           const pushData=new classRecipe;
           this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb+1,0,pushData);
-          const pushDataPerso=new classRecipe;
-          this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
+          //const pushDataPerso=new classRecipe;
+          //this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
           this.tabUpdateRef.splice(this.idNb+1,0, {init:0});
-          
           this.tabUpdateRef[this.recordRecipe+1].init=-1;
+          this.updateDataId(this.recipeFile.recipe[this.recordRecipe].data);
         } else if (event.target.textContent.trim()==="Add before" ){
           const pushData=new classRecipe;
           this.recipeFile.recipe[this.recordRecipe].data.splice(this.idNb,0,pushData);
-          const pushDataPerso=new classRecipe;
-          this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
+          //const pushDataPerso=new classRecipe;
+          //this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
           this.tabUpdateRef.splice(this.idNb,0,{init:0});
-         
           this.tabUpdateRef[this.recordRecipe].init=-1;
+          this.updateDataId(this.recipeFile.recipe[this.recordRecipe].data);
         } else if (event.target.textContent.trim().substring(0,8)==="Copy ALL" ){
+          this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(0,this.recipeFile.recipe[this.recordRecipe].dataPerso.length);
           this.copyFromTo(this.recipeFile.recipe[this.recordRecipe].dataPerso,this.recipeFile.recipe[this.recordRecipe].data);
         } else if (event.target.textContent.trim().substring(0,4)==="Copy" ){
           for (i=0; i<this.recipeFile.recipe[this.recordRecipe].dataPerso.length && 
             this.recipeFile.recipe[this.recordRecipe].dataPerso[i].ingr!==""; i++){}
           if (i===this.recipeFile.recipe[this.recordRecipe].dataPerso.length){
-            const pushData=new classRecipe;
-            this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+            //const pushData=new classRecipe;
+            //this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
             const pushDataPerso=new classRecipe;
             this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
             i=this.recipeFile.recipe[this.recordRecipe].dataPerso.length-1;
@@ -583,6 +447,7 @@ afterDropDown(event:any){
           this.recipeFile.recipe[this.recordRecipe].dataPerso[i].ingr=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr;
           this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity;
           this.recipeFile.recipe[this.recordRecipe].dataPerso[i].unit=this.recipeFile.recipe[this.recordRecipe].data[this.idNb].unit;
+          this.updateDataId(this.recipeFile.recipe[this.recordRecipe].dataPerso);
 
         } else if (event.target.textContent.trim()==="Move after" ){
           if (this.idNb<this.recipeFile.recipe[this.recordRecipe].data.length-1){
@@ -590,6 +455,7 @@ afterDropDown(event:any){
             saveData=this.recipeFile.recipe[this.recordRecipe].data[this.idNb];
             this.recipeFile.recipe[this.recordRecipe].data[this.idNb]=this.recipeFile.recipe[this.recordRecipe].data[this.idNb+1];
             this.recipeFile.recipe[this.recordRecipe].data[this.idNb+1]=saveData;
+            this.updateDataId(this.recipeFile.recipe[this.recordRecipe].data);
           }
         } else if (event.target.textContent.trim()==="Move before" ){
           if (this.idNb>0){
@@ -597,6 +463,7 @@ afterDropDown(event:any){
             saveData=this.recipeFile.recipe[this.recordRecipe].data[this.idNb];
             this.recipeFile.recipe[this.recordRecipe].data[this.idNb]=this.recipeFile.recipe[this.recordRecipe].data[this.idNb-1];
             this.recipeFile.recipe[this.recordRecipe].data[this.idNb-1]=saveData;
+            this.updateDataId(this.recipeFile.recipe[this.recordRecipe].data);
           }
           
         } else if (event.target.textContent.trim()==="Change value for all" ){
@@ -610,6 +477,13 @@ afterDropDown(event:any){
     }
   } 
 }
+
+updateDataId(record:any){
+  for (var i=0; i<record.length; i++){
+    record[i].id=i;
+  }
+}
+
 afterDropDownSel(event:any){
   this.tabDialog[this.prevDialog]=false;
   this.resetBooleans();
@@ -644,25 +518,31 @@ afterDropDownPerso(event:any){
   {
     this.isRecipeModified.set(true);
     if (event.target.textContent.trim()==="Delete" ){
-      
+        this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(this.idNb,1);
+        this.tabUpdateRef.splice(this.idNb,1);
+        this.updateDataId(this.recipeFile.recipe[this.recordRecipe].dataPerso);
     } else if (event.target.textContent.trim()==="Add after" ){
         const pushDataPerso=new classRecipe;
         this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(this.idNb+1,0,pushDataPerso);
-        const pushData=new classRecipe;
-        this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+        //const pushData=new classRecipe;
+        //this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+        this.updateDataId(this.recipeFile.recipe[this.recordRecipe].dataPerso);
     } else if (event.target.textContent.trim()==="Add before" ){
         const pushDataPerso=new classRecipe;
         this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(this.idNb,0,pushDataPerso);
-        const pushData=new classRecipe;
-        this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+        //const pushData=new classRecipe;
+        //this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
+        this.updateDataId(this.recipeFile.recipe[this.recordRecipe].dataPerso);
     } else if (event.target.textContent.trim().substring(0,8)==="Copy ALL" ){
+          this.recipeFile.recipe[this.recordRecipe].data.splice(0,this.recipeFile.recipe[this.recordRecipe].data.length);
           this.copyFromTo(this.recipeFile.recipe[this.recordRecipe].data,this.recipeFile.recipe[this.recordRecipe].dataPerso);
+
     } else if (event.target.textContent.trim().substring(0,4)==="Copy" ){
         for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].data.length && 
           this.recipeFile.recipe[this.recordRecipe].data[i].ingr!==""; i++){}
         if (i===this.recipeFile.recipe[this.recordRecipe].data.length){
-          const pushDataPerso=new classRecipe;
-          this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
+          //const pushDataPerso=new classRecipe;
+          //this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
           const pushData=new classRecipe;
           this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
           i=this.recipeFile.recipe[this.recordRecipe].data.length-1;
@@ -670,6 +550,7 @@ afterDropDownPerso(event:any){
         this.recipeFile.recipe[this.recordRecipe].data[i].ingr=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr;
         this.recipeFile.recipe[this.recordRecipe].data[i].quantity=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
         this.recipeFile.recipe[this.recordRecipe].data[i].unit=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].unit;
+        this.updateDataId(this.recipeFile.recipe[this.recordRecipe].data);
 
     } else if (event.target.textContent.trim()==="Move after" ){
         if (this.idNb<this.recipeFile.recipe[this.recordRecipe].dataPerso.length-1){
@@ -677,6 +558,7 @@ afterDropDownPerso(event:any){
           saveData=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb];
           this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb]=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb+1];
           this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb+1]=saveData;
+          this.updateDataId(this.recipeFile.recipe[this.recordRecipe].dataPerso);
         }
     } else if (event.target.textContent.trim()==="Move before" ){
         if (this.idNb>0){
@@ -684,6 +566,7 @@ afterDropDownPerso(event:any){
           saveData=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb];
           this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb]=this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb-1];
           this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb-1]=saveData;
+          this.updateDataId(this.recipeFile.recipe[this.recordRecipe].dataPerso);
         } 
     } else if (event.target.textContent.trim()==="Change value for all" ){
         this.isChangeValueForAllPerso.set(true);
@@ -711,26 +594,6 @@ afterDropDownRecipe(event:any){
       
       this.isDeleteRecipe.set(true);   
       this.delMsg=this.recipeFile.recipe[this.recordRecipe].name; 
-      //this.styleBox=getStyleDropDownContent(90, 240);
-      this.styleBox = {
-        'width': 90 + 'px',
-        'height': 240 + 'px',
-        'position': 'absolute',
-        'margin-left':'15%', 
-        'margin-top':'5px',
-        'z-index': '1'
-      }
-      //this.styleBoxOption=getStyleDropDownBox(90, 240,  0, 0, "hidden");
-      this.styleBoxOption = {
-        'background-color':'cyan',
-        'width': 240 + 'px',
-        'height':90 + 'px',
-        'margin-top' :  20 + 'px',
-        'margin-left': 0 + 'px',
-        'overflow-x': 'hidden',
-        'overflow-y': 'auto',
-        'border':'1px blue solid'
-        }
 
     } else if (this.tabActionRecipe[event.target.value]==="Create" ){
         this.isRecipeModified.set(true);
@@ -758,8 +621,19 @@ afterDropDownRecipe(event:any){
     }
 }
 
+debugTrack(index: number, item: any): any {
+    // Log the collection item to see exactly what Angular is evaluating
+    console.log(`Tracking Item at index ${index}:`, item);
+    
+    // Return the value you were originally tracking (e.g., item.id)
+    return item.id; 
+  }
+
 copyFromTo(toRecord:any, fromRecord:any){
   for (var i=0; i<fromRecord.length ; i++){
+    const data = new classRecipe;
+    toRecord.push(data);
+    toRecord[i].id=i;
     toRecord[i].ingr=fromRecord[i].ingr;
     toRecord[i].quantity=fromRecord[i].quantity;
     toRecord[i].unit=fromRecord[i].unit;
@@ -770,7 +644,8 @@ onChangeName(event:any){
   if (event.target.id==='cancel'){
     this.isChangeRecipeName.set(false); 
   } else if (event.target.id==='input'){
-    this.temporaryNameRecipe=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
+    this.temporaryNameRecipe=event.target.value;
+    //this.temporaryNameRecipe=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
   } else if (event.target.id==='save'){
     this.recipeFile.recipe[this.recordRecipe].name=this.temporaryNameRecipe;
     this.updateInListType(this.temporaryNameRecipe,'FR','Rename');
@@ -884,11 +759,6 @@ for (var i=0; i<infile.length; i++){
 this.returnData = CalcFatCalories(this.ConfigCaloriesFat, myHealth, this.ConvertUnit);
 }
 
-/** 
-selectedPosition ={ 
-  x: 0,
-  y: 0} ;
-***/
 
 // @HostListener('window:mouseup', ['$event'])
 onMouseUp(evt: MouseEvent) {
@@ -922,8 +792,8 @@ filterCalFat(ingr:string){
       this.heightDropDown=this.tabListCalFat.length *  this.heightItemDropDown;
       this.scrollY='hidden';
     }
-    this.styleBox=getStyleDropDownContent(this.heightDropDown, 230 );
-    this.styleBoxOption=getStyleDropDownBox(this.heightDropDown, 230, 0 , 30, this.scrollY);
+    //this.styleBox=getStyleDropDownContent(this.heightDropDown, 230 );
+    //this.styleBoxOption=getStyleDropDownBox(this.heightDropDown, 230, 0 , 30, this.scrollY);
   } else {
     this.isIngrDropDown.set(false);
   }
@@ -932,22 +802,22 @@ filterCalFat(ingr:string){
 
 translateComments(lang:string){
   if (this.dicFrEn.length===0){ // French To English
-    for (var i=0; i<this.tabFreEng.length; i++){
+    for (var i=0; i<this.tabFraEng.length; i++){
       this.dicFrEn.push({outLang:"",inLang:"",nbWordsOut:0,nbWordsIn:0});
-      this.dicFrEn[i].outLang=this.tabFreEng[i].English;
-      this.dicFrEn[i].inLang=this.tabFreEng[i].French;
-      this.dicFrEn[i].nbWordsOut=this.tabFreEng[i].nbWordsEn;
-      this.dicFrEn[i].nbWordsIn=this.tabFreEng[i].nbWordsFr;
+      this.dicFrEn[i].outLang=this.tabFraEng[i].English;
+      this.dicFrEn[i].inLang=this.tabFraEng[i].French;
+      this.dicFrEn[i].nbWordsOut=this.tabFraEng[i].nbWordsEn;
+      this.dicFrEn[i].nbWordsIn=this.tabFraEng[i].nbWordsFr;
     }
     this.dicFrEn.sort((a, b) => (a.nbWordsIn > b.nbWordsIn) ? -1 : 1);
   }  
   if (this.dicEnFr.length===0){ // English To French
-    for (var i=0; i<this.tabFreEng.length; i++){
+    for (var i=0; i<this.tabFraEng.length; i++){
       this.dicEnFr.push({outLang:"",inLang:"",nbWordsOut:0,nbWordsIn:0});
-      this.dicEnFr[i].outLang=this.tabFreEng[i].French;
-      this.dicEnFr[i].inLang=this.tabFreEng[i].English;
-      this.dicEnFr[i].nbWordsOut=this.tabFreEng[i].nbWordsFr;
-      this.dicEnFr[i].nbWordsIn=this.tabFreEng[i].nbWordsEn;
+      this.dicEnFr[i].outLang=this.tabFraEng[i].French;
+      this.dicEnFr[i].inLang=this.tabFraEng[i].English;
+      this.dicEnFr[i].nbWordsOut=this.tabFraEng[i].nbWordsFr;
+      this.dicEnFr[i].nbWordsIn=this.tabFraEng[i].nbWordsEn;
     }
     this.dicEnFr.sort((a, b) => (a.nbWordsIn > b.nbWordsIn) ? -1 : 1);
   }
@@ -1110,9 +980,10 @@ convertFrEng(dico:any){
 }
 
 nameRecipe(event:any){
-  var trouve=false;
+  var trouve= false;
   if (event.target.id==='input'){
-    this.temporaryNameRecipe=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
+    this.temporaryNameRecipe=event.target.value;
+    //this.temporaryNameRecipe=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
   } else if (event.target.id==='save'){
     
       const saveRecord=this.recordRecipe;
@@ -1166,16 +1037,11 @@ delRecipe(event:any){
   if (event.target.id==='YesDelConfirm'){
     this.isRecipeModified.set(true);
     this.updateInListType(this.recipeFile.recipe[this.recordRecipe].name,'FR','Delete');
-/*
-    for (var i=this.recordRecipe+1; i<this.tabUpdateRef.length; i++){
-        if (this.tabUpdateRef[i].init!==-1){
-          this.tabUpdateRef[i].init=this.tabUpdateRef[i].init-1;
-        }
-    }
-*/
     this.tabUpdateRef.splice(this.recordRecipe,1);
     this.recipeFile.recipe.splice(this.recordRecipe,1); // delete the whole recipe 
     this.recordRecipe=0;
+    this.refreshFileType(this.recipeFile);
+    this.isListTypeUpdated.set(true);
     if (this.isSearchText===true){
       this.event.target.id='search';
       this.event.target.value=this.textToSearch;
@@ -1343,14 +1209,14 @@ calculateZoom(inRecord:any, rate:number, zoom:string){
   return(theHeight);
 }
 
-selStdPer(event:any){
-  if (event.target.id==='eyeStd'){
+selStdPer(j:number){
+  if (j===0){
     if (this.theStdPersoDisplay[0]==='Y'){
       this.theStdPersoDisplay[0]='N';
     } else {
       this.theStdPersoDisplay[0]='Y';
     }
-  } else if (event.target.id==='eyePerso'){
+  } else if (j===1){
     if (this.theStdPersoDisplay[1]==='Y'){
       this.theStdPersoDisplay[1]='N';
     } else {
@@ -1399,35 +1265,73 @@ reInitialieRecipe(){
     this.recipeFile.recipe[this.recordRecipe].data.splice(0,this.recipeFile.recipe[this.recordRecipe].data.length);
     this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(0,this.recipeFile.recipe[this.recordRecipe].dataPerso.length);
     this.fillInRecord(this.initialRecipeFile.recipe[this.tabUpdateRef[this.recordRecipe].init],this.recipeFile.recipe[this.recordRecipe]);
+
+  
+    
   }
   
 }
 
+errType:string="";
+
 onInputType(event:any){
     this.resetBooleans();
-    const theValue=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
-    this.isRecipeModified.set(true);
+    //const theValue=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
     if (event.target.id==='Fr'){
-      this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeFr.trim(),"Fr",this.recipeFile.recipe[this.recordRecipe].name.trim());
-      this.recipeFile.recipe[this.recordRecipe].typeFr=theValue;
+      // this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeFr.trim(),"Fr",this.recipeFile.recipe[this.recordRecipe].name.trim());
+      const result=this.findItemDico(event.target.value,"Fr",'En');
+      if (result !==-1){
+          this.recipeFile.recipe[this.recordRecipe].typeEn=this.tabFraEng[result].English;
+          this.recipeFile.recipe[this.recordRecipe].typeFr=this.tabFraEng[result].French;
+      } else {
+        this.errType="No English translation of " + event.target.value + " found in the dictionary";
+      }
       if (this.tabDropdownType.length>1){
         this.isListTypeFr=true;
       }
     } else if (event.target.id==='En'){
-      this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeEn.trim(),"En",this.recipeFile.recipe[this.recordRecipe].name.trim());
-      this.recipeFile.recipe[this.recordRecipe].typeEn=theValue;
+      // this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeEn.trim(),"En",this.recipeFile.recipe[this.recordRecipe].name.trim());
+      const result=this.findItemDico(event.target.value,"En",'Fr');
+      if (result !==-1){
+          this.recipeFile.recipe[this.recordRecipe].typeEn=this.tabFraEng[result].English;
+          this.recipeFile.recipe[this.recordRecipe].typeFr=this.tabFraEng[result].French;
+      } else {
+        this.errType="No English translation of " + event.target.value + " found in the dictionary";
+      }
+      
+      
       if (this.tabDropdownType.length>1){
         this.isListTypeEn=true;
       }
     } 
-    this.createTabDropdownType(this.recipeFile.listTypeRecipe,event.target.id.toUpperCase(),theValue);
+    if (this.errType===""){
+        this.refreshFileType(this.recipeFile);
+        this.isListTypeUpdated.set(true);
+        this. isRecipeModified.set(true);
+    }
+    
+    this.createTabDropdownType(this.recipeFile.listTypeRecipe,event.target.id.toUpperCase(),event.target.value);
     if (this.isSearchText===true){
       this.event.target.id='search';
       this.event.target.value=this.textToSearch;
       this.searchText(this.event);
     };
-  }
+}
 
+findItemDico(item:string, fromLang:string, toLang:string){
+  if (fromLang==="Fr" && toLang==="En"){
+    for (var i=0; i<this.tabFraEng.length && this.tabFraEng[i].French.toUpperCase().trim()!==item.toUpperCase().trim(); i++){}
+    if (i<this.tabFraEng.length){
+      return (i);
+    }
+  } else if (fromLang==="En" && toLang==="Fr"){
+    for (var i=0; i<this.tabFraEng.length && this.tabFraEng[i].English!==item; i++){}
+    if (i<this.tabFraEng.length){
+      return (i);
+    }
+  }
+  return (-1);
+}
 
 updateInListType(recipeName:string,lang:string,action:string){
   this.isRecipeModified.set(true);
@@ -1456,9 +1360,6 @@ updateInListType(recipeName:string,lang:string,action:string){
         else if (lang==="UK") {this.recipeFile.listTypeRecipe[i].En};
     } 
     this.createTabDropdownType(this.recipeFile.listTypeRecipe,lang,theValue);
-    if (this.isListRecipe()){
-      this.createDropDownRecipe();
-    }
     if (this.isSearchText===true){
         this.event.target.id='search';
         this.event.target.value=this.textToSearch;
@@ -1516,25 +1417,6 @@ else {
     theHeight=this.tabDropdownType.length * 30;
   }
 
-  this.styleBoxListType = signal({
-
-    'position': 'absolute',
-    'margin-left':'10px', 
-    'margin-top':'5px',
-    'display':'inline-block',
-    'z-index': '1'
-  })
-  this.styleBoxOptionListType = signal({
-    'background-color':'lightgrey',
-    'width':150 + 'px',
-    'height':theHeight + 'px',
-    'margin-top' :  '0px',
-    'margin-left':10 + 'px',
-    'overflow-x': 'hidden',
-    'overflow-y': scrollY,
-    'border':'1px blue solid',
-    'display':'inline-block'
-    })
 }
 
 onDropdownListType(event:any){
@@ -1542,7 +1424,6 @@ onDropdownListType(event:any){
     this.tabDialog[this.prevDialog]===false;
     this.idText="";
     this.isActionRecipe.set(false);
-    this.isListRecipe.set(false);
   } else if (this.isListTypeFr==true){
     this.updateTypeName(this.recipeFile,event.target.textContent.trim(),this.recipeFile.recipe[this.recordRecipe].typeFr,"Fr",this.recipeFile.recipe[this.recordRecipe].name);
     this.recipeFile.recipe[this.recordRecipe].typeFr=event.target.textContent.trim();
@@ -1555,6 +1436,7 @@ onDropdownListType(event:any){
   }
   this.resetBooleans();
 }
+
 
 updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:string){
   this.isRecipeModified.set(true);
@@ -1656,7 +1538,6 @@ updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:s
           }
             
         }
-        // remove old info
         if (i<inFile.listTypeRecipe.length){
           if (inFile.listTypeRecipe[i].recipe.length===1){
             inFile.listTypeRecipe.splice(i,1);
@@ -1670,8 +1551,8 @@ updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:s
 }
 
 onRefresh(){
-  this.refreshFileType(this.recipeFile)
-  this.isRecipeModified.set(true);
+  this.refreshFileType(this.recipeFile);
+  //this.isRecipeModified.set(true);
 }
 
 refreshFileType(inFile:any){
@@ -1680,25 +1561,31 @@ refreshFileType(inFile:any){
 }
 
 updateFileType(inFile:any){
-   
-    var iList=0;
-    inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
-    inFile.listTypeRecipe[iList].Fr=inFile.recipe[0].typeFr;
-    inFile.listTypeRecipe[iList].En=inFile.recipe[0].typeEn;
-    inFile.listTypeRecipe[iList].recipe[0]=inFile.recipe[0].name;
-    for (var ll=1; ll<inFile.recipe.length; ll++){
-
-        for (var mm=0; mm<inFile.listTypeRecipe.length && inFile.listTypeRecipe[mm].Fr!==inFile.recipe[ll].typeFr; mm++){};
-        if (mm<inFile.listTypeRecipe.length){
-          inFile.listTypeRecipe[mm].recipe[inFile.listTypeRecipe[mm].recipe.length]=inFile.recipe[ll].name;
-        } else {
-          inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
-          iList=inFile.listTypeRecipe.length-1;
-          inFile.listTypeRecipe[iList].Fr=inFile.recipe[ll].typeFr;
-          inFile.listTypeRecipe[iList].En=inFile.recipe[ll].typeEn;
-          inFile.listTypeRecipe[iList].recipe[0]=inFile.recipe[ll].name;
-        }
-    }
+  this.listTypeName[0]=[];
+  this.listTypeName[1]=[];
+  this.listTypeName[0].push('Tous');
+  this.listTypeName[1].push('All');
+  var iList=0;
+  inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
+  inFile.listTypeRecipe[0].Fr=inFile.recipe[0].typeFr;
+  inFile.listTypeRecipe[0].En=inFile.recipe[0].typeEn;
+  inFile.listTypeRecipe[0].recipe[0]=inFile.recipe[0].name;
+  this.listTypeName[0].push(inFile.recipe[0].typeFr);
+  this.listTypeName[1].push(inFile.recipe[0].typeEn);  
+  for (var ll=1; ll<inFile.recipe.length; ll++){
+    for (var mm=0; mm<inFile.listTypeRecipe.length && inFile.listTypeRecipe[mm].Fr!==inFile.recipe[ll].typeFr; mm++){};
+      if (mm<inFile.listTypeRecipe.length){
+        inFile.listTypeRecipe[mm].recipe[inFile.listTypeRecipe[mm].recipe.length]=inFile.recipe[ll].name;
+      } else {
+        inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
+        iList=inFile.listTypeRecipe.length-1;
+        inFile.listTypeRecipe[iList].Fr=inFile.recipe[ll].typeFr;
+        inFile.listTypeRecipe[iList].En=inFile.recipe[ll].typeEn;
+        this.listTypeName[0].push(inFile.recipe[ll].typeFr);
+        this.listTypeName[1].push(inFile.recipe[ll].typeEn);
+        inFile.listTypeRecipe[iList].recipe[0]=inFile.recipe[ll].name;
+      }
+  }
 }
 
 
@@ -1737,11 +1624,13 @@ fillInRecord(inRecord:any,outRecord:any){
   for (var j=0; j<inRecord.data.length; j++){
       const pushData=new classRecipe;
       outRecord.data.push(pushData);
+      outRecord.data[j].id=j;
       outRecord.data[j].ingr=inRecord.data[j].ingr;
       outRecord.data[j].quantity=inRecord.data[j].quantity;
       outRecord.data[j].unit=inRecord.data[j].unit;      
       const pushDataPerso=new classRecipe;
       outRecord.dataPerso.push(pushDataPerso);
+      outRecord.dataPerso[j].id=j;
       outRecord.dataPerso[j].ingr=inRecord.dataPerso[j].ingr;
       outRecord.dataPerso[j].quantity=inRecord.dataPerso[j].quantity;
       outRecord.dataPerso[j].unit=inRecord.dataPerso[j].unit;   
@@ -1783,16 +1672,11 @@ ConfirmSave(){
 calculateNutritionForAllRecipe(){
   const saveRecipeRecord=this.recordRecipe;
   for (this.recordRecipe=0; this.recordRecipe<this.recipeFile.recipe.length; this.recordRecipe++){
-    this.calculateNutrition('all');
-
-  }
+    this.calculateNutrition('all');}
   this.recipeFile.updatedAt=strDateTime();
   this.message="";
   this.isRecipeModified.set(true);
-  //this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
   this.recordRecipe=saveRecipeRecord;
-  //this.message='Nutrition facts calculated and saved for all recipes';
-  //this.isRecipeModified.set(true);
 }
 
 SaveRecord(){
@@ -1813,6 +1697,7 @@ putRecord(GoogleBucket:string, GoogleObject:string, record:any){
                 this.message='File "'+ GoogleObject +'" is successfully stored in the cloud';
                 if (this.isRecipeModified()) {this.isRecipeModified.set(false)};
                 if (this.IsSaveConfirmed) {this.IsSaveConfirmed.set(false)};
+                this.isMessage.set(true);
               }
             },
             error_handler => {
@@ -1842,6 +1727,8 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                     this.initialRecipeFile.listTypeRecipe.push({Fr:"",En:"",recipe:[]});
                     this.initialRecipeFile.listTypeRecipe[i].Fr=data.listTypeRecipe[i].Fr.trim();
                     this.initialRecipeFile.listTypeRecipe[i].En=data.listTypeRecipe[i].En.trim();
+                    this.listTypeName[0].push(data.listTypeRecipe[i].Fr.trim());
+                    this.listTypeName[1].push(data.listTypeRecipe[i].En.trim());
                     var k=-1;
                     for (var j=0; j<data.listTypeRecipe[i].recipe.length; j++){
                       if (data.listTypeRecipe[i].recipe[j]!==""){
@@ -1911,11 +1798,13 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                     for (var j=0; j<data.recipe[i].data.length; j++){
                       const pushData=new classRecipe;
                       this.initialRecipeFile.recipe[i].data.push(pushData);
+                      this.initialRecipeFile.recipe[i].data[j].id=j;
                       this.initialRecipeFile.recipe[i].data[j].ingr=data.recipe[i].data[j].ingr;
                       this.initialRecipeFile.recipe[i].data[j].quantity=data.recipe[i].data[j].quantity;
                       this.initialRecipeFile.recipe[i].data[j].unit=data.recipe[i].data[j].unit;
                       const pushDataPerso=new classRecipe;
                       this.initialRecipeFile.recipe[i].dataPerso.push(pushDataPerso);
+                      this.initialRecipeFile.recipe[i].dataPerso[j].id=j;
                       this.initialRecipeFile.recipe[i].dataPerso[j].ingr=data.recipe[i].dataPerso[j].ingr;
                       this.initialRecipeFile.recipe[i].dataPerso[j].quantity=data.recipe[i].dataPerso[j].quantity;
                       this.initialRecipeFile.recipe[i].dataPerso[j].unit=data.recipe[i].dataPerso[j].unit;
@@ -1942,12 +1831,12 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                   if (i<this.ConvertUnit.tabConv.length){this.posGramTabConvert=i};
                 } else  if (iWait===4){
                   for (var i=0; i<data.length;i++){
-                    this.tabFreEng.push({French:"",English:"",inputHeight:0});
-                    this.tabFreEng[i].French=data[i].French;
-                    this.tabFreEng[i].English=data[i].English;
-                    this.tabFreEng[i].inputHeight=data[i].inputHeight;
-                    this.tabFreEng[i].nbWordsFr=data[i].nbWordsFr;
-                    this.tabFreEng[i].nbWordsEn=data[i].nbWordsEn;
+                    const dico = new classDicoRecord;
+                    this.tabFraEng.push(dico);
+                    this.tabFraEng[i].French=data[i].French;
+                    this.tabFraEng[i].English=data[i].English;
+                    this.tabFraEng[i].inputHeight=data[i].inputHeight;
+                    
                   }
                 }
                 this.cdr.markForCheck();
@@ -2042,9 +1931,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
                       // keep the files corresponding to the recipes of the user
                     } 
                 }
-                  // this.isListOfObjectsRetrieved=true; 
                   if (this.theListOfObjects.length===1){
-                  //if (this.myListOfObjects.items.length===1){
                     this.fileNb=0;
                     const nameOfFile=this.theListOfObjects[this.fileNb].header+this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json;
                     this.getRecord(this.googleBucketName, nameOfFile,1);
@@ -2065,7 +1952,7 @@ getRecord(Bucket:string,GoogleObject:string, iWait:number){
       )
   }
 
-waitHTTP(loop:number, max_loop:number, eventNb:number){
+  waitHTTP(loop:number, max_loop:number, eventNb:number){
   const pas=500;
   if (loop%pas === 0){
     console.log('waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop);

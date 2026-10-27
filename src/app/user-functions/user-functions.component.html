@@ -120,12 +120,15 @@
                 [tabLock]="tabLock"  (resetServer)="fnResetServer($event)"  (newCredentials)="fnNewCredentials($event)"
                 >
         </app-main-health>
-    } @else if (selectApps===14 || selectApps===15){
+    } @else if (selectApps===14 ){
         <app-recipe  [identification]="identification"  [configServer]="configServer"  
             [InConvToDisplay]="ConvToDisplay"     [dictionaryOnly]="dictionaryOnly"
             >
         </app-recipe>
-    } @else if ((selectApps===16 || selectApps===17) && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')){
+    } @else if (selectApps===15){
+        <app-dictionary [configServer]="configServer" [identification]="identification" [inputFile]="dicoRecord"
+        (returnDicoFile)="returnDicoFile($event)" ></app-dictionary>
+    }@else if ((selectApps===16 || selectApps===17) && (configServer.userLogin.accessLevel==='High' || configServer.userLogin.accessLevel==='Very High')){
             <app-test-server-js   [serverTest]="serverTest" [configServer]="configServer" [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" 
             [configServerChanges]="configServerChanges" [isConfigServerChanges]="isConfigServerChanges()">
             </app-test-server-js>
