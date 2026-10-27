@@ -2,7 +2,7 @@
 
 
 
-<div style="margin-top:10px; background-color: white; margin-left:10px; width:790px; border:solid 2px blue; display:block;">
+<div style="margin-top:10px; background-color: white; margin-left:20px; width:790px; border:solid 2px blue; display:block;">
     @if (isMsg()){
         <span style="margin-left:40px; font-weight: bolder; height:30px; color:blue; font-size:16px;">{{msg}}</span>
     }
@@ -45,9 +45,10 @@
     }
 </div>
 <br>
-<div style="margin-left:20px; font-size:15px; font-weight: bolder; color:blue;">Search a word/sentence: 
+<div style="width:100%; display:inline-block; margin-left:30px; font-size:15px; font-weight: bolder; color:blue;">
+    Search a word/sentence: 
     <input style="padding-left:10px; width:300px;" type="text" [value]="textToSearch" id='search' (input)="searchText($event)">
-    <span style="padding-left:10px;"> language (Fr or En) &nbsp;</span>
+    <span style="padding-left:10px; width:180px;"> language (Fr or En) &nbsp;</span>
     <input style="padding-left:10px; width:50px;" type="text" [value]="language" id='language' (input)="selLanguage($event)">
     @if (textToSearch!==""){
         <button id='but_2' class="sizeButtons"  style="width:140px; height:40px; " 
@@ -63,11 +64,11 @@
     <br><br>
 }
 @if (isConfirmedSave===true && EventHTTPReceived[0]===true){
-    <div style="max-width:800px; height:45px;  font-size:15px; margin-top:20px;  margin-left:20px;  display:inline-block;">
+    <div style="max-width:800px; height:45px;  font-size:15px; margin-top:20px;  margin-left:30px;  display:inline-block;">
         
         
         <form  [formGroup]="SpecificForm" style="display:inline-block;">
-            <div  style="max-width:500px; margin-left:5px; padding-top:10px;color:blue; font-size:15px;  display:inline-block;" >
+            <div  style="width:100%; margin-left:5px; padding-top:10px;color:blue; font-size:15px;  display:inline-block;" >
             Name of the file you want to save your data in :
             <input type='text' style='margin-left:0px; width:120px; background-color:lightgrey;' formControlName="FileName" >
             &nbsp;&nbsp;
