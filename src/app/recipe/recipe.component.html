@@ -65,7 +65,8 @@
             </div>
         }
     </div>
-    @if (EventHTTPReceived[1]===true){
+
+    @if ( isFileRetrieved() ){
         <div style=" margin-left:20px; width:var(--boxW); display:inline-block;  margin-top:20px; background-color: white; border:solid 3px black;" >
             <div id="posDivBeforeTitle"></div>
             @if (!isCreateRecipeName()){
