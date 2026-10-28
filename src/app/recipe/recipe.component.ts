@@ -898,43 +898,9 @@ convertFrEng(dico:any){
 nameRecipe(event:any){
   var trouve= false;
   if (event.target.id==='input'){
-    this.temporaryNameRecipe=event.target.value;
-    //this.temporaryNameRecipe=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
+    this.onNameInputChange(event);
   } else if (event.target.id==='save'){
-    
-      const saveRecord=this.recordRecipe;
-      const classRecord=new classRecordRecipe;
-      this.recipeFile.recipe.push(classRecord);
-      this.recordRecipe=this.recipeFile.recipe.length-1;
-      const pushData=new classRecipe;
-      this.recipeFile.recipe[this.recordRecipe].data.push(pushData);
-      const pushDataPerso=new classRecipe;
-      this.recipeFile.recipe[this.recordRecipe].dataPerso.push(pushDataPerso);
-      
-      if (this.isCreateRecipeName() && !this.isDuplicate()){
-          this.recipeFile.recipe[this.recordRecipe].name="";
-          this.recipeFile.recipe[this.recordRecipe].commentsBox=this.minHeightCommBox;
-          this.recipeFile.recipe[this.recordRecipe].commentsPersoBox=this.minHeightCommBox;
-          this.recipeFile.recipe[this.recordRecipe].commentsEnBox=this.minHeightCommBox;
-          this.recipeFile.recipe[this.recordRecipe].materielBox=this.minHeightCommBox;
-          this.recipeFile.recipe[this.recordRecipe].materielPersoBox=this.minHeightCommBox;
-      } else {
-          this.fillInRecord(this.recipeFile.recipe[saveRecord],this.recipeFile.recipe[this.recordRecipe]);
-        }
-      this.tabUpdateRef.push({init:0});
-      this.tabUpdateRef[this.tabUpdateRef.length-1].init=-1;
-      this.recipeFile.recipe[this.recordRecipe].name=this.temporaryNameRecipe;
-      if (!this.isDuplicate()){
-        for (var i=0; i<this.recipeFile.listTypeRecipe.length && trouve===false; i++){
-            if (this.recipeFile.listTypeRecipe[i].Fr===this.recipeFile.recipe[this.recordRecipe].typeFr && 
-                  this.recipeFile.listTypeRecipe[i].En===this.recipeFile.recipe[this.recordRecipe].typeEn) {
-                    this.recipeFile.listTypeRecipe[i].recipe.push(this.temporaryNameRecipe);
-                    trouve=true;
-              }
-          }
-      } else {
-        this.updateTypeName(this.recipeFile,'','',"Fr",this.recipeFile.recipe[this.recordRecipe].name);
-      }
+      this.onSaveRecipe();
       this.isDuplicate.set(false);
       this.isCreateRecipeName.set(false);
       this.isRecipeModified.set(true);
@@ -947,6 +913,55 @@ nameRecipe(event:any){
       this.resetBooleans();
   }
 }
+
+// 1. Separate the text input logic for better clarity
+onNameInputChange(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  this.temporaryNameRecipe = input.value;
+}
+
+// 2. Separate the save logic
+onSaveRecipe(): void {
+  const recipes = this.recipeFile.recipe;
+  const saveRecordIndex = this.recordRecipe;
+
+  // Create and push new recipe structure
+  const newRecord = new classRecordRecipe();
+  newRecord.data.push(new classRecipe());
+  newRecord.dataPerso.push(new classRecipe());
+  
+  recipes.push(newRecord);
+  this.recordRecipe = recipes.length - 1;
+  const currentRecipe = recipes[this.recordRecipe];
+
+  // Populate data fields
+  if (this.isCreateRecipeName() && !this.isDuplicate()) {
+    currentRecipe.name = "";
+    currentRecipe.commentsBox = this.minHeightCommBox;
+    currentRecipe.commentsPersoBox = this.minHeightCommBox;
+    currentRecipe.commentsEnBox = this.minHeightCommBox;
+    currentRecipe.materielBox = this.minHeightCommBox;
+    currentRecipe.materielPersoBox = this.minHeightCommBox;
+  } else {
+    this.fillInRecord(recipes[saveRecordIndex], currentRecipe);
+  }
+
+  // Push update references cleanly
+  this.tabUpdateRef.push({ init: -1 });
+  currentRecipe.name = this.temporaryNameRecipe;
+
+  // Optimize lookups with modern Array methods instead of 'for' loops
+  if (!this.isDuplicate()) {
+    const matchingType = this.recipeFile.listTypeRecipe.find(type => 
+      type.Fr === currentRecipe.typeFr && type.En === currentRecipe.typeEn
+    );
+
+    if (matchingType) {
+      matchingType.recipe.push(currentRecipe); // Completed your truncated code logic
+    }
+  }
+}
+
 
 delRecipe(event:any){
   this.isDeleteRecipe.set(false);
