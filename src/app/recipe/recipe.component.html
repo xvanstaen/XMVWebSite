@@ -162,7 +162,7 @@
                                 <div   class="styleBoxOptionListType" [style.height.px]="theHeight" >
                                     <li *ngFor="let tab of tabDropdownType; let m=index;" 
                                             class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                (click)="onDropdownListType($event)" id="listType" [value]="tab.name">AAA{{tab.name}}   
+                                                (click)="onDropdownListType($event)" id="listType" [value]="tab.name">{{tab.name}}   
                                     </li>
                                 </div>
                             </div>

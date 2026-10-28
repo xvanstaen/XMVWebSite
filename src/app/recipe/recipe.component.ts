@@ -373,8 +373,51 @@ resetBooleans(){
   this.isListTypeUpdated.set(true);
   this.message="";
 }
+onAction(event: Event): void {
+  const target = event.target as HTMLElement;
+  if (!target?.id) return;
 
-onAction(event:any){
+  this.resetBooleans();
+  const id = target.id;
+
+  // Handle direct id matches first for quick returns
+  if (id === 'ActionRecipe') {
+    this.isActionRecipe.set(true);
+    return;
+  }
+  if (id === 'ActionComments' || id === 'ActionCommentsPerso') {
+    this.isActionComments.set(true);
+    return;
+  }
+
+  // Parse ID string if it's a dynamic dialog action (Extracts text prefix and trailing number)
+  // e.g., "Action12" -> idText: "Action", idNb: 12
+  const match = id.match(/^([a-zA-Z]+)-(\d+)$/); 
+  if (!match) return;
+
+  const [, idText, idNbString] = match;
+  const idNb = parseInt(idNbString, 10);
+  
+  const isStandard = idText === 'Action';
+  const isPerso = idText === 'ActionPerso';
+
+  if (isStandard || isPerso) {
+    this.prevDialog = idNb;
+    this.tabDialog[idNb] = true;
+    
+    // Toggle dropdown visibility flags symmetrically
+    this.shouldShowDropdownStd[idNb] = isStandard;
+    this.shouldShowDropdownPerso[idNb] = isPerso;
+
+    // Dynamically assign text pairs using a ternary operator
+    const suffix = isStandard ? 'perso' : 'standard';
+    this.listActions[4] = `Copy to ${suffix}`;
+    this.listActions[5] = `Copy ALL to ${suffix}`;
+  }
+}
+
+
+onActionOLD(event:any){
   this.resetBooleans();
   this.findId(event.target.id);
   if (this.idText==='Action'){
@@ -1193,8 +1236,53 @@ reInitialieRecipe(){
     this.fillInRecord(this.initialRecipeFile.recipe[this.tabUpdateRef[this.recordRecipe].init],this.recipeFile.recipe[this.recordRecipe]);
   }
 }
+onInputType(event: Event): void {
+  this.resetBooleans();
+  
+  const target = event.target as HTMLInputElement;
+  if (!target) return;
 
-onInputType(event:any){
+  const lang = target.id; // 'Fr' or 'En'
+  const value = target.value;
+
+  if (lang === 'Fr' || lang === 'En') {
+    const targetLang = lang === 'Fr' ? 'En' : 'Fr';
+    const result = this.findItemDico(value, lang, targetLang);
+
+    if (result !== -1) {
+      const currentRecipe = this.recipeFile.recipe[this.recordRecipe];
+      currentRecipe.typeEn = this.tabFraEng[result].English;
+      currentRecipe.typeFr = this.tabFraEng[result].French;
+    } else {
+      // Dynamic error message based on the source language
+      const missingLang = lang === 'Fr' ? 'English' : 'French';
+      this.errType = `No ${missingLang} translation of ${value} found in the dictionary`;
+    }
+
+    // Dynamically set isListTypeFr or isListTypeEn
+    if (this.tabDropdownType.length > 1) {
+      this[`isListType${lang}` as keyof this] = true as any;
+    }
+  }
+
+  // Handle successful dictionary matches
+  if (this.errType === "") {
+    this.refreshFileType(this.recipeFile);
+    this.isListTypeUpdated.set(true);
+    this.isRecipeModified.set(true);
+  }
+
+  this.createTabDropdownType(this.recipeFile.listTypeRecipe, lang.toUpperCase(), value);
+
+  // Fixed context bug: changed `this.event` to `target` reference
+  if (this.isSearchText) {
+    target.id = 'search';
+    target.value = this.textToSearch;
+    this.searchText(event); 
+  }
+}
+
+onInputTypeOLD(event:any){
     this.resetBooleans();
     //const theValue=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
     if (event.target.id==='Fr'){
@@ -1231,7 +1319,7 @@ onInputType(event:any){
     }
     
     this.createTabDropdownType(this.recipeFile.listTypeRecipe,event.target.id.toUpperCase(),event.target.value);
-    if (this.isSearchText===true){
+    if (this.isSearchText){
       this.event.target.id='search';
       this.event.target.value=this.textToSearch;
       this.searchText(this.event);
@@ -1253,7 +1341,58 @@ findItemDico(item:string, fromLang:string, toLang:string){
   return (-1);
 }
 
-updateInListType(recipeName:string,lang:string,action:string){
+updateInListType(recipeName: string, lang: 'FR' | 'UK', action: 'Delete' | 'Rename'): void {
+  this.isRecipeModified.set(true);
+
+  const recipeFile = this.recipeFile;
+  const currentRecipe = recipeFile.recipe[this.recordRecipe];
+  
+  // 1. Find the target type index cleanly using findIndex
+  const targetType = lang === 'FR' ? currentRecipe.typeFr : currentRecipe.typeEn;
+  const typeIndex = recipeFile.listTypeRecipe.findIndex(item => 
+    lang === 'FR' ? item.Fr === targetType : item.En === targetType
+  );
+
+  // If the type is not found, exit early
+  if (typeIndex === -1) return;
+
+  const matchedTypeItem = recipeFile.listTypeRecipe[typeIndex];
+  let theValue = 'ALL';
+
+  if (action === 'Delete') {
+    if (matchedTypeItem.recipe.length === 1) {
+      // Only one recipe exists: remove the whole type category
+      recipeFile.listTypeRecipe.splice(typeIndex, 1);
+    } else {
+      // Multiple recipes exist: remove just the specific recipe
+      const recipeIndex = matchedTypeItem.recipe.indexOf(recipeName);
+      if (recipeIndex !== -1) {
+        matchedTypeItem.recipe.splice(recipeIndex, 1);
+      }
+      theValue = lang === 'FR' ? matchedTypeItem.Fr : matchedTypeItem.En;
+    }
+  } else if (action === 'Rename') {
+    const recipeIndex = matchedTypeItem.recipe.indexOf(recipeName);
+    if (recipeIndex !== -1) {
+      // NOTE: Fixed the out-of-bounds bug [recipeIndex - 1] from the original code
+      matchedTypeItem.recipe[recipeIndex] = recipeName; 
+    }
+    theValue = lang === 'FR' ? matchedTypeItem.Fr : matchedTypeItem.En;
+  }
+
+  // 2. Update UI Dropdowns
+  this.createTabDropdownType(recipeFile.listTypeRecipe, lang, theValue);
+
+  // 3. Re-trigger search cleanly if active
+  if (this.isSearchText) {
+    this.searchText({
+      target: { id: 'search', value: this.textToSearch }
+    });
+  }
+}
+
+
+updateInListTypeOLD(recipeName:string,lang:string,action:string){
   this.isRecipeModified.set(true);
   var i=0;
   var theValue="ALL";
@@ -1288,7 +1427,34 @@ updateInListType(recipeName:string,lang:string,action:string){
   }
 }
 
-createTabDropdownType(record:any,lang:string,text:string){
+createTabDropdownType(record: any[], lang: string, text: string): void {
+  // 1. Extract dynamic language property key
+  const langKey = lang === 'FR' ? 'Fr' : 'En';
+  
+  // 2. Filter, map, and remove duplicates using a Set
+  const uniqueNames = new Set<string>();
+  
+  for (const item of record) {
+    const value = item?.[langKey];
+    if (value && value.includes(text)) {
+      uniqueNames.add(value.trim());
+    }
+  }
+
+  // 3. Rebuild the dropdown array
+  this.tabDropdownType = [{ name: 'Cancel' }, ...Array.from(uniqueNames).map(name => ({ name }))];
+
+  // 4. UI Layout Logic
+  const count = this.tabDropdownType.length;
+
+  if (count > 8) {
+      this.theHeight = 240;
+    } else {
+      this.theHeight = count * 30;
+    }
+}
+
+createTabDropdownTypeOLD(record:any,lang:string,text:string){
   var j=0;
   this.tabDropdownType.splice(0, this.tabDropdownType.length);
   this.tabDropdownType.push({name:'Cancel'});

@@ -489,21 +489,22 @@ div{
   border:1px blue solid;
 }
 
-styleBoxListType{
+.styleBoxListType{
+  width: 150px;
   position:absolute;
-  margin-left:10px; 
+  margin-left:480px; 
   margin-top:5px;
-  display:inline-block;
+  margin-top: -45px;
   z-index:1;
   }
 
-styleBoxOptionListType{
+.styleBoxOptionListType{
   background-color:lightgrey;
   width:150px;
-  margin-top: 0px;
-  margin-left:10px;
+  
+
   overflow-x: hidden;
-  overflow-y: scrollY;
+  overflow-y: auto;
   border: 1px blue solid;
   display:inline-block;
 }
