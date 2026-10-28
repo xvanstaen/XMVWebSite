@@ -170,16 +170,14 @@ isDuplicate=signal<boolean>(false); // used to update listTypeRecipe[].recipe[]
 
 isChangeValueForAll=signal<boolean>(false); // used to trigger the function onChangeValues()
 isChangeValueForAllPerso=signal<boolean>(false); // used to trigger the function onChangeValues()
-
 isRecipeModified=signal<boolean>(false); 
 isListTypeUpdated=signal<boolean>(false);
-
 isListTypeFr:boolean=false; //used to trigger function tabDropdownType()
 isListTypeEn:boolean=false; //used to trigger function tabDropdownType()
-
 isSearchText:boolean=false;  // used to trigger function searchText()
-
 isIngrDropDown=signal(false); // used to trigger function modifInput()
+shouldShowDropdownStd:Array<boolean>=[];
+shouldShowDropdownPerso:Array<boolean>=[];
 
 changeValue:number=0;
 temporaryNameRecipe:string="";
@@ -415,34 +413,6 @@ onAction(event: Event): void {
     this.listActions[5] = `Copy ALL to ${suffix}`;
   }
 }
-
-
-onActionOLD(event:any){
-  this.resetBooleans();
-  this.findId(event.target.id);
-  if (this.idText==='Action'){
-      this.prevDialog=this.idNb;
-      this.tabDialog[this.prevDialog]=true;
-      this.listActions[4]="Copy to perso";
-      this.listActions[5]="Copy ALL to perso";
-      this.shouldShowDropdownStd[this.prevDialog]=true;
-       this.shouldShowDropdownPerso[this.prevDialog]=false;
-  } else  if (this.idText==='ActionPerso'){
-      this.prevDialog=this.idNb;
-      this.tabDialog[this.prevDialog]=true;
-      this.listActions[4]="Copy to standard";
-      this.listActions[5]="Copy ALL to standard";
-      this.shouldShowDropdownPerso[this.prevDialog]=true;
-      this.shouldShowDropdownStd[this.prevDialog]=false;
-  } else if(event.target.id==='ActionRecipe'){
-    this.isActionRecipe.set(true);
-  } else if(event.target.id==='ActionComments' || event.target.id==='ActionCommentsPerso'){
-    this.isActionComments.set(true); 
-  }
-}
-
-shouldShowDropdownStd:Array<boolean>=[];
-shouldShowDropdownPerso:Array<boolean>=[];
 
 afterDropDownPerso(event:any){
   this.functionAfterDropDown(event,this.recipeFile.recipe[this.recordRecipe].dataPerso,this.recipeFile.recipe[this.recordRecipe].data,"Perso");
@@ -1282,50 +1252,6 @@ onInputType(event: Event): void {
   }
 }
 
-onInputTypeOLD(event:any){
-    this.resetBooleans();
-    //const theValue=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
-    if (event.target.id==='Fr'){
-      // this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeFr.trim(),"Fr",this.recipeFile.recipe[this.recordRecipe].name.trim());
-      const result=this.findItemDico(event.target.value,"Fr",'En');
-      if (result !==-1){
-          this.recipeFile.recipe[this.recordRecipe].typeEn=this.tabFraEng[result].English;
-          this.recipeFile.recipe[this.recordRecipe].typeFr=this.tabFraEng[result].French;
-      } else {
-        this.errType="No English translation of " + event.target.value + " found in the dictionary";
-      }
-      if (this.tabDropdownType.length>1){
-        this.isListTypeFr=true;
-      }
-    } else if (event.target.id==='En'){
-      // this.updateTypeName(this.recipeFile,theValue,this.recipeFile.recipe[this.recordRecipe].typeEn.trim(),"En",this.recipeFile.recipe[this.recordRecipe].name.trim());
-      const result=this.findItemDico(event.target.value,"En",'Fr');
-      if (result !==-1){
-          this.recipeFile.recipe[this.recordRecipe].typeEn=this.tabFraEng[result].English;
-          this.recipeFile.recipe[this.recordRecipe].typeFr=this.tabFraEng[result].French;
-      } else {
-        this.errType="No English translation of " + event.target.value + " found in the dictionary";
-      }
-      
-      
-      if (this.tabDropdownType.length>1){
-        this.isListTypeEn=true;
-      }
-    } 
-    if (this.errType===""){
-        this.refreshFileType(this.recipeFile);
-        this.isListTypeUpdated.set(true);
-        this. isRecipeModified.set(true);
-    }
-    
-    this.createTabDropdownType(this.recipeFile.listTypeRecipe,event.target.id.toUpperCase(),event.target.value);
-    if (this.isSearchText){
-      this.event.target.id='search';
-      this.event.target.value=this.textToSearch;
-      this.searchText(this.event);
-    };
-}
-
 findItemDico(item:string, fromLang:string, toLang:string){
   if (fromLang==="Fr" && toLang==="En"){
     for (var i=0; i<this.tabFraEng.length && this.tabFraEng[i].French.toUpperCase().trim()!==item.toUpperCase().trim(); i++){}
@@ -1391,42 +1317,6 @@ updateInListType(recipeName: string, lang: 'FR' | 'UK', action: 'Delete' | 'Rena
   }
 }
 
-
-updateInListTypeOLD(recipeName:string,lang:string,action:string){
-  this.isRecipeModified.set(true);
-  var i=0;
-  var theValue="ALL";
-  if (lang==="FR"){
-    for (i=0; i<this.recipeFile.listTypeRecipe.length && this.recipeFile.listTypeRecipe[i].Fr!==this.recipeFile.recipe[this.recordRecipe].typeFr; i++){}
-  } else if (lang==="UK"){
-    for (i=0; i<this.recipeFile.listTypeRecipe.length && this.recipeFile.listTypeRecipe[i].En!==this.recipeFile.recipe[this.recordRecipe].typeEn; i++){}
-  }
-  if (i<this.recipeFile.listTypeRecipe.length){ 
-    if (action==="Delete"){
-        if (this.recipeFile.listTypeRecipe[i].recipe.length===1){ // only one recipe exists so delete the type
-            this.recipeFile.listTypeRecipe.splice(i,1);
-        } else { // more than one recipe exists
-
-            for (var k=0; k<this.recipeFile.listTypeRecipe[i].recipe.length && this.recipeFile.listTypeRecipe[i].recipe[k]!==recipeName; k++){};
-            this.recipeFile.listTypeRecipe[i].recipe.splice(k,1); // remove the recipe only
-            if (lang==="FR"){ theValue=this.recipeFile.listTypeRecipe[i].Fr}
-            else if (lang==="UK") {this.recipeFile.listTypeRecipe[i].En};
-        }
-    } else if (action==="Rename"){
-        for (var k=0; k<this.recipeFile.listTypeRecipe[i].recipe.length && this.recipeFile.listTypeRecipe[i].recipe[k]!==recipeName; k++){};
-        this.recipeFile.listTypeRecipe[i].recipe[k-1]=recipeName;
-        if (lang==="FR"){ theValue=this.recipeFile.listTypeRecipe[i].Fr}
-        else if (lang==="UK") {this.recipeFile.listTypeRecipe[i].En};
-    } 
-    this.createTabDropdownType(this.recipeFile.listTypeRecipe,lang,theValue);
-    if (this.isSearchText===true){
-        this.event.target.id='search';
-        this.event.target.value=this.textToSearch;
-        this.searchText(this.event);
-      };
-  }
-}
-
 createTabDropdownType(record: any[], lang: string, text: string): void {
   // 1. Extract dynamic language property key
   const langKey = lang === 'FR' ? 'Fr' : 'En';
@@ -1452,55 +1342,6 @@ createTabDropdownType(record: any[], lang: string, text: string): void {
     } else {
       this.theHeight = count * 30;
     }
-}
-
-createTabDropdownTypeOLD(record:any,lang:string,text:string){
-  var j=0;
-  this.tabDropdownType.splice(0, this.tabDropdownType.length);
-  this.tabDropdownType.push({name:'Cancel'});
-  var trouve=false;
-  if (lang==='FR'){
-    for (var i=0; i<record.length; i++){
-      if (record[i].Fr.indexOf(text)!==-1){
-        for (var j=0; j<this.tabDropdownType.length && trouve===false; j++){
-          if (this.tabDropdownType[j].name.trim()===record[i].Fr.trim()){
-            trouve=true;
-          }
-        }
-        if (trouve===false){
-          this.tabDropdownType.push({name:''});
-          this.tabDropdownType[this.tabDropdownType.length-1].name=record[i].Fr.trim();
-        }
-      }
-    }
-  }
-else {
-    for (var i=0; i<record.length; i++){
-      if (record[i].En.indexOf(text)!==-1){
-        for (var j=0; j<this.tabDropdownType.length && trouve===false; j++){
-          if (this.tabDropdownType[j].name.trim()===record[i].En.trim()){
-            trouve=true;
-          }
-        }
-        if (trouve===false){
-          this.tabDropdownType.push({name:''});
-          this.tabDropdownType[this.tabDropdownType.length-1].name=record[i].En.trim();
-        }
-      }
-    }
-  }
-  var theHeight=0
-  scrollY='hidden';
-  if (this.tabDropdownType.length===2){
-      this.tabDropdownType.splice(0, this.tabDropdownType.length);
-      this.isListTypeFr=false;
-      this.isListTypeEn=false;
-  } else if (this.tabDropdownType.length>8){
-    var theHeight=240;
-    var scrollY='scroll';
-  } else { 
-    theHeight=this.tabDropdownType.length * 30;
-  }
 }
 
 onDropdownListType(event:any){
