@@ -1,15 +1,12 @@
 import {
-  Component, OnInit, Injectable, inject, Input, input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
-  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID,
+  Component, Injectable, inject, Input, input, Output, HostListener,
+  EventEmitter, 
   signal } from '@angular/core';
 
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { MatIconModule} from '@angular/material/icon';
-import { MatDialogModule} from '@angular/material/dialog';
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { CommonModule,  } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { FormGroup, FormControl, Validators,} from '@angular/forms';
 
 import { MainManageFileComponent } from '../../fileAccessMgt/file-access.component';
 import { HealthComponent } from '../../Health/healthfood/health.component';``
@@ -17,32 +14,24 @@ import { CaloriesFatComponent } from '../../Health/calories-fat/calories-fat.com
 import { ReportHealthComponent } from '../../Health/report-health/report-health.component';
 import { ConfigHTMLHealthComponent } from '../../config-htmlhealth/config-htmlhealth.component';
 import { ManageCacheFiles } from '../../manage-cache-files/manage-cache-files';
-import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
-
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
+import {  Bucket_List_Info } from '../../JsonServerClass';
 
 import { msginLogConsole } from '../../consoleLog'
-import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock, classGetRecord } from '../../JsonServerClass';
+import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock } from '../../JsonServerClass';
 
-import { ClassSubConv, ClassConv, mainClassConv, mainConvItem, ClassUnit, ConvItem } from '../../ClassConverter'
+import { mainClassConv, mainConvItem } from '../../ClassConverter'
 
-import { ClassCaloriesFat, mainClassCaloriesFat } from '../ClassHealthCalories'
-import { ClassItem, DailyReport, mainDailyReport, ClassMeal, ClassDish } from '../ClassHealthCalories'
+import { mainClassCaloriesFat } from '../ClassHealthCalories'
+import { DailyReport, mainDailyReport, ClassMeal, ClassDish } from '../ClassHealthCalories'
 
 import { classConfHTMLFitHealth, classConfTableAll } from '../classConfHTMLTableAll';
-
-
-import { classConfigChart, classchartHealth } from '../classConfigChart';
-import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../classChart';
-import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS, classRetrieveFile } from '../../classFileSystem';
-
+import { classConfigChart,  } from '../classConfigChart';
+import { classFileParamChart } from '../classChart';
+import { classAccessFile, classHeaderReturnDataFS, classRetrieveFile } from '../../classFileSystem';
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
 
-import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
+import { convertDate, strDateTime,  } from '../../MyStdFunctions';
 import { FillHealthAllInOut } from '../../copyFilesFunction';
-import { DictionaryComponent } from '../../dictionary/dictionary.component';
-
 import { calcFatCalories, HealthResult } from '../CalcFatCalories';
 
 @Injectable({ providedIn: 'root' })
@@ -1068,7 +1057,7 @@ private prepareForSave(): void {
   
   ngOnDestroy() {
     this.passDestroy++
-    this.identification.fitness.files.fileHealth=this.initialHealthFileName;
+    //this.identification.fitness.files.fileHealth=this.initialHealthFileName;
     console.log('trigger ngOnDestroy  === pass=' + this.passDestroy);
     if (this.processDestroy === false) {
       this.processDestroy = true;

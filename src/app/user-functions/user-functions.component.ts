@@ -43,6 +43,12 @@ export class classTabApps{
   display:boolean=false;
 }
 
+interface ServerEvent {
+  google: string;
+  mongo: string;
+  fileSystem: string;
+}
+
 @Component({
   selector: 'app-user-functions',
   templateUrl: './user-functions.component.html',
@@ -107,10 +113,6 @@ export class UserFunctionsComponent {
 ngOnInit(){
   console.log('user-functions - init --- configServer.google='+this.configServer.googleServer);
   this.initTabLock();
-      
-  // TO BE DELETED
-  //this.selectApps=29;
-  //this.isAppsSelected=true;
   this.initTabApps();
   var lastSelection:number=0;
   if (this.identification.apps[0]==="All"){
@@ -142,120 +144,37 @@ ngOnInit(){
   this.posSizeClock.height = 60;
   this.posSizeClock.displayAnalog = true;
   this.posSizeClock.displayDigital = true;
-
-}
-
-initTabApps(){
-  var tabFn:Array<string>=[];
-  var nbFn:Array<number>=[];
-  tabFn[0]="General";
-  nbFn[3]=0;
-  tabFn[1]="Crypto";
-  nbFn[3]=6;
-  tabFn[2]="Fitness";
-  nbFn[3]=24;
-  tabFn[3]="Health";
-  nbFn[3]=0;
-  tabFn[4]="Recipe";
-  nbFn[4]=14;
-  tabFn[5]="Dictionary";
-  nbFn[5]=15;
-  tabFn[6]="Canvas";
-  nbFn[6]=27;
-  tabFn[7]="ConvFn";
-  nbFn[7]=10;
-  tabFn[8]="UserInfo";
-  nbFn[8]=0;
-  tabFn[9]="Config";
-  nbFn[9]=0;
-  tabFn[10]="Photo";
-  nbFn[10]=25;
-  tabFn[11]="Sport";
-  nbFn[11]=0;
-  tabFn[12]="fileMgt";
-  nbFn[12]=0;
-  tabFn[13]="caloriesMgt";
-  nbFn[13]=11;
-  tabFn[14]="adminServer";
-  nbFn[14]=16;
-  tabFn[15]="tutorials";
-  nbFn[15]=17;
-  tabFn[16]="27Aug2022";
-  nbFn[16]=26;
-  tabFn[17]="manageCUSS";
-  nbFn[17]=29;
-
-  for (var i=0; i<tabFn.length; i++){
-    const tabClass=new classTabApps;
-    tabClass.display=false;
-    this.tabApps.push(tabClass);
-    this.tabApps[this.tabApps.length-1].apps=tabFn[i];
-    this.tabApps[this.tabApps.length-1].select=nbFn[i];
-  }
-
-}
-
-initTabLock(){
-  if (this.tabLock.length===0){
-    for (var i = 0; i <this.maxEventHTTPrequest; i++) {
-      const thePush = new classAccessFile;
-      this.tabLock.push(thePush);
-      if (this.identification.triggerFileSystem === "No") {
-      this.tabLock[i].lock = 1;
-      } else {
-      this.tabLock[i].lock = 3;
-      }
-      this.tabLock[i].user = this.identification.UserId;
-      this.tabLock[i].iWait = i;
-      this.tabLock[i].timeoutFileSystem.hh = this.configServer.timeoutFileSystem.hh;
-      this.tabLock[i].timeoutFileSystem.mn = this.configServer.timeoutFileSystem.mn;
-      this.tabLock[i].IpAddress = this.configServer.IpAddress;
-  
-      this.tabLock[i].userServerId = this.credentialsFS.userServerId;
-      this.tabLock[i].credentialDate = this.credentialsFS.creationDate;
-    }
-  
-    this.tabLock[0].bucket = this.identification.fitness.bucket;
-    this.tabLock[0].object = this.identification.fitness.files.fileHealth;
-    this.tabLock[0].objectName = this.identification.fitness.files.fileHealth; 
-  
-    this.tabLock[1].bucket = this.identification.configFitness.bucket;
-    this.tabLock[1].object = this.identification.configFitness.files.calories;
-    this.tabLock[1].objectName = this.identification.configFitness.files.calories;
-  
-    this.tabLock[2].bucket = this.identification.configFitness.bucket;
-    this.tabLock[2].object = this.identification.configFitness.files.convertUnit;
-    this.tabLock[2].objectName = this.identification.configFitness.files.convertUnit;
-  
-    this.tabLock[3].bucket = this.identification.configFitness.bucket;
-    this.tabLock[3].object = this.identification.configFitness.files.confHTML;
-    this.tabLock[3].objectName = this.identification.configFitness.files.confHTML;
-  
-    this.tabLock[4].bucket = this.identification.configFitness.bucket;
-    this.tabLock[4].object = this.identification.configFitness.files.confChart;
-    this.tabLock[4].objectName = this.identification.configFitness.files.confChart;
-  
-    this.tabLock[5].bucket = this.identification.configFitness.bucket;
-    this.tabLock[5].object = this.identification.fitness.files.myChartConfig;
-    this.tabLock[5].objectName = this.identification.fitness.files.myChartConfig; 
-  
-    this.tabLock[6].bucket = this.identification.configFitness.bucket;
-    this.tabLock[6].object = this.identification.fitness.files.recipe;
-    this.tabLock[6].objectName = this.identification.fitness.files.recipe;
-  
-    this.tabLock[10].bucket = this.identification.configFitness.bucket;
-    this.tabLock[10].object = this.identification.configFitness.files.convToDisplay;
-    this.tabLock[10].objectName = this.identification.configFitness.files.convToDisplay;
-  } else {
-    for (var i = 0; i <this.maxEventHTTPrequest; i++) {
-      if (this.identification.triggerFileSystem === "No") {
-        this.tabLock[i].lock = 1;
-        } else {
-        this.tabLock[i].lock = 3;
-        }
-    }
-  }
   this.isInitTabLock=true;
+}
+initTabApps() {
+  const appData = [
+    { apps: "General", select: 0 },
+    { apps: "Crypto", select: 6 },
+    { apps: "Fitness", select: 24 },
+    { apps: "Health", select: 0 },
+    { apps: "Recipe", select: 14 },
+    { apps: "Dictionary", select: 15 },
+    { apps: "Canvas", select: 27 },
+    { apps: "ConvFn", select: 10 },
+    { apps: "UserInfo", select: 0 },
+    { apps: "Config", select: 0 },
+    { apps: "Photo", select: 25 },
+    { apps: "Sport", select: 0 },
+    { apps: "fileMgt", select: 0 },
+    { apps: "caloriesMgt", select: 11 },
+    { apps: "adminServer", select: 16 },
+    { apps: "tutorials", select: 17 },
+    { apps: "27Aug2022", select: 26 },
+    { apps: "manageCUSS", select: 29 }
+  ];
+
+  this.tabApps = appData.map(item => {
+    const tabClass = new classTabApps();
+    tabClass.display = false;
+    tabClass.apps = item.apps;
+    tabClass.select = item.select;
+    return tabClass;
+  });
 }
 
 onInput(event:any){
@@ -292,55 +211,86 @@ onSelectApps(){
   } 
 }
 
-getServerNames(event:any){
-  console.log("User functions - getServerName -- server google = " + this.configServer.googleServer);
-  if (this.configServer.googleServer!==event.google){
-    this.configServer.googleServer=event.google;
-    //console.log('user-functions - getServerNames --- configServer.google='+this.configServer.googleServer);
-    this. serverChange.emit('Google');
-  }
+initTabLock() {
+  if (this.tabLock.length !== 0) return;
+
+  const { identification, configServer, credentialsFS, maxEventHTTPrequest } = this;
+  const isTriggerNo = identification.triggerFileSystem === "No";
   
-  if (this.configServer.mongoServer!==event.mongo){
-    this.configServer.mongoServer=event.mongo;
-    this.serverChange.emit('Mongo');
+  // 1. Initialize the array with structured instances
+  for (let i = 0; i < maxEventHTTPrequest; i++) {
+    const item = new classAccessFile();
+    
+    item.lock = isTriggerNo ? 1 : 3;
+    item.user = identification.UserId;
+    item.iWait = i;
+    
+    // Deep copy timeout metrics to prevent shared object reference issues
+    item.timeoutFileSystem = { ...configServer.timeoutFileSystem };
+    item.IpAddress = configServer.IpAddress;
+    item.userServerId = credentialsFS.userServerId;
+    item.credentialDate = credentialsFS.creationDate;
+
+    this.tabLock.push(item);
   }
-  
-  if (this.configServer.fileSystemServer!==event.fileSystem){
-    this.configServer.fileSystemServer=event.fileSystem;
-    this.serverChange.emit('FS');
-  }
-  this.selectApps=0;
-  this.configServerChanges++;
-  this.isConfigServerChanges.update(ConSer => ConSer + 1);
+
+  // 2. Map specific file configurations using a declarative mapping array
+  const fitnessFiles = identification.configFitness?.files;
+  const fileMappings = [
+    { bucket: identification.fitness?.bucket, file: identification.fitness?.files?.fileHealth },
+    { bucket: identification.fitness?.bucket, file: identification.fitness?.files?.recipe },
+    { bucket: identification.fitness?.bucket, file: identification.fitness?.files?.myChartConfig },
+    { bucket: identification.configFitness?.bucket, file: fitnessFiles?.calories },
+    { bucket: identification.configFitness?.bucket, file: fitnessFiles?.convertUnit },
+    { bucket: identification.configFitness?.bucket, file: fitnessFiles?.confHTML },
+    { bucket: identification.configFitness?.bucket, file: fitnessFiles?.confChart },
+    { bucket: identification.configFitness?.bucket, file: fitnessFiles?.convToDisplay } // myChartConfig
+  ];
+
+  // 3. Dynamically assign bucket/object parameters safely
+  fileMappings.forEach((mapping, index) => {
+    if (this.tabLock[index] && mapping.file) {
+      this.tabLock[index].bucket = mapping.bucket;
+      this.tabLock[index].object = mapping.file;
+      this.tabLock[index].objectName = mapping.file;
+    }
+  });
 }
 
+
+getServerNames(event: ServerEvent): void {
+  // 1. Map event properties to config keys and emission values
+  const serverMappings = [
+    { key: 'googleServer', eventVal: event.google, emitVal: 'Google' },
+    { key: 'mongoServer', eventVal: event.mongo, emitVal: 'Mongo' },
+    { key: 'fileSystemServer', eventVal: event.fileSystem, emitVal: 'FS' }
+  ] as const;
+
+  // 2. Loop through mappings to update values and emit changes dynamically
+  for (const { key, eventVal, emitVal } of serverMappings) {
+    if (this.configServer[key] !== eventVal) {
+      this.configServer[key] = eventVal;
+      this.serverChange.emit(emitVal);
+    }
+  }
+
+  // 3. Update state counters cleanly
+  this.selectApps = 0;
+  this.configServerChanges++;
+  this.isConfigServerChanges.update(prev => prev + 1);
+}
 returnDicoFile(dico:any){
   const a = dico;
 }
 
 
 fnResetServer(event:any){
-  /*
-  this.isCredentials=false;
-  this.isResetServer=true;
-  this.isIdRetrieved=false;
-  this.getDefaultCredentials(event);
-  this.assignNewServerUsrId();
-  */
+// for future developments
 }
 
 fnNewCredentials(credentials:any){
-  /*
-  this.isResetServer=true;
-  this.credentials=credentials;
-  */
+// for future developments
 }
-/*
-ngOnChanges(changes: SimpleChanges) {   
 
-  for (const propName in changes){
-      const j=changes[propName];
-  }
 }
-*/
-}
+

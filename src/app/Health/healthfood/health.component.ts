@@ -1,33 +1,30 @@
 import {
-  Component, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
-  signal, input, effect, SimpleChanges, EventEmitter, AfterViewInit, 
-  AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID
+  Component, OnInit, Input, Output, HostListener, 
+  signal, input, effect,  EventEmitter, 
+   Inject, LOCALE_ID
 } from '@angular/core';
 
 import { MatIconModule} from '@angular/material/icon';
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { CommonModule,  ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { FormGroup, FormControl, Validators} from '@angular/forms';
 
 import { MainManageFileComponent } from '../../fileAccessMgt/file-access.component';
-import { RunningClockComponent } from '../../Health/running-clock/running-clock.component';
 
 import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock } from '../../JsonServerClass';
 import { classPosDiv, getPosDiv } from '../../getPosDiv';
 
-//import { calcFatCalories, HealthResult } from '../CalcFatCalories';
-
 import { getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
 
-import { ClassCaloriesFat, mainClassCaloriesFat } from '../ClassHealthCalories'
-import { ClassItem, DailyReport, mainDailyReport, ClassMeal, ClassDish } from '../ClassHealthCalories'
+import {  mainClassCaloriesFat } from '../ClassHealthCalories'
+import {  DailyReport, mainDailyReport, ClassMeal, ClassDish } from '../ClassHealthCalories'
 
-import { classConfHTMLFitHealth, classConfTableAll } from '../classConfHTMLTableAll';
+import {  classConfTableAll } from '../classConfHTMLTableAll';
 
-import { classFileSystem, classAccessFile , classReturnDataFS, classHeaderReturnDataFS , classRetrieveFile} from '../../classFileSystem';
+import {  classAccessFile , classHeaderReturnDataFS , classRetrieveFile} from '../../classFileSystem';
 
-import { fnAddTime, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
-import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../../clockFunctions'
+import { convertDate, strDateTime,  findIds } from '../../MyStdFunctions';
+import {  classPosSizeClock} from '../../clockFunctions'
 
 @Component({
   selector: 'app-health',

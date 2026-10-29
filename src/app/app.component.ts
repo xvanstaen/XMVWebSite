@@ -13,7 +13,6 @@ import { UserFunctionsComponent } from './user-functions/user-functions.componen
 import { XmvCompanyComponent } from './xmv-company/xmv-company.component';
 
 import { ManageGoogleService } from './CloudServices/ManageGoogle.service';
-import { ManageSecuredGoogleService } from './CloudServices/ManageSecuredGoogle.service';
 import { ManageMongoDBService } from './CloudServices/ManageMongoDB.service';
 
 import { LoginIdentif , configServer, classUserLogin } from './JsonServerClass';
@@ -47,13 +46,9 @@ export class AppComponent {
     private cdr: ChangeDetectorRef
     ) {}
 
-
-      // import configuration files
-      // access MongoDB
   configServer=new configServer;
   initConfigServer=new configServer;
   configServerChanges:number=0;
-  //XMVConfig=new XMVConfig;
   isConfigServerRetrieved=signal<boolean>(false);
   identification=new LoginIdentif;
   ConvertUnit=new mainClassConv;
@@ -547,84 +542,4 @@ console.log('isIdRetrieved='+this.isIdRetrieved);
               });
   }  
 }
-
-
-  
-/*
-  isGetLogin:boolean=false;
-  getLogin(userId:string,psw:string){
-    this.isGetLogin=true;
-    this.currentFunction="";
-    this.theFn="";
-    this.errorMsg="retrieving your information .... is in progress";
-    this.ManageSecuredGoogleService.encryptFn(this.configServer,psw, 1, 'AES', 'Yes')
-      .subscribe((data ) => { 
-        if (data.status===undefined){
-          this.configServer.userLogin.id=userId;
-          this.configServer.userLogin.psw=data.response;
-          this.configServer.userLogin.accessLevel="";
-          this.checkLogin();
-        } else {
-          this.errorMsg = data.msg;
-        }
-        this.isGetLogin=false;
-      },
-      err => {
-        this.errorMsg = err.msg;
-        this.isGetLogin=false;
-      })
-  }
-*/
-
-
-/*
-  getUserAccessLevel(){
-    this.ManageGoogleService.getSecurityAccess(this.configServer )
-    .subscribe((data ) => {  
-          if (data.status===200){
-            this.configServer.userLogin.accessLevel = data.accessLevel;
-          } else {
-            this.errorMsg=data.msg
-          }
-      },
-      err =>{
-          console.log('getSecurityAccess  error ' + err);
-          this.errorMsg="Server problem. Lower level of access has been assigned"
-      });
-  }
-*/
-
-      /*
-      getTokenOAuth2(){
-        console.log('requestToken()');
-        this.ManageGoogleService.getTokenOAuth2(this.configServer  )
-        .subscribe(
-            (data ) => {
-              console.log('return from requestToken() with no error');
-                console.log(JSON.stringify(data));
-            },
-            err => {
-              console.log('return from requestToken() with error');
-                console.log(JSON.stringify(err));
-              });
-      }
-    
-      getInfoToken(){
-        console.log('getInfoToken()');
-        this.ManageGoogleService.getInfoToken(this.configServer, this.credentials.access_token  )
-        .subscribe(
-            (data ) => {
-                console.log(JSON.stringify(data));
-                //this.tokenValues=data.tokenValues;
-            },
-            err => {
-                console.log('return from getInfoToken() with error');
-                console.log(JSON.stringify(err));
-              });
-      }
-      
-      */ 
- 
-
-
 
