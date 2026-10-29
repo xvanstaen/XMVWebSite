@@ -1,1905 +1,1379 @@
-import { Component, OnInit , Input, Output, HostListener,  HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, 
-    AfterContentChecked, Inject, LOCALE_ID, signal} from '@angular/core';
-  
-import { formatDate, ViewportScroller } from '@angular/common'; 
-import { MatIconModule} from '@angular/material/icon';
-import { CommonModule,  DatePipe } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { Component, OnInit, Input, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule, ViewportScroller } from '@angular/common';
+import { HttpEventType } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { Observable, retry, timeout } from 'rxjs';
 
-import { BucketList ,Bucket_List_Info, OneBucketInfo, classDicoRecord } from '../JsonServerClass';
-
-// configServer is needed to use ManageGoogleService
-// it is stored in MongoDB and accessed via ManageMongoDBService
-import { configServer, LoginIdentif} from '../JsonServerClass';
-
+import { configServer, LoginIdentif } from '../JsonServerClass';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
-
 import { DictionaryComponent } from '../dictionary/dictionary.component';
-
-import {  getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../DropDownStyle';
-import {classPosDiv, getPosDiv} from '../getPosDiv';
-import {CalcFatCalories} from '../Health/CalcFatCalories';
+import { classPosDiv } from '../getPosDiv';
 import { strDateTime } from '../MyStdFunctions';
 
-import {ClassCaloriesFat, mainClassCaloriesFat} from '../Health/ClassHealthCalories';
-import {ClassItem, DailyReport, mainDailyReport, ClassMeal, ClassDish} from '../Health/ClassHealthCalories';
+import { ClassCaloriesFat, mainClassCaloriesFat, ClassItem, DailyReport, ClassMeal, ClassDish } from '../Health/ClassHealthCalories';
+import { mainConvItem, mainClassConv } from '../ClassConverter';
+import { calcFatCalories, HealthResult } from '../Health/CalcFatCalories';
 
-import {ClassSubConv, mainConvItem, mainRecordConvert, mainClassUnit} from '../ClassConverter'
-import {mainClassConv, ClassConv, ClassUnit, ConvItem, recordConvert} from '../ClassConverter'
-
-export class classRecipe{
-  id:number=0;
-  ingr:string='';
-  quantity:number=0;
-  unit:string='gram';
+// ---------------------------------------------------------------------------
+// Data classes
+// ---------------------------------------------------------------------------
+export class classRecipe {
+  id: number = 0;
+  ingr: string = '';
+  quantity: number = 0;
+  unit: string = 'gram';
 }
 
-export class classRecordRecipe{
-  typeFr:string='';
-  typeEn:string='';
-  name:string='';
-  data:Array<any>=[];
-  dataPerso:Array<any>=[];
-  materiel:string='';
-  materielBox:number=0;
-  materielPerso:string='';
-  materielPersoBox:number=0;
-  nutrition=new classNutrition;
-  nutritionPerso=new classNutrition;
-  comments:string='';
-  commentsBox:number=0;
-  commentsEn:string='';
-  commentsEnBox:number=0;
-  commentsPerso:string='';
-  commentsPersoBox:number=0;
+export class classNutrition {
+  calories: number = 0;
+  proteins: number = 0;
+  carbs: number = 0;
+  sugar: number = 0;
+  cholesterol: number = 0;
+  satFat: number = 0;
+  totalSat: number = 0;
+  totalWeight: number = 0;
 }
 
-export class classNutrition{
-  calories:number=0;
-  proteins:number=0;
-  carbs:number=0;
-  sugar:number=0;
-  cholesterol:number=0;
-  satFat:number=0;
-  totalSat:number=0;
-  totalWeight:number=0;
+export class classRecordRecipe {
+  typeFr: string = '';
+  typeEn: string = '';
+  name: string = '';
+  data: Array<classRecipe> = [];
+  dataPerso: Array<classRecipe> = [];
+  materiel: string = '';
+  materielBox: number = 0;
+  materielPerso: string = '';
+  materielPersoBox: number = 0;
+  nutrition = new classNutrition();
+  nutritionPerso = new classNutrition();
+  comments: string = '';
+  commentsBox: number = 0;
+  commentsEn: string = '';
+  commentsEnBox: number = 0;
+  commentsPerso: string = '';
+  commentsPersoBox: number = 0;
 }
 
-export class classFileRecipe{
-  fileType:string='';
-  updatedAt:string='';
-  listTypeRecipe:Array<any>=[];
-  recipe:Array<classRecordRecipe>=[];
+export class classFileRecipe {
+  fileType: string = '';
+  updatedAt: string = '';
+  listTypeRecipe: Array<any> = [];
+  recipe: Array<classRecordRecipe> = [];
 }
+
+type NutritionTarget = 'std' | 'perso' | 'all';
+type CommentBoxKey = 'commentsBox' | 'commentsEnBox' | 'commentsPersoBox' | 'materielBox' | 'materielPersoBox';
+
+const NETWORK_TIMEOUT_MS = 30000;
+const NETWORK_RETRIES = 3;
+const DEGREE_C = '°C';
 
 @Component({
   selector: 'app-recipe',
   templateUrl: './recipe.component.html',
   styleUrls: ['./recipe.component.css'],
-  standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, DictionaryComponent],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, DictionaryComponent],
+  // NOTE: not switched to OnPush because many plain fields (message, tabSearch, ...) are
+  // mutated directly. Convert them to signals first, then enable ChangeDetectionStrategy.OnPush.
 })
+export class RecipeComponent implements OnInit {
 
-export class RecipeComponent {
+  @Input() configServer = new configServer();
+  @Input() identification = new LoginIdentif();
+  @Input() InConvToDisplay = new mainConvItem();
+  @Input() dictionaryOnly: boolean = false;
 
+  private readonly destroyRef = inject(DestroyRef);
 
-@Input() configServer = new configServer;
-@Input() identification= new LoginIdentif;
-@Input() InConvToDisplay=new mainConvItem;
-@Input() dictionaryOnly:boolean=false;;
+  ConfigCaloriesFat = new mainClassCaloriesFat();
+  ConvertUnit = new mainClassConv();
 
-ConfigCaloriesFat=new mainClassCaloriesFat;
-ConvertUnit=new mainClassConv;
+  returnData: HealthResult = {
+    errors: [],
+    outHealthData: new DailyReport(),
+  };
 
-returnData={
-  error:0,
-  outHealthData: new DailyReport
-}
+  posDivAfterTitle = new classPosDiv();
+  posDivBeforeTitle = new classPosDiv();
 
-posDivAfterTitle= new classPosDiv;
-posDivBeforeTitle= new classPosDiv;
+  masterFile = new classFileRecipe();
+  recipeFile = new classFileRecipe();
+  initialRecipeFile = new classFileRecipe();
 
-masterFile=new classFileRecipe;
-recipeFile=new classFileRecipe;
-initialRecipeFile=new classFileRecipe;
+  googleBucketName: string = '';
+  theListOfObjects: Array<{ header: string; name: string; json: string }> = [];
+  Error_Access_Server: string = '';
 
-Google_Bucket_Access_Root:string='https://storage.googleapis.com/storage/v1/b/';
-Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
-googleBucketName:string='';
-googleObjectName:string='';
-myListOfObjects=new Bucket_List_Info;
-theListOfObjects:Array<any>=[];
-structureListOfObjects={header:'',name:'',json:''};
+  recipe: string = '';
+  recordRecipe: number = 0;
 
-EventHTTPReceived:Array<boolean>=[];
-Error_Access_Server:string='';
-id_Animation:Array<number>=[];
-TabLoop:Array<number>=[];
-NbWaitHTTP:number=0;
+  listActions: Array<string> = ['Cancel', 'Delete', 'Add after', 'Add before', 'Copy', 'Copy ALL', 'Move after', 'Move before', 'Change value for all', 'Calculate nutrition facts'];
+  tabRecipe: Array<any> = [];
+  tabActionRecipe: Array<string> = ['Cancel', 'Create', 'Rename', 'Duplicate', 'Delete', 'Reinitialise', 'Translate FR to UK', 'Translate UK to FR', 'Calculate nut. facts for all recipes', 'Transfer nut. facts to CalFat'];
+  tabActionComments: Array<string> = ['Cancel', 'Translate FR to UK', 'Translate UK to FR', 'Zoom in - Std box', 'Zoom out - Std box', 'Zoom in - English box', 'Zoom out - English box', 'Zoom in - Ustens. box', 'Zoom out - Ustens. box', 'Zoom in - Perso box', 'Zoom out - Perso box',
+    'Zoom in - Ustens. Perso box', 'Zoom out - Ustens. Perso box'];
+  tabActionCommentsPerso: Array<string> = ['Cancel', 'Translate FR to UK', 'Translate UK to FR', 'Zoom in - Perso box', 'Zoom out - Perso box', 'Zoom in - Ustens. Perso box', 'Zoom out - Ustens. Perso box', 'Zoom in - Std box', 'Zoom out - Std box', 'Zoom in - English box', 'Zoom out - English box',
+    'Zoom in - Ustens. box', 'Zoom out - Ustens. box'];
 
-nbCallGetRecord:number=0; 
+  textToSearch: string = '';
+  tabSearch: Array<any> = [];
+  tabListCalFat: Array<any> = [];
+  tabDropdownType: Array<any> = [];
+  tabDialog: Array<boolean> = [];
+  prevDialog: number = 0;
 
-recipe:string='';
-recordRecipe:number=0;
+  fileNb: number = -1;
 
-listTypeRecipe:Array<any>=[
-  {typeFr:"",
-  typeEn:"",
-  recipe:[]}
-]
+  isDictionary: boolean = false; // @input to activate the management of the dictionary
 
-//tabButtons:Array<any>=[{En:"Save",Fr:"Sauver"},{En:"Cancel",Fr:"Annuler"},{En:"Confirm",Fr:"Confirmer"}
-//          ,{En:"Submit",Fr:"Soumettre"}]
+  isListOfObjectsRetrieved: boolean = false;
+  isFileRetrieved = signal<boolean>(false);
+  isMessage = signal<boolean>(false);
+  IsSaveConfirmed = signal<boolean>(false);
 
-listActions:Array<string>=['Cancel','Delete','Add after', 'Add before', 'Copy','Copy ALL','Move after', 'Move before','Change value for all','Calculate nutrition facts'];
-tabRecipe:Array<any>=[];
-tabActionRecipe:Array<string>=['Cancel','Create','Rename','Duplicate','Delete','Reinitialise','Translate FR to UK', 'Translate UK to FR','Calculate nut. facts for all recipes','Transfer nut. facts to CalFat'];
-recipeTable:Array<classFileRecipe>=[];
-tabActionComments:Array<string>=['Cancel','Translate FR to UK', 'Translate UK to FR','Zoom in - Std box', 'Zoom out - Std box','Zoom in - English box', 'Zoom out - English box', 'Zoom in - Ustens. box', 'Zoom out - Ustens. box','Zoom in - Perso box', 'Zoom out - Perso box',
-   'Zoom in - Ustens. Perso box', 'Zoom out - Ustens. Perso box'];
+  isActionComments = signal<boolean>(false);
+  isActionRecipe = signal<boolean>(false);
 
-tabActionCommentsPerso:Array<string>=['Cancel','Translate FR to UK', 'Translate UK to FR','Zoom in - Perso box', 'Zoom out - Perso box', 'Zoom in - Ustens. Perso box', 'Zoom out - Ustens. Perso box','Zoom in - Std box', 'Zoom out - Std box','Zoom in - English box', 'Zoom out - English box', 
-  'Zoom in - Ustens. box', 'Zoom out - Ustens. box'];
+  isCreateRecipeName = signal<boolean>(false);
+  isChangeRecipeName = signal<boolean>(false);
+  isDeleteRecipe = signal<boolean>(false);
+  isDuplicate = signal<boolean>(false);
 
+  isChangeValueForAll = signal<boolean>(false);
+  isChangeValueForAllPerso = signal<boolean>(false);
+  isRecipeModified = signal<boolean>(false);
+  isListTypeUpdated = signal<boolean>(false);
+  isListTypeFr: boolean = false;
+  isListTypeEn: boolean = false;
+  isSearchText: boolean = false;
+  isIngrDropDown = signal(false);
+  shouldShowDropdownStd: Array<boolean> = [];
+  shouldShowDropdownPerso: Array<boolean> = [];
 
-textToSearch:string='';
-tabSearch:Array<any>=[];
-tabListCalFat:Array<any>=[];
-tabDropdownType:Array<any>=[];
-tabDialog:Array<boolean>=[];
-prevDialog:number=0;
+  changeValue: number = 0;
+  temporaryNameRecipe: string = '';
+  posGramTabConvert: number = 0;
+  ingrType: string = '';
+  currentIngr: string = '';
+  translateComment: string = '';
+  margLeftChangeAll: number = 0;
+  currentValue: number = 0;
 
-fileNb:number=-1;
+  yourLanguage: number = 0; // 0 for FR, 1 for EN
+  theStdPersoDisplay: Array<string> = ['Y', 'N'];
+  eyeNutritionFact: Array<string> = ['N', 'N'];
 
-isDictionary:boolean=false; // @input to activate the management of the dictionary
+  SpecificForm = new FormGroup({
+    fileName: new FormControl('', { nonNullable: true }),
+    fileHeader: new FormControl('', { nonNullable: true }),
+    changeValue: new FormControl('', { nonNullable: true }),
+  });
 
-isListOfObjectsRetrieved:boolean=false; // list of objects containing the name of the files 
-isFileRetrieved=signal<boolean>(false);
-isMessage=signal<boolean>(false);
-IsSaveConfirmed=signal<boolean>(false);
+  idText: string = '';
+  idNb: number = 0;
 
-isActionComments=signal<boolean>(false);  // used to trigger function dropdownComments()
-isActionRecipe=signal<boolean>(false); // used to trigger function tabActionRecipe()
+  radioSelect: number = -1;
+  selectedTypeFr: string = '';
+  recordListType: number = -1;
 
-isCreateRecipeName=signal<boolean>(false); // used to provide name of recipe on Create and Duplicate
-isChangeRecipeName=signal<boolean>(false); // used to trigger function onChangeName()
-isDeleteRecipe=signal<boolean>(false); // used to trigger function delRecipe()
-isDuplicate=signal<boolean>(false); // used to update listTypeRecipe[].recipe[] 
+  delMsg: string = ''; // name of the recipe to delete
 
-isChangeValueForAll=signal<boolean>(false); // used to trigger the function onChangeValues()
-isChangeValueForAllPerso=signal<boolean>(false); // used to trigger the function onChangeValues()
-isRecipeModified=signal<boolean>(false); 
-isListTypeUpdated=signal<boolean>(false);
-isListTypeFr:boolean=false; //used to trigger function tabDropdownType()
-isListTypeEn:boolean=false; //used to trigger function tabDropdownType()
-isSearchText:boolean=false;  // used to trigger function searchText()
-isIngrDropDown=signal(false); // used to trigger function modifInput()
-shouldShowDropdownStd:Array<boolean>=[];
-shouldShowDropdownPerso:Array<boolean>=[];
+  tabUpdateRef: Array<{ init: number }> = []; // index of each recipe in initialRecipeFile (-1 = new)
+  message: string = '';
 
-changeValue:number=0;
-temporaryNameRecipe:string="";
-posGramTabConvert:number=0;
-ingrType:string="";
-currentIngr:string="";
-translateComment:string="";
-margLeftChangeAll:number=0;
-currentValue:number=0;
+  searchScroll: string = 'hidden';
+  heightListType: number = 0;
+  heightScroll: string = 'hidden';
 
-yourLanguage:number=0; // 0 for FR, 1 for EN
-theStdPersoDisplay:Array<string>=['Y','N'];
+  // Zoom-in & out of comments boxes
+  heightMatCommBox: number = 90;
+  maxHeightCommBox: number = 300;
+  minHeightCommBox: number = 40;
+  zoomInRate: number = 0.8;
+  zoomOutRate: number = 1.4;
 
-eyeNutritionFact:Array<string>=['N','N'];
+  // Dropdown boxes
+  heightActionRecipe: number = 80;
+  heightSearchDropdown: number = 0;
+  heightListRecipe: number = 80;
+  theHeight: number = 0;
+  posTopDropDown: number = -25;
+  heightDropDown: number = 0;
+  scrollY: string = 'hidden';
+  maxHeightDropDown: number = 200;
+  heightItemDropDown: number = 25;
+  marginLeft: number = 50;
+  marginTop: number = 20;
 
-SpecificForm=new FormGroup({
-  fileName: new FormControl('', { nonNullable: true }),
-  fileHeader: new FormControl('', { nonNullable: true }),
-  changeValue: new FormControl('', { nonNullable: true }),
-})
+  // Translation dictionaries
+  tabFraEng: Array<any> = [];
+  dicEnFr: Array<any> = [];
+  dicFrEn: Array<any> = [];
+  private wordMaps = new WeakMap<object, Map<string, string>>();
 
-idText:string='';
-idNb:number=0;
-event={
-  target:{
-    value:"",
-    id:"",
-  }
-}
+  tabLanguage = ['Fr', 'En'];
+  errType: string = '';
 
-radioSelect:number=-1;
-selectedTypeFr:string="";
-recordListType:number=-1;
+  listTypeName: string[][] = [['Tous'], ['All']];
 
-delMsg:string=""; // usedd to dislay name of the recipe to delete
+  private normCache = new Map<string, string>();
 
-tabUpdateRef:Array<any>=[]; // to be used when user cancels all updates
-message:string="";
+  private readonly zoomBoxes: Record<string, CommentBoxKey> = {
+    'Std box': 'commentsBox',
+    'English box': 'commentsEnBox',
+    'Perso box': 'commentsPersoBox',
+    'Ustens. box': 'materielBox',
+    'Ustens. Perso box': 'materielPersoBox',
+  };
 
-searchScroll:string='hidden';
-heightListType:number=0;
-heightScroll:string='hidden';
+  private readonly textFields = new Set(['comments', 'commentsEn', 'commentsPerso', 'materiel', 'materielPerso']);
 
-// Zoom-in & out of comments boxes
-
-heightMatCommBox:number=90;
-maxHeightCommBox:number=300;
-minHeightCommBox:number=40;
-zoomInRate:number=0.8;
-zoomOutRate:number=1.4;
-
-// Dropdown boxes
-heightActionRecipe:number=80;
-heightSearchDropdown:number=0;
-heightListRecipe:number=80;
-theHeight:number=0;
-//posLeftDropDown:number=40;
-posTopDropDown:number=-25;
-heightDropDown:number=0;
-scrollY:string='hidden';
-maxHeightDropDown:number=200;
-heightItemDropDown:number=25;
-marginLeft:number=50;
-marginTop:number=20;
-
-// used by translate function
-tabFraEng:Array<any>=[];
-tabSpecChar:Array<any>=[];
-specialChar:string=" ,.-'{}[]()/?*@!:;<>\|";
-tabWordsFre:Array<any>=[];
-tabWordsEng:Array<any>=[];
-returnChar={type:"\n"};
-strComments:string="";
-degreC:string="°C";
-wordsToConvert:Array<any>=[];
-tabSubstitution:Array<any>=[];
-tabWordsIn:Array<any>=[];
-tabWordsOut:Array<any>=[];
-dicEnFr:Array<any>=[];
-dicFrEn:Array<any>=[];
-
-tabLanguage=['Fr','En'];
-errType:string="";
-
-listTypeName: string[][] = [
-  ['Tous'], // index 0
-  ['All']   // index 1
-];
-
-
-constructor(
+  constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
-    @Inject(LOCALE_ID) private locale: string,
-    ) { }
+  ) { }
 
-ngOnInit(){
-  this.googleBucketName=this.identification.recipe.bucket;
-  this.listActions;
-  // get list of objects
-  this.GetAllObjects(0);
-  this.theHeight=(this.listActions.length + 1)* 25;
-  this.getRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,2);
-  this.getRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convertUnit,3);
-  //this.getRecord(this.identification.dictionary.bucket,this.identification.dictionary.fileName,4);
-}
+  // -------------------------------------------------------------------------
+  // Init & loading
+  // -------------------------------------------------------------------------
+  ngOnInit() {
+    this.googleBucketName = this.identification.recipe.bucket;
+    this.theHeight = (this.listActions.length + 1) * 25;
 
-returnDicoFile(inFile:any){
-  this.tabFraEng=inFile;
-}
+    const cfg = this.identification.configFitness;
 
-selLanguage(event:string){
-  if (event==='FR'){
-    this.yourLanguage=0;
-  } if (event==='UK'){
-    this.yourLanguage=1;
-  } 
-}
+    this.fetchObject(cfg.bucket, cfg.files.calories).subscribe({
+      next: data => { this.ConfigCaloriesFat = data; },
+      error: e => this.setLoadError('calories file', e),
+    });
 
-RadioSelection(event:any, id:number){
+    this.fetchObject(cfg.bucket, cfg.files.convertUnit).subscribe({
+      next: data => {
+        this.ConvertUnit = data;
+        const i = this.ConvertUnit.tabConv.findIndex(c => c.fromUnit === 'gram');
+        if (i !== -1) this.posGramTabConvert = i;
+      },
+      error: e => this.setLoadError('unit conversion file', e),
+    });
 
-if (event.currentTarget.id!==''){
-  this.findId(event.currentTarget.id);
-} else {
-  this.findId(event.target.id);
-}
-const val=this.idNb;
+    this.GetAllObjects();
+  }
 
-this.resetBooleans();
-if (this.idText==="selFile" ){
-    this.radioSelect=this.idNb;
-    if (  this.fileNb !== this.idNb){
-      this.recipeFile.recipe.splice(0,this.recipeFile.recipe.length);
-      this.recipeFile.listTypeRecipe.splice(0,this.recipeFile.listTypeRecipe.length);
-      this.initialRecipeFile.recipe.splice(0,this.initialRecipeFile.recipe.length);
-      this.initialRecipeFile.listTypeRecipe.splice(0,this.initialRecipeFile.listTypeRecipe.length);
-      this.fileNb = this.radioSelect;
-      const nameOfFile=this.theListOfObjects[this.fileNb].header+this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json;
-      this.getRecord(this.googleBucketName, nameOfFile,1);
-      this.recordRecipe=0;
-      
+  private fetchObject(bucket: string, objectName: string): Observable<any> {
+    return this.ManageGoogleService.getContentObject(this.configServer, bucket, objectName).pipe(
+      timeout(NETWORK_TIMEOUT_MS),
+      retry({ count: NETWORK_RETRIES, delay: 1000 }),
+      takeUntilDestroyed(this.destroyRef),
+    );
+  }
+
+  private setLoadError(what: string, e: any) {
+    this.Error_Access_Server = `Could not retrieve ${what}: ${e?.message ?? e?.statusText ?? e?.status ?? 'unknown error'}`;
+  }
+
+  GetAllObjects() {
+    this.scroller.scrollToAnchor('theTop');
+    this.Error_Access_Server = '';
+    const prefix: string = this.identification.recipe.fileStartName;
+
+    this.ManageGoogleService.getListMetaObjects(this.configServer, this.googleBucketName).pipe(
+      timeout(NETWORK_TIMEOUT_MS),
+      retry({ count: NETWORK_RETRIES, delay: 1000 }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (data: any[]) => {
+        // keep the files of the recipes of the user, most recent (last) first
+        this.theListOfObjects = data
+          .map(d => d.items.name as string)
+          .filter(n => n.startsWith(prefix))
+          .reverse()
+          .map(n => {
+            const dot = n.indexOf('.');
+            return dot === -1
+              ? { header: prefix, name: n.substring(prefix.length), json: '' }
+              : { header: prefix, name: n.substring(prefix.length, dot), json: n.substring(dot) };
+          });
+
+        if (this.theListOfObjects.length === 1) {
+          this.fileNb = 0;
+          this.loadRecipeFile(this.objectNameOf(0));
+          this.recordRecipe = 0;
+        }
+      },
+      error: e => this.setLoadError('the list of files', e),
+    });
+  }
+
+  private objectNameOf(i: number): string {
+    const o = this.theListOfObjects[i];
+    return o.header + o.name + o.json;
+  }
+
+  private loadRecipeFile(objectName: string) {
+    this.Error_Access_Server = '';
+    this.fetchObject(this.googleBucketName, objectName).subscribe({
+      next: data => this.onRecipeFileLoaded(data),
+      error: e => this.setLoadError(`file ${objectName}`, e),
+    });
+  }
+
+  private onRecipeFileLoaded(data: any) {
+    const trim = (s?: string) => s?.trim() ?? '';
+    const min = this.minHeightCommBox;
+
+    const types = (data.listTypeRecipe ?? []).map((t: any) => ({
+      Fr: trim(t.Fr),
+      En: trim(t.En),
+      recipe: (t.recipe ?? []).filter((r: string) => r !== '').map((r: string) => r.trim()),
+    }));
+
+    const mapList = (list: any): classRecipe[] =>
+      Array.isArray(list) ? list.map((item: any, j: number) => Object.assign(new classRecipe(), item, { id: j })) : [];
+
+    const recipes: classRecordRecipe[] = (data.recipe ?? []).map((r: any) => {
+      const rec = new classRecordRecipe();
+      rec.typeFr = r.typeFr?.trim() ?? 'Creme';
+      rec.typeEn = r.typeEn?.trim() ?? 'Cream';
+      rec.name = trim(r.name);
+      rec.comments = r.comments ?? '';
+      rec.commentsPerso = r.commentsPerso ?? '';
+      rec.commentsEn = r.commentsEn ?? '';
+      rec.materiel = r.materiel ?? '';
+      rec.materielPerso = r.materielPerso ?? '';
+      rec.commentsBox = r.commentsBox ?? min;
+      rec.commentsPersoBox = r.commentsPersoBox ?? min;
+      rec.commentsEnBox = r.commentsEnBox ?? min;
+      rec.materielBox = r.materielBox ?? min;
+      rec.materielPersoBox = r.materielPersoBox ?? min;
+      rec.nutrition = { ...new classNutrition(), ...r.nutrition };
+      rec.nutritionPerso = { ...new classNutrition(), ...r.nutritionPerso };
+      rec.data = mapList(r.data);
+      rec.dataPerso = mapList(r.dataPerso);
+      return rec;
+    });
+
+    const initial = this.initialRecipeFile;
+    initial.fileType = data.fileType ?? '';
+    initial.updatedAt = data.updatedAt ?? '';
+    initial.listTypeRecipe = types;
+    initial.recipe = recipes;
+    if (types.length === 0) {
+      this.updateFileType(initial);
     } else {
-        // keep the file
-        this.recipeFile.recipe.splice(0,this.recipeFile.recipe.length);
-        this.recipeFile.listTypeRecipe.splice(0,this.recipeFile.listTypeRecipe.length);
-        this.fillFileRecord(this.initialRecipeFile,this.recipeFile);
-        
+      this.rebuildListTypeName(types);
     }
-  } else if (this.idText==="Type"){
-    this.radioSelect=this.idNb-1;
-    if (this.idNb===0) {
-      this.selectedTypeFr="ALL";
-      this.recordListType=-1;
-      this.radioSelect=-1;
-    } else {
-      this.recordListType=this.idNb-1;
-      this.selectedTypeFr=this.recipeFile.listTypeRecipe[this.recordListType].Fr.trim();
-  
-      // search the first record of the selected Type
-      for (this.recordRecipe=0; this.recordRecipe<this.recipeFile.recipe.length && this.recipeFile.recipe[this.recordRecipe].typeFr.trim()!==this.selectedTypeFr.trim(); this.recordRecipe++){}
-      
-    }
-    if (this.recordRecipe===this.recipeFile.recipe.length){ // pb with the file, no recipe was found
-      this.recordRecipe=0;
-    }
-    if (this.isSearchText===true){
-        this.event.target.id='search';
-        this.event.target.value=this.textToSearch;
-        this.searchText(this.event);
-    };
-  }
-}
 
-resetBooleans(){
-  if (this.isActionRecipe()){this.isActionRecipe.set(false)};
-  this.isDeleteRecipe.set(false);
-  this.isIngrDropDown.set(false);
-  this.IsSaveConfirmed.set(false);
-  this.isCreateRecipeName.set(false);
-  this.tabDialog[this.prevDialog]=false;
-  this.isChangeValueForAll.set(false);
-  this.isChangeValueForAllPerso.set(false);
-  this.isChangeRecipeName.set(false); 
-  this.isActionComments.set(false); 
-  this.isListTypeFr=false;
-  this.isListTypeEn=false;
-  this.isIngrDropDown.set(false);
-  this.shouldShowDropdownStd[this.prevDialog]=false;
-  this.shouldShowDropdownPerso[this.prevDialog]=false;
-  this.errType="";
-  this.isListTypeUpdated.set(true);
-  this.message="";
-}
-onAction(event: Event): void {
-  const target = event.target as HTMLElement;
-  if (!target?.id) return;
+    // working copy
+    this.recipeFile.fileType = initial.fileType;
+    this.recipeFile.updatedAt = initial.updatedAt;
+    this.recipeFile.recipe = structuredClone(recipes);
+    this.recipeFile.listTypeRecipe = structuredClone(initial.listTypeRecipe);
+    this.resetUpdateRefs();
 
-  this.resetBooleans();
-  const id = target.id;
-
-  // Handle direct id matches first for quick returns
-  if (id === 'ActionRecipe') {
-    this.isActionRecipe.set(true);
-    return;
-  }
-  if (id === 'ActionComments' || id === 'ActionCommentsPerso') {
-    this.isActionComments.set(true);
-    return;
+    this.isFileRetrieved.set(true);
   }
 
-  // Parse ID string if it's a dynamic dialog action (Extracts text prefix and trailing number)
-  // e.g., "Action12" -> idText: "Action", idNb: 12
-  const match = id.match(/^([a-zA-Z]+)-(\d+)$/); 
-  if (!match) return;
+  private resetUpdateRefs() {
+    this.tabUpdateRef = this.initialRecipeFile.recipe.map((_, i) => ({ init: i }));
+  }
 
-  const [, idText, idNbString] = match;
-  const idNb = parseInt(idNbString, 10);
-  
-  const isStandard = idText === 'Action';
-  const isPerso = idText === 'ActionPerso';
+  returnDicoFile(inFile: any) {
+    this.tabFraEng = inFile;
+  }
 
-  if (isStandard || isPerso) {
+  selLanguage(event: string) {
+    if (event === 'FR') this.yourLanguage = 0;
+    if (event === 'UK') this.yourLanguage = 1;
+  }
+
+  // -------------------------------------------------------------------------
+  // File / type selection
+  // -------------------------------------------------------------------------
+  RadioSelection(event: any, id: number) {
+    this.findId(event.currentTarget.id !== '' ? event.currentTarget.id : event.target.id);
+    this.resetBooleans();
+
+    if (this.idText === 'selFile') {
+      this.radioSelect = this.idNb;
+      this.recipeFile.recipe.length = 0;
+      this.recipeFile.listTypeRecipe.length = 0;
+
+      if (this.fileNb !== this.idNb) {
+        this.initialRecipeFile.recipe.length = 0;
+        this.initialRecipeFile.listTypeRecipe.length = 0;
+        this.fileNb = this.radioSelect;
+        this.loadRecipeFile(this.objectNameOf(this.fileNb));
+        this.recordRecipe = 0;
+      } else {
+        // same file: restore the initial content
+        this.fillFileRecord(this.initialRecipeFile, this.recipeFile);
+        this.resetUpdateRefs();
+      }
+    } else if (this.idText === 'Type') {
+      this.radioSelect = this.idNb - 1;
+      if (this.idNb === 0) {
+        this.selectedTypeFr = 'ALL';
+        this.recordListType = -1;
+        this.radioSelect = -1;
+      } else {
+        this.recordListType = this.idNb - 1;
+        this.selectedTypeFr = this.recipeFile.listTypeRecipe[this.recordListType].Fr.trim();
+        // first record of the selected type (0 if none: problem with the file)
+        const first = this.recipeFile.recipe.findIndex(r => r.typeFr.trim() === this.selectedTypeFr);
+        this.recordRecipe = first === -1 ? 0 : first;
+      }
+      this.rerunSearch();
+    }
+  }
+
+  resetBooleans() {
+    if (this.isActionRecipe()) this.isActionRecipe.set(false);
+    this.isDeleteRecipe.set(false);
+    this.isIngrDropDown.set(false);
+    this.IsSaveConfirmed.set(false);
+    this.isCreateRecipeName.set(false);
+    this.tabDialog[this.prevDialog] = false;
+    this.isChangeValueForAll.set(false);
+    this.isChangeValueForAllPerso.set(false);
+    this.isChangeRecipeName.set(false);
+    this.isActionComments.set(false);
+    this.isListTypeFr = false;
+    this.isListTypeEn = false;
+    this.shouldShowDropdownStd[this.prevDialog] = false;
+    this.shouldShowDropdownPerso[this.prevDialog] = false;
+    this.errType = '';
+    this.isListTypeUpdated.set(true);
+    this.message = '';
+  }
+
+  // -------------------------------------------------------------------------
+  // Ingredient dialogs
+  // -------------------------------------------------------------------------
+  onAction(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target?.id) return;
+
+    this.resetBooleans();
+    const id = target.id;
+
+    if (id === 'ActionRecipe') {
+      this.isActionRecipe.set(true);
+      return;
+    }
+    if (id === 'ActionComments' || id === 'ActionCommentsPerso') {
+      this.isActionComments.set(true);
+      return;
+    }
+
+    // dynamic ids, e.g. "Action-12" or "ActionPerso-3"
+    const match = id.match(/^([a-zA-Z]+)-(\d+)$/);
+    if (!match) return;
+
+    const idText = match[1];
+    const idNb = parseInt(match[2], 10);
+    const isStandard = idText === 'Action';
+    const isPerso = idText === 'ActionPerso';
+    if (!isStandard && !isPerso) return;
+
+    // the dropdown handlers rely on these
+    this.idText = idText;
+    this.idNb = idNb;
+
     this.prevDialog = idNb;
     this.tabDialog[idNb] = true;
-    
-    // Toggle dropdown visibility flags symmetrically
     this.shouldShowDropdownStd[idNb] = isStandard;
     this.shouldShowDropdownPerso[idNb] = isPerso;
 
-    // Dynamically assign text pairs using a ternary operator
     const suffix = isStandard ? 'perso' : 'standard';
     this.listActions[4] = `Copy to ${suffix}`;
     this.listActions[5] = `Copy ALL to ${suffix}`;
   }
-}
 
-afterDropDownPerso(event:any){
-  this.functionAfterDropDown(event,this.recipeFile.recipe[this.recordRecipe].dataPerso,this.recipeFile.recipe[this.recordRecipe].data,"Perso");
-  this.shouldShowDropdownPerso[this.prevDialog]=false;
-}
+  afterDropDownPerso(event: any) {
+    const r = this.recipeFile.recipe[this.recordRecipe];
+    this.functionAfterDropDown(event, r.dataPerso, r.data, 'Perso');
+    this.shouldShowDropdownPerso[this.prevDialog] = false;
+  }
 
-afterDropDown(event:any){
-  this.functionAfterDropDown(event,this.recipeFile.recipe[this.recordRecipe].data,this.recipeFile.recipe[this.recordRecipe].dataPerso,"Std");
-  this.shouldShowDropdownStd[this.prevDialog]=false;
-}
+  afterDropDown(event: any) {
+    const r = this.recipeFile.recipe[this.recordRecipe];
+    this.functionAfterDropDown(event, r.data, r.dataPerso, 'Std');
+    this.shouldShowDropdownStd[this.prevDialog] = false;
+  }
 
-functionAfterDropDown(event:any,inFile:any, copyToFile:any, perso:string){
-  this.tabDialog[this.prevDialog]=false;
-  this.resetBooleans();
-  var i=0;
-  if (event.target.textContent.trim()==="Cancel" ){
+  private functionAfterDropDown(event: any, inFile: classRecipe[], copyToFile: classRecipe[], perso: 'Std' | 'Perso') {
+    this.tabDialog[this.prevDialog] = false;
+    this.resetBooleans();
 
-  } else 
-  {
+    const action: string = event.target.textContent.trim();
+    if (action === 'Cancel') return;
+
     this.isRecipeModified.set(true);
-    if (event.target.textContent.trim()==="Delete" ){
-        inFile.splice(this.idNb,1);
-        this.tabUpdateRef.splice(this.idNb,1);
-        this.updateDataId(inFile);
-    } else if (event.target.textContent.trim()==="Add after" ){
-        const pushData=new classRecipe;
-        inFile.splice(this.idNb+1,0,pushData);
-        this.updateDataId(inFile);
-    } else if (event.target.textContent.trim()==="Add before" ){
-        const pushData=new classRecipe;
-        inFile.splice(this.idNb,0,pushData);
-        this.updateDataId(inFile);
-    } else if (event.target.textContent.trim().substring(0,8)==="Copy ALL" ){
-          copyToFile.splice(0,copyToFile.length);
-          this.copyFromTo(copyToFile, inFile);
-    } else if (event.target.textContent.trim().substring(0,4)==="Copy" ){
-        for (var i=0; i<copyToFile.length && copyToFile[i].ingr!==""; i++){}
-        if (i===copyToFile.length){
-          const pushData=new classRecipe;
-          copyToFile.push(pushData);
-          i=copyToFile.length-1;
-        }
-        copyToFile[i].ingr=inFile[this.idNb].ingr;
-        copyToFile[i].quantity=inFile[this.idNb].quantity;
-        copyToFile[i].unit=inFile[this.idNb].unit;
-        this.updateDataId(copyToFile);
+    const idx = this.idNb;
 
-    } else if (event.target.textContent.trim()==="Move after" ){
-        if (this.idNb<inFile.length-1){
-          var saveData=new classRecipe;
-          saveData=inFile[this.idNb];
-          inFile[this.idNb]=inFile[this.idNb+1];
-          inFile[this.idNb+1]=saveData;
-          this.updateDataId(inFile);
-        }
-    } else if (event.target.textContent.trim()==="Move before" ){
-        if (this.idNb>0){
-          var saveData=new classRecipe;
-          saveData=inFile[this.idNb];
-          inFile[this.idNb]=inFile[this.idNb-1];
-          inFile[this.idNb-1]=saveData;
-          this.updateDataId(inFile);
-        } 
-    } else if (event.target.textContent.trim()==="Change value for all" ){
-         if (perso==="Perso"){
-          this.isChangeValueForAllPerso.set(true);
-        } else {
-          this.isChangeValueForAll.set(true);
-        }
-        this.currentValue=inFile[this.idNb].quantity;
-        this.currentIngr=inFile[this.idNb].ingr;
-        this.margLeftChangeAll=30;
-    } else if (event.target.textContent.trim()==="Calculate nutrition facts" ){
-        if (perso==="Perso"){
-          this.calculateNutrition('perso');
-        } else {
-          this.calculateNutrition('std');
-        }
+    if (action === 'Delete') {
+      inFile.splice(idx, 1);
+      this.updateDataId(inFile);
+    } else if (action === 'Add after') {
+      inFile.splice(idx + 1, 0, new classRecipe());
+      this.updateDataId(inFile);
+    } else if (action === 'Add before') {
+      inFile.splice(idx, 0, new classRecipe());
+      this.updateDataId(inFile);
+    } else if (action.startsWith('Copy ALL')) {
+      copyToFile.length = 0;
+      this.copyFromTo(copyToFile, inFile);
+    } else if (action.startsWith('Copy')) {
+      let i = copyToFile.findIndex(it => it.ingr === '');
+      if (i === -1) {
+        copyToFile.push(new classRecipe());
+        i = copyToFile.length - 1;
+      }
+      const src = inFile[idx];
+      Object.assign(copyToFile[i], { ingr: src.ingr, quantity: src.quantity, unit: src.unit });
+      this.updateDataId(copyToFile);
+    } else if (action === 'Move after') {
+      if (idx < inFile.length - 1) {
+        [inFile[idx], inFile[idx + 1]] = [inFile[idx + 1], inFile[idx]];
+        this.updateDataId(inFile);
+      }
+    } else if (action === 'Move before') {
+      if (idx > 0) {
+        [inFile[idx], inFile[idx - 1]] = [inFile[idx - 1], inFile[idx]];
+        this.updateDataId(inFile);
+      }
+    } else if (action === 'Change value for all') {
+      if (perso === 'Perso') this.isChangeValueForAllPerso.set(true);
+      else this.isChangeValueForAll.set(true);
+      this.currentValue = inFile[idx].quantity;
+      this.currentIngr = inFile[idx].ingr;
+      this.margLeftChangeAll = 30;
+    } else if (action === 'Calculate nutrition facts') {
+      this.calculateNutrition(perso === 'Perso' ? 'perso' : 'std');
     }
   }
-}
 
-updateDataId(record:any){
-  for (var i=0; i<record.length; i++){
-    record[i].id=i;
+  private updateDataId(record: classRecipe[]) {
+    record.forEach((r, i) => (r.id = i));
   }
-}
 
-afterDropDownSel(event:any){
-  this.tabDialog[this.prevDialog]=false;
-  this.resetBooleans();
-  var i=0;
-  if (event.target.id==='selRecipe'){
-    if (event.target.textContent.trim()==="Cancel" ){
+  copyFromTo(toRecord: classRecipe[], fromRecord: classRecipe[]) {
+    toRecord.push(...fromRecord.map((item, i) =>
+      Object.assign(new classRecipe(), { id: i, ingr: item.ingr, quantity: item.quantity, unit: item.unit })));
+  }
 
-    } else {
-        this.recordRecipe=this.tabRecipe[Number(event.target.value)].posRec ;
+  afterDropDownSel(event: any) {
+    this.tabDialog[this.prevDialog] = false;
+    this.resetBooleans();
+
+    const id: string = event.target.id;
+    if (id === 'selRecipe') {
+      if (event.target.textContent.trim() !== 'Cancel') {
+        this.recordRecipe = this.tabRecipe[Number(event.target.value)].posRec;
+      }
+    } else if (id.startsWith('selText')) {
+      this.findId(id);
+      const item = this.tabSearch[this.idNb];
+      if (item && this.recipeFile.recipe[item.posRec]) {
+        this.recordRecipe = item.posRec;
+      }
     }
-  } else if (event.target.id.substring(0,7)==="selText"){
-    this.findId(event.target.id);
-    // search text is selected
-    if (this.recordRecipe!==this.tabSearch[this.idNb].posRec){
-        for (var i=0; i<this.recipeFile.recipe.length && this.recipeFile.recipe[i].name!==this.tabSearch[Number(this.idNb)].name; i++){};
-        if (i<this.recipeFile.recipe.length){
-          this.recordRecipe=this.tabSearch[Number(this.idNb)].posRec;
-        };
-    }
-  
-  } 
-}
+  }
 
-afterDropDownRecipe(event:any){
-  this.tabDialog[this.prevDialog]=false;
-  this.resetBooleans();
-  this.isCreateRecipeName.set(false);
-  this.isDuplicate.set(false);
-  var i=0;
-  this.isActionRecipe.set(false);
-  if (this.tabActionRecipe[event.target.value]==="Cancel"){
+  // -------------------------------------------------------------------------
+  // Recipe actions
+  // -------------------------------------------------------------------------
+  afterDropDownRecipe(event: any) {
+    this.tabDialog[this.prevDialog] = false;
+    this.resetBooleans();
+    this.isDuplicate.set(false);
 
-  } else {
+    const action = this.tabActionRecipe[Number(event.target.value)];
+    if (action === 'Cancel') return;
+
     this.isRecipeModified.set(true);
-    if (this.tabActionRecipe[event.target.value]==="Delete"){
-      
-      this.isDeleteRecipe.set(true);   
-      this.delMsg=this.recipeFile.recipe[this.recordRecipe].name; 
-
-    } else if (this.tabActionRecipe[event.target.value]==="Create" ){
-        this.isRecipeModified.set(true);
+    switch (action) {
+      case 'Delete':
+        this.isDeleteRecipe.set(true);
+        this.delMsg = this.recipeFile.recipe[this.recordRecipe].name;
+        break;
+      case 'Create':
         this.isCreateRecipeName.set(true);
-
-    } else if (this.tabActionRecipe[event.target.value]==="Duplicate"){
-        this.isRecipeModified.set(true);
+        break;
+      case 'Duplicate':
         this.isCreateRecipeName.set(true);
         this.isDuplicate.set(true);
-
-    } else if (this.tabActionRecipe[event.target.value]==="Rename"){
-        this.isChangeRecipeName.set(true); 
-        this.temporaryNameRecipe="";
-     } else  if (this.tabActionRecipe[event.target.value]==="Calculate nut. facts for all recipes"){
+        break;
+      case 'Rename':
+        this.isChangeRecipeName.set(true);
+        this.temporaryNameRecipe = '';
+        break;
+      case 'Calculate nut. facts for all recipes':
         this.calculateNutritionForAllRecipe();
-     } else if (this.tabActionRecipe[event.target.value]==="Transfer nut. facts to CalFat"){
+        break;
+      case 'Transfer nut. facts to CalFat':
         this.transferToCalFat();
-     } else  if (this.tabActionRecipe[event.target.value]==="Translate FR to UK"){
+        break;
+      case 'Translate FR to UK':
         this.translateComments('FrToUk');
-     } else  if (this.tabActionRecipe[event.target.value]==="Translate UK to FR"){
+        break;
+      case 'Translate UK to FR':
         this.translateComments('UkToFr');
-     } else  if (this.tabActionRecipe[event.target.value]==="Reinitialise"){
+        break;
+      case 'Reinitialise':
         this.reInitialieRecipe();
-     }
-    }
-}
-
-debugTrack(index: number, item: any): any {
-    // Log the collection item to see exactly what Angular is evaluating
-    console.log(`Tracking Item at index ${index}:`, item);
-    
-    // Return the value you were originally tracking (e.g., item.id)
-    return item.id; 
-  }
-
-onChangeName(event:any){
-  if (event.target.id==='cancel'){
-    this.isChangeRecipeName.set(false); 
-  } else if (event.target.id==='input'){
-    this.temporaryNameRecipe=event.target.value;
-    //this.temporaryNameRecipe=event.target.value.substring(0,1).toUpperCase()+event.target.value.substring(1).trim();
-  } else if (event.target.id==='save'){
-    this.recipeFile.recipe[this.recordRecipe].name=this.temporaryNameRecipe;
-    this.updateInListType(this.temporaryNameRecipe,'FR','Rename');
-    this.isRecipeModified.set(true);
-    this.isChangeRecipeName.set(false); 
-  }
-}
-
-onChangeValues(event:any){
-  var value = 0;
-  if (event.target.id==="cancel"){this.resetBooleans();}
-  else {
-    this.changeValue=Number(this.SpecificForm.controls["changeValue"].value);
-    if (this.changeValue !==0){
-      
-      if (this.isChangeValueForAll()){
-        value = this.changeValue / this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity ;
-        for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].data.length; i++){
-          this.recipeFile.recipe[this.recordRecipe].data[i].quantity = this.recipeFile.recipe[this.recordRecipe].data[i].quantity * value;
-        }
-      } else if (this.isChangeValueForAllPerso()){
-        value = this.changeValue / this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity;
-        for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].dataPerso.length; i++){
-          this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity = this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity * value;
-        }
-      }
-    }
-  }
-  this.isChangeValueForAll.set(false);
-  this.isChangeValueForAllPerso.set(false);
-  this.currentIngr="";
-  this.currentValue=0;
-
-}
-
-calculateNutrition(type:string){
-  var theTotal=0;
-  if (type==='std' || type==='all'){
-    theTotal=0;
-    this.processNutrition(this.recipeFile.recipe[this.recordRecipe].data);
-    this.recipeFile.recipe[this.recordRecipe].nutrition.calories=this.returnData.outHealthData.total.Calories;
-    this.recipeFile.recipe[this.recordRecipe].nutrition.carbs=this.returnData.outHealthData.total.Carbs;
-    this.recipeFile.recipe[this.recordRecipe].nutrition.sugar=this.returnData.outHealthData.total.Sugar;
-    this.recipeFile.recipe[this.recordRecipe].nutrition.proteins=this.returnData.outHealthData.total.Protein;
-    this.recipeFile.recipe[this.recordRecipe].nutrition.cholesterol=this.returnData.outHealthData.total.Cholesterol;
-    this.recipeFile.recipe[this.recordRecipe].nutrition.satFat=this.returnData.outHealthData.total.Fat.Saturated;
-    this.recipeFile.recipe[this.recordRecipe].nutrition.totalSat=this.returnData.outHealthData.total.Fat.Total;
-    for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].data.length; i++){
-      if (this.recipeFile.recipe[this.recordRecipe].data[i].unit==='gram'){
-        theTotal=theTotal+Number(this.recipeFile.recipe[this.recordRecipe].data[i].quantity);
-      } else {
-        // convert unit
-        for (var j=0; j<this.ConvertUnit.tabConv[this.posGramTabConvert].convert.length && 
-          this.ConvertUnit.tabConv[this.posGramTabConvert].convert[j].toUnit!==this.recipeFile.recipe[this.recordRecipe].data[i].unit; j++ ){}
-          if (j<this.ConvertUnit.tabConv[this.posGramTabConvert].convert.length){
-            theTotal=theTotal+Number(this.recipeFile.recipe[this.recordRecipe].data[i].quantity) / Number(this.ConvertUnit.tabConv[this.posGramTabConvert].convert[j].value);
-          } else { 
-            // error 
-          }
-      }
-    }
-    this.recipeFile.recipe[this.recordRecipe].nutrition.totalWeight=theTotal;
-  } 
-  if (type==='perso' || type==='all'){
-    this.processNutrition(this.recipeFile.recipe[this.recordRecipe].dataPerso);
-    theTotal=0;
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.calories=this.returnData.outHealthData.total.Calories;
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.carbs=this.returnData.outHealthData.total.Carbs;
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.sugar=this.returnData.outHealthData.total.Sugar;
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.proteins=this.returnData.outHealthData.total.Protein;
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.cholesterol=this.returnData.outHealthData.total.Cholesterol;
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.satFat=this.returnData.outHealthData.total.Fat.Saturated;
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.totalSat=this.returnData.outHealthData.total.Fat.Total;
-    for (var i=0; i<this.recipeFile.recipe[this.recordRecipe].dataPerso.length; i++){
-      if (this.recipeFile.recipe[this.recordRecipe].dataPerso[i].unit==='gram'){
-        theTotal=theTotal+Number(this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity);
-      } else {
-        // convert unit
-        for (var j=0; j<this.ConvertUnit.tabConv[this.posGramTabConvert].convert.length && 
-          this.ConvertUnit.tabConv[this.posGramTabConvert].convert[j].toUnit!==this.recipeFile.recipe[this.recordRecipe].dataPerso[i].unit; j++ ){}
-          if (j<this.ConvertUnit.tabConv[this.posGramTabConvert].convert.length){
-            theTotal=theTotal+Number(this.recipeFile.recipe[this.recordRecipe].dataPerso[i].quantity) / Number(this.ConvertUnit.tabConv[this.posGramTabConvert].convert[j].value);
-          } else { 
-            // error 
-          }
-      }
-    }
-    this.recipeFile.recipe[this.recordRecipe].nutritionPerso.totalWeight=theTotal;
-  } 
-  this.isRecipeModified.set(true);
-}
-
-processNutrition(infile:any){
-var myHealth=new DailyReport;
-myHealth.date=new Date();
-var j=0;
-const classMeal=new ClassMeal;
-myHealth.meal.push(classMeal);
-for (var i=0; i<infile.length; i++){
-    const classDish=new ClassDish;
-    myHealth.meal[0].dish.push(classDish);
-    j=myHealth.meal[0].dish.length-1;
-    myHealth.meal[0].dish[j].name=infile[i].ingr;
-    myHealth.meal[0].dish[j].quantity=infile[i].quantity;
-    myHealth.meal[0].dish[j].unit=infile[i].unit;
-}
-this.returnData = CalcFatCalories(this.ConfigCaloriesFat, myHealth, this.ConvertUnit);
-}
-
-// @HostListener('window:mouseup', ['$event'])
-onMouseUp(evt: MouseEvent) {
-    this.modifInput(evt);
-    //this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
-    //this.selectedPositionPage = { x: evt.pageX, y: evt.pageY };
-    //this.selectedPositionClient = { x: evt.clientX, y: evt.clientY };
-  }
-
-filterCalFat(ingr:string){
-  this.tabListCalFat.splice(0,this.tabListCalFat.length);
-  var j=-1;
-  for (var i=0; i<this.ConfigCaloriesFat.tabCaloriesFat.length; i++){
-    for (var k=0; k<this.ConfigCaloriesFat.tabCaloriesFat[i].Content.length; k++){
-      if (this.ConfigCaloriesFat.tabCaloriesFat[i].Content[k].Name.toLowerCase().indexOf(ingr.toLowerCase().trim()) !== -1){
-        j++
-        this.tabListCalFat.push({name:"",serving:"",unit:""})
-        this.tabListCalFat[j].name=this.ConfigCaloriesFat.tabCaloriesFat[i].Content[k].Name;
-        this.tabListCalFat[j].serving=this.ConfigCaloriesFat.tabCaloriesFat[i].Content[k].Serving;
-        this.tabListCalFat[j].unit=this.ConfigCaloriesFat.tabCaloriesFat[i].Content[k].ServingUnit;
-        this.tabListCalFat.sort((a, b) => (a.name < b.name) ? -1 : 1);
-      }
-    }
-  }
-  if (this.tabListCalFat.length!==0){
-    this.isIngrDropDown.set(true);
-    if (this.tabListCalFat.length *  this.heightItemDropDown > this.maxHeightDropDown){
-      this.heightDropDown=this.maxHeightDropDown;
-      this.scrollY='scroll';
-    } else {
-      this.heightDropDown=this.tabListCalFat.length *  this.heightItemDropDown;
-      this.scrollY='hidden';
-    }
-    //this.styleBox=getStyleDropDownContent(this.heightDropDown, 230 );
-    //this.styleBoxOption=getStyleDropDownBox(this.heightDropDown, 230, 0 , 30, this.scrollY);
-  } else {
-    this.isIngrDropDown.set(false);
-  }
-  
-}
-
-translateComments(lang:string){
-  if (this.dicFrEn.length===0){ // French To English
-    for (var i=0; i<this.tabFraEng.length; i++){
-      this.dicFrEn.push({outLang:"",inLang:"",nbWordsOut:0,nbWordsIn:0});
-      this.dicFrEn[i].outLang=this.tabFraEng[i].English;
-      this.dicFrEn[i].inLang=this.tabFraEng[i].French;
-      this.dicFrEn[i].nbWordsOut=this.tabFraEng[i].nbWordsEn;
-      this.dicFrEn[i].nbWordsIn=this.tabFraEng[i].nbWordsFr;
-    }
-    this.dicFrEn.sort((a, b) => (a.nbWordsIn > b.nbWordsIn) ? -1 : 1);
-  }  
-  if (this.dicEnFr.length===0){ // English To French
-    for (var i=0; i<this.tabFraEng.length; i++){
-      this.dicEnFr.push({outLang:"",inLang:"",nbWordsOut:0,nbWordsIn:0});
-      this.dicEnFr[i].outLang=this.tabFraEng[i].French;
-      this.dicEnFr[i].inLang=this.tabFraEng[i].English;
-      this.dicEnFr[i].nbWordsOut=this.tabFraEng[i].nbWordsFr;
-      this.dicEnFr[i].nbWordsIn=this.tabFraEng[i].nbWordsEn;
-    }
-    this.dicEnFr.sort((a, b) => (a.nbWordsIn > b.nbWordsIn) ? -1 : 1);
-  }
-  if (lang==='FrToUk' && this.recipeFile.recipe[this.recordRecipe].comments!==''){
-    this.recipeFile.recipe[this.recordRecipe].commentsEn=this.processTranslation(this.dicFrEn,lang,  this.recipeFile.recipe[this.recordRecipe].comments);
-  } else if (lang==='UkToFr' && this.recipeFile.recipe[this.recordRecipe].commentsEn!==''){
-    this.recipeFile.recipe[this.recordRecipe].comments=this.processTranslation(this.dicEnFr,lang,  this.recipeFile.recipe[this.recordRecipe].commentsEn);
-  }
-}
-
-processTranslation(dico:any,lang:string,inComments:string){
-var iSubstitution:number=-1;
-var i=0;
-var j=0;
-const allZ:string='ZZZZZ';
-var theComments:string="";
-var trouve = false;
-this.tabSpecChar.splice(0,this.tabSpecChar.length);
-this.tabWordsFre.splice(0,this.tabWordsFre.length);
-this.tabWordsEng.splice(0,this.tabWordsEng.length);
-this.tabSubstitution.splice(0,this.tabSubstitution.length);
-
-
-for (i=0; i<inComments.length && trouve===false; i++){
-  j = inComments.substring(i).indexOf("0C");
-  if (j!==-1){
-    inComments=inComments.substring(0,i+j)+this.degreC+inComments.substring(i+j+2);
-    i=i+j+2;
-  } else {trouve=true;}
-}
-theComments=inComments;
-
-for (var i=0; i<dico.length; i++){
-    if (dico[i].nbWordsIn !== 1){ 
-      j=theComments.toLowerCase().indexOf(dico[i].inLang.toLowerCase().trim());
-      if (j!==-1){
-          iSubstitution++;
-          this.tabSubstitution.push({textIn:"", textOut:"",pos:0});
-          this.tabSubstitution[iSubstitution].textEn=dico[i].outLang.trim();;
-          this.tabSubstitution[iSubstitution].textFr=dico[i].inLang.trim();;
-          this.tabSubstitution[iSubstitution].pos=j;
-  
-          if (theComments.substring(j,j+1)===theComments.substring(j,j+1).toUpperCase()){
-            this.tabSubstitution[iSubstitution].textOut=dico[i].outLang.substring(0,1).toUpperCase() + dico[i].outLang.substring(1);
-          }
-          var text= theComments.substring(0,j) + allZ + theComments.substring(j+dico[i].inLang.trim().length);
-          theComments=text;
-      }
+        break;
     }
   }
 
-
-// first: convert long sentences
-var strComments=JSON.stringify(theComments);
-var lineBreak=JSON.stringify(this.returnChar);
-this.tabSubstitution.sort((a, b) => (a.pos < b.pos) ? -1 : 1);
-
-// search special characters
-for (i=1; i<strComments.length; i++){
-  if (strComments.substring(i,i+2)!==lineBreak.substring(9,11)){
-    j=this.specialChar.indexOf(strComments.substring(i,i+1));
-    if (j!== -1){
-      if (this.tabSpecChar.length>1 && this.tabSpecChar[this.tabSpecChar.length-1].pos+this.tabSpecChar[this.tabSpecChar.length-1].char.length === i){
-        this.tabSpecChar[this.tabSpecChar.length-1].char=this.tabSpecChar[this.tabSpecChar.length-1].char+strComments.substring(i,i+1);
-      } else {
-        this.tabSpecChar.push({pos:0,char:""}); 
-        this.tabSpecChar[this.tabSpecChar.length-1].pos=i;
-        this.tabSpecChar[this.tabSpecChar.length-1].char=strComments.substring(i,i+1);
-      }
-    }
-  } else {
-    if (this.tabSpecChar.length>1 && this.tabSpecChar[this.tabSpecChar.length-1].pos+this.tabSpecChar[this.tabSpecChar.length-1].char.length === i){
-      this.tabSpecChar[this.tabSpecChar.length-1].char=this.tabSpecChar[this.tabSpecChar.length-1].char+lineBreak.substring(9,11);
-    } else {
-      this.tabSpecChar.push({pos:0,char:""});  
-      this.tabSpecChar[this.tabSpecChar.length-1].pos=i;
-      this.tabSpecChar[this.tabSpecChar.length-1].char=lineBreak.substring(9,11);
-    }
-    i++;
-  }
-}
-if (this.tabSpecChar[this.tabSpecChar.length-1].pos < strComments.length-1){
-      this.tabSpecChar.push({pos:0,char:""});  
-      this.tabSpecChar[this.tabSpecChar.length-1].pos=strComments.length-1;
-      this.tabSpecChar[this.tabSpecChar.length-1].char="";
-}
-
-var tabMajuscule=[];
-j=-1;
-for (i=0; i<this.tabSpecChar.length; i++){
-  j++;
-  if (i===0){
-    this.tabWordsIn[j]=strComments.substring(1,this.tabSpecChar[i].pos);
-  } else {
-    this.tabWordsIn[j]=strComments.substring(this.tabSpecChar[i-1].pos+this.tabSpecChar[i-1].char.length,this.tabSpecChar[i].pos);
-  }
-  if (this.tabWordsIn[j].substring(0,1)===this.tabWordsIn[j].substring(0,1).toUpperCase()){
-    tabMajuscule[j]=true;
-  } else { tabMajuscule[j]=false;}
-}
-if (strComments.length > this.tabSpecChar[this.tabSpecChar.length-1].pos+2){
-  j++;
-  this.tabWordsIn[j]=strComments.substring(this.tabSpecChar[this.tabSpecChar.length-1].pos+2, strComments.length - 1);
-}
-
-iSubstitution=-1;
-this.convertFrEng(dico);
-
-var myText="";
-iSubstitution=-1;
-var InText="";
-var InLengthText:number=0;
-var newText=theComments;
-var k = 0;
-for (var i=0; i<this.tabWordsIn.length; i++){
-  j= newText.substring(k).indexOf(this.tabWordsIn[i]);
-  if (this.tabWordsOut[i]===allZ){
-    iSubstitution++;
-    InText=this.tabSubstitution[iSubstitution].textOut;
-    InLengthText==this.tabSubstitution[iSubstitution].textIn.length;
-  } else {
-    
-    if (tabMajuscule[i]===true){
-      InText= this.tabWordsOut[i].substring(0,1).toUpperCase() + this.tabWordsOut[i].substring(1);
-    } else {
-      InText= this.tabWordsOut[i];
-    }
-    InLengthText=this.tabWordsIn[i].length;
-  }
-  if (j!==-1){
-    if (i!==0){
-      myText=newText.substring(0, j + k) + InText + 
-      newText.substring(j+k+this.tabWordsIn[i].length);
-    } else {
-      myText=InText + 
-              newText.substring(j + k +this.tabWordsIn[i].length);
-    }
-    newText=myText;
-    k = k + j + this.tabWordsOut[i].length;
-      
-  }
-}
-return(newText);
-
-}
-
-convertFrEng(dico:any){
-  var i = 0;
-  var j = 0;
-  for (j=0; j<this.tabWordsIn.length; j++){
-    for (i=0; i<dico.length && dico[i].inLang.trim().toLowerCase()!==this.tabWordsIn[j].trim().toLowerCase(); i++){};
-    if (i<dico.length){
-      this.tabWordsOut[j]=dico[i].outLang;
-
-    } else { // translation not found keep the word 
-      this.tabWordsOut[j]=this.tabWordsIn[j];
-
-    }
-  }
-}
-
-nameRecipe(event:any){
-  var trouve= false;
-  if (event.target.id==='input'){
-    this.onNameInputChange(event);
-  } else if (event.target.id==='save'){
-      this.onSaveRecipe();
-      this.isDuplicate.set(false);
-      this.isCreateRecipeName.set(false);
+  onChangeName(event: any) {
+    const id = event.target.id;
+    if (id === 'cancel') {
+      this.isChangeRecipeName.set(false);
+    } else if (id === 'input') {
+      this.temporaryNameRecipe = event.target.value;
+    } else if (id === 'save') {
+      const rec = this.recipeFile.recipe[this.recordRecipe];
+      const oldName = rec.name;
+      rec.name = this.temporaryNameRecipe;
+      this.updateInListType(oldName, 'FR', 'Rename', this.temporaryNameRecipe);
       this.isRecipeModified.set(true);
-  } else if (event.target.id==='clear'){
-      this.temporaryNameRecipe="";
-  } else if (event.target.id==='cancel'){
-      this.recipeFile.recipe.splice(this.recordRecipe,1);
-      this.temporaryNameRecipe="";
-      this.recordRecipe=0;
+      this.isChangeRecipeName.set(false);
+      this.rerunSearch();
+    }
+  }
+
+  nameRecipe(event: any) {
+    switch (event.target.id) {
+      case 'input':
+        this.temporaryNameRecipe = (event.target as HTMLInputElement).value;
+        break;
+      case 'save':
+        this.onSaveRecipe();
+        this.isDuplicate.set(false);
+        this.isCreateRecipeName.set(false);
+        this.isRecipeModified.set(true);
+        break;
+      case 'clear':
+        this.temporaryNameRecipe = '';
+        break;
+      case 'cancel':
+        // the new recipe is only added on 'save', so there is nothing to remove here
+        this.temporaryNameRecipe = '';
+        this.isDuplicate.set(false);
+        this.resetBooleans();
+        break;
+    }
+  }
+
+  private onSaveRecipe(): void {
+    const recipes = this.recipeFile.recipe;
+    const sourceIndex = this.recordRecipe;
+
+    const newRecord = new classRecordRecipe();
+    newRecord.data.push(new classRecipe());
+    newRecord.dataPerso.push(new classRecipe());
+    recipes.push(newRecord);
+    this.recordRecipe = recipes.length - 1;
+
+    if (this.isCreateRecipeName() && !this.isDuplicate()) {
+      const min = this.minHeightCommBox;
+      Object.assign(newRecord, {
+        name: '',
+        commentsBox: min, commentsPersoBox: min, commentsEnBox: min,
+        materielBox: min, materielPersoBox: min,
+      });
+    } else {
+      this.fillInRecord(recipes[sourceIndex], newRecord);
+    }
+
+    this.tabUpdateRef.push({ init: -1 });
+    newRecord.name = this.temporaryNameRecipe;
+
+    // listTypeRecipe[].recipe[] holds recipe names
+    const matchingType = this.recipeFile.listTypeRecipe.find(
+      t => t.Fr === newRecord.typeFr && t.En === newRecord.typeEn);
+    if (matchingType && !matchingType.recipe.includes(newRecord.name)) {
+      matchingType.recipe.push(newRecord.name);
+    }
+  }
+
+  delRecipe(event: any) {
+    this.isDeleteRecipe.set(false);
+    if (event.target.id !== 'YesDelConfirm') return;
+
+    this.isRecipeModified.set(true);
+    this.updateInListType(this.recipeFile.recipe[this.recordRecipe].name, 'FR', 'Delete');
+    this.tabUpdateRef.splice(this.recordRecipe, 1);
+    this.recipeFile.recipe.splice(this.recordRecipe, 1);
+    this.recordRecipe = 0;
+    this.refreshFileType(this.recipeFile);
+    this.isListTypeUpdated.set(true);
+
+    if (this.isSearchText) {
+      this.rerunSearch();
+      if (this.tabSearch.length > 0) this.recordRecipe = this.tabSearch[0].posRec;
+    }
+  }
+
+  reInitialieRecipe() {
+    const ref = this.tabUpdateRef[this.recordRecipe];
+    if (ref && ref.init !== -1) {
+      this.fillInRecord(this.initialRecipeFile.recipe[ref.init], this.recipeFile.recipe[this.recordRecipe]);
+    }
+  }
+
+  findId(id: string) {
+    const i = id.indexOf('-');
+    if (i === -1) {
+      this.idText = id;
+      this.idNb = 0;
+    } else {
+      this.idText = id.substring(0, i);
+      this.idNb = Number(id.substring(i + 1));
+    }
+  }
+
+  onChangeValues(event: any) {
+    if (event.target.id === 'cancel') {
       this.resetBooleans();
-  }
-}
+    } else {
+      this.changeValue = Number(this.SpecificForm.controls.changeValue.value);
+      const rec = this.recipeFile.recipe[this.recordRecipe];
+      const list = this.isChangeValueForAll() ? rec.data
+        : this.isChangeValueForAllPerso() ? rec.dataPerso
+        : null;
+      const base = list ? Number(list[this.idNb]?.quantity) : 0;
 
-// 1. Separate the text input logic for better clarity
-onNameInputChange(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  this.temporaryNameRecipe = input.value;
-}
-
-// 2. Separate the save logic
-onSaveRecipe(): void {
-  const recipes = this.recipeFile.recipe;
-  const saveRecordIndex = this.recordRecipe;
-
-  // Create and push new recipe structure
-  const newRecord = new classRecordRecipe();
-  newRecord.data.push(new classRecipe());
-  newRecord.dataPerso.push(new classRecipe());
-  
-  recipes.push(newRecord);
-  this.recordRecipe = recipes.length - 1;
-  const currentRecipe = recipes[this.recordRecipe];
-
-  // Populate data fields
-  if (this.isCreateRecipeName() && !this.isDuplicate()) {
-    currentRecipe.name = "";
-    currentRecipe.commentsBox = this.minHeightCommBox;
-    currentRecipe.commentsPersoBox = this.minHeightCommBox;
-    currentRecipe.commentsEnBox = this.minHeightCommBox;
-    currentRecipe.materielBox = this.minHeightCommBox;
-    currentRecipe.materielPersoBox = this.minHeightCommBox;
-  } else {
-    this.fillInRecord(recipes[saveRecordIndex], currentRecipe);
-  }
-
-  // Push update references cleanly
-  this.tabUpdateRef.push({ init: -1 });
-  currentRecipe.name = this.temporaryNameRecipe;
-
-  // Optimize lookups with modern Array methods instead of 'for' loops
-  if (!this.isDuplicate()) {
-    const matchingType = this.recipeFile.listTypeRecipe.find(type => 
-      type.Fr === currentRecipe.typeFr && type.En === currentRecipe.typeEn
-    );
-
-    if (matchingType) {
-      matchingType.recipe.push(currentRecipe); // Completed your truncated code logic
-    }
-  }
-}
-
-
-delRecipe(event:any){
-  this.isDeleteRecipe.set(false);
-  if (event.target.id==='YesDelConfirm'){
-    this.isRecipeModified.set(true);
-    this.updateInListType(this.recipeFile.recipe[this.recordRecipe].name,'FR','Delete');
-    this.tabUpdateRef.splice(this.recordRecipe,1);
-    this.recipeFile.recipe.splice(this.recordRecipe,1); // delete the whole recipe 
-    this.recordRecipe=0;
-    this.refreshFileType(this.recipeFile);
-    this.isListTypeUpdated.set(true);
-    if (this.isSearchText===true){
-      this.event.target.id='search';
-      this.event.target.value=this.textToSearch;
-      this.searchText(this.event);
-      if (this.tabSearch.length>0){
-        this.recordRecipe=this.tabSearch[0].posRec;
-      }
-    } 
-
-  }
-}
-
-findId(id:string){
-  const i=id.indexOf('-');
-  if (i===-1){
-    this.idText=id;
-    this.idNb=0;
-  } else {
-    this.idText=id.substring(0,i);
-    this.idNb=Number(id.substring(i+1));
-  }
-}
-
-searchText(event:any){
-  this.resetBooleans();
-  var j=-1;
-  if (event.target.id==='search'){
-    this.isSearchText=true;
-    this.textToSearch = event.target.value.substring(0,1).toUpperCase() + event.target.value.substring(1).trim();
-    var theText= event.target.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-    this.tabSearch.splice(0,this.tabSearch.length);
-
-    for (var i=0; i<this.recipeFile.recipe.length; i++){
-      if (this.radioSelect===-1 || (this.radioSelect!==-1 && this.recipeFile.listTypeRecipe[this.radioSelect].En===this.recipeFile.recipe[i].typeEn && 
-        this.recipeFile.listTypeRecipe[this.radioSelect].Fr===this.recipeFile.recipe[i].typeFr)){
-        if (this.recipeFile.recipe[i].name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(theText)!==-1 || theText===""){
-       
-       // if (this.selectedTypeFr.toLowerCase().normalize('NFD')===this.recipeFile.recipe[i].typeFr.toLowerCase().normalize('NFD') || this.selectedTypeFr==="ALL" || this.selectedTypeFr===""){
-          this.tabSearch.push({name:"",posRec:0})
-          j++
-          this.tabSearch[j].name=this.recipeFile.recipe[i].name.trim();
-          this.tabSearch[j].posRec=i;
-        //}
-        }
+      if (list && this.changeValue !== 0 && base) {
+        const factor = this.changeValue / base;
+        list.forEach(item => (item.quantity = Number(item.quantity) * factor));
       }
     }
-    this.tabSearch.sort((a, b) => (a.name < b.name) ? -1 : 1);
-    if (this.tabSearch.length>9){
-      this.heightSearchDropdown=200;
-      this.searchScroll="scroll";
-
-    } else {
-      this.heightSearchDropdown=25*this.tabSearch.length;
-      this.searchScroll="hidden";
-    }
-  } else if (event.target.id==='cancel'){
-    this.isSearchText=false;
-    this.textToSearch = "";
-    this.heightSearchDropdown=0;
-    this.searchScroll="hidden";
-    this.tabSearch.splice(0,this.tabSearch.length);
-    this.resetBooleans();
-  }
-}
-
-modifInput(event:any){
-  this.resetBooleans();
-  this.findId(event.target.id);
-  this.isIngrDropDown.set(false);
-  this.isRecipeModified.set(true);
-  if (this.idText==="ingr"){
-      this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr=event.target.value;
-      this.ingrType=this.idText;
-      this.filterCalFat(event.target.value);
-  } else if (this.idText==="selingr"){
-    this.recipeFile.recipe[this.recordRecipe].data[this.idNb].ingr=this.tabListCalFat[event.target.value].name.trim();
-  } else if (this.idText==="quantity"){
-    this.recipeFile.recipe[this.recordRecipe].data[this.idNb].quantity=event.target.value;
-  } else if (this.idText==="unit"){
-    this.recipeFile.recipe[this.recordRecipe].data[this.idNb].unit=event.target.value;
-  } else if (this.idText==="ingrPerso"){
-    this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr=event.target.value;
-    this.ingrType=this.idText;
-    this.filterCalFat(event.target.value);
-  } else if (this.idText==="selingrPerso"){
-    this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].ingr=this.tabListCalFat[event.target.value].name.trim();
-  } else if (this.idText==="quantityPerso"){
-    this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].quantity=event.target.value;
-  } else if (this.idText==="unitPerso"){
-    this.recipeFile.recipe[this.recordRecipe].dataPerso[this.idNb].unit=event.target.value;
-  } else if (this.idText==="comments"){
-    this.recipeFile.recipe[this.recordRecipe].comments=event.target.value;
-    //this.calculateHeight();
-  } else if (this.idText==="commentsEn"){
-    this.recipeFile.recipe[this.recordRecipe].commentsEn=event.target.value;
-    //this.calculateHeight();
-  } else if (this.idText==="commentsPerso"){
-    this.recipeFile.recipe[this.recordRecipe].commentsPerso=event.target.value;
-    //this.calculateHeight();
-  } else if (this.idText==="materiel"){
-    this.recipeFile.recipe[this.recordRecipe].materiel=event.target.value;
-    //this.calculateHeight();
-  } else if (this.idText==="materielPerso"){
-    this.recipeFile.recipe[this.recordRecipe].materielPerso=event.target.value;
-    //this.calculateHeight();
-  }
-  
-}
-
-dropdownComments(event:any){
-  this.resetBooleans();
-  this.isActionComments.set(false); 
-  if (this.tabActionComments[event.target.value]==="Translate FR to UK"){
-    this.translateComments('FrToUk');
-   } else if (this.tabActionComments[event.target.value]==="Translate UK to FR"){
-    this.translateComments('UkToFr');
-   } else if (this.tabActionComments[event.target.value]==="Zoom in - Std box"){
-    this.recipeFile.recipe[this.recordRecipe].commentsBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].commentsBox, this.zoomInRate, "in");
-   } else if (this.tabActionComments[event.target.value]==="Zoom out - Std box"){
-    this.recipeFile.recipe[this.recordRecipe].commentsBox=this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].commentsBox, this.zoomOutRate, "out");
-   } else if (this.tabActionComments[event.target.value]==="Zoom in - English box"){
-    this.recipeFile.recipe[this.recordRecipe].commentsEnBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].commentsEnBox, this.zoomInRate, "in");
-   } else if (this.tabActionComments[event.target.value]==="Zoom out - English box"){
-    this.recipeFile.recipe[this.recordRecipe].commentsEnBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].commentsEnBox, this.zoomOutRate, "out");
-   } else if (this.tabActionComments[event.target.value]==="Zoom in - Perso box"){
-    this.recipeFile.recipe[this.recordRecipe].commentsPersoBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].commentsPersoBox, this.zoomInRate, "in");
-   } else if (this.tabActionComments[event.target.value]==="Zoom out - Perso box"){
-    this.recipeFile.recipe[this.recordRecipe].commentsPersoBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].commentsPersoBox, this.zoomOutRate, "out");
-   } else if (this.tabActionComments[event.target.value]==="Zoom in - Ustens. box"){
-    this.recipeFile.recipe[this.recordRecipe].materielBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].materielBox, this.zoomInRate, "in")
-   } else if (this.tabActionComments[event.target.value]==="Zoom out - Ustens. box"){
-    this.recipeFile.recipe[this.recordRecipe].materielBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].materielBox, this.zoomOutRate, "out");
-   } else if (this.tabActionComments[event.target.value]==="Zoom in - Ustens. Perso box"){
-    this.recipeFile.recipe[this.recordRecipe].materielPersoBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].materielPersoBox, this.zoomInRate, "in");
-   } else if (this.tabActionComments[event.target.value]==="Zoom out - Ustens. Perso box"){
-    this.recipeFile.recipe[this.recordRecipe].materielPersoBox= this.calculateZoom(this.recipeFile.recipe[this.recordRecipe].materielPersoBox, this.zoomOutRate, "out");
-   } 
-}
-
-calculateZoom(inRecord:any, rate:number, zoom:string){
-  var theHeight=0;
-  if (inRecord===0){
-    theHeight = this.minHeightCommBox;
-  } else
-  if (zoom==="in"){
-    theHeight=inRecord * rate;
-    if (theHeight < this.minHeightCommBox){
-      theHeight = this.minHeightCommBox;
-    }
-  } else if (zoom==="out"){
-    if (inRecord<this.maxHeightCommBox/2.5){
-      theHeight=inRecord * 1.8;
-    } else {
-      theHeight=inRecord * rate;
-    }
-    if (theHeight > this.maxHeightCommBox){
-        theHeight = this.maxHeightCommBox;
-    }
-  }
-  return(theHeight);
-}
-
-selStdPer(j:number){
-  if (j===0){
-    if (this.theStdPersoDisplay[0]==='Y'){
-      this.theStdPersoDisplay[0]='N';
-    } else {
-      this.theStdPersoDisplay[0]='Y';
-    }
-  } else if (j===1){
-    if (this.theStdPersoDisplay[1]==='Y'){
-      this.theStdPersoDisplay[1]='N';
-    } else {
-      this.theStdPersoDisplay[1]='Y';
-    }
-  }
-}
-
-selEyeNutFact(event:any){
-  if (event.target.id==='eyeStd'){
-    if (this.eyeNutritionFact[0]==='Y'){
-      this.eyeNutritionFact[0]='N';
-    } else {
-      this.eyeNutritionFact[0]='Y';
-    }
-  } else if (event.target.id==='eyePerso'){
-    if (this.eyeNutritionFact[1]==='Y'){
-      this.eyeNutritionFact[1]='N';
-    } else {
-      this.eyeNutritionFact[1]='Y';
-    }
-  }
-}
-
-fillFileRecord(inFile:any,outFile:any){
-  outFile.fileType=inFile.fileType;
-  for (var i=0; i<inFile.listTypeRecipe.length; i++){
-      outFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
-      outFile.listTypeRecipe[i].Fr=inFile.listTypeRecipe[i].Fr;
-      outFile.listTypeRecipe[i].En=inFile.listTypeRecipe[i].En;
-      for (var j=0; j<inFile.listTypeRecipe[i].recipe.length; j++){
-        outFile.listTypeRecipe[i].recipe[j]=inFile.listTypeRecipe[i].recipe[j];
-      }
+    this.isChangeValueForAll.set(false);
+    this.isChangeValueForAllPerso.set(false);
+    this.currentIngr = '';
+    this.currentValue = 0;
   }
 
-  for (var i=0; i<inFile.recipe.length; i++){
-      const classRecord=new classRecordRecipe;
-      outFile.recipe.push(classRecord);
-      this.fillInRecord(inFile.recipe[i],outFile.recipe[outFile.recipe.length-1]);
-    }
-  }
-
-reInitialieRecipe(){
-  if (this.tabUpdateRef[this.recordRecipe]!==-1){
-    this.recipeFile.recipe[this.recordRecipe].data.splice(0,this.recipeFile.recipe[this.recordRecipe].data.length);
-    this.recipeFile.recipe[this.recordRecipe].dataPerso.splice(0,this.recipeFile.recipe[this.recordRecipe].dataPerso.length);
-    this.fillInRecord(this.initialRecipeFile.recipe[this.tabUpdateRef[this.recordRecipe].init],this.recipeFile.recipe[this.recordRecipe]);
-  }
-}
-onInputType(event: Event): void {
-  this.resetBooleans();
-  
-  const target = event.target as HTMLInputElement;
-  if (!target) return;
-
-  const lang = target.id; // 'Fr' or 'En'
-  const value = target.value;
-
-  if (lang === 'Fr' || lang === 'En') {
-    const targetLang = lang === 'Fr' ? 'En' : 'Fr';
-    const result = this.findItemDico(value, lang, targetLang);
-
-    if (result !== -1) {
-      const currentRecipe = this.recipeFile.recipe[this.recordRecipe];
-      currentRecipe.typeEn = this.tabFraEng[result].English;
-      currentRecipe.typeFr = this.tabFraEng[result].French;
-    } else {
-      // Dynamic error message based on the source language
-      const missingLang = lang === 'Fr' ? 'English' : 'French';
-      this.errType = `No ${missingLang} translation of ${value} found in the dictionary`;
-    }
-
-    // Dynamically set isListTypeFr or isListTypeEn
-    if (this.tabDropdownType.length > 1) {
-      this[`isListType${lang}` as keyof this] = true as any;
-    }
-  }
-
-  // Handle successful dictionary matches
-  if (this.errType === "") {
-    this.refreshFileType(this.recipeFile);
-    this.isListTypeUpdated.set(true);
+  // -------------------------------------------------------------------------
+  // Nutrition
+  // -------------------------------------------------------------------------
+  calculateNutrition(type: NutritionTarget, index: number = this.recordRecipe) {
+    const r = this.recipeFile.recipe[index];
+    if (type !== 'perso') this.computeNutrition(r.data, r.nutrition);
+    if (type !== 'std') this.computeNutrition(r.dataPerso, r.nutritionPerso);
     this.isRecipeModified.set(true);
   }
 
-  this.createTabDropdownType(this.recipeFile.listTypeRecipe, lang.toUpperCase(), value);
-
-  // Fixed context bug: changed `this.event` to `target` reference
-  if (this.isSearchText) {
-    target.id = 'search';
-    target.value = this.textToSearch;
-    this.searchText(event); 
-  }
-}
-
-findItemDico(item:string, fromLang:string, toLang:string){
-  if (fromLang==="Fr" && toLang==="En"){
-    for (var i=0; i<this.tabFraEng.length && this.tabFraEng[i].French.toUpperCase().trim()!==item.toUpperCase().trim(); i++){}
-    if (i<this.tabFraEng.length){
-      return (i);
-    }
-  } else if (fromLang==="En" && toLang==="Fr"){
-    for (var i=0; i<this.tabFraEng.length && this.tabFraEng[i].English!==item; i++){}
-    if (i<this.tabFraEng.length){
-      return (i);
-    }
-  }
-  return (-1);
-}
-
-updateInListType(recipeName: string, lang: 'FR' | 'UK', action: 'Delete' | 'Rename'): void {
-  this.isRecipeModified.set(true);
-
-  const recipeFile = this.recipeFile;
-  const currentRecipe = recipeFile.recipe[this.recordRecipe];
-  
-  // 1. Find the target type index cleanly using findIndex
-  const targetType = lang === 'FR' ? currentRecipe.typeFr : currentRecipe.typeEn;
-  const typeIndex = recipeFile.listTypeRecipe.findIndex(item => 
-    lang === 'FR' ? item.Fr === targetType : item.En === targetType
-  );
-
-  // If the type is not found, exit early
-  if (typeIndex === -1) return;
-
-  const matchedTypeItem = recipeFile.listTypeRecipe[typeIndex];
-  let theValue = 'ALL';
-
-  if (action === 'Delete') {
-    if (matchedTypeItem.recipe.length === 1) {
-      // Only one recipe exists: remove the whole type category
-      recipeFile.listTypeRecipe.splice(typeIndex, 1);
-    } else {
-      // Multiple recipes exist: remove just the specific recipe
-      const recipeIndex = matchedTypeItem.recipe.indexOf(recipeName);
-      if (recipeIndex !== -1) {
-        matchedTypeItem.recipe.splice(recipeIndex, 1);
-      }
-      theValue = lang === 'FR' ? matchedTypeItem.Fr : matchedTypeItem.En;
-    }
-  } else if (action === 'Rename') {
-    const recipeIndex = matchedTypeItem.recipe.indexOf(recipeName);
-    if (recipeIndex !== -1) {
-      // NOTE: Fixed the out-of-bounds bug [recipeIndex - 1] from the original code
-      matchedTypeItem.recipe[recipeIndex] = recipeName; 
-    }
-    theValue = lang === 'FR' ? matchedTypeItem.Fr : matchedTypeItem.En;
-  }
-
-  // 2. Update UI Dropdowns
-  this.createTabDropdownType(recipeFile.listTypeRecipe, lang, theValue);
-
-  // 3. Re-trigger search cleanly if active
-  if (this.isSearchText) {
-    this.searchText({
-      target: { id: 'search', value: this.textToSearch }
+  private computeNutrition(items: classRecipe[], target: classNutrition) {
+    this.processNutrition(items);
+    const t = this.returnData.outHealthData.total;
+    Object.assign(target, {
+      calories: t.Calories,
+      carbs: t.Carbs,
+      sugar: t.Sugar,
+      proteins: t.Protein,
+      cholesterol: t.Cholesterol,
+      satFat: t.Fat.Saturated,
+      totalSat: t.Fat.Total,
+      totalWeight: this.totalGrams(items),
     });
   }
-}
 
-createTabDropdownType(record: any[], lang: string, text: string): void {
-  // 1. Extract dynamic language property key
-  const langKey = lang === 'FR' ? 'Fr' : 'En';
-  
-  // 2. Filter, map, and remove duplicates using a Set
-  const uniqueNames = new Set<string>();
-  
-  for (const item of record) {
-    const value = item?.[langKey];
-    if (value && value.includes(text)) {
-      uniqueNames.add(value.trim());
+  private totalGrams(items: classRecipe[]): number {
+    const conv = this.ConvertUnit.tabConv[this.posGramTabConvert]?.convert ?? [];
+    return items.reduce((sum, it) => {
+      const q = Number(it.quantity);
+      if (it.unit === 'gram') return sum + q;
+      const c = conv.find(x => x.toUnit === it.unit);
+      return c ? sum + q / Number(c.value) : sum;
+    }, 0);
+  }
+
+  processNutrition(infile: classRecipe[]) {
+    const report = new DailyReport();
+    report.date = new Date();
+    const meal = new ClassMeal();
+    report.meal.push(meal);
+    for (const item of infile) {
+      const dish = new ClassDish();
+      dish.name = item.ingr;
+      dish.quantity = item.quantity;
+      dish.unit = item.unit;
+      meal.dish.push(dish);
+    }
+    this.returnData = calcFatCalories(this.ConfigCaloriesFat, report, this.ConvertUnit);
+  }
+
+  calculateNutritionForAllRecipe() {
+    for (let i = 0; i < this.recipeFile.recipe.length; i++) {
+      this.calculateNutrition('all', i);
+    }
+    this.recipeFile.updatedAt = strDateTime();
+    this.message = '';
+    this.isRecipeModified.set(true);
+  }
+
+  transferToCalFat() {
+    const r = this.recipeFile.recipe[this.recordRecipe];
+    const tabs = this.ConfigCaloriesFat.tabCaloriesFat;
+
+    let group = tabs.find(t => t.Type === 'Recipe');
+    if (!group) {
+      group = new ClassCaloriesFat();
+      group.Type = 'Recipe';
+      tabs.push(group);
+    }
+
+    const key = r.name.toLowerCase().trim();
+    let item = group.Content.find(c => c.Name.toLowerCase().trim() === key);
+    if (!item) {
+      item = new ClassItem();
+      group.Content.push(item);
+    }
+
+    const n = r.nutrition;
+    item.Name = key;
+    item.Serving = n.totalWeight;
+    item.ServingUnit = 'gram';
+    item.Calories = n.calories;
+    item.Protein = n.proteins;
+    item.Carbs = n.carbs;
+    item.Sugar = n.sugar;
+    item.Cholesterol = n.cholesterol;
+    item.GlyIndex = 0;
+    item.Fat.Saturated = n.satFat;
+    item.Fat.Total = n.totalSat;
+
+    this.ConfigCaloriesFat.updatedAt = strDateTime();
+    this.putRecord(
+      this.identification.configFitness.bucket,
+      this.identification.configFitness.files.calories,
+      this.ConfigCaloriesFat);
+  }
+
+  // -------------------------------------------------------------------------
+  // Ingredient search / input
+  // -------------------------------------------------------------------------
+  onMouseUp(evt: MouseEvent) {
+    this.modifInput(evt);
+  }
+
+  filterCalFat(ingr: string) {
+    const q = ingr.toLowerCase().trim();
+    this.tabListCalFat = this.ConfigCaloriesFat.tabCaloriesFat
+      .flatMap(t => t.Content)
+      .filter(c => c.Name.toLowerCase().includes(q))
+      .map(c => ({ name: c.Name, serving: c.Serving, unit: c.ServingUnit }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const show = this.tabListCalFat.length > 0;
+    this.isIngrDropDown.set(show);
+    if (show) {
+      const h = this.tabListCalFat.length * this.heightItemDropDown;
+      this.heightDropDown = Math.min(h, this.maxHeightDropDown);
+      this.scrollY = h > this.maxHeightDropDown ? 'scroll' : 'hidden';
     }
   }
 
-  // 3. Rebuild the dropdown array
-  this.tabDropdownType = [{ name: 'Cancel' }, ...Array.from(uniqueNames).map(name => ({ name }))];
+  modifInput(event: any) {
+    this.resetBooleans();
+    this.findId(event.target.id);
+    this.isIngrDropDown.set(false);
+    this.isRecipeModified.set(true);
 
-  // 4. UI Layout Logic
-  const count = this.tabDropdownType.length;
+    const rec = this.recipeFile.recipe[this.recordRecipe];
+    if (!rec) return;
+    const value = event.target.value;
 
-  if (count > 8) {
-      this.theHeight = 240;
-    } else {
-      this.theHeight = count * 30;
+    if (this.textFields.has(this.idText)) {
+      (rec as any)[this.idText] = value;
+      return;
     }
-}
 
-onDropdownListType(event:any){
-  if (event.target.textContent.trim()==='Cancel'){
-    this.tabDialog[this.prevDialog]===false;
-    this.idText="";
-    this.isActionRecipe.set(false);
-  } else if (this.isListTypeFr==true){
-    this.updateTypeName(this.recipeFile,event.target.textContent.trim(),this.recipeFile.recipe[this.recordRecipe].typeFr,"Fr",this.recipeFile.recipe[this.recordRecipe].name);
-    this.recipeFile.recipe[this.recordRecipe].typeFr=event.target.textContent.trim();
-    
-  } else {
-    this.updateTypeName(this.recipeFile,event.target.textContent.trim(),this.recipeFile.recipe[this.recordRecipe].typeEn,"En",this.recipeFile.recipe[this.recordRecipe].name);
-    this.recipeFile.recipe[this.recordRecipe].typeEn=event.target.textContent.trim();
+    const perso = this.idText.endsWith('Perso');
+    const field = perso ? this.idText.slice(0, -'Perso'.length) : this.idText;
+    const list = perso ? rec.dataPerso : rec.data;
+    const row = list[this.idNb];
+
+    switch (field) {
+      case 'ingr':
+        row.ingr = value;
+        this.ingrType = this.idText;
+        this.filterCalFat(value);
+        break;
+      case 'selingr':
+        row.ingr = this.tabListCalFat[value].name.trim();
+        break;
+      case 'quantity':
+        row.quantity = value;
+        break;
+      case 'unit':
+        row.unit = value;
+        break;
+    }
   }
-  this.resetBooleans();
-}
 
-updateTypeName(inFile:any,newType:string,oldType:string,lang:string,recipeName:string){
-  this.isRecipeModified.set(true);
-  var trouve=false;
-  var iType=0;
-  if (oldType===""){
-    if (lang==='Fr'){
-        // search if En type exists
-        for (var i=0; i<inFile.listTypeRecipe.length && trouve===false; i++){
-          if (inFile.listTypeRecipe[i].En===inFile.recipe[this.recordRecipe].typeEn && inFile.listTypeRecipe[i].Fr===''){
-            trouve=true;
-            iType=i;
-          }
-        };
-        if (trouve===true){
-          inFile.listTypeRecipe[iType].Fr=newType;
-        } else {
-          inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
-          inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].Fr=newType;
-          inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].En="";
-        }
-    } else {
-      for (var i=0; i<inFile.listTypeRecipe.length && trouve===false; i++){
-        if (inFile.listTypeRecipe[i].Fr===inFile.recipe[this.recordRecipe].typeFr && inFile.listTypeRecipe[i].En===''){
-          trouve=true;
-          iType=i;
-        }
-      };
-      if (trouve===true){
-        inFile.listTypeRecipe[iType].En=newType;
+  // -------------------------------------------------------------------------
+  // Comments boxes
+  // -------------------------------------------------------------------------
+  dropdownComments(event: any) {
+    this.resetBooleans();
+    this.isActionComments.set(false);
+
+    const action = this.tabActionComments[event.target.value];
+    if (action === 'Translate FR to UK') return this.translateComments('FrToUk');
+    if (action === 'Translate UK to FR') return this.translateComments('UkToFr');
+
+    const m = action?.match(/^Zoom (in|out) - (.+)$/);
+    const key = m && this.zoomBoxes[m[2]];
+    if (m && key) {
+      const rec = this.recipeFile.recipe[this.recordRecipe];
+      const dir = m[1] as 'in' | 'out';
+      rec[key] = this.calculateZoom(rec[key], dir === 'in' ? this.zoomInRate : this.zoomOutRate, dir);
+    }
+  }
+
+  calculateZoom(inRecord: number, rate: number, zoom: string): number {
+    if (inRecord === 0) return this.minHeightCommBox;
+
+    if (zoom === 'in') {
+      return Math.max(inRecord * rate, this.minHeightCommBox);
+    }
+    const factor = inRecord < this.maxHeightCommBox / 2.5 ? 1.8 : rate;
+    return Math.min(inRecord * factor, this.maxHeightCommBox);
+  }
+
+  selStdPer(j: number) {
+    if (j === 0 || j === 1) {
+      this.theStdPersoDisplay[j] = this.theStdPersoDisplay[j] === 'Y' ? 'N' : 'Y';
+    }
+  }
+
+  selEyeNutFact(event: any) {
+    const j = event.target.id === 'eyeStd' ? 0 : event.target.id === 'eyePerso' ? 1 : -1;
+    if (j !== -1) {
+      this.eyeNutritionFact[j] = this.eyeNutritionFact[j] === 'Y' ? 'N' : 'Y';
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Translation
+  // -------------------------------------------------------------------------
+  translateComments(lang: string) {
+    if (this.dicFrEn.length === 0) {
+      this.dicFrEn = this.buildDico('French', 'English', 'nbWordsFr', 'nbWordsEn');
+    }
+    if (this.dicEnFr.length === 0) {
+      this.dicEnFr = this.buildDico('English', 'French', 'nbWordsEn', 'nbWordsFr');
+    }
+
+    const rec = this.recipeFile.recipe[this.recordRecipe];
+    if (lang === 'FrToUk' && rec.comments !== '') {
+      rec.commentsEn = this.processTranslation(this.dicFrEn, rec.comments);
+    } else if (lang === 'UkToFr' && rec.commentsEn !== '') {
+      rec.comments = this.processTranslation(this.dicEnFr, rec.commentsEn);
+    }
+  }
+
+  private buildDico(inKey: string, outKey: string, inCount: string, outCount: string) {
+    return this.tabFraEng
+      .map(e => ({
+        outLang: e[outKey],
+        inLang: e[inKey],
+        nbWordsOut: e[outCount],
+        nbWordsIn: e[inCount],
+      }))
+      .sort((a, b) => b.nbWordsIn - a.nbWordsIn); // longest phrases first
+  }
+
+  private wordMap(dico: any[]): Map<string, string> {
+    let map = this.wordMaps.get(dico);
+    if (!map) {
+      map = new Map<string, string>();
+      for (const d of dico) {
+        const k = String(d.inLang ?? '').trim().toLowerCase();
+        if (k && !map.has(k)) map.set(k, d.outLang);
+      }
+      this.wordMaps.set(dico, map);
+    }
+    return map;
+  }
+
+  private capitalise(s: string): string {
+    return s.charAt(0).toUpperCase() + s.substring(1);
+  }
+
+  processTranslation(dico: any[], inComments: string): string {
+    // "0C" is typed as a shortcut for the degree symbol
+    let text = inComments.replace(/0C/g, DEGREE_C);
+
+    // 1. multi-word expressions are replaced first by placeholders
+    const substitutions: string[] = [];
+    for (const d of dico) {
+      const phrase = String(d.inLang ?? '').trim();
+      if (d.nbWordsIn === 1 || !phrase) continue;
+      const re = new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      text = text.replace(re, (match: string) => {
+        const out = String(d.outLang).trim();
+        substitutions.push(/^\p{Lu}/u.test(match) ? this.capitalise(out) : out);
+        return `ZZZZZ${substitutions.length - 1}ZZZZZ`;
+      });
+    }
+
+    // 2. word by word translation, separators are kept as they are
+    const words = this.wordMap(dico);
+    const tokens = text.split(/([ ,.\-'{}\[\]()/?*@!:;<>\\|\n]+)/);
+
+    return tokens.map((tok, idx) => {
+      if (idx % 2 === 1 || tok === '') return tok; // separator
+
+      const ph = tok.match(/^ZZZZZ(\d+)ZZZZZ$/);
+      if (ph) return substitutions[Number(ph[1])];
+
+      const out = words.get(tok.trim().toLowerCase());
+      if (out === undefined) return tok; // not found: keep the word
+      return /^\p{Lu}/u.test(tok) ? this.capitalise(out) : out;
+    }).join('');
+  }
+
+  // -------------------------------------------------------------------------
+  // Search
+  // -------------------------------------------------------------------------
+  private normalize(s: string): string {
+    let n = this.normCache.get(s);
+    if (n === undefined) {
+      n = s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      this.normCache.set(s, n);
+    }
+    return n;
+  }
+
+  private rerunSearch() {
+    if (this.isSearchText) {
+      this.searchText({ target: { id: 'search', value: this.textToSearch } });
+    }
+  }
+
+  searchText(event: any) {
+    this.resetBooleans();
+    const id = event.target.id;
+
+    if (id === 'search') {
+      this.isSearchText = true;
+      const raw: string = event.target.value;
+      this.textToSearch = raw.substring(0, 1).toUpperCase() + raw.substring(1).trim();
+      const theText = this.normalize(raw);
+
+      const type = this.radioSelect !== -1 ? this.recipeFile.listTypeRecipe[this.radioSelect] : null;
+
+      this.tabSearch = this.recipeFile.recipe
+        .map((r, posRec) => ({ r, posRec }))
+        .filter(({ r }) =>
+          (!type || (type.En === r.typeEn && type.Fr === r.typeFr)) &&
+          (theText === '' || this.normalize(r.name).includes(theText)))
+        .map(({ r, posRec }) => ({ name: r.name.trim(), posRec }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      if (this.tabSearch.length > 9) {
+        this.heightSearchDropdown = 200;
+        this.searchScroll = 'scroll';
       } else {
-          inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
-          inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].Fr="";
-          inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].En=newType;
+        this.heightSearchDropdown = 25 * this.tabSearch.length;
+        this.searchScroll = 'hidden';
+      }
+    } else if (id === 'cancel') {
+      this.isSearchText = false;
+      this.textToSearch = '';
+      this.heightSearchDropdown = 0;
+      this.searchScroll = 'hidden';
+      this.tabSearch = [];
+      this.resetBooleans();
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Recipe types
+  // -------------------------------------------------------------------------
+  onInputType(event: Event): void {
+    this.resetBooleans();
+
+    const target = event.target as HTMLInputElement;
+    if (!target) return;
+
+    const lang = target.id; // 'Fr' or 'En'
+    const value = target.value;
+
+    if (lang === 'Fr' || lang === 'En') {
+      const otherLang = lang === 'Fr' ? 'En' : 'Fr';
+      const result = this.findItemDico(value, lang, otherLang);
+
+      if (result !== -1) {
+        const rec = this.recipeFile.recipe[this.recordRecipe];
+        rec.typeEn = this.tabFraEng[result].English;
+        rec.typeFr = this.tabFraEng[result].French;
+      } else {
+        const missing = lang === 'Fr' ? 'English' : 'French';
+        this.errType = `No ${missing} translation of ${value} found in the dictionary`;
+      }
+
+      if (this.tabDropdownType.length > 1) {
+        if (lang === 'Fr') this.isListTypeFr = true;
+        else this.isListTypeEn = true;
       }
     }
-    inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].recipe[0]=recipeName;
-  } else if (oldType!==""){ 
-    if (newType !== oldType){
-        if (lang==='Fr'){
-          trouve=false;
-          for (var i=0; i<inFile.listTypeRecipe.length && trouve===false; i++){
-            if (inFile.listTypeRecipe[i].Fr===oldType
-            && inFile.listTypeRecipe[i].En===inFile.recipe[this.recordRecipe].typeEn){
-              trouve=true;
-            }
-          };
-          if (trouve===true){i--;}
-          trouve=false;
-          for (var j=0; j<inFile.listTypeRecipe.length && trouve===false; j++){
-              if (inFile.listTypeRecipe[j].Fr===newType 
-                && inFile.listTypeRecipe[i].En===inFile.recipe[this.recordRecipe].typeEn){
-                trouve=true;
-              }
-          };
-          if (trouve===true){j--;}
-        } else {
-          trouve=false;
-          for (var i=0; i<inFile.listTypeRecipe.length && trouve===false; i++){
-            if (inFile.listTypeRecipe[i].En===oldType
-            && inFile.listTypeRecipe[i].Fr===inFile.recipe[this.recordRecipe].typeFr){
-              trouve=true;
-            }
-          };
-          if (trouve===true){i--;}
-          trouve=false;
-          for (var j=0; j<inFile.listTypeRecipe.length && trouve===false; j++){
-            if (inFile.listTypeRecipe[j].En===newType && inFile.listTypeRecipe[i].En===inFile.recipe[this.recordRecipe].typeEn){
-              trouve=true;
-            }
-          };
-          if (trouve===true){j--;}
-        }
-        
-        if (j<inFile.listTypeRecipe.length){// new type exists; 
-          if (inFile.recipe[this.recordRecipe].typeFr===""){
-            inFile.recipe[this.recordRecipe].typeFr=inFile.listTypeRecipe[j].Fr;
-          }
-          if (inFile.recipe[this.recordRecipe].typeEn===""){
-            inFile.recipe[this.recordRecipe].typeEn=inFile.listTypeRecipe[j].En;
-          }
-          for (var k=0; k<inFile.listTypeRecipe[j].recipe.length && inFile.listTypeRecipe[j].recipe[k]!==recipeName; k++){};
-          if (k===inFile.listTypeRecipe[j].recipe.length){ // recipe does not exist
-            inFile.listTypeRecipe[j].recipe[k]=recipeName; //add name of recipe 
-          };
-          
-        } else {
-          // create a new type
-          if (i<inFile.listTypeRecipe.length){
-            inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
-            if (lang==='Fr'){
-                inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].Fr=newType;
-                inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].En=inFile.listTypeRecipe[i].En;
-            } else {
-                inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].Fr=inFile.listTypeRecipe[i].Fr;
-                inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].En=newType;
-            }
-            inFile.listTypeRecipe[inFile.listTypeRecipe.length-1].recipe[0]=recipeName;
-          }
-            
-        }
-        if (i<inFile.listTypeRecipe.length){
-          if (inFile.listTypeRecipe[i].recipe.length===1){
-            inFile.listTypeRecipe.splice(i,1);
-          } else {
-            for (var k=0; k<inFile.listTypeRecipe[i].recipe.length && inFile.listTypeRecipe[i].recipe[k]!==recipeName; k++){};
-            inFile.listTypeRecipe[i].recipe.splice(k,1);
-          }
-        }
-      }
+
+    if (this.errType === '') {
+      this.refreshFileType(this.recipeFile);
+      this.isListTypeUpdated.set(true);
+      this.isRecipeModified.set(true);
+    }
+
+    this.createTabDropdownType(this.recipeFile.listTypeRecipe, lang.toUpperCase(), value);
+    this.rerunSearch();
   }
-}
 
-onRefresh(){
-  this.refreshFileType(this.recipeFile);
-  //this.isRecipeModified.set(true);
-}
+  findItemDico(item: string, fromLang: string, toLang: string): number {
+    const cleaned = item.trim().toUpperCase();
+    const key = fromLang === 'Fr' && toLang === 'En' ? 'French'
+      : fromLang === 'En' && toLang === 'Fr' ? 'English'
+      : null;
+    if (!key) return -1;
+    return this.tabFraEng.findIndex(el => el[key].trim().toUpperCase() === cleaned);
+  }
 
-refreshFileType(inFile:any){
-  inFile.listTypeRecipe.splice(0,inFile.listTypeRecipe.length);
-  this.updateFileType(inFile);
-}
+  updateInListType(recipeName: string, lang: 'FR' | 'UK', action: 'Delete' | 'Rename', newName?: string): void {
+    this.isRecipeModified.set(true);
 
-updateFileType(inFile:any){
-  this.listTypeName[0]=[];
-  this.listTypeName[1]=[];
-  this.listTypeName[0].push('Tous');
-  this.listTypeName[1].push('All');
-  var iList=0;
-  inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
-  inFile.listTypeRecipe[0].Fr=inFile.recipe[0].typeFr;
-  inFile.listTypeRecipe[0].En=inFile.recipe[0].typeEn;
-  inFile.listTypeRecipe[0].recipe[0]=inFile.recipe[0].name;
-  this.listTypeName[0].push(inFile.recipe[0].typeFr);
-  this.listTypeName[1].push(inFile.recipe[0].typeEn);  
-  for (var ll=1; ll<inFile.recipe.length; ll++){
-    for (var mm=0; mm<inFile.listTypeRecipe.length && inFile.listTypeRecipe[mm].Fr!==inFile.recipe[ll].typeFr; mm++){};
-      if (mm<inFile.listTypeRecipe.length){
-        inFile.listTypeRecipe[mm].recipe[inFile.listTypeRecipe[mm].recipe.length]=inFile.recipe[ll].name;
+    const file = this.recipeFile;
+    const current = file.recipe[this.recordRecipe];
+    const targetType = lang === 'FR' ? current.typeFr : current.typeEn;
+    const typeIndex = file.listTypeRecipe.findIndex(item => (lang === 'FR' ? item.Fr : item.En) === targetType);
+    if (typeIndex === -1) return;
+
+    const typeItem = file.listTypeRecipe[typeIndex];
+    let theValue = 'ALL';
+
+    if (action === 'Delete') {
+      if (typeItem.recipe.length === 1) {
+        file.listTypeRecipe.splice(typeIndex, 1);
       } else {
-        inFile.listTypeRecipe.push({Fr:'',En:'',recipe:[]});
-        iList=inFile.listTypeRecipe.length-1;
-        inFile.listTypeRecipe[iList].Fr=inFile.recipe[ll].typeFr;
-        inFile.listTypeRecipe[iList].En=inFile.recipe[ll].typeEn;
-        this.listTypeName[0].push(inFile.recipe[ll].typeFr);
-        this.listTypeName[1].push(inFile.recipe[ll].typeEn);
-        inFile.listTypeRecipe[iList].recipe[0]=inFile.recipe[ll].name;
+        const i = typeItem.recipe.indexOf(recipeName);
+        if (i !== -1) typeItem.recipe.splice(i, 1);
+        theValue = lang === 'FR' ? typeItem.Fr : typeItem.En;
       }
+    } else {
+      const i = typeItem.recipe.indexOf(recipeName);
+      if (i !== -1 && newName !== undefined) typeItem.recipe[i] = newName;
+      theValue = lang === 'FR' ? typeItem.Fr : typeItem.En;
+    }
+
+    this.createTabDropdownType(file.listTypeRecipe, lang, theValue);
   }
-}
 
-copyFromTo(toRecord:any, fromRecord:any){
-  for (var i=0; i<fromRecord.length ; i++){
-    const data = new classRecipe;
-    toRecord.push(data);
-    toRecord[i].id=i;
-    toRecord[i].ingr=fromRecord[i].ingr;
-    toRecord[i].quantity=fromRecord[i].quantity;
-    toRecord[i].unit=fromRecord[i].unit;
+  createTabDropdownType(record: any[], lang: string, text: string): void {
+    const langKey = lang === 'FR' ? 'Fr' : 'En';
+    const unique = new Set<string>();
+    for (const item of record) {
+      const value = item?.[langKey];
+      if (value && value.includes(text)) unique.add(value.trim());
+    }
+
+    this.tabDropdownType = [{ name: 'Cancel' }, ...Array.from(unique).map(name => ({ name }))];
+    const count = this.tabDropdownType.length;
+    this.theHeight = count > 8 ? 240 : count * 30;
   }
-}
 
-fillInRecord(inRecord:any,outRecord:any){
-  outRecord.typeFr=inRecord.typeFr;
-  outRecord.typeEn=inRecord.typeEn;
-  outRecord.name=inRecord.name;
-  outRecord.comments=inRecord.comments;
-  outRecord.commentsPerso=inRecord.commentsPerso;
-  outRecord.commentsEn=inRecord.commentsEn;
-  outRecord.commentsBox=inRecord.commentsBox;
-  outRecord.commentsPersoBox=inRecord.commentsPersoBox;
-  outRecord.commentsEnBox=inRecord.commentsEnBox;
-  outRecord.materiel=inRecord.materiel;
-  outRecord.materielPerso=inRecord.materielPerso;
-  outRecord.materielBox=inRecord.materielBox;
-  outRecord.materielPersoBox=inRecord.materielPersoBox;
-  outRecord.nutrition.calories=inRecord.nutrition.calories;
-  outRecord.nutrition.proteins=inRecord.nutrition.proteins;
-  outRecord.nutrition.carbs=inRecord.nutrition.carbs;
-  outRecord.nutrition.sugar=inRecord.nutrition.sugar;
-  outRecord.nutrition.cholesterol=inRecord.nutrition.cholesterol;
-  outRecord.nutrition.satFat=inRecord.nutrition.satFat;
-  outRecord.nutrition.totalSat=inRecord.nutrition.totalSat;
-  outRecord.nutrition.totalWeight=inRecord.nutrition.totalWeight;
-  outRecord.nutritionPerso.calories=inRecord.nutritionPerso.calories;
-  outRecord.nutritionPerso.proteins=inRecord.nutritionPerso.proteins;
-  outRecord.nutritionPerso.carbs=inRecord.nutritionPerso.carbs;
-  outRecord.nutritionPerso.sugar=inRecord.nutritionPerso.sugar;
-  outRecord.nutritionPerso.cholesterol=inRecord.nutritionPerso.cholesterol;
-  outRecord.nutritionPerso.satFat=inRecord.nutritionPerso.satFat;
-  outRecord.nutritionPerso.totalSat=inRecord.nutritionPerso.totalSat;
-  outRecord.nutritionPerso.totalWeight=inRecord.nutritionPerso.totalWeight;
-
-  for (var j=0; j<inRecord.data.length; j++){
-      const pushData=new classRecipe;
-      outRecord.data.push(pushData);
-      outRecord.data[j].id=j;
-      outRecord.data[j].ingr=inRecord.data[j].ingr;
-      outRecord.data[j].quantity=inRecord.data[j].quantity;
-      outRecord.data[j].unit=inRecord.data[j].unit;      
-      const pushDataPerso=new classRecipe;
-      outRecord.dataPerso.push(pushDataPerso);
-      outRecord.dataPerso[j].id=j;
-      outRecord.dataPerso[j].ingr=inRecord.dataPerso[j].ingr;
-      outRecord.dataPerso[j].quantity=inRecord.dataPerso[j].quantity;
-      outRecord.dataPerso[j].unit=inRecord.dataPerso[j].unit;   
-    }    
-} 
-
-CancelRecord(){
-    this.recipeFile.recipe.splice(0,this.recipeFile.recipe.length);
-    this.recipeFile.listTypeRecipe.splice(0,this.recipeFile.listTypeRecipe.length);
-    this.fillFileRecord(this.initialRecipeFile,this.recipeFile);
-    this.recordRecipe=0;
-    if (this.isSearchText===true){
-      this.event.target.id='search';
-      this.event.target.value=this.textToSearch;
-      this.searchText(this.event);
-      if (this.tabSearch.length>0){
-        this.recordRecipe=this.tabSearch[0].posRec;
+  onDropdownListType(event: any) {
+    const chosen: string = event.target.textContent.trim();
+    if (chosen === 'Cancel') {
+      this.tabDialog[this.prevDialog] = false;
+      this.idText = '';
+      this.isActionRecipe.set(false);
+    } else {
+      const rec = this.recipeFile.recipe[this.recordRecipe];
+      if (this.isListTypeFr) {
+        this.updateTypeName(this.recipeFile, chosen, rec.typeFr, 'Fr', rec.name);
+        rec.typeFr = chosen;
+      } else {
+        this.updateTypeName(this.recipeFile, chosen, rec.typeEn, 'En', rec.name);
+        rec.typeEn = chosen;
       }
-    } 
+    }
+    this.resetBooleans();
+  }
+
+  /** Moves the current recipe from its old type group to the new one (creating it if needed). */
+  updateTypeName(inFile: any, newType: string, oldType: string, lang: string, recipeName: string) {
+    this.isRecipeModified.set(true);
+    if (oldType !== '' && newType === oldType) return;
+
+    const cur = lang === 'Fr' ? 'Fr' : 'En';
+    const alt = cur === 'Fr' ? 'En' : 'Fr';
+    const rec = inFile.recipe[this.recordRecipe];
+    const altVal: string = alt === 'Fr' ? rec.typeFr : rec.typeEn;
+    const list: any[] = inFile.listTypeRecipe;
+
+    // 1. remove the recipe from its old group
+    if (oldType !== '') {
+      const oldIdx = list.findIndex(t => t[cur] === oldType && t[alt] === altVal);
+      if (oldIdx !== -1) {
+        const old = list[oldIdx];
+        old.recipe = old.recipe.filter((n: string) => n !== recipeName);
+        if (old.recipe.length === 0) list.splice(oldIdx, 1);
+      }
+    }
+
+    // 2. add it to the new group
+    let target = list.find(t => t[cur] === newType && t[alt] === altVal);
+    if (!target && oldType === '') {
+      // a group with only the other language filled in
+      target = list.find(t => t[alt] === altVal && t[cur] === '');
+    }
+
+    if (target) {
+      target[cur] = newType;
+      if (!target.recipe.includes(recipeName)) target.recipe.push(recipeName);
+    } else {
+      list.push({ [cur]: newType, [alt]: altVal, recipe: [recipeName] });
+    }
+  }
+
+  onRefresh() {
+    this.refreshFileType(this.recipeFile);
+  }
+
+  refreshFileType(inFile: any) {
+    inFile.listTypeRecipe.length = 0;
+    this.updateFileType(inFile);
+  }
+
+  updateFileType(inFile: any) {
+    inFile.listTypeRecipe = [];
+
+    if (inFile?.recipe?.length) {
+      for (const { typeFr, typeEn, name } of inFile.recipe) {
+        const existing = inFile.listTypeRecipe.find((t: any) => t.Fr === typeFr);
+        if (existing) {
+          existing.recipe.push(name);
+        } else {
+          inFile.listTypeRecipe.push({ Fr: typeFr, En: typeEn, recipe: [name] });
+        }
+      }
+    }
+    this.rebuildListTypeName(inFile.listTypeRecipe);
+  }
+
+  private rebuildListTypeName(list: any[]) {
+    this.listTypeName = [
+      ['Tous', ...list.map(t => t.Fr)],
+      ['All', ...list.map(t => t.En)],
+    ];
+  }
+
+  // -------------------------------------------------------------------------
+  // Copy helpers
+  // -------------------------------------------------------------------------
+  fillFileRecord(inFile: classFileRecipe, outFile: classFileRecipe) {
+    outFile.fileType = inFile.fileType;
+    outFile.listTypeRecipe = inFile.listTypeRecipe.map(t => ({ Fr: t.Fr, En: t.En, recipe: [...t.recipe] }));
+    outFile.recipe = inFile.recipe.map(r => {
+      const copy = new classRecordRecipe();
+      this.fillInRecord(r, copy);
+      return copy;
+    });
+  }
+
+  fillInRecord(inRecord: classRecordRecipe, outRecord: classRecordRecipe) {
+    const {
+      typeFr, typeEn, name,
+      comments, commentsPerso, commentsEn, commentsBox, commentsPersoBox, commentsEnBox,
+      materiel, materielPerso, materielBox, materielPersoBox,
+      nutrition, nutritionPerso,
+      data = [], dataPerso = [],
+    } = inRecord;
+
+    Object.assign(outRecord, {
+      typeFr, typeEn, name,
+      comments, commentsPerso, commentsEn, commentsBox, commentsPersoBox, commentsEnBox,
+      materiel, materielPerso, materielBox, materielPersoBox,
+    });
+
+    outRecord.nutrition = { ...new classNutrition(), ...nutrition };
+    outRecord.nutritionPerso = { ...new classNutrition(), ...nutritionPerso };
+
+    const copyList = (list: classRecipe[]) =>
+      list.map((item, j) => Object.assign(new classRecipe(), {
+        id: j, ingr: item.ingr, quantity: item.quantity, unit: item.unit,
+      }));
+    outRecord.data = copyList(data);
+    outRecord.dataPerso = copyList(dataPerso);
+  }
+
+  // -------------------------------------------------------------------------
+  // Save / cancel
+  // -------------------------------------------------------------------------
+  CancelRecord() {
+    this.fillFileRecord(this.initialRecipeFile, this.recipeFile);
+    this.resetUpdateRefs();
+    this.recordRecipe = 0;
+
+    if (this.isSearchText) {
+      this.rerunSearch();
+      if (this.tabSearch.length > 0) this.recordRecipe = this.tabSearch[0].posRec;
+    }
     this.resetBooleans();
     this.isRecipeModified.set(false);
     this.isCreateRecipeName.set(false);
-}
+  }
 
-CancelSave(){
-  this.resetBooleans();
-}
- 
-ConfirmSave(){
+  CancelSave() {
     this.resetBooleans();
-    this.tabDialog[this.prevDialog]=false;
-    //const nameOfFile=this.theListOfObjects[this.fileNb].header+this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json;
-    //this.SpecificForm.controls['FileName'].setValue(this.myListOfObjects.items[this.fileNb].name);
-    this.SpecificForm.controls['fileHeader'].setValue(this.theListOfObjects[this.fileNb].header);
-    this.SpecificForm.controls['fileName'].setValue(this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json);
+  }
+
+  ConfirmSave() {
+    this.resetBooleans();
+    this.tabDialog[this.prevDialog] = false;
+    const file = this.theListOfObjects[this.fileNb];
+    if (!file) return;
+    this.SpecificForm.controls.fileHeader.setValue(file.header);
+    this.SpecificForm.controls.fileName.setValue(file.name + file.json);
     this.IsSaveConfirmed.set(true);
-}
+  }
 
-calculateNutritionForAllRecipe(){
-  const saveRecipeRecord=this.recordRecipe;
-  for (this.recordRecipe=0; this.recordRecipe<this.recipeFile.recipe.length; this.recordRecipe++){
-    this.calculateNutrition('all');}
-  this.recipeFile.updatedAt=strDateTime();
-  this.message="";
-  this.isRecipeModified.set(true);
-  this.recordRecipe=saveRecipeRecord;
-}
-
-SaveRecord(){
+  SaveRecord() {
     this.calculateNutrition('all');
-    this.recipeFile.updatedAt=strDateTime();
-    this.putRecord(this.googleBucketName, this.SpecificForm.controls['fileHeader'].value+this.SpecificForm.controls['fileName'].value, this.recipeFile);
+    this.recipeFile.updatedAt = strDateTime();
+    this.putRecord(
+      this.googleBucketName,
+      this.SpecificForm.controls.fileHeader.value + this.SpecificForm.controls.fileName.value,
+      this.recipeFile);
     this.resetBooleans();
     this.isRecipeModified.set(false);
     this.isCreateRecipeName.set(false);
-}
-
-putRecord(GoogleBucket:string, GoogleObject:string, record:any){
-    
-    var file=new File ([JSON.stringify(record)],GoogleObject, {type: 'application/json'});
-    this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file ,GoogleObject)
-      .subscribe(res => {
-              if (res.type===4){
-                this.message='File "'+ GoogleObject +'" is successfully stored in the cloud';
-                if (this.isRecipeModified()) {this.isRecipeModified.set(false)};
-                if (this.IsSaveConfirmed) {this.IsSaveConfirmed.set(false)};
-                this.isMessage.set(true);
-              }
-            },
-            error_handler => {
-              //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
-              this.Error_Access_Server='File' + GoogleObject +' *** Save action failed - status is '+error_handler.status;
-            } 
-          )
-}
-
-getRecord(Bucket:string,GoogleObject:string, iWait:number){
-  
-  this.EventHTTPReceived[iWait]=false;
-  this.NbWaitHTTP++;
-  this.waitHTTP(this.TabLoop[iWait],30000,iWait);
-  this.Error_Access_Server='';
-  this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject )
-            .subscribe((data ) => {
-                this.nbCallGetRecord=0;
-                this.EventHTTPReceived[iWait]=true;
-                if (iWait===1){
-                  this.isFileRetrieved.set(true);
-                  this.initialRecipeFile.recipe.splice(0,this.initialRecipeFile.recipe.length);
-                  this.initialRecipeFile.listTypeRecipe.splice(0,this.initialRecipeFile.listTypeRecipe.length);
-                  this.initialRecipeFile.fileType=data.fileType;
-                  for (var i=0; i<data.listTypeRecipe.length; i++){
-                    
-                    this.initialRecipeFile.listTypeRecipe.push({Fr:"",En:"",recipe:[]});
-                    this.initialRecipeFile.listTypeRecipe[i].Fr=data.listTypeRecipe[i].Fr.trim();
-                    this.initialRecipeFile.listTypeRecipe[i].En=data.listTypeRecipe[i].En.trim();
-                    this.listTypeName[0].push(data.listTypeRecipe[i].Fr.trim());
-                    this.listTypeName[1].push(data.listTypeRecipe[i].En.trim());
-                    var k=-1;
-                    for (var j=0; j<data.listTypeRecipe[i].recipe.length; j++){
-                      if (data.listTypeRecipe[i].recipe[j]!==""){
-                        k++
-                        this.initialRecipeFile.listTypeRecipe[i].recipe[k]=data.listTypeRecipe[i].recipe[j].trim();
-                      }
-                    }
-                  }
-                  
-                  for (var i=0; i<data.recipe.length; i++){
-                    
-                    this.tabUpdateRef.push({init:0});
-                    this.tabUpdateRef[this.tabUpdateRef.length-1].init=i;
-                    const classRecord=new classRecordRecipe;
-                    this.initialRecipeFile.recipe.push(classRecord);
-                    if (data.recipe[i].typeFr===undefined){
-                      this.initialRecipeFile.recipe[i].typeFr="Creme";
-                      this.initialRecipeFile.recipe[i].typeEn="Cream";
-                    } else {
-                      this.initialRecipeFile.recipe[i].typeFr=data.recipe[i].typeFr.trim();
-                      this.initialRecipeFile.recipe[i].typeEn=data.recipe[i].typeEn.trim();
-                    }
-                    this.initialRecipeFile.recipe[i].name=data.recipe[i].name.trim();
-                    this.initialRecipeFile.recipe[i].comments=data.recipe[i].comments;
-                    this.initialRecipeFile.recipe[i].commentsPerso=data.recipe[i].commentsPerso;
-                    if (data.recipe[i].commentsEn===undefined){
-                      this.initialRecipeFile.recipe[i].commentsEn="";
-                    } else {
-                      this.initialRecipeFile.recipe[i].commentsEn=data.recipe[i].commentsEn;
-                    }
-                    if (data.recipe[i].commentsBox!==undefined){
-                      this.initialRecipeFile.recipe[i].commentsBox=data.recipe[i].commentsBox;
-                      this.initialRecipeFile.recipe[i].commentsPersoBox=data.recipe[i].commentsPersoBox;
-                      this.initialRecipeFile.recipe[i].commentsEnBox=data.recipe[i].commentsEnBox;
-                    } else {
-                      this.initialRecipeFile.recipe[i].commentsBox=this.minHeightCommBox;
-                      this.initialRecipeFile.recipe[i].commentsPersoBox=this.minHeightCommBox;
-                      this.initialRecipeFile.recipe[i].commentsEnBox=this.minHeightCommBox;
-                    }
-                    if (data.recipe[i].materielBox!==undefined){
-                      this.initialRecipeFile.recipe[i].materielBox=data.recipe[i].materielBox;
-                      this.initialRecipeFile.recipe[i].materielPersoBox=data.recipe[i].materielPersoBox;
-                    } else {
-                      this.initialRecipeFile.recipe[i].materielBox=this.minHeightCommBox;
-                      this.initialRecipeFile.recipe[i].materielPersoBox=this.minHeightCommBox;
-                    }
-                    this.initialRecipeFile.recipe[i].materiel=data.recipe[i].materiel;
-                    this.initialRecipeFile.recipe[i].materielPerso=data.recipe[i].materielPerso;
-                    this.initialRecipeFile.recipe[i].nutrition.calories=data.recipe[i].nutrition.calories;
-                    this.initialRecipeFile.recipe[i].nutrition.proteins=data.recipe[i].nutrition.proteins;
-                    this.initialRecipeFile.recipe[i].nutrition.carbs=data.recipe[i].nutrition.carbs;
-                    this.initialRecipeFile.recipe[i].nutrition.sugar=data.recipe[i].nutrition.sugar;
-                    this.initialRecipeFile.recipe[i].nutrition.cholesterol=data.recipe[i].nutrition.cholesterol;
-                    this.initialRecipeFile.recipe[i].nutrition.satFat=data.recipe[i].nutrition.satFat;
-                    this.initialRecipeFile.recipe[i].nutrition.totalSat=data.recipe[i].nutrition.totalSat;
-                    this.initialRecipeFile.recipe[i].nutrition.totalWeight=data.recipe[i].nutrition.totalWeight;
-
-                    this.initialRecipeFile.recipe[i].nutritionPerso.calories=data.recipe[i].nutritionPerso.calories;
-                    this.initialRecipeFile.recipe[i].nutritionPerso.proteins=data.recipe[i].nutritionPerso.proteins;
-                    this.initialRecipeFile.recipe[i].nutritionPerso.carbs=data.recipe[i].nutritionPerso.carbs;
-                    this.initialRecipeFile.recipe[i].nutritionPerso.sugar=data.recipe[i].nutritionPerso.sugar;
-                    this.initialRecipeFile.recipe[i].nutritionPerso.cholesterol=data.recipe[i].nutritionPerso.cholesterol;
-                    this.initialRecipeFile.recipe[i].nutritionPerso.satFat=data.recipe[i].nutritionPerso.satFat;
-                    this.initialRecipeFile.recipe[i].nutritionPerso.totalSat=data.recipe[i].nutritionPerso.totalSat;
-                    this.initialRecipeFile.recipe[i].nutritionPerso.totalWeight=data.recipe[i].nutritionPerso.totalWeight;
-
-                    for (var j=0; j<data.recipe[i].data.length; j++){
-                      const pushData=new classRecipe;
-                      this.initialRecipeFile.recipe[i].data.push(pushData);
-                      this.initialRecipeFile.recipe[i].data[j].id=j;
-                      this.initialRecipeFile.recipe[i].data[j].ingr=data.recipe[i].data[j].ingr;
-                      this.initialRecipeFile.recipe[i].data[j].quantity=data.recipe[i].data[j].quantity;
-                      this.initialRecipeFile.recipe[i].data[j].unit=data.recipe[i].data[j].unit;
-                      const pushDataPerso=new classRecipe;
-                      this.initialRecipeFile.recipe[i].dataPerso.push(pushDataPerso);
-                      this.initialRecipeFile.recipe[i].dataPerso[j].id=j;
-                      this.initialRecipeFile.recipe[i].dataPerso[j].ingr=data.recipe[i].dataPerso[j].ingr;
-                      this.initialRecipeFile.recipe[i].dataPerso[j].quantity=data.recipe[i].dataPerso[j].quantity;
-                      this.initialRecipeFile.recipe[i].dataPerso[j].unit=data.recipe[i].dataPerso[j].unit;
-                    }
-                    
-                  }
-
-                  if (this.initialRecipeFile.listTypeRecipe===undefined ||this.initialRecipeFile.listTypeRecipe.length===0 ){
-                  //if (data.listTypeRecipe===undefined ||data.listTypeRecipe.length===0 ){
-                    this.updateFileType(this.initialRecipeFile);
-                  } else {
-
-                  }
-                  //this.refreshFileType(this.initialRecipeFile); 
-                  this.fillFileRecord(this.initialRecipeFile,this.recipeFile);
-
-                  
-                } else if (iWait===2){
-                  this.ConfigCaloriesFat=data;
-                } else if (iWait===3){
-                  this.ConvertUnit=data;
-                  for (var i=0; i<this.ConvertUnit.tabConv.length && this.ConvertUnit.tabConv[i].fromUnit!=='gram';i++){};
-                  if (i<this.ConvertUnit.tabConv.length){this.posGramTabConvert=i};
-                } else  if (iWait===4){
-                  for (var i=0; i<data.length;i++){
-                    const dico = new classDicoRecord;
-                    this.tabFraEng.push(dico);
-                    this.tabFraEng[i].French=data[i].French;
-                    this.tabFraEng[i].English=data[i].English;
-                    this.tabFraEng[i].inputHeight=data[i].inputHeight;
-                    
-                  }
-                }
-            },
-            (error_handler) => {
-              this.nbCallGetRecord++
-              this.Error_Access_Server='Could not retrieve the file - number of calls = ' + this.nbCallGetRecord ;
-            }
-            )
-}
-
-
-transferToCalFat(){
-    // check if name of recipe already exists under Type='recipe'
-    var j=0;
-    for (var i=0; i< this.ConfigCaloriesFat.tabCaloriesFat.length && this.ConfigCaloriesFat.tabCaloriesFat[i].Type!=='Recipe'; i++){
-    }
-    if (i=== this.ConfigCaloriesFat.tabCaloriesFat.length){
-      // Type='Recipe' has not been found; create it
-      const CalFatClass = new ClassCaloriesFat;
-      this.ConfigCaloriesFat.tabCaloriesFat.splice(i,0,CalFatClass);
-      const itemClass= new ClassItem;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content.push(itemClass);
-      i=this.ConfigCaloriesFat.tabCaloriesFat.length-1;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Type='Recipe';
-      j=0;
-    } else {
-      // check if item food already exists and if yes overide figures otherwise create new food item
-      
-      for (j=0; j<this.ConfigCaloriesFat.tabCaloriesFat[i].Content.length && 
-        this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Name.toLowerCase().trim() !== this.recipeFile.recipe[this.recordRecipe].name.toLowerCase().trim();j++){
-  
-      }  
-      if (j===this.ConfigCaloriesFat.tabCaloriesFat[i].Content.length){
-        const itemClass= new ClassItem;
-        this.ConfigCaloriesFat.tabCaloriesFat[i].Content.splice(this.ConfigCaloriesFat.tabCaloriesFat[i].Content.length,0,itemClass);
-        j=this.ConfigCaloriesFat.tabCaloriesFat[i].Content.length-1;
-      }
-    }
-    //this.copyContent(this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j],this.outFileRecipe.tabCaloriesFat[iRecipe].Total);
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Name=this.recipeFile.recipe[this.recordRecipe].name;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Serving=this.recipeFile.recipe[this.recordRecipe].nutrition.totalWeight;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].ServingUnit='gram';
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Calories=this.recipeFile.recipe[this.recordRecipe].nutrition.calories ;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Protein=this.recipeFile.recipe[this.recordRecipe].nutrition.proteins ;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Carbs=this.recipeFile.recipe[this.recordRecipe].nutrition.carbs ;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Sugar=this.recipeFile.recipe[this.recordRecipe].nutrition.sugar ;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Cholesterol=this.recipeFile.recipe[this.recordRecipe].nutrition.cholesterol ;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Sugar=this.recipeFile.recipe[this.recordRecipe].nutrition.sugar;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].GlyIndex=0;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Fat.Saturated=this.recipeFile.recipe[this.recordRecipe].nutrition.satFat;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Fat.Total=this.recipeFile.recipe[this.recordRecipe].nutrition.totalSat;
-      this.ConfigCaloriesFat.tabCaloriesFat[i].Content[j].Name=this.recipeFile.recipe[this.recordRecipe].name.toLowerCase().trim();
-      this.ConfigCaloriesFat.updatedAt=strDateTime();
-      this.putRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.calories,this.ConfigCaloriesFat);
-}
- 
-GetAllObjects(iWait:number){
-
-    this.scroller.scrollToAnchor('theTop');
-    this.EventHTTPReceived[iWait]=false;
-    this.NbWaitHTTP++;
-    this.waitHTTP(this.TabLoop[iWait],30000,iWait);
-    this.Error_Access_Server='';
-    var i=0;
-    const lengthFile=this.identification.recipe.fileStartName.length;
-    const HTTP_Address=this.Google_Bucket_Access_Root+ this.googleBucketName + "/o"  ;
-    console.log('RetrieveAllObjects()'+this.googleBucketName);
-    this.ManageGoogleService.getListMetaObjects(this.configServer, this.googleBucketName )
-    //this.http.get<Bucket_List_Info>(HTTP_Address )
-            .subscribe((data ) => {
-                  console.log('RetrieveAllObjects() - data received');
-                  this.nbCallGetRecord=0;
-                  
-                  for (var i=0; i<data.length; i++){
-                      const theBucketInfo = new OneBucketInfo;
-                      this.myListOfObjects.items.push(theBucketInfo);
-                      this.myListOfObjects.items[i]=data[i].items;
-                  }
-                 
-
-                 var iObjects=-1;
-                  for (i=this.myListOfObjects.items.length-1; i>-1; i--){
-                    if (this.myListOfObjects.items[i].name.substring(0,lengthFile)===this.identification.recipe.fileStartName){
-                      
-                      this.theListOfObjects.push({header:"",name:"",json:""});
-                      iObjects++
-                      this.theListOfObjects[iObjects].header=this.identification.recipe.fileStartName;
-                      const j=this.myListOfObjects.items[i].name.indexOf('.');
-                      this.theListOfObjects[iObjects].json=this.myListOfObjects.items[i].name.substring(j);
-                      this.theListOfObjects[iObjects].name=this.myListOfObjects.items[i].name.substring(lengthFile, j);
-                      // keep the files corresponding to the recipes of the user
-                    } 
-                }
-                  if (this.theListOfObjects.length===1){
-                    this.fileNb=0;
-                    const nameOfFile=this.theListOfObjects[this.fileNb].header+this.theListOfObjects[this.fileNb].name+this.theListOfObjects[this.fileNb].json;
-                    this.getRecord(this.googleBucketName, nameOfFile,1);
-                    this.recordRecipe=0;
-                  }
-                  this.myListOfObjects=new Bucket_List_Info; 
-                  this.EventHTTPReceived[iWait]=true;
-            },
-            error_handler => {
-                  console.log('RECIPE RetrieveAllObjects() - error handler; HTTP='+HTTP_Address);
-                  this.nbCallGetRecord++;
-                  iWait=this.nbCallGetRecord+10;
-                  if (this.nbCallGetRecord<4){
-                    this.GetAllObjects(iWait);
-                  } else { this.nbCallGetRecord=0;}
-                  this.Error_Access_Server='RetrieveAllObjects()==> ' + error_handler.statusText+'   name=> '+ error_handler.name ;
-            } 
-      )
-}
-
-waitHTTP(loop:number, max_loop:number, eventNb:number){
-  const pas=500;
-  if (loop%pas === 0){
-    console.log('waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop);
   }
- loop++
-  
-  this.id_Animation[eventNb]=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
-  if (loop>max_loop || this.EventHTTPReceived[eventNb]===true ){
-            console.log('exit waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop + ' this.EventHTTPReceived=' + 
-                    this.EventHTTPReceived[eventNb] );
-            if (this.EventHTTPReceived[eventNb]===true ){
-                    window.cancelAnimationFrame(this.id_Animation[eventNb]);
-            }    
-            //if (this.EventHTTPReceived[1]===true && this.EventHTTPReceived[2]===true && this.EventHTTPReceived[3]===true){
-            //  this.calculateNutrition('all');
-            //}
-      }  
-}
 
-
+  putRecord(GoogleBucket: string, GoogleObject: string, record: any) {
+    const file = new File([JSON.stringify(record)], GoogleObject, { type: 'application/json' });
+    this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file, GoogleObject)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: res => {
+          if (res.type === HttpEventType.Response) {
+            this.message = `File "${GoogleObject}" is successfully stored in the cloud`;
+            this.isRecipeModified.set(false);
+            this.IsSaveConfirmed.set(false);
+            this.isMessage.set(true);
+          }
+        },
+        error: e => {
+          this.Error_Access_Server = `File ${GoogleObject} *** Save action failed - status is ${e.status}`;
+        },
+      });
+  }
 }

@@ -1,377 +1,277 @@
-import { Component, OnInit , Input, input, effect, signal, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID} from '@angular/core';
+import { Component, EventEmitter, Input, Output, effect, input, untracked } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-  import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
-  import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-  import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-  
-
-import {msginLogConsole} from '../consoleLog'
-import { configServer, LoginIdentif, classCredentials, msgConsole } from '../JsonServerClass';
-import {classPosDiv, getPosDiv} from '../getPosDiv';
-
+import { configServer, LoginIdentif, classCredentials } from '../JsonServerClass';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
+import { classAccessFile, classHeaderReturnDataFS, classRetrieveFile } from '../classFileSystem';
 
-import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS, classRetrieveFile }  from '../classFileSystem';
+const RETRY_DELAY_MS = 2000;
+
 @Component({
   selector: 'app-file-system-service',
   templateUrl: './file-system-service.component.html',
   styleUrls: ['./file-system-service.component.css'],
-  standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule,],
-
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class FileSystemServiceComponent {
-  
-  @Input() iWait:number=0;
-  @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-  @Input() configServer = new configServer;
-  @Input() identification = new LoginIdentif;
-  @Input() onInputAction:string="";
-  @Input() credentialsFS = new classCredentials;
-  nbCallFileSystem=input.required<number>();
-  previousNbCallFileSystem:number=-1;
-  @Input() iWaitToRetrieve:Array<classRetrieveFile>=[];
+  @Input() iWait = 0;
+  @Input() tabLock: Array<classAccessFile> = []; // 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked
+  @Input() configServer = new configServer();
+  @Input() identification = new LoginIdentif();
+  @Input() onInputAction = '';
+  @Input() credentialsFS = new classCredentials();
+  @Input() iWaitToRetrieve: Array<classRetrieveFile> = [];
+  readonly nbCallFileSystem = input.required<number>();
 
   @Output() resultFileSystem = new EventEmitter<any>();
 
-  myLogConsole:boolean=false;
-  myConsole:Array< msgConsole>=[];
-  returnConsole:Array< msgConsole>=[];
-  SaveConsoleFinished:boolean=false;
-  HTTP_Address:string='';
-  type:string='';
+  returnDataFS = new classHeaderReturnDataFS();
 
-  EventHTTPReceived:Array<boolean>=[];
-  maxEventHTTPrequest:number=1;
-  id_Animation:Array<number>=[];
-  TabLoop:Array<number>=[];
+  private previousNbCallFileSystem = -1;
+  private readonly debug = false;
 
-  returnDataFS=new classHeaderReturnDataFS;
+  constructor(private readonly manageGoogleService: ManageGoogleService) {
+    effect(() => {
+      // Only nbCallFileSystem is tracked; everything else runs untracked
+      const nb = this.nbCallFileSystem();
+      untracked(() => {
+        if (this.previousNbCallFileSystem !== nb) {
+          this.previousNbCallFileSystem = nb;
+          this.processCallFS();
+        }
+      });
+    });
+  }
 
-constructor(
-    private ManageGoogleService: ManageGoogleService,
-    @Inject(LOCALE_ID) private locale: string,
-    ) {effect (() => {
-        console.log("Access in file system for iWait=" + this.iWait);
-        if (this.previousNbCallFileSystem!==this.nbCallFileSystem()){
-            this.previousNbCallFileSystem=this.nbCallFileSystem()      
-            this.processCallFS(this.nbCallFileSystem()); 
-          }
-    }) }
-  
+  private log(...args: unknown[]) {
+    if (this.debug) console.log(...args);
+  }
 
-processCallFS(event:any){
-  this.returnDataFS.onInputAction=this.onInputAction; 
-  for (var i=0; i< this.iWaitToRetrieve.length; i++){
-    if (this.iWaitToRetrieve[i].accessFS===true){
-        console.log('ngOnChanges nbCallFileSystem iWait=' + this.iWaitToRetrieve[i].iWait);
-        this.returnDataFS.iWait = this.iWaitToRetrieve[i].iWait;
-        this.iWait=this.iWaitToRetrieve[i].iWait;;
-        this.onFileSystem(this.iWaitToRetrieve[i].iWait);
+  processCallFS() {
+    this.returnDataFS.onInputAction = this.onInputAction;
+    for (const item of this.iWaitToRetrieve) {
+      if (item.accessFS !== true) continue;
+      this.log('nbCallFileSystem iWait=' + item.iWait);
+      this.returnDataFS.iWait = item.iWait;
+      this.iWait = item.iWait;
+      this.onFileSystem(item.iWait);
     }
   }
-}
 
-onFileSystem(iWait: number) {
-  console.log('start of onFileSystem iWait=' + iWait) ;
-  var theAction = this.tabLock[iWait].action;
-  const iWaitSave = iWait;
-  const dataFromFS = this.returnDataFS;
-  this.tabLock[iWait].status = 0;
-  this.returnDataFS.errorMsg = "";
-  if (this.identification.triggerFileSystem.toUpperCase()!=="YES") {
-    this.tabLock[iWait].lock = 1;
-    this.tabLock[iWait].action = "";
-    this.returnDataFS.errorCode=0;
-    this.resultFileSystem.emit(this.returnDataFS);
-    
-  } else {
-      this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, this.tabLock[iWait].objectName, this.tabLock, iWait.toString())
-        .subscribe(
-          data => {
-            this.returnDataFS = dataFromFS;
-            this.returnDataFS.iWait=iWaitSave;
-            console.log('return from Server; process data in onFileSystem for iWaitSave=' + iWaitSave + ' dataFromFS.iWait=' + dataFromFS.iWait);
-            if (theAction === 'onDestroy') {
-              this.tabLock[iWaitSave].status = 0;
-            } else {
-              this.returnDataFS = this.returnOnFileSystem(data, iWaitSave, this.returnDataFS);
-            }
-            console.log('end of onFileSystem iWait=' +  + iWaitSave + ' dataFromFS.iWait=' + this.returnDataFS.iWait);
-            this.resultFileSystem.emit(this.returnDataFS);
-          },
-          err => {
-            if (theAction === 'onDestroy') {
-              if (err.status === 900) {
-                // destroy is fine
-              } else {
-                console.log('Google updateFileSystem general error=' + err.status + '  specific error= ' + err.error.error + ' & message= ' + err.error.message);
-                this.returnDataFS.errorMsg = this.returnDataFS.errorMsg + '   update FileSystem =' + err.status ;
-              }
-            } else {
-              console.log('in err');
-              this.returnDataFS = this.returnOnFileSystem(err, iWaitSave, this.returnDataFS);
-            }
-            console.log('end of onFileSystem iWait=' +  + iWaitSave + ' dataFromFS.iWait=' + this.returnDataFS.iWait);
-            this.resultFileSystem.emit(this.returnDataFS);
-        })
+  onFileSystem(iWait: number) {
+    const lockItem = this.tabLock[iWait];
+    const action = lockItem.action;
+    const result = this.returnDataFS;
+
+    lockItem.status = 0;
+    result.errorMsg = '';
+
+    if (this.identification.triggerFileSystem.toUpperCase() !== 'YES') {
+      lockItem.lock = 1;
+      lockItem.action = '';
+      result.errorCode = 0;
+      this.resultFileSystem.emit(result);
+      return;
     }
 
+    this.manageGoogleService
+      .onFileSystem(
+        this.configServer,
+        this.configServer.bucketFileSystem,
+        lockItem.objectName,
+        this.tabLock,
+        iWait.toString()
+      )
+      .subscribe({
+        next: (data) => this.handleResponse(data, iWait, action, false),
+        error: (err) => this.handleResponse(err, iWait, action, true),
+      });
   }
 
-  unlockFile(iWait: number) {
-    this.tabLock[iWait].action = 'unlock';
-    this.onFileSystem(iWait);
-  }
+  private handleResponse(payload: any, iWait: number, action: string, isError: boolean) {
+    const result = this.returnDataFS;
+    result.iWait = iWait;
+    this.log('return from server iWait=' + iWait);
 
-  lockFile(iWait: number) {
-    this.tabLock[iWait].action = 'lock';
-    this.onFileSystem(iWait);
-  }
-
-  checkFile(iWait: number) {
-    this.tabLock[iWait].action = 'check';
-    this.onFileSystem(iWait);
-  }
-
-  async checkUpdateFile(iWait: number) {
-    this.tabLock[iWait].action = 'check&update';
-    this.onFileSystem(iWait);
-  }
-
-  updateLockFile(iWait: number) {
-    this.tabLock[iWait].action = 'updatedAt';
-    this.onFileSystem(iWait);
-  }
-
-  returnOnFileSystem(data: any, iWait: number, dataFromFS:any) {
-    console.log('start returnOnFileSystem iWait=' + iWait);
-    var statusCode=0;
-    dataFromFS.reAccessFile=false;
-    if (data.status !== undefined && data.status === 200 && data.tabLock !== undefined) { // tabLock is returned
-      console.log('server response: ' + data.tabLock[iWait].object + ' createdAt=' + data.tabLock[iWait].createdAt + '  & updatedAt=' + data.tabLock[iWait].updatedAt + '  & lock value =' + data.tabLock[iWait].lock);
-      //if (data.tabLock[iWait].credentialDate !== this.credentialsFS.creationDate) { // server was reinitialised
-      //  this.tabLock[iWait] = data.tabLock[iWait];
-      //}
-
-        if (data.tabLock[iWait].lock === 1 && this.tabLock[iWait].lock !== 1) {
-          // file is now locked for this user; need to retrieve the file to ensure we have the latest version
-          statusCode=220;
-          if (iWait === 5) {
-            statusCode = data.status.tabLockItem;
-          }
-        } else if (data.tabLock[iWait].lock !== 1 && this.tabLock[iWait].lock === 1) {
-          // file is now locked by another user, reaccess the file in locked mode
-          if (iWait !== 0) {
-            statusCode = 300;
-          } else { statusCode=230; }
-        } else {
-          statusCode=200;
-        }
-        
-        this.tabLock[iWait] = data.tabLock[iWait];
-        dataFromFS.status=statusCode;
-        dataFromFS.onInputAction = "";
-        dataFromFS.reAccessFile=true;
-        dataFromFS.errorMsg = " data returned on file " + data.tabLock[iWait].objectName + " ==> action = " + data.tabLock[iWait].action + '  lock = ' + data.tabLock[iWait].lock + "  & status = " + data.tabLock[iWait].status;
-        console.log(dataFromFS.errorMsg);
-
-    } else if (data.status !== undefined && data.status.tabLockItem !== undefined && (this.tabLock[iWait].action === 'check' || this.tabLock[iWait].action === 'check&update') && data.status.tabLockItem.createdAt !== undefined) { // tabLock[iWait] is returned
-      if (data.status.tabLockItem.status === 810 || data.status.tabLockItem.status === 800) { // record found and belongs to same user or record not found or file empty
-        //this.nbCallCredentials = 0;
-        if (data.status.tabLockItem.status === 800) { // no file system or no record then lock this user
-          this.lockFile(iWait); // ====> the process below has to be reviewed 
-        }
-        this.tabLock[iWait].status = data.status.tabLockItem;
-
-      } else if (data.status.tabLockItem.status === 820) { // record found and belongs to other user
-        //this.nbCallCredentials = 0;
-        console.log('error = 820 ; data returned=' + JSON.stringify(data));
-        this.tabLock[iWait].lock = 2;
-        dataFromFS.onInputAction = "";
-        dataFromFS.reAccessFile =  true;
-      
+    if (action === 'onDestroy') {
+      if (!isError) {
+        this.tabLock[iWait].status = 0;
+      } else if (payload?.status !== 900) { // 900 = destroy is fine
+        console.log('Google updateFileSystem general error=' + payload?.status +
+          '  specific error= ' + payload?.error?.error + ' & message= ' + payload?.error?.message);
+        result.errorMsg += '   update FileSystem =' + payload?.status;
       }
-    } else if (data.status !== undefined) {
-      if (data.status === 300 || data.status === 720) { // 300 record already locked; 720 updatedAt on record locked by another user
-        console.log('error = ' + data.status + '  ; data returned =' + JSON.stringify(data));
-        //this.nbCallCredentials = 0;
-        this.tabLock[iWait].lock = 3;
-        dataFromFS.onInputAction = "";
-        if (data.status === 720) {
-          this.tabLock[iWait].status = 720;
-          dataFromFS.reAccessFile =  true;
-        } else {
-          this.tabLock[iWait].status = 300;
-          dataFromFS.errorCode=300;
-        }
-      } else if (data.status === 700 || data.status === 712 || data.status === 710) { // requested to unlock record which does not exist or is locked by another user
-        //this.nbCallCredentials = 0;
-        this.tabLock[iWait].lock = 0;
-        this.tabLock[iWait].status = data.status;
-        dataFromFS.onInputAction = "";
-        if (data.status === 712){
-          dataFromFS.errorMsg="Access to get credentials is forbidden, updates are not possible";
-        } else if (data.status === 700){
-          dataFromFS.errorMsg="System failure, updates are not possible";
-        } else {
-          dataFromFS.errorMsg="Record cannot be unlocked, updates are not possible";
-        }
-        dataFromFS.errorCode=data.status;
-      } else if (data.status === 666) {
-        dataFromFS.errorMsg="server cannot process file system because it is already processed by another user; apps will rettry once more after 2 seconds";
-        console.log(dataFromFS.errorMsg);
-        dataFromFS.nbRecall++;
-        dataFromFS.status=666;
-        var theDate = new Date();
-        var iLoop=0;
-        var seconds = theDate.getUTCSeconds();
-        var myRefTime = seconds + 2; // wait 2 seconds
-        if (myRefTime > 59) {
-          myRefTime = myRefTime - 59;
-        }
-        console.log('seconds = '+ seconds+'; try again onFileSystem at seconds = ' + myRefTime);
+      this.resultFileSystem.emit(result);
+      return;
+    }
 
-        while (seconds < myRefTime && iLoop<3000) {
-          iLoop++ // this is just a security
-          theDate = new Date();
-          seconds = theDate.getUTCSeconds();
-        }
-        console.log('2 seconds are over; iLoop='+iLoop + '  max iLoop=3000');
-      } else if (data.status === 955) {
-        dataFromFS.errorMsg = dataFromFS.errorMsg + 'status error=' + data.status;
-        dataFromFS.theResetServer = true;
-        dataFromFS.errorCode=955;
-        this.tabLock[iWait].lock = 3;
+    this.returnOnFileSystem(payload, iWait, result);
 
-      } else if (data.status === 404) {
-        dataFromFS.errorMsg = dataFromFS.errorMsg + 'status error=' + data.status;
-        dataFromFS.errorCode=404;
-      }else if (data.status === 956) {  // record is locked by another user
-        dataFromFS.errorMsg = "status " + data.status + " " + data.msg;
-        dataFromFS.theResetServer = true;
-        this.tabLock[iWait].lock = 3;
-        dataFromFS.onInputAction = "";
-        this.tabLock[iWait].status = 720;
-        dataFromFS.errorCode=720;
-
-        dataFromFS.reAccessFile=true;
-      }  else if (data.status === 'err-0') {  
-          // file system was empty and no action was taken
-          console.log('data received:' + JSON.stringify(data) + '  on action ' + this.tabLock[iWait].action);
-      } else {
-        dataFromFS.onInputAction = "";
-        if (this.tabLock[iWait].action === 'lock' || this.tabLock[iWait].action === "unlock") {
-          this.tabLock[iWait].status = 0;
-          if (this.tabLock[iWait].action === 'lock') {
-            this.tabLock[iWait].lock = 2;
-            console.log('which type of data is it????' + JSON.stringify(data) + '  on action ' + this.tabLock[iWait].action);
-            dataFromFS.errorMsg= "status " + data.status + " - record is locked ";
-          } else {
-            this.tabLock[iWait].lock = 3;
-          }
-         
-        } else {
-          this.tabLock[iWait].status = 999;
-          dataFromFS.errorCode=999;
-          if (data.message.substring(0,21)==="Http failure response"){
-              dataFromFS.errorMsg="FS Server HTTP failure";
-              console.log('*** FS Server HTTP failure' + '  on action ' + this.tabLock[iWait].action);
-          } else {
-              dataFromFS.errorMsg= "status " + data.status + " - unknown error ";
-              console.log('*** Which type of error is it????' + JSON.stringify(data) + '  on action ' + this.tabLock[iWait].action);
-          }
-          
-        } 
-      }
+    if (payload?.status === 666) {
+      // Server busy: non-blocking delay before notifying the parent (replaces the old busy-wait loop)
+      setTimeout(() => this.resultFileSystem.emit(result), RETRY_DELAY_MS);
     } else {
-      if (data.message.substring(0,21)==="Http failure response"){
-          dataFromFS.errorMsg="FS Server HTTP failure";
-          console.log('====> FS Server HTTP failure');
+      this.resultFileSystem.emit(result);
+    }
+  }
+
+  unlockFile(iWait: number) { this.runAction(iWait, 'unlock'); }
+  lockFile(iWait: number) { this.runAction(iWait, 'lock'); }
+  checkFile(iWait: number) { this.runAction(iWait, 'check'); }
+  checkUpdateFile(iWait: number) { this.runAction(iWait, 'check&update'); }
+  updateLockFile(iWait: number) { this.runAction(iWait, 'updatedAt'); }
+
+  private runAction(iWait: number, action: string) {
+    this.tabLock[iWait].action = action;
+    this.onFileSystem(iWait);
+  }
+
+  private isHttpFailure(data: any): boolean {
+    return typeof data?.message === 'string' && data.message.startsWith('Http failure response');
+  }
+
+  returnOnFileSystem(data: any, iWait: number, dataFromFS: any) {
+    const current = this.tabLock[iWait];
+    const status = data?.status;
+    const tabLockItem = status?.tabLockItem;
+    const action = current.action;
+
+    dataFromFS.reAccessFile = false;
+
+    // 1. Server returned the tabLock array
+    if (status === 200 && data.tabLock !== undefined) {
+      const server = data.tabLock[iWait];
+      let statusCode: any;
+
+      if (server.lock === 1 && current.lock !== 1) {
+        // now locked for this user: must retrieve the latest version of the file
+        statusCode = iWait === 5 ? tabLockItem : 220;
+      } else if (server.lock !== 1 && current.lock === 1) {
+        // now locked by another user: reaccess the file in locked mode
+        statusCode = iWait !== 0 ? 300 : 230;
       } else {
-          dataFromFS.errorMsg="";
-          console.log('====> From FS : which type of error???? : ' + JSON.stringify(data));
+        statusCode = 200;
       }
-      
-      this.tabLock[iWait].status = 999;
-      dataFromFS.errorCode=999;
-      if (this.tabLock[iWait].action === 'lock') {
-        dataFromFS.errorMsg= dataFromFS.errorMsg + " status  999 - record is locked ";
-        this.tabLock[iWait].lock = 2;
-      }
+
+      this.tabLock[iWait] = server;
+      dataFromFS.status = statusCode;
+      dataFromFS.onInputAction = '';
+      dataFromFS.reAccessFile = true;
+      dataFromFS.errorMsg = ` data returned on file ${server.objectName} ==> action = ${server.action}  lock = ${server.lock}  & status = ${server.status}`;
+      this.log(dataFromFS.errorMsg);
+      return dataFromFS;
     }
-    return (dataFromFS);
-  }
 
-
-waitHTTP(loop:number, max_loop:number, eventNb:number){
-  const pas=500;
-  if (loop%pas === 0){
-    console.log('waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop);
-  }
- loop++
-  
-  this.id_Animation[eventNb]=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
-  if (loop>max_loop || this.EventHTTPReceived[eventNb]===true ){
-            console.log('exit waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop + ' this.EventHTTPReceived=' + 
-                    this.EventHTTPReceived[eventNb] );
-         window.cancelAnimationFrame(this.id_Animation[eventNb]); 
-      }  
-  }
-
-LogMsgConsole(msg:string){
-  if (this.myConsole.length>40){
-    //this.SaveNewRecord('logconsole','ConsoleLog.json',this.myLogConsole, -1);
-    //this.message='Saving of LogConsole';
-  }
-  this.SaveConsoleFinished=false;
-
-  this.myLogConsole=true;
-
-  msginLogConsole(msg, this.myConsole,this.myLogConsole, this.SaveConsoleFinished,this.HTTP_Address, this.type);
-  
-}
-
-idAnimation:any;
-checkClock(refSecond:number){
-  const theDate = new Date();
-  const theSeconds=theDate.getSeconds() ;
-  if (refSecond < theSeconds) {
-    this.idAnimation=window.requestAnimationFrame(() => this.checkClock(refSecond));
-  } else {
-    window.cancelAnimationFrame(this.idAnimation);
-  }
-}
-
-/*** SHOULD NOT BE USED ANYMORE  ***/
-/*** 'callUpdateSystemFile' seems to be from an old process ***/
-ngOnChangesOLD(changes: SimpleChanges) { // TO BE REVIEWED 
-  // var nbCall=0;
-  for (const  propName in changes){
-    const j=changes[propName];
-    if ((propName==='callUpdateSystemFile')  && changes[propName].firstChange===false){
-        console.log('ngOnChanges callUpdateSystemFile iWait=' + this.iWait);
-        this.returnDataFS.onInputAction=this.onInputAction;
-        this.returnDataFS.iWait = this.iWait;
-        //nbCall++;
-        this.onFileSystem(this.iWait);
+    // 2. Server returned a single tabLockItem for check / check&update
+    if (tabLockItem !== undefined &&
+        (action === 'check' || action === 'check&update') &&
+        tabLockItem.createdAt !== undefined) {
+      if (tabLockItem.status === 810 || tabLockItem.status === 800) {
+        // 810: record belongs to same user; 800: no record / empty file
+        if (tabLockItem.status === 800) {
+          this.lockFile(iWait); // TODO: review this process
+        }
+        current.status = tabLockItem;
+      } else if (tabLockItem.status === 820) { // record belongs to another user
+        current.lock = 2;
+        dataFromFS.onInputAction = '';
+        dataFromFS.reAccessFile = true;
       }
-      else if (propName==='nbCallFileSystem'){
-        /*
-          this.returnDataFS.onInputAction=this.onInputAction; 
-          for (var i=0; i< this.iWaitToRetrieve.length; i++){
-              if (this.iWaitToRetrieve[i].accessFS===true){
-                console.log('ngOnChanges nbCallFileSystem iWait=' + this.iWaitToRetrieve[i].iWait);
-                this.returnDataFS.iWait = this.iWaitToRetrieve[i].iWait;
-                this.iWait=this.iWaitToRetrieve[i].iWait;;
-                this.onFileSystem(this.iWaitToRetrieve[i].iWait);
-              }
+      return dataFromFS;
+    }
+
+    // 3. Known status codes / generic errors
+    if (status !== undefined) {
+      switch (status) {
+        case 300: // record already locked
+        case 720: // updatedAt on record locked by another user
+          current.lock = 3;
+          dataFromFS.onInputAction = '';
+          if (status === 720) {
+            current.status = 720;
+            dataFromFS.reAccessFile = true;
+          } else {
+            current.status = 300;
+            dataFromFS.errorCode = 300;
           }
-          */
-      }
-    }
-    
-  }
+          break;
 
+        case 700:
+        case 710:
+        case 712: // unlock requested on a record that doesn't exist / belongs to another user
+          current.lock = 0;
+          current.status = status;
+          dataFromFS.onInputAction = '';
+          dataFromFS.errorMsg =
+            status === 712 ? 'Access to get credentials is forbidden, updates are not possible'
+            : status === 700 ? 'System failure, updates are not possible'
+            : 'Record cannot be unlocked, updates are not possible';
+          dataFromFS.errorCode = status;
+          break;
+
+        case 666:
+          dataFromFS.errorMsg = 'server cannot process file system because it is already processed by another user; apps will retry once more after 2 seconds';
+          dataFromFS.nbRecall++;
+          dataFromFS.status = 666;
+          break;
+
+        case 955:
+          dataFromFS.errorMsg += 'status error=' + status;
+          dataFromFS.theResetServer = true;
+          dataFromFS.errorCode = 955;
+          current.lock = 3;
+          break;
+
+        case 404:
+          dataFromFS.errorMsg += 'status error=' + status;
+          dataFromFS.errorCode = 404;
+          break;
+
+        case 956: // record is locked by another user
+          dataFromFS.errorMsg = 'status ' + status + ' ' + data.msg;
+          dataFromFS.theResetServer = true;
+          dataFromFS.onInputAction = '';
+          dataFromFS.errorCode = 720;
+          dataFromFS.reAccessFile = true;
+          current.lock = 3;
+          current.status = 720;
+          break;
+
+        case 'err-0': // file system was empty and no action was taken
+          this.log('data received:', data, 'on action ' + action);
+          break;
+
+        default:
+          dataFromFS.onInputAction = '';
+          if (action === 'lock' || action === 'unlock') {
+            current.status = 0;
+            if (action === 'lock') {
+              current.lock = 2;
+              dataFromFS.errorMsg = 'status ' + status + ' - record is locked ';
+            } else {
+              current.lock = 3;
+            }
+          } else {
+            current.status = 999;
+            dataFromFS.errorCode = 999;
+            dataFromFS.errorMsg = this.isHttpFailure(data)
+              ? 'FS Server HTTP failure'
+              : 'status ' + status + ' - unknown error ';
+          }
+      }
+      return dataFromFS;
+    }
+
+    // 4. No status at all
+    dataFromFS.errorMsg = this.isHttpFailure(data) ? 'FS Server HTTP failure' : '';
+    current.status = 999;
+    dataFromFS.errorCode = 999;
+    if (action === 'lock') {
+      dataFromFS.errorMsg += ' status  999 - record is locked ';
+      current.lock = 2;
+    }
+    return dataFromFS;
+  }
 }

@@ -1,7 +1,7 @@
 import {
-  Component, OnInit, Input, input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
+  Component, OnInit, Injectable, inject, Input, input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
   SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, LOCALE_ID,
-  signal, ChangeDetectorRef  } from '@angular/core';
+  signal } from '@angular/core';
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -23,7 +23,7 @@ import { BucketList, Bucket_List_Info } from '../../JsonServerClass';
 // it is stored in MongoDB and accessed via ManageMongoDBService
 
 import { msginLogConsole } from '../../consoleLog'
-import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock } from '../../JsonServerClass';
+import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock, classGetRecord } from '../../JsonServerClass';
 
 import { ClassSubConv, ClassConv, mainClassConv, mainConvItem, ClassUnit, ConvItem } from '../../ClassConverter'
 
@@ -32,7 +32,7 @@ import { ClassItem, DailyReport, mainDailyReport, ClassMeal, ClassDish } from '.
 
 import { classConfHTMLFitHealth, classConfTableAll } from '../classConfHTMLTableAll';
 
-import { CalcFatCalories } from '../CalcFatCalories';
+
 import { classConfigChart, classchartHealth } from '../classConfigChart';
 import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart } from '../classChart';
 import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS, classRetrieveFile } from '../../classFileSystem';
@@ -43,9 +43,27 @@ import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, fnCheckTimeOut, 
 import { FillHealthAllInOut } from '../../copyFilesFunction';
 import { DictionaryComponent } from '../../dictionary/dictionary.component';
 
+import { calcFatCalories, HealthResult } from '../CalcFatCalories';
+
+@Injectable({ providedIn: 'root' })
+export class HealthCalculatorService {
+  calculate(
+    report: DailyReport,
+    foods: mainClassCaloriesFat,
+    conv: mainClassConv,
+  ): HealthResult {
+    return calcFatCalories(foods, report, conv);
+  }
+}
+
 export class returnSignal{
   nb:number=-1;
   function:string="";
+}
+interface SaveResultEvent {
+  iWait: number;
+  status?: number;
+  err?: string;
 }
 
 @Component({
@@ -60,8 +78,9 @@ export class MainHealthComponent {
 
   constructor(
     private ManageGoogleService: ManageGoogleService,
-    private cdr: ChangeDetectorRef
+    
   ) { }
+ private calculator = inject(HealthCalculatorService);
 
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
@@ -88,6 +107,7 @@ export class MainHealthComponent {
   triggerParamSave=signal<number>(-1);
 
   isConfigHealth=signal<boolean>(false);
+  isErrorMsg=signal<boolean>(false);
 
   configHTMLRetrieved:number=-1; 
 
@@ -160,7 +180,7 @@ export class MainHealthComponent {
   DisplayListOfObjects: boolean = false;
 
 
-  errorMsg: string = '';
+  errorMsg=signal<string>("");
 
   EventHTTPReceived: Array<boolean> = [];
   EventStopWaitHTTP: Array<boolean> = [];
@@ -177,16 +197,16 @@ export class MainHealthComponent {
 
   isconfirmSaveA:boolean=false;
   isconfirmSave:boolean=false;
-  isDisplayAll:boolean=false;
+  //isDisplayAll:boolean=false;
 
-  isCopyFile:boolean=false;
+  isCopyFile=signal<boolean>(false);
   isMgtCaloriesFat:boolean=false;
 
   isDisplayChart:boolean=false;
   isSaveCaloriesFat:boolean=false;
 
   calfatNameFile: string = '';
-  errCalcCalFat:string = '';
+  errCalcCalFat=signal<string>('');
 
   processDestroy: boolean = false;
   passDestroy: number = 0;
@@ -233,113 +253,152 @@ export class MainHealthComponent {
     FileName: new FormControl('', { nonNullable: true }),
   })
 
+  initialHealthFileName:string="";
 
-  ngOnInit(): void {
-    // used to open files in parallel using the google and mongo servers
-    console.log("Main-health -- server google = " + this.configServer.googleServer);
-    this.saveServer.google=this.configServer.googleServer;
-    this.saveServer.mongo=this.configServer.mongoServer;
-    this.saveServer.FS=this.configServer.fileSystemServer;
-    for (var i = 0; i < this.maxEventHTTPrequest; i++) {
-      this.EventHTTPReceived[i] = false;
-      this.EventStopWaitHTTP[i] = false;
-      this.TabLoop[i]=0;
-    }
+  triggerCalculateCalFat:boolean=false;
+  tabSelRadio:Array<string>=[];
+  createNewHealth=signal<boolean>(false);
 
-    for (i=0; i<20; i++){
-      this.tabSelRadio[i]="N";
-    }
+ngOnInit(): void {
+  // used to open files in parallel using the google and mongo servers
+  const { googleServer, mongoServer, fileSystemServer } = this.configServer;
+  this.saveServer.google = googleServer;
+  this.saveServer.mongo = mongoServer;
+  this.saveServer.FS = fileSystemServer;
 
-    this.eventLockLimit.checkLock.action="firstLoop";
-    if (this.triggerFunction !== 0) {
-      if (this.triggerFunction === 3) {
-        this.TheSelectDisplays.controls['DisplayAll'].setValue('Y');
-      } else if (this.triggerFunction === 5) {
-        this.TheSelectDisplays.controls['MgtCalories'].setValue('Y');
-      } else if (this.triggerFunction === 7) {
-        this.TheSelectDisplays.controls['DisplayChart'].setValue('Y');
-      }
-      const theSelection = 'Y-' + this.triggerFunction;
-      this.SelRadio(theSelection.trim());
+  const n = this.maxEventHTTPrequest;
+  this.EventHTTPReceived = new Array(n).fill(false);
+  this.EventStopWaitHTTP = new Array(n).fill(false);
+  this.TabLoop = new Array(n).fill(0);
+  this.tabSelRadio = new Array(20).fill('N');
+
+  this.eventLockLimit.checkLock.action = 'firstLoop';
+
+  const initialControl: Record<number, string> = {
+    3: 'DisplayAll',
+    5: 'MgtCalories',
+    7: 'DisplayChart',
+  };
+
+  if (this.triggerFunction !== 0) {
+    const control = initialControl[this.triggerFunction];
+    if (control) {
+      this.TheSelectDisplays.controls[control].setValue('Y');
     }
-    this.SelectDisplay();
+    this.SelRadio(`Y-${this.triggerFunction}`);
   }
-  
-  resultFileSystemFn(event:any){
-    console.log('mainHealth - return from file-access/fileSystem event.iWait='+event.iWait);
-    this.eventLockLimit.checkLock.iCheck=false;
-    this.errorMsg="";
-    
-    event.nbRecall++
-    if (event.iWait===0){
+
+  this.SelectDisplay();
+}  
+resultFileSystemFn(event: classHeaderReturnDataFS): void {
+  this.eventLockLimit.checkLock.iCheck = false;
+  this.errorMsg.set('');
+  event.nbRecall++;
+
+  const radio = this.tabSelRadio;
+
+  switch (event.iWait) {
+    case 0:
       this.returnDataFSHealth = event;
-      this.resultCheckLimitHealth++
-      if (this.tabSelRadio[3] === "Y" || this.tabSelRadio[4] === "Y"  || this.tabSelRadio[6] === "Y"){
+      this.resultCheckLimitHealth++;
+      if (radio[3] === 'Y' || radio[4] === 'Y' || radio[6] === 'Y') {
         this.displayHealthAll.set(true);
       }
-    } else if (event.iWait===1){
+      break;
+
+    case 1:
       this.returnDataFSCalFat = event;
-      if (this.tabSelRadio[5] === "Y"){
-        this.resultCheckLimitCalFat.update(checkCF => checkCF + 1);
+      if (radio[5] === 'Y') {
+        this.bumpCalFatCheck();
         this.displayCalFat.set(true);
       }
-      console.log ('Return file system in mainHealth iWait=1 - new value resultCheckLimitCalFat=' + this.resultCheckLimitCalFat) 
-    } else if (event.iWait===5){
+      break;
+
+    case 5:
       this.returnDataFSParamChart = event;
-      this.resultCheckLimitCalFat.update(checkCF => checkCF + 1);
-    }  else if (event.iWait===6){
+      this.bumpCalFatCheck();
+      break;
+
+    case 6:
       this.returnDataFSRecipe = event;
-      this.resultCheckLimitCalFat.update(checkCF => checkCF + 1);
+      this.bumpCalFatCheck();
       this.displayCalFat.set(true);
-    } 
+      break;
   }
+}
 
-  resultSaveRecord(event:any){
-    this.openFileAccess.set(false);
-    if (event.iWait===0){
-      if (this.actionSave==='saveCopy'){
-        // reinitialise
-        if (event.status===200 || event.status===0){
-          this.cancelCopy();
-          this.errorMsg="copy of the file has been successfully saved";
-          this.tabSelRadio[4] = "N";
-        } else {
-          this.errorMsg = event.err;
-        }
-      } else if (this.actionSave==='createNewHealth'){
-        if (event.status===200 || event.status===0){
-            this.errorMsg="Creation of the new Health File is successful";
-        } else {
-            this.errorMsg = event.err;
-            this.createNewHealth=true;
-        }
-        this.actionSave='';
+private bumpCalFatCheck(): void {
+  this.resultCheckLimitCalFat.update(n => n + 1);
+}
+resultSaveRecord(event: SaveResultEvent): void {
+  this.openFileAccess.set(false);
+
+  switch (event.iWait) {
+    case 0:
+      this.handleHealthSaveResult(event);
+      break;
+    case 1:
+    case 6:
+      this.statusSaveFnCalFat = event;
+      this.triggerCalFatSave.update(n => n + 1);
+      break;
+    case 5:
+      this.statusSaveFnParamChart = event;
+      this.triggerParamSave.update(n => n + 1);
+      break;
+  }
+}
+
+handleHealthSaveResult(event: any): void {
+  const ok = event.status === 200 || event.status === 0;
+
+  switch (this.actionSave) {
+    case 'saveCopy':
+      if (ok) {
+        this.cancelCopy();
+        this.errorMsg.set('Copy of the file has been successfully saved');
+       
+        this.tabSelRadio[4] = 'N';
       } else {
-        this.statusSaveFnHealth=event;
-        if (this.statusSaveFnHealth.status===200 || this.statusSaveFnHealth.status===0){
-          this.InHealthAllData.tabDailyReport.splice(0,this.InHealthAllData.tabDailyReport.length);
-          this.InHealthAllData = FillHealthAllInOut(this.InHealthAllData,  this.HealthAllData);
-          this.initTrackRecord();
-        }
-        this.signalActionHealth.update (aHealth => aHealth + 1);
+        this.errorMsg.set(event.err ?? 'Creation of the new Health File failed');
       }
-    } else if (event.iWait===1 || event.iWait===6){
-          this.statusSaveFnCalFat=event;
-          this.triggerCalFatSave.update(calFatS => calFatS + 1);
-    } else if (event.iWait===5){
-          this.statusSaveFnParamChart=event;
-          this.triggerParamSave.update(Param => Param + 1);
-    } 
-  }
+      break;
 
+    case 'createNewHealth':
+      if (ok) {
+        this.errorMsg.set('Creation of the new Health File is successful');
+        this.applyHealthSaveSuccess(event);
+      } else {
+        this.errorMsg.set(event.err ?? 'Creation of the new Health File failed');
+        this.createNewHealth.set(true);
+      }
+      this.tabSelRadio[10] = 'N';
+      this.tabSelRadio[3] = 'Y';
+      this.actionSave = '';
+      break;
+  }
+}
+
+private applyHealthSaveSuccess(event: any): void {
+  this.statusSaveFnHealth = event;
+  const ok = event.status === 200 || event.status === 0;
+  if (ok) {
+    this.InHealthAllData.tabDailyReport.length=0;
+    this.InHealthAllData = FillHealthAllInOut(this.InHealthAllData, this.HealthAllData);
+    this.initTrackRecord();
+    this.afterNewHealth();
+  }
+  this.signalActionHealth.update(n => n + 1);
+}
   afterNewHealth(){
     // new file has been created
     // call Health component to fill-in this empty file
-    this.createNewHealth=false;
+    this.identification.fitness.files.fileHealth=this.SpecificForm.controls['FileName'].value;
+    this.createNewHealth.set(false);
     this.displayHealthAll.set(true);
     this.EventHTTPReceived[0]=true;
-    this.tabLock[0].lock=3;
-    if (this.tabLock[0].lock === 1) { // lock the newly created file 
+    this.tabLock[0].lock=3; // Next test does not make sense ??????
+    // lock the newly created file 
         this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
         this.tabLock[0].action='lock';
         this.iWait=0;
@@ -349,174 +408,153 @@ export class MainHealthComponent {
         this.iWaitToRetrieve[0].accessFS=true;
         this.triggerFileSystem.update (fs => fs + 1);
         this.openFileAccess.set(true);
-    }
+    
   }
 
- 
-  isErrorMsg=signal<boolean>(false);
-  resultGetRecord(event:any){
-    const iWait=event.iWait;
-    this.EventStopWaitHTTP[iWait]=true;
-    var noPb=true;
-    if (event.status!==undefined && (event.status!==200 && event.status!==0)){
-      this.isErrorMsg.set(true);
-      this.errorMsg = this.errorMsg + " error:" + event.status + " when retrieving the file " + this.tabLock[iWait].object;
-      noPb=false;
-    } else
-      this.isErrorMsg.set(false);
-      if (iWait === 0) {
-        console.log('file HealthAllData received');
-        this.configServer.googleServer=this.saveServer.google;
-        this.HealthAllData.tabDailyReport.splice(0,this.HealthAllData.tabDailyReport.length);
-        this.HealthAllData = FillHealthAllInOut(this.HealthAllData, event.content);
-        this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
-        if (this.HealthAllData.fileType === '') {
-          this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
-        }
-        if (this.InHealthAllData.fileType === '') {
-          this.InHealthAllData.tabDailyReport.splice(0,this.InHealthAllData.tabDailyReport.length);
-          this.InHealthAllData = FillHealthAllInOut(this.InHealthAllData,  this.HealthAllData);
-        }
-        this.initTrackRecord();
-        this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
-        if (this.isDisplayAll===true){
-          this.displayHealthAll.set(true);
-        } else {
-          this.displayHealthAll.set(false);
-        }
-        //****************** iWait === 1 *************************/
-      } else if (iWait === 1) {
-        this.ConfigCaloriesFat.tabCaloriesFat.splice(0, this.ConfigCaloriesFat.tabCaloriesFat.length)
-        if (event.content.fileType !== '') {
-          this.ConfigCaloriesFat.fileType = event.content.fileType;
-        } else {
-          this.ConfigCaloriesFat.fileType = this.identification.fitness.fileType.FitnessMyConfig;
-        }
-        if (event.content.updatedAt !== undefined) {
-          this.ConfigCaloriesFat.updatedAt = event.content.updatedAt;
-        } else {
-          this.ConfigCaloriesFat.updatedAt = '';
-        }
-        this.ConfigCaloriesFat.tabCaloriesFat = event.content.tabCaloriesFat;
-        this.displayCalFat.set(true);
-        this.calFatFileRetrieved.update( calFatF => calFatF + 1);
-        //****************** iWait === 2 *************************/
-      } else if (iWait === 2) {
-        this.ConvertUnit.tabConv.splice(0, this.ConvertUnit.tabConv.length);
-        this.ConvertUnit = event.content;
-        if (event.content.fileType !== '') {
-          this.ConvertUnit.fileType = event.content.fileType
-        } else {
-          this.ConvertUnit.fileType = this.identification.configFitness.fileType.convertUnit;
-        }
-        if (event.content.updatedAt !== undefined) {
-          this.ConvertUnit.updatedAt = event.content.updatedAt;
-        } else {
-          this.ConvertUnit.updatedAt = '';
-        }
-        this.ConvertUnit.tabConv = event.content.tabConv;
-      }
-      //****************** iWait === 3 *************************/
-      else if (iWait === 3) {
-        //this.ConfigHTMLFitHealth=data;
-        this.ConfigHTMLFitHealth.fileType == event.content.fileType;
-        this.ConfigHTMLFitHealth.debugPhone == event.content.debugPhone;
-        this.ConfigHTMLFitHealth.ConfigHealth.fileType == event.content.ConfigHealth.fileType;
-        if (event.content.ConfigHealth.updatedAt !== undefined) {
-          this.ConfigHTMLFitHealth.ConfigHealth.updatedAt == event.content.ConfigHealth.updatedAt;
-        } else {
-          this.ConfigHTMLFitHealth.ConfigHealth.updatedAt = '';
-        }
-        this.ConfigHTMLFitHealth.ConfigHealth.confTableAll = event.content.ConfigHealth.confTableAll;
+resultGetRecord(event: any): void {
+  const { iWait, content } = event;
+  this.EventStopWaitHTTP[iWait] = true;
 
-        this.ConfigHTMLFitHealth.ConfigCalFat.fileType == event.content.ConfigCalFat.fileType;
-        if (event.content.ConfigCalFat.updatedAt !== undefined) {
-          this.ConfigHTMLFitHealth.ConfigCalFat.updatedAt == event.content.ConfigCalFat.updatedAt;
-        } else {
-          this.ConfigHTMLFitHealth.ConfigCalFat.updatedAt = '';
-        }
-        this.ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat = event.content.ConfigCalFat.confCaloriesFat;
-
-        this.confTableAll = this.ConfigHTMLFitHealth.ConfigHealth.confTableAll;
-        //this.configHTMLRetrieved.update(HTML => HTML + 1);
-        this.configHTMLRetrieved++;
-      //****************** iWait === 4 *************************/
-      } else if (iWait === 4) {
-        this.configServer.googleServer=this.saveServer.google;
-
-        this.ConfigChart.fileType = event.content.fileType;
-        if (event.content.updatedAt !== undefined) {
-          this.ConfigChart.updatedAt = event.content.updatedAt;
-        } else {
-          this.ConfigChart.updatedAt = '';
-        }
-        this.ConfigChart.chartHealth = event.content.chartHealth;
-      }
-      //****************** iWait === 5 *************************/
-      else if (iWait === 5) {
-        this.fileParamChart.fileType = event.content.fileType;
-        if (event.content.updatedAt !== undefined) {
-          this.fileParamChart.updatedAt = event.content.updatedAt;
-        } else {
-          this.fileParamChart.updatedAt = '';
-        }
-        this.fileParamChart.data = event.content.data;
-      //****************** iWait === 6 *************************/   
-      } else if (iWait === 6) {
-        this.fileRecipe.fileType = event.content.fileType;
-        if (event.content.updatedAt !== undefined) {
-          this.fileRecipe.updatedAt = event.content.updatedAt;
-        } else {
-          this.fileRecipe.updatedAt = '';
-        }
-        this.fileRecipe.tabCaloriesFat = event.content.tabCaloriesFat;
-        this.displayCalFat.set(true);
-        this.recipeFileRetrieved.update( recipeF => recipeF + 1);
-      } else if (iWait === 10) { 
-        this.convToDisplay=event.content;
-      }
-      if (noPb===true){
-          console.log('getRecord - data processed for iWait='+iWait + '  EventHTTPReceived=true');
-          this.EventHTTPReceived[iWait] = true;
-
-          if (this.triggerCalculateCalFat===true && this.EventHTTPReceived[0]===true && 
-                this.EventHTTPReceived[1]===true && this.EventHTTPReceived[2]===true ){
-            this.processCalculateCalFat();
-          }
-      } 
+  const failed = event.status !== undefined && event.status !== 200 && event.status !== 0;
+  //this.isErrorMsg.set(failed);
+  if (failed) {
+    this.errorMsg.update(msg => `${msg} error:${event.status} when retrieving the file ${this.tabLock[iWait].object}`);
+    return;                                   // content is not usable
   }
 
-  processCalculateCalFat(){
-    var nbErrors=0;
-    this.triggerCalculateCalFat=false;
+  switch (iWait) {
+    case 0:  this.receiveHealth(content); break;
+    case 1:  this.receiveCalFat(content); break;
+    case 2:  this.receiveConvert(content); break;
+    case 3:  this.receiveHtmlConfig(content); break;
+    case 4:
+      this.configServer.googleServer = this.saveServer.google;
+      this.copyHeader(this.ConfigChart, content);
+      this.ConfigChart.chartHealth = content.chartHealth;
+      break;
+    case 5:
+      this.copyHeader(this.fileParamChart, content);
+      this.fileParamChart.data = content.data;
+      break;
+    case 6:
+      this.copyHeader(this.fileRecipe, content);
+      this.fileRecipe.tabCaloriesFat = content.tabCaloriesFat;
+      this.displayCalFat.set(true);
+      this.recipeFileRetrieved.update(n => n + 1);
+      break;
+    case 10:
+      this.convToDisplay = content;
+      break;
+  }
 
-    for (var j = 0; j < this.HealthAllData.tabDailyReport.length; j++) {
-      this.calculateHealth(this.HealthAllData.tabDailyReport[j]);
-      if (this.returnData.error !== 0) {
-        nbErrors=nbErrors+this.returnData.error;
-      }
-      this.HealthAllData.tabDailyReport[j].total = this.returnData.outHealthData.total;
-      this.HealthAllData.tabDailyReport[j].meal = this.returnData.outHealthData.meal;
+  this.EventHTTPReceived[iWait] = true;
+
+  const received = this.EventHTTPReceived;
+  if (this.triggerCalculateCalFat === true && received[0] && received[1] && received[2]) {
+    this.processCalculateCalFat();
+  }
+}
+
+// ---------- one handler per file ----------
+
+private receiveHealth(content: any): void {
+  this.configServer.googleServer = this.saveServer.google;
+
+  this.HealthAllData.tabDailyReport.length = 0;
+  this.HealthAllData = FillHealthAllInOut(this.HealthAllData, content);
+  this.HealthAllData.tabDailyReport.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  if (this.HealthAllData.fileType === '') {
+    this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
+  }
+  if (this.InHealthAllData.fileType === '') {   // keep an untouched copy for change detection
+    this.InHealthAllData.tabDailyReport.length = 0;
+    this.InHealthAllData = FillHealthAllInOut(this.InHealthAllData, this.HealthAllData);
+  }
+
+  this.initTrackRecord();
+  this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
+  this.initialHealthFileName=this.identification.fitness.files.fileHealth;
+  this.displayHealthAll.set(true);
+}
+
+private receiveCalFat(content: any): void {
+  this.copyHeader(this.ConfigCaloriesFat, content, this.identification.fitness.fileType.FitnessMyConfig);
+  this.ConfigCaloriesFat.tabCaloriesFat = content.tabCaloriesFat;
+  this.displayCalFat.set(true);
+  this.calFatFileRetrieved.update(n => n + 1);
+}
+
+private receiveConvert(content: any): void {
+  this.ConvertUnit = content;
+  this.copyHeader(this.ConvertUnit, content, this.identification.configFitness.fileType.convertUnit);
+}
+
+private receiveHtmlConfig(content: any): void {
+  const cfg = this.ConfigHTMLFitHealth;
+
+  cfg.fileType = content.fileType;
+  cfg.debugPhone = content.debugPhone;
+
+  cfg.ConfigHealth.fileType = content.ConfigHealth.fileType;
+  cfg.ConfigHealth.updatedAt = content.ConfigHealth.updatedAt ?? '';
+  cfg.ConfigHealth.confTableAll = content.ConfigHealth.confTableAll;
+
+  cfg.ConfigCalFat.fileType = content.ConfigCalFat.fileType;
+  cfg.ConfigCalFat.updatedAt = content.ConfigCalFat.updatedAt ?? '';
+  cfg.ConfigCalFat.confCaloriesFat = content.ConfigCalFat.confCaloriesFat;
+
+  this.confTableAll = cfg.ConfigHealth.confTableAll;
+  this.configHTMLRetrieved++;
+}
+
+/** Copies fileType and updatedAt. A default fileType is used only when one is given and the file's is empty. */
+private copyHeader(
+  target: { fileType: string; updatedAt: string },
+  content: { fileType: string; updatedAt?: string },
+  defaultType?: string,
+): void {
+  target.fileType = defaultType !== undefined && content.fileType === '' ? defaultType : content.fileType;
+  target.updatedAt = content.updatedAt ?? '';
+}
+
+  processCalculateCalFat(): void {
+    this.triggerCalculateCalFat = false;
+    const allErrors: string[] = [];
+    for (const report of this.HealthAllData.tabDailyReport) {
+      const { errors, outHealthData } = this.calculateHealth(report);
+      allErrors.push(...errors);
+      report.total = outHealthData.total;
+      report.meal = outHealthData.meal;
     }
+
     this.initTrackRecord();
-    this.errorMsg = "  *** Calculation of calories and fat is completed"
-    if (nbErrors>0) {
-      this.errCalcCalFat =  '  ***  ' + nbErrors + ' errors found while caculating calories and fat';
-    } else {
-      this.errCalcCalFat="";
-    }
-    this.TheSelectDisplays.controls['CalculCalories'].setValue('N');
+
+    this.errorMsg.set('*** Calculation of calories and fat is completed');
+    this.errCalcCalFat.set(allErrors.length
+        ? `*** ${allErrors.length} error(s) found while calculating calories and fat`
+        : '');
+    this.TheSelectDisplays = new FormGroup({
+        calculCalories: new FormControl<'Y' | 'N'>('N', { nonNullable: true }),
+        // ...
+      });
+    //this.selectDisplays.controls.calculCalories.setValue('N');
   }
 
+  private calculateHealth(report: DailyReport): HealthResult {
+  return this.calculator.calculate(report, this.ConfigCaloriesFat, this.ConvertUnit);
+}
+/*
   unlockFile(iWait:number){
     //this.resetSignal();
     this.tabLock[iWait].action="unlock";
     this.triggerFileSystem.update (fs => fs + 1);
     this.openFileAccess.set(true);
   }
+    */
   
   SelectDisplay() {
-    this.errorMsg="";
+    this.errorMsg.set("");
     if (this.TheSelectDisplays.controls['DisplayAll'].value === 'Y') {
       //this.isDisplayAll = true;
     } else {
@@ -524,423 +562,329 @@ export class MainHealthComponent {
     }
   }
 
-  triggerCalculateCalFat:boolean=false;
-  tabSelRadio:Array<string>=[];
+SelRadio(event: string): void {
+  const flag = event.charAt(0);              // 'Y' | 'N'
+  const on = flag === 'Y';
+  const id = Number(event.slice(2));
 
-  //theTabLock:string="";
+  this.openFileAccess.set(false);
+  this.iWaitToRetrieve.length = 0;
+  this.errorMsg.set('');
+  this.tabSelRadio[id] = flag;
 
-  SelRadio(event: any) {
-    if (this.openFileAccess()){
-      this.openFileAccess.set(false);
-    }
-    this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
-    this.errorMsg="";
-    const i = event.substring(2);
-    const NoYes = event.substring(0, 1);
-    this.tabSelRadio[i]=NoYes;
-    if (i === '3') { 
-      if (NoYes === 'Y') { // Health is selected
-        if (this.tabSelRadio[10] === "Y"){ // previous action was to Create a Health File. So, switch off this selecftion
-          this.tabSelRadio[10] = "N";
-          this.TheSelectDisplays.controls["CreateNewHealthCheckFile"].setValue("N");
-          this.createNewHealth = false;
-          this.EventHTTPReceived[0]===false;
-          if (this.tabLock[0].lock === 1) { // unlock the newly created file which was locked by this user
-            this.tabLock[0].action='unlock';
-            this.iWait=0;
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[0].iWait=0;
-            this.iWaitToRetrieve[0].accessFS=true;
-            this.triggerFileSystem.update (fs => fs + 1);
-            this.openFileAccess.set(true);
-          }
-        };
-        
-        if (this.tabLock[0].lock !== 1 || this.EventHTTPReceived[0]===false) {
-          this.tabLock[0].action='lock';
-          this.iWait=0;
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=0;
-          this.iWaitToRetrieve[0].accessFS=true;
-        } 
-        this.isDisplayAll = true; // selection to managing Health file 
-        if (this.EventHTTPReceived[0]===true) {
-          this.displayHealthAll.set(true); // to trigger the call to Health component
-        } else {
-          this.displayHealthAll.set(false);
-        }
-        // if not already done, retrieve all files requiredd by Health component
-        if (this.EventHTTPReceived[1]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=1;
-        }
-        if (this.EventHTTPReceived[3]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=3;
-        }   
-        if (this.EventHTTPReceived[2]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=2;
-        }       
-        if (this.iWaitToRetrieve.length>0){
-          this.triggerReadFile.update (rf => rf + 1);
-          this.openFileAccess.set(true);
-        }
-      } else { // Health is off
-        if (this.tabLock[0].lock === 1) { // unlock the file if was locked by this user
-          this.tabLock[0].action='unlock';
-          this.iWait=0;
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=0;
-          this.iWaitToRetrieve[0].accessFS=true;
-          this.triggerFileSystem.update (fs => fs + 1);
-          this.openFileAccess.set(true);
-        }
-        this.isDisplayAll = false;
-        this.displayHealthAll.set(false);
-      }
-    } else if (i === '4') {
-      if (NoYes === 'Y') {
-        this.isCopyFile = true;
-        const fileName = 'COPY ' + this.SpecificForm.controls['FileName'].value;
-        this.SpecificForm.controls['FileName'].setValue(fileName);
-      } else {
-        this.isCopyFile = false;
-      }
-    } else if (i === '5') {
-      if (NoYes === 'Y') { // select management of CalFat component
-        if (this.tabLock[1].lock !== 1 || this.EventHTTPReceived[1]===false) {
-          this.EventHTTPReceived[1]=false;
-          this.tabLock[1].action='lock';
-          this.iWait=1;
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=1;
-          this.iWaitToRetrieve[0].accessFS=true;
-        } 
-        this.isMgtCaloriesFat = true;
-        if (this.EventHTTPReceived[1]===true) {
-          this.displayCalFat.set(true);
-        } else {
-          this.displayCalFat.set(false);
-        }
-        // retrieve all files required by CalFat component if not there already
-        if (this.EventHTTPReceived[3]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=3;
-        } 
-        if (this.EventHTTPReceived[6]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=6;
-        }
-        if (this.EventHTTPReceived[2]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=2;
-        } 
-        if (this.EventHTTPReceived[10]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=10;
-        } 
-        if (this.iWaitToRetrieve.length>0){
-          this.triggerReadFile.update (rf => rf + 1);
-          this.openFileAccess.set(true);
-        }
+  switch (id) {
+    case 3:  this.selHealth(on); break;
+    case 4:  this.selCopyFile(on); break;
+    case 5:  this.selCalFatMgt(on); break;
+    case 6:  if (on) this.selCalculate(); break;
+    case 7:  this.selChart(on); break;
+    case 8:  this.isConfigHealth.set(on); break;
+    case 9:  if (on) this.selReloadChartConfig(); break;
+    case 10: this.selCreateHealthFile(on); break;
+  }
+}
 
-      } else {
-          this.isMgtCaloriesFat = false;
-          this.displayCalFat.set(false);
-          if (this.tabLock[1].lock === 1) {
-            this.tabLock[1].action='unlock';
-            this.iWaitToRetrieveFn(1);
-          }
-          if (this.tabLock[6].lock === 1) {
-            this.tabLock[6].action='unlock';
-            this.iWaitToRetrieveFn(6);
-          }
-          if (this.tabLock[0].lock === 1 && this.tabSelRadio[3]==="N"){
-            this.tabLock[0].action='unlock';
-            this.iWaitToRetrieveFn(0);
-          }
+// ---------- one method per radio button ----------
 
-          if (this.iWaitToRetrieve.length>0){
-              this.triggerFileSystem.update (fs => fs + 1);
-              this.openFileAccess.set(true);
-          }
-        //}
-      }
-    } else if (i === '6') { // Calculate Calories & Fat
-      if (NoYes === 'Y') {
-            if (this.tabLock[0].lock !== 1 || this.EventHTTPReceived[0]===false) {
-              this.EventHTTPReceived[0]=false;
-              this.tabLock[0].action='lock';
-              this.iWait=0;
-              const theClass=new classRetrieveFile;
-              this.iWaitToRetrieve.push(theClass);
-              this.iWaitToRetrieve[0].accessFS=true;
-              this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=0;
-            }
-            if (this.EventHTTPReceived[1]===false){
-              const theClass=new classRetrieveFile;
-              this.iWaitToRetrieve.push(theClass);
-              this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=1;
-            }
-            if (this.EventHTTPReceived[2]===false){
-              const theClass=new classRetrieveFile;
-              this.iWaitToRetrieve.push(theClass);
-              this.iWaitToRetrieve[0].iWait=2;
-            }
-            this.openFileAccess.set(true);
-            if (this.iWaitToRetrieve.length>0){
-              this.triggerReadFile.update (rf => rf + 1);
-              this.triggerCalculateCalFat=true;
-            } 
-          this.processCalculateCalFat();
-        //}
-      } //else { // just to be safe
-        //this.triggerCalculateCalFat=true;
-      //}
-    } else if (i === '8') {
-      if (NoYes === 'Y') { //Manage HTML file 
-        /*
-        this.iWait=3;
-        if (this.EventHTTPReceived[3]===false){
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=3;
-          this.iWaitToRetrieve[0].accessFS=false;
-          this.triggerReadFile.update (rf => rf + 1);
-          this.openFileAccess.set(true);
-        }
-        */
-       this.isConfigHealth.set(true);
-      } else {
-        this.isConfigHealth.set(false);
-      }
-    } else if (i === '7') { // Display chart
-      if (NoYes === 'Y') {
-        var maxItems=3;
-        this.isDisplayChart = true;
-        if (this.tabLock[5].lock !== 1|| this.fileParamChart.data.length===0 || this.EventHTTPReceived[5]===false) {
-          this.EventHTTPReceived[5]=false;
-          this.tabLock[5].action='lock';
-          this.iWait=5;
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=5;
-          this.iWaitToRetrieve[0].accessFS=true;
-        }
-        if (this.EventHTTPReceived[0]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=0;
-        }
-        if (this.EventHTTPReceived[4]===false){
-            const theClass=new classRetrieveFile;
-            this.iWaitToRetrieve.push(theClass);
-            this.iWaitToRetrieve[this.iWaitToRetrieve.length-1].iWait=4;
-        }
-        if (this.iWaitToRetrieve.length>0){
-          this.triggerReadFile.update (rf => rf + 1);
-          this.openFileAccess.set(true);
-        }
-      } else {
-        this.isDisplayChart = false;
-        if (this.tabLock[5].lock === 1 && this.identification.triggerFileSystem.toUpperCase()==="YES") {
-          this.tabLock[5].action='unlock';
-          this.iWait=5;
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=5;
-          this.iWaitToRetrieve[0].accessFS=true;
-          this.triggerFileSystem.update (fs => fs + 1);
-          this.openFileAccess.set(true);
-        }
-      }
-    } else if (i === '9') {
-      if (NoYes === 'Y') { // reload configuration chart
-          this.tabLock[4].action='';
-          this.iWait=4;
-          const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=4;
-          this.iWaitToRetrieve[0].accessFS=false;
-          this.triggerReadFile.update (rf => rf + 1);
-          this.openFileAccess.set(true);
-      }
-    } else if (i === '10') {
-      if (NoYes === 'Y') { // create a new Health file
-        this.createNewHealth=true;
-        this.tabSelRadio[3] = "N";
-        this.isDisplayAll=false;
-        this.displayHealthAll.set(false);
-        this.TheSelectDisplays.controls["DisplayAll"].setValue("N");
-        this.SpecificForm.controls["FileName"].setValue("");
-        
-      } else {
-        this.createNewHealth=false;
-        this.TheSelectDisplays.controls["CreateNewHealthCheckFile"].setValue("N");
-        this.tabSelRadio[10] = "N";
-      }
-    }
+private selHealth(on: boolean): void {
+  if (this.initialHealthFileName!=="" && this.initialHealthFileName!==this.identification.fitness.files.fileHealth){
+      if (this.tabLock[0].lock === 1) this.unlockFile(0); 
+      this.tabSelRadio[10] = 'N';
+      this.identification.fitness.files.fileHealth=this.initialHealthFileName;
+      this.InHealthAllData = new mainDailyReport;
+      this.EventHTTPReceived[0] = false;
+      this.iWaitToRetrieve=[];
+      this.iWaitToRetrieveFn(0);
+      if (this.iWaitToRetrieve[0].accessFS=true) this.triggerFileSystem.update(n => n + 1);
+      this.openFileAccess.set(true);
+      this.displayHealthAll.set(false);
+      return;
+  }
+    
+  if (!on) {
+    if (this.tabLock[0].lock === 1) this.unlockFile(0);
+    //this.isDisplayAll = false;
+    this.displayHealthAll.set(false);
+    return;
   }
 
-  createNewHealth:boolean=false;
-
-
-  iWaitToRetrieveFn(iWait:number){
-    const theClass=new classRetrieveFile;
-          this.iWaitToRetrieve.push(theClass);
-          this.iWaitToRetrieve[0].iWait=iWait;
-          if (this.identification.triggerFileSystem.toUpperCase()==="YES"){ 
-              this.iWaitToRetrieve[0].accessFS=true;    
-          } else {
-            this.iWaitToRetrieve[0].accessFS=false;
-          }
-          
+  if (this.tabSelRadio[10] === 'Y') {          // switch off "create new Health file"
+    this.tabSelRadio[10] = 'N';
+    this.TheSelectDisplays.controls['CreateNewHealthCheckFile'].setValue('N');
+    this.createNewHealth.set(false);
+    if (this.tabLock[0].lock === 1) this.unlockFile(0);
   }
 
-  confirmCreateNewHealthFile(event:any){
-    if (event === "Save"){
-      if (this.SpecificForm.controls['FileName'].value!==""){
-        var myEvent=new classtheEvent;
-      
-        this.HealthAllData.tabDailyReport.splice(0,this.HealthAllData.tabDailyReport.length);
-        const theDaily = new DailyReport;
-        this.HealthAllData.tabDailyReport.splice(0, 0, theDaily);
-        const theDate=convertDate(new(Date),"yyyy-mm-dd");
-        this.TheSelectDisplays.controls['SelectedDate'].setValue(theDate);
-        this.HealthAllData.tabDailyReport[0].date=this.TheSelectDisplays.controls['SelectedDate'].value;
-        const theMeal = new ClassMeal;
-        this.HealthAllData.tabDailyReport[0].meal.push(theMeal);
-        this.HealthAllData.tabDailyReport[0].meal[0].name="Breakfast";
-        const theIngredient = new ClassDish;
-        this.HealthAllData.tabDailyReport[0].meal[0].dish.push(theIngredient);
-        this.HealthAllData.tabDailyReport[0].meal[0].dish[0].name="A";
-        this.initTrackRecord();
-        this.actionSave='createNewHealth';
-        myEvent.checkLock.iWait=0;
-        myEvent.checkLock.isDataModified=true;
-        myEvent.checkLock.isSaveFile=true;
-        myEvent.checkLock.iCheck=true;
-        myEvent.fileName=this.SpecificForm.controls['FileName'].value;
-        myEvent.object=myEvent.fileName;
-        this.processSaveHealth(myEvent);
-      } else {
-        this.errorMsg = "You must provide the name of the new file"
-      }
-    } else { // cancel
-        this.createNewHealth=false;
-        this.TheSelectDisplays.controls["CreateNewHealthCheckFile"].setValue("N");
-        this.isDisplayAll=false;
-        this.tabSelRadio[10] = "N";
-        this.EventHTTPReceived[0]=false;
-        this.displayHealthAll.set(false);
+  if (this.tabLock[0].lock !== 1 || this.EventHTTPReceived[0] === false) {
+    this.lockFile(0);
+  }
+
+  //this.isDisplayAll = true;
+  this.displayHealthAll.set(this.EventHTTPReceived[0] === true);
+
+  this.queueMissing([1, 3, 2]);
+  this.flushReads();
+}
+
+private selCopyFile(on: boolean): void {
+  
+  if (on) {
+    const name = this.SpecificForm.controls['FileName'];
+    name.setValue(`COPY ${name.value}`);
+    this.isCopyFile.set(true);
+  } else {this.isCopyFile.set(false)}
+}
+
+private selCalFatMgt(on: boolean): void {
+  if (on) {
+    this.isMgtCaloriesFat = true;
+    if (this.tabLock[1].lock !== 1 || this.EventHTTPReceived[1] === false) {
+      this.EventHTTPReceived[1] = false;
+      this.lockFile(1);
+    }
+    this.displayCalFat.set(this.EventHTTPReceived[1] === true);
+
+    this.queueMissing([3, 6, 2, 10]);
+    this.flushReads();
+    return;
+  }
+
+  this.isMgtCaloriesFat = false;
+  this.displayCalFat.set(false);
+
+  const toUnlock = [1, 6];
+  if (this.tabSelRadio[3] === 'N') toUnlock.push(0);
+
+  for (const slot of toUnlock) {
+    if (this.tabLock[slot].lock === 1) {
+      this.tabLock[slot].action = 'unlock';
+      this.iWaitToRetrieveFn(slot);
     }
   }
-
-  calculateHealth(selRecord: DailyReport) {
-    this.returnData = CalcFatCalories(this.ConfigCaloriesFat, selRecord, this.ConvertUnit);
-    if (this.returnData.error > 0) {
-      this.errorMsg = this.returnData.error + ' nb of errors detected';
-    }
-  }
-
-  checkLockLimitFn(event:any) {
+  if (this.iWaitToRetrieve.length > 0) {
+    this.triggerFileSystem.update(n => n + 1);
     this.openFileAccess.set(true);
-    const saveNbCalls=this.eventLockLimit.nbCalls;
-    if (event.bucket===undefined){
-      this.eventLockLimit.checkLock = event;
+  }
+}
 
-    } else {
-      this.eventLockLimit = event;
+private selCalculate(): void {
+  if (this.tabLock[0].lock !== 1 || this.EventHTTPReceived[0] === false) {
+    this.EventHTTPReceived[0] = false;
+    this.lockFile(0);
+  }
+  this.queueMissing([1, 2]);
+
+  this.openFileAccess.set(true);
+  if (this.iWaitToRetrieve.length > 0) {
+    this.triggerReadFile.update(n => n + 1);
+    this.triggerCalculateCalFat = true;
+  }
+  this.processCalculateCalFat();
+}
+
+private selChart(on: boolean): void {
+  if (!on) {
+    this.isDisplayChart = false;
+    if (this.tabLock[5].lock === 1 && this.identification.triggerFileSystem.toUpperCase() === 'YES') {
+      this.unlockFile(5);
     }
-    this.eventLockLimit.iWait=this.eventLockLimit.checkLock.iWait;
-    this.eventLockLimit.nbCalls=saveNbCalls+1;
-    this.isRetrieveFile=true;
+    return;
   }
 
-  retrieveRecord(event:any){
-    this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
+  this.isDisplayChart = true;
+  if (this.tabLock[5].lock !== 1 || this.fileParamChart.data.length === 0 || this.EventHTTPReceived[5] === false) {
+    this.EventHTTPReceived[5] = false;
+    this.lockFile(5);
+  }
+  this.queueMissing([0, 4]);
+  this.flushReads();
+}
+
+private selReloadChartConfig(): void {
+  this.tabLock[4].action = '';
+  this.iWait = 4;
+  this.queueRetrieve(4, false);
+  this.triggerReadFile.update(n => n + 1);
+  this.openFileAccess.set(true);
+}
+
+selCreateHealthFile(on: boolean): void {
+  if (on) {
+    this.createNewHealth.set(true);
+    this.tabSelRadio[3] = 'N';
+    //this.isDisplayAll = false;
+    this.displayHealthAll.set(false);
+    this.TheSelectDisplays.controls['DisplayAll'].setValue('N');
+    this.SpecificForm.controls['FileName'].setValue('');
+  } else {
+    this.createNewHealth .set(false);
+    this.TheSelectDisplays.controls['CreateNewHealthCheckFile'].setValue('N');
+    this.tabSelRadio[10] = 'N';
+  }
+}
+
+// ---------- shared helpers ----------
+
+/** Queue one file to retrieve. accessFS is only set when given, so class defaults still apply. */
+private queueRetrieve(iWait: number, accessFS?: boolean): void {
+  const r = new classRetrieveFile();
+  r.iWait = iWait;
+  if (accessFS !== undefined) r.accessFS = accessFS;
+  this.iWaitToRetrieve.push(r);
+}
+
+/** Queue every slot whose file has not been received yet, in the order given. */
+private queueMissing(slots: number[]): void {
+  for (const slot of slots) {
+    if (this.EventHTTPReceived[slot] === false) this.queueRetrieve(slot);
+  }
+}
+
+lockFile(slot: number): void {
+  this.tabLock[slot].action = 'lock';
+  this.iWait = slot;
+  this.queueRetrieve(slot, true);
+}
+
+unlockFile(slot: number): void {
+  this.tabLock[slot].action = 'unlock';
+  this.iWait = slot;
+  this.queueRetrieve(slot, true);
+  this.triggerFileSystem.update(n => n + 1);
+  this.openFileAccess.set(true);
+}
+
+/** Read whatever was queued, if anything. */
+private flushReads(): void {
+  if (this.iWaitToRetrieve.length > 0) {
+    this.triggerReadFile.update(n => n + 1);
+    this.openFileAccess.set(true);
+  }
+}
+
+iWaitToRetrieveFn(iWait:number){
     const theClass=new classRetrieveFile;
     this.iWaitToRetrieve.push(theClass);
-    this.iWait=event;
-    this.tabLock[this.iWait].action='check&update';
-    this.iWaitToRetrieve[0].iWait=this.iWait;
-    if (this.iWait==0 || this.iWait===3){
-      this.iWaitToRetrieve[0].accessFS=true;
+    this.iWaitToRetrieve[0].iWait=iWait;
+    if (this.identification.triggerFileSystem.toUpperCase()==="YES"){ 
+      this.iWaitToRetrieve[0].accessFS=true;    
     } else {
       this.iWaitToRetrieve[0].accessFS=false;
-    }
-    this.triggerFileSystem.update (fs => fs + 1); 
-    this.isRetrieveFile = true;
-    this.triggerReadFile.update (rf => rf + 1);
-    this.openFileAccess.set(true);
+    }     
   }
 
-  initTrackRecord() {
-    this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-    for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
-      if (this.tabNewRecordAll.length === 0 || i !== 0) {
-        
-        const trackNew = { ngStyle:0, even:0, change:false, nb: 0, meal: [{ nb: 0, food: [{ nb: 0 }] }] };
-        this.tabNewRecordAll.push(trackNew);
-        if (i%2!==0){
-          this.tabNewRecordAll[i].ngStyle=1;
-          this.tabNewRecordAll[i].even=1;
-        }
-      }
-      for (var j = 0; j < this.HealthAllData.tabDailyReport[i].meal.length; j++) {
-        if (this.tabNewRecordAll[i].meal.length === 0 || j !== 0) {
-          const trackNew = { nb: 0, food: [{ nb: 0 }] };
-          this.tabNewRecordAll[i].meal.push(trackNew);
-        }
-        for (var k = 0; k < this.HealthAllData.tabDailyReport[i].meal[j].dish.length; k++) {
-          if (this.tabNewRecordAll[i].meal[j].food.length === 0 || k !== 0) {
-            const trackNew = { nb: 0 };
-            this.tabNewRecordAll[i].meal[j].food.push(trackNew);
-          }
-        }
-      }
-    }
+confirmCreateNewHealthFile(action: string): void {
+  if (action !== 'Save') {                      // cancel
+    this.createNewHealth.set(false);
+    this.TheSelectDisplays.controls['CreateNewHealthCheckFile'].setValue('N');
+    //this.isDisplayAll = false;
+    this.tabSelRadio[10] = 'N';
+    this.EventHTTPReceived[0] = false;
+    this.displayHealthAll.set(false);
+    return;
   }
 
-  saveParamChart(event:any){
-    if (!this.openFileAccess()){
-      this.openFileAccess.set(true);
-    }
-    this.errorMsg="";
-    this.fileParamChart.fileType = this.identification.fitness.fileType.myChart;
-    this.fileParamChart.updatedAt = strDateTime();
-    event.iWait=5;
-    event.bucket=this.identification.fitness.bucket;
-    if (event.fileName!==""){
-      event.object=event.fileName;
-    } else {
-      event.object=this.identification.fitness.files.myChartConfig;
-    }
-    event.fileContent=this.fileParamChart;
-    event.checkLock.iCheck=true;
-    event.saveCalls++
-    this.triggerSaveFile.update (sf => sf + 1);
-    this.checkLockLimitFn(event);
+  const fileName = (this.SpecificForm.controls['FileName'].value ?? '').trim();
+  if (!fileName) {
+    this.errorMsg.set('You must provide the name of the new file');
+    return;
   }
+
+  const today = convertDate(new Date(), 'yyyy-mm-dd');
+  this.TheSelectDisplays.controls['SelectedDate'].setValue(today);
+
+  // build the starter report locally, then attach it once
+  const dish = new ClassDish();
+  dish.name = 'A';
+  const meal = new ClassMeal();
+  meal.name = 'Breakfast';
+  meal.dish.push(dish);
+  const report = new DailyReport();
+  report.date = new Date();
+  report.meal.push(meal);
+
+  const reports = this.HealthAllData.tabDailyReport;
+  reports.splice(0, reports.length, report);    // clear and insert in one call
+
+  this.initTrackRecord();
+  this.actionSave = 'createNewHealth';
+
+  const myEvent = new classtheEvent();
+  Object.assign(myEvent.checkLock, { iWait: 0, isDataModified: true, isSaveFile: true, iCheck: true });
+  myEvent.fileName = fileName;
+  myEvent.object = fileName;
+  this.processSaveHealth(myEvent);
+}
+
+checkLockLimitFn(event: classtheEvent | classCheckLock): void {
+  const nbCalls = this.eventLockLimit.nbCalls + 1;
+
+  if ((event as classtheEvent).bucket === undefined) {
+    this.eventLockLimit.checkLock = event as classCheckLock;
+  } else {
+    this.eventLockLimit = event as classtheEvent;
+  }
+
+  this.eventLockLimit.iWait = this.eventLockLimit.checkLock.iWait;
+  this.eventLockLimit.nbCalls = nbCalls;
+  this.openFileAccess.set(true);
+  this.isRetrieveFile = true;
+}
+
+retrieveRecord(iWait: number): void {
+  this.iWait = iWait;
+  this.tabLock[iWait].action = 'check&update';
+
+  const request = new classRetrieveFile();
+  request.iWait = iWait;
+  request.accessFS = iWait === 0 || iWait === 3;
+  this.iWaitToRetrieve.splice(0, this.iWaitToRetrieve.length, request);
+
+  this.triggerFileSystem.update(n => n + 1);
+  this.triggerReadFile.update(n => n + 1);
+  this.isRetrieveFile = true;
+  this.openFileAccess.set(true);
+}
+
+initTrackRecord(): void {
+  this.tabNewRecordAll = this.HealthAllData.tabDailyReport.map((report, i) => {
+    const odd = i % 2 !== 0 ? 1 : 0;
+    return {
+      ngStyle: odd,
+      even: odd,
+      change: false,
+      nb: 0,
+      meal: report.meal.map(m => ({ nb: 0, food: m.dish.map(() => ({ nb: 0 })) })),
+    };
+  });
+}
+
+saveParamChart(event: classtheEvent): void {
+  const { bucket, fileType, files } = this.identification.fitness;
+
+  this.openFileAccess.set(true);
+  this.errorMsg.set('');
+
+  this.fileParamChart.fileType = fileType.myChart;
+  this.fileParamChart.updatedAt = strDateTime();
+
+  Object.assign(event, {
+    iWait: 5,
+    bucket,
+    object: event.fileName || files.myChartConfig,
+    fileContent: this.fileParamChart,
+    saveCalls: event.saveCalls + 1,
+  });
+  event.checkLock.iCheck = true;
+
+  this.triggerSaveFile.update(n => n + 1);
+  this.checkLockLimitFn(event);
+}
 
   SaveCaloriesFat(event: any) {
-    //this.resetSignal();
-    if (!this.openFileAccess()){
-      this.openFileAccess.set(true);
-    }
-    this.errorMsg="";
+
+    this.openFileAccess.set(true);
+    this.errorMsg.set("");
     this.isSaveCaloriesFat = true;
 
     if (event.target.id==='RecipeSave'){
@@ -955,134 +899,160 @@ export class MainHealthComponent {
   }
 
   processSaveCaloriesFat(event: any) {
-      if (this.ConfigCaloriesFat.fileType === '') {
+    if (this.ConfigCaloriesFat.fileType === '') {
         this.ConfigCaloriesFat.fileType = this.identification.configFitness.fileType.calories;
       }
       this.ConfigCaloriesFat.updatedAt = strDateTime();
+      Object.assign(event, {
+      bucket:this.identification.configFitness.bucket,
+      object:event.fileName,
+      fileContent:this.ConfigCaloriesFat,
+      iWait:1
+    });
+    /*
       event.bucket=this.identification.configFitness.bucket;
       event.object=event.fileName;
       event.fileContent=this.ConfigCaloriesFat;
       event.iWait=1;
+      */
   }
 
   processSaveRecipe(event: any) {
-      if (this.fileRecipe.fileType === '') {
+
+    if (this.fileRecipe.fileType === '') {
         this.fileRecipe.fileType = this.identification.fitness.fileType.recipe;
-      }
-      this.fileRecipe.updatedAt = strDateTime();
-      event.bucket=this.identification.fitness.bucket;
-      event.object=event.fileName;
-      event.fileContent=this.fileRecipe;
-      event.iWait=6;
+    }
+    this.fileRecipe.updatedAt = strDateTime();
+    Object.assign(event, {
+      bucket:this.identification.fitness.bucket,
+      object:event.fileName,
+      fileContent:this.fileRecipe,
+      iWait:6
+    });
+    /*
+    event.bucket=this.identification.fitness.bucket;
+    event.object=event.fileName;
+    event.fileContent=this.fileRecipe;
+    event.iWait=6;
+    */
   }
 
   confirmSaveAction:boolean=false;
+  actionSave:string="";
 
   confirmSave(event: any) {
-    if (this.tabLock[event.checkLock.iWait].lock === 1) {
-      this.confirmSaveAction = true;
-      this.eventLockLimit.checkLock.iWait=event.checkLock.iWait;
-      this.eventLockLimit.checkLock.isDataModified=event.checkLock.isDataModified;
-      this.eventLockLimit.checkLock.isSaveFile=event.checkLock.isSaveFile;
-      this.eventLockLimit.checkLock.lastInputAt=event.lastInput;
-      this.eventLockLimit.checkLock.iCheck=true;
-      this.eventLockLimit.nbCalls++
-      this.confirmSaveAction = false;
-    } 
+   const { checkLock } = event;
+
+    if (this.tabLock[checkLock.iWait].lock !== 1) return;
+
+    Object.assign(this.eventLockLimit.checkLock, {
+      iWait: checkLock.iWait,
+      isDataModified: checkLock.isDataModified,
+      isSaveFile: checkLock.isSaveFile,
+      lastInputAt: event.lastInput,
+      iCheck: true,
+    });
+
+    this.eventLockLimit.nbCalls++;
   }
 
-  actionSave:string="";
-  saveCopy() {
-    if (!this.openFileAccess()){
-      this.openFileAccess.set(true);
-    }
-    this.actionSave='saveCopy';
-    this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
-    if (this.HealthAllData.fileType !== '') {
-      this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
-    }
-    this.HealthAllData.updatedAt = strDateTime();
-    this.eventLockLimit.bucket=this.identification.fitness.bucket;
-    this.eventLockLimit.object=this.SpecificForm.controls["FileName"].value;
-    this.eventLockLimit.fileContent=this.HealthAllData;
-    this.eventLockLimit.iWait=0;
-    this.triggerSaveFile.update (sf => sf + 1)
+
+saveCopy(): void {
+  this.openFileAccess.set(true);          // setting a signal to the same value is a no-op
+  this.actionSave = 'saveCopy';
+
+  this.prepareForSave();
+
+  Object.assign(this.eventLockLimit, {
+    bucket: this.identification.fitness.bucket,
+    object: this.SpecificForm.controls['FileName'].value,
+    fileContent: this.HealthAllData,
+    iWait: 0,
+  });
+
+  this.triggerSaveFile.update(n => n + 1);
+}
+
+/** Shared by every save path (saveCopy, the recalculation save, ...). */
+private prepareForSave(): void {
+  const data = this.HealthAllData;
+  data.tabDailyReport.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  if (data.fileType === '') {
+    data.fileType = this.identification.fitness.fileType.Health;
   }
+  data.updatedAt = strDateTime();
+}
 
   cancelCopy() {
     this.actionSave='';
-    this.errorMsg="";
-    this.isCopyFile = false;
+    this.errorMsg.set("");
+    this.isCopyFile.set(false);
     this.TheSelectDisplays.controls['CopyFile'].setValue('N');
   }
 
   cancelUpdates(iWait:number){
-    this.errorMsg="";
+    this.errorMsg.set("");
     if (iWait === 0) {
       this.HealthAllData.tabDailyReport.splice(0, this.HealthAllData.tabDailyReport.length)
       this.HealthAllData = FillHealthAllInOut(this.HealthAllData, this.InHealthAllData);
       this.initTrackRecord();
     } 
-    
     this.signalActionHealth.update (aHealth => aHealth + 1);
   }
 
   calculateCalFat(event: any){
-    this.calculateHealth(this.HealthAllData.tabDailyReport[event]);
-    if (this.errorMsg !== '') {
-        //this.errCalcCalFat = 'errors found while caculating calories and fat (' + this.errorMsg + ')';
-        //this.errorMsg = "";
+    const { errors, outHealthData } = calcFatCalories(this.ConfigCaloriesFat, this.HealthAllData.tabDailyReport[event], this.ConvertUnit);
+    if (errors.length > 0) {
+      this.errorMsg .set(`${errors.length} error(s) detected`);
+    } else {
+      this.HealthAllData.tabDailyReport[event].total = outHealthData.total;
+      this.HealthAllData.tabDailyReport[event].meal = outHealthData.meal;
     }
-    this.HealthAllData.tabDailyReport[event].total = this.returnData.outHealthData.total;
-    this.HealthAllData.tabDailyReport[event].meal = this.returnData.outHealthData.meal;
   }
 
   processSaveHealth(event: any) {
     if (!this.openFileAccess()){
       this.openFileAccess.set(true);
     }
-    this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
-    this.errorMsg = '';
-    var trouve = false;
-    var i = 0
-    for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
-       trouve = false;
-      if (this.tabNewRecordAll[i].nb === 1) {
-        trouve = true;
-      } else {
-        for (var j = 0; j < this.HealthAllData.tabDailyReport[i].meal.length && trouve === false; j++) {
-          if (this.tabNewRecordAll[i].meal[j].nb === 1) {
-            trouve = true;
-          }
-          for (var k = 0; k < this.HealthAllData.tabDailyReport[i].meal[j].dish.length && trouve === false; k++) {
-            if (this.tabNewRecordAll[i].meal[j].food[k].nb === 1) {
-                trouve = true;
-            }
-          }
+    this.iWaitToRetrieve.length = 0;          // or splice(0), clearing in place
+    this.errorMsg.set('');
+    let nbErrors = 0;
+    const reports = this.HealthAllData.tabDailyReport;
+
+    reports.forEach((report, i) => {
+      const flags = this.tabNewRecordAll[i];
+
+      const isNew =
+        flags.nb === 1 ||
+        report.meal.some((_, j) =>
+          flags.meal[j].nb === 1 ||
+          report.meal[j].dish.some((_, k) => flags.meal[j].food[k].nb === 1)
+        );
+      if (!isNew) return;
+        const { errors, outHealthData } = calcFatCalories(this.ConfigCaloriesFat, report, this.ConvertUnit);
+        nbErrors += errors.length;
+        if (errors.length === 0) {
+          report.total = outHealthData.total;
+          report.meal = outHealthData.meal;
         }
-      }
-      if (trouve === true) {
-          this.calculateHealth(this.HealthAllData.tabDailyReport[i]);
-          if (this.errorMsg !== '') {
-            //this.errCalcCalFat = 'errors found while caculating calories and fat (' + this.errorMsg + ')';
-            //this.errorMsg = "";
-          }
-          this.HealthAllData.tabDailyReport[i].total = this.returnData.outHealthData.total;
-          this.HealthAllData.tabDailyReport[i].meal = this.returnData.outHealthData.meal;
-        }
-      }
-    this.HealthAllData.tabDailyReport.sort((a, b) => (a.date > b.date) ? -1 : 1);
-    if (this.HealthAllData.fileType !== '') {
+    });
+    if (nbErrors > 0) {
+      this.errorMsg.set(`${nbErrors} error(s) detected`);
+    }
+    reports.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    if (this.HealthAllData.fileType === '') {
       this.HealthAllData.fileType = this.identification.fitness.fileType.Health;
     }
     this.HealthAllData.updatedAt = strDateTime();
+
     event.bucket=this.identification.fitness.bucket;
     event.object=event.fileName;
     event.fileContent=this.HealthAllData;
     event.iWait=0;
-
     event.saveCalls++
-    this.triggerSaveFile.update (sf => sf + 1)
+
+    this.triggerSaveFile.update(sf => sf + 1)
     this.checkLockLimitFn(event);
   }
 
@@ -1098,6 +1068,7 @@ export class MainHealthComponent {
   
   ngOnDestroy() {
     this.passDestroy++
+    this.identification.fitness.files.fileHealth=this.initialHealthFileName;
     console.log('trigger ngOnDestroy  === pass=' + this.passDestroy);
     if (this.processDestroy === false) {
       this.processDestroy = true;

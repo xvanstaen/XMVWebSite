@@ -1,413 +1,350 @@
 import {
-  Component, OnInit, Input, Output, HostListener, OnDestroy, HostBinding, ChangeDetectionStrategy,
-  SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, 
-  input, Signal, effect, computed, Inject, LOCALE_ID, signal
+  Component, Input, Output, EventEmitter, ChangeDetectionStrategy,
+  input, effect, signal, untracked
 } from '@angular/core';
-
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { HttpEventType } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { timeout } from 'rxjs';
 
 import { FileSystemServiceComponent } from '../file-system-service/file-system-service.component';
-
-import { msginLogConsole } from '../consoleLog'
-import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent } from '../JsonServerClass';
-
-import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS, classRetrieveFile } from '../classFileSystem';
-
+import { msginLogConsole } from '../consoleLog';
+import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classGetRecord } from '../JsonServerClass';
+import { classAccessFile, classHeaderReturnDataFS, classRetrieveFile } from '../classFileSystem';
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
+import { fnCheckLockLimit } from '../MyStdFunctions';
 
-import { fnAddTime, convertDate, strDateTime, fnCheckLockLimit, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../MyStdFunctions';
+const GET_TIMEOUT_MS = 100_000;
+const MAX_RECALL_FS = 4;
 
 @Component({
   selector: 'app-file-access',
   templateUrl: './file-access.component.html',
   styleUrls: ['./file-access.component.css'],
-  standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule,FileSystemServiceComponent],
-
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FileSystemServiceComponent],
 })
 export class MainManageFileComponent {
 
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
-  
+
   @Input() credentials = new classCredentials;
   @Input() credentialsMongo = new classCredentials;
   @Input() credentialsFS = new classCredentials;
 
-  @Input() iWaitToRetrieve:Array<classRetrieveFile>=[];
-  @Input() eventCheckToLimit=new classtheEvent;
-  @Input() tabLock: Array<classAccessFile> = []; //0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-  
-  triggerCheckToLimit=input.required<number>();
-  previousTriggerCheckToLimit:number=-1;
-  triggerReadFile=input.required<number>();
-  previousTriggerReadFile:number=-1;
-  triggerSaveFile=input.required<number>();
-  previousTriggerSaveFile:number=-1;
-  triggerFileSystem=input.required<number>();
-  previousTriggerFileSystem:number=-1;
-  //@Input() triggerFunction: number = 0;
+  @Input() iWaitToRetrieve: Array<classRetrieveFile> = [];
+  @Input() eventCheckToLimit = new classtheEvent;
+  @Input() tabLock: Array<classAccessFile> = []; // 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked
 
-  //@Input() secondaryLevelFn:boolean=false;
+  triggerCheckToLimit = input.required<number>();
+  triggerReadFile = input.required<number>();
+  triggerSaveFile = input.required<number>();
+  triggerFileSystem = input.required<number>();
 
-  @Output() returnFile = new EventEmitter<any>();
-  @Output() returnSaveFn = new EventEmitter<any>();
+  @Output() returnFile = new EventEmitter<classGetRecord>();
+  @Output() returnSaveFn = new EventEmitter<classGetRecord>();
   @Output() resultFileSystem = new EventEmitter<any>();
 
-  returnGetRecord={
-    iWait:0,
-    content:"",
-    status:0,
-    err:""
-  }
+  returnDataFS = new classHeaderReturnDataFS;
 
-  returnDataFS=new classHeaderReturnDataFS;
+  nbCallFileSystem = signal<number>(0);
+  isCallFS = signal<boolean>(false);
 
-  actionParamChart:number=0;
-  actionCalFat:number=0;
-  actionRecipe:number=0;
-  actionHealth:number=0;
-
-  processDestroy: boolean = false;
-  passDestroy: number=0;
-
-  counterActions:number=0;
-  returnActionFile:number=0;
-
-  myLogConsole: boolean = false;
-  myConsole: Array<msgConsole> = [];
-  returnConsole: Array<msgConsole> = [];
-  SaveConsoleFinished: boolean = false;
-  type: string = '';
-
-  HTTP_Address: string = '';
-  HTTP_AddressPOST: string = '';
-  Google_Bucket_Access_Root: string = 'https://storage.googleapis.com/storage/v1/b/';
-  Google_Bucket_Access_RootPOST: string = 'https://storage.googleapis.com/upload/storage/v1/b/';
-  Google_Object_Health: string = 'HealthTracking';
-  Google_Object_Console: string = 'LogConsole';
-  Google_Object_Calories: string = 'ConfigCaloriesFat';
-
-  Error_Access_Server: string = '';
-
-
-  EventHTTPReceived: Array<boolean> = [];
-  EventStopWaitHTTP: Array<boolean> = [];
-  maxEventHTTPrequest: number = 12;
-  id_Animation: Array<number> = [];
-  TabLoop: Array<number> = [];
-  NbWaitHTTP: number = 0;
-
-  isMustSaveFile:boolean=false;
-  
-  //callFileSystem:boolean=true;
-  nbCallFileSystem=signal<number>(0);
-  isCallFS=signal<boolean>(false);
-  
   theEvent = new classtheEvent;
 
-  saveEvent: any;
+  counterActions = 0;
+  returnActionFile = 0;
 
-  eventLockLimit={
-    iWait:0,
-    isDataModified:false,
-    isSaveFile:false,
-    lastInputAt:"",
+  myLogConsole = false;
+  myConsole: Array<msgConsole> = [];
+  SaveConsoleFinished = false;
+  type = '';
+  HTTP_Address = '';
+
+  iWait = 0;
+  loopCheckToLimit = 0;
+  nbRecallFS = 0;
+  nbAccessFS = -1;
+  previoustriggerFileSystem:number=-1;
+  previoustriggerCheckToLimit:number=-1;
+  previoustriggerReadFile:number=-1;
+  previoustriggerSaveFile:number=-1;
+
+  /** Set to true to enable verbose tracing. */
+  private debug = false;
+
+  constructor(private manageGoogleService: ManageGoogleService) {
+    // One effect per trigger: each only depends on its own input.
+    // Handlers run untracked so signals they read/write never become dependencies.
+    effect(() => {
+      if (this.previoustriggerFileSystem!==this.triggerFileSystem()){
+        this.previoustriggerFileSystem=this.triggerFileSystem();
+        const t = this.triggerFileSystem();
+        untracked(() => this.processTriggerFS(t));
+      }
+    });
+
+    effect(() => {
+       if (this.previoustriggerReadFile!==this.triggerReadFile()){
+        this.previoustriggerReadFile=this.triggerReadFile();
+        const t = this.triggerReadFile();
+        untracked(() => this.processReadFile(t));
+       }
+    });
+
+    effect(() => {
+      if (this.previoustriggerCheckToLimit!==this.triggerCheckToLimit()){
+        this.previoustriggerCheckToLimit=this.triggerCheckToLimit();
+            this.triggerCheckToLimit();
+            untracked(() => {
+              this.loopCheckToLimit = 0;
+              this.processCheckToLimit();
+            });
+        }
+    });
+
+    effect(() => {
+      if (this.previoustriggerSaveFile!==this.triggerSaveFile()){
+        this.previoustriggerSaveFile=this.triggerSaveFile();
+        this.triggerSaveFile();
+        untracked(() => {
+          const e = this.eventCheckToLimit;
+          this.saveNewRecord(e.bucket, e.object, e.fileContent, e.iWait);
+        });
+      }
+    });
   }
 
-  iWait:number=0;
-  loopCheckToLimit:number=0;
-  nbRecallFS:number=0;
-  nbAccessFS:number=-1;
-  
+  // ---------------------------------------------------------------- triggers
 
-  constructor(
-    private ManageGoogleService: ManageGoogleService,
-    @Inject(LOCALE_ID) private locale: string,) 
-    {effect (() => {
-         
-            if (this.previousTriggerFileSystem!==this.triggerFileSystem()){
-              this.previousTriggerFileSystem=this.triggerFileSystem();
-              console.log("file-access calls 'processTriggerFS'")
-              this.processTriggerFS(this.triggerFileSystem()); 
-          }
-          if (this.previousTriggerReadFile!==this.triggerReadFile()){
-              this.previousTriggerReadFile=this.triggerReadFile();
-              this.processReadFile(this.triggerReadFile());
-          }
-          if (this.previousTriggerCheckToLimit!==this.triggerCheckToLimit()){
-              this.previousTriggerCheckToLimit=this.triggerCheckToLimit();
-              this.loopCheckToLimit=0;
-              this.processCheckToLimit(this.triggerCheckToLimit());
-          }
-              
-          if (this.previousTriggerSaveFile!==this.triggerSaveFile()){
-              this.previousTriggerSaveFile = this.triggerSaveFile();    
-              this.SaveNewRecord(this.eventCheckToLimit.bucket, this.eventCheckToLimit.object, this.eventCheckToLimit.fileContent, this.eventCheckToLimit.iWait);
-          }
-        }) 
+  processTriggerFS(trigger: number) {
+    this.log('processTriggerFS --', trigger);
+    if (this.iWaitToRetrieve.length > 0) {
+      this.requestFileSystemCall();
     }
-
-  processTriggerFS(event:any){
-      console.log('======= processTriggerFS -- ' + this.triggerFileSystem());
-      if (this.iWaitToRetrieve.length>0){
-        this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
-        this.isCallFS.set(true);
-      }
   }
 
-  processReadFile(event:any){
-      var accessToFS=0;
-      for (var i=0; i<this.maxEventHTTPrequest; i++){
-        this.EventHTTPReceived[i] = false;
-        this.EventStopWaitHTTP[i] = false;
-        this.TabLoop[i]=0;
-      }
-      for (var i=0; i< this.iWaitToRetrieve.length; i++){
-        this.retrieveRecord(this.iWaitToRetrieve[i].iWait);
-        accessToFS++;
-      }
-      console.log('======= processReadFile -- ' + this.triggerReadFile());
-      console.log('======= processReadFile nb of files read -- ' + i);
-      this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
-  }
-  processCheckToLimit(event:any){
-      if (this.eventCheckToLimit.checkLock.iCheck===true){
-          this.nbRecallFS=0;
-          this.loopCheckToLimit++;
-          console.log('PROCESS file-access eventCheckToLimit iWait=' + this.eventCheckToLimit.iWait);
-          //callSaveProcess++
-          this.checkLockLimit(this.eventCheckToLimit);
-      }
+  processReadFile(trigger: number) {
+    this.log('processReadFile --', trigger);
+    for (const item of this.iWaitToRetrieve) {
+      this.retrieveRecord(item.iWait);
+    }
+    this.log('processReadFile nb of files read --', this.iWaitToRetrieve.length);
+    this.nbCallFileSystem.update(n => n + 1);
   }
 
+  processCheckToLimit() {
+    if (this.eventCheckToLimit.checkLock.iCheck === true) {
+      this.nbRecallFS = 0;
+      this.loopCheckToLimit++;
+      this.log('processCheckToLimit iWait=', this.eventCheckToLimit.iWait);
+      this.checkLockLimit(this.eventCheckToLimit);
+    }
+  }
 
-  resultFileSystemFn(event:any){
-    console.log(' fileAccess process resultFS after emit from onFileSystem iWait=' + event.iWait +  '   returnDataFS=' + this.returnDataFS.iWait );
-    if (this.returnDataFS.errorCode===666){
-      console.log('this.returnDataFS.errorCode===666 this.nbRecallFS='+this.nbRecallFS );
-      if (this.nbRecallFS<4){
-        this.nbRecallFS++
-        this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
-        this.isCallFS.set(true);
+  // ------------------------------------------------------------- file system
+
+  resultFileSystemFn(event: any) {
+    this.log('resultFileSystemFn iWait=', event.iWait, 'errorCode=', event.errorCode);
+
+    if (event.errorCode === 666) {
+      if (this.nbRecallFS < MAX_RECALL_FS) {
+        this.nbRecallFS++;
+        this.requestFileSystemCall();
       } else {
-        this.nbRecallFS=0;
+        this.nbRecallFS = 0;
       }
-    } else {
-      this.returnDataFS = event;
-      console.log(' fileAccess end process resultFS; emit returnDataFS to calling apps (mainHealth) event.checkLock.iWait=' + event.iWait +  '   returnDataFS=' + this.returnDataFS.iWait);
-      this.resultFileSystem.emit(this.returnDataFS);
+      return;
     }
+
+    this.returnDataFS = event;
+    this.resultFileSystem.emit(this.returnDataFS);
   }
-  
-  errCalcCalFat:string="";
-  checkLockLimit(event:any) {
+
+  checkLockLimit(event: any) {
     this.nbCallFileSystem.set(0);
-    console.log('file-access - start checkLockLimit - this.nbCallFileSystem='+this.nbCallFileSystem+'  this.returnDataFS.nbRecall='+this.returnDataFS.nbRecall);
-    var valueCheck = { action: '', lockValue: 0, lockAction: '' };
-    var eventToCheck=new classtheEvent;
-    eventToCheck=this.eventCheckToLimit;
-    this.errCalcCalFat="";
-    if (this.identification.triggerFileSystem.toUpperCase()!=="YES") { //"No"
-      if (eventToCheck.checkLock.isSaveFile===true ){
-        valueCheck.action = "ProcessSave";
-      }
-      else {
-        valueCheck.action = "noAction";
-      }
-      
+    this.log('start checkLockLimit nbCallFileSystem=', this.nbCallFileSystem(), 'nbRecall=', this.returnDataFS.nbRecall);
+
+    const check = event.checkLock;
+    let valueCheck = { action: '', lockValue: 0, lockAction: '' };
+
+    if (this.identification.triggerFileSystem.toUpperCase() !== 'YES') {
+      valueCheck.action = this.eventCheckToLimit.checkLock.isSaveFile === true ? 'ProcessSave' : 'noAction';
     } else {
-      valueCheck = fnCheckLockLimit(this.configServer, this.tabLock, event.checkLock.iWait, event.checkLock.lastInputAt, event.checkLock.isDataModified, event.checkLock.isSaveFile);
+      valueCheck = fnCheckLockLimit(
+        this.configServer, this.tabLock, check.iWait, check.lastInputAt, check.isDataModified, check.isSaveFile
+      );
     }
-    if (valueCheck.action !== 'noAction') {
-      if (valueCheck.action === 'changeTabLock') {
-        this.tabLock[event.checkLock.iWait].lock = valueCheck.lockValue;
-      } else if (valueCheck.action === 'ProcessSave') {
+
+    switch (valueCheck.action) {
+      case 'noAction':
+        this.counterActions++;
+        this.returnActionFile = this.counterActions;
+        this.returnDataFS.nbRecall++;
+        this.returnDataFS.iWait = check.iWait;
+        this.returnDataFS.errorCode = 0;
+        this.returnDataFS.errorMsg = '';
+        this.returnDataFS.checkToLimit = 0; // no action needed; process should continue
+        this.resultFileSystem.emit(this.returnDataFS);
+        break;
+
+      case 'changeTabLock':
+        this.tabLock[check.iWait].lock = valueCheck.lockValue;
+        break;
+
+      case 'ProcessSave':
         this.mainSaveProcess(this.eventCheckToLimit);
-      } else {
-        this.iWaitToRetrieve.splice(0,this.iWaitToRetrieve.length);
-        const theClass=new classRetrieveFile;
-        this.iWaitToRetrieve.push(theClass);
-        this.iWaitToRetrieve[0].iWait=event.checkLock.iWait;
-        this.iWaitToRetrieve[0].accessFS=true;
-        //this.callFileSystem=true; 
-        if (this.loopCheckToLimit<=2 ){
-          this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
-          this.isCallFS.set(true);
+        break;
+
+      default: {
+        const toRetrieve = new classRetrieveFile;
+        toRetrieve.iWait = check.iWait;
+        toRetrieve.accessFS = true;
+        // Replace rather than mutate the @Input array in place.
+        this.iWaitToRetrieve = [toRetrieve];
+
+        if (this.loopCheckToLimit <= 2) {
+          this.requestFileSystemCall();
         }
+
         if (valueCheck.action === 'updateSystemFile') {
-          this.tabLock[event.checkLock.iWait].action = valueCheck.lockAction;
+          this.tabLock[check.iWait].action = valueCheck.lockAction;
         } else if (valueCheck.action === 'checkFile') {
-          if (event.isSaveFile === false) {
-            this.tabLock[event.checkLock.iWait].action = 'check&update';
-          } else {
-            this.tabLock[event.checkLock.iWait].action = 'check';
-          }
-        } 
+          this.tabLock[check.iWait].action = check.isSaveFile === false ? 'check&update' : 'check';
+        }
       }
-    } else {
-      this.counterActions++
-      this.returnActionFile=this.counterActions;
-      this.returnDataFS.nbRecall++
-      this.returnDataFS.iWait=event.checkLock.iWait;
-      this.returnDataFS.errorCode=0;
-      this.returnDataFS.errorMsg="";
-      this.returnDataFS.checkToLimit=0; // no action needed; process should continue
-      this.resultFileSystem.emit(this.returnDataFS);
     }
 
-    console.log('file-access - end checkLockLimit - this.nbCallFileSystem='+this.nbCallFileSystem()+'  this.returnDataFS.nbRecall='+this.returnDataFS.nbRecall);
+    this.log('end checkLockLimit nbCallFileSystem=', this.nbCallFileSystem(), 'nbRecall=', this.returnDataFS.nbRecall);
   }
-  
-  retrieveRecord(event:any){
-    if (event===0){
-      this.getRecord(this.identification.fitness.bucket, this.identification.fitness.files.fileHealth, 0);
-    } else if (event===1){
-      this.getRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.calories, 1);
-    } else if (event===2){
-      this.getRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.convertUnit, 2);
-    } else if (event===3){
-      this.getRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confHTML, 3);
-    } else if (event===4){
-      this.getRecord(this.identification.configFitness.bucket, this.identification.configFitness.files.confChart, 4); // individual
-    } else if (event===5){
-      this.getRecord(this.identification.fitness.bucket, this.identification.fitness.files.myChartConfig, 5);
-    } else if (event===6){
-      this.getRecord(this.identification.fitness.bucket, this.identification.fitness.files.recipe, 6);
-    } else if (event===7){
 
-    } else if (event===8){
+  private requestFileSystemCall() {
+    this.nbCallFileSystem.update(n => n + 1);
+    this.isCallFS.set(true);
+  }
 
-    } else if (event===7){
-    
-    } else if (event===10){
-      this.getRecord(this.identification.configFitness.bucket,this.identification.configFitness.files.convToDisplay,10);
+  // --------------------------------------------------------------- read file
+
+  private fileMap(): Record<number, [string, string]> {
+    const { fitness: f, configFitness: c } = this.identification;
+    return {
+      0: [f.bucket, f.files.fileHealth],
+      1: [c.bucket, c.files.calories],
+      2: [c.bucket, c.files.convertUnit],
+      3: [c.bucket, c.files.confHTML],
+      4: [c.bucket, c.files.confChart],
+      5: [f.bucket, f.files.myChartConfig],
+      6: [f.bucket, f.files.recipe],
+      10: [c.bucket, c.files.convToDisplay],
+    };
+  }
+
+  retrieveRecord(iWait: number) {
+    const target = this.fileMap()[iWait];
+    if (!target) return;
+
+    this.getRecord(target[0], target[1], iWait);
+    this.iWait = iWait;
+    if (this.tabLock[iWait]) {
+      this.tabLock[iWait].action = 'check&update';
     }
-    this.iWait=event;
-    this.tabLock[this.iWait].action='check&update';
   }
 
-  getRecord(Bucket: string, GoogleObject: string, iWait: number) {
-    console.log('getRecord - iWait='+iWait);
-    this.EventHTTPReceived[iWait] = false;
-    this.EventStopWaitHTTP[iWait]=false;
-    this.NbWaitHTTP++;
+  getRecord(bucket: string, object: string, iWait: number) {
+    this.log('getRecord iWait=', iWait);
 
-    this.waitHTTP(this.TabLoop[iWait], 3000, iWait);
-    this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject)
-      .subscribe((data) => {
-              console.log('getRecord - data received for iWait='+iWait);
-          this.EventStopWaitHTTP[iWait]=true;
-          this.returnGetRecord.iWait = iWait;
-          var noPb=true;
-          if (data.status!==undefined && data.status!==200){
-            
-            this.returnGetRecord.content = "";
-            this.returnGetRecord.status = data.status;
-            this.returnGetRecord.err=data.msg;
-            noPb=false;
-          } else {
-            this.returnGetRecord.content = data;
-            this.returnGetRecord.status = 0;
-          }
-          this.returnFile.emit(this.returnGetRecord);
+    this.manageGoogleService.getContentObject(this.configServer, bucket, object)
+      .pipe(timeout(GET_TIMEOUT_MS))
+      .subscribe({
+        next: data => {
+          const failed = data.status !== undefined && data.status !== 200;
+          this.returnFile.emit(this.buildRecord(
+            iWait,
+            failed ? '' : data,
+            failed ? data.status : 0,
+            failed ? data.msg : ''
+          ));
         },
-        err => {
-          this.EventStopWaitHTTP[iWait]=true;
-          this.returnGetRecord.iWait = iWait;
-          this.returnGetRecord.content = "";
-          this.returnGetRecord.status = 700;
-          if (err.message.substring(0,21)==="Http failure response"){
-              this.returnGetRecord.err="Server HTTP failure";
-              console.log('*** Server HTTP failure' + '  on file iWait=' + iWait);
-          } else {
-              this.returnGetRecord.err=err;
-              console.log('get record ' + " error="+JSON.stringify(err));
-          }
-          
-          this.returnFile.emit(this.returnGetRecord);
-        }
-      )
+        error: err => {
+          const httpFail = typeof err?.message === 'string' && err.message.startsWith('Http failure response');
+          this.log('getRecord error iWait=', iWait, err);
+          this.returnFile.emit(this.buildRecord(
+            iWait, '', 700, httpFail ? 'Server HTTP failure' : err
+          ));
+        },
+      });
   }
 
-
-
-
-  mainSaveProcess(event:any){
-    this.SaveNewRecord(event.bucket, event.object, event.fileContent, event.iWait);
+  /** A fresh object per emission, so concurrent requests never overwrite each other. */
+  private buildRecord(iWait: number, content: any, status: number, err: any = ''): classGetRecord {
+    const rec = new classGetRecord;
+    rec.iWait = iWait;
+    rec.content = content;
+    rec.status = status;
+    rec.err = err;
+    return rec;
   }
 
-  SaveNewRecord(GoogleBucket: string, GoogleObject: string, record: any, iWait: number) {
-    //var file=new File ([JSON.stringify(this.HealthAllData)],GoogleObject, {type: 'application/json'});
-    var file = new File([JSON.stringify(record)], GoogleObject, { type: 'application/json' });
-    const iWaitSave=iWait;
+  // --------------------------------------------------------------- save file
+
+  mainSaveProcess(event: any) {
+    this.saveNewRecord(event.bucket, event.object, event.fileContent, event.iWait);
+  }
+
+  saveNewRecord(bucket: string, object: string, record: any, iWait: number) {
+    let content: any = record;
+
+    if (object === 'ConsoleLog.json') {
+      object = 'ConsoleLog.json-' + new Date().toString().substring(4, 21);
+      content = this.myConsole;
+    }
+    const file = new File([JSON.stringify(content)], object, { type: 'application/json' });
+
     this.nbCallFileSystem.set(0);
-    if (GoogleObject === 'ConsoleLog.json') {
-      const myTime = new Date();
-      GoogleObject = 'ConsoleLog.json-' + myTime.toString().substring(4, 21);
-      file = new File([JSON.stringify(this.myConsole)], GoogleObject, { type: 'application/json' });
+    if (this.identification.triggerFileSystem.toUpperCase() === 'YES') {
+      if (this.tabLock[iWait]) {
+        this.tabLock[iWait].action = 'updatedAt';
+      }
+      this.requestFileSystemCall();
     }
-    if (this.identification.triggerFileSystem.toUpperCase()==="YES") {
-      this.tabLock[iWait].action='updatedAt';
-      //this.callFileSystem=true;
-      this.nbCallFileSystem.update (nbCallFS => nbCallFS + 1);
-      this.isCallFS.set(true);
-    }
-    console.log('SaveNewRecord of object=' + GoogleObject);
+    this.log('saveNewRecord object=', object);
 
-    this.ManageGoogleService.uploadObject(this.configServer, GoogleBucket, file, GoogleObject)
-      .subscribe(res => {
-        console.log('Return of SaveNewRecord of object=' + GoogleObject + '  res.type='+res.type);
-        if (res.type === 4 ) {
-          console.log('Successful SaveNewRecord of object=' + GoogleObject);
-          this.counterActions++
-          this.returnActionFile=this.counterActions;
-          this.tabLock[iWait].status = 0;
-          this.returnGetRecord.status=200;
-          this.returnGetRecord.iWait=iWaitSave;
-          this.returnSaveFn.emit(this.returnGetRecord);
-          //this.errorMsg = 'File "' + GoogleObject + '" is successfully stored in the cloud';
-        }
-      },
-        error_handler => {
-          //**this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
-          this.counterActions++
-          //this.errorMsg = 'File' + GoogleObject + '" *** Save action failed - status is ' + error_handler.status;
-          this.returnActionFile=-this.counterActions;
-          this.returnGetRecord.status=700;
-          this.returnGetRecord.iWait=iWait;
-          this.returnGetRecord.err= 'File' + GoogleObject + '" *** Save action failed - status is ' + error_handler.status;
-          this.returnSaveFn.emit(this.returnGetRecord);
-        }
-      )
+    this.manageGoogleService.uploadObject(this.configServer, bucket, file, object)
+      .subscribe({
+        next: res => {
+          if (res.type !== HttpEventType.Response) return;
+          this.log('saveNewRecord success object=', object);
+          this.counterActions++;
+          this.returnActionFile = this.counterActions;
+          if (this.tabLock[iWait]) {
+            this.tabLock[iWait].status = 0;
+          }
+          this.returnSaveFn.emit(this.buildRecord(iWait, '', 200));
+        },
+        error: e => {
+          this.counterActions++;
+          this.returnActionFile = -this.counterActions;
+          this.returnSaveFn.emit(this.buildRecord(
+            iWait, '', 700, `File ${object} *** Save action failed - status is ${e.status}`
+          ));
+        },
+      });
   }
 
-  waitHTTP(loop: number, max_loop: number, eventNb: number) {
-    const pas = 500;
-    if (loop % pas === 0) {
-      console.log(eventNb + ' waitHTTP fn  ==> loop=' + loop + ' max_loop=' + max_loop);
-    }
-    loop++
-    this.TabLoop[eventNb]++
-
-    this.id_Animation[eventNb] = window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
-    if (loop > max_loop || this.EventHTTPReceived[eventNb] === true || this.EventStopWaitHTTP[eventNb] === true) {
-      
-      console.log(eventNb + ' exit waitHTTP ==> TabLoop[eventNb]=' + this.TabLoop[eventNb] + ' eventNb=' + eventNb + ' this.EventHTTPReceived=' +
-        this.EventHTTPReceived[eventNb]);
-      window.cancelAnimationFrame(this.id_Animation[eventNb]);
-    }
-  }
+  // ----------------------------------------------------------------- console
 
   LogMsgConsole(msg: string) {
     if (this.myConsole.length > 40) {
-      this.SaveNewRecord('logconsole', 'ConsoleLog.json', this.myLogConsole, -1);
+      this.saveNewRecord('logconsole', 'ConsoleLog.json', this.myConsole, -1);
     }
     this.SaveConsoleFinished = false;
-
     this.myLogConsole = true;
     msginLogConsole(msg, this.myConsole, this.myLogConsole, this.SaveConsoleFinished, this.HTTP_Address, this.type);
   }
 
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[file-access]', ...args);
+  }
 }

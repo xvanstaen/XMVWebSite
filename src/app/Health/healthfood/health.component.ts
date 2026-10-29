@@ -12,10 +12,10 @@ import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, For
 import { MainManageFileComponent } from '../../fileAccessMgt/file-access.component';
 import { RunningClockComponent } from '../../Health/running-clock/running-clock.component';
 
-import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent } from '../../JsonServerClass';
+import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock } from '../../JsonServerClass';
 import { classPosDiv, getPosDiv } from '../../getPosDiv';
 
-import { CalcFatCalories } from '../CalcFatCalories';
+//import { calcFatCalories, HealthResult } from '../CalcFatCalories';
 
 import { getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'
 
@@ -381,8 +381,6 @@ export class HealthComponent  {
 
     this.TheSelectDisplays.controls['startRange'].setValue('');
     this.TheSelectDisplays.controls['endRange'].setValue('');
-
-    this.fillClassHeader();
 
     //this.configServer.timeoutFileSystem.userTimeOut.mn=2;
     console.log('ngInit() calls this.timeToGo() => userActivity=' + this.userActivity.substring(0,14));
@@ -877,321 +875,338 @@ export class HealthComponent  {
     this.onAction(this.theEvent);
   }
 
-  DelAfterConfirm(event: any) {
-    this.openFileAccess.set(false);
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
-    this.resetBooleans();
-    this.isDeleteItem = false;
-    if (event.currentTarget.id.substring(0, 13) === 'YesDelConfirm') {
-      if (this.theEvent.target.id.substring(0, 10) === 'DelAllDate') {
-        this.theEvent.target.id = 'DelAllDate-' + this.TabOfId[0];
-        this.DeleteDay(this.theEvent);
-      }
-      else
-        if (this.theEvent.target.id.substring(0, 10) === 'DelAllMeal') {
-          this.theEvent.target.id = 'DelAllMeal-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-          this.DeleteMeal(this.theEvent);
-        }
-        else
-          if (this.theEvent.target.id.substring(0, 7) === 'DelAll-') {
-            this.theEvent.target.id = 'DelAll-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-            this.DeleteIngredient(this.theEvent);
-          }
+/** Builds ids like 'AllMealA-2-1' from a prefix and the first `depth` indices of TabOfId */
+private idFor(prefix: string, depth: number): string {
+  return [prefix, ...this.TabOfId.slice(0, depth)].join('-');
+}
+
+/** Flags a day as changed (once) and refreshes row styling */
+private markChangedOnce(d: number) {
+  if (this.tabNewRecordAll[d].change === false) {
+    this.markChanged(d);          // helper from the earlier refactor
+    this.reInitBackground();
+  }
+}
+
+DelAfterConfirm(event: any) {
+  this.openFileAccess.set(false);
+  this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth, 'only');
+  this.resetBooleans();
+  this.isDeleteItem = false;
+
+  if (!event.currentTarget.id.startsWith('YesDelConfirm')) return;
+
+  const target = this.theEvent.target;
+  if (target.id.startsWith('DelAllDate')) {
+    target.id = this.idFor('DelAllDate', 1);
+    this.DeleteDay(this.theEvent);
+  } else if (target.id.startsWith('DelAllMeal')) {
+    target.id = this.idFor('DelAllMeal', 2);
+    this.DeleteMeal(this.theEvent);
+  } else if (target.id.startsWith('DelAll-')) {
+    target.id = this.idFor('DelAll', 3);
+    this.DeleteIngredient(this.theEvent);
+  }
+}
+
+onAction(event: any) {
+  this.openFileAccess.set(false);
+  this.errorMsg = '';
+  this.theEvent.target.id = event.target.id;
+  this.theEvent.target.textContent = event.target.textContent;
+  this.onInputAction = 'onAction';
+  this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth, 'only');
+}
+
+onActionA(event: any) {
+  this.resetBooleans();
+  const lock = this.tabLock[0].lock;
+  if (lock === 2) return;
+
+  const id: string = event.target.id;
+  const text: string = event.target.textContent;
+  const isOpen = id.startsWith('openAction');
+
+  this.manageIds(id);
+  this.dialogue[this.prevDialogue] = false;
+
+  if (lock === 0 && !isOpen) {
+    this.isAllDataModified = true;
+    this.checkLockLimit.emit({
+      iWait: 0,
+      isDataModified: this.isAllDataModified,
+      isSaveFile: this.isSaveHealth,
+      lastInputAt: this.lastInputAt,
+      nbCalls: 0,
+    });
+    return;
+  }
+
+  const sb = this.sizeBox;
+
+  if (isOpen) {
+    this.prevDialogue = 6;
+    this.dialogue[6] = true;
+    sb.heightOptions = Math.min(sb.heightItem * this.NewTabAction.length + 10, 250);
+    sb.heightContent = sb.heightOptions;
+    this.styleBox = getStyleDropDownContent(sb.heightContent, sb.widthContent);
+    this.styleBoxOption = getStyleDropDownBox(sb.heightOptions, sb.widthOptions, 60, 0, 'scroll');
+  } else if (id.startsWith('selAction')) {
+    if (!text.includes('cancel')) {
+      this.isAllDataModified = true;
+      this.IsSaveConfirmedAll = false;
+      this.findAction(text);
+      this.runSelectedAction(this.myType.trim(), this.myAction);
+    }
+  } else if (id.startsWith('ActionDate')) {
+    // see note 1: these ids don't match what CreateDay/DeleteDay look for
+    const prefixes: Record<string, string> = {
+      'insert after': 'DateA',
+      'insert before': 'DateB',
+      'delete': 'DelDate',
+    };
+    const prefix = prefixes[text];
+    if (prefix) {
+      this.theEvent.target.id = this.idFor(prefix, 1);
+      if (text === 'delete') this.DeleteDay(this.theEvent);
+      else this.CreateDay(this.theEvent);
     }
   }
 
-  onAction(event: any) {
-    this.openFileAccess.set(false);
-    this.errorMsg="";
-    this.theEvent.target.id = event.target.id;
-    this.theEvent.target.textContent = event.target.textContent;
-    this.onInputAction = 'onAction';
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+  if (this.prevDialogue < 6) {
+    sb.heightOptions = sb.heightItem * (this.TabAction.length + 1);
+    sb.heightContent = sb.heightOptions;
+    this.styleBox = getStyleDropDownContent(sb.heightContent, sb.widthContent);
+    this.styleBoxOption = getStyleDropDownBox(sb.heightOptions, sb.widthOptions, 30, 0, sb.scrollY);
+  } else if (this.isDeleteItem === true) {
+    sb.heightOptions = 90;
+    sb.heightContent = 90;
+    this.styleBox = getStyleDropDownContent(90, 240);
+    this.styleBoxOption = getStyleDropDownBox(90, 240, 60, this.posItem, sb.scrollY);
   }
+}
 
-  onActionA(event: any) {
-    this.resetBooleans();
-    if (this.tabLock[0].lock !== 2) {
-      this.manageIds(event.target.id);
-      this.dialogue[this.prevDialogue] = false;
-      if (this.tabLock[0].lock === 0 && event.target.id.substring(0, 10) !== 'openAction') {
-        this.isAllDataModified = true;
-        this.checkLockLimit.emit({iWait:0,isDataModified:this.isAllDataModified,isSaveFile:this.isSaveHealth, lastInputAt:this.lastInputAt,nbCalls:0});
-      }
-      else {
-        if (event.target.id.substring(0, 10) === 'openAction') {
-          this.prevDialogue = 6;
-          this.dialogue[this.prevDialogue] = true;
-          this.sizeBox.heightOptions = this.sizeBox.heightItem * (this.NewTabAction.length) + 10;
-          if (this.sizeBox.heightOptions>250){
-            this.sizeBox.heightOptions=250;
-          }
-          this.sizeBox.heightContent = this.sizeBox.heightOptions;
-          this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
-          this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 60, 0, "scroll");
-        } else if (event.target.id.substring(0, 9) === 'selAction') {
-          if (event.target.textContent.indexOf('cancel') !== -1) {
-          } else {
-            this.isAllDataModified = true;
-            this.IsSaveConfirmedAll = false;
-            this.findAction(event.target.textContent);
-            if (this.myType.trim() === "date") {
-              if (this.myAction === "insert after") {
-                this.theEvent.target.id = 'AllDateA-' + this.TabOfId[0];
-                this.CreateDay(this.theEvent);
-              } else if (this.myAction === "insert before") {
-                this.theEvent.target.id = 'AllDateB-' + this.TabOfId[0];
-                this.CreateDay(this.theEvent);
-              } else if (this.myAction === "delete") {
-                this.theEvent.target.id = 'DelAllDate-' + this.TabOfId[0];
-                this.delMsg = ' date=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].date;
-                this.posDelConfirm = this.posDelDate;
-                this.isDeleteItem = true;
-              }
-            } else if (this.myType.trim() === "meal") {
-              if (this.myAction === "insert after") {
-                this.theEvent.target.id = 'AllMealA-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-                this.CreateMeal(this.theEvent);
-              } else if (this.myAction === "insert before") {
-                this.theEvent.target.id = 'AllMealB-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-                this.CreateMeal(this.theEvent);
-              } else if (this.myAction === "delete") {
-                this.theEvent.target.id = 'DelAllMeal-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-                this.delMsg = ' meal=' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;
-                this.posDelConfirm = this.posDelMeal;
-                this.isDeleteItem = true;
-              }
-            } else if (this.myType.trim() === "food") {
-              if (this.myAction === "insert before") {
-                this.theEvent.target.id = 'AllIngrB-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-                this.CreateIngredient(this.theEvent);
-              } else if (this.myAction === "insert after") {
-                this.theEvent.target.id = 'AllIngrA-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-                this.CreateIngredient(this.theEvent);
-              } else if (this.myAction === "delete") {
-                this.theEvent.target.id = 'DelAll-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-                this.isDeleteItem = true;
-                this.delMsg =
-                  ' ingredient ' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish[this.TabOfId[2]].name
-                  + ' of meal ' + this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].name;;
-                this.posDelConfirm = this.posDelIngr;
-              }
-            } else if (this.myType.trim() === "calCalFat") {
-              this.calFatCalculation(this.TabOfId[0]);
-            } else if (this.myType.trim() === "detailNutFacts") {
-              this.detailNutFacts(this.TabOfId[0]);
-            }
-          }
-        } else if (event.target.id.substring(0, 10) === 'ActionDate') {
-          if (event.target.textContent === 'insert after') {
-            this.theEvent.target.id = 'DateA-' + this.TabOfId[0];
-            this.CreateDay(this.theEvent);
-          } else if (event.target.textContent === 'insert before') {
-            this.theEvent.target.id = 'DateB-' + this.TabOfId[0];
-            this.CreateDay(this.theEvent);
-          } else if (event.target.textContent === 'delete') {
-            this.theEvent.target.id = 'DelDate-' + this.TabOfId[0];
-            this.DeleteDay(this.theEvent);
-          }
-        }
-        if (this.prevDialogue < 6) {
-          this.sizeBox.heightOptions = this.sizeBox.heightItem * (this.TabAction.length + 1);
-          this.sizeBox.heightContent = this.sizeBox.heightOptions;
-          this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, this.sizeBox.widthContent);
-          this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, this.sizeBox.widthOptions, 30, 0, this.sizeBox.scrollY);
-        } else if (this.isDeleteItem === true) {
-          this.sizeBox.heightOptions = 90;
-          this.sizeBox.heightContent = 90;
-          this.styleBox = getStyleDropDownContent(this.sizeBox.heightContent, 240);
-          this.styleBoxOption = getStyleDropDownBox(this.sizeBox.heightOptions, 240, 60, this.posItem, this.sizeBox.scrollY);
-        }
-      }
+/** Handles the date / meal / food levels with one code path, plus the two calc actions */
+private runSelectedAction(type: string, action: string) {
+  const [d, m, i] = this.TabOfId;
+  const days = this.HealthAllData.tabDailyReport;
+
+  const levels = {
+    date: {
+      depth: 1, add: 'AllDate', del: 'DelAllDate', pos: this.posDelDate,
+      create: (e: any) => this.CreateDay(e),
+      msg: () => ' date=' + days[d].date,
+    },
+    meal: {
+      depth: 2, add: 'AllMeal', del: 'DelAllMeal', pos: this.posDelMeal,
+      create: (e: any) => this.CreateMeal(e),
+      msg: () => ' meal=' + days[d].meal[m].name,
+    },
+    food: {
+      depth: 3, add: 'AllIngr', del: 'DelAll', pos: this.posDelIngr,
+      create: (e: any) => this.CreateIngredient(e),
+      msg: () => ` ingredient ${days[d].meal[m].dish[i].name} of meal ${days[d].meal[m].name}`,
+    },
+  };
+  const level = (levels as Record<string, typeof levels.date | undefined>)[type];
+
+  if (level) {
+    if (action === 'insert after' || action === 'insert before') {
+      const side = action === 'insert after' ? 'A' : 'B';
+      this.theEvent.target.id = this.idFor(level.add + side, level.depth);
+      level.create(this.theEvent);
+    } else if (action === 'delete') {
+      this.theEvent.target.id = this.idFor(level.del, level.depth);
+      this.delMsg = level.msg();
+      this.posDelConfirm = level.pos;
+      this.isDeleteItem = true;
     }
+  } else if (type === 'calCalFat') {
+    this.calFatCalculation(d);
+  } else if (type === 'detailNutFacts') {
+    this.detailNutFacts(d);
+  }
+}
+
+DeleteIngredient(event: any) {
+  const id: string = event.target.id;
+  this.manageIds(id);
+  if (!id.startsWith('DelAll')) return;
+
+  const [d, m, i] = this.TabOfId;     // captured: CreateIngredient re-runs manageIds
+  const meal = this.HealthAllData.tabDailyReport[d].meal[m];
+
+  meal.dish.splice(i, 1);
+  this.tabNewRecordAll[d].meal[m].food.splice(i, 1);
+
+  if (meal.dish.length === 0) {
+    this.theEvent.target.id = this.idFor('AllIngrA', 3);
+    this.CreateIngredient(this.theEvent);
+  }
+  this.markChangedOnce(d);
+}
+
+DeleteMeal(event: any) {
+  const id: string = event.target.id;
+  this.manageIds(id);
+  if (!id.startsWith('DelAll')) return;
+
+  const [d, m] = this.TabOfId;
+  const day = this.HealthAllData.tabDailyReport[d];
+
+  day.meal.splice(m, 1);
+  this.tabNewRecordAll[d].meal.splice(m, 1);
+  this.markChangedOnce(d);
+
+  if (day.meal.length === 0) {
+    this.theEvent.target.id = this.idFor('AllMealA', 2);
+    this.CreateMeal(this.theEvent);
+  }
+}
+
+DeleteDay(event: any) {
+  const id: string = event.target.id;
+  this.manageIds(id);
+  if (!id.startsWith('DelAllDate')) return;
+
+  const [d] = this.TabOfId;
+  this.HealthAllData.tabDailyReport.splice(d, 1);
+  this.tabNewRecordAll.splice(d, 1);
+  this.reInitBackground();
+}
+
+  /** 'A' suffix → insert after current item (+1), 'B' suffix → insert before (0), otherwise null */
+  private insertOffset(id: string, prefix: string): 0 | 1 | null {
+    if (id.startsWith(prefix + 'A')) return 1;
+    if (id.startsWith(prefix + 'B')) return 0;
+    return null;
   }
 
-  DeleteIngredient(event: any) {
-    this.manageIds(event.target.id);
-    if (event.target.id.substring(0, 6) === 'DelAll') {
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 1);
-      this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food.splice(this.TabOfId[2], 1);
-      if (this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.length === 0) {
-        this.theEvent.target.id = 'AllIngrA-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
-        this.CreateIngredient(this.theEvent);
-      }
-      if (this.tabNewRecordAll[this.TabOfId[0]].change===false){
-        this.tabNewRecordAll[this.TabOfId[0]].change=true;
-        this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
-        this.reInitBackground();
-      }
-    }
-  }
-
-  DeleteMeal(event: any) {
-    this.manageIds(event.target.id);
-    if (event.target.id.substring(0, 6) === 'DelAll') {
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1], 1);
-      this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1], 1);
-      if (this.tabNewRecordAll[this.TabOfId[0]].change===false){
-        this.tabNewRecordAll[this.TabOfId[0]].change=true;
-        this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
-        this.reInitBackground();
-      }
-      if (this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.length === 0) {
-        this.theEvent.target.id = 'AllMealA-' + this.TabOfId[0] + '-' + this.TabOfId[1];
-        this.CreateMeal(this.theEvent);
-      }
-    }
-  }
-
-  DeleteDay(event: any) {
-    this.manageIds(event.target.id);
-    if (event.target.id.substring(0, 10) === 'DelAllDate') {
-      this.HealthAllData.tabDailyReport.splice(this.TabOfId[0], 1);
-      this.tabNewRecordAll.splice(this.TabOfId[0], 1);
-      this.reInitBackground();
-    } 
+  private markChanged(dayIndex: number) {
+    const rec = this.tabNewRecordAll[dayIndex];
+    rec.change = true;
+    rec.ngStyle = 2;
   }
 
   CreateIngredient(event: any) {
-    this.manageIds(event.target.id);
-    const theIngredient = new ClassDish;
-    if (event.target.id.substring(0, 8) === 'AllIngrA') {
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2] + 1, 0, theIngredient);
-      this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food.splice(this.TabOfId[2] + 1, 0, { nb: 1 });
-    } if (event.target.id.substring(0, 8) === 'AllIngrB') {
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.splice(this.TabOfId[2], 0, theIngredient);
-      this.tabNewRecordAll[this.TabOfId[0]].meal[this.TabOfId[1]].food.splice(this.TabOfId[2], 0, { nb: 1 });
+    const id: string = event.target.id;
+    this.manageIds(id);
+    const [d, m, i] = this.TabOfId;
+
+    const offset = this.insertOffset(id, 'AllIngr');
+    if (offset !== null) {
+      this.HealthAllData.tabDailyReport[d].meal[m].dish.splice(i + offset, 0, new ClassDish());
+      this.tabNewRecordAll[d].meal[m].food.splice(i + offset, 0, { nb: 1 });
     }
-    this.tabNewRecordAll[this.TabOfId[0]].change=true;
-    this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
+
+    this.markChanged(d);
     this.reInitBackground();
   }
 
   CreateMeal(event: any) {
-    this.manageIds(event.target.id);
-    const theMeal = new ClassMeal;
-    if (event.target.id.substring(0, 8) === 'AllMealA') {
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1] + 1, 0, theMeal);
-      const theIngredient = new ClassDish;
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1] + 1].dish.push(theIngredient);
-      const trackNew = { nb: 1, food: [{ nb: 1 }] };
-      this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1] + 1, 0, trackNew);
-    } else if (event.target.id.substring(0, 8) === 'AllMealB') { // create before current  meal
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal.splice(this.TabOfId[1], 0, theMeal);
-      const theIngredient = new ClassDish;
-      this.HealthAllData.tabDailyReport[this.TabOfId[0]].meal[this.TabOfId[1]].dish.push(theIngredient);
-      const trackNew = { nb: 1, food: [{ nb: 1 }] };
-      this.tabNewRecordAll[this.TabOfId[0]].meal.splice(this.TabOfId[1], 0, trackNew);
-    }
-    if (event.target.id.substring(0, 7) === 'AllMeal'){
-      this.tabNewRecordAll[this.TabOfId[0]].change=true;
-      this.tabNewRecordAll[this.TabOfId[0]].ngStyle=2;
-      this.reInitBackground();
-    }
-    
-  }
+    const id: string = event.target.id;
+    this.manageIds(id);
+    const [d, m] = this.TabOfId;
 
-  CreateDay(event: any) {
-    this.manageIds(event.target.id);
-    const theDaily = new DailyReport; 
-    var iDate = 0;
-    if (event.target.id.substring(0, 8) === 'AllDateA') {
-      this.HealthAllData.tabDailyReport.splice(this.TabOfId[0] + 1, 0, theDaily);
-      iDate = this.TabOfId[0] + 1;
-      const trackNew = { ngStyle:0, even:0, change:true, nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
-      this.tabNewRecordAll.splice(this.TabOfId[0] + 1, 0, trackNew);
-    } else if (event.target.id.substring(0, 8) === 'AllDateB') {
-      this.HealthAllData.tabDailyReport.splice(this.TabOfId[0], 0, theDaily)
-      iDate = this.TabOfId[0];
-      const trackNew = { ngStyle:0, even:0, change:true, nb: 1, meal: [{ nb: 1, food: [{ nb: 1 }] }] };
-      this.tabNewRecordAll.splice(this.TabOfId[0], 0, trackNew);
-    }
-    if (event.target.id.substring(0, 7) === 'AllDate') {
-      const theDate=convertDate(new(Date),"yyyy-mm-dd");
-      this.TheSelectDisplays.controls['SelectedDate'].setValue(theDate);
-      this.HealthAllData.tabDailyReport[iDate].date=this.TheSelectDisplays.controls['SelectedDate'].value;
-      const theMeal = new ClassMeal;
-      this.HealthAllData.tabDailyReport[iDate].meal.push(theMeal);
-      const theIngredient = new ClassDish;
-      this.HealthAllData.tabDailyReport[iDate].meal[0].dish.push(theIngredient);
-    } 
+    const offset = this.insertOffset(id, 'AllMeal');
+    if (offset === null) return;
+
+    const idx = m + offset;
+    const meal = new ClassMeal();
+    meal.dish.push(new ClassDish());
+    this.HealthAllData.tabDailyReport[d].meal.splice(idx, 0, meal);
+    this.tabNewRecordAll[d].meal.splice(idx, 0, { nb: 1, food: [{ nb: 1 }] });
+
+    this.markChanged(d);
     this.reInitBackground();
   }
 
-  reInitBackground(){
-    for (var i=0; i<this.tabNewRecordAll.length; i++){
-      if (i%2!==0){
-        this.tabNewRecordAll[i].ngStyle=1;
-        this.tabNewRecordAll[i].even=1;
-      } else {
-        this.tabNewRecordAll[i].ngStyle=0;
-        this.tabNewRecordAll[i].even=0;
-      }
-      if (this.tabNewRecordAll[i].change===true){
-        this.tabNewRecordAll[i].ngStyle=2;
-      }
+  CreateDay(event: any) {
+    const id: string = event.target.id;
+    this.manageIds(id);
+    const offset = this.insertOffset(id, 'AllDate');
+
+    if (offset !== null) {
+      const idx = this.TabOfId[0] + offset;
+
+      const daily = new DailyReport();
+      this.HealthAllData.tabDailyReport.splice(idx, 0, daily);
+      this.tabNewRecordAll.splice(idx, 0, {
+        ngStyle: 0,
+        even: 0,
+        change: true,
+        nb: 1,
+        meal: [{ nb: 1, food: [{ nb: 1 }] }],
+      });
+
+      const today = convertDate(new Date(), 'yyyy-mm-dd');
+      const dateCtrl = this.TheSelectDisplays.controls['SelectedDate'];
+      dateCtrl.setValue(today);
+      daily.date = dateCtrl.value;
+
+      const meal = new ClassMeal();
+      meal.dish.push(new ClassDish());
+      daily.meal.push(meal);
+    }
+
+    this.reInitBackground();
+  }
+
+reInitBackground() {
+  this.tabNewRecordAll.forEach((rec, i) => {
+    const parity = i % 2;           // 0 = even row, 1 = odd row
+    rec.even = parity;
+    rec.ngStyle = rec.change ? 2 : parity;
+  });
+}
+
+manageIds(theId: string) {
+  this.errorMsg = '';
+  this.TabOfId = findIds(theId, '-').tabOfId;
+}
+
+cleanFile() {
+  const dateCtrl = this.TheSelectDisplays.controls['SelectedDate'];
+
+  // 1. Drop days that have no meals (checked before meals are cleaned, as in the original)
+  this.HealthAllData.tabDailyReport = this.HealthAllData.tabDailyReport
+    .filter(day => day.meal.length > 0);
+
+  for (const day of this.HealthAllData.tabDailyReport) {
+    // 2. Trim timestamps down to yyyy-mm-dd
+    const dateStr = day.date.toString();
+    if (dateStr.length > 10) {
+      dateCtrl.setValue(dateStr.substring(0, 10));
+      day.date = dateCtrl.value;
+    }
+
+    // 3. Drop meals with no name and no dishes
+    day.meal = day.meal.filter(meal => meal.dish.length > 0 || meal.name !== '');
+
+    // 4. Drop empty dishes (no name and zero quantity)
+    for (const meal of day.meal) {
+      meal.dish = meal.dish.filter(d => !(d.name === '' && d.quantity === 0));
     }
   }
 
-  manageIds(theId: string) {
-    this.errorMsg = '';
-    this.TabOfId.splice(0, this.TabOfId.length);
-    const theValue = findIds(theId, "-");
-    this.TabOfId = theValue.tabOfId;
-  }
+  this.tabNewRecordAll.length = 0;
+  this.initTrackRecord.emit();
+  this.isAllDataModified = true;
+}
 
-  cleanFile() {
-    for (var i = 0; i < this.HealthAllData.tabDailyReport.length; i++) {
-      var trouve = false;
-      if (this.HealthAllData.tabDailyReport[i].date.toString().length > 10) {
-        if (this.HealthAllData.tabDailyReport[i].meal.length === 0) {
-          trouve = true;
-          this.HealthAllData.tabDailyReport.splice(i, 1);
-          i--
-        } else {
-          this.TheSelectDisplays.controls['SelectedDate'].setValue(this.HealthAllData.tabDailyReport[i].date.toString().substring(0, 10));
-          this.HealthAllData.tabDailyReport[i].date = this.TheSelectDisplays.controls['SelectedDate'].value;
-        }
-      }
-      for (var j = 0; j < this.HealthAllData.tabDailyReport[i].meal.length && trouve === false; j++) {
-        if (this.HealthAllData.tabDailyReport[i].meal[j].dish.length === 0 && this.HealthAllData.tabDailyReport[i].meal[j].name === "") {
-          this.HealthAllData.tabDailyReport[i].meal.splice(j, 1);
-          j--
-        } else {
-          for (var k = 0; k < this.HealthAllData.tabDailyReport[i].meal[j].dish.length; k++) {
-            if (this.HealthAllData.tabDailyReport[i].meal[j].dish[k].name === "" && this.HealthAllData.tabDailyReport[i].meal[j].dish[k].quantity === 0) {
-              this.HealthAllData.tabDailyReport[i].meal[j].dish.splice(k, 1);
-              k--
-            }
-          }
-        }
-      }
-    }
-    this.tabNewRecordAll.splice(0, this.tabNewRecordAll.length);
-    this.initTrackRecord.emit();
-    this.isAllDataModified = true;
-  }
+fillAllData(inRecord: any, outRecord: any) { // TO BE DELETED
+  outRecord.date = inRecord.date;
+  outRecord.burntCalories = inRecord.burntCalories;
+  outRecord.total = inRecord.total;
 
-  fillAllData(inRecord: any, outRecord: any) { // TO BE DELETED
-    var i = 0;
-    var j = 0;
-    outRecord.date = inRecord.date;
-    outRecord.burntCalories = inRecord.burntCalories;
-    outRecord.total = inRecord.total;
-    for (i = 0; i < inRecord.meal.length; i++) {
-      const theMeal = new ClassMeal;
-      outRecord.meal.push(theMeal);
-      outRecord.meal[outRecord.meal.length - 1].name = inRecord.meal[i].name;
-      outRecord.meal[outRecord.meal.length - 1].total = inRecord.meal[i].total;
-      for (j = 0; j < inRecord.meal[i].dish.length; j++) {
-        const theIngredient = new ClassDish;
-        outRecord.meal[outRecord.meal.length - 1].dish.push(theIngredient);
-        const iMeal = outRecord.meal.length - 1;
-        outRecord.meal[iMeal].dish[outRecord.meal[iMeal].dish.length - 1] = inRecord.meal[i].dish[j];
-      }
-    }
+  for (const inMeal of inRecord.meal) {
+    const meal = new ClassMeal();
+    meal.name = inMeal.name;
+    meal.total = inMeal.total;
+    meal.dish.push(...inMeal.dish);
+    outRecord.meal.push(meal);
   }
-
+}
   delDate(event: any) {
     this.isDeleteConfirmed = true;
     this.manageIds(event.target.id);
@@ -1201,322 +1216,159 @@ export class HealthComponent  {
     this.scroller.scrollToAnchor('ListAll');
   }
 
-  ConfirmDelDate() {
+ConfirmDelDate() {
+  const idx = this.recordToDelete;
+  const { date } = this.HealthAllData.tabDailyReport[idx];
 
-    const theDate = this.HealthAllData.tabDailyReport[this.recordToDelete].date;
-    this.HealthAllData.tabDailyReport.splice(this.recordToDelete, 1);
-    this.tabNewRecordAll.splice(this.recordToDelete, 1);
-    this.reInitBackground();
-    this.errorMsg = 'record#' + this.recordToDelete + ' with date=' + theDate + 'is deleted but file is not saved';
-    this.errorFn = 'delDate';
-    this.isDeleteConfirmed = false;
-    this.isAllDataModified = true;
-  }
+  this.HealthAllData.tabDailyReport.splice(idx, 1);
+  this.tabNewRecordAll.splice(idx, 1);
+  this.reInitBackground();
 
-  cancelDelDate() {
-    this.isDeleteConfirmed = false;
-  }
+  this.errorMsg = `record#${idx} with date=${date} is deleted but file is not saved`;
+  this.errorFn = 'delDate';
+  this.isDeleteConfirmed = false;
+  this.isAllDataModified = true;
+}
 
-  ConfirmSaveA(event: any) {
-    this.openFileAccess.set(false);
-    this.errorMsg = '';
-    this.errorFn="";
-    this.resetBooleans();
-    this.theEvent.target.id = event.target.id;
-    this.theEvent.target.value = event.target.value;
-    this.theEvent.target.textContent = event.target.textContent;
-    this.theEvent.checkLock.iWait=0;
-    this.theEvent.checkLock.isDataModified=true;
-    this.theEvent.checkLock.isSaveFile=false;
-    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
-    this.theEvent.fileName=this.SpecificForm.controls['FileName'].value;
-    this.onInputAction = "confirmSave";
-    this.timeOutactivity(0, true, false,"only");
-  }
+cancelDelDate() {
+  this.isDeleteConfirmed = false;
+}
 
-  SaveHealth(event: any) {
-    this.errorMsg = '';
-    this.errorFn="";
-    this.isSaveHealth = true;
-    this.IsSaveConfirmedAll = false;
-    this.theEvent.target.id = event.target.id;
-    this.theEvent.checkLock.iWait=0;
-    this.theEvent.checkLock.isDataModified=true;
-    this.theEvent.checkLock.isSaveFile=true;
-    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
-    this.theEvent.fileName = this.SpecificForm.controls['FileName'].value;
-    this.theEvent.object = this.SpecificForm.controls['FileName'].value;
-    this.theEvent.checkLock.action="saveHealth";
-    this.onInputAction = "saveHealth";
-    this.timeOutactivity(0, true, true,"saveHealth");
-    this.processSaveHealth.emit(this.theEvent);
-  }
+/** Shared setup for the lock check that precedes a save */
+private prepareCheckLock(event: any, isSaveFile: boolean) {
+  const ev = this.theEvent;
+  ev.target.id = event.target.id;
+  ev.fileName = this.SpecificForm.controls['FileName'].value;
+  ev.checkLock.iWait = 0;
+  ev.checkLock.isDataModified = true;
+  ev.checkLock.isSaveFile = isSaveFile;
+  ev.checkLock.lastInputAt = this.lastInputAt;
+}
 
-  saveHealthAfterCheckToLimit(){
-    //this.theEvent.checkLock.isSaveFile=false;
-    //this.theEvent.checkLock.isDataModified=false;
-    //this.processSaveHealth.emit(this.theEvent);
-  }
+ConfirmSaveA(event: any) {
+  this.openFileAccess.set(false);
+  this.errorMsg = '';
+  this.errorFn = '';
+  this.resetBooleans();
 
-  cancelUpdateAll(event: any) {
-    this.onInputAction="cancelUpdateAll";
-    this.cancelUpdates.emit(0);
-    this.isMustSaveFile = false;
-    this.tabInputMeal.splice(0, this.tabInputMeal.length);
-    this.tabInputFood.splice(0, this.tabInputFood.length);
-    this.IsSaveConfirmedAll = false;
-    this.isAllDataModified = false;
-    this.errorMsg = '';
-    this.errorFn = '';
-  }
+  this.prepareCheckLock(event, false);
+  this.theEvent.target.value = event.target.value;
+  this.theEvent.target.textContent = event.target.textContent;
 
-  processSignalFunctions(){
-    if (this.onInputAction === "saveHealth"){
-        this.isMustSaveFile = false;
-        this.isSaveHealth = false;
-        this.IsSaveConfirmedAll = false;
-        this.theEvent.checkLock.isDataModified = false;
-        this.theEvent.checkLock.isSaveFile = false;
-        this.theEvent.checkLock.iCheck = true;
-        this.resetBooleans();
-        if (this.statusSaveFn.status===200 || this.statusSaveFn.status===0){
-          this.errorMsg='File has been successfully saved';
-          this.isAllDataModified = false;
-        } else {
-          this.errorMsg=this.statusSaveFn.err;
-        }
-    } else  if (this.onInputAction === "cancelUpdateAll"){
-      if (this.filterHealth = true && (this.  TheSelectDisplays.controls['startRange'].value !== '' || this.TheSelectDisplays.controls['endRange'].value !== '')) {
-          this.theEvent.target.id === 'selectAllData';
-          this.dateRangeSelection(this.theEvent);
+  this.onInputAction = 'confirmSave';
+  this.timeOutactivity(0, true, false, 'only');
+}
+
+SaveHealth(event: any) {
+  this.errorMsg = '';
+  this.errorFn = '';
+  this.isSaveHealth = true;
+  this.IsSaveConfirmedAll = false;
+
+  this.prepareCheckLock(event, true);
+  this.theEvent.object = this.theEvent.fileName;
+  this.theEvent.checkLock.action = 'saveHealth';
+
+  this.onInputAction = 'saveHealth';
+  this.timeOutactivity(0, true, true, 'saveHealth');
+  this.processSaveHealth.emit(this.theEvent);
+}
+
+cancelUpdateAll() {
+  this.onInputAction = 'cancelUpdateAll';
+  this.cancelUpdates.emit(0);
+  this.isMustSaveFile = false;
+  this.tabInputMeal.length = 0;
+  this.tabInputFood.length = 0;
+  this.IsSaveConfirmedAll = false;
+  this.isAllDataModified = false;
+  this.errorMsg = '';
+  this.errorFn = '';
+}
+
+processSignalFunctions() {
+  switch (this.onInputAction) {
+    case 'saveHealth': {
+      this.isMustSaveFile = false;
+      this.isSaveHealth = false;
+      this.IsSaveConfirmedAll = false;
+      this.theEvent.checkLock.isDataModified = false;
+      this.theEvent.checkLock.isSaveFile = false;
+      this.theEvent.checkLock.iCheck = true;
+      this.resetBooleans();
+
+      const { status, err } = this.statusSaveFn;
+      if (status === 200 || status === 0) {
+        this.errorMsg = 'File has been successfully saved';
+        this.isAllDataModified = false;
       } else {
-          this.maxNum = this.maxItemsPerPage;
-          this.minNum = 0;
-          this.numPage = 1;
+        this.errorMsg = err;
       }
+      break;
     }
-      this.onInputAction="";
-  }
-  
-  cancelTheSave(){
-    this.IsSaveConfirmedAll = false;
-    this.isMustSaveFile = false;
-  }
+    case 'cancelUpdateAll': {
+      const { startRange, endRange } = this.TheSelectDisplays.controls;
+      const hasRange = startRange.value !== '' || endRange.value !== '';
 
-//  checkTimeOut:boolean=true;
-
-  afterCheckFS(data:any){
-    this.openFileAccess.set(false);
-    if (this.firstLoopInit===true && this.tabLock[0].lock === 1){
-      this.firstLoopInit=false;
-      this.lastInputAt = strDateTime();
-      this.refDate=new Date();
-      this.callTimeToGo();
-    }
-    this.errorFn="";
-    if (this.identification.triggerFileSystem.toUpperCase()!=="YES"){
-      this.tabLock[0].lock = 1;
-    }
-    if (this.resultCheckLimitHealth!==-1){
-      console.log('Health component - afterCheckFS - this.onInputAction='+this.onInputAction);
-      if (this.returnDataFSHealth.errorCode!==0 && this.returnDataFSHealth.errorCode!==200){
-        this.errorMsg = this.returnDataFSHealth.errorMsg;
-      } 
-      else  if (this.tabLock[0].lock === 1 && this.onInputAction === "onInputDailyAll") {
-        this.onInputDailyAllA(this.theEvent);
-        this.onInputAction="";
-      } else if (this.tabLock[0].lock===1 && this.onInputAction === "onAction") {
-        //this.onActionA(this.theEvent);
-        this.onInputAction="";
-      } else if (this.tabLock[0].action === 'check&update' && this.tabLock[0].status === 0 && this.isMustSaveFile === true) {
-        this.ConfirmSaveA(this.theEvent); 
-      } else if (this.tabLock[0].lock !== 1 && (this.onInputAction === "saveHealth" || this.onInputAction === "confirmSave")){
-        this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFSHealth.errorMsg + ")" + " status=" + this.tabLock[0].status;
-        this.isMustSaveFile = false;
-        this.isSaveHealth = false;
-      } else if (this.tabLock[0].lock === 2) {
-            this.isAllDataModified = false; // is envionment reinitialised
-            this.isSaveHealth = false;
+      this.filterHealth = hasRange; // see note 1
+      if (hasRange) {
+        // this.theEvent.target.id = 'selectAllData';  // see note 2
+        this.dateRangeSelection(this.theEvent);
       } else {
-        console.log('File is locked by this user; no specific action needed; user can update the data');
+        this.maxNum = this.maxItemsPerPage;
+        this.minNum = 0;
+        this.numPage = 1;
       }
+      break;
     }
   }
+  this.onInputAction = '';
+}
 
-  fillClassHeader(){
-    /*
-    this.divClassHeader[0]=this.createDivClassHeader(this.confTableAll.colWidth.action);
-    this.divClassHeader[1]=this.createDivClassHeader(this.confTableAll.colWidth.date);
-    this.divClassHeader[2]=this.createDivClassHeader(this.confTableAll.colWidth.calBurnt);
-    this.divClassHeader[3]=this.createDivClassHeader(this.confTableAll.colWidth.meal);
-    this.divClassHeader[4]=this.createDivClassHeader(this.confTableAll.colWidth.ingr);
-    this.divClassHeader[5]=this.createDivClassHeader(this.confTableAll.colWidth.other);
-    
-    this.tabHeader[0]=this.createClassHeader(this.confTableAll.colWidth.action);
-    this.tabHeader[1]=this.createClassHeader(this.confTableAll.colWidth.date);
-    this.tabHeader[2]=this.createClassHeader(this.confTableAll.colWidth.calBurnt);
-    this.tabHeader[3]=this.createClassHeader(this.confTableAll.colWidth.meal);
-    this.tabHeader[4]=this.createClassHeader(this.confTableAll.colWidth.ingr);
-    this.tabHeader[5]=this.createClassHeader(this.confTableAll.colWidth.other);
+cancelTheSave() {
+  this.IsSaveConfirmedAll = false;
+  this.isMustSaveFile = false;
+}
 
-    this.tabDivContent[0]=this.createDivClassContent(this.confTableAll.colWidth.action);
-    this.tabDivContent[1]=this.createDivClassContent(this.confTableAll.colWidth.date);
-    this.tabDivContent[2]=this.createDivClassContent(this.confTableAll.colWidth.calBurnt);
-    this.tabDivContent[3]=this.createDivClassContent(this.confTableAll.colWidth.meal);
-    this.tabDivContent[4]=this.createDivClassContent(this.confTableAll.colWidth.ingr);
-    this.tabDivContent[5]=this.createDivClassContent(this.confTableAll.colWidth.other);
-    
-    this.tabDivEmptyContent[0]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.action));
-    this.tabDivEmptyContent[1]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.date));
-    this.tabDivEmptyContent[2]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.calBurnt));
-    this.tabDivEmptyContent[3]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.meal));
-    this.tabDivEmptyContent[4]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.ingr));
-    this.tabDivEmptyContent[5]=this.createEmptyDivClassContent(Number(this.confTableAll.colWidth.other));
+afterCheckFS(data: any) {
+  this.openFileAccess.set(false);
+  const lock = this.tabLock[0];
 
-    
-    for (var i=0; i<3; i++){
-      this.tabContent[i]=[];
-      this.tabContent[i][0]=this.createClassContent(this.confTableAll.colWidth.action,i,'center');
-      this.tabContent[i][1]=this.createClassContent(this.confTableAll.colWidth.date,i,'left');
-      this.tabContent[i][2]=this.createClassContent(this.confTableAll.colWidth.calBurnt,i,'center');
-      this.tabContent[i][3]=this.createClassContent(this.confTableAll.colWidth.meal,i,'center');
-      this.tabContent[i][4]=this.createClassContent(this.confTableAll.colWidth.ingr,i,'left');
-      this.tabContent[i][5]=this.createClassContent(this.confTableAll.colWidth.other,i,'center');
-    }
-      
-
-    for (var i=0; i<2; i++){
-      this.tabSubTotal[i]=[];
-      this.tabSubTotal[i][0]=this.createSubTotal(Number(this.confTableAll.colWidth.action),i);
-      this.tabSubTotal[i][1]=this.createSubTotal(Number(this.confTableAll.colWidth.date),i);
-      this.tabSubTotal[i][2]=this.createSubTotal(Number(this.confTableAll.colWidth.calBurnt),i);
-      this.tabSubTotal[i][3]=this.createSubTotal(Number(this.confTableAll.colWidth.meal),i);
-      this.tabSubTotal[i][4]=this.createSubTotal(Number(this.confTableAll.colWidth.ingr),i);
-
-      this.tabSubTotal[i][5]=this.createSubTotal(Number(this.confTableAll.colWidth.other),i);
-    }
-    for (var i=0; i<2; i++){
-      this.tabTotal[i]=[];
-      this.tabTotal[i][0]=this.createTotal(Number(this.confTableAll.colWidth.action),i);
-      this.tabTotal[i][1]=this.createTotal(Number(this.confTableAll.colWidth.date),i);
-      this.tabTotal[i][2]=this.createTotal(Number(this.confTableAll.colWidth.calBurnt),i);
-      this.tabTotal[i][3]=this.createTotal(Number(this.confTableAll.colWidth.meal),i);
-      this.tabTotal[i][4]=this.createTotal(Number(this.confTableAll.colWidth.ingr),i);
-      this.tabTotal[i][5]=this.createTotal(Number(this.confTableAll.colWidth.other),i);
-    }
-      */
+  if (this.firstLoopInit === true && lock.lock === 1) {
+    this.firstLoopInit = false;
+    this.lastInputAt = strDateTime();
+    this.refDate = new Date();
+    this.callTimeToGo();
   }
 
-  createSubTotal(width:Number,backGround:number){
-    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
-    var style:any;
-    var backColor=this.confTableAll.row.even;
-    if (backGround===1){
-      backColor=this.confTableAll.row.odd;
-    } 
-    width=Number(width)-0.3;
-    return style = {
-        'background-color':backColor,
-        'width': width + 'px',
-        'height':  Number(this.confTableAll.subTotal.height)  + 'px',
-        'color': this.confTableAll.subTotal.color,  
-        'font-size':Number(this.confTableAll.subTotal.fontSize) + 'px',
-        'font-weight':this.confTableAll.subTotal.fontWeight,
-        'text-align': 'left',
-        'display':'block',
-        'float':'left',
-        'border':'0px white solid', 
-    }
+  this.errorFn = '';
+  if (this.identification.triggerFileSystem.toUpperCase() !== 'YES') {
+    lock.lock = 1;
   }
+  if (this.resultCheckLimitHealth === -1) return;
 
-  createTotal(width:Number,backGround:number){
-    //[ngStyle]="'font-weight.px':confTableAll.subTotal.fontWeight}" 
-    var style:any;
-    var backColor=this.confTableAll.row.even;
-    if (backGround===1){
-      backColor=this.confTableAll.row.odd;
-    } 
-    width=Number(width)-0.3;
-    return style = {
-        'background-color':backColor,
-        'width': width + 'px',
-        'height':  Number(this.confTableAll.Total.height)-14  + 'px',
-        'color': this.confTableAll.Total.color,  
-        'font-size':Number(this.confTableAll.Total.fontSize) + 'px',
-        'font-weight':this.confTableAll.Total.fontWeight,
-        'text-align': 'left',
-        'display':'block',
-        'float':'left',
-        'border':'0px white solid', 
-    }
+  const { errorCode, errorMsg } = this.returnDataFSHealth;
+  const action = this.onInputAction;
+  const isSaving = action === 'saveHealth' || action === 'confirmSave';
+
+  if (errorCode !== 0 && errorCode !== 200) {
+    this.errorMsg = errorMsg;
+  } else if (lock.lock === 1 && action === 'onInputDailyAll') {
+    this.onInputDailyAllA(this.theEvent);
+    this.onInputAction = '';
+  } else if (lock.lock === 1 && action === 'onAction') {
+    this.onInputAction = '';
+  } else if (lock.action === 'check&update' && lock.status === 0 && this.isMustSaveFile === true) {
+    this.ConfirmSaveA(this.theEvent);
+  } else if (lock.lock !== 1 && isSaving) {
+    this.errorMsg = `file has been locked by another user; all your updates are lost (${errorMsg}) status=${lock.status}`;
+    this.isMustSaveFile = false;
+    this.isSaveHealth = false;
+  } else if (lock.lock === 2) {
+    this.isAllDataModified = false; // environment is reinitialised
+    this.isSaveHealth = false;
   }
-
-  createClassHeader(width:string){
-    var style:any;
-    return style = {
-        'background-color':this.confTableAll.title.background,
-        'width': width + 'px',
-        'height':  Number(this.confTableAll.row.height) + 'px' ,
-        'padding-top':2 + 'px',
-        'color': this.confTableAll.title.color,  
-        'border':'1px white solid',
-        'text-align': 'center',
-        'display':'inline-block',
-    }
-  } 
-
-  createClassContent(width:any, backGround:number, align:string){
-    var style:any;
-    var backColor=this.confTableAll.row.even;
-    var theColor=this.confTableAll.row.color;
-    if (backGround===1){
-      backColor=this.confTableAll.row.odd;
-    } else if (backGround===2){
-      backColor=this.confTableAll.rowNew.background;
-      theColor=this.confTableAll.rowNew.color;
-    } 
-    return style = {
-        'background-color':backColor,
-        'width': width + 'px',
-        'height': Number(this.confTableAll.row.height) + 'px' ,
-        'color': theColor,  
-        'border':'none',
-        'text-align': align,
-        'display':'inline-block',
-    }
-  }
-
-  createDivClassHeader(width:any){
-    var style:any;
-    return style = {
-        'width': width + 'px',
-        'height':  (Number(this.confTableAll.row.height)+5)  + 'px',
-        'border':'none',
-        'display':'block',
-        'float':'left'
-    }
-  } 
-
-  createDivClassContent(width:any){ 
-    var style:any;
-    return style = {
-        'width': width + 'px',
-        'height':  (Number(this.confTableAll.row.height)+5 ) + 'px',
-        'border':'none',
-        'display':'block',
-        'float':'left'
-    }
-  }
-
-  createEmptyDivClassContent(width:number){
-    var style:any;
-    return style = {
-        'width': width + 'px',
-        'height':  (Number(this.confTableAll.row.height)+5)  + 'px',
-        'border':'none',
-        'display':'block',
-        'float':'left'
-    }
-  }
+  // otherwise: locked by this user, nothing to do
+}
 
 }

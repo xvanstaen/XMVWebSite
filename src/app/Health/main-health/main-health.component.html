@@ -58,12 +58,12 @@
         <div class="skipLine">&nbsp;</div>
     </div>
 
-    @if (isErrorMsg() && errorMsg!==""){
+    @if (errorMsg()!==""){
         <div style="display:block;">
             <span style="margin-top:10px; padding-top:5px; padding-left:20px; margin-left:20px; width:500px;  background-color: cyan; color:blue; font-size:14px; display:inline-block; text-align: left; min-height:30px;">
-                {{errorMsg}}
-                @if (errCalcCalFat!==''){
-                    <br>{{errCalcCalFat}}
+                {{errorMsg()}}
+                @if (errCalcCalFat()!==''){
+                    <br>{{errCalcCalFat()}}
                 }
             </span>
         </div>
@@ -87,7 +87,8 @@
             (saveCopy)="saveCopy()" (unlockFile)="unlockFile($event)"
         -->
   
-    } @else if (createNewHealth===true){
+    } 
+    @if (createNewHealth()){
         <div style="margin-left:20px; margin-top:10px; border: blue 2px double; background-color: silver;width:90%; max-width:500px;">
             <div class="skipLine">&nbsp;</div>
             <form  [formGroup]="SpecificForm" >
@@ -104,7 +105,8 @@
             </form>
             <div class="skipLine">&nbsp;</div>
         </div>
-    } @else if (isCopyFile===true){ <!--    Create COPY OF HealthAllData file -->
+    } 
+    @if (isCopyFile()){ <!--    Create COPY OF HealthAllData file -->
         <div style="margin-left:20px; margin-top:10px; border: blue 2px double; background-color: silver;width:90%; max-width:500px;">
             <div class="skipLine">&nbsp;</div>
             <form  [formGroup]="SpecificForm" >

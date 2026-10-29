@@ -5,7 +5,7 @@
 <body>
 
     @if (openFileAccess()){    
-        <app-file-access 
+        <app-file-access
                 [configServer]="configServer" [identification]="identification" 
                 [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit()"
                 [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
@@ -532,7 +532,7 @@
                         <div class="msg"  style="margin-left:10px;">
                                 File has been modified
                             <button id='AllConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>
-                            <button id='AllCancel' class="sizeButtons" style='width:100px;' (click)="cancelUpdateAll($event)"> Cancel changes</button>
+                            <button id='AllCancel' class="sizeButtons" style='width:100px;' (click)="cancelUpdateAll()"> Cancel changes</button>
                         </div>
                     }
                     @if(this.isMustSaveFile === true){

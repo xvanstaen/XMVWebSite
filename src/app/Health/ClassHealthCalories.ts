@@ -25,25 +25,7 @@ export class ClassCaloriesFat{
     Content:Array<ClassItem>=[];
     Total=new ClassItem;
   }
-  
-  export class ClassItem{
-    Name:string="";
-    Serving:number=0;
-    ServingUnit: string="gram";
-    Calories:number=0;
-    GlyIndex:number=0;
-    Sugar:number=0;
-    naturalSugar:number=0;
-    addedSugar:number=0;
-    Cholesterol:number=0;
-    Fat={
-        Saturated:0,
-        Total:0,
-    };
-    Protein:number=0;
-    Carbs:number=0;
-    lockData:string="N";
-  }
+
 
   //
   // Health 
@@ -73,4 +55,22 @@ export class ClassCaloriesFat{
     unit:string='gram';
     calFat=new ClassItem;
   
+  }
+  export class ClassItem{
+    Name:string="";
+    Serving:number=0;
+    ServingUnit: string="gram";
+    Calories:number=0;
+    GlyIndex:number=0;
+    Sugar:number=0;
+    naturalSugar:number=0;
+    addedSugar:number=0;
+    Cholesterol:number=0;
+    Fat={
+        Saturated:0,
+        Total:0,
+    };
+    Protein:number=0;
+    Carbs:number=0;
+    lockData:string="N";
   }

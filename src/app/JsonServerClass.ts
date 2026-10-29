@@ -368,3 +368,10 @@ export class classDicoRecord{
   active:boolean=true;
 }
 
+export class classGetRecord{
+    iWait=0;
+    content="";
+    status=0;
+    err="";
+}
+

@@ -2,163 +2,127 @@
 import { mainClassCaloriesFat, DailyReport, ClassMeal, ClassDish, ClassItem} from './ClassHealthCalories'
 import {mainConvItem, mainRecordConvert, mainClassUnit, mainClassConv} from './../ClassConverter'
 
-export function CalcFatCalories(tabCalFat:mainClassCaloriesFat, dayHealth:DailyReport, tabConvert:mainClassConv){
-
-var returnData={
-    error:0,
-    outHealthData: new DailyReport
+export interface Nutrients {
+  Calories: number; Sugar: number; naturalSugar: number; addedSugar: number;
+  Cholesterol: number; Protein: number; Carbs: number;
+  Fat: { Saturated: number; Total: number };
 }
-var theServing=0;
-var i=0;
-var j=0;
-var k=0;
-var l=0;
-var theQuantity:number=0;
-var kLoop=0
-var iLoop=false;
-var iFood=0;
-var iType=0;
-var error=0;
-var trouve=false;
 
-returnData.outHealthData.date=dayHealth.date;
-returnData.outHealthData.burntCalories=dayHealth.burntCalories;
-returnData.outHealthData.total.Calories = 0;
-returnData.outHealthData.total.Sugar = 0;
-returnData.outHealthData.total.naturalSugar = 0;
-returnData.outHealthData.total.addedSugar = 0;
-returnData.outHealthData.total.Cholesterol = 0;
-returnData.outHealthData.total.Fat.Saturated = 0;
-returnData.outHealthData.total.Fat.Total = 0;
-returnData.outHealthData.total.Protein = 0;
-returnData.outHealthData.total.Carbs = 0;
-returnData.error=0;
+export interface HealthResult {
+  errors: string[];              // use errors.length where you used `error`
+  outHealthData: DailyReport;
+}
 
+const norm = (s?: string) => (s ?? '').toLowerCase().trim();
+const num = (v: unknown) => Number(v) || 0;   // NaN -> 0
 
-for (j=0; j< dayHealth.meal.length ; j++){
-    error=0;
-    const meal=new ClassMeal;
-    returnData.outHealthData.meal.push(meal);
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Calories = 0;
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Sugar = 0;
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.naturalSugar = 0;
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.addedSugar = 0;
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Cholesterol = 0;
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Saturated = 0;
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Total = 0;
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Protein = 0;
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Carbs = 0;
+const emptyNutrients = (): ClassItem => new ClassItem();   // all numeric fields already 0
 
-    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].name=dayHealth.meal[j].name.toLowerCase().trim();
+const scale = (n: ClassItem, f: number): ClassItem => {
+  const r = new ClassItem();
+  r.Calories     = num(n.Calories) * f;
+  r.Sugar        = num(n.Sugar) * f;
+  r.naturalSugar = num(n.naturalSugar) * f;
+  r.addedSugar   = num(n.addedSugar) * f;
+  r.Cholesterol  = num(n.Cholesterol) * f;
+  r.Protein      = num(n.Protein) * f;
+  r.Carbs        = num(n.Carbs) * f;
+  r.Fat.Saturated = num(n.Fat.Saturated) * f;
+  r.Fat.Total     = num(n.Fat.Total) * f;
+  return r;
+};
 
-    for (k=0; k< dayHealth.meal[j].dish.length; k++){  // && error===0
-        const dish=new ClassDish;
-        returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish.push(dish);
-        returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].unit =dayHealth.meal[j].dish[k].unit.toLowerCase().trim();
-        returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].quantity =Number(dayHealth.meal[j].dish[k].quantity);
-        returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].name =dayHealth.meal[j].dish[k].name.toLowerCase().trim();
-        trouve=false;
-        iLoop=false;
-        if (dayHealth.meal[j].dish[k].calFat.lockData.toUpperCase().trim()!=="Y" ){
-            for (iType=0; iType<tabCalFat.tabCaloriesFat.length && trouve===false && iLoop===false; iType++){
-                for (iFood=0; iFood<tabCalFat.tabCaloriesFat[iType].Content.length && trouve===false && iLoop===false; iFood++){
-                    if (dayHealth.meal[j].dish[k].name.toLowerCase().trim()=== tabCalFat.tabCaloriesFat[iType].Content[iFood].Name.toLowerCase().trim()){
-                        iLoop=true;
-                        if (dayHealth.meal[j].dish[k].unit.toLowerCase().trim()=== tabCalFat.tabCaloriesFat[iType].Content[iFood].ServingUnit.toLowerCase().trim()){
-                            trouve=true;
-                            theQuantity=dayHealth.meal[j].dish[k].quantity;
-                        
-                        }
-                    }
-                }
-            };
-            if (iLoop===true){iFood--; iType--}; // unit in Health corresponds to unit in tabCalFat
-            
-            if (iLoop===true && trouve===false) { // unit in Health does not correspond to unit in tabCalFat; then conversion is needed
-                        //      Find converion as follows
-                        // FROM dayHealth.meal[j].dish[k].unit.toLowerCase().trim()
-                        // TO tabCalFat.tabCaloriesFat[iType].Content[iFood].ServingUnit.toLowerCase().trim()
-                        //
-                        // Find the From Unit
-                    for  ( l=0; l<tabConvert.tabConv.length  && trouve===false; l++) { // tabConvert.tabConv[l].fromUnit.toLowerCase()!== dayHealth.meal[j].dish[k].unit.toLowerCase()
-                        if ( tabConvert.tabConv[l].fromUnit.toLowerCase().trim()=== dayHealth.meal[j].dish[k].unit.toLowerCase().trim() ) {
-                            for (kLoop=0; kLoop<tabConvert.tabConv[l].convert.length && tabConvert.tabConv[l].convert[kLoop].toUnit.toLowerCase().trim() !== tabCalFat.tabCaloriesFat[iType].Content[iFood].ServingUnit.toLowerCase().trim(); kLoop++){};
-                            if (kLoop<tabConvert.tabConv[l].convert.length){
-                                trouve=true;
-                                theQuantity=dayHealth.meal[j].dish[k].quantity*tabConvert.tabConv[l].convert[kLoop].value;
-                            }
-                        }
-                    }    
-                    
-                    if (trouve===false){
-                        error=1;
-                        if (dayHealth.meal[j].dish[k].unit.toLowerCase().trim()!==''){
-                            returnData.error++
-                            console.log('CalcFatCalories - conversion From-To not found for '+ dayHealth.meal[j].dish[k].unit.toLowerCase().trim());
-                        }
-                    }
-                }
-            if (iLoop===true && error===0){
-                theServing=Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Serving);
-                if (theServing!==0){
-                    const quantity=theQuantity/theServing;
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Calories =  returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Calories+quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Calories);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Sugar =  returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Sugar+quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Sugar);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.naturalSugar =  returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.naturalSugar+quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].naturalSugar);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.addedSugar =  returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.addedSugar+quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].addedSugar);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Cholesterol = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Cholesterol+quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Cholesterol);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Saturated = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Saturated + quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Fat.Saturated);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Total = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Total + quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Fat.Total);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Protein = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Protein + quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Protein);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Carbs = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Carbs + quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Carbs);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Calories =  quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Calories);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Sugar =  quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Sugar);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.naturalSugar =  quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].naturalSugar);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.addedSugar =  quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].addedSugar);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Cholesterol = quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Cholesterol);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Fat.Saturated =  quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Fat.Saturated);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Fat.Total = quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Fat.Total);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Protein = quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Protein);
-                    returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Carbs = quantity * Number(tabCalFat.tabCaloriesFat[iType].Content[iFood].Carbs);
-                }
-            } 
-            if (iLoop===false){
-                if (dayHealth.meal[j].dish[k].name.toLowerCase().trim()){
-                    returnData.error++
-                    console.log('CalcFatCalories: no information found for '+ dayHealth.meal[j].dish[k].name.toLowerCase().trim()) ;
-                }
-            }
-        } else { // lockData==="yes"
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Calories =  returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Calories+dayHealth.meal[j].dish[k].calFat.Calories;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Sugar =  returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Sugar+dayHealth.meal[j].dish[k].calFat.Sugar;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.naturalSugar =  returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.naturalSugar+dayHealth.meal[j].dish[k].calFat.naturalSugar;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.addedSugar =  returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.addedSugar+dayHealth.meal[j].dish[k].calFat.addedSugar;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Cholesterol = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Cholesterol+dayHealth.meal[j].dish[k].calFat.Cholesterol;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Saturated = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Saturated + dayHealth.meal[j].dish[k].calFat.Fat.Saturated;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Total = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Total + dayHealth.meal[j].dish[k].calFat.Fat.Total;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Protein = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Protein + dayHealth.meal[j].dish[k].calFat.Protein;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Carbs = returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Carbs + dayHealth.meal[j].dish[k].calFat.Carbs;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Calories =  dayHealth.meal[j].dish[k].calFat.Calories;        returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Sugar =  dayHealth.meal[j].dish[k].calFat.Sugar;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.naturalSugar =  dayHealth.meal[j].dish[k].calFat.naturalSugar;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.addedSugar =  dayHealth.meal[j].dish[k].calFat.addedSugar;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Cholesterol = dayHealth.meal[j].dish[k].calFat.Cholesterol;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Fat.Saturated =  dayHealth.meal[j].dish[k].calFat.Fat.Saturated;        returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Fat.Total = dayHealth.meal[j].dish[k].calFat.Fat.Total;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Protein = dayHealth.meal[j].dish[k].calFat.Protein;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.Carbs = dayHealth.meal[j].dish[k].calFat.Carbs;
-            returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].dish[k].calFat.lockData = dayHealth.meal[j].dish[k].calFat.lockData;
-        }
+const add = (a: ClassItem, b: ClassItem): ClassItem => {
+  const r = new ClassItem();
+  r.Calories     = a.Calories + b.Calories;
+  r.Sugar        = a.Sugar + b.Sugar;
+  r.naturalSugar = a.naturalSugar + b.naturalSugar;
+  r.addedSugar   = a.addedSugar + b.addedSugar;
+  r.Cholesterol  = a.Cholesterol + b.Cholesterol;
+  r.Protein      = a.Protein + b.Protein;
+  r.Carbs        = a.Carbs + b.Carbs;
+  r.Fat.Saturated = a.Fat.Saturated + b.Fat.Saturated;
+  r.Fat.Total     = a.Fat.Total + b.Fat.Total;
+  return r;
+};
+
+// ---------- lookups ----------
+function findFood(foods: mainClassCaloriesFat, name: string) {
+  for (const type of foods.tabCaloriesFat) {
+    const food = type.Content.find(f => norm(f.Name) === name);
+    if (food) return food;
+  }
+  return undefined;
+}
+
+/** Returns the quantity expressed in `toUnit`, or undefined if no conversion exists. */
+function convertQuantity(qty: number, fromUnit: string, toUnit: string, conv: mainClassConv): number | undefined {
+  if (fromUnit === toUnit) return qty;
+  for (const c of conv.tabConv) {
+    if (norm(c.fromUnit) !== fromUnit) continue;
+    const hit = c.convert.find(x => norm(x.toUnit) === toUnit);
+    if (hit) return qty * hit.value;
+  }
+  return undefined;
+}
+
+// ---------- one dish ----------
+function calcDish(src: ClassDish, foods: mainClassCaloriesFat, conv: mainClassConv): { dish: ClassDish; errors: string[] } {
+    const dish = new ClassDish();
+    dish.name = norm(src.name);
+    dish.unit = norm(src.unit);
+    dish.quantity = Number(src.quantity);
+
+    // locked: keep user-entered values as they are
+    if (norm(src.calFat.lockData) === 'y') {
+        Object.assign(dish.calFat, structuredClone(src.calFat));
+        return { dish, errors: [] };
     }
-    returnData.outHealthData.total.Calories = returnData.outHealthData.total.Calories + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Calories;
-    returnData.outHealthData.total.Sugar = returnData.outHealthData.total.Sugar + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Sugar;
-    returnData.outHealthData.total.naturalSugar = returnData.outHealthData.total.naturalSugar + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.naturalSugar;
-    returnData.outHealthData.total.addedSugar = returnData.outHealthData.total.addedSugar + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.addedSugar;
-    returnData.outHealthData.total.Cholesterol = returnData.outHealthData.total.Cholesterol + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Cholesterol;
-    returnData.outHealthData.total.Fat.Saturated = returnData.outHealthData.total.Fat.Saturated + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Saturated ;
-    returnData.outHealthData.total.Fat.Total = returnData.outHealthData.total.Fat.Total + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Fat.Total;
-    returnData.outHealthData.total.Carbs = returnData.outHealthData.total.Carbs + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Carbs;
-    returnData.outHealthData.total.Protein = returnData.outHealthData.total.Protein + returnData.outHealthData.meal[ returnData.outHealthData.meal.length-1].total.Protein;
+
+    const food = findFood(foods, dish.name);
+    if (!food) {
+        return { dish, errors: dish.name ? [`no information found for '${dish.name}'`] : [] };
+    }
+
+    const qty = convertQuantity(dish.quantity, dish.unit, norm(food.ServingUnit), conv);
+    if (qty === undefined) {
+        return { dish, errors: dish.unit ? [`conversion not found for unit '${dish.unit}' (${dish.name})`] : [] };
+    }
+
+    const serving = num(food.Serving);
+    if (serving !== 0) {
+        Object.assign(dish.calFat, scale(food, qty / serving));
+        }
+    return { dish, errors: [] };
 }
 
-return(returnData);
-  
+// ---------- one day ----------
+export function calcFatCalories(
+    foods: mainClassCaloriesFat,
+    day: DailyReport,
+    conv: mainClassConv,): 
+    HealthResult {
+        const errors: string[] = [];
+
+        const meals = day.meal.map(srcMeal => {
+            const dishes = srcMeal.dish.map(d => {
+                const r = calcDish(d, foods, conv);
+                errors.push(...r.errors);
+                return r.dish;
+            });
+
+            const meal = new ClassMeal();
+                meal.name = norm(srcMeal.name);
+                meal.dish = dishes;
+                meal.total = dishes.reduce((acc, d) => add(acc, d.calFat), emptyNutrients());
+                return meal;
+            });
+
+        const out = new DailyReport();
+        out.date = day.date;
+        out.burntCalories = day.burntCalories;
+        out.meal = meals;
+        out.total = meals.reduce((acc, m) => add(acc, m.total), emptyNutrients());
+
+        return { errors, outHealthData: out };
 }
