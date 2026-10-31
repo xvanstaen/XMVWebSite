@@ -539,11 +539,11 @@
                                         [style.background-color]="HTMLCaloriesFat.row.even" [style.color]="'white'" >
                                     <!-- all items below will be next to each other-->    
                                         <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.action">
-                                            <div class="styleInput textHover" [style.pointer-events]="j === 0 ? 'auto' : 'none'" style="margin-left:15px">
-                                                <div [id]="'openAction-' + i + '-' + j"  class="circle" (click)="onAction($event)">
+                                            
+                                                <div [id]="'openAction-' + i + '-' + j"  class="circle" style="margin-left:10px;" (click)="onAction($event)">
                                                     <span style="margin-top:2px;">A</span>
                                                 </div>
-                                            </div>            
+                                                     
                                         </div>
                                         <div class="divContent" [style.width.px]="HTMLCaloriesFat.colWidth.type">
                                             <input class="styleInput textHover"  style="text-align:left" [readonly]='inputReadOnly'  type="text" (input)="onInput($event)" [id]="'type-' + i" placeholder="meat/fish/oil"  

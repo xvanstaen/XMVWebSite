@@ -1,598 +1,406 @@
-import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, ChangeDetectorRef} from '@angular/core';
-  
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { Component, Input, signal } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
+import { HttpEventType } from '@angular/common/http';
 
 import { ManageCircuitsComponent } from '../manage-circuits/manage-circuits.component';
 import { SportPerformanceComponent } from '../sport-performance/sport-performance.component';
 import { DisplayCircuitLoopComponent } from '../display-circuit-loop/display-circuit-loop.component';
 import { BuildLoopFromPerfComponent } from '../build-loop/build-loop-from-perf.component';
 
-import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
-import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
-import { fillHeaderFile , reinitTotal, copyInitPerf, copyLegInOut, copyInOut, copyLoopInOut, updateTabPor} from '../commonSportFunctions';
-import { findIds, formatHHMNSS } from '../../MyStdFunctions';
+import { configServer, LoginIdentif } from '../../JsonServerClass';
+import { classFileSport, classNewLoop, classCircuitRec, classFilePerf, classWorkCircuit, classHeaderFileSport, PerfLeg } from '../classSport';
+import { fillHeaderFile, perfFileName } from '../commonSportFunctions';
+import { formatHHMNSS } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
+
+type ActionPerf = 'perfYes' | 'perfNo' | 'circuitYes' | 'circuitNo';
+
+/** max distance (in degrees) between the PoR and the record kept for it, beyond that the leg is excluded */
+const EXCLUDE_TOLERANCE = 0.00035;
+/** search window (records) around the record where the distance of the leg is reached */
+const SEARCH_INTERVAL = 10;
 
 @Component({
   selector: 'app-sport-reports',
   templateUrl: './sport-reports.component.html',
   styleUrls: ['./sport-reports.component.css'],
-  standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, 
-    BuildLoopFromPerfComponent, SportPerformanceComponent, ManageCircuitsComponent, DisplayCircuitLoopComponent
-   ],
+  standalone: true,
+  imports: [BuildLoopFromPerfComponent, SportPerformanceComponent, ManageCircuitsComponent, DisplayCircuitLoopComponent],
 })
-
-
 export class SportReportsComponent {
 
   constructor(
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
-    private cdr: ChangeDetectorRef
-    ) { }
+  ) { }
 
-    @Input() configServer = new configServer;
-    @Input() identification= new LoginIdentif;
+  isRefresh=signal(false);
 
-    firstPoR:string="";
-    firstPoRNb:number=0;
-    displayTabTwo:number=2;
-    headerPerf= new classHeaderFileSport;
-    nbSave:number=0;
+  @Input() configServer = new configServer;
+  @Input() identification = new LoginIdentif;
 
-    initPerfPoR:Array<classTabPoR>=[];
-    theFile= new classFileSport;
-    nameFilePerf:string="";
+  firstPoR: string = "";
+  firstPoRNb: number = 0;
+  displayTabTwo: number = 2;
+  headerPerf = new classHeaderFileSport;
+  nbSave: number = 0;
 
-    circuitPOR:Array<any>=[];
-    tabCircuit:Array<any>=[];
-    
-    perfCircuit:Array<any>=[];
-    savePerfCircuit:Array<any>=[];
+  theFile = new classFileSport;
+  nameFilePerf: string = "";
 
-    perfCircuitRef:Array<any>=[];
+  circuitPOR: Array<classWorkCircuit> = [];
+  perfCircuit: Array<PerfLeg> = [];
 
-    nbItemsLoop:number=-1;
+  specificCircuit = new classCircuitRec;
+  filePerf: Array<classFilePerf> = [];
 
-    specificCircuit= new classCircuitRec;
+  selectionCircuit=signal<boolean>(false);
+  isPerfRetrieved=signal<boolean>(false);
+  isFilePerfReceived=signal<boolean>(false);
+  isSpecificCircuitReceived=signal<boolean>(false);
+  isFilesToSave=signal<boolean>(false);
+  isBuildFromPerf=signal<boolean>(false);
 
-    filePerf:Array<classFilePerf>=[];
+  errorMessage=signal<string>("");       // perfCircuit file not found in the cloud
+  calcErrorMessage=signal<string>("");   // start point not found while calculating
+  isPerfCircuitRetrieved=signal<boolean>(false);   // 1 retrieved, 2 not found, 3 not requested
+  saveMsg=signal<string>("");
 
-    selectionCircuit:boolean=false;
-    isPerfRetrieved:boolean=false;
+  nbErrUpload: number = -1;
+  nbSuccessUpload: number = 0;
 
-    formOptions: FormGroup = new FormGroup({ 
-      fileName: new FormControl("", { nonNullable: true }),
-    })
+  // ---------------------------------------------------------------- helpers
 
-    isFilePerfReceived:boolean=false;
-    isSpecificCircuitReceived:boolean=false;
-    isFilesToSave:boolean=false;
-
-    //TabOfId:Array<any>=[];
-    //strFound:string="";
-    errorMessage:string="";
-    errorMsg:string="";
-    isPerfCircuitRetrieved:number=0;
-
-    saveMsg:string="";
-
-    isBuildFromPerf:boolean=false;
-
-    //****************************** */
-   
-
-ngOnInit(){
-/****
-  this.ManageGoogleService.insertCacheFile(this.configServer,this.identification.circuits.file)
-    .subscribe((data ) => {  
-          console.log('insertCacheFile ==> OK');
-      },
-      err => {
-          console.log('error on insertCacheFile :'+ JSON.stringify(err));
-      });
-  //this.GetRecord(this.identification.circuits.bucket, this.identification.circuits.file,1);
-  */ 
-  
-}
-
-resetTab(){
-  this.circuitPOR.splice(0,this.circuitPOR.length);
-  //this.tabCircuit.splice(0,this.tabCircuit.length);
-  this.perfCircuit.splice(0,this.perfCircuit.length);
-}
-
-resetVar(){
-  this.saveMsg="";
-  this.isFilesToSave=false;
-  this.errorMessage="";
-  this.errorMsg="";
-}
-
-onSelectPerf(event:any){
-  // console.log('sport-reports; name of the perfFile is '+event.name + '  and length of the file is ' +  this.filePerf.length)
-  this.isPerfCircuitRetrieved=0;
-  this.isBuildFromPerf=false;
-  this.resetVar();
-  this.resetTab();
-  this.theFile=event;
-  this.filePerf.splice(0,this.filePerf.length);
-  this.filePerf=event.content;
-  this.headerPerf=fillHeaderFile(this.theFile, this.headerPerf);
-  if (this.headerPerf.name===""){
-    this.headerPerf.name=event.name;
+  /** new arrays (not splice) so that the children see the change */
+  private resetTab() {
+    this.circuitPOR = [];
+    this.perfCircuit = [];
   }
-  this.nameFilePerf=event.name;
-  this.isPerfRetrieved=false;
-  this.isFilePerfReceived=true;
-  this.initPerfPoR= updateTabPor(this.filePerf);
-  //this.updateTabPor();
 
-  this.scroller.scrollToAnchor('bottomPage');
-  if (this.isSpecificCircuitReceived===true && this.initPerfPoR.length>0){
-    //this.circuitPerfPoR();
-    this.isBuildFromPerf=true;
+  private resetVar() {
+    this.saveMsg.set("");
+    this.isFilesToSave.set(false);
+    this.errorMessage.set("");
+    this.calcErrorMessage.set("");
+    this.isRefresh.set(false);
   }
-    this.cdr.detectChanges();
-}
 
-onSelectCircuit(event:any){ 
-  this.isPerfCircuitRetrieved=0;
-  this.isBuildFromPerf=false;
-  this.resetVar();
-  this.resetTab();
-  this.specificCircuit.points.splice(0,this.specificCircuit.points.length);
-  this.specificCircuit=event;
-  this.selectionCircuit=false;
-  this.isSpecificCircuitReceived=true;
-  if (this.isFilePerfReceived===true && this.specificCircuit.points.length>0){
-    //this.circuitPerfPoR();
-    this.isBuildFromPerf=true;
+  /** render first, then scroll: the anchor must exist in the DOM */
+  private refresh() {
+    this.isRefresh.set(true);
+    this.scroller.scrollToAnchor('bottomPage');
   }
-  this.firstPoR=this.specificCircuit.points[0].ref;
-  this.firstPoRNb=0;
-  this.scroller.scrollToAnchor('bottomPage');
-  this.cdr.detectChanges();
-}
 
-selFirstPoR(event:any){
-  if (event.target.id.substring(0,4)==="PoR-"){
-    this.firstPoR=this.specificCircuit.points[event.target.id.substring(4)].ref;
-    this.firstPoRNb=Number(event.target.id.substring(4));
-  } 
-}
-
-onActionPerf(event:any){
-  if (event.target.id==="PerfYes"){
-    this.isPerfRetrieved=true;
-    this.resetVar();
-  } else if (event.target.id==="PerfNo"){
-    this.isPerfRetrieved=false;
-  } else if (event.target.id==="CircuitYes"){
-    this.resetVar();
-    this.selectionCircuit=true;
-  } else if (event.target.id==="CircuitNo"){
-    this.selectionCircuit=false;
+  private fileNameFor(kind: 'perf' | 'cPOR', perfName: string): string {
+    return perfFileName(this.theFile.sport, this.specificCircuit.code, kind, this.theFile.theDate, perfName);
   }
-  this.scroller.scrollToAnchor('bottomPage');
-  this.cdr.detectChanges();
-}
 
+  // ---------------------------------------------------------------- selections
 
-retrievePerfCircuit(resp:string){
-  this.resetVar();
-  if (resp==="Yes"){
-    this.isFilesToSave=false;
-    this.saveMsg="";
-    this.errorMsg="";
-    var j=1;
-    j=this.theFile.theDate.indexOf('/');
-    if (j!==-1){
-      this.theFile.theDate=this.theFile.theDate.substring(0,j)+this.theFile.theDate.substring(j+1);
+  onActionPerf(action: ActionPerf) {
+    switch (action) {
+      case 'perfYes': this.isPerfRetrieved.set(true); this.resetVar(); break;
+      case 'perfNo': this.isPerfRetrieved.set(false); break;
+      case 'circuitYes': this.resetVar(); this.selectionCircuit.set(true); break;
+      case 'circuitNo': this.selectionCircuit.set(false); break;
     }
-    const fileName = this.theFile.sport.substring(0,1).toUpperCase() +'-' +this.specificCircuit.code +'-'+ 'perf-' + this.theFile.theDate + this.nameFilePerf.substring(0,35);
-    this.ManageGoogleService.getContentObject(this.configServer, 'xmv-sport-analysis',  fileName)
-        .subscribe(
-            data => {
-              this.isPerfCircuitRetrieved=1;
-              this.theFile=data;
-              this.perfCircuit.splice(0,this.perfCircuit.length);
-              this.perfCircuit=this.theFile.content;
-              this.savePerfCircuit.splice(0,this.savePerfCircuit.length);
-              this.savePerfCircuit=copyInOut(this.perfCircuit,this.savePerfCircuit);
-                this.cdr.detectChanges();
-            },
-            err=>{
-              this.isPerfCircuitRetrieved=2;
-              this.errorMessage=fileName;
-                this.cdr.detectChanges();
-            })
-  } else {
-    this.isPerfCircuitRetrieved=3;
-    this.cdr.detectChanges();
+    this.refresh();
   }
-}
 
-circuitPerfPoR(){
-  var iLeg=0;
-  var i=0;
-  var j=0;
-  var k=0;
-  this.perfCircuitRef.splice(0,this.perfCircuitRef.length);
-
-  for (j=0; j<this.specificCircuit.points.length; j++){
-    this.perfCircuitRef.push({newLoop:[]});
-    const classLoop=new classNewLoop;
-    this.perfCircuitRef[j].newLoop.push(classLoop);
-    this.perfCircuitRef[j].newLoop[0].from = this.specificCircuit.points[j].ref;
-    if (j<this.specificCircuit.points.length-1){
-        this.perfCircuitRef[j].newLoop[0].to = this.specificCircuit.points[j+1].ref;
-    } else {
-        this.perfCircuitRef[j].newLoop[0].to = this.specificCircuit.points[0].ref;
+  onSelectPerf(event: any) {
+    this.isPerfCircuitRetrieved.set(false);
+    this.isBuildFromPerf.set(false);
+    this.resetVar();
+    this.resetTab();
+    this.theFile = event;
+    this.filePerf = event.content;
+    // new object, so that build-loop sees the change
+    this.headerPerf = fillHeaderFile(this.theFile, new classHeaderFileSport);
+    if (this.headerPerf.name === "") {
+      this.headerPerf.name = event.name;
     }
+    this.nameFilePerf = event.name;
+    this.isPerfRetrieved.set(false);
+    this.isFilePerfReceived.set(true);
+
+    const hasPoR = this.filePerf.some(rec => rec.refPoR !== "");
+    if (this.isSpecificCircuitReceived() && hasPoR) {
+      this.isBuildFromPerf.set(true);
+    }
+    this.refresh();
   }
 
+  onSelectCircuit(event: any) {
+    this.isPerfCircuitRetrieved.set(false);
+    this.isBuildFromPerf.set(false);
+    this.resetVar();
+    this.resetTab();
+    this.specificCircuit = event;
+    this.selectionCircuit.set(false);
+    this.isSpecificCircuitReceived.set(true)
+    if (this.isFilePerfReceived() && this.specificCircuit.points.length > 0) {
+      this.isBuildFromPerf.set(true);
+    }
+    this.firstPoR = this.specificCircuit.points[0]?.ref ?? "";
+    this.firstPoRNb = 0;
+    this.refresh();
+  }
 
-  for (i=0; i<this.initPerfPoR.length; i++){
-    for (j=0; j< this.specificCircuit.points.length && this.specificCircuit.points[j].ref!==this.initPerfPoR[i].content.refPoR; j++){}
-    if (j< this.specificCircuit.points.length){
-      // PoR is found so update perfCircuitRef
-      // check the first available loop
-      //for (k=0; k<this.perfCircuitRef[j].newLoop.length && this.perfCircuitRef[j].newLoop[k].dist===0; k++){}
-      if (this.perfCircuitRef[j].newLoop[this.perfCircuitRef[j].newLoop.length-1].dist!==0){      
-        // create a new loop for each leg 
-        for (iLeg=0; iLeg<this.specificCircuit.points.length; iLeg++){
-          const classLoop=new classNewLoop;
-          this.perfCircuitRef[iLeg].newLoop.push(classLoop);
+  selFirstPoR(i: number) {
+    this.firstPoR = this.specificCircuit.points[i].ref;
+    this.firstPoRNb = i;
+  }
+
+  // ---------------------------------------------------------------- retrieve an existing perfCircuit file
+
+  retrievePerfCircuit(resp: 'Yes' | 'No') {
+    this.resetVar();
+    if (resp !== 'Yes') {
+      this.isPerfCircuitRetrieved.set(false);
+      return;
+    }
+    const fileName = this.fileNameFor('perf', this.nameFilePerf);
+    this.ManageGoogleService.getContentObject(this.configServer, 'xmv-sport-analysis', fileName)
+      .subscribe({
+        next: (data: any) => {
+            this.isPerfCircuitRetrieved.set(true);
+            if (data.status!==undefined){
+              if (data.status===0 || data.status===200){
+                  this.theFile = data;
+                  if (Array.isArray(data.content)) {
+                    this.perfCircuit = this.theFile.content;
+                  } else {
+                    this.perfCircuit=[];
+                    this.errorMessage.set(" Circuit file content'" + fileName + "' is empty");
+                    this.isPerfCircuitRetrieved.set(false);
+                  }
+              } else {
+                this.perfCircuit=[];
+                    this.errorMessage.set(" Error " + data.status +  ". Circuit file content'" + fileName + "' not found");
+                    this.isPerfCircuitRetrieved.set(false);
+              }
+            }
+        },
+        error: () => {
+          this.errorMessage.set(" Circuit file '" + fileName + "' not found");
+          this.isPerfCircuitRetrieved.set(false);
         }
-       
-      }
-      //this.copyInitPerf(j,this.perfCircuitRef[j].newLoop.length-1,i);
-      copyInitPerf(j,this.perfCircuitRef[j].newLoop.length-1,i,this.perfCircuitRef,this.initPerfPoR);
+      });
+  }
 
+  // ---------------------------------------------------------------- calculation of the performance
+
+  /** first record where the first PoR is reached (lat AND lon inside the tolerance); -1 when not found */
+  private findStartRow(porNb: number): number {
+    const p = this.specificCircuit.points[porNb];
+    if (p.prio !== 'lat' && p.prio !== 'lon') { return -1; }
+    const trunc6 = (x: number) => Math.trunc(x * 1e6) / 1e6;
+    const specLat = trunc6(p.lat);
+    const specLon = trunc6(p.lon);
+    return this.filePerf.findIndex(r =>
+      Math.abs(r.lat - specLat) <= p.varLat && Math.abs(r.lon - specLon) <= p.varLon);
+  }
+
+  /** returns the work leg #idx, creating the missing ones (legs before the first PoR are placeholders) */
+  private ensureLeg(idx: number): classWorkCircuit {
+    while (this.circuitPOR.length <= idx) {
+      const n = this.circuitPOR.length;
+      const leg = new classWorkCircuit;
+      leg.name = this.specificCircuit.points[n].ref;
+      leg.spec = n;
+      leg.exclude[0] = "";
+      if (n < this.firstPoRNb) {
+        leg.dist[0] = 0;
+        leg.value[0] = 0;
+      } else {
+        leg.dist[0] = this.specificCircuit.dist[n];
+      }
+      this.circuitPOR.push(leg);
     }
-
+    return this.circuitPOR[idx];
   }
-  for (i=0; i<this.perfCircuitRef.length; i++){
-      for (j=0; j<this.perfCircuitRef[i].newLoop.length; j++){
-        if (j===this.perfCircuitRef[j].newLoop.length-1 && i===this.perfCircuitRef.length-1){
 
-        } else if (j<this.perfCircuitRef[j].newLoop.length-1 && i===this.perfCircuitRef.length-1){
-          this.perfCircuitRef[i].newLoop[j].to=this.perfCircuitRef[0].newLoop[j+1].from;
-          this.perfCircuitRef[i].newLoop[j].perfRecordTo=this.perfCircuitRef[0].newLoop[j+1].perfRecordFrom;
-        }  else  {
-            this.perfCircuitRef[i].newLoop[j].to=this.perfCircuitRef[i+1].newLoop[j].from;
-            this.perfCircuitRef[i].newLoop[j].perfRecordTo=this.perfCircuitRef[i+1].newLoop[j].perfRecordFrom;
-            
-        } 
-        this.perfCircuitRef[i].newLoop[j].dist = this.filePerf[this.perfCircuitRef[i].newLoop[j].perfRecordTo].dist -
-            this.filePerf[this.perfCircuitRef[i].newLoop[j].perfRecordFrom].dist;
-        this.perfCircuitRef[i].newLoop[j].time = this.filePerf[this.perfCircuitRef[i].newLoop[j].perfRecordTo].time -
-            this.filePerf[this.perfCircuitRef[i].newLoop[j].perfRecordFrom].time; 
-        this.perfCircuitRef[i].newLoop[j].strTime = formatHHMNSS(this.perfCircuitRef[i].newLoop[j].time);
-        this.perfCircuitRef[i].newLoop[j].speed = this.perfCircuitRef[i].newLoop[j].dist * 1000 / this.perfCircuitRef[i].newLoop[j].time * 3.6;
-      }
-
-  }
-  this.cdr.detectChanges();
-}
-
-
-onCalculatePerf(){
-
-    var theRef=0;
-    var newDist=0;
-    var iFind =0;
-    var iRef=0;
-    var j=0;
-    var bestRow=0;
-    var valRef=0;
+  onCalculatePerf() {
+    const pts = this.specificCircuit.points;
+    const nbPts = pts.length;
+    const perf = this.filePerf;
 
     this.resetTab();
-    this.circuitPOR.splice(0,this.circuitPOR.length);
-    var refStartPoint = 0;
-    this.isFilesToSave=false;
-    // search the first point of reference
-    var i=this.firstPoRNb;
-    for (var j=0; j<this.firstPoRNb; j++){
-      const classWork=new classWorkCircuit;
-      this.circuitPOR.push(classWork);
-      this.circuitPOR[this.circuitPOR.length-1].name=this.specificCircuit.points[j].ref;
-      this.circuitPOR[this.circuitPOR.length-1].dist[0]=0//this.specificCircuit.dist[j];
-      this.circuitPOR[this.circuitPOR.length-1].value[0]=0;
-      this.circuitPOR[this.circuitPOR.length-1].exclude[0]="";
-      this.circuitPOR[this.circuitPOR.length-1].spec=j;
-    }
-    for (j=0; j<this.filePerf.length && refStartPoint===0; j++){
-        //i=0;
-        iFind = this.specificCircuit.points[i].lon.toString().indexOf('.');
-        const specLon = Number(this.specificCircuit.points[i].lon.toString().substring(0,iFind+7));
-        iFind = this.specificCircuit.points[i].lat.toString().indexOf('.');
-        const specLat = Number(this.specificCircuit.points[i].lat.toString().substring(0,iFind+7));
-        if ((this.specificCircuit.points[i].prio === "lat" && 
-                      specLat - this.specificCircuit.points[i].varLat <= this.filePerf[j].lat &&
-                      specLat + this.specificCircuit.points[i].varLat >= this.filePerf[j].lat) ||
-                      (this.specificCircuit.points[i].prio === "lon" && 
-                      specLon - this.specificCircuit.points[i].varLon <= this.filePerf[j].lon &&
-                      specLon + this.specificCircuit.points[i].varLon >= this.filePerf[j].lon)){
-            if ((this.specificCircuit.points[i].prio === "lat" && 
-                      specLon - this.specificCircuit.points[i].varLon <= this.filePerf[j].lon &&
-                      specLon + this.specificCircuit.points[i].varLon >= this.filePerf[j].lon) ||
-                            (this.specificCircuit.points[i].prio === "lon" && 
-                      specLat - this.specificCircuit.points[i].varLat <= this.filePerf[j].lat &&
-                      specLat + this.specificCircuit.points[i].varLat >= this.filePerf[j].lat)){
-                  refStartPoint = j;
-                  const classWork=new classWorkCircuit;
-                  this.circuitPOR.push(classWork); // value contains all the records foundin perfFile corresponding to the PoR
-                  this.circuitPOR[this.circuitPOR.length-1].name=this.specificCircuit.points[i].ref;
-                  this.circuitPOR[this.circuitPOR.length-1].spec=i;
-                  this.circuitPOR[this.circuitPOR.length-1].value[0]=j;
-                  this.circuitPOR[this.circuitPOR.length-1].dist[0]=this.specificCircuit.dist[0];
-                  this.circuitPOR[this.circuitPOR.length-1].exclude[0]="";
-            }
-        }
-    }
-    // *** IF START POINT NOT FOUND STOP THE PROCESS AND DISPLAY ERROR MESSAGE
+    this.isFilesToSave.set(false);
+    this.calcErrorMessage.set("");
 
-    // find eachPoR based on distance
-  if (j<this.filePerf.length){
-        var iLoop=-1;
-        for (var jRow=0; jRow<this.filePerf.length; jRow++){
-          iLoop++
-          // the first time iRef get the value of 'i' which corresponds to the selection of the first PoR
-          // for the next loop iRef will start from 0 
-          for ( var iRef=i; iRef<this.specificCircuit.points.length && jRow<this.filePerf.length; iRef++){
-            
-            this.circuitPOR[iRef].dist[iLoop]=this.specificCircuit.dist[iRef];
-            // find the next item as per the distance
-            newDist = 0
-            for (theRef=0; theRef < iRef; theRef++){
-                newDist = newDist + this.circuitPOR[theRef].dist[this.circuitPOR[theRef].dist.length-1] - this.specificCircuit.dist[theRef];
-                theRef = theRef + 1
-              }
-            if (newDist > 0){
-                newDist = newDist + Number(this.specificCircuit.dist[theRef]);
-            } else {
-                newDist = Number(this.specificCircuit.dist[theRef]);
-            }
-            if (Number(iRef) < this.specificCircuit.points.length-1) {
-              theRef=Number(iRef)+1
-            } else { 
-              theRef=0;
-            }
-            bestRow=0;
-            for (var k=jRow; k<this.filePerf.length && this.filePerf[k].dist - this.filePerf[this.circuitPOR[iRef].value[iLoop]].dist <= this.specificCircuit.dist[iRef]; k++){
-              if ((Math.abs(this.filePerf[k].lat - this.specificCircuit.points[theRef].lat) <= this.specificCircuit.points[theRef].varLat)
-                      && (Math.abs(this.filePerf[k].lon - this.specificCircuit.points[theRef].lon) <= this.specificCircuit.points[theRef].varLon)){
-                  if (bestRow = 0) {
-                      bestRow = k;
-                  } else {if ((Math.abs(this.filePerf[k].lat - this.specificCircuit.points[theRef].lat) <= Math.abs(this.filePerf[bestRow].lat - this.specificCircuit.points[theRef].lat)) 
-                                  && (Math.abs(this.filePerf[k].lon - this.specificCircuit.points[theRef].lon) <= Math.abs(this.filePerf[bestRow].lon - this.specificCircuit.points[theRef].lon))) {
-                        bestRow = k;
-                      }
-                  }
-              }
-            }
-            if (bestRow !==0){
-              k = bestRow;
-            }
-            // check then which piont is the closest from a lat-lon point of view
-            const interval = 10;
-            jRow = k - interval;
-            var selRow = k - interval + 1;
-            if (iRef<this.specificCircuit.points.length-1){
-              valRef=iRef+1;
-            } else {
-              valRef=0;
-            }
-            for (var jInt=0; jInt<interval * 3 && jRow<this.filePerf.length; jInt++){
-  
-                if (this.specificCircuit.points[valRef].prio === "lat"){
-                  if (Math.abs(this.filePerf[jRow].lat - this.specificCircuit.points[valRef].lat) < 
-                      Math.abs(this.filePerf[selRow].lat - this.specificCircuit.points[valRef].lat)) {
-                        selRow = jRow;
-                      }
-                                    
-                } else if (this.specificCircuit.points[valRef].prio === "lon"){
-                  if (Math.abs(this.filePerf[jRow].lon - this.specificCircuit.points[valRef].lon) < 
-                      Math.abs(this.filePerf[selRow].lon - this.specificCircuit.points[valRef].lon)) {
-                        selRow = jRow;
-                      }
-                                    
-                }
-                jRow++
-            }
-            if (selRow<this.filePerf.length){
-                var exclude=false;
-                if (iLoop===0 && iRef!==this.specificCircuit.points.length-1){
-                  const classWork=new classWorkCircuit;
-                  this.circuitPOR.push(classWork); // value contains all the records found in perfFile corresponding to the PoR
-                  this.circuitPOR[this.circuitPOR.length-1].name=this.specificCircuit.points[this.circuitPOR.length-1].ref;
-                  this.circuitPOR[this.circuitPOR.length-1].spec=this.circuitPOR.length-1;
-                  this.circuitPOR[this.circuitPOR.length-1].dist[0]=this.specificCircuit.dist[this.circuitPOR.length-1];
-                  this.circuitPOR[this.circuitPOR.length-1].exclude[0]="";
-                }
-                //if (exclude===false){
-                if ( iRef===this.specificCircuit.points.length-1){
-                    this.circuitPOR[0].value[iLoop+1]=selRow;
-                    theRef=0;
-                } else {
-                    this.circuitPOR[iRef+1].value[iLoop]=selRow;
-                    theRef=iRef+1;
-                }
-                this.circuitPOR[iRef].dist[iLoop]=this.filePerf[selRow].dist  - this.filePerf[this.circuitPOR[iRef].value[iLoop]].dist;
-                //}   
+    // *** the start point must be found, otherwise stop and display an error
+    const startRow = this.findStartRow(this.firstPoRNb);
+    if (startRow < 0) {
+      this.calcErrorMessage .set("start point not found; restart your selection");
+      this.isPerfRetrieved.set(false);
+      this.selectionCircuit.set(false);
+      this.isSpecificCircuitReceived.set(false);
+      this.filePerf = [];
+      this.refresh();
+      return;
+    }
+    this.ensureLeg(this.firstPoRNb).value[0] = startRow;
 
-                if (this.specificCircuit.points[theRef].prio === "lat" && this.filePerf[selRow].lat!==0){
-                  if (Math.abs(this.filePerf[selRow].lat - this.specificCircuit.points[theRef].lat) > 0.00035){
-                    // this.circuitPOR[i].value.splice(iLoop,1);
-                    this.circuitPOR[theRef].exclude[iLoop]="E";
-                    exclude=true;
-                  }
-                } else if (this.specificCircuit.points[theRef].prio === "lon" && this.filePerf[selRow].lon!==0){
-                  if (Math.abs(this.filePerf[selRow].lon - this.specificCircuit.points[theRef].lon) > 0.00035){
-                    //this.circuitPOR[i].value.splice(iLoop,1);
-                    this.circuitPOR[theRef].exclude[iLoop]="E";
-                    exclude=true;
-                  }
-                }
-                if (exclude===false){
-                  this.circuitPOR[theRef].exclude[iLoop]="";
-                }
+    // *** find each PoR based on distance
+    let iLoop = -1;
+    let startRef = this.firstPoRNb;   // the first loop starts at the selected PoR, the next ones at 0
+    let stop = false;
+    for (let jRow = startRow; jRow < perf.length && !stop; jRow++) {
+      iLoop++;
+      for (let iRef = startRef; iRef < nbPts && jRow < perf.length; iRef++) {
+        const leg = this.ensureLeg(iRef);
+        leg.dist[iLoop] = this.specificCircuit.dist[iRef];
+
+        const fromRow = leg.value[iLoop];
+        if (fromRow === undefined) { stop = true; break; }   // the previous leg did not find its end
+        const fromDist = perf[fromRow].dist;
+
+        const nextRef = iRef < nbPts - 1 ? iRef + 1 : 0;
+        const target = pts[nextRef];
+
+        // first look for the best record while the distance of the leg is not exceeded
+        let bestRow = -1;
+        let k = jRow;
+        for (; k < perf.length && perf[k].dist - fromDist <= this.specificCircuit.dist[iRef]; k++) {
+          const dLat = Math.abs(perf[k].lat - target.lat);
+          const dLon = Math.abs(perf[k].lon - target.lon);
+          if (dLat <= target.varLat && dLon <= target.varLon) {
+            if (bestRow < 0 ||
+               (dLat <= Math.abs(perf[bestRow].lat - target.lat) && dLon <= Math.abs(perf[bestRow].lon - target.lon))) {
+              bestRow = k;
             }
           }
-          i=0;
         }
-       
-        this.createPerfCircuit();
-        
-  } else {
-    this.errorMessage="start point not found; restart your selection";
-    this.isPerfRetrieved=false;
-    this.selectionCircuit=false;
-    this.isSpecificCircuitReceived=false;
-    this.filePerf.splice(0, this.filePerf.length);
-  }
-this.scroller.scrollToAnchor('bottomPage');
-this.cdr.detectChanges();
-}
+        if (bestRow >= 0) { k = bestRow; }
 
-createPerfCircuit(){
-  for (var i=0; i<this.circuitPOR.length; i++){
-    this.perfCircuit.push({newLoop:[]});
-  }
-
-  for (var iLoop=0; iLoop<this.circuitPOR[0].dist.length; iLoop++){
-    for (var i=0; i<this.circuitPOR.length; i++){
-      if (iLoop<this.circuitPOR[i].dist.length){ // must ensure that the loop#j exists for this leg
-        const classLoop=new classNewLoop;
-        this.perfCircuit[i].newLoop.push(classLoop);
-        this.perfCircuit[i].newLoop[iLoop].from=this.circuitPOR[i].name;
-        this.perfCircuit[i].newLoop[iLoop].dist=this.circuitPOR[i].dist[iLoop];
-        this.perfCircuit[i].newLoop[iLoop].perfRecordFrom=this.circuitPOR[i].value[iLoop];
-        this.perfCircuit[i].newLoop[iLoop].exclude=this.circuitPOR[i].exclude[iLoop];
-        this.perfCircuit[i].newLoop[iLoop].spec=i;
-        if (i<this.circuitPOR.length-1){
-          this.perfCircuit[i].newLoop[iLoop].to=this.circuitPOR[i+1].name;
-          this.perfCircuit[i].newLoop[iLoop].perfRecordTo=this.circuitPOR[i+1].value[iLoop];
-        } else { // process the last leg of the loop
-          this.perfCircuit[i].newLoop[iLoop].to=this.circuitPOR[0].name;
-          if (iLoop<this.circuitPOR[0].value.length-1){
-            this.perfCircuit[i].newLoop[iLoop].perfRecordTo=this.circuitPOR[0].value[iLoop+1];
-            // next loop exists
+        // then refine on the priority coordinate in a window around k
+        const start = Math.max(0, k - SEARCH_INTERVAL);
+        let selRow = Math.min(start + 1, perf.length - 1);
+        jRow = start;
+        const coord: 'lat' | 'lon' | '' = target.prio === 'lat' ? 'lat' : target.prio === 'lon' ? 'lon' : '';
+        for (let jInt = 0; jInt < SEARCH_INTERVAL * 3 && jRow < perf.length; jInt++, jRow++) {
+          if (coord !== '' &&
+              Math.abs(perf[jRow][coord] - target[coord]) < Math.abs(perf[selRow][coord] - target[coord])) {
+            selRow = jRow;
           }
         }
-        if (this.perfCircuit[i].newLoop[iLoop].perfRecordFrom!==0 && this.perfCircuit[i].newLoop[iLoop].perfRecordTp!==0){
-            this.perfCircuit[i].newLoop[iLoop].theTime = this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordTo].time - this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordFrom].time;
-            this.perfCircuit[i].newLoop[iLoop].dist = this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordTo].dist - this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordFrom].dist;
-            this.perfCircuit[i].newLoop[iLoop].speed = this.perfCircuit[i].newLoop[iLoop].dist * 1000 / this.perfCircuit[i].newLoop[iLoop].theTime * 3.6; 
-            this.perfCircuit[i].newLoop[iLoop].strTime=formatHHMNSS(this.perfCircuit[i].newLoop[iLoop].theTime);      
-        }
 
+        if (selRow < perf.length) {
+          const toLeg = this.ensureLeg(nextRef);
+          // the end of the last leg is the start of the next loop of leg 0
+          const toIdx = iRef === nbPts - 1 ? iLoop + 1 : iLoop;
+          toLeg.value[toIdx] = selRow;
+          leg.dist[iLoop] = perf[selRow].dist - fromDist;
+
+          const tooFar = coord !== '' && perf[selRow][coord] !== 0 &&
+                         Math.abs(perf[selRow][coord] - target[coord]) > EXCLUDE_TOLERANCE;
+          toLeg.exclude[toIdx] = tooFar ? "E" : "";
+        }
+      }
+      startRef = 0;
+    }
+
+    this.createPerfCircuit();
+    this.refresh();
+  }
+
+  private createPerfCircuit() {
+    const por = this.circuitPOR;
+    if (por.length === 0) { return; }
+    const perf = this.filePerf;
+    const hasRow = (n: number) => n > 0 && n < perf.length;
+    const legs: Array<PerfLeg> = por.map(() => ({ newLoop: [] }));
+
+    for (let iLoop = 0; iLoop < por[0].dist.length; iLoop++) {
+      for (let i = 0; i < por.length; i++) {
+        if (iLoop >= por[i].dist.length) { continue; }   // this leg has no such loop
+        const loop = new classNewLoop;
+        loop.from = por[i].name;
+        loop.dist = por[i].dist[iLoop];
+        loop.perfRecordFrom = por[i].value[iLoop] ?? 0;
+        loop.exclude = por[i].exclude[iLoop] ?? "";
+        loop.spec = i;
+        if (i < por.length - 1) {
+          loop.to = por[i + 1].name;
+          loop.perfRecordTo = por[i + 1].value[iLoop] ?? 0;
+        } else {
+          // last leg of the loop: ends where the next loop of leg 0 starts, if that loop exists
+          loop.to = por[0].name;
+          if (iLoop < por[0].value.length - 1) {
+            loop.perfRecordTo = por[0].value[iLoop + 1] ?? 0;
+          }
+        }
+        if (hasRow(loop.perfRecordFrom) && hasRow(loop.perfRecordTo)) {
+          const from = perf[loop.perfRecordFrom];
+          const to = perf[loop.perfRecordTo];
+          loop.theTime = to.time - from.time;
+          loop.dist = to.dist - from.dist;
+          loop.speed = loop.theTime > 0 ? loop.dist * 1000 / loop.theTime * 3.6 : 0;
+          loop.strTime = formatHHMNSS(loop.theTime);
+        }
+        legs[i].newLoop.push(loop);
       }
     }
 
+    // each leg must have the same number of loops as leg 0: add or cut
+    const nbLoops = legs[0].newLoop.length;
+    for (let i = 1; i < legs.length; i++) {
+      while (legs[i].newLoop.length < nbLoops) { legs[i].newLoop.push(new classNewLoop); }
+      legs[i].newLoop.length = nbLoops;
+    }
+    this.perfCircuit = legs;
   }
-  // each leg must have same number of loops
-  // add if needed
-  for (i=1; i<this.perfCircuit.length; i++){
-    for (iLoop=this.perfCircuit[i].newLoop.length; iLoop<this.perfCircuit[0].newLoop.length; iLoop++){
-        const classLoop=new classNewLoop;
-        this.perfCircuit[i].newLoop.push(classLoop);
+
+  // ---------------------------------------------------------------- save
+
+  savePerf(event: any) {
+    // name of the file is managed by the calling component
+    this.saveMsg.set("");
+    this.fnSavePerf(this.identification.performanceSport.bucket, event.codeName, event);
+  }
+
+  uploadPerfCircuit(event: any) {
+    const perfName = this.theFile.name;
+    this.theFile.codeName = this.fileNameFor('perf', perfName);
+    this.fnSave('perfCircuit', event, this.theFile.codeName, 'xmv-sport-analysis');
+
+    if (this.circuitPOR.length > 0) {
+      this.theFile.codeName = this.fileNameFor('cPOR', perfName);
+      this.fnSave('circuitPOR', this.circuitPOR, this.theFile.codeName, 'xmv-tests');
     }
   }
-  // delete if needed
-  for (i=1; i<this.perfCircuit.length; i++){
-    if (this.perfCircuit[0].newLoop.length<this.perfCircuit[i].newLoop.length){
-        this.perfCircuit[i].newLoop.splice(this.perfCircuit[i].newLoop.length-1,1);
-    }
-  }
-  this.cdr.detectChanges();
-}
 
-
-
-isSavePerf:boolean=false;
-savePerf(event:any){
-  console.log('savePerf length=' + event.length)
-
-  // name of the file is managed by the calling component
-  this.saveMsg="";
-  this.isSavePerf=true;
-  this.fnSavePerf( this.identification.performanceSport.bucket, event.codeName, event);
-}
-
-uploadPerfCircuit(event:any){
-  console.log('uploadPerfCircuit' + event.length);
-  var j=1;
-  for (var i=0; j!==-1; i++){
-    j=this.theFile.theDate.indexOf('/');
-    if (j!==-1){
-      this.theFile.theDate=this.theFile.theDate.substring(0,j)+this.theFile.theDate.substring(j+1);
-    }
-  }
-  const nameFile = this.theFile.sport.substring(0,1).toUpperCase() + '-' + this.specificCircuit.code + '-';
-  const partwo = this.theFile.theDate + this.theFile.name.substring(0,35);
-  this.theFile.codeName = nameFile + 'perf-' + partwo;
-  // name of the file is managed by the calling component
-  this.fnSave('perfCircuit', event, this.theFile.codeName,'xmv-sport-analysis');
-
-  if (this.circuitPOR.length>0){
-    this.theFile.codeName = nameFile + 'cPOR-' + partwo;
-    this.fnSave('circuitPOR', this.circuitPOR, this.theFile.codeName,'xmv-tests');
+  private upload(bucket: string, fileName: string, obj: any) {
+    const file = new File([JSON.stringify(obj)], fileName, { type: 'application/json' });
+    return this.ManageGoogleService.uploadObject(this.configServer, bucket, file, fileName);
   }
 
+  fnSavePerf(bucket: string, fileName: string, aFile: any) {
+    this.upload(bucket, fileName, aFile).subscribe({
+      next: (res: any) => {
+        if (res.type === HttpEventType.Response) {
+          this.nbSuccessUpload++;
+          this.nbSave = this.nbSuccessUpload;
+          this.saveMsg.set(" file has been updated and stored in the cloud ");
+        }
+      },
+      error: () => {
+        this.nbErrUpload--;
+        this.nbSave = this.nbErrUpload;
+        this.saveMsg.set(" upload pb - file has not been updated");
+      }
+    });
+  }
+
+  fnSave(type: string, content: any, fileName: string, bucket: string) {
+    this.theFile.fileType = type;
+    this.theFile.content = content;
+    const name = fileName;
+    this.upload(bucket, fileName, this.theFile).subscribe({
+      next: (res: any) => { if (res.type === HttpEventType.Response) { this.saveMsg.set("File '"+name+"' saved") } },
+      error: () => { this.saveMsg.set("File '"+name+"' not saved"); }
+    });
+  }
 }
-
-
-nbErrUpload:number=-1;
-nbSuccessUpload:number=0;
-fnSavePerf(bucket:string, fileName:string,aFile:any){
-  var file=new File ([JSON.stringify(aFile)], fileName, {type: 'application/json'});    
-  this.ManageGoogleService.uploadObject(this.configServer, bucket, file ,  fileName)
-        .subscribe(
-            res => {
-                if (res.type===4){ 
-                  this.nbSuccessUpload++;
-                  this.nbSave=this.nbSuccessUpload;
-                  this.saveMsg =  " file has been updated and stored in the cloud ";
-                }
-                  this.cdr.detectChanges();
-          }, 
-          err => {
-            this.nbErrUpload--;
-            this.nbSave=this.nbErrUpload;
-            this.saveMsg =  " upload pb - file has not been updated";
-            this.cdr.detectChanges();
-          })
-}
-
-fnSave(type:string, content:any, fileName:string, bucket:string){
-  this.theFile.fileType=type;
-  this.theFile.content=content; 
-  var file=new File ([JSON.stringify(this.theFile)], fileName, {type: 'application/json'});    
-  this.ManageGoogleService.uploadObject(this.configServer, bucket, file ,  fileName)
-        .subscribe(
-            res => {
-                if (res.type===4){ 
-                  console.log("file is save - " + fileName);
-                  this.cdr.detectChanges();
-                }
-            },
-            err => {
-              console.log("file is not saved - " + fileName);
-              this.cdr.detectChanges();
-            });
-}
-
-
-
-
-
-}
-

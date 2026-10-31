@@ -15,16 +15,12 @@ import { XmvCompanyComponent } from './xmv-company/xmv-company.component';
 import { ManageGoogleService } from './CloudServices/ManageGoogle.service';
 import { ManageMongoDBService } from './CloudServices/ManageMongoDB.service';
 
-import { LoginIdentif , configServer, classUserLogin } from './JsonServerClass';
-import { EventAug, configPhoto, StructurePhotos } from './JsonServerClass';
-import { environment } from '../environments/environment';
+import { LoginIdentif , configServer } from './JsonServerClass';
+import { EventAug } from './JsonServerClass';
 import { classCredentials} from './JsonServerClass';
 import { mainClassConv,mainConvItem, mainRecordConvert, mainClassUnit} from './ClassConverter';
 import { classAccessFile } from './classFileSystem';
-
 import { fillConfig } from './copyFilesFunction';
-import { fnAddTime } from './MyStdFunctions';
-
 import { fillCredentials } from './copyFilesFunction';
 
 @Component({
@@ -293,9 +289,6 @@ console.log('devMode='+this.devMode);
      
       this.currentFunction="getLogin";
       this.theFn="Login";
-      //this.cdr.detectChanges.mark()
-
-
       //=============
       //this.configServer.timeoutFileSystem.userTimeOut.mn=10;
       //this.configServer.timeoutFileSystem.userTimeOut.ss=20;
@@ -316,8 +309,7 @@ console.log('devMode='+this.devMode);
             this.onLocalGetLogin(reader.result as string);
             
           }
-          // reader.onabort= () => {console.log("stop");}
-          };
+        };
         reader.readAsText(event.target.files[0]);
         
       }
@@ -347,7 +339,6 @@ console.log('devMode='+this.devMode);
     } else if (serverType==='FS'){
       this.configServer.googleServer = this.configServer.fileSystemServer
     } 
-    //this.ManageGoogleService.getCredentials(this.configServer  )
     this.ManageGoogleService.getNewServerUsrId (this.configServer  )
       .subscribe(
           (data ) => {
@@ -361,7 +352,6 @@ console.log('devMode='+this.devMode);
                 this.configServer.googleServer = this.saveGoogleServer;
             }
             this.isCredentials=true;
-            //this.cdr.markForCheck();
   
           },
           err => {

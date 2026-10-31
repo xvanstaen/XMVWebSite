@@ -85,7 +85,7 @@ export class DisplayCircuitLoopComponent {
     
     
     for (var i=0; i<this.perfCircuit.length && this.isPbDetected===false; i++){
-        if (this.perfCircuit[0]===undefined){
+        if (this.perfCircuit[i]===undefined){
           this.isPbDetected=true;
           this.stringPerfCircuit=JSON.stringify(this.perfCircuit);
         }
