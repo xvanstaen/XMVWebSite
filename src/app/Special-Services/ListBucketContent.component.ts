@@ -1,8 +1,8 @@
 
-import { Component, OnInit , Input, Output, EventEmitter,HostListener, OnChanges, SimpleChanges
+import { Component, signal , Input, Output, EventEmitter,HostListener,  SimpleChanges
   , ChangeDetectorRef} from '@angular/core';
 
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { CommonModule,  ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { classTabMetaPerso , Bucket_List_Info, OneBucketInfo } from '../JsonServerClass';
@@ -52,9 +52,6 @@ export class ListBucketContentComponent {
     type:string='';
 
     isObjectToSave:boolean=false;
-    EventHTTPReceived:Array<boolean>=[false,false,false,false,false,false];
-    id_Animation:Array<number>=[0,0,0,0,0];
-    TabLoop:Array<number>=[0,0,0,0,0];
 
      // ACCESS TO GOOGLE STORAGE
     HTTP_AddressLog:string='';
@@ -72,7 +69,7 @@ export class ListBucketContentComponent {
     fileRetrieved:boolean=false;
          // ACCESS TO GOOGLE STORAGE
 
-    Message:string='';
+    message=signal<string>("");
      
     DisplayListOfObjects:boolean=false;
     SelectedFile:boolean=false;
@@ -93,7 +90,6 @@ ngOnInit(){
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
       this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + 'logconsole' + "/o?name="  ;
-      this.Error_Access_Server='';
       this.IsngInitDone=true;
       this.RetrieveAllObjects();
   }   
@@ -133,15 +129,14 @@ RetrieveAllObjects(){
           error_handler => {
             
             console.log('RetrieveAllObjects() - error handler; HTTP='+this.HTTP_Address);
-            this.Message='HTTP_Address='+this.HTTP_Address;
-            this.Error_Access_Server='RetrieveAllObjects()==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+            this.message.set("HTTP_Address='+this.HTTP_Address");
           } 
     )
   }
   
   
   RetrieveSelectedFile(event:any){
-    this.Message='';
+    this.message.set("");
     const saveEvent=event;
     this.ManageGoogleService.getContentObject(this.configServer, event.bucket,event.name )
       .subscribe((data ) => {
@@ -158,10 +153,7 @@ RetrieveAllObjects(){
         //
       },
       error_handler => {
-        this.Message='HTTP_Address='+event.mediaLink;
-        this.Error_Access_Server='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-        console.log('RetrieveSelectedFile- error handler '+this.Error_Access_Server);
-        this.Error_Access_Server='INIT - error status==> '+ error_handler.status+ '   Error url==>  '+ error_handler.url;
+        this.message.set("Selected file '" + saveEvent.name + "' not found");
       } 
       )
   }

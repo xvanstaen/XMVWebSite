@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, Output, HostListener, 
+  Component, Input, Output, HostListener, 
   signal, input, effect,  EventEmitter, 
    Inject, LOCALE_ID
 } from '@angular/core';
@@ -11,7 +11,7 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 
 import { MainManageFileComponent } from '../../fileAccessMgt/file-access.component';
 
-import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classCheckLock } from '../../JsonServerClass';
+import { configServer, LoginIdentif, msgConsole, classtheEvent } from '../../JsonServerClass';
 import { classPosDiv, getPosDiv } from '../../getPosDiv';
 
 import { getStyleDropDownContent, getStyleDropDownBox, classDropDown } from '../../DropDownStyle'

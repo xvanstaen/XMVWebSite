@@ -5,18 +5,39 @@ import { formatHHMNSS } from './../MyStdFunctions';
 const LOOP_FIELDS = ['dist', 'exclude', 'from', 'to', 'loop', 'loopDel', 'perfRecordFrom', 'perfRecordTo',
   'speed', 'strTime', 'theTime'] as const;
 
+/** one loop of the totals row (subset of classNewLoop) */
+export type TotalLoop = Pick<classNewLoop, 'dist' | 'theTime' | 'speed' | 'strTime' | 'from' | 'to'>;
+export interface PerfTotal { newLoop: TotalLoop[]; }
+
 /** speed in km/h from a distance in km and a time in seconds (0 when no time elapsed) */
 function speedKmh(distKm: number, seconds: number): number {
-  return seconds > 0 ? distKm * 1000 / seconds * 3.6 : 0;
+  return seconds > 0 ? distKm * 3600 / seconds : 0;
 }
 
-export function fillHeaderFile(inHeader: any, outHeader: classHeaderFileSport): classHeaderFileSport {
-  outHeader.circuit = inHeader.circuit;
-  outHeader.codeName = inHeader.codeName;
-  outHeader.fileType = inHeader.fileType;
-  outHeader.name = inHeader.name;
-  outHeader.sport = inHeader.sport;
-  outHeader.theDate = inHeader.theDate;
+/** generic copy of a list of keys: keeps dst[k] = src[k] type-safe without 'any' */
+function copyFields<K extends keyof classNewLoop>(dst: classNewLoop, src: classNewLoop, keys: readonly K[]): void {
+  for (const k of keys) {
+    dst[k] = src[k];
+  }
+}
+
+/** initial values of a loop taken from the perf record holding the PoR */
+function applyInitPerf(loop: classNewLoop, por: classTabPoR): void {
+  const rec = por.content;
+  loop.dist = rec.dist;
+  loop.perfRecordFrom = por.recNb;
+  loop.lon = rec.lon;
+  loop.lat = rec.lat;
+  loop.exclude = rec.exclude;
+}
+
+export function fillHeaderFile(inHeader: Partial<classHeaderFileSport>, outHeader: classHeaderFileSport): classHeaderFileSport {
+  outHeader.circuit = inHeader.circuit!;
+  outHeader.codeName = inHeader.codeName!;
+  outHeader.fileType = inHeader.fileType!;
+  outHeader.name = inHeader.name!;
+  outHeader.sport = inHeader.sport!;
+  outHeader.theDate = inHeader.theDate!;
   outHeader.refPoints = inHeader.refPoints ?? [];
   return outHeader;
 }
@@ -24,52 +45,50 @@ export function fillHeaderFile(inHeader: any, outHeader: classHeaderFileSport): 
 /** records of the perf file which carry a PoR, with their record number */
 export function updateTabPor(filePerf: Array<classFilePerf>): Array<classTabPoR> {
   const tabPerfPoR: Array<classTabPoR> = [];
-  filePerf.forEach((rec, i) => {
-    if (rec.refPoR !== "") {
-      const item = new classTabPoR;
+  for (let i = 0; i < filePerf.length; i++) {
+    if (filePerf[i].refPoR !== "") {
+      const item = new classTabPoR();
       item.recNb = i;
-      item.content = rec;
+      item.content = filePerf[i];
       tabPerfPoR.push(item);
     }
-  });
+  }
   return tabPerfPoR;
 }
 
 /** initial values of a leg/loop taken from the perf record holding the PoR (kept for existing callers) */
 export function copyInitPerf(j: number, k: number, i: number, perfCircuit: Array<PerfLeg>, perfPoR: Array<classTabPoR>) {
-  const loop = perfCircuit[j].newLoop[k];
-  const por = perfPoR[i];
-  loop.dist = por.content.dist;
-  loop.perfRecordFrom = por.recNb;
-  loop.lon = por.content.lon;
-  loop.lat = por.content.lat;
-  loop.exclude = por.content.exclude;
+  applyInitPerf(perfCircuit[j].newLoop[k], perfPoR[i]);
   return perfCircuit;
 }
 
-export function createPerfTotal(perfCircuit: Array<PerfLeg>, perfTotalCircuit: Array<any>) {
-  perfTotalCircuit.splice(0, perfTotalCircuit.length);
-  perfTotalCircuit.push({ newLoop: [] });
-  for (let iLoop = 0; iLoop < perfCircuit[0].newLoop.length; iLoop++) {
-    perfTotalCircuit[0].newLoop.push({ dist: 0, theTime: 0, speed: 0, strTime: "", from: "", to: "" });
-    perfTotalCircuit = reinitTotal(iLoop, perfCircuit, perfTotalCircuit);
+export function createPerfTotal(perfCircuit: Array<PerfLeg>, perfTotalCircuit: Array<PerfTotal>) {
+  const nbLoops = perfCircuit[0]?.newLoop.length ?? 0;
+  const newLoop: TotalLoop[] = Array.from({ length: nbLoops },
+    () => ({ dist: 0, theTime: 0, speed: 0, strTime: "", from: "", to: "" }));
+  perfTotalCircuit.length = 0;
+  perfTotalCircuit.push({ newLoop });
+  for (let iLoop = 0; iLoop < nbLoops; iLoop++) {
+    reinitTotal(iLoop, perfCircuit, perfTotalCircuit);
   }
   return perfTotalCircuit;
 }
 
-export function reinitTotal(jLoop: number, perfCircuit: Array<PerfLeg>, perfTotalCircuit: Array<any>) {
+export function reinitTotal(jLoop: number, perfCircuit: Array<PerfLeg>, perfTotalCircuit: Array<PerfTotal>) {
   const total = perfTotalCircuit[0].newLoop[jLoop];
-  total.dist = 0;
-  total.theTime = 0;
+  let dist = 0;
+  let time = 0;
   for (const leg of perfCircuit) {
     const loop = leg.newLoop[jLoop];
     if (loop !== undefined && loop.exclude === "" && loop.dist !== 0) {
-      total.dist += loop.dist;
-      total.theTime += loop.theTime;
+      dist += loop.dist;
+      time += loop.theTime;
     }
   }
-  total.strTime = formatHHMNSS(total.theTime);
-  total.speed = speedKmh(total.dist, total.theTime);
+  total.dist = dist;
+  total.theTime = time;
+  total.strTime = formatHHMNSS(time);
+  total.speed = speedKmh(dist, time);
   return perfTotalCircuit;
 }
 
@@ -82,17 +101,13 @@ export function copyInOut(inFile: Array<PerfLeg>, outFile: Array<PerfLeg>) {
 }
 
 export function copyLegInOut(inFile: Array<PerfLeg>, outFile: Array<PerfLeg>, iLeg: number, jLoop: number) {
-  const src: any = inFile[iLeg].newLoop[jLoop];
-  const dst: any = outFile[iLeg].newLoop[jLoop];
-  for (const f of LOOP_FIELDS) {
-    dst[f] = src[f];
-  }
+  copyFields(outFile[iLeg].newLoop[jLoop], inFile[iLeg].newLoop[jLoop], LOOP_FIELDS);
   return outFile;
 }
 
 export function copyLoopInOut(inFile: Array<PerfLeg>, outFile: Array<PerfLeg>, jLoop: number) {
   for (let i = 0; i < inFile.length; i++) {
-    outFile = copyLegInOut(inFile, outFile, i, jLoop);
+    copyLegInOut(inFile, outFile, i, jLoop);
   }
   return outFile;
 }
@@ -103,7 +118,7 @@ export function copyLoopInOut(inFile: Array<PerfLeg>, outFile: Array<PerfLeg>, j
  * Does NOT mutate its inputs (all '/' are removed from the date).
  */
 export function perfFileName(sport: string, circuitCode: string, kind: 'perf' | 'cPOR', theDate: string, perfName: string): string {
-  return sport.charAt(0).toUpperCase() + '-' + circuitCode + '-' + kind + '-' + theDate.replaceAll('/', '') + perfName.substring(0, 35);
+  return `${sport.charAt(0).toUpperCase()}-${circuitCode}-${kind}-${theDate.replaceAll('/', '')}${perfName.substring(0, 35)}`;
 }
 
 /**
@@ -113,38 +128,43 @@ export function perfFileName(sport: string, circuitCode: string, kind: 'perf' | 
 export function buildPerfCircuitRef(points: Array<classPointOfRef>, initPerfPoR: Array<classTabPoR>,
                                     filePerf: Array<classFilePerf>): Array<PerfLeg> {
   const nbLegs = points.length;
-  const ref: Array<PerfLeg> = [];
-  if (nbLegs === 0) { return ref; }
+  if (nbLegs === 0) { return []; }
 
-  points.forEach((p, j) => {
-    const loop = new classNewLoop;
+  const ref: Array<PerfLeg> = points.map((p, j) => {
+    const loop = new classNewLoop();
     loop.from = p.ref;
     loop.to = points[(j + 1) % nbLegs].ref;
-    ref.push({ newLoop: [loop] });
+    return { newLoop: [loop] };
   });
 
-  const addLoopToAllLegs = () => ref.forEach(leg => leg.newLoop.push(new classNewLoop));
-  const lastLoop = (leg: number) => ref[leg].newLoop.length - 1;
-  const findLeg = (porName: string, start: number) => {
-    let j = start;
-    while (j < nbLegs && points[j].ref !== porName) { j++; }
-    return j;
-  };
+  // lookup built once: PoR name -> leg indexes (ascending), instead of rescanning points for every PoR
+  const legsByName = new Map<string, number[]>();
+  points.forEach((p, j) => {
+    const list = legsByName.get(p.ref);
+    if (list) { list.push(j); } else { legsByName.set(p.ref, [j]); }
+  });
+  /** first leg >= start named porName, or nbLegs when none */
+  const findLeg = (porName: string, start: number): number =>
+    legsByName.get(porName)?.find(j => j >= start) ?? nbLegs;
+
+  const addLoopToAllLegs = () => { for (const leg of ref) { leg.newLoop.push(new classNewLoop()); } };
+  const lastLoopOf = (leg: number) => ref[leg].newLoop[ref[leg].newLoop.length - 1];
 
   // dispatch every PoR of the perf file into its leg / loop
   let j = 0;
-  for (let i = 0; i < initPerfPoR.length; i++) {
-    const porName = initPerfPoR[i].content.refPoR;
-    const isLastPoR = i === initPerfPoR.length - 1;
-    j = findLeg(porName, j);
+  const lastPoR = initPerfPoR.length - 1;
+  for (let i = 0; i <= lastPoR; i++) {
+    const por = initPerfPoR[i];
+    const isLastPoR = i === lastPoR;
+    j = findLeg(por.content.refPoR, j);
     if (j < nbLegs) {
-      if (ref[j].newLoop[lastLoop(j)].dist !== 0) { addLoopToAllLegs(); }
-      copyInitPerf(j, lastLoop(j), i, ref, initPerfPoR);
+      if (lastLoopOf(j).dist !== 0) { addLoopToAllLegs(); }
+      applyInitPerf(lastLoopOf(j), por);
     } else if (!isLastPoR) {
       // end of circuit reached without finding it: start a new loop and search again from the beginning
       addLoopToAllLegs();
-      j = findLeg(porName, 0);
-      if (j < nbLegs) { copyInitPerf(j, lastLoop(j), i, ref, initPerfPoR); }
+      j = findLeg(por.content.refPoR, 0);
+      if (j < nbLegs) { applyInitPerf(lastLoopOf(j), por); }
     }
     if (j === nbLegs - 1 && !isLastPoR) {
       addLoopToAllLegs();
@@ -155,9 +175,10 @@ export function buildPerfCircuitRef(points: Array<classPointOfRef>, initPerfPoR:
   // compute dist / time / speed of every leg
   for (let i = 0; i < nbLegs; i++) {
     const isLastLeg = i === nbLegs - 1;
-    const nbLoops = ref[i].newLoop.length;
+    const loops = ref[i].newLoop;
+    const nbLoops = loops.length;
     for (let jl = 0; jl < nbLoops; jl++) {
-      const loop = ref[i].newLoop[jl];
+      const loop = loops[jl];
       if (isLastLeg) {
         if (jl < nbLoops - 1) { loop.perfRecordTo = ref[0].newLoop[jl + 1].perfRecordFrom; }
       } else {
@@ -178,7 +199,7 @@ export function buildPerfCircuitRef(points: Array<classPointOfRef>, initPerfPoR:
   const iLoop = ref[0].newLoop.length - 1;
   let i = 1;
   while (i < nbLegs && ref[i].newLoop[iLoop].perfRecordFrom === 0) { i++; }
-  if (i === nbLegs) { ref.forEach(leg => leg.newLoop.splice(iLoop, 1)); }
+  if (i === nbLegs) { for (const leg of ref) { leg.newLoop.splice(iLoop, 1); } }
 
   return ref;
 }

@@ -5,8 +5,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { timeout } from 'rxjs';
-
 import { FileSystemServiceComponent } from '../file-system-service/file-system-service.component';
 import { msginLogConsole } from '../consoleLog';
 import { configServer, LoginIdentif, msgConsole, classCredentials, classtheEvent, classGetRecord } from '../JsonServerClass';
@@ -14,6 +12,7 @@ import { classAccessFile, classHeaderReturnDataFS, classRetrieveFile } from '../
 import { ManageGoogleService } from '../CloudServices/ManageGoogle.service';
 import { fnCheckLockLimit } from '../MyStdFunctions';
 
+import { timeout } from 'rxjs';
 const GET_TIMEOUT_MS = 100_000;
 const MAX_RECALL_FS = 4;
 

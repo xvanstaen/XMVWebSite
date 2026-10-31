@@ -47,11 +47,11 @@ label{
 }
 
 .blockR{
-    width:630px;
+    width:680px;
     display:inline-block;
     height:25px;
     border:solid 0px red;
-    overflow-x:hidden;
+    overflow-y:auto;
 }
 
 .blockR:hover{
@@ -60,7 +60,7 @@ label{
 
 .tabHeader{
     max-height:300px; 
-    width:var(--mWidth);
+    width:630px;
     margin-left:25px; 
     display:inline-block; 
     border:2px solid blue;
@@ -73,14 +73,13 @@ label{
 
 .tabContent{
     max-height:300px; 
-    max-width:var(--mWidth);
-    width:var(80px+200px+250px+15px);
+    width:630px;
     margin-left:25px; 
     display:inline-block; 
     border:2px solid blue;
     background-color: cyan;
     color:blue;
-    overflow:scroll;
+    overflow-y:auto;
 }
 
 .theLi{

@@ -1,12 +1,10 @@
-import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
+import { Component,  signal, Input, Output, EventEmitter} from '@angular/core';
   
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { CommonModule, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
   
-import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
-import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
+import { configServer, LoginIdentif,  OneBucketInfo,  } from '../../JsonServerClass';
+import {classFileSport, classPointOfRef, classCircuitRec, classFilePerf, classHeaderFileSport, classTabPoR, classCountryPoR } from "../classSport"
 
 import { fillHeaderFile, updateTabPor } from '../commonSportFunctions';
 
@@ -15,6 +13,12 @@ import { ListBucketContentComponent }  from '../../Special-Services/ListBucketCo
 import { ManagePointOfRefComponent } from '../../Sport/manage-point-of-ref/manage-point-of-ref.component';
 import { BuildLoopFromPerfComponent } from '../../Sport/build-loop/build-loop-from-perf.component';
 
+/** Copies only the listed properties. */
+const pick = <T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> =>
+  Object.fromEntries(keys.map(k => [k, obj[k]])) as Pick<T, K>;
+const GET_TIMEOUT_MS = 100_000;
+const MAX_RECALL_FS = 4;
+ 
 @Component({
   selector: 'app-sport-perf-raw-data-mgt',
   templateUrl: './sport-perf-raw-data-mgt.component.html',
@@ -31,6 +35,8 @@ export class SportPerfRawDataMgtComponent {
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
     ) { }
+  /** Set to true to enable verbose tracing. */
+  private debug = false;
 
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;
@@ -51,12 +57,14 @@ export class SportPerfRawDataMgtComponent {
   NbRefresh_Bucket:number=0;
   bucketName:string="";
 
-  errorMsg:string="";
-
-  isFilePerfReceived:boolean=false;
-
-  isFilesToSave:boolean=false;
-  saveMsg:string="";
+  errorMsg=signal<string>("");
+  isDisplayPerf=signal<boolean>(false);
+  isPerfFileModified=signal<boolean>(false);
+  isFilePerfReceived=signal<boolean>(false);
+  isFilesToSave=signal<boolean>(false);
+  isCircuitSelected=signal<boolean>(false);
+  isPoRFileReturned=signal<boolean>(false);
+  saveMsg=signal<string>("");
 
   TabOfId:Array<any>=[];
   strFound:string="";
@@ -68,16 +76,12 @@ export class SportPerfRawDataMgtComponent {
   selItem:number=-1;
   selectedRecord=new classFilePerf;
   perfNb:number=0;
-  isFileReceived:boolean=false;
-
-  isCircuitSelected:boolean=true;
-
   newPoR:string="";
   tabInputPoR:Array<classPointOfRef>=[];
   listOfPoR:Array<classPointOfRef>=[];
-  isPoRFileReturned:boolean=false;
-
   newPoRmsg:string="";
+  nbErrUpload:number=-1;
+  nbSuccessUpload:number=0;
 
   ngOnInit(){
     this.bucketName=this.identification.performanceSport.bucket;
@@ -87,46 +91,61 @@ export class SportPerfRawDataMgtComponent {
       
   }
   selBucket=new OneBucketInfo;
+
+  // .emit from app-ListBucketContent
   BucketInfo(event:any){
-      console.log("Bucket info=" + event.name);
-      this.selBucket=event;
-      this.isFileReceived=false;
+    this.log("Bucket info=" + event.name);
+    this.selBucket=event;
+    this.isFilePerfReceived.set(false);
   }
 
+  // .emit from app-ListBucketContent
   ReceivedData(event:any){
-    //console.log("Received Data=" + event);
-    
+    //this.log("Received Data=" + event);
+    this.errorMsg.set("");
     this.resetVar();
     this.resetTab();
-    this.isPerfFileModified=false;
-    this.filePerf.splice(0,this.filePerf.length);
-    this.initFilePerf.splice(0,this.initFilePerf.length);
+    this.isPerfFileModified.set(false);
+    this.filePerf.length=0;
+    this.initFilePerf.length=0;
     if (event.fileType!==undefined && event.fileType==="perfRawData"){
       this.theFile=event;
-      this.copyInOutFile(event.content,this.filePerf);
-      this.copyInOutFile(event.content,this.initFilePerf);
+      this.filePerf=this.copyInOutFile(event.content);
+      this.initFilePerf=this.copyInOutFile(event.content);
 
       this.headerPerf=fillHeaderFile(this.theFile,this.headerPerf);
      
-      console.log("file perf " + this.theFile.name + " has " + this.filePerf.length + " record(s)");
-      //this.updateTabPor();
+      this.log("file perf " + this.theFile.name + " has " + this.filePerf.length + " record(s)");
+      this.isFilePerfReceived.set(true);
       this.tabPerfPoR= updateTabPor(this.filePerf);
       if (this.tabPerfPoR.length===0){
-        console.log("no PoR records found for file " + this.theFile.name);
+        this.log("no PoR records found for file " + this.theFile.name);
+        this.errorMsg.set("no PoR records found for file " + this.theFile.name);
+        return;
+      }
+      if (this.isPoRFileReturned()){
+        this.listPoR();
       }
     } else {
-
-        this.errorMsg=this.selBucket.name + " is not a formatted performance sport file"
-    }
-    this.isFileReceived=true;
-    if (this.isPoRFileReturned===true){
-      this.listPoR();
+        this.errorMsg.set(this.selBucket.name + " is not a formatted performance sport file");
     }
     this.scroller.scrollToAnchor('bottomPage');
   }
 
-  
-  manageFile(event:any){
+  // called by .emit from component app-manage-point-of-ref
+  manageFile(event: classCountryPoR[]) {
+  const items = event.flatMap(c => c.PoR);
+  items.sort((a, b) => a.ref < b.ref ? -1 : a.ref > b.ref ? 1 : 0);
+
+  // keep the same array reference (it may be bound in the template)
+  this.listOfPoR.splice(0, this.listOfPoR.length, ...items);
+
+  this.isPoRFileReturned.set(true);
+  if (this.isFilePerfReceived()) {
+    this.listPoR();
+  }
+}
+  manageFileOLD(event:any){
     this.listOfPoR.splice(0,this.listOfPoR.length);
     for (var i=0; i<event.length && event.length>0; i++){
       for (var j=0; j<event[i].PoR.length && event[i].PoR.length>0; j++){
@@ -136,40 +155,36 @@ export class SportPerfRawDataMgtComponent {
       }
     }
     this.listOfPoR.sort((a, b) => (a.ref < b.ref) ? -1 : 1);
-    this.isPoRFileReturned=true;
-    if (this.isFileReceived===true){
+    this.isPoRFileReturned.set(true);
+    if (this.isFilePerfReceived()){
       this.listPoR();
     }
   }
-
+  // called by .emit from component app-manage-point-of-ref
+  onSelectPoR(event:any){
+      this.log(event);
+  }
 
   onResetFile(){
-    this.filePerf.splice(0,this.filePerf.length);
-    this.copyInOutFile(this.initFilePerf,this.filePerf);
-    this.isPerfFileModified=false;
+    this.filePerf.length=0;
+    this.filePerf=this.copyInOutFile(this.initFilePerf);
+    this.isPerfFileModified.set(false);
   }
 
   onSavePerfPoRFile(event:any){
-    console.log(event);
-    //this.theFile=event;
-    //this.theFile.codeName = "1-"+this.theFile.name;
-
-    // name of the file is managed by the calling component
+    this.log(event);
     this.fnSave(this.identification.performanceSport.bucket, event, event.codeName);
   }
 
-  isPerfFileModified:boolean=false;
   onSavePerfFile(){
     // update the refPoints table
     this.listPoR();
     this.theFile.content=this.filePerf;
-    this.isPerfFileModified=false;
+    this.isPerfFileModified.set(false);
     this.theFile.codeName = this.theFile.name;
     this.fnSave(this.identification.performanceSport.bucket, this.theFile, this.theFile.codeName);
   }
   
-  nbErrUpload:number=-1;
-  nbSuccessUpload:number=0;
   fnSave(bucket:string, content:any, fileName:string){
     var file=new File ([JSON.stringify(content)], fileName, {type: 'application/json'});    
     this.ManageGoogleService.uploadObject(this.configServer, bucket, file ,  fileName)
@@ -178,61 +193,53 @@ export class SportPerfRawDataMgtComponent {
                   if (res.type===4){ 
                     this.nbSuccessUpload++;
                     this.nbSave=this.nbSuccessUpload;
-                    this.saveMsg =  " file has been updated and stored in the cloud ";
+                    this.saveMsg.set(" file has been updated and stored in the cloud ");
                   }
               
             }, 
             err => {
               this.nbErrUpload--;
               this.nbSave=this.nbErrUpload;
-              this.saveMsg =  " upload pb - file has not been updated";
+              this.saveMsg.set(" upload pb - file has not been updated");
             })
   }
 
   listPoR(){
 
-    this.specificCircuit.points.splice(0,this.specificCircuit.points.length);
-    for (var i=0; i<this.filePerf.length; i++){
-      if (this.filePerf[i].refPoR!==""){
-        this.theFile.refPoints[this.theFile.refPoints.length]=this.filePerf[i].refPoR;
-        for (var j=0; j<this.specificCircuit.points.length && this.specificCircuit.points.length>0 && this.specificCircuit.points[j].ref!==this.filePerf[i].refPoR; j++){}
-          for (var k=0; k<this.listOfPoR.length && this.filePerf[i].refPoR!==this.listOfPoR[k].ref; k++){}
-          if (j===this.specificCircuit.points.length){
-              const theClass=new classPointOfRef;
-              this.specificCircuit.points.push(theClass);
-              this.specificCircuit.points[this.specificCircuit.points.length-1]=this.listOfPoR[k];  
-          }
-      }      
+    // Index listOfPoR once (first occurrence wins, like the original search)
+    const porByRef = new Map<string, classPointOfRef>();
+    for (const por of this.listOfPoR) {
+      if (!porByRef.has(por.ref)) porByRef.set(por.ref, por);
     }
 
-    this.theFile.refPoints.sort((a, b) => (a < b) ? -1 : 1);
-    for (i=1; i<this.theFile.refPoints.length; i++){
-      if (this.theFile.refPoints[i-1]===this.theFile.refPoints[i]){
-        this.theFile.refPoints.splice(i,1);
-        i--
-      } 
+    const points = this.specificCircuit.points;
+    points.length = 0;                                   // clear in place
+
+    const refs = new Set<string>(this.theFile.refPoints); // Set dedups automatically
+    const seen = new Set<string>();
+
+    for (const perf of this.filePerf) {
+      const ref = perf.refPoR;
+      if (ref === "") continue;
+
+      refs.add(ref);
+      if (seen.has(ref)) continue;                       // already added to circuit
+      seen.add(ref);
+
+      const por = porByRef.get(ref);
+      if (por) points.push(por);
     }
+
+    this.theFile.refPoints = [...refs].sort();           // default sort = same order as a < b on strings
 
   }
 
 
-  copyInOutFile(inFile:any,outFile:any){
-    for (var i=0; i<inFile.length; i++){
-      const theClassA=new classFilePerf;
-      outFile.push(theClassA);
-      outFile[i].alt=inFile[i].alt;
-      outFile[i].dist=inFile[i].dist;
-      outFile[i].exclude=inFile[i].exclude;
-      outFile[i].heart=inFile[i].heart;
-      outFile[i].lat=inFile[i].lat;
-      outFile[i].lon=inFile[i].lon;
-      outFile[i].refPoR=inFile[i].refPoR;
-      outFile[i].slope=inFile[i].slope;
-      outFile[i].speed=inFile[i].speed;
-      outFile[i].time=inFile[i].time;
-    }
-  }
+  copyInOutFile(inFile:any){
+    const outF = inFile.map((item: classFilePerf) => Object.assign(new classFilePerf(), item));
+    return(outF);
 
+  }
 
   onInputPoR(event:any){
     var i=0
@@ -262,11 +269,9 @@ export class SportPerfRawDataMgtComponent {
           this.newPoR="";
           this.tabInputPoR.splice(0,this.tabInputPoR.length);
           this.selItem=-1;
-          this.isPerfFileModified=true;
-          //this.updateTabPor();
+          this.isPerfFileModified.set(true);
           this.tabPerfPoR= updateTabPor(this.filePerf);
         }
-        
         
       }  else if (event.target.id.substring(0,7)==="selPoR-"){
             var theClass=new classPointOfRef;
@@ -277,17 +282,10 @@ export class SportPerfRawDataMgtComponent {
         } 
   }
 
-
-
-  onSelectPoR(event:any){
-      console.log(event);
-  }
-
-
   resetVar(){
-    this.saveMsg="";
-    this.isFilesToSave=false;
-    this.errorMsg="";
+    this.saveMsg.set("");
+    this.isFilesToSave.set(false);
+    this.errorMsg.set("");
     this.selItem=-1;
     this.newPoRmsg="";
   }
@@ -296,12 +294,11 @@ export class SportPerfRawDataMgtComponent {
 
   }
 
-  isDisplayPerf:boolean=false;
   onDisplayPerf(event:string){
     if (event==="Yes"){
-        this.isDisplayPerf=true;
+        this.isDisplayPerf.set(true);
     } else {
-      this.isDisplayPerf=false;
+      this.isDisplayPerf.set(false);
     }
   }
   
@@ -327,7 +324,7 @@ export class SportPerfRawDataMgtComponent {
       //this.selectedRecord=this.filePerf[this.selItem];
     } 
     this.newPoR=this.filePerf[this.perfNb].refPoR;
-    console.log('row selection = ' + this.selItem);
+    this.log('row selection = ' + this.selItem);
   }
 
   syncScrollBar(event:any){
@@ -338,7 +335,9 @@ export class SportPerfRawDataMgtComponent {
       }
     }
   }
-
+  private log(...args: unknown[]) {
+    if (this.debug) this.log('[sport-perf-raw-data]', ...args);
+  }
 
 
 }
