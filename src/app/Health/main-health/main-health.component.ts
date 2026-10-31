@@ -363,9 +363,18 @@ handleHealthSaveResult(event: any): void {
       }
       this.tabSelRadio[10] = 'N';
       this.tabSelRadio[3] = 'Y';
-      this.actionSave = '';
+      
       break;
+
+    case '':
+      if (ok) {
+        this.errorMsg.set('Update of the Health file is successful');
+        this.applyHealthSaveSuccess(event);
+      } else {
+        this.errorMsg.set(event.err ?? 'update of the Health file failed');
+      }
   }
+  this.actionSave = '';
 }
 
 private applyHealthSaveSuccess(event: any): void {
@@ -375,7 +384,10 @@ private applyHealthSaveSuccess(event: any): void {
     this.InHealthAllData.tabDailyReport.length=0;
     this.InHealthAllData = FillHealthAllInOut(this.InHealthAllData, this.HealthAllData);
     this.initTrackRecord();
-    this.afterNewHealth();
+    if (this.actionSave==="createNewHealth"){
+      this.afterNewHealth();
+    }
+    
   }
   this.signalActionHealth.update(n => n + 1);
 }

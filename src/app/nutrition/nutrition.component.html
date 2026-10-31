@@ -1,0 +1,42 @@
+<div class="shell">
+  <header>
+    <div>
+      <h1>Nutrition Tracker</h1>
+      <p class="date-line">{{ caption() }}</p>
+    </div>
+
+    <div class="date-nav" role="group" aria-label="Choose day">
+      <button type="button" (click)="store.shiftDate(-1)" aria-label="Previous day">Previous</button>
+      <input type="date" [value]="store.date()" (change)="onDateChange($event)" aria-label="Date" />
+      <button type="button" (click)="store.shiftDate(1)" aria-label="Next day">Next</button>
+    </div>
+
+    <div class="budget" [class.over]="caloriesOver()">
+      <p>
+        <strong>{{ store.totals().calories | number: '1.0-0' }}</strong>
+        of {{ store.goals().calories | number: '1.0-0' }} kcal
+      </p>
+      <div class="bar" aria-hidden="true"><span [style.width.%]="caloriePct()"></span></div>
+    </div>
+  </header>
+
+  <main>
+    <nav class="tabs" aria-label="Sections">
+      @for (t of tabs; track t.id) {
+        <button type="button" [attr.aria-current]="tab() === t.id ? 'page' : null" (click)="tab.set(t.id)">
+          {{ t.label }}
+        </button>
+      }
+    </nav>
+
+    @switch (tab()) {
+      @case ('log') { <app-daily-log /> }
+      @case ('foods') { <app-food-manager /> }
+      @case ('goals') { <app-goals-editor /> }
+    }
+  </main>
+
+  <aside>
+    <app-nutrition-label [totals]="store.totals()" [goals]="store.goals()" [caption]="caption()" />
+  </aside>
+</div>

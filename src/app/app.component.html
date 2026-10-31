@@ -23,7 +23,9 @@
     <span style="width:94%; background-color: lightgrey; margin-left:10px; border:solid 2px blue; display:inline-block; ">Parameter SCOPE = {{myParams.scope}}</span>
 </div>
 -->
-
+<!--
+<app-nutrition></app-nutrition>
+-->
 @if (isCallUserFunction===false){
     @if(isConfigServerRetrieved() && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved===true) || devMode!=='local')){
         <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved" [identification]="identification"

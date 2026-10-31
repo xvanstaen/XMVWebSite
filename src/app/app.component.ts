@@ -23,12 +23,16 @@ import { classAccessFile } from './classFileSystem';
 import { fillConfig } from './copyFilesFunction';
 import { fillCredentials } from './copyFilesFunction';
 
+//import { NutritionComponent } from './nutrition/nutrition.component';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   standalone: true, 
-  imports:[RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule,XmvCompanyComponent, UserFunctionsComponent],
+  imports:[RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule,XmvCompanyComponent, UserFunctionsComponent,
+   
+  ],
 })
 
 export class AppComponent {
