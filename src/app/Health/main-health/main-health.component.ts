@@ -1032,10 +1032,10 @@ private prepareForSave(): void {
       if (!isNew) return;
         const { errors, outHealthData } = calcFatCalories(this.ConfigCaloriesFat, report, this.ConvertUnit);
         nbErrors += errors.length;
-        if (errors.length === 0) {
+        //if (errors.length === 0) {
           report.total = outHealthData.total;
           report.meal = outHealthData.meal;
-        }
+        //}
     });
     if (nbErrors > 0) {
       this.errorMsg.set(`${nbErrors} error(s) detected`);
