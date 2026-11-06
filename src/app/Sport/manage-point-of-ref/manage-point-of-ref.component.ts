@@ -30,6 +30,8 @@ export class ManagePointOfRefComponent {
     private cdr: ChangeDetectorRef
     ) { }
 
+    debug:boolean=false;
+
     @Output() returnFile= new EventEmitter<any>();
     @Output() returnSelection= new EventEmitter<any>();
     @Output() returnSelCountry= new EventEmitter<any>();
@@ -329,7 +331,7 @@ onActionPoR(event:any){
       this.isUpdateRef.set(true);
       this.tabDialog[0]=false;
     } 
-    console.log(event.target.id);
+    this.log(event.target.id);
     this.scroller.scrollToAnchor('bottomPage');
     this.cdr.detectChanges();
 
@@ -381,7 +383,7 @@ saveFile(bucket:string, object:string,record:any){
       res => {
         if (res.type===4){ 
           this.errorMsg.set("file " + object + " has been successfully saved");
-          console.log(this.errorMsg);
+          this.log(this.errorMsg);
           this.isFileModified.set(false);
           this.resetAllBooleans;
           if (this.isCircuitSelected){
@@ -392,7 +394,7 @@ saveFile(bucket:string, object:string,record:any){
       }, 
       err => {
         this.errorMsg.set('failure to get record ' + object + ' ;  error = '+ JSON.stringify(err));
-        console.log(this.errorMsg);
+        this.log(this.errorMsg);
         this.scroller.scrollToAnchor('bottomPage');
       })
 }
@@ -447,9 +449,11 @@ GetRecord(bucketName:string,objectName:string, iWait:number){
       },
       error => {
         this.errorMsg.set('failure to get record ' + objectName +' ;  error = '+ JSON.stringify(error));
-        console.log(this.errorMsg());
+        this.log(this.errorMsg());
         this.scroller.scrollToAnchor('bottomPage');
       })
 }
-
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[app.component:]', ...args);
+  }
 }

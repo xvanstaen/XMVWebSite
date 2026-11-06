@@ -36,6 +36,8 @@ import {  classPosSizeClock} from '../../clockFunctions'
 })
 export class HealthComponent  {
 
+  private debug:boolean=false;
+
   @Output() initTrackRecord = new EventEmitter<any>();
   //@Output() retrieveRecord = new EventEmitter<any>();
 
@@ -306,7 +308,7 @@ export class HealthComponent  {
   }
 
   ngOnInit(): void {
-    console.log("Health -- server google = " + this.configServer.googleServer);
+    this.log("Health -- server google = " + this.configServer.googleServer);
     this.createDropDownCalFatFn();
     this.minNum = 0 ;
     this.maxNum = this.maxItemsPerPage;
@@ -380,7 +382,7 @@ export class HealthComponent  {
     this.TheSelectDisplays.controls['endRange'].setValue('');
 
     //this.configServer.timeoutFileSystem.userTimeOut.mn=2;
-    console.log('ngInit() calls this.timeToGo() => userActivity=' + this.userActivity.substring(0,14));
+    this.log('ngInit() calls this.timeToGo() => userActivity=' + this.userActivity.substring(0,14));
     //this.userActivity = defineMyDate();
     this.lastInputAt = strDateTime();
     this.refDate=new Date();
@@ -394,7 +396,7 @@ export class HealthComponent  {
   firstLoopInit:boolean=true;
   
   timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
-    console.log('Health component - timeOutactivity');
+    this.log('Health component - timeOutactivity');
     this.firstLoopInit=false;
     window.cancelAnimationFrame(this.idAnimation);
     this.callTimeToGo();
@@ -482,7 +484,7 @@ export class HealthComponent  {
   resultAccessFile(event:any){
     this.openFileAccess.set(false);
     this.returnDataFSHealth=event;
-    console.log('Health component - resultAccessFile');
+    this.log('Health component - resultAccessFile');
     if (this.lockValueBeforeCheck!==this.tabLock[0].lock || this.onInputAction!==''){
 
       if (this.tabLock[0].lock===1 && this.lockValueBeforeCheck!==this.tabLock[0].lock){
@@ -512,13 +514,13 @@ export class HealthComponent  {
       this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.fileHealth);
       this.IsSaveConfirmedAll = true;
     }
-    console.log(event);
+    this.log(event);
   }
 
   resetBooleans() {
     this.errorFn="";
     this.errorMsg="";
-    console.log('Health component - resetBooleans');
+    this.log('Health component - resetBooleans');
     this.isDeleteItem = false;
     this.dialogue[this.prevDialogue] = false;
     this.tabInputMeal.splice(0, this.tabInputMeal.length);
@@ -676,7 +678,7 @@ export class HealthComponent  {
             nbDelItem++
           }
         }
-        console.log('nbDelItem=' + nbDelItem);
+        this.log('nbDelItem=' + nbDelItem);
       } else {
         this.tabInputFood.splice(0, this.tabInputFood.length);
         for (var i = 0; i < this.tabFood.length; i++) {
@@ -1367,5 +1369,7 @@ afterCheckFS(data: any) {
   }
   // otherwise: locked by this user, nothing to do
 }
-
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[app.component:]', ...args);
+  }
 }

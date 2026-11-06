@@ -1,13 +1,11 @@
-import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
-  Output, Input, HostListener, EventEmitter, ElementRef, ChangeDetectorRef, signal} from '@angular/core';
+import { Component, Input, signal} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { CommonModule,  DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators} from '@angular/forms';
-import { HttpClient, provideHttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { ActivatedRoute, Router } from "@angular/router";
+import { FormGroup, FormControl,} from '@angular/forms';
+import { HttpClient,  HttpHeaders } from '@angular/common/http';
+import { ActivatedRoute } from "@angular/router";
 
 import { UserFunctionsComponent } from './user-functions/user-functions.component';
 import { XmvCompanyComponent } from './xmv-company/xmv-company.component';
@@ -36,15 +34,14 @@ import { fillCredentials } from './copyFilesFunction';
 })
 
 export class AppComponent {
-
-  
   constructor(
     private ManageGoogleService: ManageGoogleService,
     private ManageMongoDB: ManageMongoDBService,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
     ) {}
+ /** Set to true to enable verbose tracing. */
+  private debug = false;
 
   configServer=new configServer;
   initConfigServer=new configServer;
@@ -75,11 +72,11 @@ export class AppComponent {
   IpAddress:string="";
   bearerAuthorisation:string="";
   theNumber:string="";
-  isIdRetrieved:boolean=false;
+  isIdRetrieved=signal<boolean>(false);
   saveServerUsrId:number=0;
   inputSelect:number=0;
   isAppsSelected:boolean=false;
-  errorMsg:string="";
+  errorMsg=signal<string>("");
   isResetServer:boolean=false;
   keys: Array<string>=[];
   @Input() LoginTable_User_Data:Array<EventAug>=[];
@@ -100,11 +97,14 @@ export class AppComponent {
   devMode:string="";
   currentFunction:string="";
   theFn:string="Config";
-  errConfig:string="";
+  errConfig=signal<string>("");
+
+  isValidateId:boolean=false;
+  isCallUserFunction:boolean=false;
 
   ngOnInit(){
    // const snapshotParam = this.route.snapshot.paramMap.get("server");
-   // console.log('snapshotParam=' + JSON.stringify(snapshotParam))
+   // this.log('snapshotParam=' + JSON.stringify(snapshotParam))
 
   // http://localhost:4200/?server=8080&scope=test 
    // http://localhost:4200/?server=XMV&scope=prod 
@@ -116,40 +116,33 @@ export class AppComponent {
 
 
   this.route.queryParams.subscribe(params => {
-    console.log(JSON.stringify(params));
+    this.log(JSON.stringify(params));
     if (params['server']!==undefined ){
           this.myParams.server = params['server'];
-          if (this.myParams.server==="8080"){
-            this.initConfigServer.googleServer=this.tabServers[0];
-            this.initConfigServer.mongoServer=this.tabServers[0];
-            this.initConfigServer.fileSystemServer=this.tabServers[0];
-          } else if (this.myParams.server==="google"){
-            this.initConfigServer.googleServer=this.tabServers[1];
-            this.initConfigServer.mongoServer=this.tabServers[1];
-            this.initConfigServer.fileSystemServer=this.tabServers[1];
-          } else if (this.myParams.server==="test"){
-            this.initConfigServer.googleServer=this.tabServers[2];
-            this.initConfigServer.mongoServer=this.tabServers[2];
-            this.initConfigServer.fileSystemServer=this.tabServers[2];
-          } else if (this.myParams.server==="fsys"){
-            this.initConfigServer.googleServer=this.tabServers[3];
-            this.initConfigServer.mongoServer=this.tabServers[3];
-            this.initConfigServer.fileSystemServer=this.tabServers[3];
+          var i= 0;
+          switch (this.myParams.server){
+            case ("8080"): i=0; break;
+            case ("google"): i=1; break;
+            case ("test"): i=2; break;
+            case ("fsys"): i=3; break;
           }
+          this.initConfigServer.googleServer=this.tabServers[i];
+          this.initConfigServer.mongoServer=this.tabServers[i];
+          this.initConfigServer.fileSystemServer=this.tabServers[i];
     }
     if (params['devMode']!==undefined ){
       this.myParams.devMode = params['devMode'];
       this.devMode = this.myParams.devMode;
     }
     if (params['scope']!==undefined){
-            this.myParams.scope = params['scope'];
+      this.myParams.scope = params['scope'];
     }
   })
   this.currentFunction="retrieveConfig";
   if (this.passInit===0 && this.devMode!=="local"){ 
       this.http.get<any>('https://jsonip.com').subscribe( 
           (data) => {
-            console.log('ip address (jsonip) = ', data.ip);
+            this.log('ip address (jsonip) = ', data.ip);
             this.IpAddress = data.ip
           }, 
           (err) => {
@@ -157,9 +150,9 @@ export class AppComponent {
           });
           
       this.RetrieveConfig();
-console.log('isIdRetrieved='+this.isIdRetrieved);   
-console.log('isCallUserFunction='+this.isCallUserFunction);  
-console.log('devMode='+this.devMode);     
+      this.log('isIdRetrieved='+this.isIdRetrieved());   
+      this.log('isCallUserFunction='+this.isCallUserFunction);  
+      this.log('devMode='+this.devMode);     
       this.passInit++
     }
   }
@@ -169,9 +162,9 @@ console.log('devMode='+this.devMode);
     this.http.get("http://api.ipify.org/?format=json").subscribe(
       res=>{
           this.IpAddress = JSON.stringify(res);
-          console.log('ip address (pi.ipify.org)'+ this.IpAddress);
+          this.log('ip address (pi.ipify.org)'+ this.IpAddress);
       }, 
-      err=> {console.log("issue to retrieve ipAddress" + err)}
+      err=> {this.log("issue to retrieve ipAddress" + err)}
     )
   }
 
@@ -186,9 +179,9 @@ console.log('devMode='+this.devMode);
   } 
   
   RetrieveConfig(){
-    console.log('RetrieveConfig()');
+    this.log('RetrieveConfig()');
     var test_prod='';
-    this.errConfig=""
+    this.errConfig.set("");
 
     if (this.myParams.scope==="prod"){
         test_prod='prod';
@@ -212,43 +205,42 @@ console.log('devMode='+this.devMode);
           //this.getTokenOAuth2();
           if (this.credentials.access_token===""){
             this.getServerUsrId('Google');
-            console.log('retrieve config Google');
+            this.log('retrieve config Google');
         }  
         if (this.credentialsMongo.access_token===""){
             this.getServerUsrId('Mongo');
-            console.log('retrieve config Mongo');
+            this.log('retrieve config Mongo');
         }  
         if (this.credentialsFS.access_token===""){
             this.getServerUsrId('FS');
-            console.log('retrieve config FS');
+            this.log('retrieve config FS');
         } 
         
         
         },
         error => {
-          console.log('error to retrieve the configuration file ;  error = ', error);
+          this.log('error to retrieve the configuration file ;  error = ', error);
         });
   }
 
-  isCallUserFunction:boolean=false;
   callUserFunction(event:any){
     if (this.configServer.userLogin.id!==''){
-      this.isIdRetrieved=true;
+      this.isIdRetrieved.set(true);
     }
       this.isCallUserFunction=event;
-  console.log('this.isIdRetrieved='+this.isIdRetrieved);
-  console.log('this.isCallUserFunction'+this.isCallUserFunction);
+    this.log('this.isIdRetrieved()='+this.isIdRetrieved());
+    this.log('this.isCallUserFunction'+this.isCallUserFunction);
   }
 
   TheIdentifObject(event:any){
     this.identification=event;
-    // console.log(this.identif);
+    // this.log(this.identif);
   }
 
   onReturnConfig(data:any,test_prod:string){
-    this.errConfig="";
+    this.errConfig.set("");
     if (Array.isArray(data) === false){
-      if (this.devMode==="local"){
+     // if (this.devMode==="local"){
         if (typeof data === "string") {
           if (data.indexOf('\n')>-1){
             while (data.indexOf('\n')>-1){
@@ -258,7 +250,7 @@ console.log('devMode='+this.devMode);
           var myData=JSON.parse(data);
           }
         } else { myData=data;}
-      }
+     // }
     }       
     if (Array.isArray(myData) === true){
       if (myData[0].project!==undefined){
@@ -269,16 +261,16 @@ console.log('devMode='+this.devMode);
             } 
           } 
       } else {
-          this.errConfig=this.nameRetrievedFile + " = wrong file retrieved; retry";
+          this.errConfig.set(this.nameRetrievedFile + " = wrong file retrieved; retry");
       }
     } else   if (typeof data === "object" && data.title!==undefined){ //it's an object
         this.configServer = fillConfig(data);
         this.credentials.userServerId=1;
     } else {
-        this.errConfig=this.nameRetrievedFile + " = wrong file retrieved; retry";
+        this.errConfig.set(this.nameRetrievedFile + " = wrong file retrieved; retry");
     }
 
-    if (this.errConfig===""){
+    if (this.errConfig()===""){
       this.configServer.googleServer = this.initConfigServer.googleServer;
       this.configServer.mongoServer = this.initConfigServer.mongoServer;
       this.configServer.fileSystemServer = this.initConfigServer.fileSystemServer;
@@ -306,16 +298,12 @@ console.log('devMode='+this.devMode);
       const reader = new FileReader();
       this.nameRetrievedFile=event.target.files[0].name;
       reader.onloadend = () => {
-          if (this.currentFunction==="retrieveConfig"){
-            this.onReturnConfig(reader.result as string,"test");
-            
-          } else if (this.currentFunction==="getLogin"){
-            this.onLocalGetLogin(reader.result as string);
-            
+          switch (this.currentFunction){
+              case ("retrieveConfig"): this.onReturnConfig(reader.result as string,"test"); break;
+              case ("getLogin"): this.onLocalGetLogin(reader.result as string); break;
           }
         };
         reader.readAsText(event.target.files[0]);
-        
       }
     }
 
@@ -327,40 +315,38 @@ console.log('devMode='+this.devMode);
             (data ) => {
               this.credentialsFS.creationDate = data.credentials.creationDate;
               this.credentialsFS.userServerId = data.credentials.userServerId
-              console.log('getCredentials server='+theServer +' '+JSON.stringify(data));
+              this.log('getCredentials server='+theServer +' '+JSON.stringify(data));
             },
             err => {
-              console.log("return from getCredentials() for server '" + theServer + "' with error = "+ err.status);
+              this.log("return from getCredentials() for server '" + theServer + "' with error = "+ err.status);
             });
     }
   
 
   getServerUsrId(serverType:any){
-    console.log('getServerUsrId()');
-    this.saveGoogleServer=this.configServer.googleServer;
-    if (serverType==='Mongo'){
-        this.configServer.googleServer = this.configServer.mongoServer;
-    } else if (serverType==='FS'){
-      this.configServer.googleServer = this.configServer.fileSystemServer
-    } 
-    this.ManageGoogleService.getNewServerUsrId (this.configServer  )
+    this.log('getServerUsrId()');
+    
+    switch (serverType){
+      case ('Google'): this.saveGoogleServer=this.configServer.googleServer; break;
+      case ('Mongo'): this.configServer.googleServer = this.configServer.mongoServer; break;
+      case('FS'): this.configServer.googleServer = this.configServer.fileSystemServer; break;
+    }
+
+    this.ManageGoogleService.getNewServerUsrId (this.configServer )
       .subscribe(
           (data ) => {
-            if (serverType==='Google'){
-              this.credentials = fillCredentials(data.credentials);
-            } else if (serverType==='Mongo'){
-                this.credentialsMongo = fillCredentials(data.credentials);
-                this.configServer.googleServer = this.saveGoogleServer;
-            } else if (serverType==='FS'){
-                this.credentialsFS = fillCredentials(data.credentials);
-                this.configServer.googleServer = this.saveGoogleServer;
+            switch (data){
+              case ('Google'): this.credentials = fillCredentials(data.credentials); break;
+              case ('Mongo'): this.credentialsMongo = fillCredentials(data.credentials); break;
+              case ('FS'): this.credentialsFS = fillCredentials(data.credentials); break;
             }
+            this.configServer.googleServer = this.saveGoogleServer;
             this.isCredentials=true;
-  
           },
           err => {
-            console.log('return from requestToken() with error = '+ JSON.stringify(err));
-            });
+            this.log('return from requestToken() with error = '+ JSON.stringify(err));
+            this.errorMsg.set("error with getNewServerUsrId");
+          });
     }
   
   assignNewServerUsrId(){
@@ -387,53 +373,40 @@ console.log('devMode='+this.devMode);
   onSelectApps(){
     this.isAppsSelected=true;
     this.selectApps=this.inputSelect;
-    if (this.selectApps===11){
-      this.selHealthFunction=5;
-    } else if (this.selectApps===12){
-      this.selHealthFunction=3;
-    } else if (this.selectApps===13){
-      this.selHealthFunction=7;
-    }  else if (this.selectApps===15){
-      this.dictionaryOnly=true;
-    }else{
-      this.selHealthFunction=0
-    } 
+    switch (this.selectApps){
+      case 11:this.selHealthFunction=5; break;
+      case 12:this.selHealthFunction=3; break;
+      case 13:this.selHealthFunction=5; break;
+      case 15:this.dictionaryOnly=true; break;
+      default: {this.selHealthFunction=0;}
+    }
   }
 
   changeServerName(event:any){
-    if (event==="Google"){
-      this.getServerUsrId('Google');
-    }  
-    if (event==="Mongo"){
-        this.getServerUsrId('Mongo');
-    }  
-    if (event==="FS"){
-        this.getServerUsrId('FS');
-    } 
-}    
+    this.getServerUsrId(event);
+  }
+    
 
-fnResetServer(){
-}
+  fnResetServer(){
+  }
 
   fnNewCredentials(credentials:any){
     this.isResetServer=true;
     this.credentials=credentials;
   }
 
-  isValidateId:boolean=false;
   validateIdentification(){
     this.isValidateId=true;
-    this.errorMsg="";
+    this.errorMsg.set("");
     if (this.theForm.controls['userId'].value !== '' && this.theForm.controls['psw'].value !== '' ){
       if (this.isCredentials===true){
-        //this.getLogin(this.theForm.controls['userId'].value,this.theForm.controls['psw'].value);
         this.checkLogin(this.theForm.controls['userId'].value,this.theForm.controls['psw'].value);
       }
       else {
-          this.errorMsg="Configuration file not completely processed yet; submit again";
+          this.errorMsg.set("Configuration file not completely processed yet; submit again");
       }
     } else {
-      this.errorMsg="Fill-in both fields";
+      this.errorMsg.set("Fill-in both fields");
     }
   }
 
@@ -443,27 +416,20 @@ fnResetServer(){
   }
 
   ReceiveFiles(event:any){
-   console.log('receive file ' + event.fileType);
-    if (event.fileType!=='' && 
-            event.fileType===this.identification.configFitness.fileType.convertUnit){ 
-        this.ConvertUnit=event;
-    } else if (event.fileType!=='' && 
-            event.fileType===this.identification.configFitness.fileType.convToDisplay){ 
-         this.ConvToDisplay=event;
-  
-    } else if (event.fileType!=='' && 
-            event.fileType===this.identification.configFitness.fileType.tabOfUnits){ 
-        this.theTabOfUnits=event;
-  
-    } else if (event.fileType!=='' && 
-          event.fileType===this.identification.configFitness.fileType.weightReference){ 
-        this.WeightRefTable=event;
-      } 
+    this.log('receive file ' + event.fileType);
+    if (event.fileType===''){return;}
+    switch (event.fileType){
+      case this.identification.configFitness.fileType.convertUnit: this.ConvertUnit=event; break;
+      case this.identification.configFitness.fileType.convToDisplay: this.ConvToDisplay=event; break;
+      case this.identification.configFitness.fileType.tabOfUnits:this.theTabOfUnits=event; break;
+      case this.identification.configFitness.fileType.weightReference:this.WeightRefTable=event; break;
+    }
+
   }
 
   onLocalGetLogin(data:any){
     this.currentFunction="";
-    this .errConfig="";
+    this .errConfig.set("");
     var myData=JSON.parse(data);
     if (myData.UserId!==undefined){
       this.identification=myData;
@@ -474,18 +440,18 @@ fnResetServer(){
       } else {
         this.configServer.userLogin.accessLevel="Low";
       }
-      this.isIdRetrieved=true;
-console.log('isIdRetrieved='+this.isIdRetrieved);
+      this.isIdRetrieved.set(true);
+      this.log('isIdRetrieved='+this.isIdRetrieved());
       this.currentFunction="";
     } else {
-      this .errConfig=this.nameRetrievedFile + " does not correspond to a login file; retry"
+      this .errConfig.set(this.nameRetrievedFile + " does not correspond to a login file; retry");
     }
   }
 
   checkLogin(userId:string,psw:string){
     this.currentFunction="";
     this.theFn="";
-    this.errorMsg="retrieving your information .... is in progress";
+    this.errorMsg.set("retrieving your information .... is in progress");
     this.configServer.userLogin.id=userId;
     this.configServer.userLogin.psw=psw;
     this.configServer.userLogin.accessLevel="";
@@ -496,44 +462,47 @@ console.log('isIdRetrieved='+this.isIdRetrieved);
               this.identification=data;
               this.configServer.userLogin.accessLevel=this.identification.secLevel;
               this.identification.secLevel="";
-              this.isIdRetrieved=true;
+              this.isIdRetrieved.set(true);
               this.isValidateId=false;
               this.identification.userServerId=this.credentialsFS.userServerId;
               this.identification.credentialDate=this.credentialsFS.creationDate;
               this.identification.IpAddress=this.configServer.IpAddress;
-              this.errorMsg="";
-            
-              console.log("isResetServer= "+this.isResetServer + "  isIdRetrieved=" + this.isIdRetrieved )
+              this.errorMsg.set("");
+              this.log("isResetServer= "+this.isResetServer + "  isIdRetrieved=" + this.isIdRetrieved() )
             } else {
-              this.errorMsg=data.msg;
+              this.errorMsg.set(data.msg);
               this.isValidateId=false;
             }
         //
       },
         err=> {
-          console.log('error to checkLogin - error status=' + err.status + ' '+ err.message );
-          this.errorMsg="Identification failed; update the fields";
+          this.log('error to checkLogin - error status=' + err.status + ' '+ err.message );
+          this.errorMsg.set("Identification failed; update the fields");
           this.isValidateId=false;
         })
   }
-  getFileContentHTTP(bucket:any, object:any){
 
+  getFileContentHTTP(bucket:any, object:any){
     const theBearer = 'Bearer ' +    this.credentials.access_token;
     const theHeaders = new HttpHeaders( { 'Authorization': theBearer,
-    'Content-Type' : 'application/json', "Accept": "application/json", 
-              }  );
+              'Content-Type' : 'application/json', "Accept": "application/json",  }  );
     const HTTP_Address='https://storage.googleapis.com/download/storage/v1/b/' + bucket + '/o/' + object +'?alt=media' ;
     //const HTTP_Address='https://storage.googleapis.com/storage/v1/b/' + bucket + '/o' + object +'?alt=media&name=' ;
     this.http.get(HTTP_Address,  {headers: theHeaders})
           .subscribe((data ) => {  
-            console.log(JSON.stringify(data)); 
+            this.log(JSON.stringify(data)); 
           },
             err => {
-                console.log('File not retrieved ' + err.status  );
+                this.log('File not retrieved ' + err.status  );
                 if ( err.error!==undefined ){
-                    console.log('Error = ' + ' ' + err.error.error.code  + ' ' + err.error.error.message)
+                    this.log('Error = ' + ' ' + err.error.error.code  + ' ' + err.error.error.message)
                 }
+                this.errorMsg.set('File not retrieved ' + err.status );
               });
   }  
+
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[app.component:]', ...args);
+  }
 }
 

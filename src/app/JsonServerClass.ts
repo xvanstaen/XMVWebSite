@@ -364,7 +364,7 @@ export class classDicoRecord{
   English:string="";
   inputHeight:number=0;
   margTopCircleNumber=0;
-  posInitFilenumber=0;
+  posInitFileNumber=0;
   active:boolean=true;
 }
 

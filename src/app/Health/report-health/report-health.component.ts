@@ -1,448 +1,234 @@
 import {
-  Component, OnInit, Input, Output, ViewChild, HostListener, HostBinding, ChangeDetectionStrategy,
-  Signal, input, SimpleChanges, EventEmitter, AfterViewInit, AfterViewChecked, 
-  AfterContentChecked, Inject, LOCALE_ID, signal
+  AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output,
+  SimpleChanges, computed, input, signal, viewChildren,
 } from '@angular/core';
-
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { MatIconModule} from '@angular/material/icon';
-import { MatDialogModule} from '@angular/material/dialog';
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
-
-import {
-  Chart, ChartOptions, ChartType, ChartConfiguration, PluginChartOptions, ScaleChartOptions, ChartDataset,
-  BarController, BarElement, CategoryScale, ChartData, LinearScale, LineController, LineElement, PointElement,
-} from 'chart.js/auto';
-
+import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 
 import { MainManageFileComponent } from '../../fileAccessMgt/file-access.component';
 import { ColorPaletteComponent } from '../../color-picker/color-palette/color-palette.component';
-import { ColorSliderComponent } from '../../color-picker/color-slider/color-slider.component';  
+import { ColorSliderComponent } from '../../color-picker/color-slider/color-slider.component';
 
-import { classPosDiv, getPosDiv } from '../../getPosDiv';
+import { mainDailyReport } from '../ClassHealthCalories';
+import { classchartHealth } from '../classConfigChart';
+import { classPosSlider, configServer, LoginIdentif, classtheEvent } from '../../JsonServerClass';
+import { classFileParamChart, classReturnColor, classTabFormChart } from '../classChart';
+import { classAccessFile, classHeaderReturnDataFS } from '../../classFileSystem';
+import { addMonthDay, strDateTime } from '../../MyStdFunctions';
+import { specialDraw } from '../../manageChartFn';
+import { fillHealthDataSet } from '../../fillChartData';
 
-import { mainClassCaloriesFat, mainDailyReport } from '../ClassHealthCalories';
-import { classConfigChart, classchartHealth } from '../classConfigChart';
-import { classPosSlider } from '../../JsonServerClass';
+// ───────────────────────────── constants & small helpers ─────────────────────────────
 
-import { configServer, LoginIdentif, msgConsole, classtheEvent } from '../../JsonServerClass';
+const LOCK_FILE = 5;               // index of the chart-config file inside tabLock
+const MAX_CANVAS = 5;              // number of charts / canvases
+const CHECK_THROTTLE_MS = 5000;    // min delay between two lock checks triggered by user activity
+const DATE_RE = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
 
+type ColorKey = 'canvas' | 'legend' | 'chartTitle' | 'box' | 'xBorder' | 'xTicks' | 'yBorder' | 'yTicks';
+type ListKind = 'type' | 'period' | 'periodAll' | 'fontWeight' | 'textAlign' | 'titlePosition' | 'titleDisplay';
+type FieldKind = 'label' | 'limit';
+type RgbaPair = { slider: classReturnColor; palette: classReturnColor };
 
-import { classAxis, classLegendChart, classPluginTitle, classTabFormChart, classFileParamChart, classReturnColor } from '../classChart';
-import { classFileSystem, classAccessFile, classReturnDataFS, classHeaderReturnDataFS } from '../../classFileSystem';
-import { fnAddTime, addMonthDay, convertDate, strDateTime, fnCheckTimeOut, defineMyDate, formatDateInSeconds, formatDateInMilliSeconds, findIds } from '../../MyStdFunctions';
-import { drawNumbers, drawHourHand, drawMinuteHand, drawSecondHand, classPosSizeClock} from '../../clockFunctions'
+const COLOR_KEYS: ColorKey[] = ['canvas', 'legend', 'chartTitle', 'box', 'xBorder', 'xTicks', 'yBorder', 'yTicks'];
 
-import { buildBarChartDataSet,buildLineChartDataSet, specialDraw } from '../../manageChartFn';
-import { fillHealthDataSet } from '../../fillChartData'
+const newRgba = (): RgbaPair => ({ slider: new classReturnColor, palette: new classReturnColor });
+
+/** Deep copy that keeps the prototype; falls back to the original reference if the value cannot be cloned. */
+function clone<T>(v: T): T {
+  try {
+    const c = structuredClone(v);
+    return v && typeof v === 'object' ? Object.setPrototypeOf(c, Object.getPrototypeOf(v)) : c;
+  } catch {
+    return v;
+  }
+}
+
+/** 'false' / false => false, anything else => true (same rule the original code applied to "stacked"). */
+const toBool = (v: unknown): boolean => !(v === false || v === 'false');
+
+/** Disabled, non-nullable control (the whole form is enabled only when the user owns the file lock). */
+const ctl = (value: unknown, validators: ValidatorFn[] = []) =>
+  new FormControl<any>({ value, disabled: true }, { nonNullable: true, validators });
+const dateCtl = () => ctl('', [Validators.required, Validators.pattern(DATE_RE)]);
+const axisForm = () => new FormGroup({
+  borderColor: ctl(''), borderWidth: ctl(0), position: ctl(''), stacked: ctl(''), ticksColor: ctl(''),
+});
+
+/** Limit line drawn on top of a bar dataset. `ref` = per-day reference array returned by fillHealthDataSet. */
+interface LimitDef { name: string; idx: number; value: (h: any) => number; ref?: 'refSaturated' | 'refSugar' | 'refCarbs'; }
+const LIMIT_DEFS: Record<string, LimitDef> = {
+  'Cholesterol':   { name: 'Chol. limit',      idx: 0, value: h => Number(h.Cholesterol.myLimit) },
+  'Saturated Fat': { name: 'Sat. limit',       idx: 1, value: h => Number(h.SaturatedFat), ref: 'refSaturated' },
+  'Proteins':      { name: 'Prot. limit',      idx: 2, value: h => Number(h.Protein) },
+  'Carbs':         { name: 'Carbs limit',      idx: 3, value: h => Number(h.Carbs), ref: 'refCarbs' },
+  'Sugar':         { name: 'Add. Sugar limit', idx: 4, value: h => Number(h.Sugar), ref: 'refSugar' },
+};
+
 @Component({
   selector: 'app-report-health',
   templateUrl: './report-health.component.html',
   styleUrls: ['./report-health.component.css'],
-  standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, MatIconModule,  MainManageFileComponent, ColorPaletteComponent, ColorSliderComponent],
-
+  // small utility classes that replace the inline styles repeated dozens of times in the template
+  styles: [`
+    :host .rh-row { width:100%; display:inline-block; margin-top:5px; }
+    :host .rh-section { text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px; display:inline-block; margin-top:10px; }
+    :host .rh-swatch { width:20px; height:20px; margin-left:10px; border:1px solid black; }
+    :host .rh-dialog { width:98%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px; }
+    :host .rh-dialog-title { margin-top:8px; text-align:center; width:100%; display:block; font-size:16px; color:blue; float:right; }
+    :host .rh-cross { font-size:16px; color:black; font-weight:bold; margin-top:-2px; }
+    :host .rh-box { width:95%; max-width:410px; margin-left:20px; border:solid 2px blue; display:block; }
+    :host .rh-pick { width:47%; display:inline-block; margin-left:10px; }
+    :host .rh-pick-name { width:50%; margin-left:10px; color:blue; display:inline-block; }
+    :host .rh-note { width:99%; display:inline-block; margin-left:10px; color:blue; }
+    :host .rh-btn { margin-left:30px; width:90px; height:45px; }
+  `],
+  standalone: true,
+  imports: [DecimalPipe, NgTemplateOutlet, ReactiveFormsModule, MainManageFileComponent, ColorPaletteComponent, ColorSliderComponent],
 })
+export class ReportHealthComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-export class ReportHealthComponent implements OnInit {
-
-  SelChartForm: FormGroup;
-  constructor(
-    private fb: FormBuilder,
-  ) {
-    this.SelChartForm = this.fb.group({
-      //title: new FormControl(''),
-      selectedItems: this.fb.array([]),
-    })
-  }
-
-  get ListChart() {
-    return this.SelChartForm.controls["selectedItems"] as FormArray;
-  }
-
-  FormChart(): FormGroup {
-    return this.fb.group({
-      selected: new FormControl('N', { nonNullable: true })
-    })
-  }
-  FillSelected = { 'selected': '' };
-
+  // ───────────────────────────── inputs / outputs ─────────────────────────────
   @Input() identification = new LoginIdentif;
   @Input() HealthAllData = new mainDailyReport;
   @Input() ConfigChartHealth = new classchartHealth;
   @Input() inFileParamChart = new classFileParamChart;
   @Input() configServer = new configServer;
-
-  //inData=new classAccessFile;
-  //@Input() tabLock = new classAccessFile; //.lock ++> 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked;
-  @Input() tabLock: Array<classAccessFile> = [];
+  @Input() tabLock: Array<classAccessFile> = [];   // .lock: 0=unlocked; 1=locked by user; 2=locked by other user; 3=must be checked
   @Input() returnDataFSParamChart = new classHeaderReturnDataFS;
+  @Input() resultCheckLimitParamChart: number = 0;
+  @Input() statusSaveFn: any;
 
-  @Input() resultCheckLimitParamChart:number = 0;
-  @Input() statusSaveFn:any;
+  triggerParamSave = input.required<number>();
 
-  triggerParamSave=input.required<number>();
-  triggerCheckToLimit=signal<number>(0);
-  triggerFileSystem=signal<number>(-1);
-  triggerReadFile=signal<number>(-1);
-  triggerSaveFile=signal<number>(-1);
-
-  posSlider = new classPosSlider;
-  posPalette = new classPosSlider;
-  paramChange: number = 0; // used to trigger the change on slider position
-
+  // kept for the parent's bindings
   @Output() checkLockLimit = new EventEmitter<any>();
   @Output() processSave = new EventEmitter<any>();
   @Output() retrieveRecord = new EventEmitter<any>();
   @Output() unlockFile = new EventEmitter<any>();
   @Output() cancelUpdates = new EventEmitter<any>();
 
-  @ViewChild('baseChart', { static: true })
+  // ───────────────────────────── file-access child ─────────────────────────────
+  triggerCheckToLimit = signal(0);
+  triggerFileSystem = signal(-1);
+  triggerReadFile = signal(-1);
+  triggerSaveFile = signal(-1);
+  openFileAccess = signal(false);
+  theEvent = new classtheEvent;
+  lockValueBeforeCheck = 0;
+  onInputAction = '';
+  lastInputAt = '';
+  private lastCheckAt = 0;
 
-  isSaveParamChart:boolean=false;
-  isMustSaveFile:boolean=false;
+  /** state of the file lock (0,1,2,3) – read through getters so the template never touches tabLock[5] directly */
+  get lockState(): number | undefined { return this.tabLock[LOCK_FILE]?.lock; }
+  get isLocked(): boolean { return this.lockState === 1; }
+  get isLockedByOther(): boolean { return this.lockState === 2; }
 
-  // DEBUG
-  debugPhone: boolean = false;
-
-  current_Chart: number = 0;
-  tabParamChart: Array<classTabFormChart> = []; // working table
-
-  tabCtx: Array<any> = [];
-  tabChart: Array<any> = [];
-  myTabChart: Array<Chart> = [];
-
-  mainWindow = {
-    top: 120,
-    left: 20,
-  }
-  subWindow = {
-    top: 20,
-    left: 10,
-  }
-
-  tabCanvasId: Array<string> = ['canvas1', 'canvas2', 'canvas3', 'canvas4', 'canvas5'];
-
-  //tabofLabels:Array<string>=['Calories burnt', 'Calories intake', 'Cholesterol', 'Saturated fat', 'Total fat', 'Proteins', 'Carbs','Sugar'];
-  //tabofExistLabels:Array<boolean>=[true,true,true,true,true,true,true,false]
-  tabOfLabelsColor: Array<string> = [];
-  tabLabelRgba: Array<any> = [{
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-  }];
-
-  tabOfLimitLabelsColor: Array<string> = [];
-  tabLimitLabelRgba: Array<any> = [{
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-  }];
-
-  returnTitleRgba = {
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-  }
-
-  returnLegendRgba = {
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-  }
-  returnCanvasRgba = {
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-  }
-  returnBoxRgba = {
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-  }
-
-  lineChartType: Array<string> = [];
-
-  tabPeriod = ['daily', 'weekly'];
+  // ───────────────────────────── forms ─────────────────────────────
+  readonly tabPeriod = ['daily', 'weekly'];
+  readonly chartNumbers = [1, 2, 3, 4, 5];
 
   paramAllCharts = new FormGroup({
-    period: new FormControl({ value: 'daily', disabled: false }, { nonNullable: true }), //daily, weekly
-    nbWeeks: new FormControl({ value: 1, disabled: false }, { nonNullable: true }), //nb of weeks if option 'weekly' is defined
-    startRange: new FormControl({ value: '', disabled: false }, [
-      Validators.required,
-      // validates date format yyyy-mm-dd with regular expression
-      Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
-    ]),
-    endRange: new FormControl({ value: '', disabled: false }, [
-      Validators.required,
-      // validates date format yyyy-mm-dd with regular expression
-      Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
-    ])
+    period: new FormControl({ value: 'daily', disabled: false }, { nonNullable: true }),
+    nbWeeks: new FormControl({ value: 1, disabled: false }, { nonNullable: true }),
+    startRange: new FormControl({ value: '', disabled: false }, [Validators.required, Validators.pattern(DATE_RE)]),
+    endRange: new FormControl({ value: '', disabled: false }, [Validators.required, Validators.pattern(DATE_RE)]),
   });
 
   selectChart: FormGroup = new FormGroup({
-    chartType: new FormControl({ value: 'line', disabled: true }, { nonNullable: true }),
-    barThickness: new FormControl({ value: 'line', disabled: true }, { nonNullable: true }),
-    chartTitle: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    colorChartTitle: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    ratio: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    canvasWidth: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    canvasHeight: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    canvasMarginLeft: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    stackedX: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    stackedY: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    canvasBackground: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    legendTitle: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    colorLegendTitle: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    boxwidth: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    boxheight: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    boxpointStyle: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    boxusePointStyle: new FormControl(false, { nonNullable: true }),
-    boxcolor: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    boxfontSize: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    boxradius: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    boxfontWeight: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    boxfontFamily: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    period: new FormControl({ value: '', disabled: true }, { nonNullable: true }), //daily, weekly
-    nbWeeks: new FormControl({ value: 1, disabled: true }, { nonNullable: true }), 
-    startRange: new FormControl({ value: '', disabled: true }, [
-      Validators.required,
-      // validates date format yyyy-mm-dd with regular expression
-      Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
-    ]),
-    endRange: new FormControl({ value: '', disabled: true }, [
-      Validators.required,
-      // validates date format yyyy-mm-dd with regular expression
-      Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
-    ])
+    chartType: ctl('line'), barThickness: ctl(0), chartTitle: ctl(''), colorChartTitle: ctl(''), ratio: ctl(0),
+    canvasWidth: ctl(0), canvasHeight: ctl(0), canvasMarginLeft: ctl(0), stackedX: ctl(''), stackedY: ctl(''),
+    canvasBackground: ctl(''), legendTitle: ctl(''), colorLegendTitle: ctl(''),
+    boxwidth: ctl(0), boxheight: ctl(0), boxpointStyle: ctl(''), boxusePointStyle: ctl(false), boxcolor: ctl(''),
+    boxfontSize: ctl(0), boxradius: ctl(0), boxfontWeight: ctl(''), boxfontFamily: ctl(''),
+    period: ctl(''), nbWeeks: ctl(1), startRange: dateCtl(), endRange: dateCtl(),
   });
-
-
 
   selectTitle: FormGroup = new FormGroup({
-    paddingTop: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    paddingBottom: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    paddingLeft: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    position: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    display: new FormControl(false, { nonNullable: true }),
-    text: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    align: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    color: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    paletteRgba: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    paletteXpos: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    paletteYpos: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    sliderRgba: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    sliderXpos: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    sliderYpos: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    fontSize: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    fontWeight: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    family: new FormControl({ value: '', disabled: true }, { nonNullable: true })
+    paddingTop: ctl(0), paddingBottom: ctl(0), paddingLeft: ctl(0), position: ctl(''), display: ctl(false),
+    text: ctl(''), align: ctl(''), color: ctl(''),
+    paletteRgba: ctl(0), paletteXpos: ctl(0), paletteYpos: ctl(0), sliderRgba: ctl(0), sliderXpos: ctl(0), sliderYpos: ctl(0),
+    fontSize: ctl(0), fontWeight: ctl(''), family: ctl(''),
   });
 
+  selectAxisX: FormGroup = axisForm();
+  selectAxisY: FormGroup = axisForm();
+  readonly axes = [
+    { title: 'Axis X', form: this.selectAxisX, border: 'xBorder' as ColorKey, ticks: 'xTicks' as ColorKey },
+    { title: 'Axis Y', form: this.selectAxisY, border: 'yBorder' as ColorKey, ticks: 'yTicks' as ColorKey },
+  ];
 
-
-  selectAxisX: FormGroup = new FormGroup({
-    borderColor: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    borderWidth: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    position: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    stacked: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    ticksColor: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-  });
-
-  selectAxisY: FormGroup = new FormGroup({
-    borderColor: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    borderWidth: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    position: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    stacked: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-    ticksColor: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
-  });
-
-
-  canvas: Array<any> = [{
-    width: '',
-    height: '',
-    background: '',
-    marginLeft: '',
-  }];
-
-  overallTab: Array<any> = [
-    {
-      datasetBar: [],
-      labelBar: []
-    }
-  ]
-
-  overallTabLimit: Array<any> = [
-    {
-      dataset: [],
-      label: []
-    }
-  ]
-
-
-  // user by slider and palette
-  my_input_child1: string = '';
-  my_input_child2: string = '';
-  my_output_child1: string = '';
-  my_output_child2: string = '';
-
-  selected_canvasColor: string = '';
-  selected_legendColor: string = '';
-  selected_boxColor: string = '';
-  selected_chartTitleColor: string = '';
-  selected_colorTitle: string = "";
-  selected_XBorderColor: string = "";
-  selected_YBorderColor: string = "";
-  selected_XTicksColor: string = "";
-  selected_YTicksColor: string = "";
-
-  selectedFields: Array<any> = [];
-  selectedLimitFields: Array<any> = [];
-
-  isSelectCanvasColor: boolean = false;
-  isSelectLegendColor: boolean = false;
-  isSelectLChartTitleColor = signal(false);
-  isSelectBoxColor: boolean = false;
-
-  isSelectAxisXBorderColor: boolean = false;
-  isSelectAxisXTicksColor: boolean = false;
-  isSelectAxisYBorderColor: boolean = false;
-  isSelectAxisYTicksColor: boolean = false;
-
-  isTypeSelected = signal(false);
-  isPeriodSelected = signal(false);
-  isTestLineChart: boolean = false;
-
-  isParamTitle=signal(false);
-  isParamLegend=signal(false);
-  isParamAxis=signal(false);
-
-  isFontWeight = signal(false);
-  isTextAlign = signal(false);
-  isTitlePosition = signal(false);
-  isTitleDisplay = signal( false);
-
-  isSelectChartTitleColor = signal(false);
-
-  isSelectXBorderColor: boolean = false;
-  isSelectYBorderColor: boolean = false;
-  isSelectXTicksColor: boolean = false;
-  isSelectYTicksColor: boolean = false;
-  isSliderSelected = signal(false);
-
-  returnXBorderColorRgba = {
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-
-  };
-  returnYBorderColorRgba = {
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-
-  }
-  returnXTicksRgba = {
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-
-  };
-  returnYTicksRgba = {
-    slider: new classReturnColor,
-    palette: new classReturnColor,
-
-  };
-  dialogLabColor: Array<boolean> = [];
-  dialogLimitLabColor: Array<boolean> = [];
-  currentLabColor: number = 0;
-  isSelectLabColor: boolean = false;
-
-  // from color-slider
-  returnSlider = {
-    rgba: '',
-    xPos: 0,
-    yPos: 0
-  }
-
-  returnPalette = {
-    rgba: '',
-    xPos: 0,
-    yPos: 0
-  }
-  newtabChart: any;
-  newtabCtx: any;
-
-  isPosDivSlider: boolean = false;
-  isPosDivSliderTrue: boolean = false;
-
-  posDivPosSlider = new classPosDiv;
-  posDivPosSliderTrue = new classPosDiv;
-
-  tabFontWeight: Array<string> = ["cancel", "100", "200", "300", "400", "500", "600", "700", "800", "900", "bold", "bolder", "lighter", "normal"];
-  tabTextAlign: Array<string> = ["cancel", "center", "left", "right", "end", "start", "inherit", "initial"];
-  tabTitlePosition: Array<string> = ["cancel", "top", "bottom"];
-  tabDisplay: Array<boolean> = [false, true];
-
-  eventClientY: number = 0;
-  eventPageY: number = 0;
-
-  onInputAction:string="";
-
-  lastInputAt:string="";
-
-  theEvent = new classtheEvent;
-
-  errorTimeOut:string="";
-  userActivity:string= "";
-
-  posSizeClock=new classPosSizeClock;
-  maxCanvas:number=5;
-
-  SpecificForm = new FormGroup({
-    FileName: new FormControl('', { nonNullable: true }),
-  })
-
+  SpecificForm = new FormGroup({ FileName: new FormControl('', { nonNullable: true }) });
   IsSaveConfirmed = signal(false);
 
-  lockValueBeforeCheck:number=0;
-  @HostListener('window:mouseup', ['$event'])
-  onMouseUp(event: MouseEvent) {
-    //this.selectedPosition = { x: event.pageX, y: event.pageY };
-    if (this.debugPhone === true) {
-      //this.getPosDivPosSliderTrue();
-      this.posDivPosSliderTrue = getPosDiv("posDivSliderTrue");
-      this.eventClientY = event.clientY;
-      this.eventPageY = event.pageY;
-    }
-  }
+  // ───────────────────────────── chart data ─────────────────────────────
+  selectedChart = 0;                                 // 0 = none, 1..5
+  errorMsg = '';
+  lineChartType: string[] = [];
+  tabParamChart: classTabFormChart[] = [];           // working table (one entry per chart)
+  tabCtx: any[] = [];
+  tabChart: any[] = [];
+  canvas: Array<{ width: any; height: any; background: any; marginLeft: any }> =
+    Array.from({ length: MAX_CANVAS }, () => ({ width: '', height: '', background: '', marginLeft: '' }));
+  private readonly canvasRefs = viewChildren<ElementRef<HTMLCanvasElement>>('baseChart');
 
+  // selected items (Y/N) + colours for the current chart
+  selectedFields: string[] = [];
+  selectedLimitFields: string[] = [];
+  tabOfLabelsColor: string[] = [];
+  tabOfLimitLabelsColor: string[] = [];
+  tabLabelRgba: any[] = [newRgba()];
+  tabLimitLabelRgba: any[] = [newRgba()];
 
-  ngAfterViewInit() { // this.ConfigChartHealth.barChart.length     
+  // ───────────────────────────── drop-down lists / dialogs ─────────────────────────────
+  readonly tabFontWeight = ['cancel', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'bold', 'bolder', 'lighter', 'normal'];
+  readonly tabTextAlign = ['cancel', 'center', 'left', 'right', 'end', 'start', 'inherit', 'initial'];
+  readonly tabTitlePosition = ['cancel', 'top', 'bottom'];
+  readonly tabDisplay = [false, true];
 
-    for (var i = 0; i < this.tabCanvasId.length; i++) {
-      this.tabChart[i] = document.getElementById(this.tabCanvasId[i]);
+  /** the single drop-down list currently open (replaces seven separate boolean signals) */
+  openList = signal<ListKind | null>(null);
+  isParamTitle = signal(false);
+  isParamLegend = signal(false);
+  isParamAxis = signal(false);
 
-      this.tabCtx[i] = this.tabChart[i].getContext('2d');
-      this.overallTab.push({ datasetBar: [], labelBar: [] });
-      this.overallTabLimit.push({ dataset: [], label: [] });
-      this.collectSpecialData(i, this.overallTab[i].datasetBar, this.overallTab[i].labelBar, this.overallTabLimit[i].dataset, this.overallTabLimit[i].label);
-    }
-    
+  // ───────────────────────────── colour picker ─────────────────────────────
+  isSliderSelected = signal(false);
+  titleDialogColor = signal(false);                  // picker opened from the title/legend dialog
+  private colorKey: ColorKey | null = null;          // main-form colour being edited
+  private labelPick: { kind: FieldKind; idx: number } | null = null;
 
-    const event = {
-      target: {
-        id: 'apply'
-      }
-    }
-    this.forAllCharts(event);
-    
-  }
+  selColor: Record<ColorKey, string> = Object.fromEntries(COLOR_KEYS.map(k => [k, ''])) as Record<ColorKey, string>;
+  rgbaOf: Record<ColorKey, RgbaPair> = Object.fromEntries(COLOR_KEYS.map(k => [k, newRgba()])) as Record<ColorKey, RgbaPair>;
+  selected_colorTitle = '';
+  temporaryColor = '';
 
+  my_input_child1 = '';   // palette input
+  my_input_child2 = '';   // slider input
+  returnSlider: any = { rgba: '', xPos: 0, yPos: 0 };
+  returnPalette: any = { rgba: '', xPos: 0, yPos: 0 };
+  posSlider = new classPosSlider;
+  posPalette = new classPosSlider;
+  paramChange = 0;
+  mainWindow = { top: 120, left: 20 };
+  subWindow = { top: 20, left: 10 };
+
+  // ───────────────────────────── inactivity countdown ─────────────────────────────
+  private timerId: ReturnType<typeof setInterval> | undefined;
+  private deadline = 0;
+  isUserTimeOut = false;
+  readonly timeLeft = signal(0);   // seconds
+  readonly timeLeftParts = computed(() => {
+    const s = this.timeLeft();
+    return { h: Math.floor(s / 3600), m: Math.floor((s % 3600) / 60), s: s % 60 };
+  });
+
+  // ───────────────────────────── lifecycle ─────────────────────────────
 
   ngOnInit() {
-    console.log('===> ngOnInit report-health');
+    const cfg = this.ConfigChartHealth.barDefault.datasets;
 
-
-    if (this.debugPhone === true) {
-      this.posDivPosSlider = getPosDiv("posDivSlider");
-      //this.getPosDivPosSlider();
-    }
-    var i = 0;
     this.posSlider.VerHor = 'H';
     this.posSlider.top = 5;
     this.posSlider.left = 60;
@@ -452,655 +238,756 @@ export class ReportHealthComponent implements OnInit {
     this.posPalette.div.top = this.mainWindow.top + this.subWindow.top;
     this.posPalette.top = 0;
     this.posPalette.left = 60;
-    for (i = 0; i < this.ConfigChartHealth.barDefault.datasets.labels.length; i++) {
 
-      this.FillSelected.selected = 'N';
-      this.ListChart.push(this.FormChart());
-      this.ListChart.controls[i].setValue(this.FillSelected);
-      this.selectedFields[i] = 'N';
-      this.dialogLabColor[i] = false;
-      if (i > 0) {
-        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        this.tabLabelRgba.push(myRgba);
-      }
-    }
+    this.selectedFields = cfg.labels.map(() => 'N');
+    this.tabLabelRgba = Array.from({ length: Math.max(1, cfg.labels.length) }, newRgba);
+    this.selectedLimitFields = cfg.labelsLimits.map(() => 'N');
+    this.tabLimitLabelRgba = Array.from({ length: Math.max(1, cfg.labelsLimits.length) }, newRgba);
+    this.lineChartType = [...this.ConfigChartHealth.chartTypes];
 
-    for (i = 0; i < this.ConfigChartHealth.barDefault.datasets.labelsLimits.length; i++) {
-
-      this.FillSelected.selected = 'N';
-      this.ListChart.push(this.FormChart());
-      this.ListChart.controls[i + this.ConfigChartHealth.barDefault.datasets.labels.length - 1].setValue(this.FillSelected);
-
-      this.selectedLimitFields[i] = 'N';
-      this.dialogLimitLabColor[i] = false;
-      if (i > 0) {
-        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        this.tabLimitLabelRgba.push(myRgba);
-      }
-    }
-
-    // log which chart types are supported
-    for (i = 0; i < this.ConfigChartHealth.chartTypes.length; i++) {
-      this.lineChartType[i] = this.ConfigChartHealth.chartTypes[i];
-    }
-
-    this.tabParamChart.splice(0, this.tabParamChart.length);
-
+    // one working entry per chart: from the saved file when there is one, from the defaults otherwise
+    this.tabParamChart = [];
+    let nbFromFile = 0;
     if (this.inFileParamChart.fileType !== undefined && this.inFileParamChart.fileType !== '') {
-      for (i = 0; i < this.inFileParamChart.data.length; i++) {
-        const classParam = new classTabFormChart;
-        this.tabParamChart.push(classParam);
-        this.fillInCharts(this.inFileParamChart.data[i], this.tabParamChart[i]);
-        if (this.tabParamChart[i].labels.length === 0) {
-          for (var k = 0; k < this.ConfigChartHealth.barDefault.datasets.fieldsToSelect.length; k++) {
-            if (this.ConfigChartHealth.barDefault.datasets.fieldsToSelect[k] === false) {
-              this.tabParamChart[i].labels[k] = 'N';
-            } else {
-              this.tabParamChart[i].labels[k] = 'Y';
-            }
-          }
-        }
-        for (var j = 0; j < this.tabParamChart[i].labelsColor.length; j++) {
-          if (this.tabParamChart[i].labelsColor[j] === undefined || this.tabParamChart[i].labelsColor[j] === "") {
-            this.tabParamChart[i].labelsColor[j] = this.ConfigChartHealth.barDefault.datasets.borderColor[j];
-          }
-        }
-
-        this.fillInFormFromTab(i);
-        this.canvas.push({ width: '', height: '', background: 0, marginLeft: '' });
-        this.changeCanvas(i);
+      nbFromFile = Math.min(this.inFileParamChart.data.length, MAX_CANVAS);
+      for (let i = 0; i < nbFromFile; i++) {
+        this.loadChartFromFile(i);
       }
-      for (i = i; i < this.maxCanvas; i++) {
-          this.initTabParamCanvas(i);
-      }
-    } else {
-      for (i = 0; i < this.maxCanvas; i++) {
-        this.initTabParamCanvas(i);
-        
-      }
-
-      this.lockValueBeforeCheck=this.tabLock[5].lock;
-  
     }
-
-    const theDate = new Date();
-    const newDate = addMonthDay(theDate, -1, 0, '-') // minus 1 month
-    this.paramAllCharts.controls['startRange'].setValue(newDate);
-    for (var nb = 0; nb < this.maxCanvas; nb++) {
-      this.tabParamChart[nb].period = this.paramAllCharts.controls['period'].value.toLowerCase().trim();
-      this.tabParamChart[nb].nbWeeks = this.paramAllCharts.controls['nbWeeks'].value;
-      this.tabParamChart[nb].startRange = newDate;
-      this.tabParamChart[nb].endRange = "";
-
-      //this.fillInFormFromTab(nb);
-
+    for (let i = nbFromFile; i < MAX_CANVAS; i++) {
+      this.initTabParamCanvas(i);
     }
+    for (let i = 0; i < MAX_CANVAS; i++) {
+      this.changeCanvas(i);
+    }
+    this.lockValueBeforeCheck = this.lockState ?? 0;
 
-    this.posSizeClock.margLeft = 440;
-    this.posSizeClock.margTop = -20;
-    this.posSizeClock.width = 60;
-    this.posSizeClock.height = 60;
-    this.posSizeClock.displayAnalog = false;
-    this.posSizeClock.displayDigital = true;
+    // every chart starts on "last month .. today" whatever the file says
+    const startDefault = addMonthDay(new Date(), -1, 0, '-');
+    this.paramAllCharts.controls['startRange'].setValue(startDefault);
+    const period = this.paramAllCharts.controls['period'].value.toLowerCase().trim();
+    for (const t of this.tabParamChart) {
+      t.period = period;
+      t.nbWeeks = this.paramAllCharts.controls['nbWeeks'].value;
+      t.startRange = startDefault;
+      t.endRange = '';
+    }
 
     this.lastInputAt = strDateTime();
-    this.refDate=new Date();
-    this.callTimeToGo();
-    if (this.tabLock[5].lock===1){
-      this.enableForm();
-    } else {
-      this.disableForm();
-    }
-    
-
+    this.startCountdown();
+    this.setFormsEnabled(this.isLocked);
   }
-/*
-  ngAfterViewChecked(){
-    for (var i = 0; i < this.tabCanvasId.length; i++) {
-      this.collectSpecialData(i, this.overallTab[i].datasetBar, this.overallTab[i].labelBar, this.overallTabLimit[i].dataset, this.overallTabLimit[i].label);
-    }
 
-    const theDate = new Date();
-    const newDate = addMonthDay(theDate, -1, 0, '-') // minus 1 month
-    this.paramAllCharts.controls['startRange'].setValue(newDate);
-    const event = {
-      target: {
-        id: 'apply'
+  ngAfterViewInit() {
+    this.canvasRefs().forEach((ref, i) => this.tabCtx[i] = ref.nativeElement.getContext('2d'));
+    this.forAllCharts('apply');   // builds the 5 charts once
+  }
+
+  ngOnDestroy() {
+    this.stopCountdown();
+    this.tabChart.forEach(c => c?.destroy?.());
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    for (const prop of Object.keys(changes)) {
+      const ch = changes[prop];
+      switch (prop) {
+        case 'tabLock': {
+          const prev = ch.previousValue?.[LOCK_FILE]?.lock;
+          if (this.isLocked) {
+            if (prev !== undefined && prev !== 1) {
+              this.errorMsg = 'You can now update the file';
+              this.isUserTimeOut = false;     // lock regained => new inactivity window
+              this.startCountdown();
+            }
+            this.setFormsEnabled(true);
+          } else {
+            if (prev === 1) { this.errorMsg = 'File is locked by another user'; }
+            this.setFormsEnabled(false);
+          }
+          break;
+        }
+        case 'triggerParamSave':   // result of the save requested through processSave
+          if (!ch.firstChange && this.onInputAction === 'saveParamChart') {
+            const lock = this.tabLock[LOCK_FILE];
+            if (lock?.lock === 1 && (lock.status === 0 || lock.status === 300)) {
+              this.errorMsg = this.theEvent.target.id === 'save'
+                ? 'parameters for chart#' + this.selectedChart + ' have been saved'
+                : 'for all charts, parameters have been saved';
+            } else {
+              this.errorMsg = 'Parameters cannot be saved - error=' + lock?.status;
+            }
+            this.onInputAction = '';
+          }
+          break;
+        case 'returnDataFSParamChart':
+          if (!ch.firstChange) {
+            if (!this.isLocked && this.onInputAction === 'saveParamChart') {
+              this.errorMsg = 'file has been locked by another user; all your updates are lost ('
+                + this.returnDataFSParamChart.errorMsg + ') status=' + this.tabLock[LOCK_FILE]?.status;
+            }
+            this.setFormsEnabled(this.isLocked);
+            this.onInputAction = '';
+          }
+          break;
+        case 'statusSaveFn':
+          if (!ch.firstChange) {
+            this.onInputAction = '';
+            this.theEvent.checkLock.action = '';
+            if (this.statusSaveFn.status === 200 || this.statusSaveFn.status === 0) {
+              this.errorMsg = 'File has been successfully saved';
+            } else {
+              this.errorMsg = this.statusSaveFn.err;
+            }
+          }
+          break;
       }
     }
-    this.forAllCharts(event);
-
   }
 
-*/
+  // ───────────────────────────── inactivity / lock check ─────────────────────────────
 
-  //isSaveFile:boolean=false;
-  isDataModified:boolean=false;
-  isUserTimeOut:boolean=false;
-  refDate=new Date();
-  displaySec:number=0;
-  displayMin:number=0;
-  displayHour:number=0;
-  idAnimation:any;
+  private timeoutMs(): number {
+    const t = this.configServer.timeoutFileSystem.userTimeOut;
+    return (t.hh * 3600 + t.mn * 60 + t.ss) * 1000;
+  }
 
-  openFileAccess=signal(false);
+  private startCountdown() {
+    this.stopCountdown();
+    this.deadline = Date.now() + this.timeoutMs();
+    this.tick();
+    this.timerId = setInterval(() => this.tick(), 1000);   // 1 tick/second instead of a 60 fps requestAnimationFrame loop
+  }
 
-  timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean,theAction:string){
-      this.openFileAccess.set(false);
-      window.cancelAnimationFrame(this.idAnimation);
-      this.callTimeToGo();
-      if (this.isUserTimeOut=true){return;};
-      this.refDate=new Date();
-      this.lastInputAt = strDateTime();
-      if (theAction==="only"){
-        this.theEvent.checkLock.action='checkTO';
-        this.theEvent.checkLock.iWait=iWait;
-        this.theEvent.checkLock.isDataModified=isDataModified;
-        this.theEvent.checkLock.isSaveFile=isSaveFile;
-        this.theEvent.checkLock.iCheck=true;
-        this.theEvent.checkLock.lastInputAt=this.lastInputAt;
-        this.theEvent.checkLock.nbCalls++;
-        this.triggerCheckToLimit.update(checkLimit => checkLimit + 1);
-        this.openFileAccess=signal(true);
-        this.lockValueBeforeCheck=this.tabLock[5].lock;
-        //this.checkLockLimit.emit({iWait:iWait,isDataModified:isDataModified,isSaveFile:isSaveFile, lastInputAt:this.lastInputAt, iCheck:true,nbCalls:0,action:theAction});
+  private stopCountdown() {
+    if (this.timerId !== undefined) { clearInterval(this.timerId); this.timerId = undefined; }
+  }
+
+  private tick() {
+    const left = Math.ceil((this.deadline - Date.now()) / 1000);
+    if (left <= 0) {
+      this.stopCountdown();
+      this.timeLeft.set(0);
+      this.isUserTimeOut = true;
+      this.unlockFile.emit(LOCK_FILE);
+      this.resetBooleans();
+    } else {
+      this.timeLeft.set(left);
+    }
+  }
+
+  /** Called on every user action: restarts the countdown and, for theAction='only', asks the file-access child to check the lock. */
+  timeOutactivity(iWait: number, isDataModified: boolean, isSaveFile: boolean, theAction: string) {
+    this.openFileAccess.set(false);
+    if (this.isUserTimeOut) { return; }
+    this.lastInputAt = strDateTime();
+    this.deadline = Date.now() + this.timeoutMs();
+    if (!this.timerId) { this.startCountdown(); }
+    if (theAction !== 'only') { return; }
+
+    // a lock check = a server round-trip: do not fire one per click / keystroke (iWait=0 is a confirm-save, always checked)
+    const now = Date.now();
+    if (iWait !== 0 && now - this.lastCheckAt < CHECK_THROTTLE_MS) { return; }
+    this.lastCheckAt = now;
+
+    const cl = this.theEvent.checkLock;
+    cl.action = 'checkTO';
+    cl.iWait = iWait;
+    cl.isDataModified = isDataModified;
+    cl.isSaveFile = isSaveFile;
+    cl.iCheck = true;
+    cl.lastInputAt = this.lastInputAt;
+    cl.nbCalls++;
+    this.triggerCheckToLimit.update(v => v + 1);
+    this.openFileAccess.set(true);
+    this.lockValueBeforeCheck = this.lockState ?? 0;
+  }
+
+  resultAccessFile(theEvent: any) {
+    this.openFileAccess.set(false);
+    if (this.lockValueBeforeCheck !== this.lockState) {
+      if (this.isLocked) {
+        this.setFormsEnabled(true);
+        this.errorMsg = 'You can now update the file';
+      } else {
+        this.errorMsg = 'File is locked by another user';
+        this.setFormsEnabled(false);
       }
     }
-
-  callTimeToGo(){
-    const currSeconds=this.refDate.getSeconds() ;
-    const currMinutes=this.refDate.getMinutes();
-    const currHour=this.refDate.getHours();
-    const currentDateSec = currHour*3600+currMinutes*60+currSeconds;
-    this.timeToGo(currentDateSec,this.configServer.timeoutFileSystem.userTimeOut.hh * 3600 +this.configServer.timeoutFileSystem.userTimeOut.mn * 60 + this.configServer.timeoutFileSystem.userTimeOut.ss);
-    
-  }
-
-  timeToGo(refDateSec:any, timeOutSec:any){
-    // nb of seconds before timeout is reached
-    const theDate=new Date();
-    const currentDateSec = theDate.getHours()*3600+theDate.getMinutes()*60+theDate.getSeconds();
-    const timeSpent = Number(currentDateSec) - Number(refDateSec);
-    const timeLeft= timeOutSec - timeSpent;
-
-    if (timeLeft <= 0 ){
-        window.cancelAnimationFrame(this.idAnimation);
-        this.isUserTimeOut=true;
-        this.unlockFile.emit(5);
-        //this.isSaveFile=false;
-        this.isDataModified=false;
-        this.resetBooleans();
-    } else {
-        this.displayHour = Math.floor(timeLeft / 3600);
-        const minSec = timeLeft % 3600 ;
-        this.displayMin = Math.floor(minSec / 60);
-        this.displaySec = minSec % 60 ;
-        this.idAnimation=window.requestAnimationFrame(() => this.timeToGo(refDateSec,timeOutSec));
+    if (this.onInputAction === 'confirmSave') {
+      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.myChartConfig);
+      this.IsSaveConfirmed.set(true);
     }
   }
 
-  enableForm() {
-    this.selectChart.get('chartType')?.enable();
-    this.selectChart.get('barThickness')?.enable();
-    this.selectChart.get('chartTitle')?.enable();
-    this.selectChart.get('colorChartTitle')?.enable();
-    this.selectChart.get('ratio')?.enable();
-    this.selectChart.get('canvasWidth')?.enable();
-    this.selectChart.get('canvasHeight')?.enable();
-    this.selectChart.get('canvasMarginLeft')?.enable();
-    this.selectChart.get('stackedX')?.enable();
-    this.selectChart.get('stackedY')?.enable();
-    this.selectChart.get('canvasBackground')?.enable();
-    this.selectChart.get('legendTitle')?.enable();
-    this.selectChart.get('colorLegendTitle')?.enable();
-    this.selectChart.get('boxwidth')?.enable();
-    this.selectChart.get('boxheight')?.enable();
-    this.selectChart.get('boxpointStyle')?.enable();
-    this.selectChart.get('boxusePointStyle')?.enable();
-    this.selectChart.get('boxcolor')?.enable();
-    this.selectChart.get('boxfontSize')?.enable();
-    this.selectChart.get('boxradius')?.enable();
-    this.selectChart.get('boxfontWeight')?.enable();
-    this.selectChart.get('boxfontFamily')?.enable();
-    this.selectChart.get('period')?.enable();
-    this.selectChart.get('nbWeeks')?.enable();
-    this.selectChart.get('startRange')?.enable();
-    this.selectChart.get('endRange')?.enable();
-
-    this.selectTitle.get('paddingTop')?.enable();
-    this.selectTitle.get('paddingBottom')?.enable();
-    this.selectTitle.get('paddingLeft')?.enable();
-    this.selectTitle.get('position')?.enable();
-    this.selectTitle.get('display')?.enable();
-    this.selectTitle.get('text')?.enable();
-    this.selectTitle.get('align')?.enable();
-    this.selectTitle.get('color')?.enable();
-    this.selectTitle.get('paletteRgba')?.enable();
-    this.selectTitle.get('paletteXpos')?.enable();
-    this.selectTitle.get('paletteYpos')?.enable();
-    this.selectTitle.get('sliderRgba')?.enable();
-    this.selectTitle.get('sliderXpos')?.enable();
-    this.selectTitle.get('sliderYpos')?.enable();
-    this.selectTitle.get('fontSize')?.enable();
-    this.selectTitle.get('fontWeight')?.enable();
-    this.selectTitle.get('family')?.enable();
-
-    this.selectAxisX.get('borderColor')?.enable();
-    this.selectAxisX.get('borderWidth')?.enable();
-    this.selectAxisX.get('position')?.enable();
-    this.selectAxisX.get('stacked')?.enable();
-    this.selectAxisX.get('ticksColor')?.enable();
-
-    this.selectAxisY.get('borderColor')?.enable();
-    this.selectAxisY.get('borderWidth')?.enable();
-    this.selectAxisY.get('position')?.enable();
-    this.selectAxisY.get('stacked')?.enable();
-    this.selectAxisY.get('ticksColor')?.enable();
+  private setFormsEnabled(on: boolean) {
+    for (const f of [this.selectChart, this.selectTitle, this.selectAxisX, this.selectAxisY]) {
+      on ? f.enable({ emitEvent: false }) : f.disable({ emitEvent: false });
+    }
   }
 
-
-  disableForm() {
-    this.selectChart.get('chartType')?.disable();
-    this.selectChart.get('barThickness')?.disable();
-    this.selectChart.get('chartTitle')?.disable();
-    this.selectChart.get('colorChartTitle')?.disable();
-    this.selectChart.get('ratio')?.disable();
-    this.selectChart.get('canvasWidth')?.disable();
-    this.selectChart.get('canvasHeight')?.disable();
-    this.selectChart.get('canvasMarginLeft')?.disable();
-    this.selectChart.get('stackedX')?.disable();
-    this.selectChart.get('stackedY')?.disable();
-    this.selectChart.get('canvasBackground')?.disable();
-    this.selectChart.get('legendTitle')?.disable();
-    this.selectChart.get('colorLegendTitle')?.disable();
-    this.selectChart.get('boxwidth')?.disable();
-    this.selectChart.get('boxheight')?.disable();
-    this.selectChart.get('boxpointStyle')?.disable();
-    this.selectChart.get('boxusePointStyle')?.disable();
-    this.selectChart.get('boxcolor')?.disable();
-    this.selectChart.get('boxfontSize')?.disable();
-    this.selectChart.get('boxradius')?.disable();
-    this.selectChart.get('boxfontWeight')?.disable();
-    this.selectChart.get('boxfontFamily')?.disable();
-    this.selectChart.get('period')?.disable();
-    this.selectChart.get('nbWeeks')?.disable();
-    this.selectChart.get('startRange')?.disable();
-    this.selectChart.get('endRange')?.disable();
-
-    this.selectTitle.get('paddingTop')?.disable();
-    this.selectTitle.get('paddingBottom')?.disable();
-    this.selectTitle.get('paddingLeft')?.disable();
-    this.selectTitle.get('position')?.disable();
-    this.selectTitle.get('display')?.disable();
-    this.selectTitle.get('text')?.disable();
-    this.selectTitle.get('align')?.disable();
-    this.selectTitle.get('color')?.disable();
-    this.selectTitle.get('paletteRgba')?.disable();
-    this.selectTitle.get('paletteXpos')?.disable();
-    this.selectTitle.get('paletteYpos')?.disable();
-    this.selectTitle.get('sliderRgba')?.disable();
-    this.selectTitle.get('sliderXpos')?.disable();
-    this.selectTitle.get('sliderYpos')?.disable();
-    this.selectTitle.get('fontSize')?.disable();
-    this.selectTitle.get('fontWeight')?.disable();
-    this.selectTitle.get('family')?.disable();
-
-    this.selectAxisX.get('borderColor')?.disable();
-    this.selectAxisX.get('borderWidth')?.disable();
-    this.selectAxisX.get('position')?.disable();
-    this.selectAxisX.get('stacked')?.disable();
-    this.selectAxisX.get('ticksColor')?.disable();
-
-    this.selectAxisY.get('borderColor')?.disable();
-    this.selectAxisY.get('borderWidth')?.disable();
-    this.selectAxisY.get('position')?.disable();
-    this.selectAxisY.get('stacked')?.disable();
-    this.selectAxisY.get('ticksColor')?.disable();
-  }
+  // ───────────────────────────── chart building ─────────────────────────────
 
   changeCanvas(i: number) {
-    if (this.tabParamChart[i].canvasHeight !== 0) {
-      this.canvas[i].height = this.tabParamChart[i].canvasHeight;
-    } else {
-      this.canvas[i].height = this.ConfigChartHealth.barDefault.canvas.maxHeight;
-    }
-    if (this.tabParamChart[i].canvasWidth !== 0) {
-      this.canvas[i].width = this.tabParamChart[i].canvasWidth;
-    } else {
-      this.canvas[i].width = this.ConfigChartHealth.barDefault.canvas.maxWidth;
-    }
-    if (this.tabParamChart[i].canvasBackground !== '') {
-      this.canvas[i].background = this.tabParamChart[i].canvasBackground;
-    } else {
-      this.canvas[i].background = this.ConfigChartHealth.barDefault.canvas.backgroundcolor;
-    }
-    if (this.tabParamChart[i].canvasMarginLeft !== 0) {
-      this.canvas[i].marginLeft = this.tabParamChart[i].canvasMarginLeft;
-    } else {
-      this.canvas[i].marginLeft = this.ConfigChartHealth.barDefault.canvas.marginleft;
-    }
+    const t = this.tabParamChart[i];
+    const d = this.ConfigChartHealth.barDefault.canvas;
+    const c = this.canvas[i];
+    c.height = t.canvasHeight !== 0 ? t.canvasHeight : d.maxHeight;
+    c.width = t.canvasWidth !== 0 ? t.canvasWidth : d.maxWidth;
+    c.background = t.canvasBackground !== '' ? t.canvasBackground : d.backgroundcolor;
+    c.marginLeft = t.canvasMarginLeft !== 0 ? t.canvasMarginLeft : d.marginleft;
   }
 
-  forAllCharts(event: any) {
-    if (event.target.id === "clear") {
-      this.paramAllCharts.controls['period'].setValue(this.tabPeriod[0]);
-      this.paramAllCharts.controls['nbWeeks'].setValue(0);
-      const theDate = new Date();
-      const newDate = addMonthDay(theDate, -1, 0, '-') // minus 1 month
-      this.paramAllCharts.controls['startRange'].setValue(newDate);
-      this.paramAllCharts.controls['endRange'].setValue('');
+  buildChart(nb: number) {
+    this.changeCanvas(nb);
+    this.tabChart[nb]?.destroy?.();
+    this.collectSpecialData(nb);
+  }
 
-    } else if (event.target.id === "apply") {
-      for (var nb = 0; nb < this.maxCanvas; nb++) {
-        this.tabParamChart[nb].period = this.paramAllCharts.controls['period'].value.toLowerCase().trim();
-        this.tabParamChart[nb].nbWeeks = this.paramAllCharts.controls['nbWeeks'].value;
-        if (this.paramAllCharts.controls['startRange'].value !== null) {
-          this.tabParamChart[nb].startRange = this.paramAllCharts.controls['startRange'].value;
-        }
-        if (this.paramAllCharts.controls['endRange'].value !== null) {
-          this.tabParamChart[nb].endRange = this.paramAllCharts.controls['endRange'].value;
-        }
-        this.fillInFormFromTab(nb);
-        this.buildChart(nb);
+  forAllCharts(action: 'clear' | 'apply') {
+    const p = this.paramAllCharts.controls;
+    if (action === 'clear') {
+      p['period'].setValue(this.tabPeriod[0]);
+      p['nbWeeks'].setValue(0);
+      p['startRange'].setValue(addMonthDay(new Date(), -1, 0, '-'));
+      p['endRange'].setValue('');
+      return;
+    }
+    const period = p['period'].value.toLowerCase().trim();
+    for (let nb = 0; nb < MAX_CANVAS; nb++) {
+      const t = this.tabParamChart[nb];
+      t.period = period;
+      t.nbWeeks = p['nbWeeks'].value;
+      if (p['startRange'].value !== null) { t.startRange = p['startRange'].value; }
+      if (p['endRange'].value !== null) { t.endRange = p['endRange'].value; }
+      this.buildChart(nb);
+    }
+    // the form shows the selected chart only (it used to be left on the data of chart #5)
+    if (this.selectedChart !== 0) { this.fillInFormFromTab(this.selectedChart - 1); }
+  }
+
+  private collectSpecialData(nb: number) {
+    const param = this.tabParamChart[nb];
+    const labels: any[] = [];
+    let datasets: any[] = [];
+
+    const ret = fillHealthDataSet(labels, datasets, this.HealthAllData, param, this.ConfigChartHealth, 0, this.identification);
+    const refs = { refSaturated: [] as number[], refSugar: [] as number[], refCarbs: [] as number[] };
+    if (ret !== undefined) {
+      datasets = ret.datasets;
+      refs.refSaturated = ret.refSaturated;
+      refs.refSugar = ret.refSugar;
+      refs.refCarbs = ret.refCarbs;
+    }
+
+    // add one horizontal "limit" line per dataset that has a limit defined
+    const nbBars = datasets.length;
+    const health = this.identification.health;
+    for (let i = 0; i < nbBars; i++) {
+      const src = datasets[i];
+      const def = LIMIT_DEFS[src.label];
+      if (!def) { continue; }
+      const value = def.value(health);
+      if (!(value > 0)) { continue; }
+
+      let data: number[] = [];
+      if (def.ref) {
+        data = src.data.map((_: unknown, j: number) => refs[def.ref!][j]);
+      } else if (param.period === 'daily') {
+        data = src.data.map(() => value);
+      } else if (param.period === 'weekly') {
+        data = src.data.map(() => value * 7);
       }
+      const color = param.limitLabelsColor[def.idx];
+      const borderColor: any[] = [];
+      borderColor[datasets.length] = color;
+      datasets.push({
+        type: 'line', label: def.name, backgroundColor: '', borderColor, data,
+        borderWidth: 3, showLine: true, fill: false,
+        pointBorderWidth: 0, pointBorderColor: '', pointBackgroundColor: color, pointStyle: false,
+      });
     }
+
+    this.tabChart[nb] = specialDraw(this.tabCtx[nb], param, this.ConfigChartHealth, labels, datasets);
   }
 
-  selectedChart: number = 0;
-  SelChart(event: any) {
-    this.timeOutactivity(5, true, false,"only");
+  // ───────────────────────────── chart selection & validation ─────────────────────────────
 
+  selectChartNo(n: number) {
+    this.timeOutactivity(5, true, false, 'only');
     if (this.selectedChart !== 0) {
-
-      this.selected_canvasColor = '';
-      this.selected_legendColor = '';
-      this.selected_boxColor = '';
-      this.selected_chartTitleColor = '';
-      this.selected_colorTitle = "";
+      this.selColor.canvas = this.selColor.legend = this.selColor.box = this.selColor.chartTitle = '';
+      this.selected_colorTitle = '';
       this.fillInTabOfCharts(this.selectedChart - 1);
-
     }
-    if (event.target.id === 'Chart1') {
-      this.selectedChart = 1;
-    } else if (event.target.id === 'Chart2') {
-      this.selectedChart = 2;
-    } else if (event.target.id === 'Chart3') {
-      this.selectedChart = 3;
-    } else if (event.target.id === 'Chart4') {
-      this.selectedChart = 4;
-    } else if (event.target.id === 'Chart5') {
-      this.selectedChart = 5;
-    }
-    this.fillInFormFromTab(this.selectedChart - 1);
-    if (this.debugPhone === true) {
-      this.posDivPosSlider = getPosDiv("posDivSlider");
-      //this.getPosDivPosSlider();
-    }
+    this.selectedChart = n;
+    this.fillInFormFromTab(n - 1);
   }
 
-  cancelChartParam(event: any) {
-    this.timeOutactivity(5, true, false,"only");
-    if (event.target.id === "allChartParam") {
+  cancelChartParam(target: 'all' | 'title' | 'axis') {
+    this.timeOutactivity(5, true, false, 'only');
+    if (target === 'all') {
       this.selectedChart = 0;
-      this.isParamTitle=signal(false);
-      this.isParamLegend=signal(false);
-      this.isParamAxis = signal(false);
+      this.isParamTitle.set(false);
+      this.isParamLegend.set(false);
+      this.isParamAxis.set(false);
       this.resetBooleans();
-
-    } else if (event.target.id === "chartTitle") {
-      this.isParamTitle =signal(false);
-      this.isParamLegend=signal(false);
-    } else if (event.target.id === "axis") {
-      this.isParamAxis = signal(false);
+    } else if (target === 'title') {
+      this.isParamTitle.set(false);
+      this.isParamLegend.set(false);
+    } else {
+      this.isParamAxis.set(false);
     }
   }
 
-  processAxis(event: any) {
-    this.timeOutactivity(5, true, false,"only");
-    this.isParamAxis = signal(false);
-    if (this.selectAxisX.controls['stacked'].value === 'false') {
-      this.tabParamChart[this.selectedChart - 1].axisX.stacked = false;
-    } else {
-      this.tabParamChart[this.selectedChart - 1].axisX.stacked = true;
-    }
-    if (this.selectAxisY.controls['stacked'].value === 'false') {
-      this.tabParamChart[this.selectedChart - 1].axisY.stacked = false;
-    } else {
-      this.tabParamChart[this.selectedChart - 1].axisY.stacked = true;
-    }
+  fnSelectChart() {
+    this.errorMsg = '';
+    const c = this.selectChart.controls;
+    const norm = (s: string) => s.toLowerCase().trim();
+    const type: string = c['chartType'].value;
+    const period: string = c['period'].value;
 
-    this.selectChart.controls['stackedX'].setValue(this.tabParamChart[this.selectedChart - 1].axisX.stacked);
-    this.selectChart.controls['stackedY'].setValue(this.tabParamChart[this.selectedChart - 1].axisY.stacked);
+    if (type !== '' && !this.lineChartType.some(t => norm(t) === norm(type))) {
+      this.errorMsg = 'Field TYPE is unknown; please update it';
+    } else if (period !== '' && !this.tabPeriod.some(t => norm(t) === norm(period))) {
+      this.errorMsg = 'Field PERIOD is unknown; please update it';
+    } else if (c['startRange'].value !== '' && c['endRange'].value !== '' && c['endRange'].value < c['startRange'].value) {
+      this.errorMsg = 'end date cannot be before start date; please update';
+    } else if (isNaN(c['canvasWidth'].value)) {
+      this.errorMsg = 'Field CANVAS WIDTH is not a numeric';
+    } else if (isNaN(c['canvasHeight'].value)) {
+      this.errorMsg = 'Field CANVAS HEIGHT is not a numeric';
+    } else if (isNaN(c['ratio'].value)) {
+      this.errorMsg = 'Field RATIO is not a numeric';
+    }
+    if (this.errorMsg === '') {
+      this.fillInTabOfCharts(this.selectedChart - 1);
+      this.buildChart(this.selectedChart - 1);
+    }
   }
 
+  // ───────────────────────────── drop-down lists ─────────────────────────────
 
-  initTabParamCanvas(i:number){
-    const classParam = new classTabFormChart;
-    this.tabParamChart.push(classParam);
-    this.tabParamChart[this.tabParamChart.length - 1].chartType = 'line';
+  openOptionList(kind: ListKind) {
+    this.timeOutactivity(5, true, false, 'only');
+    this.resetBooleans();
+    this.openList.set(kind);
+  }
 
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.display = this.ConfigChartHealth.barDefault.options.plugins.title.display;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.text = this.ConfigChartHealth.barDefault.options.plugins.title.text;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.position = this.ConfigChartHealth.barDefault.options.plugins.title.position;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.padding.top = this.ConfigChartHealth.barDefault.options.plugins.title.padding.top;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.padding.bottom = this.ConfigChartHealth.barDefault.options.plugins.title.padding.bottom;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.align = this.ConfigChartHealth.barDefault.options.plugins.title.align;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.color = this.ConfigChartHealth.barDefault.options.plugins.title.color;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.size = this.ConfigChartHealth.barDefault.options.plugins.title.font.size;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.weight = this.ConfigChartHealth.barDefault.options.plugins.title.font.weight;
-    this.tabParamChart[this.tabParamChart.length - 1].chartTitle.font.family = this.ConfigChartHealth.barDefault.options.plugins.title.font.family;
+  pickOption(kind: ListKind, value: any) {
+    this.timeOutactivity(5, true, false, 'only');
+    this.resetBooleans();                       // closes the list
+    if (value === 'cancel') { return; }
+    const text = String(value).trim();
+    switch (kind) {
+      case 'type':          this.selectChart.controls['chartType'].setValue(text); break;
+      case 'period':        this.selectChart.controls['period'].setValue(text.toLowerCase()); break;
+      case 'periodAll':     this.paramAllCharts.controls['period'].setValue(text.toLowerCase()); break;
+      case 'fontWeight':    this.selectTitle.controls['fontWeight'].setValue(text); break;
+      case 'textAlign':     this.selectTitle.controls['align'].setValue(text); break;
+      case 'titlePosition': this.selectTitle.controls['position'].setValue(text); break;
+      case 'titleDisplay':  this.selectTitle.controls['display'].setValue(value); break;   // keeps the boolean
+    }
+  }
 
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.display = this.ConfigChartHealth.barDefault.options.plugins.legend.title.display;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.text = this.ConfigChartHealth.barDefault.options.plugins.legend.title.text;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.position = this.ConfigChartHealth.barDefault.options.plugins.legend.title.position;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.top = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.top;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.bottom = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.bottom;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.padding.left = this.ConfigChartHealth.barDefault.options.plugins.legend.title.padding.left;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.align = this.ConfigChartHealth.barDefault.options.plugins.legend.title.align;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.color = this.ConfigChartHealth.barDefault.options.plugins.legend.title.color;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.size = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.size;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.weight = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.weight;
-    this.tabParamChart[this.tabParamChart.length - 1].legendTitle.font.family = this.ConfigChartHealth.barDefault.options.plugins.legend.title.font.family;
+  // ───────────────────────────── title / legend / axis dialogs ─────────────────────────────
 
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.boxWidth = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxWidth;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.boxHeight = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.boxHeight;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.usePointStyle = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.usePointStyle;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.pointStyle = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.pointStyle;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.borderRadius = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.borderRadius;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.color = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.color;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.size = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.size;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.weight = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.weight;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBox.font.family = this.ConfigChartHealth.barDefault.options.plugins.legend.labels.font.family;
+  viewTitle(kind: 'chart' | 'legend') {
+    this.timeOutactivity(5, true, false, 'only');
+    this.resetBooleans();
+    const t = this.tabParamChart[this.selectedChart - 1];
+    if (kind === 'chart') { this.transferTitle('chart', t.chartTitle, t.chartTitleRgba); }
+    else { this.transferTitle('legend', t.legendTitle, t.legendTitleRgba); }
+  }
 
-    this.tabParamChart[this.tabParamChart.length - 1].bar = this.ConfigChartHealth.barChart.datasets;
-    this.tabParamChart[this.tabParamChart.length - 1].line = this.ConfigChartHealth.lineChart.datasetsDefault;
+  viewAxis() {
+    this.timeOutactivity(5, true, false, 'only');
+    this.resetBooleans();
+    this.isParamAxis.set(true);
+  }
 
-    this.tabParamChart[this.tabParamChart.length - 1].canvasBackground = this.ConfigChartHealth.barDefault.canvas.backgroundcolor;
-    this.tabParamChart[this.tabParamChart.length - 1].canvasHeight = this.ConfigChartHealth.barDefault.canvas.height
-    this.tabParamChart[this.tabParamChart.length - 1].canvasMarginLeft = this.ConfigChartHealth.barDefault.canvas.marginleft;
-    this.tabParamChart[this.tabParamChart.length - 1].canvasWidth = this.ConfigChartHealth.barDefault.canvas.width;
+  private transferTitle(kind: 'chart' | 'legend', src: any, rgba: any) {
+    this.resetBooleans();
+    this.isParamTitle.set(false);
+    this.isParamLegend.set(false);
+    const main = this.selectChart.controls;
+    const v: any = {
+      fontWeight: src.font.weight, fontSize: src.font.size, family: src.font.family,
+      align: src.align, position: src.position, display: src.display,
+      paddingTop: src.padding.top, paddingBottom: src.padding.bottom,
+      paletteRgba: rgba.palette.rgba, paletteXpos: rgba.palette.xPos, paletteYpos: rgba.palette.yPos,
+      sliderRgba: rgba.slider.rgba, sliderXpos: rgba.slider.xPos, sliderYpos: rgba.slider.yPos,
+    };
+    if (kind === 'chart') {
+      v.text = main['chartTitle'].value;
+      v.color = main['colorChartTitle'].value;
+      this.isParamTitle.set(true);
+    } else {
+      v.paddingLeft = this.tabParamChart[this.selectedChart - 1].legendTitle.padding.left;
+      v.text = main['legendTitle'].value;
+      v.color = main['colorLegendTitle'].value;
+      this.isParamLegend.set(true);
+    }
+    this.selected_colorTitle = v.color;
+    this.selectTitle.patchValue(v, { emitEvent: false });
+  }
 
+  processTitle() {
+    const t = this.tabParamChart[this.selectedChart - 1];
+    if (this.isParamTitle()) {
+      this.fillTabTitle(t.chartTitle, t.chartTitleRgba);
+      this.isParamTitle.set(false);
+    } else if (this.isParamLegend()) {
+      this.fillTabTitle(t.legendTitle, t.legendTitleRgba);
+      this.isParamLegend.set(false);
+    }
+    this.selected_colorTitle = '';
+  }
 
-    for (var l = 0; l < this.ConfigChartHealth.barDefault.datasets.labelsLimits.length; l++) {
-      if (this.ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[l] === true) {
-        this.tabParamChart[this.tabParamChart.length - 1].limitLabels[l] = "Y";
-        this.selectedLimitFields[l] = "Y";
+  private fillTabTitle(dst: any, rgba: any) {
+    const c = this.selectTitle.controls;
+    dst.text = c['text'].value;
+    dst.font.weight = c['fontWeight'].value;
+    dst.font.size = c['fontSize'].value;
+    dst.font.family = c['family'].value;
+    dst.align = c['align'].value;
+    dst.position = c['position'].value;
+    dst.display = toBool(c['display'].value);
+    dst.color = c['color'].value;
+    dst.padding.top = c['paddingTop'].value;
+    dst.padding.bottom = c['paddingBottom'].value;
+    rgba.palette.rgba = c['paletteRgba'].value;
+    rgba.palette.xPos = c['paletteXpos'].value;
+    rgba.palette.yPos = c['paletteYpos'].value;
+    rgba.slider.rgba = c['sliderRgba'].value;
+    rgba.slider.xPos = c['sliderXpos'].value;
+    rgba.slider.yPos = c['sliderYpos'].value;
+
+    if (this.isParamLegend()) {
+      dst.padding.left = c['paddingLeft'].value;
+      this.selectChart.patchValue({ legendTitle: dst.text, colorLegendTitle: dst.color }, { emitEvent: false });
+    } else {
+      this.selectChart.patchValue({ chartTitle: dst.text, colorChartTitle: dst.color }, { emitEvent: false });
+    }
+  }
+
+  processAxis() {
+    this.timeOutactivity(5, true, false, 'only');
+    this.isParamAxis.set(false);
+    const t = this.tabParamChart[this.selectedChart - 1];
+    t.axisX.stacked = toBool(this.selectAxisX.controls['stacked'].value);
+    t.axisY.stacked = toBool(this.selectAxisY.controls['stacked'].value);
+    this.selectChart.patchValue({ stackedX: t.axisX.stacked, stackedY: t.axisY.stacked }, { emitEvent: false });
+  }
+
+  // ───────────────────────────── colour picker ─────────────────────────────
+
+  private colorControl(key: ColorKey): AbstractControl {
+    switch (key) {
+      case 'canvas':     return this.selectChart.controls['canvasBackground'];
+      case 'legend':     return this.selectChart.controls['colorLegendTitle'];
+      case 'chartTitle': return this.selectChart.controls['colorChartTitle'];
+      case 'box':        return this.selectChart.controls['boxcolor'];
+      case 'xBorder':    return this.selectAxisX.controls['borderColor'];
+      case 'xTicks':     return this.selectAxisX.controls['ticksColor'];
+      case 'yBorder':    return this.selectAxisY.controls['borderColor'];
+      case 'yTicks':     return this.selectAxisY.controls['ticksColor'];
+    }
+  }
+
+  private openPicker(current: string, top: number) {
+    this.mainWindow.top = top;
+    this.posSlider.div.top = top + this.subWindow.top;
+    this.my_input_child1 = current;
+    this.my_input_child2 = current;
+    this.temporaryColor = current;
+    if (this.returnSlider.rgba !== '') { this.my_input_child2 = this.returnSlider.rgba; }
+    if (this.returnPalette.rgba !== '') {
+      this.my_input_child1 = this.returnPalette.rgba;
+      this.temporaryColor = this.returnPalette.rgba;
+    }
+    this.isSliderSelected.set(true);
+  }
+
+  /** Click on a colour swatch. 'dialog' = the swatch of the title/legend dialog. */
+  openColorPicker(target: ColorKey | 'dialog') {
+    if (this.isLockedByOther) { return; }
+    this.resetBooleans();
+    this.timeOutactivity(5, true, false, 'only');
+
+    let key: ColorKey;
+    let viaDialog: boolean;
+    if (target === 'dialog') {
+      if (this.isParamLegend()) { key = 'legend'; }
+      else if (this.isParamTitle()) { key = 'chartTitle'; }
+      else { return; }
+      viaDialog = true;
+    } else {
+      key = target;
+      viaDialog = (key === 'legend' && this.isParamLegend()) || (key === 'chartTitle' && this.isParamTitle());
+    }
+    this.colorKey = key;
+    this.titleDialogColor.set(viaDialog);
+    this.returnSlider = this.rgbaOf[key].slider;
+    this.returnPalette = this.rgbaOf[key].palette;
+    this.openPicker(this.selColor[key], 120);
+  }
+
+  /** The user typed a colour in a text field: refresh the swatch and forget the previous picker position. */
+  onColorFieldEdit(target: ColorKey | 'dialog') {
+    if (this.isLockedByOther) { return; }
+    this.resetBooleans();
+    this.timeOutactivity(5, true, false, 'only');
+    if (target === 'dialog') {
+      this.selected_colorTitle = this.selectTitle.controls['color'].value;
+      target = this.isParamLegend() ? 'legend' : 'chartTitle';
+    } else {
+      this.selColor[target] = this.colorControl(target).value;
+    }
+    this.initRgba(this.rgbaOf[target]);
+  }
+
+  selectLabelColor(kind: FieldKind, idx: number) {
+    if (this.labelPick) { this.resetBooleans(); }
+    if (this.isLockedByOther) { return; }
+    this.timeOutactivity(5, true, false, 'only');
+    this.labelPick = { kind, idx };
+    const rgba = kind === 'limit' ? this.tabLimitLabelRgba[idx] : this.tabLabelRgba[idx];
+    this.returnPalette = rgba.palette;
+    this.returnSlider = rgba.slider;
+    this.openPicker(kind === 'limit' ? this.tabOfLimitLabelsColor[idx] : this.tabOfLabelsColor[idx], 370);
+  }
+
+  fnSlider(event: any) { this.my_input_child1 = event; this.my_input_child2 = event; }   // slider -> palette
+  fnSliderBis(event: any) { this.returnSlider = event; }
+  fnPalette(event: any) { this.temporaryColor = event; }
+  fnPaletteBis(event: any) { this.returnPalette = event; }
+
+  fnExitPalette(action: 'Save' | 'Cancel') {
+    if (this.isLockedByOther) { return; }
+    this.timeOutactivity(5, true, false, 'only');
+    if (action === 'Cancel') { this.resetBooleans(); return; }
+
+    const color = this.temporaryColor;
+    if (this.labelPick) {
+      const { kind, idx } = this.labelPick;
+      if (kind === 'label') { this.tabOfLabelsColor[idx] = color; this.tabLabelRgba[idx].palette = this.returnPalette; this.tabLabelRgba[idx].slider = this.returnSlider; }
+      else { this.tabOfLimitLabelsColor[idx] = color; this.tabLimitLabelRgba[idx].palette = this.returnPalette; this.tabLimitLabelRgba[idx].slider = this.returnSlider; }
+      this.labelPick = null;
+    } else if (this.colorKey) {
+      const k = this.colorKey;
+      this.selColor[k] = color;
+      this.colorControl(k).setValue(color);
+      this.rgbaOf[k].palette = this.returnPalette;
+      this.rgbaOf[k].slider = this.returnSlider;
+      this.colorKey = null;
+    }
+
+    if (this.titleDialogColor()) {          // colour picked from the title/legend dialog
+      this.selected_colorTitle = color;
+      this.titleDialogColor.set(false);
+      this.selectTitle.patchValue({
+        color,
+        paletteRgba: this.returnPalette.rgba, paletteXpos: this.returnPalette.xPos, paletteYpos: this.returnPalette.yPos,
+        sliderRgba: this.returnSlider.rgba, sliderXpos: this.returnSlider.xPos, sliderYpos: this.returnSlider.yPos,
+      }, { emitEvent: false });
+    }
+    this.isSliderSelected.set(false);
+  }
+
+  private initRgba(r: RgbaPair) {
+    r.slider.xPos = 0; r.slider.yPos = 0; r.slider.rgba = '';
+    r.palette.xPos = 0; r.palette.yPos = 0; r.palette.rgba = '';
+  }
+
+  resetBooleans() {
+    this.openList.set(null);
+    this.colorKey = null;
+    this.labelPick = null;
+    this.titleDialogColor.set(false);
+    this.isSliderSelected.set(false);
+  }
+
+  // ───────────────────────────── items (labels / limits) of a chart ─────────────────────────────
+
+  toggleField(kind: FieldKind, idx: number) {
+    this.openFileAccess.set(false);
+    if (this.isLockedByOther) { return; }
+    this.timeOutactivity(5, true, false, 'only');
+    const arr = kind === 'label' ? this.selectedFields : this.selectedLimitFields;
+    if (arr[idx] === 'Y') { arr[idx] = 'N'; }
+    else if (arr[idx] === 'N') { arr[idx] = 'Y'; }
+  }
+
+  // ───────────────────────────── save / cancel ─────────────────────────────
+
+  confirmSave(event: Event, kind: 'save' | 'saveAll') {
+    this.errorMsg = '';
+    this.resetBooleans();
+    const target = event.target as HTMLButtonElement;
+    const ev = this.theEvent;
+    ev.target.id = kind;
+    ev.target.value = target.value;
+    ev.target.textContent = target.textContent;
+    ev.checkLock.iWait = 0;
+    ev.checkLock.isDataModified = true;
+    ev.checkLock.isSaveFile = false;
+    ev.checkLock.lastInputAt = this.lastInputAt;
+    ev.fileName = this.SpecificForm.controls['FileName'].value;
+    this.onInputAction = 'confirmSave';
+    this.timeOutactivity(0, true, false, 'only');
+  }
+
+  cancelTheSave() {
+    this.openFileAccess.set(false);
+    this.IsSaveConfirmed.set(false);
+  }
+
+  saveFn() {
+    this.openFileAccess.set(false);
+    this.errorMsg = '';
+    this.IsSaveConfirmed.set(false);
+    const sel = this.selectedChart - 1;
+    this.fillInTabOfCharts(sel);
+    if (this.errorMsg === '') {
+      if (this.theEvent.target.id === 'save') {
+        this.fillInCharts(this.tabParamChart[sel], this.inFileParamChart.data[sel]);
+        this.buildChart(sel);
       } else {
-        this.tabParamChart[this.tabParamChart.length - 1].limitLabels[l] = "N";
-        this.selectedLimitFields[l] = "N";
+        for (let i = 0; i < this.tabParamChart.length; i++) {
+          this.fillInCharts(this.tabParamChart[i], this.inFileParamChart.data[i]);
+          this.buildChart(i);                  // was buildChart(selectedChart - 1) inside the loop
+        }
       }
-      if (l > 0) {
-        const myLimitRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels.push(myLimitRgba);
-      }
-
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.rgba = "";
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.xPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].palette.yPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.rgba = "";
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.xPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].limitRgbaLabels[l].slider.yPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].limitLabelsColor[l] = this.ConfigChartHealth.barDefault.datasets.borderColorLimits[l];
     }
-
-    for (var l = 0; l < this.ConfigChartHealth.barDefault.datasets.fieldsToSelect.length; l++) {
-      if (this.ConfigChartHealth.barDefault.datasets.fieldsToSelect[l] === true) {
-        this.tabParamChart[this.tabParamChart.length - 1].labels[l] = "Y";
-        this.selectedFields[l] = "Y";
-
-      } else {
-        this.tabParamChart[this.tabParamChart.length - 1].labels[l] = "N";
-        this.selectedFields[l] = "N";
-      }
-
-      this.tabParamChart[this.tabParamChart.length - 1].labelsColor[l] = this.ConfigChartHealth.barDefault.datasets.borderColor[l];
-      if (l > 0) {
-        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels.push(myRgba);
-      }
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.rgba = "";
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.xPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].palette.yPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.rgba = "";
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.xPos = 0;
-      this.tabParamChart[this.tabParamChart.length - 1].rgbaLabels[l].slider.yPos = 0;
-    }
-
-    this.tabParamChart[this.tabParamChart.length - 1].period = 'daily';
-    this.tabParamChart[this.tabParamChart.length - 1].nbWeeks = 0;
-    this.tabParamChart[this.tabParamChart.length - 1].ratio = 2;
-
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.border.color = this.ConfigChartHealth.barDefault.options.scales.axisX.border.color;
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.border.width = this.ConfigChartHealth.barDefault.options.scales.axisX.border.width;
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.position = this.ConfigChartHealth.barDefault.options.scales.axisX.position;
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.stacked = this.ConfigChartHealth.barDefault.options.scales.axisX.stacked;
-    this.tabParamChart[this.tabParamChart.length - 1].axisX.ticks = this.ConfigChartHealth.barDefault.options.scales.axisX.ticks;
-
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.border.color = this.ConfigChartHealth.barDefault.options.scales.axisY.border.color;
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.border.width = this.ConfigChartHealth.barDefault.options.scales.axisY.border.width;
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.position = this.ConfigChartHealth.barDefault.options.scales.axisY.position;
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.stacked = this.ConfigChartHealth.barDefault.options.scales.axisY.stacked;
-    this.tabParamChart[this.tabParamChart.length - 1].axisY.ticks = this.ConfigChartHealth.barDefault.options.scales.axisY.ticks;
-
-
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.rgba = "";
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.xPos = 0;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.palette.yPos = 0;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.rgba = "";
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.xPos = 0;
-    this.tabParamChart[this.tabParamChart.length - 1].legendBoxRgba.slider.yPos = 0;
-
-    this.canvas.push({ width: '', height: '', background: 0, marginLeft: '' });
-    this.changeCanvas(i);
+    const ev = this.theEvent;
+    ev.checkLock.iWait = 5;
+    ev.iWait = 5;
+    ev.checkLock.isDataModified = true;
+    ev.checkLock.isSaveFile = true;
+    ev.checkLock.iCheck = true;
+    ev.checkLock.lastInputAt = this.lastInputAt;
+    ev.checkLock.action = 'saveParamChart';
+    ev.fileName = this.SpecificForm.controls['FileName'].value;
+    this.onInputAction = 'saveParamChart';
+    this.timeOutactivity(5, true, true, 'saveParamChart');
+    this.processSave.emit(ev);
   }
 
-
-  fillInTabOfCharts(nb: number) {
-
-    this.tabParamChart[nb].chartType = this.selectChart.controls['chartType'].value.toLowerCase().trim();
-    this.tabParamChart[nb].chartTitle.text = this.selectChart.controls['chartTitle'].value;
-
-    this.tabParamChart[nb].legendTitle.text = this.selectChart.controls['legendTitle'].value;
-    this.tabParamChart[nb].legendTitle.color = this.selectChart.controls['colorLegendTitle'].value;
-    this.tabParamChart[nb].chartTitle.color = this.selectChart.controls['colorChartTitle'].value;
-    this.fillRgba(this.returnTitleRgba, this.tabParamChart[nb].chartTitleRgba);
-    this.fillRgba(this.returnLegendRgba, this.tabParamChart[nb].legendTitleRgba);
-    this.tabParamChart[nb].ratio = this.selectChart.controls['ratio'].value;
-    this.tabParamChart[nb].canvasWidth = this.selectChart.controls['canvasWidth'].value;
-    this.tabParamChart[nb].canvasHeight = this.selectChart.controls['canvasHeight'].value;
-    this.tabParamChart[nb].canvasBackground = this.selectChart.controls['canvasBackground'].value;
-    this.tabParamChart[nb].canvasMarginLeft = this.selectChart.controls['canvasMarginLeft'].value;
-    this.tabParamChart[nb].bar.barThickness = this.selectChart.controls['barThickness'].value;
-    this.tabParamChart[nb].legendBox.boxWidth = this.selectChart.controls['boxwidth'].value;
-    this.tabParamChart[nb].legendBox.boxHeight = this.selectChart.controls['boxheight'].value;
-    this.tabParamChart[nb].legendBox.pointStyle = this.selectChart.controls['boxpointStyle'].value;
-    this.tabParamChart[nb].legendBox.usePointStyle = this.selectChart.controls['boxusePointStyle'].value;
-    this.tabParamChart[nb].legendBox.font.size = this.selectChart.controls['boxfontSize'].value;
-    this.tabParamChart[nb].legendBox.font.weight = this.selectChart.controls['boxfontWeight'].value;
-    this.tabParamChart[nb].legendBox.font.family = this.selectChart.controls['boxfontFamily'].value;
-    this.tabParamChart[nb].legendBox.borderRadius = this.selectChart.controls['boxradius'].value;
-    this.tabParamChart[nb].legendBox.color = this.selectChart.controls['boxcolor'].value;
-    this.fillRgba(this.returnBoxRgba, this.tabParamChart[nb].legendBoxRgba);
-
-    if ((typeof this.selectChart.controls['stackedX'].value === 'string' && this.selectChart.controls['stackedX'].value === 'false')
-      || (typeof this.selectChart.controls['stackedX'].value === 'boolean' && this.selectChart.controls['stackedX'].value === false)) {
-      this.tabParamChart[nb].axisX.stacked = false;
+  cancelFn(kind: 'cancelAll' | 'cancelOne') {
+    this.resetBooleans();
+    this.timeOutactivity(5, true, false, 'only');
+    const reload = (i: number) => {
+      this.fillInCharts(this.inFileParamChart.data[i], this.tabParamChart[i]);
+      this.buildChart(i);
+    };
+    if (kind === 'cancelAll') {
+      for (let i = 0; i < this.tabParamChart.length; i++) { reload(i); }
     } else {
-      this.tabParamChart[nb].axisX.stacked = true;
+      reload(this.selectedChart - 1);
     }
-    if ((typeof this.selectChart.controls['stackedY'].value === 'string' && this.selectChart.controls['stackedY'].value === 'false')
-      || (typeof this.selectChart.controls['stackedY'].value === 'boolean' && this.selectChart.controls['stackedY'].value === false)) {
-      this.tabParamChart[nb].axisY.stacked = false;
-    } else {
-      this.tabParamChart[nb].axisY.stacked = true;
-    }
-
-    this.tabParamChart[nb].axisX.border.color = this.selectAxisX.controls['borderColor'].value;
-    this.tabParamChart[nb].axisX.border.width = this.selectAxisX.controls['borderWidth'].value;
-    this.tabParamChart[nb].axisX.position = this.selectAxisX.controls['position'].value;
-    this.tabParamChart[nb].axisX.ticks.color = this.selectAxisX.controls['ticksColor'].value;
-
-    this.tabParamChart[nb].axisY.border.color = this.selectAxisY.controls['borderColor'].value;
-    this.tabParamChart[nb].axisY.border.width = this.selectAxisY.controls['borderWidth'].value;
-    this.tabParamChart[nb].axisY.position = this.selectAxisY.controls['position'].value;
-    this.tabParamChart[nb].axisY.ticks.color = this.selectAxisY.controls['ticksColor'].value;
-
-    this.tabParamChart[nb].period = this.selectChart.controls['period'].value.toLowerCase().trim();
-    this.tabParamChart[nb].nbWeeks = this.selectChart.controls['nbWeeks'].value;
-    this.tabParamChart[nb].startRange = this.selectChart.controls['startRange'].value;
-    this.tabParamChart[nb].endRange = this.selectChart.controls['endRange'].value;
-
-    for (var i = 0; i < this.selectedFields.length; i++) {
-      this.tabParamChart[nb].labels[i] = this.selectedFields[i];
-      this.tabParamChart[nb].labelsColor[i] = this.tabOfLabelsColor[i];
-      this.fillRgba(this.tabLabelRgba[i], this.tabParamChart[nb].rgbaLabels[i]);
-    }
-
-    for (var i = 0; i < this.selectedLimitFields.length; i++) {
-      this. tabParamChart[nb].limitLabels[i] = this.selectedLimitFields[i];
-      this.tabParamChart[nb].limitLabelsColor[i] = this.tabOfLimitLabelsColor[i];
-      if (this.tabParamChart[nb].limitRgbaLabels[i] === undefined) {
-        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        this.tabParamChart[nb].limitRgbaLabels.push(myRgba);
-      }
-      this.fillRgba(this.tabLimitLabelRgba[i], this.tabParamChart[nb].limitRgbaLabels[i]);
-    }
-
-    this.fillRgba(this.returnCanvasRgba, this.tabParamChart[nb].rgbaCanvas);
-
+    if (this.selectedChart !== 0) { this.fillInFormFromTab(this.selectedChart - 1); }
   }
 
+  // ───────────────────────────── tab <-> form <-> file copies ─────────────────────────────
+
+  private loadChartFromFile(i: number) {
+    const cfg = this.ConfigChartHealth.barDefault.datasets;
+    const t = new classTabFormChart;
+    this.tabParamChart.push(t);
+    this.fillInCharts(this.inFileParamChart.data[i], t);
+    if (t.labels.length === 0) {
+      for (let k = 0; k < cfg.fieldsToSelect.length; k++) {
+        t.labels[k] = cfg.fieldsToSelect[k] === false ? 'N' : 'Y';
+      }
+    }
+    for (let j = 0; j < t.labelsColor.length; j++) {
+      if (t.labelsColor[j] === undefined || t.labelsColor[j] === '') { t.labelsColor[j] = cfg.borderColor[j]; }
+    }
+  }
+
+  private initTabParamCanvas(_i: number) {
+    const cfg = this.ConfigChartHealth;
+    const d = cfg.barDefault;
+    const t = new classTabFormChart;
+    this.tabParamChart.push(t);
+
+    t.chartType = 'line';
+    this.copyTitle(d.options.plugins.title, t.chartTitle, false);
+    this.copyTitle(d.options.plugins.legend.title, t.legendTitle, true);
+    this.copyLegendBox(d.options.plugins.legend.labels, t.legendBox);
+    t.bar = clone(cfg.barChart.datasets);            // one copy per chart: no longer shared with the other charts / the config
+    t.line = clone(cfg.lineChart.datasetsDefault);
+    t.canvasBackground = d.canvas.backgroundcolor;
+    t.canvasHeight = d.canvas.height;
+    t.canvasMarginLeft = d.canvas.marginleft;
+    t.canvasWidth = d.canvas.width;
+
+    for (let l = 0; l < d.datasets.labelsLimits.length; l++) {
+      const sel = d.datasets.fieldsLimitsToSelect[l] === true ? 'Y' : 'N';
+      t.limitLabels[l] = sel;
+      this.selectedLimitFields[l] = sel;
+      t.limitRgbaLabels[l] ??= newRgba();
+      this.initRgba(t.limitRgbaLabels[l]);
+      t.limitLabelsColor[l] = d.datasets.borderColorLimits[l];
+    }
+    for (let l = 0; l < d.datasets.fieldsToSelect.length; l++) {
+      const sel = d.datasets.fieldsToSelect[l] === true ? 'Y' : 'N';
+      t.labels[l] = sel;
+      this.selectedFields[l] = sel;
+      t.labelsColor[l] = d.datasets.borderColor[l];
+      t.rgbaLabels[l] ??= newRgba();
+      this.initRgba(t.rgbaLabels[l]);
+    }
+
+    t.period = 'daily';
+    t.nbWeeks = 0;
+    t.ratio = 2;
+    this.copyAxis(d.options.scales.axisX, t.axisX);
+    this.copyAxis(d.options.scales.axisY, t.axisY);
+    this.initRgba(t.legendBoxRgba);
+  }
+
+  private copyTitle(s: any, d: any, withLeftPadding: boolean) {
+    d.display = s.display; d.text = s.text; d.position = s.position;
+    d.padding.top = s.padding.top; d.padding.bottom = s.padding.bottom;
+    if (withLeftPadding) { d.padding.left = s.padding.left; }
+    d.align = s.align; d.color = s.color;
+    d.font.size = s.font.size; d.font.weight = s.font.weight; d.font.family = s.font.family;
+  }
+
+  private copyLegendBox(s: any, d: any) {
+    d.boxWidth = s.boxWidth; d.boxHeight = s.boxHeight; d.borderRadius = s.borderRadius;
+    d.pointStyle = s.pointStyle; d.usePointStyle = s.usePointStyle; d.color = s.color;
+    d.font.size = s.font.size; d.font.weight = s.font.weight; d.font.family = s.font.family;
+  }
+
+  private copyAxis(s: any, d: any) {
+    d.stacked = s.stacked; d.border.color = s.border.color; d.border.width = s.border.width;
+    d.position = s.position;
+    d.ticks = clone(s.ticks);                         // was shared by reference between all charts
+  }
+
+  private fillRgba(src: any, dst: any) {
+    dst.palette.rgba = src.palette.rgba;
+    dst.palette.xPos = src.palette.xPos;
+    dst.palette.yPos = src.palette.yPos;
+    dst.slider.rgba = src.slider.rgba;
+    dst.slider.xPos = src.slider.xPos ?? 0;
+    dst.slider.yPos = src.slider.yPos ?? 0;
+  }
+
+  /** copies one "chart parameters" object to another (file -> tab, tab -> file) */
   fillInCharts(inFile: any, outFile: any) {
-    var i=0;
+    const cfg = this.ConfigChartHealth.barDefault.datasets;
     outFile.chartType = inFile.chartType.toLowerCase().trim();
-    outFile.chartTitle.display = inFile.chartTitle.display;
-    outFile.chartTitle.text = inFile.chartTitle.text;
-    outFile.chartTitle.position = inFile.chartTitle.position;
-    outFile.chartTitle.padding.top = inFile.chartTitle.padding.top;
-    outFile.chartTitle.padding.bottom = inFile.chartTitle.padding.bottom;
-    outFile.chartTitle.align = inFile.chartTitle.align;
-    outFile.chartTitle.color = inFile.chartTitle.color;
-    outFile.chartTitle.font.size = inFile.chartTitle.font.size;
-    outFile.chartTitle.font.weight = inFile.chartTitle.font.weight;
-    outFile.chartTitle.font.family = inFile.chartTitle.font.family;
-
-    outFile.legendTitle.display = inFile.legendTitle.display;
-    outFile.legendTitle.text = inFile.legendTitle.text;
-    outFile.legendTitle.position = inFile.legendTitle.position;
-    outFile.legendTitle.padding.top = inFile.legendTitle.padding.top;
-    outFile.legendTitle.padding.bottom = inFile.legendTitle.padding.bottom;
-    outFile.legendTitle.padding.left = inFile.legendTitle.padding.left;
-    outFile.legendTitle.align = inFile.legendTitle.align;
-    outFile.legendTitle.color = inFile.legendTitle.color;
-    outFile.legendTitle.font.size = inFile.legendTitle.font.size;
-    outFile.legendTitle.font.weight = inFile.legendTitle.font.weight;
-    outFile.legendTitle.font.family = inFile.legendTitle.font.family;
-
+    this.copyTitle(inFile.chartTitle, outFile.chartTitle, false);
+    this.copyTitle(inFile.legendTitle, outFile.legendTitle, true);
     this.fillRgba(inFile.chartTitleRgba, outFile.chartTitleRgba);
     this.fillRgba(inFile.legendTitleRgba, outFile.legendTitleRgba);
 
-    outFile.bar = inFile.bar;
-    outFile.line = inFile.line;
+    outFile.bar = clone(inFile.bar);
+    outFile.line = clone(inFile.line);
 
     outFile.ratio = inFile.ratio;
     outFile.canvasWidth = inFile.canvasWidth;
@@ -1109,993 +996,168 @@ export class ReportHealthComponent implements OnInit {
     outFile.canvasMarginLeft = inFile.canvasMarginLeft;
     this.fillRgba(inFile.rgbaCanvas, outFile.rgbaCanvas);
 
-    outFile.axisX.stacked = inFile.axisX.stacked;
-    outFile.axisX.border.color = inFile.axisX.border.color;
-    outFile.axisX.border.width = inFile.axisX.border.width;
-    outFile.axisX.position = inFile.axisX.position;
-    outFile.axisX.ticks = inFile.axisX.ticks;
-
-    outFile.axisY.stacked = inFile.axisY.stacked;
-    outFile.axisY.border.color = inFile.axisY.border.color;
-    outFile.axisY.border.width = inFile.axisY.border.width;
-    outFile.axisY.position = inFile.axisY.position;
-    outFile.axisY.ticks = inFile.axisY.ticks;
+    this.copyAxis(inFile.axisX, outFile.axisX);
+    this.copyAxis(inFile.axisY, outFile.axisY);
 
     outFile.period = inFile.period.toLowerCase().trim();
-    if (inFile.nbWeeks!==undefined){
-      outFile.nbWeeks = inFile.nbWeeks;
-    } else {
-      outFile.nbWeeks = 1;
-    }
-    
+    outFile.nbWeeks = inFile.nbWeeks ?? 1;
     outFile.startRange = inFile.startRange;
     outFile.endRange = inFile.endRange;
 
-    outFile.legendBox.boxWidth = inFile.legendBox.boxWidth;
-    outFile.legendBox.boxHeight = inFile.legendBox.boxHeight;
-    outFile.legendBox.borderRadius = inFile.legendBox.borderRadius;
-    outFile.legendBox.font.size = inFile.legendBox.font.size;
-    outFile.legendBox.font.weight = inFile.legendBox.font.weight;
-    outFile.legendBox.font.family = inFile.legendBox.font.family;
-    outFile.legendBox.pointStyle = inFile.legendBox.pointStyle;
-    outFile.legendBox.usePointStyle = inFile.legendBox.usePointStyle;
-    outFile.legendBox.color = inFile.legendBox.color;
-    outFile.legendBoxRgba.palette.rgba = inFile.legendBoxRgba.palette.rgba;
+    this.copyLegendBox(inFile.legendBox, outFile.legendBox);
     this.fillRgba(inFile.legendBoxRgba, outFile.legendBoxRgba);
 
-    for (i = 0; i < inFile.labels.length; i++) {
-      outFile.labels[i] = inFile.labels[i];
-      outFile.labelsColor[i] = inFile.labelsColor[i];
-      if (outFile.rgbaLabels[i] === undefined) {
-        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        outFile.rgbaLabels.push(myRgba);
-      }
-      this.fillRgba(inFile.rgbaLabels[i], outFile.rgbaLabels[i]);
+    this.syncLabels(inFile.labels, inFile.labelsColor, inFile.rgbaLabels,
+      outFile.labels, outFile.labelsColor, outFile.rgbaLabels, cfg.fieldsToSelect.length);
+    this.syncLabels(inFile.limitLabels, inFile.limitLabelsColor, inFile.limitRgbaLabels,
+      outFile.limitLabels, outFile.limitLabelsColor, outFile.limitRgbaLabels, cfg.fieldsLimitsToSelect.length);
+  }
+
+  /** copies the items of the source, then pads up to `total` with "N" (item not selected) */
+  private syncLabels(inL: any[], inColors: any[], inRgba: any[], outL: any[], outColors: any[], outRgba: any[], total: number) {
+    const fallback = this.ConfigChartHealth.barDefault.datasets.backgroundColor;
+    let i = 0;
+    for (; i < inL.length; i++) {
+      outL[i] = inL[i];
+      outColors[i] = inColors[i];
+      outRgba[i] ??= newRgba();
+      this.fillRgba(inRgba[i], outRgba[i]);
     }
-    var j=i-1;
-    for (var i=i; i<this.ConfigChartHealth.barDefault.datasets.fieldsToSelect.length; i++){
-      j=j+1;
-      //if (this.ConfigChartHealth.barDefault.datasets.fieldsToSelect[i]===true){
-    
-        outFile.labels[j] = "N";
-        outFile.labelsColor[j]= this.ConfigChartHealth.barDefault.datasets.backgroundColor[i];
-      //}
-      if (outFile.rgbaLabels[i] === undefined) {
-        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        outFile.rgbaLabels.push(myRgba);
-      }
-    }
-    for (i = 0; i < inFile.limitLabels.length; i++) {
-      outFile.limitLabels[i] = inFile.limitLabels[i];
-      outFile.limitLabelsColor[i] = inFile.limitLabelsColor[i];
-      if (outFile.limitRgbaLabels[i] === undefined) {
-        const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-        outFile.limitRgbaLabels.push(myRgba);
-      }
-      this.fillRgba(inFile.limitRgbaLabels[i], outFile.limitRgbaLabels[i]);
-    }
-    j=i-1;
-    for (var i=i; i<this.ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect.length; i++){
-      //if (this.ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[i]===true){
-        j=j+1;
-        outFile.limitLabels[j] = "N";// this.ConfigChartHealth.barDefault.datasets.labels[i];
-        outFile.limitLabelsColor[j]= this.ConfigChartHealth.barDefault.datasets.backgroundColor[i];
-        if (outFile.limitRgbaLabels[i] === undefined) {
-          const myRgba = { slider: new classReturnColor, palette: new classReturnColor }
-          outFile.limitRgbaLabels.push(myRgba);
-        }
-      //}
+    for (; i < total; i++) {
+      outL[i] = 'N';
+      outColors[i] = fallback[i];
+      outRgba[i] ??= newRgba();
     }
   }
 
-  fillRgba(inFile: any, outFile: any) {
-    outFile.palette.rgba = inFile.palette.rgba;
-    outFile.palette.xPos = inFile.palette.xPos;
-    outFile.palette.yPos = inFile.palette.yPos;
-    outFile.slider.rgba = inFile.slider.rgba;
-    if (inFile.slider.xPos!==undefined){
-      outFile.slider.xPos = inFile.slider.xPos;
-    } else {
-      outFile.slider.xPos = 0;
+  /** form -> working table */
+  fillInTabOfCharts(nb: number) {
+    const t = this.tabParamChart[nb];
+    const c = this.selectChart.controls;
+    const ax = this.selectAxisX.controls;
+    const ay = this.selectAxisY.controls;
+
+    t.chartType = c['chartType'].value.toLowerCase().trim();
+    t.chartTitle.text = c['chartTitle'].value;
+    t.chartTitle.color = c['colorChartTitle'].value;
+    t.legendTitle.text = c['legendTitle'].value;
+    t.legendTitle.color = c['colorLegendTitle'].value;
+    this.fillRgba(this.rgbaOf.chartTitle, t.chartTitleRgba);
+    this.fillRgba(this.rgbaOf.legend, t.legendTitleRgba);
+
+    t.ratio = c['ratio'].value;
+    t.canvasWidth = c['canvasWidth'].value;
+    t.canvasHeight = c['canvasHeight'].value;
+    t.canvasBackground = c['canvasBackground'].value;
+    t.canvasMarginLeft = c['canvasMarginLeft'].value;
+    t.bar.barThickness = c['barThickness'].value;
+    this.fillRgba(this.rgbaOf.canvas, t.rgbaCanvas);
+
+    t.legendBox.boxWidth = c['boxwidth'].value;
+    t.legendBox.boxHeight = c['boxheight'].value;
+    t.legendBox.pointStyle = c['boxpointStyle'].value;
+    t.legendBox.usePointStyle = c['boxusePointStyle'].value;
+    t.legendBox.font.size = c['boxfontSize'].value;
+    t.legendBox.font.weight = c['boxfontWeight'].value;
+    t.legendBox.font.family = c['boxfontFamily'].value;
+    t.legendBox.borderRadius = c['boxradius'].value;
+    t.legendBox.color = c['boxcolor'].value;
+    this.fillRgba(this.rgbaOf.box, t.legendBoxRgba);
+
+    t.axisX.stacked = toBool(c['stackedX'].value);
+    t.axisY.stacked = toBool(c['stackedY'].value);
+    t.axisX.border.color = ax['borderColor'].value;
+    t.axisX.border.width = ax['borderWidth'].value;
+    t.axisX.position = ax['position'].value;
+    t.axisX.ticks.color = ax['ticksColor'].value;
+    t.axisY.border.color = ay['borderColor'].value;
+    t.axisY.border.width = ay['borderWidth'].value;
+    t.axisY.position = ay['position'].value;
+    t.axisY.ticks.color = ay['ticksColor'].value;
+
+    t.period = c['period'].value.toLowerCase().trim();
+    t.nbWeeks = c['nbWeeks'].value;
+    t.startRange = c['startRange'].value;
+    t.endRange = c['endRange'].value;
+
+    for (let i = 0; i < this.selectedFields.length; i++) {
+      t.labels[i] = this.selectedFields[i];
+      t.labelsColor[i] = this.tabOfLabelsColor[i];
+      this.fillRgba(this.tabLabelRgba[i], t.rgbaLabels[i]);
     }
-    if (inFile.slider.yPos!==undefined){
-      outFile.slider.yPos = inFile.slider.yPos;
-    } else {
-      outFile.slider.yPos = 0;
+    for (let i = 0; i < this.selectedLimitFields.length; i++) {
+      t.limitLabels[i] = this.selectedLimitFields[i];
+      t.limitLabelsColor[i] = this.tabOfLimitLabelsColor[i];
+      t.limitRgbaLabels[i] ??= newRgba();
+      this.fillRgba(this.tabLimitLabelRgba[i], t.limitRgbaLabels[i]);
     }
   }
 
-
+  /** working table -> form (one patchValue per group, without emitting valueChanges for every control) */
   fillInFormFromTab(nb: number) {
-    this.selectChart.controls['chartType'].setValue(this.tabParamChart[nb].chartType.toLowerCase().trim());
-    this.selectChart.controls['chartTitle'].setValue(this.tabParamChart[nb].chartTitle.text);
-    this.selectChart.controls['colorChartTitle'].setValue(this.tabParamChart[nb].chartTitle.color);
-    this.selectChart.controls['ratio'].setValue(this.tabParamChart[nb].ratio);
-    this.selectChart.controls['canvasWidth'].setValue(this.tabParamChart[nb].canvasWidth);
-    this.selectChart.controls['canvasHeight'].setValue(this.tabParamChart[nb].canvasHeight);
-    this.selectChart.controls['canvasBackground'].setValue(this.tabParamChart[nb].canvasBackground);
-    this.selectChart.controls['legendTitle'].setValue(this.tabParamChart[nb].legendTitle.text);
-    this.selectChart.controls['colorLegendTitle'].setValue(this.tabParamChart[nb].legendTitle.color);
+    const t = this.tabParamChart[nb];
+    const quiet = { emitEvent: false };
 
-    this.selectChart.controls['stackedX'].setValue(this.tabParamChart[nb].axisX.stacked);
-    this.selectChart.controls['stackedY'].setValue(this.tabParamChart[nb].axisY.stacked);
-
-    this.selectAxisX.controls['borderWidth'].setValue(this.tabParamChart[nb].axisX.border.width);
-    this.selectAxisX.controls['borderColor'].setValue(this.tabParamChart[nb].axisX.border.color);
-    this.selectAxisX.controls['position'].setValue(this.tabParamChart[nb].axisX.position);
-    this.selectAxisX.controls['ticksColor'].setValue(this.tabParamChart[nb].axisX.ticks.color);
-    this.selectAxisX.controls['stacked'].setValue(this.tabParamChart[nb].axisX.stacked);
-
-    this.selectAxisY.controls['borderWidth'].setValue(this.tabParamChart[nb].axisY.border.width);
-    this.selectAxisY.controls['borderColor'].setValue(this.tabParamChart[nb].axisY.border.color);
-    this.selectAxisY.controls['position'].setValue(this.tabParamChart[nb].axisY.position);
-    this.selectAxisY.controls['ticksColor'].setValue(this.tabParamChart[nb].axisY.ticks.color);
-    this.selectAxisY.controls['stacked'].setValue(this.tabParamChart[nb].axisY.stacked);
-    this.selected_XTicksColor = this.tabParamChart[nb].axisX.ticks.color;
-    this.selected_XBorderColor = this.tabParamChart[nb].axisX.border.color;
-    this.selected_YTicksColor = this.tabParamChart[nb].axisY.ticks.color;
-    this.selected_YBorderColor = this.tabParamChart[nb].axisY.border.color;
-
-
-    this.selectChart.controls['period'].setValue(this.tabParamChart[nb].period.toLowerCase().trim());
-    if (this.tabParamChart[nb].nbWeeks!==undefined){
-      this.selectChart.controls['nbWeeks'].setValue(this.tabParamChart[nb].nbWeeks);
-    } else {
-      this.selectChart.controls['nbWeeks'].setValue(1);
-    }
-    this.selectChart.controls['startRange'].setValue(this.tabParamChart[nb].startRange);
-    this.selectChart.controls['endRange'].setValue(this.tabParamChart[nb].endRange);
-    this.selectChart.controls['canvasMarginLeft'].setValue(this.tabParamChart[nb].canvasMarginLeft);
-    this.selectChart.controls['barThickness'].setValue(this.tabParamChart[nb].bar.barThickness);
-
-    this.selectChart.controls['boxwidth'].setValue(this.tabParamChart[nb].legendBox.boxWidth);
-    this.selectChart.controls['boxheight'].setValue(this.tabParamChart[nb].legendBox.boxHeight);
-    this.selectChart.controls['boxpointStyle'].setValue(this.tabParamChart[nb].legendBox.pointStyle);
-    this.selectChart.controls['boxusePointStyle'].setValue(this.tabParamChart[nb].legendBox.usePointStyle);
-    this.selectChart.controls['boxfontSize'].setValue(this.tabParamChart[nb].legendBox.font.size);
-    this.selectChart.controls['boxfontWeight'].setValue(this.tabParamChart[nb].legendBox.font.weight);
-    this.selectChart.controls['boxfontFamily'].setValue(this.tabParamChart[nb].legendBox.font.family);
-    this.selectChart.controls['boxradius'].setValue(this.tabParamChart[nb].legendBox.borderRadius);
-    this.selectChart.controls['boxcolor'].setValue(this.tabParamChart[nb].legendBox.color);
-
-    this.fillRgba(this.tabParamChart[nb].legendBoxRgba, this.returnBoxRgba);
-    this.fillRgba(this.tabParamChart[nb].rgbaCanvas, this.returnCanvasRgba);
-    this.fillRgba(this.tabParamChart[nb].chartTitleRgba, this.returnTitleRgba);
-    this.fillRgba(this.tabParamChart[nb].legendTitleRgba, this.returnLegendRgba);
-    this.selected_canvasColor = this.tabParamChart[nb].canvasBackground;
-    this.selected_chartTitleColor = this.tabParamChart[nb].chartTitle.color;
-    this.selected_legendColor = this.tabParamChart[nb].legendTitle.color;
-    this.selected_boxColor = this.tabParamChart[nb].legendBox.color;
-    if (this.isParamLegend ()) {
-      this.selected_colorTitle = this.selected_legendColor;
-    } else if (this.isParamTitle ()) {
-      this.selected_colorTitle = this.selected_chartTitleColor;
+    this.selectChart.patchValue({
+      chartType: t.chartType.toLowerCase().trim(),
+      chartTitle: t.chartTitle.text,
+      colorChartTitle: t.chartTitle.color,
+      ratio: t.ratio,
+      canvasWidth: t.canvasWidth,
+      canvasHeight: t.canvasHeight,
+      canvasMarginLeft: t.canvasMarginLeft,
+      canvasBackground: t.canvasBackground,
+      legendTitle: t.legendTitle.text,
+      colorLegendTitle: t.legendTitle.color,
+      stackedX: t.axisX.stacked,
+      stackedY: t.axisY.stacked,
+      period: t.period.toLowerCase().trim(),
+      nbWeeks: t.nbWeeks ?? 1,
+      startRange: t.startRange,
+      endRange: t.endRange,
+      barThickness: t.bar.barThickness,
+      boxwidth: t.legendBox.boxWidth,
+      boxheight: t.legendBox.boxHeight,
+      boxpointStyle: t.legendBox.pointStyle,
+      boxusePointStyle: t.legendBox.usePointStyle,
+      boxfontSize: t.legendBox.font.size,
+      boxfontWeight: t.legendBox.font.weight,
+      boxfontFamily: t.legendBox.font.family,
+      boxradius: t.legendBox.borderRadius,
+      boxcolor: t.legendBox.color,
+    }, quiet);
+    for (const [form, axis] of [[this.selectAxisX, t.axisX], [this.selectAxisY, t.axisY]] as const) {
+      form.patchValue({
+        borderWidth: axis.border.width, borderColor: axis.border.color, position: axis.position,
+        ticksColor: axis.ticks.color, stacked: axis.stacked,
+      }, quiet);
     }
 
+    this.selColor.xTicks = t.axisX.ticks.color;
+    this.selColor.xBorder = t.axisX.border.color;
+    this.selColor.yTicks = t.axisY.ticks.color;
+    this.selColor.yBorder = t.axisY.border.color;
+    this.selColor.canvas = t.canvasBackground;
+    this.selColor.chartTitle = t.chartTitle.color;
+    this.selColor.legend = t.legendTitle.color;
+    this.selColor.box = t.legendBox.color;
+    this.fillRgba(t.legendBoxRgba, this.rgbaOf.box);
+    this.fillRgba(t.rgbaCanvas, this.rgbaOf.canvas);
+    this.fillRgba(t.chartTitleRgba, this.rgbaOf.chartTitle);
+    this.fillRgba(t.legendTitleRgba, this.rgbaOf.legend);
+    if (this.isParamLegend()) { this.selected_colorTitle = this.selColor.legend; }
+    else if (this.isParamTitle()) { this.selected_colorTitle = this.selColor.chartTitle; }
 
-    for (var i = 0; i < this.tabParamChart[nb].labels.length; i++) {
-      this.selectedFields[i] = this.tabParamChart[nb].labels[i];
-      this.tabOfLabelsColor[i] = this.tabParamChart[nb].labelsColor[i];
-      this.tabLabelRgba = this.tabParamChart[nb].rgbaLabels;
-      this.fillRgba(this.tabParamChart[nb].rgbaLabels[i], this.tabLabelRgba[i]);
+    this.tabLabelRgba = t.rgbaLabels;     // same objects as the working table, as before
+    for (let i = 0; i < t.labels.length; i++) {
+      this.selectedFields[i] = t.labels[i];
+      this.tabOfLabelsColor[i] = t.labelsColor[i];
+      if (t.rgbaLabels[i]) { this.fillRgba(t.rgbaLabels[i], t.rgbaLabels[i]); }   // normalises undefined slider positions
     }
-    for (var i = 0; i < this.tabParamChart[nb].limitLabels.length; i++) {
-      this.selectedLimitFields[i] = this.tabParamChart[nb].limitLabels[i];
-      this.tabOfLimitLabelsColor[i] = this.tabParamChart[nb].limitLabelsColor[i];
-      this.fillRgba(this.tabParamChart[nb].limitRgbaLabels[i], this.tabLimitLabelRgba[i]);
+    for (let i = 0; i < t.limitLabels.length; i++) {
+      this.selectedLimitFields[i] = t.limitLabels[i];
+      this.tabOfLimitLabelsColor[i] = t.limitLabelsColor[i];
+      if (t.limitRgbaLabels[i] && this.tabLimitLabelRgba[i]) { this.fillRgba(t.limitRgbaLabels[i], this.tabLimitLabelRgba[i]); }
     }
   }
-
-  transferTitle(id: string, outFile: any, outRgba: any) {
-    this.resetBooleans();
-    this.isParamTitle=signal(false);
-    this.isParamLegend=signal(false);
-
-    this.selectTitle.controls['fontWeight'].setValue(outFile.font.weight);
-    this.selectTitle.controls['fontSize'].setValue(outFile.font.size);
-    this.selectTitle.controls['family'].setValue(outFile.font.family);
-    this.selectTitle.controls['align'].setValue(outFile.align);
-    this.selectTitle.controls['position'].setValue(outFile.position);
-    this.selectTitle.controls['display'].setValue(outFile.display);
-
-    this.selectTitle.controls['paddingTop'].setValue(outFile.padding.top);
-    this.selectTitle.controls['paddingBottom'].setValue(outFile.padding.bottom);
-
-    this.selectTitle.controls['paletteRgba'].setValue(outRgba.palette.rgba);
-    this.selectTitle.controls['paletteXpos'].setValue(outRgba.palette.xPos);
-    this.selectTitle.controls['paletteYpos'].setValue(outRgba.palette.yPos);
-
-    this.selectTitle.controls['sliderRgba'].setValue(outRgba.slider.rgba);
-    this.selectTitle.controls['sliderXpos'].setValue(outRgba.slider.xPos);
-    this.selectTitle.controls['sliderYpos'].setValue(outRgba.slider.yPos);
-
-    if (id === 'viewChartTitle') {
-      this.isParamTitle = signal(true);
-      this.selectTitle.controls['text'].setValue(this.selectChart.controls['chartTitle'].value);
-      this.selectTitle.controls['color'].setValue(this.selectChart.controls['colorChartTitle'].value);
-      this.selected_colorTitle = this.selectChart.controls['colorChartTitle'].value;
-    } else if (id === 'viewLegendTitle') {
-      this.selectTitle.controls['paddingLeft'].setValue(this.tabParamChart[this.selectedChart - 1].legendTitle.padding.left);
-      this.selectTitle.controls['text'].setValue(this.selectChart.controls['legendTitle'].value);
-      this.selectTitle.controls['color'].setValue(this.selectChart.controls['colorLegendTitle'].value);
-      this.isParamLegend = signal(true);
-      this.selected_colorTitle = this.selectChart.controls['colorLegendTitle'].value;
-    }
-  }
-
-  processTitle() {
-    if (this.isParamTitle ()) {
-      this.fillTabTitle(this.tabParamChart[this.selectedChart - 1].chartTitle, this.tabParamChart[this.selectedChart - 1].chartTitleRgba);
-      this.fillInFormFromTab(this.selectedChart - 1);
-      this.isParamTitle =signal(false);
-    } else if (this.isParamLegend()) {
-      this.fillTabTitle(this.tabParamChart[this.selectedChart - 1].legendTitle, this.tabParamChart[this.selectedChart - 1].legendTitleRgba);
-      this.isParamLegend =signal(false);
-    }
-    this.selected_colorTitle = "";
-  }
-
-  fillTabTitle(outFile: any, outRgba: any) {
-    outFile.text = this.selectTitle.controls['text'].value;
-    outFile.font.weight = this.selectTitle.controls['fontWeight'].value;
-    outFile.font.size = this.selectTitle.controls['fontSize'].value;
-    outFile.font.family = this.selectTitle.controls['family'].value;
-    outFile.align = this.selectTitle.controls['align'].value;
-    outFile.position = this.selectTitle.controls['position'].value;
-    outFile.display = this.selectTitle.controls['display'].value;
-    outFile.color = this.selectTitle.controls['color'].value;
-    outFile.padding.top = this.selectTitle.controls['paddingTop'].value;
-    outFile.padding.bottom = this.selectTitle.controls['paddingBottom'].value;
-
-    outRgba.palette.rgba = this.selectTitle.controls['paletteRgba'].value;
-    outRgba.palette.xPos = this.selectTitle.controls['paletteXpos'].value;
-    outRgba.palette.yPos = this.selectTitle.controls['paletteYpos'].value;
-    outRgba.slider.rgba = this.selectTitle.controls['sliderRgba'].value;
-    outRgba.slider.xPos = this.selectTitle.controls['sliderXpos'].value;
-    outRgba.slider.yPos = this.selectTitle.controls['sliderYpos'].value;
-
-    if (this.isParamLegend()) {
-      outFile.padding.left = this.selectTitle.controls['paddingLeft'].value;
-
-      this.selectChart.controls['legendTitle'].setValue(outFile.text);
-      this.selectChart.controls['colorLegendTitle'].setValue(outFile.color);
-
-
-    } else if (this.isParamTitle()) {
-      outFile.padding.left = this.selectTitle.controls['paddingLeft'].value;
-      this.selectChart.controls['chartTitle'].setValue(outFile.text);
-      this.selectChart.controls['colorChartTitle'].setValue(outFile.color);
-    }
-  }
-
-  selectType(event: any) {
-    this.timeOutactivity(5, true, false,"only");
-    this.resetBooleans();
-    if (event.target.id === 'selType') {
-      this.isTypeSelected = signal(true);
-    } else if (event.target.id === 'selectedType') {
-      this.isTypeSelected = signal(false);
-      this.selectChart.controls['chartType'].setValue(event.target.textContent.trim());
-    } else if (event.target.textContent.trim() !== "cancel") {
-      if (event.target.id === 'viewChartTitle') {
-        this.transferTitle(event.target.id, this.tabParamChart[this.selectedChart - 1].chartTitle, this.tabParamChart[this.selectedChart - 1].chartTitleRgba);
-      } else if (event.target.id === 'viewLegendTitle') {
-        this.transferTitle(event.target.id, this.tabParamChart[this.selectedChart - 1].legendTitle, this.tabParamChart[this.selectedChart - 1].legendTitleRgba);
-      } else if (event.target.id === 'viewAxis') {
-        this.isParamAxis = signal(true);
-      } else
-        if (event.target.id === 'selFontWeight') {
-          this.isFontWeight = signal(true);
-        } else if (event.target.id === 'selectedFontWeight') {
-          this.isFontWeight = signal(false);
-          this.selectTitle.controls['fontWeight'].setValue(event.target.textContent.trim());
-        } else if (event.target.id === 'selTextAlign') {
-          this.isTextAlign = signal(true);
-        } else if (event.target.id === 'selectedTextAlign') {
-          this.isTextAlign = signal(false);
-          this.selectTitle.controls['align'].setValue(event.target.textContent.trim());
-        } else if (event.target.id === 'selTitlePosition') {
-          this.isTitlePosition = signal(true);
-        } else if (event.target.id === 'selectedTitlePosition') {
-          this.isTitlePosition = signal(false);
-          this.selectTitle.controls['position'].setValue(event.target.textContent.trim());
-        } else if (event.target.id === 'selTitleDisplay') {
-          this.isTitleDisplay = signal(true);
-        } else if (event.target.id === 'selectedTitleDisplay') {
-          this.isTitleDisplay = signal(false);
-          this.selectTitle.controls['display'].setValue(event.target.textContent.trim());
-        }
-    } else { this.resetBooleans(); }
-
-
-  }
-
-  selectPeriod(event: any) {
-    this.timeOutactivity(5, true, false,"only");
-    this.resetBooleans();
-    if (event.target.id === 'selPeriod') {
-      this.isPeriodSelected = signal(true);
-    } else if (event.target.id === 'selectedPeriod') {
-      this.isPeriodSelected = signal(false);
-      this.selectChart.controls['period'].setValue(event.target.textContent.toLowerCase().trim());
-    }
-  }
-
-  selectPeriodAll(event: any) {
-    this.timeOutactivity(5, true, false,"only");
-    this.resetBooleans();
-    if (event.target.id === 'selPeriod') {
-      this.isPeriodSelected = signal(true);
-    } else if (event.target.id === 'selectedPeriod') {
-      this.isPeriodSelected = signal(false);
-      this.paramAllCharts.controls['period'].setValue(event.target.textContent.toLowerCase().trim());
-    }
-  }
-
-  selectColorAxis(event: any) {
-    if (this.tabLock[5].lock !== 2) {
-      this.timeOutactivity(5, true, false,"only");
-      this.resetBooleans();
-      this.mainWindow.top = 120;
-      this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
-      if (event === "xBorderColor") {
-        this.isSelectXBorderColor = true;
-        this.my_input_child1 = this.selected_XBorderColor;
-        this.my_input_child2 = this.selected_XBorderColor;
-        this.returnSlider = this.returnXBorderColorRgba.slider;
-        this.returnPalette = this.returnXBorderColorRgba.palette;
-
-      } else if (event === "xTicksColor") {
-        this.isSelectXTicksColor = true;
-        this.my_input_child1 = this.selected_XTicksColor;
-        this.my_input_child2 = this.selected_XTicksColor;
-        this.returnSlider = this.returnXTicksRgba.slider;
-        this.returnPalette = this.returnXTicksRgba.palette;
-
-      } else if (event === "yBorderColor") {
-        this.isSelectYBorderColor = true;
-        this.my_input_child1 = this.selected_YBorderColor;
-        this.my_input_child2 = this.selected_YBorderColor;
-        this.returnSlider = this.returnYBorderColorRgba.slider;
-        this.returnPalette = this.returnYBorderColorRgba.palette;
-
-      } else if (event === "yTicksColor") {
-        this.isSelectYTicksColor = true;
-        this.my_input_child1 = this.selected_YTicksColor;
-        this.my_input_child2 = this.selected_YTicksColor;
-        this.returnSlider = this.returnYTicksRgba.slider;
-        this.returnPalette = this.returnYTicksRgba.palette;
-
-      }
-      this.isSliderSelected = signal(true);
-    }
-  }
-
-  selectColor(event: any) {
-    if (this.tabLock[5].lock !== 2) {
-      this.resetBooleans();
-      this.timeOutactivity(5, true, false,"only");
-      this.mainWindow.top = 120;
-      this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
-      if (event === 'canvasColor') {
-        this.isSelectCanvasColor = true;
-        this.my_input_child1 = this.selected_canvasColor;
-        this.my_input_child2 = this.selected_canvasColor;
-        this.returnSlider = this.returnCanvasRgba.slider;
-        this.returnPalette = this.returnCanvasRgba.palette;
-        this.isSliderSelected = signal(true);
-      } else if (event === 'legendColor' || (event === 'colorTitle' && this.isParamLegend())) {
-        this.my_input_child1 = this.selected_legendColor;
-        this.my_input_child2 = this.selected_legendColor;
-        this.returnSlider = this.returnLegendRgba.slider;
-        this.returnPalette = this.returnLegendRgba.palette;
-        if (this.isParamLegend()) {
-          this.isSelectLChartTitleColor = signal(true);
-        } else {
-          this.isSelectLegendColor = true;
-        }
-        this.isSliderSelected = signal(true);
-      } else if (event === 'colorChartTitle' || (event === 'colorTitle' && this.isParamTitle())) {
-        this.my_input_child1 = this.selected_chartTitleColor;
-        this.my_input_child2 = this.selected_chartTitleColor;
-        this.returnSlider = this.returnTitleRgba.slider;
-        this.returnPalette = this.returnTitleRgba.palette;
-        if (this.isParamTitle()) {
-          this.isSelectLChartTitleColor = signal(true);
-        } else {
-          this.isSelectChartTitleColor= signal(true);
-        }
-        this.isSliderSelected = signal(true);
-      } else if (event === "boxColor") {
-        this.isSelectBoxColor = true;
-        this.my_input_child1 = this.selected_boxColor;
-        this.my_input_child2 = this.selected_boxColor;
-        this.returnSlider = this.returnBoxRgba.slider;
-        this.returnPalette = this.returnBoxRgba.palette;
-        this.isSliderSelected = signal(true);
-      }
-
-      else if (event === 'fieldCanvasColor') { //  
-        this.selected_canvasColor = this.selectChart.controls["canvasBackground"].value;
-        this.initRgba(this.returnCanvasRgba);
-      } else if (event === 'fieldLegendColor' || (event === 'fieldColorTitle' && this.isParamLegend())) {
-        this.selected_legendColor = this.selectChart.controls["colorLegendTitle"].value;
-        this.initRgba(this.returnLegendRgba);
-      } else if (event === 'fieldColorChartTitle' || (event === 'fieldColorTitle' && this.isParamTitle())) {
-        this.selected_chartTitleColor = this.selectChart.controls["colorChartTitle"].value;
-        this.initRgba(this.returnTitleRgba);
-      } else if (event === 'fieldBoxColor') {
-        this.selected_boxColor = this.selectChart.controls["boxcolor"].value;
-        this.initRgba(this.returnBoxRgba);
-      } else if (event === 'fieldBoxColor') {
-        this.selected_boxColor = this.selectChart.controls["boxcolor"].value;
-        this.initRgba(this.returnBoxRgba);
-      } else if (event === 'fieldXColorBorder') {
-        this.selected_XBorderColor = this.selectAxisX.controls["borderColor"].value;
-        this.initRgba(this.returnBoxRgba);
-      } else if (event === 'fieldXTicksColor') {
-        this.selected_XTicksColor = this.selectAxisX.controls["ticksColor"].value;
-        this.initRgba(this.returnBoxRgba);
-      } else if (event === 'fieldYColorBorder') {
-        this.selected_YBorderColor = this.selectAxisY.controls["borderColor"].value;
-        this.initRgba(this.returnBoxRgba);
-      } else if (event === 'fieldYTicksColor') {
-        this.selected_YTicksColor = this.selectAxisY.controls["ticksColor"].value;
-        this.initRgba(this.returnBoxRgba);
-      }
-
-
-      if (this.returnSlider.rgba !== '') {
-        this.my_input_child2 = this.returnSlider.rgba;
-      }
-      if (this.returnPalette.rgba !== '') {
-        this.my_input_child1 = this.returnPalette.rgba;
-        this.temporaryColor = this.returnPalette.rgba;
-      }
-    }
-  }
-
-  initRgba(event: any) {
-    event.slider.xPos = 0;
-    event.slider.yPos = 0;
-    event.slider.rgba = '';
-    event.palette.xPos = 0;
-    event.palette.yPos = 0;
-    event.palette.rgba = '';
-  }
-
-
-  fnSlider(event: any) {
-    this.my_input_child1 = event; //used by palette
-    this.my_input_child2 = event; //used by slider
-  }
-
-  fnSliderBis(event: any) {
-    this.returnSlider = event; // returned by slider
-  }
-
-  fnPaletteBis(event: any) {
-    this.returnPalette = event;
-  }
-
-  temporaryColor: string = '';
-  fnPalette(event: any) {
-    if (this.debugPhone === true) {
-      //this.getPosDivPosSliderTrue();
-      this.posDivPosSliderTrue = getPosDiv("posDivSliderTrue");
-    }
-    this.temporaryColor = event;
-  }
-
-
-  fnExitPalette(event: any) {
-   
-    if (this.tabLock[5].lock !== 2) {
-      this.timeOutactivity(5, true, false,"only");
-      if (event === 'Cancel') {
-        this.resetBooleans();
-      } else if (event === 'Save') {
-        if (this.isSelectCanvasColor === true) {
-          this.selected_canvasColor = this.temporaryColor;
-          this.returnCanvasRgba.palette = this.returnPalette;
-          this.returnCanvasRgba.slider = this.returnSlider;
-          this.isSelectCanvasColor = false;
-          this.selectChart.controls['canvasBackground'].setValue(this.temporaryColor);
-        } else if (this.isSelectLegendColor === true || (this.isParamLegend() && this. isSelectLChartTitleColor())) {
-          this.selected_legendColor = this.temporaryColor;
-          this.isSelectLegendColor = false;
-          this.returnLegendRgba.palette = this.returnPalette;
-          this.returnLegendRgba.slider = this.returnSlider;
-          this.selectChart.controls['colorLegendTitle'].setValue(this.temporaryColor);
-
-        } else if (this.isSelectChartTitleColor() || (this.isParamTitle() && this.isSelectLChartTitleColor())) {
-          this.selected_chartTitleColor = this.temporaryColor;
-          this.isSelectChartTitleColor = signal(false);
-          this.returnTitleRgba.palette = this.returnPalette;
-          this.returnTitleRgba.slider = this.returnSlider;
-
-          this.selectChart.controls['colorChartTitle'].setValue(this.temporaryColor);
-
-        } else if (this.isSelectLabColor === true) {
-          if (this.dialogLabColor[this.currentLabColor] === true) {
-            this.tabOfLabelsColor[this.currentLabColor] = this.temporaryColor;
-            this.tabLabelRgba[this.currentLabColor].palette = this.returnPalette;
-            this.tabLabelRgba[this.currentLabColor].slider = this.returnSlider;
-            this.isSelectLabColor = false;
-            this.dialogLabColor[this.currentLabColor] = false;
-          } else if (this.dialogLimitLabColor[this.currentLabColor] === true) {
-            this.tabOfLimitLabelsColor[this.currentLabColor] = this.temporaryColor;
-            this.tabLimitLabelRgba[this.currentLabColor].palette = this.returnPalette;
-            this.tabLimitLabelRgba[this.currentLabColor].slider = this.returnSlider;
-            this.isSelectLabColor = false;
-            this.dialogLimitLabColor[this.currentLabColor] = false;
-          }
-
-        } else if (this.isSelectBoxColor === true) {
-          this.selected_boxColor = this.temporaryColor;
-          this.selectChart.controls['boxcolor'].setValue(this.temporaryColor);
-          this.returnBoxRgba.palette = this.returnPalette;
-          this.returnBoxRgba.slider = this.returnSlider;
-          this.isSelectBoxColor = false;
-        } else if (this.isSelectXBorderColor === true) {
-          this.selected_XBorderColor = this.temporaryColor;
-          this.selectAxisX.controls['borderColor'].setValue(this.temporaryColor);
-          this.returnXBorderColorRgba.palette = this.returnPalette;
-          this.returnXBorderColorRgba.slider = this.returnSlider;
-          this.isSelectXBorderColor = false;
-        } else if (this.isSelectXTicksColor === true) {
-          this.selected_XTicksColor = this.temporaryColor;
-          this.selectAxisX.controls['ticksColor'].setValue(this.temporaryColor);
-          this.returnXTicksRgba.palette = this.returnPalette;
-          this.returnXTicksRgba.slider = this.returnSlider;
-          this.isSelectXTicksColor = false;
-        } else if (this.isSelectYBorderColor === true) {
-          this.selected_YBorderColor = this.temporaryColor;
-          this.selectAxisY.controls['borderColor'].setValue(this.temporaryColor);
-          this.returnYBorderColorRgba.palette = this.returnPalette;
-          this.returnYBorderColorRgba.slider = this.returnSlider;
-          this.isSelectYBorderColor = false;
-        } else if (this.isSelectYTicksColor === true) {
-          this.selected_YTicksColor = this.temporaryColor;
-          this.selectAxisY.controls['ticksColor'].setValue(this.temporaryColor);
-          this.returnYTicksRgba.palette = this.returnPalette;
-          this.returnYTicksRgba.slider = this.returnSlider;
-          this.isSelectYTicksColor = false;
-        }
-
-        if (this.isSelectLChartTitleColor()) {
-          this.selected_colorTitle = this.temporaryColor;
-          this.isSelectLChartTitleColor = signal(false);
-          this.selectTitle.controls['color'].setValue(this.temporaryColor);
-          this.selectTitle.controls['paletteRgba'].setValue(this.returnPalette.rgba);
-          this.selectTitle.controls['paletteXpos'].setValue(this.returnPalette.xPos);
-          this.selectTitle.controls['paletteYpos'].setValue(this.returnPalette.yPos);
-          this.selectTitle.controls['sliderRgba'].setValue(this.returnSlider.rgba);
-          this.selectTitle.controls['sliderXpos'].setValue(this.returnSlider.xPos);
-          this.selectTitle.controls['sliderYpos'].setValue(this.returnSlider.yPos);
-        }
-
-      }
-      this.isSliderSelected = signal(false);
-    }
-  }
-  selectLabelColor(event: any) {
-    if (this.isSelectLabColor === true){
-      this.resetBooleans();
-    }
-    if (this.tabLock[5].lock !== 2) {
-      this.timeOutactivity(5, true, false,"only");
-      const i = event.target.id.indexOf('-');
-      this.dialogLabColor[this.currentLabColor] = false;
-      this.dialogLimitLabColor[this.currentLabColor] = false;
-      this.currentLabColor = Number(event.target.id.substring(i + 1));
-      if (event.target.id.substring(0, i) === "labelLimitColor") {
-        this.dialogLimitLabColor[this.currentLabColor] = true;
-        this.returnPalette = this.tabLimitLabelRgba[this.currentLabColor].palette;
-        this.returnSlider = this.tabLimitLabelRgba[this.currentLabColor].slider;
-      } else {
-        this.dialogLabColor[this.currentLabColor] = true;
-        this.returnPalette = this.tabLabelRgba[this.currentLabColor].palette;
-        this.returnSlider = this.tabLabelRgba[this.currentLabColor].slider;
-      }
-      this.isSelectLabColor = true;
-
-      if (this.returnSlider.rgba !== '') {
-        this.my_input_child2 = this.returnSlider.rgba;
-      }
-      if (this.returnPalette.rgba !== '') {
-        this.my_input_child1 = this.returnPalette.rgba;
-        this.temporaryColor = this.returnPalette.rgba;
-      }
-      this.isSliderSelected = signal(true);
-      this.mainWindow.top = 370;
-      this.posSlider.div.top = this.mainWindow.top + this.subWindow.top;
-    }
-  }
-
-  SelRadio(event: any) {
-    this.openFileAccess.set(false);
-    //console.log('event.target.id='+event.target.id+ "  event.currentTarget.id=" + event.currentTarget.id );
-    if (this.tabLock[5].lock !== 2) {
-      this.timeOutactivity(5, true, false,"only");
-      const i = event.target.id.indexOf('-');
-      const item = Number(event.target.id.substring(i + 1));
-      if (event.target.id === 'submit') {
-
-      } else if (event.target.id.substring(0, 1) === 'A') {
-        if (this.selectedFields[item] === 'Y') {
-          this.FillSelected.selected = 'N';
-          this.ListChart.controls[item].setValue(this.FillSelected);
-          this.selectedFields[item] = 'N';
-        } else if (this.selectedFields[item] === 'N') {
-          this.FillSelected.selected = 'Y';
-          this.ListChart.controls[item].setValue(this.FillSelected);
-          this.selectedFields[item] = 'Y';
-        }
-      } else if (event.target.id.substring(0, 1) === 'L') {
-        if (this.selectedLimitFields[item] === 'Y') {
-          this.FillSelected.selected = 'N';
-          this.ListChart.controls[item + this.ConfigChartHealth.barDefault.datasets.labels.length - 1].setValue(this.FillSelected);
-          this.selectedLimitFields[item] = 'N';
-        } else if (this.selectedLimitFields[item] === 'N') {
-          this.FillSelected.selected = 'Y';
-          this.ListChart.controls[item + this.ConfigChartHealth.barDefault.datasets.labels.length - 1].setValue(this.FillSelected);
-          this.selectedLimitFields[item] = 'Y';
-        }
-      }
-    }
-  }
-
-
-  errorMsg: string = '';
-  fnSelectChart() {
-    this.errorMsg = '';
-    //this.timeOutactivity(5, true, false,"only");
-    
-    // check that all parameters are correct
-    if (this.selectChart.controls['chartType'].value !== '') {
-      for (var i = 0; i < this.lineChartType.length && this.selectChart.controls['chartType'].value.toLowerCase().trim() !== this.lineChartType[i].toLowerCase().trim(); i++) {
-      }
-      if (i === this.lineChartType.length) {
-        this.errorMsg = 'Field TYPE is unknown; please update it';
-      }
-    }
-    if (this.errorMsg === '' && this.selectChart.controls['period'].value !== '') {
-      for (var i = 0; i < this.tabPeriod.length && this.selectChart.controls['period'].value.toLowerCase().trim() !== this.tabPeriod[i].toLowerCase().trim(); i++) {
-      }
-      if (i === this.tabPeriod.length) {
-        this.errorMsg = 'Field PERIOD is unknown; please update it';
-      }
-    }
-    if (this.errorMsg === '' && this.selectChart.controls['startRange'].value !== '' && this.selectChart.controls['endRange'].value !== '' && this.selectChart.controls['endRange'].value < this.selectChart.controls['startRange'].value) {
-      this.errorMsg = 'end date cannot be before start date; please update';
-    }
-
-    if (this.errorMsg === '' && isNaN(this.selectChart.controls['canvasWidth'].value)) {
-      this.errorMsg = 'Field CANVAS WIDTH is not a numeric';
-    }
-    if (this.errorMsg === '' && isNaN(this.selectChart.controls['canvasHeight'].value)) {
-      this.errorMsg = 'Field CANVAS HEIGHT is not a numeric';
-    }
-    if (this.errorMsg === '' && isNaN(this.selectChart.controls['ratio'].value)) {
-      this.errorMsg = 'Field RATIO is not a numeric';
-    }
-    if (this.errorMsg === '') {
-      this.fillInTabOfCharts(this.selectedChart - 1);
-      this.buildChart(this.selectedChart - 1);
-    }
-
-  }
-
-  //nbPass:number=0;
-  buildChart(nb: number) {
-    this.changeCanvas(nb);
-    if (this.tabChart[nb]){
-      this.tabChart[nb].destroy();
-    }
-    this.collectSpecialData(nb, this.overallTab[nb].datasetBar, this.overallTab[nb].labelBar, this.overallTabLimit[nb].dataset, this.overallTabLimit[nb].label);
-  }
-
- 
-
-  //********************** */
-  collectSpecialData(nb: number, datasetsSpecialBar: Array<any>, dateLabelSpecial: Array<any>, datasetsLimit: Array<any>, dateLabelLimit: Array<any>) {
-    var i = 0;
-    var j = 0;
-    var addWeekly: number = 0;
-   
-    const returnData = fillHealthDataSet(dateLabelSpecial, datasetsSpecialBar, this.HealthAllData,this.tabParamChart[nb], this.ConfigChartHealth, addWeekly, this.identification);
-    var refDailySaturated: Array<number> = [];
-    var refDailySugar: Array<number> = [];
-    var refDailyNaturalSugar: Array<number> = [];
-    var refDailyAddedSugar: Array<number> = [];
-    var refDailyCarbs: Array<number> = [];
-    if (returnData!==undefined) {
-        datasetsSpecialBar = returnData.datasets;
-        refDailySaturated = returnData.refSaturated;
-        refDailySugar = returnData.refSugar;
-        refDailyNaturalSugar = returnData.refNaturalSugar;
-        refDailyAddedSugar = returnData.refAddedSugar;
-        refDailyCarbs = returnData.refCarbs;
-    }
-    
-  
-    // prepare the drawing of the horizontal bars
-
-    var iMax: number = 0;
-    var dataValue: number = 0;
-    var datasetsLength: number = 0;
-    iMax = datasetsSpecialBar.length;
-    var labelName: string = '';
-    var newRecords: number = 0;
-    var tabNewItem = [];
-    var labLimit: number = 0;
-    var j = 0;
-    for (var i = 0; i < iMax; i++) {
-      dataValue = 0;
-      if (datasetsSpecialBar[i].label === 'Cholesterol') {
-        dataValue = Number(this.identification.health.Cholesterol.myLimit);
-        labelName = 'Chol. limit';
-        labLimit = 0;
-      } else if (datasetsSpecialBar[i].label === 'Saturated Fat') {
-        labelName = 'Sat. limit';
-        labLimit = 1;
-        dataValue = Number(this.identification.health.SaturatedFat);
-      } else if (datasetsSpecialBar[i].label === 'Proteins') {
-        dataValue = Number(this.identification.health.Protein);
-        labelName = 'Prot. limit';
-        labLimit = 2;
-      } else if (datasetsSpecialBar[i].label === 'Carbs') {
-        dataValue = Number(this.identification.health.Carbs);
-        labelName = 'Carbs limit';
-        labLimit = 3;
-      } else if (datasetsSpecialBar[i].label === 'Sugar') {
-        labelName = 'Add. Sugar limit';
-        labLimit = 4;
-        dataValue = Number(this.identification.health.Sugar);
-      }
-      /* 
-      else if (datasetsSpecialBar[i].label === 'natural Sugar') {
-        labelName = 'natural Sugar';
-        labLimit = 4;
-        dataValue = Number(this.identification.health.Sugar);
-      } else if (datasetsSpecialBar[i].label === 'added Sugar') {
-        labelName = 'added Sugar';
-        labLimit = 4;
-        dataValue = Number(this.identification.health.Sugar);
-      }
-        */
-      if (dataValue > 0) {
-        datasetsSpecialBar.push({
-          type: "line",
-          label: "",
-          backgroundColor: '',
-          borderColor: [], //The line color.
-          data: [],
-          borderWidth: 3, //The line width (in pixels).
-          showLine: true,
-          fill: false, //true 
-          pointBorderWidth: 0,
-          pointBorderColor: '',
-          pointBackgroundColor: '',
-          //order:1,
-          //tension:0.2,
-          pointStyle: false,
-        });
-        if (datasetsSpecialBar[i].label === 'Sugar') {
-          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
-            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailySugar[j];
-          }
-        } else if (datasetsSpecialBar[i].label === 'natural Sugar') {
-          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
-            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailyNaturalSugar[j];
-          }
-        } else if (datasetsSpecialBar[i].label === 'added Sugar') {
-          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
-            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailyAddedSugar[j];
-          }
-        } else if (datasetsSpecialBar[i].label === 'Carbs') {
-          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
-            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailyCarbs[j];
-          }
-        } else
-        if (datasetsSpecialBar[i].label === 'Saturated Fat') {
-          for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
-            datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] =refDailySaturated[j];
-          }
-        } else {
-          if (this.tabParamChart[nb].period === 'daily') {
-            for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
-              datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] = dataValue;
-            }
-          } else if (this.tabParamChart[nb].period === 'weekly') {
-            for (var j = 0; j < datasetsSpecialBar[i].data.length; j++) {
-              datasetsSpecialBar[datasetsSpecialBar.length - 1].data[j] = dataValue * 7;
-            }
-          }
-        }
-
-        datasetsSpecialBar[datasetsSpecialBar.length - 1].borderColor[datasetsSpecialBar.length - 1] = this.tabParamChart[nb].limitLabelsColor[labLimit];
-
-        datasetsSpecialBar[datasetsSpecialBar.length - 1].label = labelName;
-        datasetsSpecialBar[datasetsSpecialBar.length - 1].pointBackgroundColor = this.tabParamChart[nb].limitLabelsColor[labLimit];
-      }
-    }
-
-    const newChart=specialDraw(this.tabCtx[nb],this.tabParamChart[nb], this.ConfigChartHealth, dateLabelSpecial, datasetsSpecialBar);
-    this.tabChart[nb]= newChart;
-  }
-
-
-  resetBooleans() {
-    this.isTypeSelected = signal(false);
-    this.isPeriodSelected = signal(false);
-    this.isSelectLegendColor = false;
-    this.isSelectBoxColor = false;
-    this.isSelectCanvasColor = false;
-    this.isSelectLChartTitleColor = signal(false);
-    this.isSelectLabColor = false;
-    this.dialogLabColor[this.currentLabColor] = false;
-
-    this.isSliderSelected = signal(false);
-    //this.selectedChart=0;
-
-    this.isFontWeight = signal(false);
-    this.isTextAlign = signal(false);
-    this.isTitlePosition = signal(false);;
-    this.isTitleDisplay = signal(false);;
-
-    this.isSelectXBorderColor = false;
-    this.isSelectXTicksColor = false;
-    this.isSelectYBorderColor = false;
-    this.isSelectYTicksColor = false;
-    this.isPosDivSliderTrue = false;
-  }
-
-
-  ConfirmSave(event: any) {
-    this.errorMsg = '';
-    this.resetBooleans();
-    this.theEvent.target.id = event.target.id;
-    this.theEvent.target.value = event.target.value;
-    this.theEvent.target.textContent = event.target.textContent;
-    this.theEvent.checkLock.iWait=0;
-    this.theEvent.checkLock.isDataModified=true;
-    this.theEvent.checkLock.isSaveFile=false;
-    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
-    this.theEvent.fileName=this.SpecificForm.controls['FileName'].value;
-    this.onInputAction = "confirmSave";
-    this.timeOutactivity(0, true, false,"only");
-  }
-
-  cancelTheSave(){
-    this.openFileAccess.set(false);
-    this.IsSaveConfirmed = signal(false);
-    this.isMustSaveFile = false;
-  }
-
-
-  saveFn() {
-    this.openFileAccess.set(false);
-    this.errorMsg = '';
-    this.IsSaveConfirmed = signal(false);
-    this.fillInTabOfCharts(this.selectedChart - 1);
-    if (this.errorMsg === '') {
-      if (this.theEvent.target.id === 'save') {
-          this.fillInCharts(this.tabParamChart[this.selectedChart - 1], this.inFileParamChart.data[this.selectedChart - 1]);
-          this.buildChart(this.selectedChart - 1);
-      } else {
-          for (var i = 0; i < this.tabParamChart.length; i++) {
-            this.fillInCharts(this.tabParamChart[i], this.inFileParamChart.data[i]);
-            this.buildChart(this.selectedChart - 1);
-          }
-      }
-    }
-    //this.isSaveFile = true;
-    this.theEvent.checkLock.iWait=5;
-    this.theEvent.iWait=5;
-    this.theEvent.checkLock.isDataModified=true;
-    this.theEvent.checkLock.isSaveFile=true;
-    this.theEvent.checkLock.iCheck=true;
-    this.theEvent.checkLock.lastInputAt=this.lastInputAt;
-    this.theEvent.checkLock.action="saveParamChart";
-    this.theEvent.fileName = this.SpecificForm.controls['FileName'].value;
-    this.onInputAction = "saveParamChart";
-    this.timeOutactivity(5, true, true,"saveParamChart");
-    this.processSave.emit(this.theEvent);
-  }
-
-  cancelFn(event: string) {
-    this.resetBooleans();
-    this.timeOutactivity(5, true, false,"only");
-     if (event === 'cancelAll') {
-      for (var i = 0; i < this.tabParamChart.length; i++) {
-        this.fillInCharts(this.inFileParamChart.data[i], this.tabParamChart[i]);
-        this.fillInFormFromTab(i);
-        this.buildChart(i);
-      }
-    } else if (event === 'cancelOne') {
-      this.fillInCharts(this.inFileParamChart.data[this.selectedChart - 1], this.tabParamChart[this.selectedChart - 1]);
-      this.fillInFormFromTab(this.selectedChart - 1);
-      this.buildChart(this.selectedChart - 1);
-    }
-  }
-
-
-  resultAccessFile(theEvent:any){
-    this.openFileAccess.set(false);
-    //this.openFileAccess=signal(false);
-    if (this.lockValueBeforeCheck!==this.tabLock[5].lock){
-      if (this.tabLock[5].lock===1){
-        this.enableForm();
-        this.errorMsg = "You can now update the file";
-      } else {
-        this.errorMsg = "File is locked by another user";
-        this.disableForm();
-      }
-    }
-    if (this.onInputAction === "confirmSave"){
-      this.SpecificForm.controls['FileName'].setValue(this.identification.fitness.files.myChartConfig);
-      this.IsSaveConfirmed = signal(true);
-    }
-    console.log(theEvent);
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-
-    for (const propName in changes) {
-      console.log('onChange report-Health propName='+propName);
-      if (propName === 'tabLock'){
-        if (this.tabLock[5].lock===1){
-          if (changes[propName].previousValue !==undefined && changes[propName].previousValue.lock!==1){
-            this.errorMsg = "You can now update the file";
-          }
-          this.enableForm();
-        } else {
-          if (changes[propName].previousValue !==undefined && changes[propName].previousValue.lock===1){
-            this.errorMsg = "File is locked by another user";
-          }
-          this.disableForm();
-        }
-      } else if (propName === 'actionParamChart' && changes[propName].firstChange === false) {
-          if ( this.onInputAction === "saveParamChart") {
-            if (this.tabLock[5].lock === 1 && (this.tabLock[5].status === 0 || this.tabLock[5].status === 300)) {
-              if (this.theEvent.target.id === 'save') {
-                this.errorMsg = 'parameters for chart#' + this.selectedChart + ' have been saved';
-              } else if (this.theEvent.target.id === 'saveAll') {
-                this.errorMsg = 'for all charts, parameters have been saved';
-              }
-            } else {
-              this.errorMsg = 'Parameters cannot be saved - error=' + this.tabLock[5].status;
-            }
-            this.onInputAction = "";
-        } 
-      } else if (propName==='returnDataFSParamChart' && changes[propName].firstChange === false) {
-        // is it needed
-        if (this.tabLock[5].lock !== 1 && this.onInputAction === "saveParamChart"){
-          this.errorMsg = "file has been locked by another user; all your updates are lost (" +  this.returnDataFSParamChart.errorMsg + ")" + " status=" + this.tabLock[5].status;
-        } 
-        if (this.tabLock[5].lock === 1) {
-            this.enableForm();
-        } else {
-            this.disableForm();
-        }
-        this.onInputAction = "";
-      } else if ( propName==='statusSaveFn' && changes[propName].firstChange === false) {  //propName === 'callSaveFunction' ||
-        this.onInputAction = "";
-        this.theEvent.checkLock.action="";
-        this.isMustSaveFile = false;
-        this.isSaveParamChart = false;
-        if (this.statusSaveFn.status===200 || this.statusSaveFn.status===0){
-          this.errorMsg='File has been successfully saved';
-          this.isDataModified = false;
-        } else {
-          this.errorMsg=this.statusSaveFn.err;
-        }
-      } 
-    }
-    // //this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j)); 
-  }
-
-
 }

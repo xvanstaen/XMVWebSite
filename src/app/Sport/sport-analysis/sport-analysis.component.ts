@@ -1,13 +1,12 @@
-import { Component, OnInit , Input, Output, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject, ChangeDetectorRef} from '@angular/core';
+import { Component , Input, ChangeDetectorRef} from '@angular/core';
   
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
+import { CommonModule, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { FormGroup, FormControl} from '@angular/forms';
 
-import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
-import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
-import { findIds, formatHHMNSS } from '../../MyStdFunctions';
+import { configServer, LoginIdentif,  OneBucketInfo,  Bucket_List_Info } from '../../JsonServerClass';
+import {classFileSport, classNewLoop, classCircuitRec, classTotalLoop, } from '../classSport';
+import { formatHHMNSS } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
 import { ManageCircuitsComponent } from '../../Sport/manage-circuits/manage-circuits.component';
@@ -25,6 +24,8 @@ export class SportAnalysisComponent {
     private ManageGoogleService: ManageGoogleService,
     private cdr: ChangeDetectorRef
     ) { }
+
+  debug:boolean=false;
 
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;
@@ -167,7 +168,7 @@ RetrieveAllObjects(){
           },
           error_handler => {
             this.message='RetrieveAllObjects() - error handler= '+ error_handler;
-            console.log(this.message);          } 
+            this.log(this.message);          } 
     )
   }
 
@@ -295,7 +296,7 @@ createDisplay(){
                       for ( k=0; k<this.allFilesPerf[iFile].content.length  && 
                           this.allFilesPerf[iFile].content[l].newLoop[0].to!==this.displayPerf.content[k].newLoop[0].to; k++){} 
                       if (this.allFilesPerf[iFile].content[l].newLoop[0].to!==this.displayPerf.content[k-1].newLoop[0].to){
-                          console.log('there is a problem with the creation of the file "filePerf"')
+                          this.log('there is a problem with the creation of the file "filePerf"')
                           
                           } else { // true was found
                             
@@ -378,7 +379,7 @@ getFile(bucket:string, object:string, iList:number){
   this.message='';
   this.ManageGoogleService.getContentObject(this.configServer, bucket, object )
     .subscribe((data ) => {
-      console.log('RetrieveSelectedFile='+object);
+      this.log('RetrieveSelectedFile='+object);
       this.nbFilesRead++
       if (data.circuit!==this.specificCircuit.name){
           // remove the item from the list
@@ -441,7 +442,7 @@ getFile(bucket:string, object:string, iList:number){
       }
       this.message='failure to access '+object;
       
-      console.log(this.message);
+      this.log(this.message);
       } 
     )
 }
@@ -463,5 +464,8 @@ syncScrollBar(event:any){
     }
   }
 }
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[app.component:]', ...args);
+  }
 
 }

@@ -1,26 +1,28 @@
 
 <div style="width:500px; margin-left:15px; " >
-    <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="bucketName"  [NbRefresh_Bucket]="NbRefresh_Bucket"
+    <app-ListBucketContent [configServer]="configServer"  [Bucket_Name]="identification.performanceSport.bucket"  [NbRefresh_Bucket]="NbRefresh_Bucket"
           [tabMetaPerso]="tabMetaPerso" (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)">
     </app-ListBucketContent>
 </div>
-
-<div class="error" *ngIf="errorMsg!==''">
-    <div class="skipLine"></div>
-    {{errorMsg}}
-    <div class="skipLine"></div>
-</div>
-
+@if (errorMsg()!==""){
+    <div style="margin-top:5px; padding-left:10px; margin-left:40px;width:500px; color:blue; font-size:15px; font-weight: bolder; background-color: cyan;">
+            {{errorMsg()}}
+        </div>
+        <br><br>
+}
 <!-- isPerfRetrieved===true means a component wants to retrieve the perf file only -->
-<div *ngIf="isPerfRetrieved===false && isFileProcessed===true && perf.length>0">
-    
-    <div *ngIf="SelectedBucketInfo.name!==''" style="margin-left:40px; width:380px; display:inline-block; background-color:cyan; border:blue 1px solid;">
-        <span style="color:black; font-size:18px; font-weight: bolder; text-align:center; display:inline-block; width:100%;">Selected file </span>
-            <span style="color:green; font-size:14px; font-weight: bolder; text-align: center; display:inline-block; width:100%;">
-                {{this.SelectedBucketInfo.name}}
-            </span>
-            <div class="skipLine"></div>
-    </div>
+@if (!isPerfRetrieved){
+    @if (SelectedBucketInfo.name!==''){
+        <div style="margin-left:40px; width:380px; display:inline-block; background-color:cyan; border:blue 1px solid;">
+            <span style="color:black; font-size:18px; font-weight: bolder; text-align:center; display:inline-block; width:100%;">Selected file </span>
+                <span style="color:green; font-size:14px; font-weight: bolder; text-align: center; display:inline-block; width:100%;">
+                    {{this.SelectedBucketInfo.name}}
+                </span>
+                <div class="skipLine"></div>
+        </div>
+    }
+}
+@if (isFileReceived() && isPerfProcessCompleted()){
     <form [formGroup]="formOptions" >
 
         <div style="margin-left:40px; width:380px; display:block; height:140px; border:solid 2px blue;">
@@ -32,9 +34,7 @@
                 
             <input type="text"   class="inputText blockFloat" formControlName="meters" value="meters" >
             <label class="theLabel blockFloat">meters</label>
-
-            <button *ngIf="isFileProcessed===true && perf.length>0" id='selOptions' class="sizeButtons" style="margin-top:10px; margin-left:100px; " (click)="checkOptions()"> Submit</button>
-                
+            <button id='selOptions' class="sizeButtons" style="margin-top:10px; margin-left:100px; " (click)="checkOptions()"> Submit</button>
             
         </div>
     </form>
@@ -50,54 +50,53 @@
         </div>
     </form>
    
-    <div *ngIf="isManagePointOfRef===false">
+    @if (!isManagePointOfRef){
         <div class="skipLine"></div>
         <div style="width:300px; display:inline-block; height:30px; padding-top:5px; padding-left:15px; margin-left:40px; background-color: cyan;">Manage Point Of Reference  </div>
         <button  class="sizeButtons" style="width:80px;" (click)="actionPointOfRef('managePoRef')">Submit</button>
         <div class="skipLine"></div>
-    </div>
-    <div *ngIf="isManagePointOfRef===true">
+    } 
+    @if (!isFilePorReceived() || (isFilePorReceived() && isManagePointOfRef)){
         <div style="width:300px; display:inline-block; height:30px; padding-top:5px; padding-left:15px; margin-left:40px; background-color: cyan;">Manage Point Of Reference </div>
         <button  class="sizeButtons" style="width:80px;" (click)="actionPointOfRef('cancelPoRef')">Cancel display</button>
         <div class="skipLine"></div>
-        <app-manage-point-of-ref [configServer]="configServer" [identification]="identification">
+        <app-manage-point-of-ref [configServer]="configServer" [identification]="identification"
+            [isCircuitSelected]="isCircuitSelected"
+            (returnFile)="returnPoR($event)">
         </app-manage-point-of-ref>
-    </div>
+
+    }
     <div id="topTable" class="skipLine"></div>
-    <div *ngIf="isPerfProcessCompleted===true">
 
         <table style="margin-left:40px;">
             <thead >
                 <tr>
-                    
                     <th class="tabH"  >TIME (sec) </th>
                     <th class="tabH"  >DISTANCE (meter) </th>
                     <th class="tabH">SPEED (km/h)</th>
-                    <th style="width:95px;  background-color: white;border:solid 0px blue;">&nbsp;</th>
+                    <th style="width:120px;  background-color: white;border:solid 0px blue;">&nbsp;</th>
                     <th class="tabH"  >TIME (sec) </th>
                     <th class="tabH"  >TIME (hh:mm:ss) </th>
                     <th class="tabH"  >DISTANCE (meter) </th>
                     <th class="tabH" >SPEED (km/h)</th>
                 </tr>
             </thead>
-
             <tbody >
-                <tr *ngFor="let tab of tabSecond; let i=index" >
-                    <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.interval}} </td>
-                    <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
-                    <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
-                    <td style="background-color: white;">&nbsp;</td>
-                    <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.cumulInterval}} </td>
-                    <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulTime}}</td>
-                    <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulDist * 1000 | number:'1.0-0'}}</td>
-                    <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulSpeed  | number:'1.1-2'}}</td>
-                </tr>
+                @for (tab of tabSecond;track $index; let i = $index){
+                    <tr >
+                        <td class="tabRow" style="border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.interval}} </td>
+                        <td class="tabRow" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
+                        <td class="tabRow" style="border-right:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
+                        <td style="background-color: white;">&nbsp;</td>
+                        <td class="tabRow" style="border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.cumulInterval}} </td>
+                        <td class="tabRow" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulTime}}</td>
+                        <td class="tabRow" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulDist * 1000 | number:'1.0-0'}}</td>
+                        <td class="tabRow" style="border-right:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulSpeed  | number:'1.1-2'}}</td>
+                    </tr>
+                }
             </tbody>
         </table>
-
-        <div class="skipLine"></div>
-
-        <table style="margin-left:40px;">
+        <table style="margin-top:6px; margin-left:40px; overflow-x:hidden;">
             <thead>
                 <tr>
                     <th class="tabH"  >DISTANCE (meter) </th>
@@ -112,33 +111,29 @@
                 </tr>
             </thead>
         </table>
-        <div style="margin-left:40px; height:210px; overflow-y:scroll; width:670px;">
-        <table >    
-            <tbody >
-                
-                    <tr *ngFor="let tab of tabMeter; let i=index" >
-                    
-                        <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
-                        <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.time}} </td>
-                        <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.strTime}}</td>
-                        <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
-                        <td style="width:20px; background-color: white;">&nbsp;</td>
-                        <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulDist * 1000 | number:'1.0-0'}}</td>
-                        <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.cumulTime}} </td>
-                        <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulStrTime}}</td>
-                        <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulSpeed  | number:'1.1-2'}}</td>
-
-                    </tr>
-                
-            </tbody>
-        </table>
+        <div style="margin-left:40px; height:210px; overflow-y:scroll;overflow-x:hidden; width:870px;">
+            <table >    
+                <tbody >
+                    @for (tab of tabMeter; track $index; let i=$index){
+                        <tr >
+                            <td class="tabRow" style="border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
+                            <td class="tabRow" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.time}} </td>
+                            <td class="tabRow" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.strTime}}</td>
+                            <td class="tabRow" style="border-right:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
+                            <td style="width:20px; background-color: white;">&nbsp;</td>
+                            <td class="tabRow" style="border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulDist * 1000 | number:'1.0-0'}}</td>
+                            <td class="tabRow" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.cumulTime}} </td>
+                            <td class="tabRow" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulStrTime}}</td>
+                            <td class="tabRow" style="border-right:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.cumulSpeed  | number:'1.1-2'}}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
 
+        <div style="margin-top:6px; margin-left:100px; color:blue; font-size:18px;">CONTENT OF FILE {{this.SelectedBucketInfo.name}}</div>
 
-        <div class="skipLine"></div>
-        <div style="margin-left:100px; color:blue; font-size:18px;">CONTENT OF FILE {{this.SelectedBucketInfo.name}}</div>
-
-        <div style="margin-left:40px; width:300px;">
+        <div style="margin-left:40px; width:400px;">
             <div class="skipLine"></div>
             <div style="height:30px;  width:100%; display:inline-block; border:solid 1px blue; background-color: cyan;">
                 Altitude at departing point {{perf[0].alt}} meters
@@ -161,67 +156,109 @@
                 Highest speed {{speed.highest}} at km {{speed.dist | number:'1.1-3'}}
             </div>
             <div class="skipLine"></div>
-        
+        </div>
+        <div style="margin-left:40px; width:1050px;">
             <table >
                 <thead>
                     <tr>
-                        <th class="tabH"  >TIME (sec) </th>
-                        <th class="tabH"  >DISTANCE (meter) </th>
-                        <th class="tabH"  >SPEED (km/h)</th>
-                        <th class="tabH"  >HEART </th>
+                        <th class="tabH"  style="width:65px;">TIME (sec) </th>
+                        <th class="tabH"  style="width:90px;">DISTANCE (meter) </th>
+                        <th class="tabH"  style="width:90px;">SPEED (km/h)</th>
+                        <th class="tabH"  style="width:50px;">HEART </th>
                         <th class="tabH"  >ALTITUDE </th>
                         <th class="tabH"  >LATITUDE </th>
                         <th class="tabH"  >LONGITUDE</th>
                         <th class="tabH"  >SLOPE</th>
+                        <th class="tabH porEven"  style="width:150px;" (click)="calculatePoR()">PoR @if (country>-1){{{filePoR[country].country}}} (click for actions)</th>
                     </tr>
                 </thead>
             </table>
-            <div style="height:210px; overflow-y:scroll; width:670px;">
-            <table >    
-                <tbody >
-                        <tr *ngFor="let tab of perf; let i=index" >
-                        
-                            <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.time}} </td>
-                            <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
-                            <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
-                            <td class="tabRow" style="border-left:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.heart | number:'1.0-0'}}</td>
-                            <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.alt | number:'1.1-4'}} </td>
-                            <td class="tabRow" [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lat | number:'1.1-7'}}</td>
-                            <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lon  | number:'1.1-7'}}</td>
-                            <td class="tabRow" style="border-right:solid 1px blue; " [ngClass]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.slope  | number:'1.1-5'}}</td>
+            <div style="height:210px; overflow-y:scroll; ">
+                <table >    
+                    <tbody >
+                        @for ( tab of perf; track $index; let i=$index) {  
+                            @if (!isDisplayRefPor || (isDisplayRefPor && tab.refPoR!=="")){
+                            <tr >
+                                <td class="tabRow" style="width:65px; border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.time}} </td>
+                                <td class="tabRow" style="width:90px;border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.dist  * 1000 | number:'1.0-0'}}</td>
+                                <td class="tabRow" style="width:90px;border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.speed  | number:'1.1-2'}}</td>
+                                <td class="tabRow" style="width:50px; border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.heart | number:'1.0-0'}}</td>
+                                <td class="tabRow" style="border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" >{{tab.alt | number:'1.1-4'}} </td>
+                                <td class="tabRow" style="border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lat | number:'1.1-7'}}</td>
+                                <td class="tabRow" style="border-left:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.lon  | number:'1.1-7'}}</td>
+                                <td class="tabRow" style="border-left:solid 1px blue " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.slope  | number:'1.1-5'}}</td>
+                                <td class="tabRow"  style="width:150px; border-left:solid 1px blue; border-right:solid 1px blue; " [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}">{{tab.refPoR}}</td>
 
-                        </tr>
-                    
-                </tbody>
-            </table>
+                            </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="skipLine"></div>
-        <div class="skipLine"></div>
-        <div *ngIf="isConfirmSave===false" style="margin-left:40px; width:320px; display:inline-block; border:solid 2px blue; height:80px;  background-color: cyan;"> 
-            <div style="width:95%; display:inline-block; padding-top:5px; height:30px; padding-left:5px; margin-left:5px;">Do you want to save the file in a JSON format </div>
-            <button  class="sizeButtons" style="width:80px; margin-left:110px; height:30px;" (click)="confirmSave('confirmSave')">Confirm</button>
+        <div style="margin-top:5px; padding-left:10px; margin-left:40px;width:700px; color:blue; font-size:15px; font-weight: bolder; background-color: cyan;">
+            {{saveMsg()}}
         </div>
-        <div *ngIf="isConfirmSave===true"> 
+        <div class="skipLine"></div>
+        @if (!isConfirmSave){
+            <div  style="margin-left:40px; width:320px; display:inline-block; border:solid 2px blue; height:80px;  background-color: cyan;"> 
+                <div style="width:95%; display:inline-block; padding-top:5px; height:30px; padding-left:5px; margin-left:5px;">Do you want to save the file in a JSON format </div>
+                <button  class="sizeButtons" style="width:80px; margin-left:110px; height:30px;" (click)="confirmSave('confirmSave')">Confirm</button>
+                <br>
+                
+            </div>
+            <button  class="sizeButtons" style="font-weight:bolder; width:120px; margin-left:110px; height:40px;" (click)="displayRefPorOnly()"> @if (!isDisplayRefPor){Display records with PoR only} @else {Display all records}</button>
+            <div style="margin-top:10px; display:inline-block; width:250px; margin-left:40px; max-height:100px;">
+                <span style="text-align: center; background-color: blue; color: white; font-size: 16px;">Select the country</span>
+                @for (tab of filePoR; track $index; let i = $index){
+                    <div class="sel" style="padding-left:10px; color:blue" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" (click)="selectedCountry(i)">{{tab.country}}</div>
+                }
+                <div style="width:95%; display:inline-block; padding-top:5px; height:30px; padding-left:5px; margin-left:5px;">Circuits </div>
+                @for (tab of fileCircuit; track $index; let i = $index){
+                    <div class="sel" style="padding-left:10px; color:blue" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" (click)="selCircuit(i)">{{tab.name}}</div>
+                }
+
+            </div>
+        } @else {        
             <div [formGroup]="formOptions" style="margin-left:40px; width:280px; display:inline-block; border:solid 2px blue;  height:120px; background-color: cyan;">
                 <div style="width:90%; display:inline-block; height:30px; padding-top:5px;  margin-left:25px;">Save the file under the name : </div>
-
                     <input type="text"  class="inputText" style="width:95%; padding-left:5px; margin-left:5px; height:30px;" formControlName="fileName" value="fileName" >
-                
-
                 <div class="skipLine"></div>
                 <button  class="sizeButtons" style="width:80px; margin-left:50px;" (click)="saveFile()">Submit</button>
                 <button  class="sizeButtons" style="width:80px; margin-left:10px;" (click)="cancelFile()">Cancel</button>
-            
-                
-            </div>
-        </div>
-    </div>
 
-    <div class="skipLine"></div>
-    <div  class="skipLine"></div>
-    <div class="skipLine"></div>
-    <div id="bottomPage"></div>
-    <div class="skipLine"></div>
-    <div class="skipLine"></div>
-</div>
+            </div>
+        }
+    }
+@if (!isFileCircuitReceived()){
+    <app-manage-circuits [configServer]="configServer" [identification]="identification" 
+            (returnCircuit)="returnCircuit($event)" [selectionCircuit]="isCircuitSelected">
+    </app-manage-circuits>   
+}
+@if (isSpecificCircuitSelected()){
+    <div style="width:900px; margin-left:35px; margin-top:10px; background-color: lightgrey;">
+        <div style="width:100%;"> Country: {{specificCircuit.country}}</div>
+        <div style="width:100%;"> Name: {{specificCircuit.name}}</div>
+        @for (tab of specificCircuit.points; track $index; let i=$index){
+            <div style="width:100%;" class="sel" [class]="{'even':i % 2 ===0, 'odd': i % 2 !==0}" (click)="selPriority(i)">
+                <span style="margin-left:6px;  font-size: 16px;" >Nb:{{i}}</span>
+                <span style="margin-left:6px;" >ref:{{tab.ref}}</span>
+                <span style="margin-left:6px;" >pri:{{tab.prio}}</span>
+                <span style="margin-left:6px;" >lat:{{tab.lat}}</span>
+                <span style="margin-left:6px;" >lon:{{tab.lon}}</span>
+                <span style="margin-left:6px;" >Dist:{{specificCircuit.dist[i]}}</span>
+                <span style="margin-left:6px;" >varLat:{{tab.varLat}}</span>
+                <span style="margin-left:6px;" >varLon:{{tab.varLon}}</span>
+            </div>
+        }
+
+   
+    </div>
+    <div style="width:100%;"> Sort your circuit</div>
+    @for (tab of specificCircuit.points; track $index; let i=$index){
+       {{i}}: <input type="number" [id]="i" (input)=onInput($event) value="tabSorting[i]" style="width:30px;">
+    }
+    <button  class="sizeButtons" style="width:120px; margin-left:100px;" (click)="sortTheCircuit()">Sort</button>
+ }
+    <div id="bottomPage" style="margin-top:30px;">&nbsp;</div>
+

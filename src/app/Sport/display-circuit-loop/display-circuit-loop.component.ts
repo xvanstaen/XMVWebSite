@@ -1,474 +1,478 @@
-import { Component, OnInit , Input, Output, OnChanges, HostListener,  OnDestroy, HostBinding, ChangeDetectionStrategy, 
-  SimpleChanges,EventEmitter, AfterViewInit, AfterViewChecked, AfterContentChecked, Inject} from '@angular/core';
-  
-import { CommonModule,  DatePipe, formatDate, ViewportScroller } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { Component, signal, Input, Output, SimpleChanges, EventEmitter, OnInit, OnChanges } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 
-import {msginLogConsole} from '../../consoleLog'
-import { configServer, LoginIdentif,  OneBucketInfo,  msgConsole, classCredentials, Bucket_List_Info } from '../../JsonServerClass';
-import {classFileSport, classPointOfRef, classNewLoop, classCircuitRec, classFilePerf,classWorkCircuit, classTabPoR, classTotalLoop, classCountryPoR, classHeaderFileSport} from '../classSport';
-import { findIds, formatHHMNSS } from '../../MyStdFunctions';
-import { fillHeaderFile , reinitTotal, copyInitPerf, copyLegInOut, copyInOut, copyLoopInOut, updateTabPor, createPerfTotal} from '../commonSportFunctions';
-
+import { classFileSport, classHeaderFileSport, classFilePerf, classNewLoop, PerfLeg } from '../classSport';
+import { formatHHMNSS } from '../../MyStdFunctions';
+import { fillHeaderFile, reinitTotal, copyLegInOut, copyInOut, copyLoopInOut, createPerfTotal, speedKmh } from '../commonSportFunctions';
+// NOTE: add `export` in front of `function speedKmh` in commonSportFunctions.ts
 
 @Component({
   selector: 'app-display-circuit-loop',
   templateUrl: './display-circuit-loop.component.html',
   styleUrls: ['./display-circuit-loop.component.css'],
-  standalone:true,
-  imports:[CommonModule, FormsModule, ReactiveFormsModule, ],
+  standalone: true,
+  imports: [DecimalPipe, ReactiveFormsModule],
 })
-export class DisplayCircuitLoopComponent {
+export class DisplayCircuitLoopComponent implements OnInit, OnChanges {
 
-  @Input() perfCircuit:Array<any>=[];
-  @Input() filePerf:Array<any>=[];
-  @Input() headerPerf= new classHeaderFileSport;
-  @Input() nbSave:number=0;
-  @Input() displayTab:number=0;
+  private debug: boolean = false;
 
-  @Output() savePerf= new EventEmitter<any>();
-  @Output() uploadPerfCircuit= new EventEmitter<any>();
+  @Input() perfCircuit: Array<PerfLeg> = [];
+  @Input() filePerf: Array<classFilePerf> = [];
+  @Input() headerPerf = new classHeaderFileSport;
+  @Input() displayTab: number = 0;
 
+  @Output() savePerf = new EventEmitter<any>();
+  @Output() uploadPerfCircuit = new EventEmitter<any>();
   @Output() displaySportChart = new EventEmitter<any>();
 
+  /** rows of the table body: PoR rows carry the name of the PoR of the leg in the first column */
+  readonly detailRows: ReadonlyArray<{ key: 'perfRecordFrom' | 'perfRecordTo' | 'theTime' | 'strTime' | 'dist' | 'speed'; label: string; leg: 'from' | 'to' | '' }> = [
+    { key: 'perfRecordFrom', label: '', leg: 'from' },
+    { key: 'perfRecordTo', label: '', leg: 'to' },
+    { key: 'theTime', label: 'Time (sec)', leg: '' },
+    { key: 'strTime', label: 'Time', leg: '' },
+    { key: 'dist', label: 'Distance (km)', leg: '' },
+    { key: 'speed', label: 'Speed (km/h)', leg: '' },
+  ];
 
-  tabIdScroll:Array<string>=[];
+  tabIdScroll: Array<string> = [];
 
-  theFile= new classFileSport;
-  savePerfCircuit:Array<any>=[];
+  theFile = new classFileSport;
+  savePerfCircuit: Array<PerfLeg> = [];
 
-  selectedLoop:number=0;
-  isActionDisplay:boolean=false;
-  actionDisplay:Array<string>=["Cancel","Exclude","Delete","Restore"]
-  perfTotalCircuit:Array<any>=[];
-  maxWidthTable:number=0;
-  widthTable:number=0;
-  tabManageLoop:Array<string>=[];
-  nbItemsLoop:number=-1;
-  isManageExclude:boolean=false;
-  excludeItem:number=0;
-  tabExclDel:Array<string>=[];
-  formOptions: FormGroup = new FormGroup({ 
+  selectedLoop: number = 0;
+  isActionDisplay = signal<boolean>(false);
+  actionDisplay: Array<string> = ["Cancel", "Exclude", "Delete", "Restore"];
+  perfTotalCircuit: Array<any> = [];
+  maxWidthTable: number = 0;
+  widthTable: number = 0;
+  tabManageLoop: Array<string> = [];
+  nbItemsLoop: number = -1;
+  isManageExclude: boolean = false;
+  excludeItem: number = 0;
+  tabExclDel: Array<string> = [];
+  formOptions: FormGroup = new FormGroup({
     fileName: new FormControl("", { nonNullable: true }),
     record: new FormControl("", { nonNullable: true }),
-  })
-  newLat:number=0;
-  newLon:number=0;
-  TabOfId:Array<any>=[];
-  strFound:string="";
+  });
+  newLat: number = 0;
+  newLon: number = 0;
+  TabOfId: Array<any> = [];
+  strFound: string = "";
 
-  isPerfCircuitRetrieved:number=0;
+  isPerfCircuitRetrieved: number = 0;
 
-  isModifOk:boolean=false;
-  isFilesToSave:boolean=false;
-  isNewRecordValid:boolean=false;
-  errorMessage:string="";
-  errorMsg:string="";
-  
-  nbSavedFiles:number=0;
-  saveMsg:string="";
-  maxFiles:number=0;
+  isModifOk: boolean = false;
+  isFilesToSave: boolean = false;
+  isNewRecordValid: boolean = false;
+  errorMessage = signal<string>("");
+  errorMsg = signal<string>("");
 
-  colOne:number=240;
+  nbSavedFiles: number = 0;
+  saveMsg = signal<string>("");
+  maxFiles: number = 0;
 
-  isPbDetected:boolean=false;
-  stringPerfCircuit:string="";
-  ngOnInit(){
-    if (this.displayTab===1){
-      this.tabIdScroll[0]="scroll-3";
-      this.tabIdScroll[1]="scroll-4";
-    } else {
-      this.tabIdScroll[0]="scroll-5";
-      this.tabIdScroll[1]="scroll-6";
+  colOne: number = 240;
+
+  isPbDetected = signal<boolean>(false);
+  stringPerfCircuit: string = "";
+  isSaveFileRequested: boolean = false;
+
+  // ---------------------------------------------------------------- init
+
+  ngOnInit() {
+    this.tabIdScroll = this.displayTab === 1 ? ["scroll-3", "scroll-4"] : ["scroll-5", "scroll-6"];
+
+    const pb = this.perfCircuit.length === 0 || this.perfCircuit.some(leg => leg === undefined);
+    this.isPbDetected.set(pb);
+    if (pb) {
+      this.stringPerfCircuit = JSON.stringify(this.perfCircuit);
+      return;
     }
-    
-    
-    for (var i=0; i<this.perfCircuit.length && this.isPbDetected===false; i++){
-        if (this.perfCircuit[i]===undefined){
-          this.isPbDetected=true;
-          this.stringPerfCircuit=JSON.stringify(this.perfCircuit);
-        }
-    }
-    if (this.isPbDetected===false){
-      for (var iLoop=0; iLoop<this.perfCircuit[0].newLoop.length; iLoop++){
-        this.tabManageLoop[iLoop]="";
-      }
-      this.perfTotalCircuit=createPerfTotal(this.perfCircuit, this.perfTotalCircuit);
-      this.fnSizeTable();
-      this.copyToSavePerfCirc();
-    }
-
+    this.resetLoopFlags();
+    this.perfTotalCircuit = createPerfTotal(this.perfCircuit, this.perfTotalCircuit);
+    this.fnSizeTable();
+    this.copyToSavePerfCirc();
   }
 
-  fnSizeTable(){
-    this.widthTable=this.perfTotalCircuit[0].newLoop.length * 80 + this.colOne;
-    if (this.widthTable<550){
-      this.maxWidthTable=this.widthTable;
-    }
-    else {
-      this.maxWidthTable=550;
-    }
+  /** one flag per loop, all cleared */
+  private resetLoopFlags() {
+    const nbLoops = this.perfCircuit[0].newLoop.length;
+    this.tabManageLoop = new Array<string>(nbLoops).fill("");
+    this.tabExclDel = [];
   }
 
-  manageExclude(event:any){
-    const theValue=findIds(event.target.id,"-");
-    for (var i=0; i<theValue.tabOfId.length; i++){
-      this.TabOfId[i]=theValue.tabOfId[i];
-    }
-    this.isManageExclude=true;
-    this.newLat=0;
-    this.newLon=0;
+  fnSizeTable() {
+    this.widthTable = this.perfTotalCircuit[0].newLoop.length * 80 + this.colOne;
+    this.maxWidthTable = Math.min(this.widthTable, 550);
+  }
+
+  // ---------------------------------------------------------------- helpers
+
+  /** leg selected in the table (undefined when none) */
+  get selectedLeg(): classNewLoop | undefined {
+    return this.perfCircuit[this.TabOfId[0]]?.newLoop[this.TabOfId[1]];
+  }
+
+  private legAt(iLeg: number, jLoop: number): classNewLoop {
+    return this.perfCircuit[iLeg].newLoop[jLoop];
+  }
+
+  private recordValue(): number {
+    return Number(this.formOptions.controls["record"].value);
+  }
+
+  /** dist / time / speed of a leg from its perfRecordFrom / perfRecordTo records */
+  private recomputeLeg(leg: classNewLoop) {
+    const from = this.filePerf[leg.perfRecordFrom];
+    const to = this.filePerf[leg.perfRecordTo];
+    leg.dist = to.dist - from.dist;
+    leg.theTime = to.time - from.time;
+    leg.strTime = formatHHMNSS(leg.theTime);
+    leg.speed = speedKmh(leg.dist, leg.theTime);
+  }
+
+  private refreshTotal(jLoop: number) {
+    this.perfTotalCircuit = reinitTotal(jLoop, this.perfCircuit, this.perfTotalCircuit);
+  }
+
+  resetLeg(iLeg: number, iLoop: number) {
+    Object.assign(this.legAt(iLeg, iLoop), {
+      exclude: "", dist: 0, speed: 0, theTime: 0, strTime: "",
+      from: "", to: "", perfRecordFrom: 0, perfRecordTo: 0,
+    });
+  }
+
+  // ---------------------------------------------------------------- UI events
+
+  manageExclude(iLeg: number, jLoop: number) {
+    this.TabOfId = [iLeg, jLoop];
+    this.isManageExclude = true;
+    this.newLat = 0;
+    this.newLon = 0;
     this.formOptions.controls["record"].setValue("");
   }
 
-  manageDisplayLoop(event:any){
-    this.isActionDisplay=false;
-    if (event.target.id.substring(0,4)==="loop"){
-      this.selectedLoop=Number(event.target.id.substring(5));
-      if (this.tabManageLoop[this.selectedLoop]==="E"){
-          this.actionDisplay[1]="Include";
-      } else {
-        this.actionDisplay[1]="Exclude";
-      }
-      this.isActionDisplay=true;
-    } else if (event.target.id.substring(0,6)==="action"){
-        if (Number(event.target.id.substring(7))===1){ // Exclude
-          if (this.tabManageLoop[this.selectedLoop]==="E"){
-            this.tabManageLoop[this.selectedLoop]="";
-            this.tabExclDel[this.selectedLoop]="";
-          } else {
-            this.tabManageLoop[this.selectedLoop]="E";
-            this.tabExclDel[this.selectedLoop]="E";
-          };
-        } else  if (Number(event.target.id.substring(7))===2){ // Delete
-              for (var i=0; i<this.perfCircuit.length; i++){
-                this.resetLeg(i,this.selectedLoop);
-              }
-              this.perfTotalCircuit=reinitTotal(this.selectedLoop,this.perfCircuit, this.perfTotalCircuit);
-              this.tabManageLoop[this.selectedLoop]="D";
-              this.tabExclDel[this.selectedLoop]="D";
-        } else  if (Number(event.target.id.substring(7))===3){ // Restore
-              for (var i=0; i<this.perfCircuit.length; i++){
-                this.perfCircuit=copyLoopInOut(this.savePerfCircuit,this.perfCircuit,this.selectedLoop);  
-              }
-              this.perfTotalCircuit=reinitTotal(this.selectedLoop, this.perfCircuit, this.perfTotalCircuit);
-              this.tabManageLoop[this.selectedLoop]="";
-              this.tabExclDel[this.selectedLoop]="";
-        } else {
-              this.tabManageLoop[this.selectedLoop]="";
-              this.tabExclDel[this.selectedLoop]="";
-        }
+  manageDisplayLoop(event: any) {
+    this.isActionDisplay.set(false);
+    const id: string = event.target.id;
+
+    if (id.startsWith("loop")) {
+      this.selectedLoop = Number(id.substring(5)) - 1;
+      this.actionDisplay[1] = this.tabManageLoop[this.selectedLoop] === "E" ? "Include" : "Exclude";
+      this.isActionDisplay.set(true);
+      return;
+    }
+    if (!id.startsWith("action")) { return; }
+
+    const loop = this.selectedLoop;
+    const setFlag = (flag: string) => {
+      this.tabManageLoop[loop] = flag;
+      this.tabExclDel[loop] = flag;
+    };
+
+    switch (Number(id.substring(7))) {
+      case 1: // Exclude / Include
+        setFlag(this.tabManageLoop[loop] === "E" ? "" : "E");
+        break;
+      case 2: // Delete
+        for (let i = 0; i < this.perfCircuit.length; i++) { this.resetLeg(i, loop); }
+        this.refreshTotal(loop);
+        setFlag("D");
+        break;
+      case 3: // Restore
+        this.perfCircuit = copyLoopInOut(this.savePerfCircuit, this.perfCircuit, loop);
+        this.refreshTotal(loop);
+        setFlag("");
+        break;
+      default: // Cancel
+        setFlag("");
     }
   }
 
-
-  resetLeg(iLeg:number,iLoop:number){
-    this.perfCircuit[iLeg].newLoop[iLoop].exclude="";
-    this.perfCircuit[iLeg].newLoop[iLoop].dist=0;
-    this.perfCircuit[iLeg].newLoop[iLoop].speed=0;
-    this.perfCircuit[iLeg].newLoop[iLoop].theTime="";
-    this.perfCircuit[iLeg].newLoop[iLoop].strTime="";
-    this.perfCircuit[iLeg].newLoop[iLoop].from="";
-    this.perfCircuit[iLeg].newLoop[iLoop].to="";
-    this.perfCircuit[iLeg].newLoop[iLoop].perfRecordFrom=0;
-    this.perfCircuit[iLeg].newLoop[iLoop].perfRecordTo=0;
-  }
-
-
-  syncScrollBar(event:any){
-    if (event.srcElement.scrollLeft!==undefined){
-      var elem1=document.getElementById(this.tabIdScroll[0]);
-      var elem3=document.getElementById(this.tabIdScroll[1]);
-      if (elem1!==null){
-        elem1.scrollLeft=event.srcElement.scrollLeft;
-      }
-      if (elem3!==null){
-        elem3.scrollLeft=event.srcElement.scrollLeft;
-  
-      }
+  syncScrollBar(event: Event) {
+    const scrollLeft = (event.target as HTMLElement | null)?.scrollLeft;
+    if (scrollLeft === undefined) { return; }
+    for (const id of this.tabIdScroll) {
+      const elem = document.getElementById(id);
+      if (elem !== null) { elem.scrollLeft = scrollLeft; }
     }
   }
 
-  isSaveFileRequested:boolean=false;
-  onRequestSaveFile(){
+  onRequestSaveFile() {
     this.resetVar();
     this.formOptions.controls['fileName'].setValue(this.headerPerf.name);
-    this.isSaveFileRequested=true;
-    this.isFilesToSave=false;
+    this.isSaveFileRequested = true;
     // request to confirm the upload of the file in the cloud as well as the name of the file
   }
 
-  onUploadCircuit(){
-    if (this.displayTab===2){
+  onUploadCircuit() {
+    if (this.displayTab === 2) {
       this.uploadPerfCircuit.emit(this.perfCircuit);
     }
   }
 
-  displayCharts(){
-    this.displaySportChart.emit({filePerf:this.perfCircuit,fileTotal:this.perfTotalCircuit, display:true});
-  }
-  noDisplayCharts(){
-    this.displaySportChart.emit({filePerf:this.perfCircuit,fileTotal:this.perfTotalCircuit, display:false});
+  displayCharts() { this.emitCharts(true); }
+  noDisplayCharts() { this.emitCharts(false); }
+  private emitCharts(display: boolean) {
+    this.displaySportChart.emit({ filePerf: this.perfCircuit, fileTotal: this.perfTotalCircuit, display });
   }
 
-  onSaveFile(event:any){
-    if (event==="Confirm" && this.formOptions.controls["fileName"].value !==""){
-      this.isSaveFileRequested=false;
-      this.isFilesToSave=true;
-      // update all filePerf records according to initial (savePerfCircuit) and updated (perfCircuit) circuits 
-      for (var iLoop=0; iLoop<this.tabManageLoop.length; iLoop++){
-          if (this.tabManageLoop[iLoop]==="D"){
-            for (i=0; i<this.savePerfCircuit.length; i++){
-                this.filePerf[this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom].refPoR="";
-                this.filePerf[this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom].exclude="";
-            }
-          }
+  // ---------------------------------------------------------------- save
+
+  onSaveFile(event: any) {
+    if (event === "Cancel") {
+      this.isSaveFileRequested = false;
+      this.isFilesToSave = false;
+      return;
+    }
+    const fileName: string = this.formOptions.controls["fileName"].value;
+    if (event !== "Confirm" || fileName === "") { return; } // confirm with empty file name: nothing to do
+
+    this.isSaveFileRequested = false;
+    this.isFilesToSave = true;
+
+    this.updateFilePerfFromCircuit();
+
+    this.headerPerf.name = fileName;
+    this.headerPerf.codeName = fileName;
+    this.theFile = fillHeaderFile(this.headerPerf, this.theFile);
+    this.theFile.content = this.filePerf;
+    // every PoR of filePerf, without duplicates, sorted
+    this.theFile.refPoints = [...new Set(this.filePerf.map(r => r.refPoR).filter(r => r !== ""))].sort();
+    this.savePerf.emit(this.theFile);
+
+    this.removeDeletedLoops();
+  }
+
+  /** reports exclusions / deletions / modified PoR of perfCircuit (vs savePerfCircuit) into filePerf */
+  private updateFilePerfFromCircuit() {
+    const clearRecord = (rec: number) => {
+      this.filePerf[rec].refPoR = "";
+      this.filePerf[rec].exclude = "";
+    };
+
+    // loops deleted as a whole: their PoR are removed from filePerf
+    this.tabManageLoop.forEach((flag, iLoop) => {
+      if (flag !== "D") { return; }
+      for (const leg of this.savePerfCircuit) { clearRecord(leg.newLoop[iLoop].perfRecordFrom); }
+    });
+
+    for (let i = 0; i < this.perfCircuit.length; i++) {
+      const legName = this.savePerfCircuit[i].newLoop[0].from; // name of the PoR starting this leg
+      for (let iLoop = 0; iLoop < this.perfCircuit[i].newLoop.length; iLoop++) {
+        if (this.tabManageLoop[iLoop] === "D") { continue; } // already cleared above
+        const cur = this.legAt(i, iLoop);
+        const old = this.savePerfCircuit[i].newLoop[iLoop];
+
+        if (cur.exclude === "D") {
+          clearRecord(old.perfRecordFrom);
+          continue;
+        }
+        if (cur.exclude === "E") {
+          this.filePerf[cur.perfRecordFrom].exclude = "E";
+        } else if (old.exclude === "E") { // cur.exclude === "" : exclusion has been removed
+          this.filePerf[old.perfRecordFrom].exclude = "";
+        }
+        if (old.perfRecordFrom !== cur.perfRecordFrom) { // PoR has been moved to another record
+          this.filePerf[cur.perfRecordFrom].refPoR = legName;
+          this.filePerf[cur.perfRecordFrom].exclude = cur.exclude;
+          clearRecord(old.perfRecordFrom);
+        }
       }
+    }
 
-      for (var i=0; i<this.perfCircuit.length; i++){
-          for (var iLoop=0; iLoop<this.perfCircuit[i].newLoop.length && i<this.perfCircuit.length; iLoop++){
-            if (this.perfCircuit[i].newLoop[iLoop].exclude==="D"){
-                  this.filePerf[this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom].refPoR="";
-                  this.filePerf[this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom].exclude="";
-              } else {
-                if (this.perfCircuit[i].newLoop[iLoop].exclude==="E"){
-                  this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordFrom].exclude="E";
-                } else if (this.perfCircuit[i].newLoop[iLoop].exclude==="" && this.savePerfCircuit[i].newLoop[iLoop].exclude==="E"){
-                    this.filePerf[this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom].exclude="";
-                } else if (this.perfCircuit[i].newLoop[iLoop].exclude==="D"){
-                    this.filePerf[this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom].exclude="";
-                }
-                if (this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom!==this.perfCircuit[i].newLoop[iLoop].perfRecordFrom ){
-                  this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordFrom].refPoR=this.perfCircuit[i].newLoop[0].from;
-                  this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordFrom].exclude=this.perfCircuit[i].newLoop[iLoop].exclude;
-                  this.filePerf[this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom].refPoR="";
-                  this.filePerf[this.savePerfCircuit[i].newLoop[iLoop].perfRecordFrom].exclude="";
-                }            
-            }
-          }             
+    // the last perfRecordTo refers to the last PoR: its ref must also be stored in filePerf
+    for (let iLoop = this.perfCircuit[0].newLoop.length - 1; iLoop >= 0; iLoop--) {
+      for (let i = this.perfCircuit.length - 1; i >= 0; i--) {
+        const cur = this.legAt(i, iLoop);
+        if (cur.perfRecordFrom !== 0 && cur.perfRecordTo !== 0) {
+          this.filePerf[cur.perfRecordTo].refPoR = this.savePerfCircuit[i].newLoop[0].to;
+          this.filePerf[cur.perfRecordTo].exclude = cur.exclude;
+          return; // last item found
         }
-
-        // the last perfRecordTo refers to the last PoR and the ref must then be stoed in filePerf
-        var trouve=false;
-        for (var iLoop=this.perfCircuit[0].newLoop.length-1; iLoop>-1 && trouve===false; iLoop--){
-            for (i=this.perfCircuit.length-1; i>-1 && trouve===false; i--){
-              if (this.perfCircuit[i].newLoop[iLoop].perfRecordFrom!==0 && this.perfCircuit[i].newLoop[iLoop].perfRecordTo!==0){
-                  // last item is found
-                  this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordTo].refPoR=this.perfCircuit[i].newLoop[0].to;
-                  this.filePerf[this.perfCircuit[i].newLoop[iLoop].perfRecordTo].exclude=this.perfCircuit[i].newLoop[iLoop].exclude;
-                  trouve=true;
-                }
-            }
-        }
-        this.headerPerf.name = this.formOptions.controls["fileName"].value;
-        this.headerPerf.codeName = this.formOptions.controls["fileName"].value;
-        this.theFile=fillHeaderFile(this.headerPerf, this.theFile);
-
-        // all PoR in filePerf are to be stored in table refPoints
-        this.theFile.refPoints.splice(0,this.theFile.refPoints.length);
-        this.theFile.content=this.filePerf;
-        for (var i=0; i<this.filePerf.length; i++){
-          if (this.filePerf[i].refPoR!==""){
-            this.theFile.refPoints[this.theFile.refPoints.length]=this.filePerf[i].refPoR;
-          }
-        }
-        this.theFile.refPoints.sort((a, b) => (a < b) ? -1 : 1);
-        // remove all duplicates
-        for (i=1; i<this.theFile.refPoints.length; i++){
-          if (this.theFile.refPoints[i-1]===this.theFile.refPoints[i]){
-            this.theFile.refPoints.splice(i,1);
-            i--
-          } 
-        }
-        this.savePerf.emit(this.theFile);
-
-        for (var iLoop=0; iLoop<this.tabManageLoop.length; iLoop++){
-          if (this.tabManageLoop[iLoop]==="D"){
-            for (i=0; i<this.savePerfCircuit.length; i++){
-                this.perfCircuit[i].newLoop.splice(iLoop,1);
-            }
-          }
       }
-    } else if (event==="Cancel"){
-        this.isSaveFileRequested=false;
-        this.isFilesToSave=false;
-    } // otherwise mean confirm but with empty file name
-  }
-
-  reInitialisePerf(){
-    this.resetVar();
-    this.perfCircuit.splice(0,this.perfCircuit.length);
-    this.perfCircuit=copyInOut(this.savePerfCircuit,this.perfCircuit);
-    for (var i=0; i<this.perfCircuit[0].newLoop.length; i++){
-      this.perfTotalCircuit=reinitTotal(i, this.perfCircuit, this.perfTotalCircuit);
     }
   }
 
-  copyToSavePerfCirc(){
-    this.savePerfCircuit.splice(0,this.perfCircuit.length);
-    this.savePerfCircuit=copyInOut(this.perfCircuit,this.savePerfCircuit);
-
+  /** after saving, deleted loops disappear from the table (highest index first so indexes stay valid) */
+  private removeDeletedLoops() {
+    let removed = false;
+    for (let iLoop = this.tabManageLoop.length - 1; iLoop >= 0; iLoop--) {
+      if (this.tabManageLoop[iLoop] !== "D") { continue; }
+      for (const leg of this.perfCircuit) { leg.newLoop.splice(iLoop, 1); }
+      removed = true;
+    }
+    if (removed) {
+      this.resetLoopFlags();
+      this.perfTotalCircuit = createPerfTotal(this.perfCircuit, this.perfTotalCircuit);
+      this.fnSizeTable();
+    }
   }
-  
-  resetVar(){
-    this.saveMsg="";
-    this.isFilesToSave=false;
-    this.errorMessage="";
-    this.errorMsg="";
 
-  }
+  // ---------------------------------------------------------------- reinit / copy
 
-  actionExclude(event:any){
+  reInitialisePerf() {
     this.resetVar();
-    this.isManageExclude=false;
-    var prevRecord=0;
-
-    var iPerf=0;
-    var jLoop=0;
-    this.isModifOk=false;
-    if (event.target.id==="accept"){
-          this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].exclude="";
-          this.perfTotalCircuit=reinitTotal(this.TabOfId[1], this.perfCircuit, this.perfTotalCircuit);
-    } else if (event.target.id==="delete"){
-          this.resetLeg(this.TabOfId[0],this.TabOfId[1]);
-          this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].exclude="D";
-          this.perfTotalCircuit=reinitTotal(this.TabOfId[1], this.perfCircuit, this.perfTotalCircuit);
-    } else if (event.target.id==="exclude"){
-        this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].exclude="E";
-        this.perfTotalCircuit=reinitTotal(this.TabOfId[1], this.perfCircuit, this.perfTotalCircuit);
-    } else if (event.target.id==="restore"){
-      this.perfCircuit=copyLegInOut(this.savePerfCircuit,this.perfCircuit,this.TabOfId[0], this.TabOfId[1]);
-      this.perfTotalCircuit=reinitTotal(this.TabOfId[1], this.perfCircuit, this.perfTotalCircuit);
-    } else if (event.target.id==="search"){
-      this.isManageExclude=true;
-      this.isNewRecordValid=false;
-      if (isNaN(this.formOptions.controls["record"].value)){
-          this.errorMsg='record must be a numeric value'
-      } else {
-        if (this.formOptions.controls["record"].value<this.filePerf.length-1 || this.formOptions.controls["record"].value>-1){
-          this.isNewRecordValid=true;
-          this.newLat=this.filePerf[this.formOptions.controls["record"].value].lat;
-          this.newLon=this.filePerf[this.formOptions.controls["record"].value].lon;
-          this.isModifOk=true; 
-        } else {
-          this.errorMsg="record does not exist"
-        }
-      }
-    } else if (event.target.id==="modFrom" || event.target.id==="modTo"){
-      this.isNewRecordValid=false;
-      // new lat and lon 
-      // dist must be updated for all following milestones
-      if (event.target.id==="modFrom"){
-          if (this.TabOfId[0]===0 && this.TabOfId[1]===0){
-            // first item is updated so no update of previous "to" field
-
-            prevRecord=-1;
-          } else if (this.TabOfId[0]===0 && this.TabOfId[1]>0){
-            // "to" field is from lat milestone of previous loop
-            prevRecord=1;
-            iPerf=this.perfCircuit.length-1;
-            jLoop=this.TabOfId[1]-1;
-            this.perfCircuit[iPerf].newLoop[jLoop].perfRecordTo=Number(this.formOptions.controls["record"].value);
-          } else {
-            prevRecord=1;
-            iPerf=this.TabOfId[0]-1;
-            jLoop=this.TabOfId[1];
-            this.perfCircuit[iPerf].newLoop[jLoop].perfRecordTo=Number(this.formOptions.controls["record"].value);
-          }
-          
-          this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].perfRecordFrom=Number(this.formOptions.controls["record"].value);
-      } else if (event.target.id==="modTo"){
-        if (this.TabOfId[0]===this.perfCircuit.length-1 && this.TabOfId[1]===this.perfCircuit[this.TabOfId[0]].newLoop.length-1){
-          // last PoR of the table so only field "to" is to be updated
-          prevRecord=-1;
-        } else  if (this.TabOfId[0]===this.perfCircuit.length-1 && this.TabOfId[1]<this.perfCircuit[this.TabOfId[0]].newLoop.length-1){
-          // from field of next leg is on the next loop
-          iPerf=0;
-          jLoop=this.TabOfId[1]+1;
-          prevRecord=1;
-          this.perfCircuit[iPerf].newLoop[jLoop].perfRecordFrom=Number(this.formOptions.controls["record"].value);
-        } else { // from field of next leg is on the same loop
-          iPerf=this.TabOfId[0]+1;
-          jLoop=this.TabOfId[1];
-          this.perfCircuit[iPerf].newLoop[jLoop].perfRecordFrom=Number(this.formOptions.controls["record"].value);
-          prevRecord=1;
-        }
-        this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].perfRecordTo=Number(this.formOptions.controls["record"].value);
-      }
-      // modify current fields
-      this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].dist=this.filePerf[this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].perfRecordTo].dist -
-      this.filePerf[this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].perfRecordFrom].dist;
-      this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].theTime=this.filePerf[this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].perfRecordTo].time -
-      this.filePerf[this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].perfRecordFrom].time;
-      this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].strTime=formatHHMNSS(this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].theTime);
-      this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].speed=
-              Number(this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].dist)  * 1000 / Number(this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].theTime) * 3.6;
-      
-      // need to change distance of previous or next item
-      if (prevRecord!==-1){
-        this.perfCircuit[iPerf].newLoop[jLoop].dist=this.filePerf[this.perfCircuit[iPerf].newLoop[jLoop].perfRecordTo].dist-
-        this.filePerf[this.perfCircuit[iPerf].newLoop[jLoop].perfRecordFrom].dist;
-        this.perfCircuit[iPerf].newLoop[jLoop].theTime=this.filePerf[this.perfCircuit[iPerf].newLoop[jLoop].perfRecordTo].time-
-        this.filePerf[this.perfCircuit[iPerf].newLoop[jLoop].perfRecordFrom].time;
-        this.perfCircuit[iPerf].newLoop[jLoop].strTime=formatHHMNSS(this.perfCircuit[iPerf].newLoop[jLoop].theTime);
-        this.perfCircuit[iPerf].newLoop[jLoop].speed=Number(this.perfCircuit[iPerf].newLoop[jLoop].dist)  * 1000 / Number(this.perfCircuit[iPerf].newLoop[jLoop].theTime) * 3.6;
-      }
-      if ((this.TabOfId[0]===0 && this.TabOfId[1]>0) || (this.TabOfId[0]===0 && this.TabOfId[1]===0)){
-        // total must be updated for the 2 loops
-        if (this.TabOfId[1]>0){
-          this.perfTotalCircuit=reinitTotal(jLoop, this.perfCircuit, this.perfTotalCircuit);
-          }
-        jLoop=this.TabOfId[1];
-        this.perfTotalCircuit=reinitTotal(jLoop, this.perfCircuit, this.perfTotalCircuit);
-      }
-    } 
+    this.perfCircuit = copyInOut(this.savePerfCircuit, []);
+    this.resetLoopFlags();
+    this.perfTotalCircuit = createPerfTotal(this.perfCircuit, this.perfTotalCircuit);
   }
 
-  testValueModif(event:any){
+  copyToSavePerfCirc() {
+    this.savePerfCircuit = copyInOut(this.perfCircuit, []);
+  }
+
+  resetVar() {
+    this.saveMsg.set("");
+    this.isFilesToSave = false;
+    this.errorMessage.set("");
+    this.errorMsg.set("");
+  }
+
+  // ---------------------------------------------------------------- exclude / modify a leg
+
+  actionExclude(event: any) {
+    this.resetVar();
+    this.isManageExclude = false;
+    this.isModifOk = false;
+
+    const id: string = event.target.id;
+    const [iLeg, jLoop] = this.TabOfId;
+
+    switch (id) {
+      case "accept":
+        this.legAt(iLeg, jLoop).exclude = "";
+        this.refreshTotal(jLoop);
+        break;
+      case "delete":
+        this.resetLeg(iLeg, jLoop);
+        this.legAt(iLeg, jLoop).exclude = "D";
+        this.refreshTotal(jLoop);
+        break;
+      case "exclude":
+        this.legAt(iLeg, jLoop).exclude = "E";
+        this.refreshTotal(jLoop);
+        break;
+      case "restore":
+        this.perfCircuit = copyLegInOut(this.savePerfCircuit, this.perfCircuit, iLeg, jLoop);
+        this.refreshTotal(jLoop);
+        break;
+      case "search":
+        this.searchRecord();
+        break;
+      case "modFrom":
+      case "modTo":
+        this.modifyPoR(id, iLeg, jLoop);
+        break;
+    }
+  }
+
+  private searchRecord() {
+    this.isManageExclude = true;
+    this.isNewRecordValid = false;
+    const raw = this.formOptions.controls["record"].value;
+    const rec = Number(raw);
+    if (raw === "" || isNaN(rec)) {
+      this.errorMsg.set('record must be a numeric value');
+    } else if (Number.isInteger(rec) && rec >= 0 && rec < this.filePerf.length) {
+      this.isNewRecordValid = true;
+      this.newLat = this.filePerf[rec].lat;
+      this.newLon = this.filePerf[rec].lon;
+      this.isModifOk = true;
+    } else {
+      this.errorMsg.set("record does not exist");
+    }
+  }
+
+  /** moves the start ("modFrom") or the end ("modTo") of a leg, and the neighbouring leg which shares that point */
+  private modifyPoR(action: "modFrom" | "modTo", iLeg: number, jLoop: number) {
+    this.isNewRecordValid = false;
+    const rec = this.recordValue();
+    const cur = this.legAt(iLeg, jLoop);
+    const lastLeg = this.perfCircuit.length - 1;
+
+    let neighbour: classNewLoop | null = null;
+    let neighbourLoop = jLoop;
+
+    if (action === "modFrom") {
+      if (iLeg > 0) {
+        neighbour = this.legAt(iLeg - 1, jLoop);
+      } else if (jLoop > 0) { // previous leg is the last leg of the previous loop
+        neighbourLoop = jLoop - 1;
+        neighbour = this.legAt(lastLeg, neighbourLoop);
+      }
+      if (neighbour) { neighbour.perfRecordTo = rec; }
+      cur.perfRecordFrom = rec;
+    } else {
+      if (iLeg < lastLeg) {
+        neighbour = this.legAt(iLeg + 1, jLoop);
+      } else if (jLoop < this.perfCircuit[iLeg].newLoop.length - 1) { // next leg is the first leg of the next loop
+        neighbourLoop = jLoop + 1;
+        neighbour = this.legAt(0, neighbourLoop);
+      }
+      if (neighbour) { neighbour.perfRecordFrom = rec; }
+      cur.perfRecordTo = rec;
+    }
+
+    this.recomputeLeg(cur);
+    if (neighbour) { this.recomputeLeg(neighbour); }
+
+    // totals of the loop(s) concerned
+    this.refreshTotal(jLoop);
+    if (neighbourLoop !== jLoop) { this.refreshTotal(neighbourLoop); }
+  }
+
+  testValueModif(event: any) {
     // should be a warning ===> CODE NOT COMPLETED
     // verification to be made at time of file saving
-    if (event==="modFrom"){
-      if (this.TabOfId[0]>0 && this.TabOfId[1]>0 && this.perfCircuit[this.TabOfId[0]-1].newLoop[this.TabOfId[1]].perfRecordFrom>=this.formOptions.controls["record"].value){
-        this.errorMsg="Cannot be modified - value entered " + this.formOptions.controls["record"].value + " cannot be smaller than start of previous PoR = " + this.perfCircuit[this.TabOfId[0]-1].newLoop[this.TabOfId[1]].perfRecordFrom;
-      } else if (this.TabOfId[0]>0  && this.TabOfId[0]<this.perfCircuit.length-1 && this.perfCircuit[this.TabOfId[0]+1].newLoop[this.TabOfId[1]].perfRecordTo<this.formOptions.controls["record"].value){
-        this.errorMsg="Cannot be modified - value entered " + this.formOptions.controls["record"].value + " cannot be greater than end of next PoR = " + this.perfCircuit[this.TabOfId[0]+1].newLoop[this.TabOfId[1]].perfRecordTo;
-      } else if (this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].perfRecordTo<this.formOptions.controls["record"].value){
-        this.errorMsg="Cannot be modified - value entered " + this.formOptions.controls["record"].value + " cannot be greater than end of current PoR = " + this.perfCircuit[this.TabOfId[0]].newLoop[this.TabOfId[1]].perfRecordTo;
-      } else if (this.TabOfId[0]===0 &&this.TabOfId[1]>0 && this.perfCircuit[this.perfCircuit.length-1].newLoop[this.TabOfId[1]-1].perfRecordFrom>=this.formOptions.controls["record"].value){
-        this.errorMsg="Cannot be modified - value entered " + this.formOptions.controls["record"].value + " cannot be smaller than start of previous PoR = " + this.perfCircuit[this.perfCircuit.length-1].newLoop[this.TabOfId[1]-1].perfRecordFrom;
-      }
-    } else if (event==="modTo"){
-  
+    if (event !== "modFrom") { return; }
+
+    const [iLeg, jLoop] = this.TabOfId;
+    const value = this.formOptions.controls["record"].value;
+    const lastLeg = this.perfCircuit.length - 1;
+    const cur = this.legAt(iLeg, jLoop);
+    const msg = (cmp: string, what: string, limit: number) =>
+      `Cannot be modified - value entered ${value} cannot be ${cmp} than ${what} = ${limit}`;
+
+    if (iLeg > 0 && jLoop > 0 && this.legAt(iLeg - 1, jLoop).perfRecordFrom >= value) {
+      this.errorMsg.set(msg("smaller", "start of previous PoR", this.legAt(iLeg - 1, jLoop).perfRecordFrom));
+    } else if (iLeg > 0 && iLeg < lastLeg && this.legAt(iLeg + 1, jLoop).perfRecordTo < value) {
+      this.errorMsg.set(msg("greater", "end of next PoR", this.legAt(iLeg + 1, jLoop).perfRecordTo));
+    } else if (cur.perfRecordTo < value) {
+      this.errorMsg.set(msg("greater", "end of current PoR", cur.perfRecordTo));
+    } else if (iLeg === 0 && jLoop > 0 && this.legAt(lastLeg, jLoop - 1).perfRecordFrom >= value) {
+      this.errorMsg.set(msg("smaller", "start of previous PoR", this.legAt(lastLeg, jLoop - 1).perfRecordFrom));
     }
-    
   }
 
-  ngOnChanges(changes: SimpleChanges) { 
-    console.log("ngOnChanges display-circuit, nbSave="+this.nbSave);
-    var callInit=false;
-    for (const propName in changes){
-      const j=changes[propName];
-      if (propName==='nbSave'){
-        if (changes[propName].firstChange===false){ 
-            if (this.nbSave>=0){
-              //this.saveMsg="perf file has been updated";   
-              console.log("display-circuit : perf file has been updated"); 
-              this.copyToSavePerfCirc(); 
-            } else {
-              //this.saveMsg="pb with upload - perf file has not been updated";   
-              console.log("pb with upload - display-circuit : perf file has not been updated");  
-            }
+  // ---------------------------------------------------------------- changes
+  nbSave:number=-1;
+  ngOnChanges(changes: SimpleChanges) {
+    this.log("ngOnChanges display-circuit, nbSave=" + this.nbSave);
+    let callInit = false;
+
+    for (const propName of Object.keys(changes)) {
+      if (changes[propName].firstChange) { continue; }
+      if (propName === 'nbSave') {
+        if (this.nbSave >= 0) {
+          this.saveMsg.set("Perf file has been updated");
+          this.log("display-circuit : perf file has been updated");
+          this.copyToSavePerfCirc();
+        } else {
+          this.saveMsg.set("pb with upload - perf file has not been updated");
+          this.log("pb with upload - display-circuit : perf file has not been updated");
         }
-      } else if (propName==='filePerf' || propName==='headerPerf' || propName==='perfCircuit'){
-          if (changes[propName].firstChange===false){
-              callInit=true;
-          }
+      } else if (propName === 'filePerf' || propName === 'headerPerf' || propName === 'perfCircuit') {
+        callInit = true;
       }
     }
-    if (callInit===true){
-      this.ngOnInit();
-    }
+    if (callInit) { this.ngOnInit(); }
   }
 
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[display-circuit-loop:]', ...args);
+  }
 }

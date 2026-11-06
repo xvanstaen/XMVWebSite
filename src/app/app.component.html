@@ -3,7 +3,7 @@
 </head>
 <body>
     <!--
-    <div *ngIf="isConfigServerRetrieved===true && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved===true) || devMode!=='local')">
+    <div *ngIf="isConfigServerRetrieved===true && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved()) || devMode!=='local')">
         <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved" [identification]="identification"
             [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
             (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)" 
@@ -27,7 +27,7 @@
 <app-nutrition></app-nutrition>
 -->
 @if (isCallUserFunction===false){
-    @if(isConfigServerRetrieved() && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved===true) || devMode!=='local')){
+    @if(isConfigServerRetrieved() && configServer.project==='XMVWebSite' && ((devMode==='local' && isIdRetrieved()) || devMode!=='local')){
         <app-xmv-company [configServer]="configServer" [isConfigServerRetrieved]="isConfigServerRetrieved" [identification]="identification"
             [credentials]="credentials"  [credentialsMongo]="credentialsMongo" [credentialsFS]="credentialsFS" [configServerChanges]="configServerChanges"
             (resetServer)="fnResetServer()"  (newCredentials)="fnNewCredentials($event)" (serverChange)="changeServerName($event)" 
@@ -42,7 +42,7 @@
     @if (isConfigServerRetrieved() && devMode!=='local' && configServer.project!=='XMVWebSite'){ 
     <div style="margin-left:30px; margin-top:40px; width:300px;">
         <form [formGroup]="theForm" >
-            <div style="display:inline-block; height:15px; width:100%; color:red; font-size: 14px;">userServerId==>{{credentials.userServerId}}   {{errorMsg}}</div>
+            <div style="display:inline-block; height:15px; width:100%; color:red; font-size: 14px;">userServerId==>{{credentials.userServerId}}   {{errorMsg()}}</div>
             <label class="label">User Id</label> <input type="text" class="theInput" formControlName="userId">
             <div style="display:inline-block; height:4px; width:100%;"></div>
             <label class="label">Password</label> <input type="password" class="theInput" formControlName="psw">
@@ -57,7 +57,7 @@
     </div>
     }
 
-    @if (isIdRetrieved===true && isConfigServerRetrieved() && ((devMode!=='local' && configServer.project!=='XMVWebSite') || isCallUserFunction===true)){
+    @if (isIdRetrieved() && isConfigServerRetrieved() && ((devMode!=='local' && configServer.project!=='XMVWebSite') || isCallUserFunction===true)){
         <div style="margin-top:20px; border:0px red solid;">
             <app-user-functions
                     [identification]="identification"  [configServer]="configServer"  [devMode]="devMode"
@@ -70,15 +70,14 @@
         </div>
     }
 }
-
 @if (!isConfigServerRetrieved() && devMode!=='local'){
     <div style="margin-top:10px; display:inline-block; font-size:14px; color:blue;  width:500px; margin-left:20px; background-color: lightskyblue;">
         Configuration is being retrieved
     </div>
 
-    @if (errConfig!==''){ 
+    @if (errConfig()!==''){ 
     <div style="margin-top:10px; font-weight:bolder; display:inline-block; font-size:14px; color:white;  width:500px; margin-left:20px; background-color: red;">
-        {{errConfig}}
+        {{errConfig()}}
     </div>
     }
 }

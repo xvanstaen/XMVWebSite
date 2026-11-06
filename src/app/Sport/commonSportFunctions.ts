@@ -10,7 +10,7 @@ export type TotalLoop = Pick<classNewLoop, 'dist' | 'theTime' | 'speed' | 'strTi
 export interface PerfTotal { newLoop: TotalLoop[]; }
 
 /** speed in km/h from a distance in km and a time in seconds (0 when no time elapsed) */
-function speedKmh(distKm: number, seconds: number): number {
+export function speedKmh(distKm: number, seconds: number): number {
   return seconds > 0 ? distKm * 3600 / seconds : 0;
 }
 
@@ -146,8 +146,16 @@ export function buildPerfCircuitRef(points: Array<classPointOfRef>, initPerfPoR:
   /** first leg >= start named porName, or nbLegs when none */
   const findLeg = (porName: string, start: number): number =>
     legsByName.get(porName)?.find(j => j >= start) ?? nbLegs;
-
+  // ?? (Nullish Coalescing): This operator provides a backup plan if the left side evaluates to null or undefined.
+  // 
+  //legsByName.get(porName) will return either the array of numbers or nbLegs if undefined
+  //
+  // .find(j => j >= start): This loops through the array of numbers
+  //  and returns the first number (j) that is greater than or equal to your start value. 
+  // If no number matches the condition, it returns undefined.
+  
   const addLoopToAllLegs = () => { for (const leg of ref) { leg.newLoop.push(new classNewLoop()); } };
+  
   const lastLoopOf = (leg: number) => ref[leg].newLoop[ref[leg].newLoop.length - 1];
 
   // dispatch every PoR of the perf file into its leg / loop
@@ -187,6 +195,8 @@ export function buildPerfCircuitRef(points: Array<classPointOfRef>, initPerfPoR:
       if (loop.perfRecordFrom !== 0 && loop.perfRecordTo !== 0) {
         const from = filePerf[loop.perfRecordFrom];
         const to = filePerf[loop.perfRecordTo];
+        loop.from =filePerf[loop.perfRecordFrom].refPoR;
+        loop.to =filePerf[loop.perfRecordTo].refPoR;
         loop.dist = to.dist - from.dist;
         loop.theTime = to.time - from.time;
         loop.strTime = formatHHMNSS(loop.theTime);

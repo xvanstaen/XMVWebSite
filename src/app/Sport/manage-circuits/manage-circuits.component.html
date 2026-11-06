@@ -1,157 +1,196 @@
-
-<body >
-   @if (selectionCircuit===false){
-        <div  style="width:100%; display:inline-block; margin-top:10px; ">
-            <app-manage-point-of-ref [configServer]="configServer" [identification]="identification"
-            [isCircuitSelected]="isCircuitSelected" 
+@if (!selectionCircuit) {
+    <div style="width:100%; display:inline-block; margin-top:10px;">
+        <app-manage-point-of-ref [configServer]="configServer" [identification]="identification"
+            [isCircuitSelected]="isCircuitSelected"
             (returnFile)="manageFile($event)" (returnSelection)="onSelectPoR($event)">
-            </app-manage-point-of-ref>
-        </div>
-    }
-   
-    <div   style="width:100%; color:blue; font-size:18px; text-align: center; display:inline-block; border:solid 2px red; margin-left:20px; margin-top:10px; background-color: rgb(155, 247, 247);">
-        @if (selectionCircuit===false){
+        </app-manage-point-of-ref>
+    </div>
+}
 
-            <span style='margin-top:8px;' >Manage Circuits</span>
-        } @else {
-            <span  style='margin-top:8px;' >Select a circuit</span>
+<div style="width:560px; color:blue; font-size:18px; text-align:center; display:inline-block; border:solid 2px red; margin-left:20px; margin-top:10px; background-color:rgb(155, 247, 247);">
+    <div style="margin-top:10px;">{{ selectionCircuit ? 'Select a circuit' : 'Manage Circuits' }}</div>
+
+    @if (isFileCircuitReceived()) {
+        @if (errorMessage()) {
+            <div style="margin-left:10px; width:80%; margin-top:10px; color:blue; background-color:lightgreen;">{{ errorMessage() }}</div>
         }
-        @if (isFileCircuitReceived===true){
-            <div [ngStyle]="{'max-height.px': sizeBox}" style="width:100%; display:inline-block; margin-top:10px;" class="myScrollBar">
-            
-                <label style="width:5%; " class="theTitle">&nbsp;</label>
-                <label style="width:5%;" class="theTitle" > #</label>
-                <label style="width:40%;" class="theTitle" > Circuit</label>
-                <label style="width:22%; " class="theTitle" > Country</label>  
-                <label style="width:22%; " class="theTitle" > City</label>
+<br>
+        <div [style.max-height.px]="sizeBox" style="width:100%; display:inline-block; margin-top:10px;" class="myScrollBar">
+            <div style="margin-left:15px;   width:530px;   
+    color:white;
+    text-align: center; 
+    height:22px;border:1px white solid;
+    font-size: 15px;
+    display:block;">
+            <span class="theTitle" style="width:35px; background-color: rgb(155, 247, 247);" >&nbsp;</span>
+            <span style="width:35px;" class="theTitle"> #</span>
+            <span style="width:205px;" class="theTitle"> Circuit</span>
+            <span style="width:125px;" class="theTitle"> Country</span>
+            <span style="width:125px;" class="theTitle"> City</span>
+            </div>
+            @for (tab of fileCircuit; track $index; let i = $index) {
+                @let sel = TabOfId[0] === i && tabDialog[1] === true;
+                @let even = i % 2 === 0;
 
-                <div *ngFor="let tab of fileCircuit; let i=index">
-                    @if (tabDialog[1]===true && TabOfId[0]===i){
-                        <div style="width:365px; display:block; margin-left:50px; color:blue; height:65px;"> 
-                            <li *ngFor="let tabAH of tabActionH; let k=index" class="Straight-options" style="width:92.5px; font-size:13px; display:inline-block;" [ngClass]='{"evenAction": k % 2 ===0 , "oddAction": k % 2 ===1 }' >
-                                <span  (click)="onInput($event)" id="selActionH-{{TabOfId[0]}}-{{k}}">{{tabAH}} </span>
+                @if (sel) {
+                    <div style="width:365px; display:block; margin-left:50px; color:blue; height:65px;">
+                        @for (tabAH of tabActionH; track $index; let k = $index) {
+                            <li class="Straight-options" style="width:92.5px; font-size:13px; display:inline-block;"
+                                [class.evenAction]="k % 2 === 0" [class.oddAction]="k % 2 === 1">
+                                <span (click)="onInput($event)" id="selActionH-{{TabOfId[0]}}-{{k}}">{{ tabAH }} </span>
                             </li>
-                        </div>
-                    }
-                    @if (isDeleteCircuit===true && TabOfId[0]===i){
-                        <div style="width:565px; display:block; color:blue; margin-left:5px; background-color: cyan;"> 
-                            <span > Do you confrm the deletion of PoR {{tab.name}}</span>
-                            <div style="display:block; margin-left:50px;">
-                                <button  class="sizeButtons" (click)="onInput($event)" id="delCircuitYES-{{TabOfId[0]}}">YES </button>
-                                <button  class="sizeButtons" (click)="onInput($event)" id="delCircuitNO-{{TabOfId[0]}}">NO </button>
-                            </div>
-                            <div class="skipLine"></div>
-                        </div>
-                    }
-                    <div style="width:100%; display:inline-block; margin-left:12px; height:20px;">
-                        @if (selectionCircuit===false){
-                            <label  style="width:5%; margin-left:5px; "class="inputText " [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true}"   >
-                                <span  id="actionH-{{i}}" (click)="onInput($event)">A</span>
-                            </label>
-                            <label style="width:5%;"  class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true}" >{{i+1}}</label>
-                            <input style="width:40%;" class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" (input)="onInput($event)" id="name-{{i}}" type="text" value="{{fileCircuit[i].name}}">
-                            <input style="width:22%;" class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" (input)="onInput($event)" id="country-{{i}}" type="text" value="{{fileCircuit[i].country}}">            
-                            <input style="width:22%;"  class="inputText" [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" (input)="onInput($event)" id="city-{{i}}" type="text"  value="{{fileCircuit[i].city}}">
-                        } @else {
-                            <label  style="width:5%; margin-left:5px; "class="inputText " [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true}"  id="returnCircuit-{{i}}" (click)="onInput($event)" >S</label>
-                            <label style="width:5%;"  class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true}"  id="returnCircuit-{{i}}" (click)="onInput($event)">{{i+1}}</label>
-                            <label style="width:40%;" class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" id="returnCircuit-{{i}}" (click)="onInput($event)" >{{fileCircuit[i].name}}</label>
-                            <label style="width:22%;" class="inputText"  [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" id="returnCircuit-{{i}}" (click)="onInput($event)" >{{fileCircuit[i].country}}</label>       
-                            <label style="width:22%;"  class="inputText" [ngClass]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 , 'selCircuit': TabOfId[0]===i && tabDialog[1]===true }" id="returnCircuit-{{i}}" (click)="onInput($event)" >{{fileCircuit[i].city}}</label>
                         }
                     </div>
-                    @if (i===expandCircuit && selectionCircuit===false){
-                        <div style="margin-left:10px; width:100%; display:inline-block; margin-left:5px; " >
-                            <span class="titlePOR" style="margin-left:28px; width:490px; margin-top:5px; font-weight:bolder; text-align: center; float:none;"> Point Of References</span>
-                            <label class="titlePOR " style="width:20px; margin-left:28px; ">&nbsp;</label>
-                            <label class="titlePOR " style="width:20px;"> #</label>
-                            <label class="titlePOR"  style="width:210px" > Reference</label>
-                            <label class="titlePOR"  style="width:40px"> Dist.</label>
-                                <!-- <label class="theLabel theTitle" > Altitude</label> -->
-                            <label class="titlePOR"  style="width:100px"> Latitude</label>
-                            <label class="titlePOR"  style="width:100px"> Longitude</label>
+                }
 
-                            <div  style=" width:100%; display:inline-block;" *ngFor="let tabPoR of fileCircuit[i].points; let j=index">
-                                @if (this.tabRef.length>0 && TabOfId[0]===i && TabOfId[1]===j){ 
-                                    <li *ngFor="let tabR of tabRef; let k=index"  style="width:60%; display:inline-block; color:blue;">
-                                        <span class="Straight-options" (click)="onInput($event)" [ngClass]='{"odd": k % 2 ===0, "even": k % 2 ===1}' id="selPoR-{{TabOfId[0]}}-{{TabOfId[1]}}-{{k}}">{{tabR.ref}} </span>
-                                    </li>
-                                }
-                                @if (tabDialog[2]===true && TabOfId[0]===i && TabOfId[1]===j){
-                                    <div style="width:365px; display:block; color:blue; margin-left:50px; height:65px;"> 
-                                        <li *ngFor="let tabA of tabAction; let k=index" class="Straight-options" style="width:92.5px; font-size:13px; display:inline-block;" [ngClass]='{"odd": k % 2 ===0 , "even": k % 2 ===1 }' >
-                                            <span  (click)="onInput($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{k}}">{{tabA}} </span>
-                                        </li>
-                                    </div>
-                                }
-                                @if (isDeletePoR===true && TabOfId[0]===i && TabOfId[1]===j){
-                                    <div style="margin-left:50px; text-align:center; width:365px; display:block; color:blue; border:solid blue 1px;  background-color: white;">
-                                        Do you confrm the deletion of PoR
-                                        <br>
-                                        {{tabPoR.ref}}
-                                        <div style="display:inline-block; width:100%; ">
-                                            <button  class="sizeButtons"  style="margin-left:15px;" (click)="onInput($event)" id="delPoRYES-{{TabOfId[0]}}-{{TabOfId[1]}}">YES </button>
-                                            <button  class="sizeButtons" (click)="onInput($event)" id="delPoRNO-{{TabOfId[0]}}-{{TabOfId[1]}}">NO </button>
-                                        </div>
-                                        <div class="skipLine"></div>
-                                    </div>
-                                }
-                                @if (selectionCircuit===false){
-                                    <div  style="margin-left:28px;">
-                                        <label class="inputText shortLabel  " [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">A</label>
-                                        <label class="inputText shortLabel " [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }"  id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">{{j+1}}</label>
-                                    
-                                        <input type="text" class="inputText"   style="width:210px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="PoRef-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].points[j].ref}}">
-                                        <input type="text" class="inputText"   style="width:40px"  [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="dist-{{i}}-{{j}}"  (input)="onInput($event)" value="{{fileCircuit[i].dist[j]  | number:'1.1-1' }}">
-                                        <!-- <label  class="inputText" id="PoRalt-{{i}}-{{j}}" >{{fileCircuit[i].points[j].alt}}</label> --> 
-                                        <label class="inputText" style="width:100px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lat}}</label>
-                                        <label class="inputText" style="width:100px" [ngClass]="{'evenPoR': j % 2 === 0 , 'oddPoR': j % 2 === 1 }" id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)" >{{fileCircuit[i].points[j].lon}}</label>
-                                    </div>
-                                }
-                            </div>
+                @if (isDeleteCircuit && TabOfId[0] === i) {
+                    <div style="width:565px; display:block; color:blue; margin-left:5px; background-color:cyan;">
+                        <span> Do you confirm the deletion of circuit ' {{ tab.name }} ' ?</span>
+                        <div style="display:block; margin-left:50px;">
+                            <button class="sizeButtons" (click)="onInput($event)" id="delCircuitYES-{{TabOfId[0]}}">YES </button>
+                            <button class="sizeButtons" (click)="onInput($event)" id="delCircuitNO-{{TabOfId[0]}}">NO </button>
                         </div>
-                    }
-                </div>
-            
-            </div>
-        }
-        @if (isFileModified===true){
-            <div style="border:solid 1px red; width:450px; display:block; margin-left:20px; background-color: cyan;">
-                
-                @if (saveConfirmed===false){
-                    <label style="width:100%; text-align: center; display:inline-block; color:blue; font-size:16px;" >File has been modified </label>
-                    <label  style="width:40%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Do you want to save it?</label>
-                    <button   id='confirmSave' class="sizeButtons" style="width:80px;" (click)="manageUpdates($event)"> YES </button>
-                    <!-- 
-                    <button   id='cancelSave' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> Cancel </button>
-                    -->
-                    <div class="skipLine"></div>
-                    <label style="width:100%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Do you want to cancel all your updates?</label>
-                    <button   id='reinitialize' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> YES </button>
-                    <button   id='noReinit' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> NO </button>
-                    <div class="skipLine"></div>
-                } @else {
-                    <div [formGroup]="formOptions">
-                        <label  style="width:90%; margin-left:15px; display:inline-block; color:blue; font-size:14px;" >Name of the file to update</label>
-                        <input type="text"  class="inputText" style="width:90%; margin-left:15px;" formControlName="fileName" value="fileName" >
-                        <button   id='saveFile' class="sizeButtons" style="margin-top:10px; margin-left:80px; width:80px;" (click)="manageUpdates($event)"> Submit </button>
-                        <button   id='cancelSave' class="sizeButtons"  style="width:80px;" (click)="manageUpdates($event)"> Cancel save</button>
                         <div class="skipLine"></div>
                     </div>
                 }
-            </div>
-        }
-        @if (selectionCircuit===false){
-            <div  style="text-align:left; border:red 0px solid; display:block; width:100%;"> 
-                <span style="width:100%; margin-top:0px; padding-left:30px; display:inline-block; padding-top:5px; border:green 0px solid; font-size:15px; height:35px;">Do you want to update all PoR values?</span>
-                <button  class="sizeButtons" style="margin-left:15px;" (click)="updateAllCircuits($event)" id="updatePoRYES">YES </button>
-                <button  class="sizeButtons" style="margin-left:15px;" (click)="updateAllCircuits($event)" id="updatePoRNO">NO </button>
-            </div>
-        }
-    </div>
-    @if (selectionCircuit===false){
+
+                <div style="width:530px; ; display:inline-flex; gap:0px; box-sizing: border-box; border:green 0px solid; height:25px;">
+                    @if (!selectionCircuit) {
+                        <div class="inputText" style="width:35px; text-align: center; margin: 0; padding: 0; flex-grow: 1; " 
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                           [id]="'actionH-' + i" (click)="onInput($event)">A
+                        </div>
+                        <div  class="inputText"style="width:35px; text-align: center; margin: 0; padding: 0; flex-grow: 1;" 
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel">{{ i + 1 }}</div>
+                        <input style="text-align: left; width:200px;margin: 0; padding:5px; flex-grow: 1;" class="inputText" type="text" id="name-{{i}}"
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                            (input)="onInput($event)" [value]="tab.name">
+                        <input style="width:125px;margin: 0; padding: 5px; flex-grow: 1;" class="inputText" type="text" id="country-{{i}}"
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                            (input)="onInput($event)" [value]="tab.country">
+                        <input style="width:125px;margin: 0; padding: 5px; flex-grow: 1;" class="inputText" type="text" id="city-{{i}}"
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                            (input)="onInput($event)" [value]="tab.city">
+                    } @else {
+                        <div style="width:35px; margin-left:5px;" class="inputText" id="returnCircuit-{{i}}"
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                            (click)="onInput($event)">S</div>
+                        <div style="width:35px;" class="inputText" id="returnCircuit-{{i}}"
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                            (click)="onInput($event)">{{ i + 1 }}</div>
+                        <div style="width:200px;" class="inputText" id="returnCircuit-{{i}}"
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                            (click)="onInput($event)">{{ tab.name }}</div>
+                        <div style="width:125px;" class="inputText" id="returnCircuit-{{i}}"
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                            (click)="onInput($event)">{{ tab.country }}</div>
+                        <div style="width:125px;" class="inputText" id="returnCircuit-{{i}}"
+                            [class.even]="even" [class.odd]="!even" [class.selCircuit]="sel"
+                            (click)="onInput($event)">{{ tab.city }}</div>
+                    }
+                </div>
+
+                @if (i === expandCircuit && !selectionCircuit) {
+                    <div style="width:100%; display:inline-block; margin-left:5px;">
+                        <span class="titlePOR" style="margin-left:28px; width:490px; margin-top:5px; font-weight:bolder; text-align:center; float:none;"> Point Of References</span>
+                        <label class="titlePOR" style="width:20px; margin-left:28px;">&nbsp;</label>
+                        <label class="titlePOR" style="width:20px;"> #</label>
+                        <label class="titlePOR" style="width:210px;"> Reference</label>
+                        <label class="titlePOR" style="width:40px;"> Dist.</label>
+                        <label class="titlePOR" style="width:100px;"> Latitude</label>
+                        <label class="titlePOR" style="width:100px;"> Longitude</label>
+
+                        @for (pt of tab.points; track $index; let j = $index) {
+                            @let here = TabOfId[0] === i && TabOfId[1] === j;
+                            @let evenPoR = j % 2 === 0;
+
+                            @if (here && tabRef.length > 0) {
+                                @for (tabR of tabRef; track $index; let k = $index) {
+                                    <li style="width:60%; display:inline-block; color:blue;">
+                                        <span class="Straight-options" (click)="onInput($event)"
+                                            [class.odd]="k % 2 === 0" [class.even]="k % 2 === 1"
+                                            id="selPoR-{{TabOfId[0]}}-{{TabOfId[1]}}-{{k}}">{{ tabR.ref }} </span>
+                                    </li>
+                                }
+                            }
+
+                            @if (here && tabDialog[2]) {
+                                <div style="width:365px; display:block; color:blue; margin-left:50px; height:65px;">
+                                    @for (tabA of tabAction; track $index; let k = $index) {
+                                        <li class="Straight-options" style="width:92.5px; font-size:13px; display:inline-block;"
+                                            [class.odd]="k % 2 === 0" [class.even]="k % 2 === 1">
+                                            <span (click)="onInput($event)" id="selAction-{{TabOfId[0]}}-{{TabOfId[1]}}-{{k}}">{{ tabA }} </span>
+                                        </li>
+                                    }
+                                </div>
+                            }
+
+                            @if (here && isDeletePoR) {
+                                <div style="margin-left:50px; text-align:center; width:365px; display:block; color:blue; border:solid blue 1px; background-color:white;">
+                                    Do you confirm the deletion of PoR
+                                    <br>
+                                    {{ pt.ref }}
+                                    <div style="display:inline-block; width:100%;">
+                                        <button class="sizeButtons" style="margin-left:15px;" (click)="onInput($event)" id="delPoRYES-{{TabOfId[0]}}-{{TabOfId[1]}}">YES </button>
+                                        <button class="sizeButtons" (click)="onInput($event)" id="delPoRNO-{{TabOfId[0]}}-{{TabOfId[1]}}">NO </button>
+                                    </div>
+                                    <div class="skipLine"></div>
+                                </div>
+                            }
+
+                            <div style="margin-left:28px;">
+                                <label class="inputText shortLabel" [class.evenPoR]="evenPoR" [class.oddPoR]="!evenPoR"
+                                    id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">A</label>
+                                <label class="inputText shortLabel" [class.evenPoR]="evenPoR" [class.oddPoR]="!evenPoR"
+                                    id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">{{ j + 1 }}</label>
+                                <input type="text" class="inputText" style="width:210px;"
+                                    [class.evenPoR]="evenPoR" [class.oddPoR]="!evenPoR"
+                                    id="PoRef-{{i}}-{{j}}" (input)="onInput($event)" [value]="pt.ref">
+                                <!-- (change): the number pipe would otherwise reformat the field while the user is typing -->
+                                <input type="text" class="inputText" style="width:40px;"
+                                    [class.evenPoR]="evenPoR" [class.oddPoR]="!evenPoR"
+                                    id="dist-{{i}}-{{j}}" (change)="onInput($event)" [value]="tab.dist[j] | number:'1.1-1'">
+                                <label class="inputText" style="width:100px;" [class.evenPoR]="evenPoR" [class.oddPoR]="!evenPoR"
+                                    id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">{{ pt.lat }}</label>
+                                <label class="inputText" style="width:100px;" [class.evenPoR]="evenPoR" [class.oddPoR]="!evenPoR"
+                                    id="actionPoR-{{i}}-{{j}}" (click)="onInput($event)">{{ pt.lon }}</label>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    }
+
+    @if (isFileModified()) {
+        <div style="margin-top:20px; border:solid 1px red; width:450px; display:block; margin-left:20px; background-color:cyan;">
+            @if (!saveConfirmed) {
+                <label style="width:100%; text-align:center; display:inline-block; color:blue; font-size:16px;">File has been modified </label>
+                <label style="width:40%; margin-left:15px; display:inline-block; color:blue; font-size:14px;">Do you want to save it?</label>
+                <button id="confirmSave" class="sizeButtons" style="width:80px;" (click)="manageUpdates($event)"> YES </button>
+                <div class="skipLine"></div>
+                <label style="width:100%; margin-left:15px; display:inline-block; color:blue; font-size:14px;">Do you want to cancel all your updates?</label>
+                <button id="reinitialize" class="sizeButtons" style="width:80px;" (click)="manageUpdates($event)"> YES </button>
+                <button id="noReinit" class="sizeButtons" style="width:80px;" (click)="manageUpdates($event)"> NO </button>
+                <div class="skipLine"></div>
+            } @else {
+                <div [formGroup]="formOptions">
+                    <label style="width:90%; margin-left:15px; display:inline-block; color:blue; font-size:14px;">Name of the file to update</label>
+                    <input type="text" class="inputText" style="width:90%; margin-left:15px;" formControlName="fileName">
+                    <button id="saveFile" class="sizeButtons" style="margin-top:10px; margin-left:80px; width:80px;" (click)="manageUpdates($event)"> Submit </button>
+                    <button id="cancelSave" class="sizeButtons" style="width:80px;" (click)="manageUpdates($event)"> Cancel save</button>
+                    <div class="skipLine"></div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (!selectionCircuit) {
+        <div style="text-align:left; display:block; width:100%;">
+            <span style="width:100%; padding-left:30px; display:inline-block; padding-top:5px; font-size:15px; height:35px;">Do you want to update all PoR values?</span>
+            <button class="sizeButtons" style="margin-left:15px;" (click)="updateAllCircuits($event)" id="updatePoRYES">YES </button>
+            <button class="sizeButtons" style="margin-left:15px;" (click)="updateAllCircuits($event)" id="updatePoRNO">NO </button>
+        </div>
         <div style="margin-top:10px; display:block;">&nbsp;</div>
     }
-    <div  id="bottomCircuit" style="height:13px; width:100%; display:inline-block;"></div>
-
-</body>
+</div>

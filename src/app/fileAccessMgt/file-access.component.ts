@@ -344,6 +344,6 @@ export class MainManageFileComponent {
   }
 
   private log(...args: unknown[]) {
-    if (this.debug) this.log('[file-access]', ...args);
+    if (this.debug) console.log('[file-access]', ...args);
   }
 }

@@ -69,7 +69,8 @@ export class MainHealthComponent {
     private ManageGoogleService: ManageGoogleService,
     
   ) { }
- private calculator = inject(HealthCalculatorService);
+  private calculator = inject(HealthCalculatorService);
+  private debug = false;
 
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
@@ -545,14 +546,7 @@ private copyHeader(
   private calculateHealth(report: DailyReport): HealthResult {
   return this.calculator.calculate(report, this.ConfigCaloriesFat, this.ConvertUnit);
 }
-/*
-  unlockFile(iWait:number){
-    //this.resetSignal();
-    this.tabLock[iWait].action="unlock";
-    this.triggerFileSystem.update (fs => fs + 1);
-    this.openFileAccess.set(true);
-  }
-    */
+
   
   SelectDisplay() {
     this.errorMsg.set("");
@@ -1005,10 +999,9 @@ private prepareForSave(): void {
     const { errors, outHealthData } = calcFatCalories(this.ConfigCaloriesFat, this.HealthAllData.tabDailyReport[event], this.ConvertUnit);
     if (errors.length > 0) {
       this.errorMsg .set(`${errors.length} error(s) detected`);
-    } else {
-      this.HealthAllData.tabDailyReport[event].total = outHealthData.total;
-      this.HealthAllData.tabDailyReport[event].meal = outHealthData.meal;
-    }
+    } 
+    this.HealthAllData.tabDailyReport[event].total = outHealthData.total;
+    this.HealthAllData.tabDailyReport[event].meal = outHealthData.meal;
   }
 
   processSaveHealth(event: any) {
@@ -1070,7 +1063,7 @@ private prepareForSave(): void {
   ngOnDestroy() {
     this.passDestroy++
     //this.identification.fitness.files.fileHealth=this.initialHealthFileName;
-    console.log('trigger ngOnDestroy  === pass=' + this.passDestroy);
+    this.log('trigger ngOnDestroy  === pass=' + this.passDestroy);
     if (this.processDestroy === false) {
       this.processDestroy = true;
       var trouve = false;
@@ -1086,10 +1079,10 @@ private prepareForSave(): void {
           this.ManageGoogleService.onFileSystem(this.configServer, this.configServer.bucketFileSystem, 'fileSystem', this.tabLock, this.iWait.toString())
           .subscribe(
             data => {
-              console.log('ngOnDestroy: successfull return from File System' );
+              this.log('ngOnDestroy: successfull return from File System' );
             },
             err=>{
-              console.log('ngOnDestroy: error from File System. Status=' + JSON.stringify(err))
+              this.log('ngOnDestroy: error from File System. Status=' + JSON.stringify(err))
             })
         }
       }
@@ -1111,5 +1104,8 @@ private prepareForSave(): void {
     msginLogConsole(msg, this.myConsole, this.myLogConsole, this.SaveConsoleFinished, this.HTTP_Address, this.type);
   }
 
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[app.component:]', ...args);
+  }
 
 }

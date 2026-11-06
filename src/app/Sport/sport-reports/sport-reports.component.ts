@@ -5,11 +5,10 @@ import { HttpEventType } from '@angular/common/http';
 import { ManageCircuitsComponent } from '../manage-circuits/manage-circuits.component';
 import { SportPerformanceComponent } from '../sport-performance/sport-performance.component';
 import { DisplayCircuitLoopComponent } from '../display-circuit-loop/display-circuit-loop.component';
-import { BuildLoopFromPerfComponent } from '../build-loop/build-loop-from-perf.component';
 
 import { configServer, LoginIdentif } from '../../JsonServerClass';
-import { classFileSport, classNewLoop, classCircuitRec, classFilePerf, classWorkCircuit, classHeaderFileSport, PerfLeg } from '../classSport';
-import { fillHeaderFile, perfFileName } from '../commonSportFunctions';
+import { classFileSport, classNewLoop, classCircuitRec, classFilePerf, classWorkCircuit, classHeaderFileSport, PerfLeg, classPointOfRef } from '../classSport';
+import { fillHeaderFile, perfFileName, updateTabPor, buildPerfCircuitRef } from '../commonSportFunctions';
 import { formatHHMNSS } from '../../MyStdFunctions';
 
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
@@ -26,7 +25,7 @@ const SEARCH_INTERVAL = 10;
   templateUrl: './sport-reports.component.html',
   styleUrls: ['./sport-reports.component.css'],
   standalone: true,
-  imports: [BuildLoopFromPerfComponent, SportPerformanceComponent, ManageCircuitsComponent, DisplayCircuitLoopComponent],
+  imports: [SportPerformanceComponent, ManageCircuitsComponent, DisplayCircuitLoopComponent],
 })
 export class SportReportsComponent {
 
@@ -34,8 +33,8 @@ export class SportReportsComponent {
     private scroller: ViewportScroller,
     private ManageGoogleService: ManageGoogleService,
   ) { }
-
-  isRefresh=signal(false);
+  private debug:boolean=false;
+  //isRefresh=signal(false);
 
   @Input() configServer = new configServer;
   @Input() identification = new LoginIdentif;
@@ -43,6 +42,7 @@ export class SportReportsComponent {
   firstPoR: string = "";
   firstPoRNb: number = 0;
   displayTabTwo: number = 2;
+  displayTabOne: number = 1;
   headerPerf = new classHeaderFileSport;
   nbSave: number = 0;
 
@@ -53,7 +53,12 @@ export class SportReportsComponent {
   perfCircuit: Array<PerfLeg> = [];
 
   specificCircuit = new classCircuitRec;
+
   filePerf: Array<classFilePerf> = [];
+  fwdFilePerf: Array<classFilePerf> = [];
+  fwdHeaderPerf = new classHeaderFileSport;
+
+  perfCircuitRef: Array<PerfLeg> = [];
 
   selectionCircuit=signal<boolean>(false);
   isPerfRetrieved=signal<boolean>(false);
@@ -83,12 +88,12 @@ export class SportReportsComponent {
     this.isFilesToSave.set(false);
     this.errorMessage.set("");
     this.calcErrorMessage.set("");
-    this.isRefresh.set(false);
+    //this.isRefresh.set(false);
   }
 
   /** render first, then scroll: the anchor must exist in the DOM */
   private refresh() {
-    this.isRefresh.set(true);
+    //this.isRefresh.set(true);
     this.scroller.scrollToAnchor('bottomPage');
   }
 
@@ -100,19 +105,24 @@ export class SportReportsComponent {
 
   onActionPerf(action: ActionPerf) {
     switch (action) {
-      case 'perfYes': this.isPerfRetrieved.set(true); this.resetVar(); break;
+      case 'perfYes': this. isPerfRetrieved.set(true); this.filePerf.length=0; this.perfCircuitRef.length=0; this.resetVar(); break;
       case 'perfNo': this.isPerfRetrieved.set(false); break;
-      case 'circuitYes': this.resetVar(); this.selectionCircuit.set(true); break;
+      case 'circuitYes': this.resetVar(); this.selectionCircuit.set(true);this.perfCircuitRef.length=0; break;
       case 'circuitNo': this.selectionCircuit.set(false); break;
     }
-    this.refresh();
+    //this.refresh();
   }
 
   onSelectPerf(event: any) {
-    this.isPerfCircuitRetrieved.set(false);
+    //this.isPerfCircuitRetrieved.set(false);
     this.isBuildFromPerf.set(false);
     this.resetVar();
     this.resetTab();
+    if (event.content.length===0){
+      this.errorMessage.set("selected performance file '" + event.name +  "'  is empty");
+      this.isFilePerfReceived.set(false);
+      return;
+    }
     this.theFile = event;
     this.filePerf = event.content;
     // new object, so that build-loop sees the change
@@ -126,9 +136,9 @@ export class SportReportsComponent {
 
     const hasPoR = this.filePerf.some(rec => rec.refPoR !== "");
     if (this.isSpecificCircuitReceived() && hasPoR) {
-      this.isBuildFromPerf.set(true);
+      this.buildFormPerf();
     }
-    this.refresh();
+    //this.refresh();
   }
 
   onSelectCircuit(event: any) {
@@ -140,16 +150,43 @@ export class SportReportsComponent {
     this.selectionCircuit.set(false);
     this.isSpecificCircuitReceived.set(true)
     if (this.isFilePerfReceived() && this.specificCircuit.points.length > 0) {
-      this.isBuildFromPerf.set(true);
+      this.buildFormPerf();
     }
     this.firstPoR = this.specificCircuit.points[0]?.ref ?? "";
     this.firstPoRNb = 0;
-    this.refresh();
+    //this.refresh();
   }
 
   selFirstPoR(i: number) {
     this.firstPoR = this.specificCircuit.points[i].ref;
     this.firstPoRNb = i;
+  }
+
+  buildFormPerf(){
+    this.errorMessage.set("");
+    this.perfCircuitRef = [];
+    this.isBuildFromPerf.set(false);
+    const initPerfPoR = updateTabPor(this.filePerf);
+    if (initPerfPoR.length === 0) {
+      this.errorMessage.set("No Point Of References found in the perf file " + this.headerPerf.name);
+      return;
+    }
+    this.perfCircuitRef = buildPerfCircuitRef(this.specificCircuit.points as Array<classPointOfRef>, initPerfPoR, this.filePerf);
+    const nbLoop=this.perfCircuitRef[0].newLoop.length - 1;
+    for (var i=nbLoop; i>-1; i--){
+      var trouve=false;
+      for (var j=0; j<this.perfCircuitRef.length && !trouve; j++){
+        if (this.perfCircuitRef[j].newLoop[i].speed!==0){ trouve=true; }
+      }
+      if (!trouve){
+        for (var j=0; j<this.perfCircuitRef.length; j++){
+        this.perfCircuitRef[j].newLoop.splice(i,1);
+        }
+      }
+    }
+    //this.fwdFilePerf = this.filePerf;
+    //this.fwdHeaderPerf = this.headerPerf;
+    this.isBuildFromPerf.set(true);
   }
 
   // ---------------------------------------------------------------- retrieve an existing perfCircuit file
@@ -160,31 +197,32 @@ export class SportReportsComponent {
       this.isPerfCircuitRetrieved.set(false);
       return;
     }
+    this.isPerfCircuitRetrieved.set(false);
     const fileName = this.fileNameFor('perf', this.nameFilePerf);
     this.ManageGoogleService.getContentObject(this.configServer, 'xmv-sport-analysis', fileName)
       .subscribe({
         next: (data: any) => {
-            this.isPerfCircuitRetrieved.set(true);
             if (data.status!==undefined){
               if (data.status===0 || data.status===200){
-                  this.theFile = data;
                   if (Array.isArray(data.content)) {
+                    this.isPerfCircuitRetrieved.set(true);
+                    this.theFile = data;
                     this.perfCircuit = this.theFile.content;
                   } else {
                     this.perfCircuit=[];
                     this.errorMessage.set(" Circuit file content'" + fileName + "' is empty");
-                    this.isPerfCircuitRetrieved.set(false);
                   }
               } else {
                 this.perfCircuit=[];
                     this.errorMessage.set(" Error " + data.status +  ". Circuit file content'" + fileName + "' not found");
-                    this.isPerfCircuitRetrieved.set(false);
               }
+            } else {
+                this.perfCircuit=[];
+                this.errorMessage.set(" Error: circuit file content'" + fileName + "' not found");
             }
         },
         error: () => {
           this.errorMessage.set(" Circuit file '" + fileName + "' not found");
-          this.isPerfCircuitRetrieved.set(false);
         }
       });
   }
@@ -238,7 +276,7 @@ export class SportReportsComponent {
       this.selectionCircuit.set(false);
       this.isSpecificCircuitReceived.set(false);
       this.filePerf = [];
-      this.refresh();
+      //this.refresh();
       return;
     }
     this.ensureLeg(this.firstPoRNb).value[0] = startRow;
@@ -303,7 +341,7 @@ export class SportReportsComponent {
     }
 
     this.createPerfCircuit();
-    this.refresh();
+    //this.refresh();
   }
 
   private createPerfCircuit() {
@@ -402,5 +440,8 @@ export class SportReportsComponent {
       next: (res: any) => { if (res.type === HttpEventType.Response) { this.saveMsg.set("File '"+name+"' saved") } },
       error: () => { this.saveMsg.set("File '"+name+"' not saved"); }
     });
+  }
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[app.component:]', ...args);
   }
 }

@@ -4,15 +4,15 @@ import { CommonModule, ViewportScroller } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   
 import { configServer, LoginIdentif,  OneBucketInfo,  } from '../../JsonServerClass';
-import {classFileSport, classPointOfRef, classCircuitRec, classFilePerf, classHeaderFileSport, classTabPoR, classCountryPoR } from "../classSport"
+import {classFileSport, classPointOfRef, classCircuitRec, classFilePerf, 
+    classHeaderFileSport, classTabPoR, classCountryPoR, PerfLeg } from "../classSport"
 
-import { fillHeaderFile, updateTabPor } from '../commonSportFunctions';
+import { fillHeaderFile, updateTabPor, buildPerfCircuitRef  } from '../commonSportFunctions';
 
 import { ManageGoogleService } from '../../CloudServices/ManageGoogle.service';
 import { ListBucketContentComponent }  from '../../Special-Services/ListBucketContent.component';
 import { ManagePointOfRefComponent } from '../../Sport/manage-point-of-ref/manage-point-of-ref.component';
-import { BuildLoopFromPerfComponent } from '../../Sport/build-loop/build-loop-from-perf.component';
-
+import { DisplayCircuitLoopComponent } from '../display-circuit-loop/display-circuit-loop.component';
 /** Copies only the listed properties. */
 const pick = <T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> =>
   Object.fromEntries(keys.map(k => [k, obj[k]])) as Pick<T, K>;
@@ -25,7 +25,7 @@ const MAX_RECALL_FS = 4;
   styleUrls: ['./sport-perf-raw-data-mgt.component.css'],
   standalone:true,
   imports:[CommonModule, FormsModule, ReactiveFormsModule, ManagePointOfRefComponent, 
-    ListBucketContentComponent, BuildLoopFromPerfComponent, 
+    ListBucketContentComponent, DisplayCircuitLoopComponent, 
   ],
 
 })
@@ -41,28 +41,28 @@ export class SportPerfRawDataMgtComponent {
   @Input() configServer = new configServer;
   @Input() identification= new LoginIdentif;
 
-  nbSave:number=0; // to trigger ngOnChanges when file 'theFile' is updated
-
   @Output() savePerf= new EventEmitter<any>();
 
+  perfCircuitRef: Array<PerfLeg> = [];
+
+  displayTabOne:number=1;
   specificCircuit= new classCircuitRec;
   saveSpecificCircuit= new classCircuitRec;
   headerPerf=new classHeaderFileSport;
-  theFile= new classFileSport;
-  //nameFilePerf:string="";
+
   filePerf:Array<classFilePerf>=[];
-  initFilePerf:Array<classFilePerf>=[];
+  initFilePerf = new classFileSport; // used in cae of cancel updates
   isPerfRetrieved:boolean=true;
 
   NbRefresh_Bucket:number=0;
-  bucketName:string="";
 
   errorMsg=signal<string>("");
+  isBuildFromPerf=signal<boolean>(false);
   isDisplayPerf=signal<boolean>(false);
   isPerfFileModified=signal<boolean>(false);
   isFilePerfReceived=signal<boolean>(false);
   isFilesToSave=signal<boolean>(false);
-  isCircuitSelected=signal<boolean>(false);
+  isCircuitSelected=signal<boolean>(true); // want to retrieve the different circuits
   isPoRFileReturned=signal<boolean>(false);
   saveMsg=signal<string>("");
 
@@ -80,12 +80,7 @@ export class SportPerfRawDataMgtComponent {
   tabInputPoR:Array<classPointOfRef>=[];
   listOfPoR:Array<classPointOfRef>=[];
   newPoRmsg:string="";
-  nbErrUpload:number=-1;
-  nbSuccessUpload:number=0;
 
-  ngOnInit(){
-    this.bucketName=this.identification.performanceSport.bucket;
-  }
 
   resetTab(){
       
@@ -99,7 +94,6 @@ export class SportPerfRawDataMgtComponent {
     this.isFilePerfReceived.set(false);
   }
 
-  // .emit from app-ListBucketContent
   ReceivedData(event:any){
     //this.log("Received Data=" + event);
     this.errorMsg.set("");
@@ -107,20 +101,23 @@ export class SportPerfRawDataMgtComponent {
     this.resetTab();
     this.isPerfFileModified.set(false);
     this.filePerf.length=0;
-    this.initFilePerf.length=0;
-    if (event.fileType!==undefined && event.fileType==="perfRawData"){
-      this.theFile=event;
+    this.initFilePerf = new classFileSport;
+    if (event.fileType!==undefined && event.fileType==="perfRawData" && event.content!==undefined){
+      if (event.content.length===0) {
+        this.errorMsg.set("Performance file '" + event.name + "'is empty");
+        return;
+      }
       this.filePerf=this.copyInOutFile(event.content);
-      this.initFilePerf=this.copyInOutFile(event.content);
+      this.initFilePerf=event;
 
-      this.headerPerf=fillHeaderFile(this.theFile,this.headerPerf);
+      this.headerPerf=fillHeaderFile(event,this.headerPerf);
      
-      this.log("file perf " + this.theFile.name + " has " + this.filePerf.length + " record(s)");
+      this.log("file perf " + this.headerPerf.name + " has " + this.filePerf.length + " record(s)");
       this.isFilePerfReceived.set(true);
       this.tabPerfPoR= updateTabPor(this.filePerf);
       if (this.tabPerfPoR.length===0){
-        this.log("no PoR records found for file " + this.theFile.name);
-        this.errorMsg.set("no PoR records found for file " + this.theFile.name);
+        this.log("no PoR records found for file " + this.headerPerf.name);
+        this.errorMsg.set("no PoR records found for file " + this.headerPerf.name);
         return;
       }
       if (this.isPoRFileReturned()){
@@ -130,6 +127,31 @@ export class SportPerfRawDataMgtComponent {
         this.errorMsg.set(this.selBucket.name + " is not a formatted performance sport file");
     }
     this.scroller.scrollToAnchor('bottomPage');
+  }
+
+  buildFormPerf(){
+    this.errorMsg.set("");
+    this.perfCircuitRef = [];
+    this.isBuildFromPerf.set(false);
+    const initPerfPoR = updateTabPor(this.filePerf);
+    if (initPerfPoR.length === 0) {
+      this.errorMsg.set("No Point Of References found in the perf file " + this.headerPerf.name);
+      return;
+    }
+    this.perfCircuitRef = buildPerfCircuitRef(this.specificCircuit.points as Array<classPointOfRef>, initPerfPoR, this.filePerf);
+    const nbLoop=this.perfCircuitRef[0].newLoop.length - 1;
+    for (var i=nbLoop; i>-1; i--){
+      var trouve=false;
+      for (var j=0; j<this.perfCircuitRef.length && !trouve; j++){
+        if (this.perfCircuitRef[j].newLoop[i].speed!==0){ trouve=true; }
+      }
+      if (!trouve){
+        for (var j=0; j<this.perfCircuitRef.length; j++){
+        this.perfCircuitRef[j].newLoop.splice(i,1);
+        }
+      }
+    }
+    this.isBuildFromPerf.set(true);
   }
 
   // called by .emit from component app-manage-point-of-ref
@@ -167,7 +189,8 @@ export class SportPerfRawDataMgtComponent {
 
   onResetFile(){
     this.filePerf.length=0;
-    this.filePerf=this.copyInOutFile(this.initFilePerf);
+    this.filePerf=this.copyInOutFile(this.initFilePerf.content);
+    this.headerPerf=fillHeaderFile(this.initFilePerf, new classHeaderFileSport);
     this.isPerfFileModified.set(false);
   }
 
@@ -176,36 +199,38 @@ export class SportPerfRawDataMgtComponent {
     this.fnSave(this.identification.performanceSport.bucket, event, event.codeName);
   }
 
+  savePerfFromCircuit(event:any){
+    // TO BE VALIDATED
+    this.fnSave(this.identification.performanceSport.bucket, event, event.name);
+  }
+
   onSavePerfFile(){
     // update the refPoints table
     this.listPoR();
-    this.theFile.content=this.filePerf;
+    this.initFilePerf== new classFileSport;
+    this.initFilePerf.content=this.copyInOutFile(this.filePerf);;
+    this.initFilePerf=fillHeaderFile(this.headerPerf, this.initFilePerf); //TO BE VALIDATED
     this.isPerfFileModified.set(false);
-    this.theFile.codeName = this.theFile.name;
-    this.fnSave(this.identification.performanceSport.bucket, this.theFile, this.theFile.codeName);
+    this.fnSave(this.identification.performanceSport.bucket, this.initFilePerf, this.initFilePerf.name);
   }
   
   fnSave(bucket:string, content:any, fileName:string){
-    var file=new File ([JSON.stringify(content)], fileName, {type: 'application/json'});    
+    var file=new File ([JSON.stringify(content)], fileName, {type: 'application/json'});   
+    const nameFile = fileName; 
     this.ManageGoogleService.uploadObject(this.configServer, bucket, file ,  fileName)
           .subscribe(
               res => {
                   if (res.type===4){ 
-                    this.nbSuccessUpload++;
-                    this.nbSave=this.nbSuccessUpload;
-                    this.saveMsg.set(" file has been updated and stored in the cloud ");
+                    this.saveMsg.set(" file '" + nameFile + "' has been updated and stored in the cloud ");
                   }
               
             }, 
             err => {
-              this.nbErrUpload--;
-              this.nbSave=this.nbErrUpload;
-              this.saveMsg.set(" upload pb - file has not been updated");
+              this.saveMsg.set(" upload pb - file '" + nameFile + "' has not been updated");
             })
   }
 
   listPoR(){
-
     // Index listOfPoR once (first occurrence wins, like the original search)
     const porByRef = new Map<string, classPointOfRef>();
     for (const por of this.listOfPoR) {
@@ -215,7 +240,7 @@ export class SportPerfRawDataMgtComponent {
     const points = this.specificCircuit.points;
     points.length = 0;                                   // clear in place
 
-    const refs = new Set<string>(this.theFile.refPoints); // Set dedups automatically
+    const refs = new Set<string>(this.headerPerf.refPoints); // Set dedups automatically
     const seen = new Set<string>();
 
     for (const perf of this.filePerf) {
@@ -230,7 +255,7 @@ export class SportPerfRawDataMgtComponent {
       if (por) points.push(por);
     }
 
-    this.theFile.refPoints = [...refs].sort();           // default sort = same order as a < b on strings
+    this.headerPerf.refPoints = [...refs].sort();           // default sort = same order as a < b on strings
 
   }
 
@@ -321,7 +346,6 @@ export class SportPerfRawDataMgtComponent {
     } else if (event.target.id.substring(0,8)==='perfSel-'){
       this.selItem=Number(event.target.id.substring(8));
       this.perfNb=this.selItem;
-      //this.selectedRecord=this.filePerf[this.selItem];
     } 
     this.newPoR=this.filePerf[this.perfNb].refPoR;
     this.log('row selection = ' + this.selItem);
@@ -336,7 +360,7 @@ export class SportPerfRawDataMgtComponent {
     }
   }
   private log(...args: unknown[]) {
-    if (this.debug) this.log('[sport-perf-raw-data]', ...args);
+    if (this.debug) console.log('[sport-perf-raw-data]', ...args);
   }
 
 

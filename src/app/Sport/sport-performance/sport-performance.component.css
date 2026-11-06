@@ -1,3 +1,32 @@
 
 
 @import '../sport.component.css';
+
+.porEven{
+    color:blue;
+    background-color: lightgreen;
+}
+
+.porOdd{
+    color:blue;
+    background-color: rgb(124, 241, 124);
+}
+
+.porEven:hover{
+    color:white;
+    background-color: blue;
+}
+
+.porEven:hover{
+    color:white;
+    background-color: blue;
+}
+
+.sel{
+    font-size: 14px;
+}
+
+.sel:hover{
+    color:white;
+    background-color: blue;
+}

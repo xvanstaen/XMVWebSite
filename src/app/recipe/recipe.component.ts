@@ -82,6 +82,7 @@ const DEGREE_C = '°C';
 })
 export class RecipeComponent implements OnInit {
 
+  debug:boolean=false;
   @Input() configServer = new configServer();
   @Input() identification = new LoginIdentif();
   @Input() InConvToDisplay = new mainConvItem();
@@ -183,7 +184,7 @@ export class RecipeComponent implements OnInit {
   delMsg: string = ''; // name of the recipe to delete
 
   tabUpdateRef: Array<{ init: number }> = []; // index of each recipe in initialRecipeFile (-1 = new)
-  message: string = '';
+  message=signal<string>("");
 
   searchScroll: string = 'hidden';
   heightListType: number = 0;
@@ -447,7 +448,7 @@ export class RecipeComponent implements OnInit {
     this.shouldShowDropdownPerso[this.prevDialog] = false;
     this.errType = '';
     this.isListTypeUpdated.set(true);
-    this.message = '';
+    this.message.set("");
   }
 
   // -------------------------------------------------------------------------
@@ -815,7 +816,7 @@ export class RecipeComponent implements OnInit {
       this.calculateNutrition('all', i);
     }
     this.recipeFile.updatedAt = strDateTime();
-    this.message = '';
+    this.message.set("");
     this.isRecipeModified.set(true);
   }
 
@@ -1365,7 +1366,7 @@ export class RecipeComponent implements OnInit {
       .subscribe({
         next: res => {
           if (res.type === HttpEventType.Response) {
-            this.message = `File "${GoogleObject}" is successfully stored in the cloud`;
+            this.message.set(`File "${GoogleObject}" is successfully stored in the cloud`);
             this.isRecipeModified.set(false);
             this.IsSaveConfirmed.set(false);
             this.isMessage.set(true);
@@ -1375,5 +1376,8 @@ export class RecipeComponent implements OnInit {
           this.Error_Access_Server = `File ${GoogleObject} *** Save action failed - status is ${e.status}`;
         },
       });
+  }
+  private log(...args: unknown[]) {
+    if (this.debug) this.log('[app.component:]', ...args);
   }
 }

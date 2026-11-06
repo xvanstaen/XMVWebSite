@@ -107,8 +107,8 @@
                     
                 </div>
             }
-            @if (isMessage()){
-                <div class="msg" style="width:100%; display:inline-block; font-size:15px; font-weight:bolder;" ><br>{{message}} </div>
+            @if (message()!==""){
+                <div class="msg" style="width:100%; display:inline-block; font-size:15px; font-weight:bolder;" ><br>{{message()}} </div>
             }
             @if (IsSaveConfirmed()){
                 <div  style="margin-left:10px; width:400px; border:solid 2px green; background-color: lightgrey;">

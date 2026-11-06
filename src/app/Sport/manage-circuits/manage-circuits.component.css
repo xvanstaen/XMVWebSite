@@ -11,11 +11,10 @@ body{
 .inputText{
     color:blue;
     background-color: rgb(232, 229, 229);
-    height:22px;
-    margin-left:0px;
-    padding-left:10px;
-    display:block;
-    float:left;
+    height:22px;   
+    border:red 0px solid;
+
+    
 }
 
 .inputText:hover{
@@ -24,12 +23,11 @@ body{
 }
 
 .theTitle{
-    background:blue;
-    color:white;
-    text-align: center;
-    font-size: 15px;
-    display:inline-block;
+ background:blue;
     height:22px;
+    display:block;
+    float:left;
+    border:0px white solid;
 }
 
 .titlePOR{

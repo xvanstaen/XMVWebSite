@@ -12,7 +12,7 @@
         </span>
       }
       <span style="margin-top:10px;"><br></span>
-      @if (DisplayListOfObjects){
+      @if (DisplayListOfObjects()){
             @for (ListObject of  myListOfObjects.items; track $index; let i=$index){
                   <li style="list-style-type: none;" (click)="RetrieveSelectedFile(ListObject)">  
                         <span  class="object " [class]="{'even': i % 2 === 0 , 'odd': i % 2 === 1 }" >{{i+1}} - {{ListObject.name}}</span>     
@@ -21,7 +21,6 @@
       } @else {
 
             <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>
-            {{HTTP_Address}}
       }
       <div id='SelectedObjectsFile' ></div>
       <br><br>

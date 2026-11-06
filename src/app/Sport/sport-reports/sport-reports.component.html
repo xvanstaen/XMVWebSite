@@ -18,16 +18,16 @@
 
 @if (isBuildFromPerf()){
     <div class="quest"
-         style="background-color: lightblue; color:white; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:10px; border:2px solid green;">
+         style="background-color: lightblue; color:blue; font-size:16px; font-weight:bolder; text-align: center; width:580px; margin-top:10px; border:2px solid green;">
         <div style="margin-top:10px;">Circuit created from PoR contained in perf file <br> {{headerPerf.name}}</div>
         @if (saveMsg()!==''){
             <div style="width:100%; display:inline-block; color:red;">{{saveMsg()}}</div>
         }
-        <div style="margin-top:-15px;">
-            <app-build-loop-from-perf
-                [specificCircuit]="specificCircuit" [filePerf]="filePerf" [headerPerf]="headerPerf" [nbSave]="nbSave"
+        <div style="margin-left:15px; display:block;">
+            <app-display-circuit-loop
+                [perfCircuit]="perfCircuitRef" [filePerf]="filePerf" [headerPerf]="headerPerf" [displayTab]="displayTabOne"
                 (savePerf)="savePerf($event)">
-            </app-build-loop-from-perf>
+            </app-display-circuit-loop>
         </div>
         <div class="skipLine"></div>
     </div>
@@ -35,6 +35,7 @@
 
 @if (isPerfRetrieved()) {
     <app-sport-performance [configServer]="configServer" [identification]="identification"
+        [initFilePerf]="theFile"
         (returnPerf)="onSelectPerf($event)" [isPerfRetrieved]="isPerfRetrieved()">
     </app-sport-performance>
 }
@@ -45,7 +46,7 @@
     </app-manage-circuits>
 }
 
-@if (isSpecificCircuitReceived() || filePerf.length>0){
+@if (isSpecificCircuitReceived() || isFilePerfReceived()){
     <div class="quest" style="width:580px; display:block ;margin-top:15px;  margin-left:20px; background-color: lightblue;">
         <div style="width:580px; display:inline-block; text-align: center; font-size:17px; font-weight: bolder; margin-top:4px;"> You have selected</div>
         @if (isSpecificCircuitReceived()){
@@ -54,7 +55,7 @@
                 <span style="color:blue; font-weight: bold; width:65%; display:inline-block;">{{specificCircuit.name}} </span>
             </div>
         }
-        @if (filePerf.length>0){
+        @if (isFilePerfReceived()){
             <div style="width:100%; display:inline-block; margin-top:8px;">
                 <span class="aLabel" style="padding-left:15px; width:30%;"> Performance file </span>
                 <span style="color:blue; font-weight: bold; width:65%;">{{nameFilePerf}}</span>
@@ -63,7 +64,7 @@
     </div>
 }
 
-@if (isSpecificCircuitReceived() && filePerf.length>0){
+@if (isSpecificCircuitReceived() && isFilePerfReceived()){
     <div class="quest" style="width:580px; margin-left:20px; margin-top:15px; background-color: cyan;">
         <div class="quest">
             <div class="aLabel" style="font-weight:bolder; width:100%;"> Do you want to retrieve the PerfCircuit file if it exists</div>
@@ -102,7 +103,7 @@
 @if (errorMessage()){
     <div style="color:red; font-size:15px; width:580px; margin-left:20px; display:inline-block; text-wrap:wrap; text-align:center;
         font-weight:bold; padding-top:9px; height:80px; background-color: lightgreen;">
-        <span>Circuit file <br>{{errorMessage()}} </span>
+        {{errorMessage()}}
     </div>
 }
 @if (calcErrorMessage()){
@@ -119,7 +120,7 @@
             <div style="margin-top:10px;">New circuit <br> </div>
             <div style="margin-top:-15px;">
                 <app-display-circuit-loop
-                    [perfCircuit]="perfCircuit" [filePerf]="filePerf" [headerPerf]="headerPerf" [nbSave]="nbSave" [displayTab]="displayTabTwo"
+                    [perfCircuit]="perfCircuit" [filePerf]="filePerf" [headerPerf]="headerPerf" [displayTab]="displayTabTwo"
                     (savePerf)="savePerf($event)" (uploadPerfCircuit)="uploadPerfCircuit($event)">
                 </app-display-circuit-loop>
             </div>

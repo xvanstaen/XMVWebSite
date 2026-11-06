@@ -1,12 +1,15 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, signal, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 
 import { ListBucketContentComponent } from '../../Special-Services/ListBucketContent.component';
 import { ManagePointOfRefComponent } from '../../Sport/manage-point-of-ref/manage-point-of-ref.component';
+import { ManageCircuitsComponent } from '../manage-circuits/manage-circuits.component';
 import { configServer, LoginIdentif, OneBucketInfo, classTabMetaPerso } from '../../JsonServerClass';
-import { classFileSport, classFilePerf } from '../classSport';
+import { classPointOfRef, classFileSport, classFilePerf, classHeaderFileSport , classCircuitRec} from '../classSport';
+import { PoRMatch, updatePerfRefPoints } from '../assignPoR';
+import { fillHeaderFile } from '../commonSportFunctions';
 import { fromGPXtoTXT } from '../convertGPXtoTXT';
 import { fromTCXtoJSON } from '../convertTCXtoTXT';
 import { formatHHMNSS } from '../../MyStdFunctions';
@@ -43,7 +46,8 @@ const MAX_ALT_HEART_INIT = 2000;
   templateUrl: './sport-performance.component.html',
   styleUrls: ['./sport-performance.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ListBucketContentComponent, ManagePointOfRefComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ListBucketContentComponent, 
+    ManagePointOfRefComponent, ManageCircuitsComponent],
 })
 export class SportPerformanceComponent implements OnInit {
 
@@ -56,16 +60,28 @@ export class SportPerformanceComponent implements OnInit {
   @Input() identification = new LoginIdentif();
   /** true => create the perf file and return it to the calling component */
   @Input() isPerfRetrieved: boolean = false;
+  @Input() initFilePerf = new classFileSport;
 
+  fileCircuit:Array<classCircuitRec>=[];
   /**
    * Debug only: when true, raw and converted import files are uploaded to the
    * 'xmv-tests' bucket (JSON.stringify of a whole file + one HTTP upload each).
    */
   private debugUploads = false;
+  private debug:boolean=false;
 
   tabMetaPerso: Array<classTabMetaPerso> = [];
   perf: Array<classFilePerf> = [];
   filePerf = new classFileSport();
+  headerFile = new classHeaderFileSport;
+
+  isFileCircuitReceived=signal<boolean>(false);
+
+  filePoR:Array<any>=[];
+
+  isCircuitSelected:boolean=true;
+  isFilePorReceived=signal(false);
+  saveMsg=signal<string>("");
 
   bucketName: string = '';
   NbRefresh_Bucket = 0;
@@ -82,8 +98,8 @@ export class SportPerformanceComponent implements OnInit {
 
   isManagePointOfRef = false;
   isConfirmSave = false;
-  isFileProcessed = false;
-  isPerfProcessCompleted = false;
+  isFileReceived=signal<boolean>(false);
+  isPerfProcessCompleted=signal<boolean>(false);
 
   tabSecond: Array<SecondRow> = [];
   tabMeter: Array<MeterRow> = [];
@@ -91,8 +107,8 @@ export class SportPerformanceComponent implements OnInit {
   heart = { lowest: MAX_ALT_HEART_INIT, lDist: 0, highest: 0, hDist: 0 };
   speed = { highest: 0, dist: 0 };
 
-  errorMsg = '';      // shown by the template
-  errorMessage = '';  // save / lat-lon messages (not displayed by the current template)
+  errorMsg=signal<string>("");      // shown by the template
+  // save / lat-lon messages (not displayed by the current template)
 
   ngOnInit() {
     this.bucketName = this.identification.performanceSport.bucket;
@@ -101,8 +117,23 @@ export class SportPerformanceComponent implements OnInit {
     meta.key = 'fileType';
     meta.value = 'performance';
     this.tabMetaPerso.push(meta);
+    if (this.isPerfRetrieved){
+      this.headerFile = fillHeaderFile (this.initFilePerf,this.headerFile);
+      this.ReceivedData(this.initFilePerf);
+    }
   }
 
+  returnPoR(event:any){
+    this.saveMsg.set("");
+    if (event.length===0){
+      this.errorMsg.set("File with points of reference is empty. ");
+      return;
+    }
+    this.filePoR=[];
+    this.filePoR = event;
+    this.isFilePorReceived.set(true);
+    this.isCircuitSelected=false;
+  }
   // ---------------------------------------------------------------- UI events
 
   BucketInfo(event: any) {
@@ -111,7 +142,10 @@ export class SportPerformanceComponent implements OnInit {
   }
 
   actionPointOfRef(event: string) {
-    if (event === 'managePoRef') this.isManagePointOfRef = true;
+    this.saveMsg.set("");
+    if (event === 'managePoRef') {
+      this.isManagePointOfRef = true; 
+      this.isCircuitSelected=false;}
     else if (event === 'cancelPoRef') this.isManagePointOfRef = false;
   }
 
@@ -120,31 +154,117 @@ export class SportPerformanceComponent implements OnInit {
   }
 
   cancelFile() {
+    this.saveMsg.set("");
     this.isConfirmSave = false;
   }
 
+  calculatePoR(){
+    this.saveMsg.set("");
+    this.applyCircuit('SI-2',1);
+    return;
+    if (this.country===-1){
+      this.errorMsg.set("To get the appropriate PoR, selected the country ");
+      return;
+    }
+  }
+
+  matches: PoRMatch[] = [];
+  notFound: string[] = [];
+
+  country:number=-1;
+  selectedCountry(event:any){
+    this.country=event;
+  }
+
+  applyCircuit(circuitCode = 'SI-2', toleranceFactor = 1) {
+    if (!this.perf.length) {
+      console.error('applyCircuit: file perf is empty, load the perf data first');
+      return;
+    }
+    const res = updatePerfRefPoints(this.perf, this.fileCircuit, circuitCode, { toleranceFactor });
+    this.perf = res.filePerf;
+    this.matches = res.matches;
+    this.notFound = res.notFound;
+  }
+
+  returnCircuit(event:any){
+    this.fileCircuit=event;
+    this.isFileCircuitReceived.set(true);
+  }
+
+  isDisplayRefPor:boolean=false;
+  displayRefPorOnly(){
+    if (this.isDisplayRefPor){this.isDisplayRefPor=false} else {this.isDisplayRefPor=true}
+  }
+
+  isSpecificCircuitSelected=signal<boolean>(false);
+  specificCircuit = new classCircuitRec;
+  circuitRecord:number=-1;
+  tabSorting:Array<number>=[];
+  selCircuit(event:any){
+    this.saveMsg.set("");
+    const rec = this.fileCircuit[event];
+    this.specificCircuit=new classCircuitRec;
+    this.specificCircuit=rec;
+    this.circuitRecord=event;
+    this.isSpecificCircuitSelected.set(true);
+    for (var i=0; i<20; i++){
+      this.tabSorting[i]=i+1;
+    }
+
+  }
+
+  sortCircuit:number=-1;
+  selPriority(event:any){
+    this.sortCircuit=event;
+  }
+
+  onInput(event:any){
+    const i = event.target.id;
+    this.tabSorting[i]=Number(event.target.value);
+  }
+
+  sortTheCircuit(){
+    let points: Array<classPointOfRef> = [];
+    let dist: Array<number> = [];
+
+    for (var i=0; i<this.specificCircuit.points.length; i++){
+      points[i] = this.specificCircuit.points[i];
+      dist[i]=this.specificCircuit.dist[i];
+    }
+    for (var i=0; i<this.specificCircuit.points.length; i++){
+      this.specificCircuit.points[i] = points[this.tabSorting[i]];
+      this.specificCircuit.dist[i] = dist[this.tabSorting[i]];
+    }
+
+  }
+
   checkOptions() {
-    this.errorMsg = '';
+    this.errorMsg.set("");
+    this.saveMsg.set("");
     const seconds = Number(this.formOptions.controls['seconds'].value);
     const meters = Number(this.formOptions.controls['meters'].value);
 
     if (!Number.isFinite(seconds) || seconds <= 0) {
-      this.errorMsg = 'enter a numeric value greater than 0 for seconds';
+      this.errorMsg.set('enter a numeric value greater than 0 for seconds');
     } else if (!Number.isFinite(meters) || meters <= 0) {
-      this.errorMsg = 'enter a numeric value greater than 0 for meters';
+      this.errorMsg.set('enter a numeric value greater than 0 for meters');
     } else if (this.perf.length === 0) {
-      this.errorMsg = 'file perf is empty - check the problem';
+      this.errorMsg.set('file perf is empty - check the problem');
     }
-    if (this.errorMsg === '') this.performancePerSec();
+    if (this.errorMsg()==="") this.performancePerSec();
   }
 
   // ------------------------------------------------------------ file reception
 
   ReceivedData(event: any) {
-    this.isPerfProcessCompleted = false;
-    this.isFileProcessed = false;
-    this.errorMsg = '';
-    this.errorMessage = '';
+    this.isPerfProcessCompleted.set(false);
+    this.isFileReceived.set(false);
+    this.saveMsg.set("");
+    this.errorMsg.set("");
+    if (this.perf.length!==0){
+      this.errorMsg.set("New file received");
+    }
     this.perf = [];
     this.scroller.scrollToAnchor('result');
 
@@ -161,15 +281,17 @@ export class SportPerformanceComponent implements OnInit {
     this.fillMissingLatLon();
 
     if (this.perf.length === 0) {
-      if (this.errorMsg === '') this.errorMsg = 'file perf is empty - check the problem';
-    } else {
-      this.isFileProcessed = true;
-    }
-
+      if (this.errorMsg()==="") this.errorMsg.set('file perf is empty - check the problem');
+      } else {
+        this.isFileReceived.set(true);
+      }
+    this.filePerf=event;
+    this.performancePerSec();
     if (this.isPerfRetrieved) {
-      this.createFilePerf();
+      //this.filePerf=fillHeaderFile(this.headerFile, this.filePerf);
+      //this.createFilePerf();
       this.returnPerf.emit(this.filePerf);
-    }
+    } 
   }
 
   private parseTextFile(event: any) {
@@ -349,7 +471,7 @@ export class SportPerformanceComponent implements OnInit {
       }
       prev = i;
     }
-    if (prev === -1) this.errorMessage = 'LAT & LON are nil and cannot be updated';
+    if (prev === -1) this.errorMsg.set('LAT & LON are nil and cannot be updated');
   }
 
   // ------------------------------------------------------ per second / per meter
@@ -434,7 +556,7 @@ export class SportPerformanceComponent implements OnInit {
     this.finalizeMeters();
 
     this.scroller.scrollToAnchor('bottomPage');
-    this.isPerfProcessCompleted = true;
+    this.isPerfProcessCompleted.set(true);
   }
 
   private finalizeSeconds() {
@@ -472,25 +594,30 @@ export class SportPerformanceComponent implements OnInit {
   }
 
   saveFile() {
-    this.errorMessage = '';
+    this.errorMsg.set("");
     this.createFilePerf();
 
     const fileName: string = this.formOptions.controls['fileName'].value;
     const type = 'application/json';
-    const file = new File([JSON.stringify(this.filePerf)], fileName, { type });
+    const file = new File([JSON.stringify(this.filePerf)], fileName, { type: 'application/json' });
+    
+    //this.google
+    // .uploadObject(this.configServer, this.identification.performanceSport.bucket, file, fileName)
+    //  
 
     this.google
-      .uploadObjectMetaPerso(this.configServer, this.identification.performanceSport.bucket, file, fileName, '', type, this.tabMetaPerso)
+     .uploadObjectMetaPerso(this.configServer, this.identification.performanceSport.bucket, file, fileName, '', type, this.tabMetaPerso)
       .subscribe({
         next: res => {
           if (res.type === HttpEventType.Response) {
-            this.errorMessage = `file ${fileName} has been successfully saved`;
+            this.saveMsg.set(`file ${fileName} has been successfully saved`);
             this.isConfirmSave = false;
           }
         },
         error: err => {
-          this.errorMessage = `failure to save ${fileName} ; error = ${JSON.stringify(err)}`;
-          console.log(this.errorMessage);
+          this.saveMsg.set(`failure to save ${fileName} ; error = ${JSON.stringify(err)}`);
+          this.log(this.errorMsg());
+          this.isConfirmSave = false;
         },
       });
   }
@@ -501,12 +628,12 @@ export class SportPerformanceComponent implements OnInit {
     if (!this.debugUploads) return;
     const file = new File([JSON.stringify(content)], name, { type: 'application/json' });
     this.google.uploadObject(this.configServer, DEBUG_BUCKET, file, name)
-      .subscribe({ error: err => console.log(err) });
+      .subscribe({ error: err => this.log(err) });
   }
 
   /** GPX/TCX are only converted and uploaded for inspection; they do not fill this.perf yet. */
   private processGPXfile(event: any) {
-    this.errorMsg = 'GPX import does not build a performance table yet - file perf is empty';
+    this.errorMsg.set('GPX import does not build a performance table yet - file perf is empty');
     if (!this.debugUploads) return;
     const r = fromGPXtoTXT(event);
     this.debugUpload(r.theFile, 'myJSON-GPXfile');
@@ -514,10 +641,14 @@ export class SportPerformanceComponent implements OnInit {
   }
 
   private processTCXfile(event: any) {
-    this.errorMsg = 'TCX import does not build a performance table yet - file perf is empty';
+    this.errorMsg.set('TCX import does not build a performance table yet - file perf is empty');
     if (!this.debugUploads) return;
     const r = fromTCXtoJSON(event);
     this.debugUpload(r.theLaps, 'myJSON-CSVfile');
     this.debugUpload(r.thePerf, 'myJSON-TCXfile');
+  }
+
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[app.component:]', ...args);
   }
 }

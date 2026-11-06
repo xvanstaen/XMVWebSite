@@ -4,8 +4,8 @@
 
 <div style="margin-top:10px; background-color: lightgrey; margin-left:20px; width:790px; border:solid 2px blue; display:block;">
     <div style="margin-top:10px; color:blue; text-align:center; font-size:32px; height:45px; letter-spacing: 3px;  padding-top:5px; font-weight:bolder; ">DICTIONARY</div>
-    @if (isMsg()){
-        <span style="margin-left:40px; font-weight: bolder; height:30px; color:blue; font-size:16px;">{{msg}}</span>
+    @if (msg()!==""){
+        <span style="margin-left:40px; font-weight: bolder; height:30px; color:blue; font-size:16px;">{{msg()}}</span>
     }
     <div style="margin-top:5px; width:100%; display:inline-block;" ></div>
     <div class="circleSize"   style="display:inline-block;"></div>
@@ -55,7 +55,7 @@
             (click)="cancelSearch()"> Cancel search</button>
         }
     </div>
-    @if (isConfirmedSave===false && EventHTTPReceived[0]===true && isModified===true){
+    @if (isConfirmedSave===false && isModified===true){
         <div style="margin-top: 20px; display:inline-block; width:100%; margin-left:280px;">
             <button id='but_1' class="sizeButtons"  style="width:90px; height:40px; font-size:15px;"  (click)="onSave()"> Save</button> &nbsp;&nbsp;
             <button id='but_2' class="sizeButtons"  style="width:140px; height:40px;  font-size:15px;" 
@@ -63,7 +63,7 @@
         </div>
         <br><br>
     }
-    @if (isConfirmedSave===true && EventHTTPReceived[0]===true){
+    @if (isConfirmedSave===true ){
         <div style="max-width:800px; font-size:15px; margin-top:20px;  margin-left:30px;  display:inline-block;">
             <form  [formGroup]="SpecificForm" style="display:inline-block;">
                 <div  style="display: flex; align-items: center; gap: 10px;  margin-left:5px; padding-top:10px;color:blue; font-size:15px;  display:inline-block;" >

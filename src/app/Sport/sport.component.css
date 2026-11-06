@@ -135,7 +135,7 @@ div{
 table {
     --rowH: 21px;
     
-    width:650px;
+    width:850px;
     /*
     overflow: scroll;
     */
@@ -147,7 +147,7 @@ table {
     
 th {
     background-color: #96D4D4;
-    border-spacing: 5px;
+    border-spacing: 0px;
     border: 1px solid blue;
     color: blue;
     height:30px;
