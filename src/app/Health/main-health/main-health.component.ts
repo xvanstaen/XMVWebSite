@@ -158,26 +158,14 @@ export class MainHealthComponent {
   SaveConsoleFinished: boolean = false;
   type: string = '';
 
-  HTTP_Address: string = '';
-  HTTP_AddressPOST: string = '';
-  Google_Bucket_Access_Root: string = 'https://storage.googleapis.com/storage/v1/b/';
-  Google_Bucket_Access_RootPOST: string = 'https://storage.googleapis.com/upload/storage/v1/b/';
   Google_Object_Health: string = 'HealthTracking';
   Google_Object_Console: string = 'LogConsole';
   Google_Object_Calories: string = 'ConfigCaloriesFat';
-  bucket_data: string = '';
-  myListOfObjects = new Bucket_List_Info;
-  DisplayListOfObjects: boolean = false;
-
 
   errorMsg=signal<string>("");
 
   EventHTTPReceived: Array<boolean> = [];
-  EventStopWaitHTTP: Array<boolean> = [];
   maxEventHTTPrequest: number = 12;
-  id_Animation: Array<number> = [];
-  TabLoop: Array<number> = [];
-  NbWaitHTTP: number = 0;
 
   saveServer={
     google:"",
@@ -190,10 +178,10 @@ export class MainHealthComponent {
   //isDisplayAll:boolean=false;
 
   isCopyFile=signal<boolean>(false);
-  isMgtCaloriesFat:boolean=false;
+  //isMgtCaloriesFat:boolean=false;
 
-  isDisplayChart:boolean=false;
-  isSaveCaloriesFat:boolean=false;
+  isDisplayChart=signal<boolean>(false);
+  //isSaveCaloriesFat=signal<boolean>(false);
 
   calfatNameFile: string = '';
   errCalcCalFat=signal<string>('');
@@ -258,8 +246,6 @@ ngOnInit(): void {
 
   const n = this.maxEventHTTPrequest;
   this.EventHTTPReceived = new Array(n).fill(false);
-  this.EventStopWaitHTTP = new Array(n).fill(false);
-  this.TabLoop = new Array(n).fill(0);
   this.tabSelRadio = new Array(20).fill('N');
 
   this.eventLockLimit.checkLock.action = 'firstLoop';
@@ -415,10 +401,8 @@ private applyHealthSaveSuccess(event: any): void {
 
 resultGetRecord(event: any): void {
   const { iWait, content } = event;
-  this.EventStopWaitHTTP[iWait] = true;
-
   const failed = event.status !== undefined && event.status !== 200 && event.status !== 0;
-  //this.isErrorMsg.set(failed);
+
   if (failed) {
     this.errorMsg.update(msg => `${msg} error:${event.status} when retrieving the file ${this.tabLock[iWait].object}`);
     return;                                   // content is not usable
@@ -632,7 +616,7 @@ private selCopyFile(on: boolean): void {
 
 private selCalFatMgt(on: boolean): void {
   if (on) {
-    this.isMgtCaloriesFat = true;
+    //this.isMgtCaloriesFat = true;
     if (this.tabLock[1].lock !== 1 || this.EventHTTPReceived[1] === false) {
       this.EventHTTPReceived[1] = false;
       this.lockFile(1);
@@ -643,8 +627,7 @@ private selCalFatMgt(on: boolean): void {
     this.flushReads();
     return;
   }
-
-  this.isMgtCaloriesFat = false;
+  //this.isMgtCaloriesFat = false;
   this.displayCalFat.set(false);
 
   const toUnlock = [1, 6];
@@ -679,14 +662,14 @@ private selCalculate(): void {
 
 private selChart(on: boolean): void {
   if (!on) {
-    this.isDisplayChart = false;
+    this.isDisplayChart.set(false);
     if (this.tabLock[5].lock === 1 && this.identification.triggerFileSystem.toUpperCase() === 'YES') {
       this.unlockFile(5);
     }
     return;
   }
 
-  this.isDisplayChart = true;
+  this.isDisplayChart.set(true);
   if (this.tabLock[5].lock !== 1 || this.fileParamChart.data.length === 0 || this.EventHTTPReceived[5] === false) {
     this.EventHTTPReceived[5] = false;
     this.lockFile(5);
@@ -880,7 +863,7 @@ saveParamChart(event: classtheEvent): void {
 
     this.openFileAccess.set(true);
     this.errorMsg.set("");
-    this.isSaveCaloriesFat = true;
+    //this.isSaveCaloriesFat.set(true);
 
     if (event.target.id==='RecipeSave'){
       this.processSaveRecipe(event);
@@ -1101,7 +1084,7 @@ private prepareForSave(): void {
     this.SaveConsoleFinished = false;
 
     this.myLogConsole = true;
-    msginLogConsole(msg, this.myConsole, this.myLogConsole, this.SaveConsoleFinished, this.HTTP_Address, this.type);
+    msginLogConsole(msg, this.myConsole, this.myLogConsole, this.SaveConsoleFinished, "", this.type);
   }
 
   private log(...args: unknown[]) {

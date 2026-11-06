@@ -125,7 +125,7 @@
         </div>
     } 
 
-    @if ( displayCalFat()){ <!-- isMgtCaloriesFat===true && EventHTTPReceived[1]===true &&  EventHTTPReceived[6]===true &&  EventHTTPReceived[3]===true || -->
+    @if ( displayCalFat()){
         <div id='posTopAppCalFat'>   <!--    && tabLock[1].lock!==3 -->
             <app-calories-fat [identification]="identification"  [configServer]="configServer" [inFileRecipe]="fileRecipe" [convToDisplay]="convToDisplay"
                 [ConfigCaloriesFat]="ConfigCaloriesFat"  [HTMLCaloriesFat]="ConfigHTMLFitHealth.ConfigCalFat.confCaloriesFat"  [tabLock]="tabLock" 
@@ -141,7 +141,7 @@
                 (unlockFile)="unlockFile($event)"-->
         </div>
     }
-    @if (isDisplayChart===true && EventHTTPReceived[4]===true && EventHTTPReceived[0]===true && EventHTTPReceived[5]===true){
+    @if (isDisplayChart() && EventHTTPReceived[4]===true && EventHTTPReceived[0]===true && EventHTTPReceived[5]===true){
         <div id='posTopAppReportHealth'> <!--  && tabLock[5].lock!==3 -->
             
             <app-report-health [identification]="identification"  [configServer]="configServer"  [inFileParamChart]="fileParamChart" [tabLock]="tabLock"
