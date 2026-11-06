@@ -528,7 +528,7 @@
             </div> 
             <div class="skipLine">&nbsp;</div>
                 @if (isAllDataModified===true && tabLock[0].lock ===1){
-                    @if (IsSaveConfirmedAll===false && isSaveHealth===false){
+                    @if (IsSaveConfirmedAll===false && !isSaveHealth()){
                         <div class="msg"  style="margin-left:10px;">
                                 File has been modified
                             <button id='AllConfirm' class="sizeButtons" (click)="ConfirmSaveA($event)"> Save</button>

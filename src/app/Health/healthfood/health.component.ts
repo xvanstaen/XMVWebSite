@@ -206,7 +206,7 @@ export class HealthComponent  {
   lastInputAt: string = '';
 
   isMustSaveFile: boolean = false;
-  isSaveHealth: boolean = false;
+  isSaveHealth=signal<boolean>(false);
 
   errCalcCalFat: string = '';
 
@@ -525,7 +525,7 @@ export class HealthComponent  {
     this.dialogue[this.prevDialogue] = false;
     this.tabInputMeal.splice(0, this.tabInputMeal.length);
     this.isInputFood = false;
-    this.isSaveHealth=false;
+    this.isSaveHealth.set(false);
     if (this.tabLock[0].lock !== 1 || this.isForceReset === true) {
       this.isDeleteConfirmed = false;
       this.IsSaveConfirmedAll = false;
@@ -558,7 +558,7 @@ export class HealthComponent  {
   checkText: string = '';
   SearchText(event: any) {
     this.errorMsg="";
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(),"only");
     this.resetBooleans();
     if (event.currentTarget.id === 'search' && event.currentTarget.value !== '') {
       this.checkText = event.currentTarget.value.toLowerCase().trim();
@@ -568,7 +568,7 @@ export class HealthComponent  {
   }
 
   actionSearchText(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(),"only");
     this.resetBooleans();
     if (event.target.id === 'submit'){
       this.checkText = this.TheSelectDisplays.controls['searchString'].value;
@@ -580,7 +580,7 @@ export class HealthComponent  {
 
 
   dateRangeSelection(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(),"only");
     this.resetBooleans();
     this.errorMsg = '';
     this.isRangeDateError = false;
@@ -623,7 +623,7 @@ export class HealthComponent  {
   }
 
   clearDates(){
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(),"only");
     this.TheSelectDisplays.controls['startRange'].setValue('');
     this.TheSelectDisplays.controls['endRange'].setValue('');
     this.resetBooleans();
@@ -732,7 +732,7 @@ export class HealthComponent  {
   }
 
   onSelMealFood(event: any) {
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(),"only");
     this.errorMsg = '';
     this.manageIds(event.target.id);
     if (event.currentTarget.id.substring(0, 7) === 'selFood') {
@@ -753,8 +753,8 @@ export class HealthComponent  {
     this.onInputAction = 'onInputDailyAll';
     this.offsetLeft = event.currentTarget.offsetLeft;
     this.offsetWidth = event.currentTarget.offsetWidth;
-    this.isSaveHealth=false;
-    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+    this.isSaveHealth.set(false);
+    this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(),"only");
   }
 
   onInputDailyAllA(event: any) {
@@ -867,10 +867,10 @@ export class HealthComponent  {
 
   onDropDownAll(event: any) {
     this.openFileAccess.set(false);
-    // this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth,"only");
+    // this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(),"only");
     this.theEvent.target.id = 'selAction-' + this.TabOfId[0] + '-' + this.TabOfId[1] + '-' + this.TabOfId[2];
     this.theEvent.target.textContent = event.target.textContent;
-    this.isSaveHealth=false;
+    this.isSaveHealth.set(false);
     this.onAction(this.theEvent);
   }
 
@@ -889,7 +889,7 @@ private markChangedOnce(d: number) {
 
 DelAfterConfirm(event: any) {
   this.openFileAccess.set(false);
-  this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth, 'only');
+  this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(), 'only');
   this.resetBooleans();
   this.isDeleteItem = false;
 
@@ -910,11 +910,12 @@ DelAfterConfirm(event: any) {
 
 onAction(event: any) {
   this.openFileAccess.set(false);
+  this.isSaveHealth.set(false);
   this.errorMsg = '';
   this.theEvent.target.id = event.target.id;
   this.theEvent.target.textContent = event.target.textContent;
   this.onInputAction = 'onAction';
-  this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth, 'only');
+  this.timeOutactivity(0, this.isAllDataModified, this.isSaveHealth(), 'only');
 }
 
 onActionA(event: any) {
@@ -934,7 +935,7 @@ onActionA(event: any) {
     this.checkLockLimit.emit({
       iWait: 0,
       isDataModified: this.isAllDataModified,
-      isSaveFile: this.isSaveHealth,
+      isSaveFile: this.isSaveHealth(),
       lastInputAt: this.lastInputAt,
       nbCalls: 0,
     });
@@ -1261,7 +1262,7 @@ ConfirmSaveA(event: any) {
 SaveHealth(event: any) {
   this.errorMsg = '';
   this.errorFn = '';
-  this.isSaveHealth = true;
+  this.isSaveHealth.set(true);
   this.IsSaveConfirmedAll = false;
 
   this.prepareCheckLock(event, true);
@@ -1289,7 +1290,7 @@ processSignalFunctions() {
   switch (this.onInputAction) {
     case 'saveHealth': {
       this.isMustSaveFile = false;
-      this.isSaveHealth = false;
+      this.isSaveHealth.set(false);
       this.IsSaveConfirmedAll = false;
       this.theEvent.checkLock.isDataModified = false;
       this.theEvent.checkLock.isSaveFile = false;
@@ -1362,10 +1363,10 @@ afterCheckFS(data: any) {
   } else if (lock.lock !== 1 && isSaving) {
     this.errorMsg = `file has been locked by another user; all your updates are lost (${errorMsg}) status=${lock.status}`;
     this.isMustSaveFile = false;
-    this.isSaveHealth = false;
+     this.isSaveHealth.set(false)
   } else if (lock.lock === 2) {
     this.isAllDataModified = false; // environment is reinitialised
-    this.isSaveHealth = false;
+    this.isSaveHealth.set(false)
   }
   // otherwise: locked by this user, nothing to do
 }

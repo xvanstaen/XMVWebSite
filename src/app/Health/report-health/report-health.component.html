@@ -1,68 +1,84 @@
+<!-- ───────────── reusable pieces ───────────── -->
 
+<!-- one drop-down list: kind = which list, items = values, left/top = offsets, h/w = size (px) -->
+<ng-template #optionList let-kind="kind" let-items="items" let-left="left" let-top="top" let-h="h" let-w="w" let-scroll="scroll">
+    <div class="dropdown">
+        <div class="Straight-content" [style.margin-left.px]="left" [style.margin-top.px]="top">
+            <div class="StraightDropDown" [style.height.px]="h" [style.width.px]="w"
+                 [style.overflow-x]="scroll ? 'hidden' : null" [style.overflow-y]="scroll ? 'scroll' : null">
+                @for (action of items; track $index) {
+                    <li class="Straight-options" [class.colorEven]="$even" [class.colorOdd]="$odd" (click)="pickOption(kind, action)">{{action}}</li>
+                }
+            </div>
+        </div>
+    </div>
+</ng-template>
 
-@if (openFileAccess()){
-    <app-file-access 
-        [configServer]="configServer" [identification]="identification" 
+<!-- check-box like list of the items (labels or limits) that can be put in a chart -->
+<ng-template #fieldPick let-kind="kind" let-names="names" let-enabled="enabled" let-selected="selected" let-colors="colors">
+    @for (name of names; track $index) {
+        @if (enabled[$index] === true) {
+            <span class="rh-pick">
+                <input style="width:20px;" class="theRadioButt" type="radio" [disabled]="!isLocked"
+                       [checked]="selected[$index] === 'Y'" (click)="toggleField(kind, $index)">
+                <div class="rh-pick-name">{{name}}</div>
+                @if (selected[$index] === 'Y') {
+                    <span class="trow myColor rh-swatch" [style.background-color]="colors[$index]" (click)="selectLabelColor(kind, $index)">&nbsp;</span>
+                }
+            </span>
+        }
+    }
+</ng-template>
+
+<!-- ───────────── file access (lock check) ───────────── -->
+@if (openFileAccess()) {
+    <app-file-access
+        [configServer]="configServer" [identification]="identification"
         [tabLock]="tabLock" [eventCheckToLimit]="theEvent" [triggerCheckToLimit]="triggerCheckToLimit()"
         [triggerFileSystem]="triggerFileSystem()" [triggerReadFile]="triggerReadFile()" [triggerSaveFile]="triggerSaveFile()"
-        (resultFileSystem)="resultAccessFile($event)"
-    >
-    </app-file-access>
+        (resultFileSystem)="resultAccessFile($event)" />
 }
 <div class="skipLine">&nbsp;</div>
-@if (isParamAxis() && isSliderSelected()){
-    <div class="dropdown" >
+
+<!-- ───────────── dialog: axis X & Y ───────────── -->
+@if (isParamAxis() && !isSliderSelected()) {
+    <div class="dropdown">
         <div class="Straight-content" style="margin-top:120px;">
-            <div  class="StraightDropDown " style="width:98%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
-                <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">
-                    Chart # {{selectedChart}} - Parameters of axis X & Y
-                    <div class="cancelCross" id="axis" (click)="cancelChartParam($event)">
-                        <div style="font-size:16px; color:black; font-weight:bold; margin-top: -2px;" id="axis" (click)="cancelChartParam($event)">x</div>
-                    </div>
+            <div class="StraightDropDown rh-dialog">
+                <div class="rh-dialog-title">
+                    Chart # {{selectedChart}} - Parameters of axis X &amp; Y
+                    <div class="cancelCross" (click)="cancelChartParam('axis')"><div class="rh-cross">x</div></div>
                 </div>
-                <form  [formGroup]="selectAxisX" style="margin-left:20px;">
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">Axis X</div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Stacked</span><input  class='inputText' type="text" style="width:30%;"  formControlName="stacked" placeholder="false/true" > 
-                    </div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Position</span><input  class='inputText' type="text" style="width:30%;"  formControlName="position" placeholder="right/left" > 
-                    </div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Border width</span><input  class='inputText' type="text" style="width:30%;"  formControlName="borderWidth" > 
-                    </div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Border color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldXColorBorder')" formControlName="borderColor"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]="selected_XBorderColor" class="trow myColor" (click)="selectColorAxis('xBorderColor')" >&nbsp;</span>
-                    </div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Ticks color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldXTicksColor')" formControlName="ticksColor"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]="selected_XTicksColor" class="trow myColor" (click)="selectColorAxis('xTicksColor')" >&nbsp;</span>
-                    </div>
-                </form>
-                <form  [formGroup]="selectAxisY" style="margin-left:20px;">
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">Axis Y</div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Stacked</span><input  class='inputText' type="text" style="width:30%;"  formControlName="stacked" placeholder="false/true" > 
-                    </div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">    
-                        <span class="trow" style="width:25%;"> Position</span><input  class='inputText' type="text" style="width:30%;"  formControlName="position" placeholder="right/left" > 
-                    </div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Border width</span><input  class='inputText' type="text" style="width:30%;"  formControlName="borderWidth" > 
-                    </div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Border color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldYColorBorder')" formControlName="borderColor"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]="selected_YBorderColor" class="trow myColor" (click)="selectColorAxis('yBorderColor')" >&nbsp;</span>
-                    </div>
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Ticks color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldYTicksColor')" formControlName="ticksColor"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]="selected_YTicksColor" class="trow myColor" (click)="selectColorAxis('yTicksColor')" >&nbsp;</span>
-                    </div>
-                </form>
+                @for (ax of axes; track ax.title) {
+                    <form [formGroup]="ax.form" style="margin-left:20px;">
+                        <div class="rh-row">{{ax.title}}</div>
+                        <div class="rh-row">
+                            <span class="trow" style="width:25%;"> Stacked</span>
+                            <input class="inputText" type="text" style="width:30%;" formControlName="stacked" placeholder="false/true">
+                        </div>
+                        <div class="rh-row">
+                            <span class="trow" style="width:25%;"> Position</span>
+                            <input class="inputText" type="text" style="width:30%;" formControlName="position" placeholder="right/left">
+                        </div>
+                        <div class="rh-row">
+                            <span class="trow" style="width:25%;"> Border width</span>
+                            <input class="inputText" type="text" style="width:30%;" formControlName="borderWidth">
+                        </div>
+                        <div class="rh-row">
+                            <span class="trow" style="width:25%;"> Border color</span>
+                            <input class="inputText" type="text" style="width:40%;" (input)="onColorFieldEdit(ax.border)" formControlName="borderColor">
+                            <span class="trow myColor rh-swatch" [style.background-color]="selColor[ax.border]" (click)="openColorPicker(ax.border)">&nbsp;</span>
+                        </div>
+                        <div class="rh-row">
+                            <span class="trow" style="width:25%;"> Ticks color</span>
+                            <input class="inputText" type="text" style="width:40%;" (input)="onColorFieldEdit(ax.ticks)" formControlName="ticksColor">
+                            <span class="trow myColor rh-swatch" [style.background-color]="selColor[ax.ticks]" (click)="openColorPicker(ax.ticks)">&nbsp;</span>
+                        </div>
+                    </form>
+                }
                 <div class="skipLine">&nbsp;</div>
-                @if (tabLock[5].lock===1){
-                    <button id='axis' (click)="processAxis($event)" > Save</button>
+                @if (isLocked) {
+                    <button (click)="processAxis()"> Save</button>
                 }
                 <div class="skipLine">&nbsp;</div>
             </div>
@@ -70,602 +86,333 @@
     </div>
 }
 
-@if ((isParamTitle() || isParamLegend()) && !isSelectLChartTitleColor() &&  !isSliderSelected()){
-    <div class="dropdown" >
+<!-- ───────────── dialog: chart title / legend title ───────────── -->
+@if ((isParamTitle() || isParamLegend()) && !titleDialogColor() && !isSliderSelected()) {
+    <div class="dropdown">
         <div class="Straight-content" style="margin-top:120px;">
-            <div  class="StraightDropDown " style="width:98%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
-                <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">
-                    Chart # {{selectedChart}} - Parameters of 
-                        @if (isParamTitle()){Title
-                        } @else if (isParamLegend()){ Legend }
-                        
-                    <div class="cancelCross" id="chartTitle" (click)="cancelChartParam($event)">
-                        <div style="font-size:16px; color:black; font-weight:bold; margin-top: -2px;" id="chartTitle" (click)="cancelChartParam($event)">x</div>
-                    </div>
+            <div class="StraightDropDown rh-dialog">
+                <div class="rh-dialog-title">
+                    Chart # {{selectedChart}} - Parameters of @if (isParamTitle()) { Title } @else { Legend }
+                    <div class="cancelCross" (click)="cancelChartParam('title')"><div class="rh-cross">x</div></div>
                 </div>
-                <form  [formGroup]="selectTitle" style="margin-left:20px;">
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
+                <form [formGroup]="selectTitle" style="margin-left:20px;">
+                    <div class="rh-row">
                         <span class="trow" style="width:25%;"> Display</span>
-                        <input  class='inputText' type="text" style="width:30%;"  formControlName="display" placeholder="false/true" > 
-                        @if (tabLock[5].lock===1){
-                        <span id="selTitleDisplay" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
+                        <input class="inputText" type="text" style="width:30%;" formControlName="display" placeholder="false/true">
+                        @if (isLocked) { <span class="circle" style="margin-left:20px;" (click)="openOptionList('titleDisplay')">A</span> }
+                        @if (openList() === 'titleDisplay') {
+                            <ng-container *ngTemplateOutlet="optionList; context: { kind: 'titleDisplay', items: tabDisplay, left: 270, top: -25, h: tabDisplay.length * 26, w: 80 }" />
                         }
-                        @if (isTitleDisplay() && tabLock[5].lock===1){
-                            <div class="dropdown " >
-                                <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
-                                    <div  class="StraightDropDown "  [style.height.px]="tabDisplay.length * 26" [style.width.px]="80">
-                                        @for (action of tabDisplay; track action; let m=$index;){    
-                                            <li  class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                        (click)="selectType($event)" id="selectedTitleDisplay" [value]="action" >{{action}}
-                                            </li>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                    <div class="rh-row">
+                        <span class="trow" style="width:25%;"> Text</span>
+                        <input class="inputText" type="text" style="width:70%;" formControlName="text">
+                    </div>
+                    <div class="rh-row">
+                        <span class="trow" style="width:15%;"> Padding </span>
+                        <span class="trow" style="width:10%;"> Top</span><input class="inputText" type="text" style="width:10%;" formControlName="paddingTop">
+                        <span class="trow" style="margin-left:20px; width:15%;"> Bottom</span><input class="inputText" type="text" style="width:10%;" formControlName="paddingBottom">
+                        @if (isParamLegend()) {
+                            <span class="trow" style="margin-left:20px; width:10%;"> Left</span><input class="inputText" type="text" style="width:10%;" formControlName="paddingLeft">
                         }
-                    </div> 
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Text</span><input  class='inputText' type="text" style="width:70%;"  formControlName="text"  > 
-                    </div> 
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span   class="trow" style="width:15%;"> Padding </span>
-                        <span   class="trow" style="width:10%;"> Top</span><input  class='inputText' type="text" style="width:10%;"  formControlName="paddingTop"  > 
-                        <span   class="trow" style="margin-left:20px; width:15%;"> Bottom</span>
-                        <input  class='inputText' type="text" style="width:10%;"  formControlName="paddingBottom"  > 
-                        @if (isParamLegend()){
-                            <span   class="trow" style="margin-left:20px; width:10%;"> Left</span>
-                            <input  class='inputText' type="text" style="width:10%;"  formControlName="paddingLeft"  > 
+                    </div>
+                    <div class="rh-row">
+                        <span class="trow" style="width:25%;"> Position</span>
+                        <input class="inputText" type="text" style="width:30%;" formControlName="position">
+                        @if (isLocked) { <span class="circle" style="margin-left:20px;" (click)="openOptionList('titlePosition')">A</span> }
+                        @if (openList() === 'titlePosition') {
+                            <ng-container *ngTemplateOutlet="optionList; context: { kind: 'titlePosition', items: tabTitlePosition, left: 270, top: -25, h: tabTitlePosition.length * 26, w: 80 }" />
                         }
-                    </div> 
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Position</span><input  class='inputText' type="text" style="width:30%;"  formControlName="position"  > 
-                        @if (tabLock[5].lock===1){    
-                            <span id="selTitlePosition" class="circle"  style='margin-left:20px;' (click)="selectType($event)">A</span>
+                    </div>
+                    <div class="rh-row">
+                        <span class="trow" style="width:25%;"> Align</span>
+                        <input class="inputText" type="text" style="width:30%;" formControlName="align">
+                        @if (isLocked) { <span class="circle" style="margin-left:20px;" (click)="openOptionList('textAlign')">A</span> }
+                        @if (openList() === 'textAlign') {
+                            <ng-container *ngTemplateOutlet="optionList; context: { kind: 'textAlign', items: tabTextAlign, left: 270, top: -25, h: tabTextAlign.length * 26, w: 80 }" />
                         }
-                        @if (isTitlePosition()){
-
-                            <div class="dropdown " >
-                                <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
-                                    <div  class="StraightDropDown "  [style.height.px]="tabTitlePosition.length * 26" [style.width.px]='80'>
-                                        @for (action of tabTitlePosition; track action; let m=$index;){    
-                                            <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                        (click)="selectType($event)" id="selectedTitlePosition" [value]="action" >{{action}}
-                                            </li>
-                                        }   
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                    <div class="rh-row">
+                        <span class="trow" style="width:25%;"> Color</span>
+                        <input class="inputText" type="text" style="width:40%;" (input)="onColorFieldEdit('dialog')" formControlName="color">
+                        <span class="trow myColor rh-swatch" [style.background-color]="selected_colorTitle" (click)="openColorPicker('dialog')">&nbsp;</span>
+                    </div>
+                    <div class="rh-row">
+                        <span class="trow" style="width:25%;"> Font Size</span>
+                        <input class="inputText" type="text" style="width:30%;" formControlName="fontSize">
+                    </div>
+                    <div class="rh-row">
+                        <span class="trow" style="width:25%;"> Font Weight</span>
+                        <input class="inputText" type="text" style="width:30%;" formControlName="fontWeight">
+                        @if (isLocked) { <span class="circle" style="margin-left:20px;" (click)="openOptionList('fontWeight')">A</span> }
+                        @if (openList() === 'fontWeight') {
+                            <ng-container *ngTemplateOutlet="optionList; context: { kind: 'fontWeight', items: tabFontWeight, left: 270, top: -25, h: 150, w: 80, scroll: true }" />
                         }
-                    </div> 
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Align</span><input  class='inputText' type="text" style="width:30%;"  formControlName="align"  > 
-                        @if (tabLock[5].lock===1){
-                            <span id="selTextAlign" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
-                        }    
-                        @if (isTextAlign()){
-
-                            <div class="dropdown " >
-                                <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
-                                    <div  class="StraightDropDown "  [style.height.px]="tabTextAlign.length * 26" [style.width.px]="80">
-                                        @for (action of tabTextAlign; track action; let m=$index;){    
-                                            <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                        (click)="selectType($event)" id="selectedTextAlign" [value]="action" >{{action}}>
-                                            </li>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div> 
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:40%;"   (click)="selectColor('fieldColorTitle')" formControlName="color"  > 
-                        <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]='selected_colorTitle' class="trow myColor" (click)="selectColor('colorTitle')" >&nbsp;</span>
-
-                    </div>  
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Font Size</span><input  class='inputText' type="text" style="width:30%;"  formControlName="fontSize"  > 
-                    </div> 
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Font Weight</span><input  class='inputText' type="text" style="width:30%;"  formControlName="fontWeight"  > 
-                        @if (tabLock[5].lock===1){
-                            <span id="selFontWeight" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
-                        }
-                        @if (isFontWeight()){
-                            <div class="dropdown " >
-                                <div class="Straight-content" style="margin-left:270px; margin-top:-25px;">
-                                    <div  class="StraightDropDown " style="width:80px; height:150px; overflow-x:hidden; overflow-y:scroll">
-                                        @for (action of tabFontWeight; track action; let m=$index;){    
-                                            <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" style="overflow-x:hidden; overflow-y:scroll"
-                                                        (click)="selectType($event)" id="selectedFontWeight" [value]="action" >{{action}}
-                                            </li>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    
-                    
-                    </div> 
-                    <div style="width:100%; display:inline-block;  margin-top:5px;">
-                        <span class="trow" style="width:25%;"> Family</span><input  class='inputText' type="text" style="width:30%;"  formControlName="family"  > 
-                    </div> 
+                    </div>
+                    <div class="rh-row">
+                        <span class="trow" style="width:25%;"> Family</span>
+                        <input class="inputText" type="text" style="width:30%;" formControlName="family">
+                    </div>
                     <div class="skipLine">&nbsp;</div>
-                        @if (tabLock[5].lock===1){
-                            <button  (click)="processTitle()" > Save</button>
-                        }
+                    @if (isLocked) { <button (click)="processTitle()"> Save</button> }
                     <div class="skipLine">&nbsp;</div>
                 </form>
-
-
             </div>
         </div>
     </div>
 }
-<div id="posDivSlider"  ></div>
-@if (isSliderSelected()  && tabLock[5].lock===1){
-    <div  class="dropdown" >
-        <div id="posDivSliderTrue"  ></div>
+
+<!-- ───────────── colour slider + palette ───────────── -->
+@if (isSliderSelected() && isLocked) {
+    <div class="dropdown">
         <div class="Straight-content" style="margin-top:120px; width:90%;">
-            <div  class="StraightDropDown " style="width:100%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
+            <div class="StraightDropDown rh-dialog" style="width:100%;">
                 <div class="skipline">&nbsp;</div>
-                <span style='margin-left:30px; width:90%; display:inline-block;' > SliderA {{my_input_child2}} </span>
-                <span style='margin-left:30px; width:90%; display:inline-block;' > Palette: {{temporaryColor}} </span>
+                <span style="margin-left:30px; width:90%; display:inline-block;"> SliderA {{my_input_child2}} </span>
+                <span style="margin-left:30px; width:90%; display:inline-block;"> Palette: {{temporaryColor}} </span>
                 <div class="skipline">&nbsp;</div>
-                <app-color-palette  [my_input1]="my_input_child1" [posPalette]="posPalette"[INreturnField]="returnPalette" (my_output1)='fnPalette($event)' (my_output2)='fnPaletteBis($event)'>
+                <app-color-palette [my_input1]="my_input_child1" [posPalette]="posPalette" [INreturnField]="returnPalette"
+                                   (my_output1)="fnPalette($event)" (my_output2)="fnPaletteBis($event)">
                 </app-color-palette>
-                <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider" (my_output2)='fnSliderBis($event)' (my_output1)='fnSlider($event)'>
+                <app-color-slider [my_input2]="my_input_child2" [posSlider]="posSlider" [paramChange]="paramChange" [INreturnField]="returnSlider"
+                                  (my_output2)="fnSliderBis($event)" (my_output1)="fnSlider($event)">
                 </app-color-slider>
                 <div style="margin-top:80px;">
-                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block;  margin-left:55px;" [style.background-color]='my_input_child2'></span>
-                    <span style="width:40px; height:40px; border:solid 0.5px black; display: inline-block; margin-left:15px;" [style.background-color]="temporaryColor"></span>
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display:inline-block; margin-left:55px;" [style.background-color]="my_input_child2"></span>
+                    <span style="width:40px; height:40px; border:solid 0.5px black; display:inline-block; margin-left:15px;" [style.background-color]="temporaryColor"></span>
                     <div style="margin-left:200px; margin-top:-40px;">
-                        <button (click)="fnExitPalette('Save')" > Save</button>
+                        <button (click)="fnExitPalette('Save')"> Save</button>
                         <button (click)="fnExitPalette('Cancel')" style="margin-left:20px;"> Cancel</button>
                     </div>
                     <div class="skipline">&nbsp;</div>
-                </div>  
+                </div>
             </div>
         </div>
     </div>
 }
 
 <div class="skipLine">&nbsp;</div>
-@if (tabLock[5].lock===2){
+@if (isLockedByOther) {
     <div class="msg">File is locked by another user; you cannot update the parameters</div>
 }
 
-<div style="width:410px;; max-width:410px; margin-left:20px; border:solid 2px blue; display:block;">
-    <div style="margin-top:8px; text-align: center; width:410px; font-size:16px; color:blue; ">CREATE/CHANGE PARAMETERS FOR 
-        <div class="cancelCross"  id="allChartParam" (click)="cancelChartParam($event)">
-            <div style="font-size:16px; color:black; font-weight:bold; margin-top: -2px;"  id="allChartParam" (click)="cancelChartParam($event)">x</div>
-        </div>
+<!-- ───────────── parameters of ONE chart ───────────── -->
+<div style="width:410px; max-width:410px; margin-left:20px; border:solid 2px blue; display:block;">
+    <div class="rh-dialog-title" style="width:410px; float:none;">
+        CREATE/CHANGE PARAMETERS FOR
+        <div class="cancelCross" (click)="cancelChartParam('all')"><div class="rh-cross">x</div></div>
     </div>
-    <!--
-    <app-running-clock [posSizeClock]="posSizeClock">
-    </app-running-clock>
-    -->
-    <br> <span style="margin-left:25px;">Time out will occur in </span>
-    <span style="border: black double 2px; margin-left:5px;"> 
-        @if (displayHour!==0){ {{displayHour |number:'2.0-0'}} hour(s) }
-        <span>{{this.displayMin |number:'2.0-0'}} min {{this.displaySec | number:'2.0-0'}} sec</span>
+    <br>
+    <span style="margin-left:25px;">Time out will occur in </span>
+    @let left = timeLeftParts();
+    <span style="border:black double 2px; margin-left:5px;">
+        @if (left.h !== 0) { {{left.h | number:'2.0-0'}} hour(s) }
+        <span>{{left.m | number:'2.0-0'}} min {{left.s | number:'2.0-0'}} sec</span>
     </span>
     <div class="skipLine">&nbsp;</div>
-    <span style="margin-left:25px;"> Chart 1</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart1"   >  
-    <span style="margin-left:30px;"> Chart 2</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart2"   >  
-    <span style="margin-left:30px;"> Chart 3</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart3"   >  
+    @for (n of chartNumbers; track n) {
+        @if (n === 4) { <div class="skipLine">&nbsp;</div> }
+        <span style="margin-left:30px;"> Chart {{n}}</span>
+        <input style="margin-left:5px; width:20px;" class="theRadioButt" type="radio" name="myChart"
+               [checked]="selectedChart === n" (click)="selectChartNo(n)">
+    }
     <div class="skipLine">&nbsp;</div>
-    <span style="margin-left:50px;"> Chart 4</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart4"   >  
-    <span style="margin-left:50px;"> Chart 5</span><input style="margin-left:5px; width:20px;" (click)='SelChart($event)'   class="theRadioButt" type="radio"  name="myChart" id="Chart5"   >  
-    <div class="skipLine">&nbsp;</div>
 
-    <!--   **************************** SELECTION PARAMETERS **************************** -->
-    @if (selectedChart!==0){
-        <form  [formGroup]="selectChart" style="margin-left:20px;">
-            <div style="width:100%; display:inline-block;">
-                <div class="skipLine">&nbsp;</div>
-                
-                <span class="trow" style="text-align:center; width:90%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:5px;"> CHART </span>
-                
-                <span class="trow" style="width:25%;"> Type</span><input   class='inputText' type="text"  style="width:30%;"  formControlName="chartType"  > 
-                @if (tabLock[5].lock===1){
-                    <span id="selType" class="circle" style='margin-left:20px;' (click)="selectType($event)">A</span>
+    @if (selectedChart !== 0) {
+        <form [formGroup]="selectChart" style="margin-left:20px;">
+            @let period = selectChart.controls['period'].value;
+
+            <div class="skipLine">&nbsp;</div>
+            <span class="rh-section">CHART</span>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Type</span>
+                <input class="inputText" type="text" style="width:30%;" formControlName="chartType">
+                @if (isLocked) { <span class="circle" style="margin-left:20px;" (click)="openOptionList('type')">A</span> }
+                @if (openList() === 'type') {
+                    <ng-container *ngTemplateOutlet="optionList; context: { kind: 'type', items: lineChartType, left: 50, top: 0, h: lineChartType.length * 30, w: 80 }" />
                 }
-                @if (isTypeSelected()){
-                    <div class="dropdown " >
-                        <div class="Straight-content" style="margin-left:50px;">
-                            <div  class="StraightDropDown "  [style.height.px]="lineChartType.length * 30" [style.width.px]="80">
-                                @for (action of lineChartType; track action; let m=$index;){
-                                    <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                (click)="selectType($event)" id="selectedType" [value]="action" >{{action}}
-                                    </li>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div> 
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Title</span><input   class='inputText' type="text" style="width:40%;"  formControlName="chartTitle"  > 
-                <span class="trow" style="margin-left:40px;width:30px;"> view</span><span id="viewChartTitle" class="circle" style='margin-left:10px;' (click)="selectType($event)">A</span>
-                
-                <div style="width:100%; display:inline-block;  margin-top:5px;">
-                    <span class="trow" style="width:25%;"> Color</span><input   class='inputText' type="text" style="width:40%;"   (input)="selectColor('fieldColorChartTitle')" formControlName="colorChartTitle"  > 
-                    <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]='selected_chartTitleColor' class="trow myColor" (click)="selectColor('colorChartTitle')" >&nbsp;</span>
-                </div>
-                
-            </div> 
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> bar thickness</span><input  class='inputText' type="text" style="width:22%;"  formControlName="barThickness"  > 
-            </div> 
-
-            <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> CANVAS </span>
-
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Width </span><input   class='inputText' type="text" style="width:22%;"   formControlName="canvasWidth"  > 
-                <span class="trow" style="width:18%; margin-left:10px;"> Height</span><input   class='inputText' type="text" style="width:25%;"   formControlName="canvasHeight"  > 
-            </div> 
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-            <span class="trow" style="width:25%;"> Margin left</span><input   class='inputText' type="text" style="width:22%;"  formControlName="canvasMarginLeft"  > 
             </div>
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Title</span>
+                <input class="inputText" type="text" style="width:40%;" formControlName="chartTitle">
+                <span class="trow" style="margin-left:40px; width:30px;"> view</span><span class="circle" style="margin-left:10px;" (click)="viewTitle('chart')">A</span>
+            </div>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Color</span>
+                <input class="inputText" type="text" style="width:40%;" (input)="onColorFieldEdit('chartTitle')" formControlName="colorChartTitle">
+                <span class="trow myColor rh-swatch" [style.background-color]="selColor.chartTitle" (click)="openColorPicker('chartTitle')">&nbsp;</span>
+            </div>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> bar thickness</span>
+                <input class="inputText" type="text" style="width:22%;" formControlName="barThickness">
+            </div>
+
+            <span class="rh-section">CANVAS</span>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Width </span><input class="inputText" type="text" style="width:22%;" formControlName="canvasWidth">
+                <span class="trow" style="width:18%; margin-left:10px;"> Height</span><input class="inputText" type="text" style="width:25%;" formControlName="canvasHeight">
+            </div>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Margin left</span><input class="inputText" type="text" style="width:22%;" formControlName="canvasMarginLeft">
+            </div>
+            <div class="rh-row">
                 <span class="trow" style="width:25%;"> Background</span>
-                <input  class='inputText' type="text"  style="width:40%;" formControlName="canvasBackground" (input)="selectColor('fieldCanvasColor')" > 
-                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]="selected_canvasColor" class="trow myColor" (click)="selectColor('canvasColor')" >&nbsp;</span>
-                
-            </div> 
-
-            <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> LEGEND </span>
-
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Title </span><input  class='inputText' type="text" style="width:40%;"   formControlName="legendTitle"  > 
-                <span class="trow" style="margin-left:40px;width:30px;"> view</span><span  id="viewLegendTitle" class="circle" style='margin-left:10px;' (click)="selectType($event)">A</span>
-            </div>
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Color</span><input class='inputText' type="text" style="width:40%;"   (input)="selectColor('fieldLegendColor')" formControlName="colorLegendTitle"  > 
-                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]="selected_legendColor" class="trow myColor" (click)="selectColor('legendColor')" >&nbsp;</span>
-                
-            </div> 
-
-            <span class="trow" style="text-align:center; width:100%; color:blue; font-weight:bold; font-size:14px;  display:inline-block;  margin-top:10px;"> BOX FOR LABELS </span>
-        
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Width</span><input   class='inputText' type="text" style="width:22%;"  formControlName="boxwidth"  > 
-                <span class="trow" style="width:25%; margin-left:10px;"> Height</span><input   class='inputText' type="text" style="width:22%;"  formControlName="boxheight"  > 
-            </div>
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Shape</span><input   class='inputText' type="text" style="width:22%;"  formControlName="boxpointStyle"  > 
-                <span class="trow" style="width:25%; margin-left:10px;"> Display shape</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxusePointStyle"  > 
-            </div>
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Color</span><input  class='inputText' type="text" style="width:22%;"  (input)="selectColor('fieldBoxColor')" formControlName="boxcolor"  > 
-                <span  style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [style.background-color]="selected_boxColor" class="trow myColor" (click)="selectColor('boxColor')" >&nbsp;</span>
-                
-
-            </div>
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Font size</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxfontSize"  > 
-                <span class="trow" style="width:25%; margin-left:10px;"> Radius</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxradius"  > 
-            </div>
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> Font weight</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxfontWeight"  > 
-                <span class="trow" style="width:25%; margin-left:10px;"> Font family</span><input  class='inputText' type="text" style="width:22%;"  formControlName="boxfontFamily"  > 
+                <input class="inputText" type="text" style="width:40%;" (input)="onColorFieldEdit('canvas')" formControlName="canvasBackground">
+                <span class="trow myColor rh-swatch" [style.background-color]="selColor.canvas" (click)="openColorPicker('canvas')">&nbsp;</span>
             </div>
 
-            <div style="width:100%; display:inline-block;  margin-top:15px;">
-                    <span class="trow" style="width:100px;"> view axis X & Y</span><span id="viewAxis" class="circle" style='margin-left:10px;' (click)="selectType($event)">A</span>
+            <span class="rh-section">LEGEND</span>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Title </span><input class="inputText" type="text" style="width:40%;" formControlName="legendTitle">
+                <span class="trow" style="margin-left:40px; width:30px;"> view</span><span class="circle" style="margin-left:10px;" (click)="viewTitle('legend')">A</span>
             </div>
-            <div style="width:100%; display:inline-block;  margin-top:15px;">
-                <span class="trow" style="width:25%;" > stackedX</span><input  class='inputText' type="text" style="width:22%;"   formControlName="stackedX" placeholder="true/false" > 
-                <span class="trow" style="width:25%; margin-left:10px;"> stackedY</span><input  class='inputText' type="text" style="width:22%;"   formControlName="stackedY" placeholder="true/false" > 
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Color</span>
+                <input class="inputText" type="text" style="width:40%;" (input)="onColorFieldEdit('legend')" formControlName="colorLegendTitle">
+                <span class="trow myColor rh-swatch" [style.background-color]="selColor.legend" (click)="openColorPicker('legend')">&nbsp;</span>
+            </div>
 
-            </div> 
-            <div style="width:100%; display:inline-block;  margin-top:5px;">
-                <span class="trow" style="width:25%;"> ratio</span><input  type="text" class='inputText' style="width:22%;" formControlName="ratio"  > 
+            <span class="rh-section">BOX FOR LABELS</span>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Width</span><input class="inputText" type="text" style="width:22%;" formControlName="boxwidth">
+                <span class="trow" style="width:25%; margin-left:10px;"> Height</span><input class="inputText" type="text" style="width:22%;" formControlName="boxheight">
             </div>
-            <div style="width:100%; display:inline-block;  margin-top:5px;">    
-                <span class="trow" style="width:25%; "> period</span><input  type="text"   class='inputText' style="width:30%;" formControlName="period" placeholder="daily/weekly" > 
-                @if (paramAllCharts.controls['period'].value==='weekly'){<span  class="trow" style="width:25%; "> nb of weeks</span><input  type="number"   class='inputText' style="width:30%;" formControlName="nbWeeks">}
-                @if (tabLock[5].lock===1){
-                    <span id="selPeriod" class="circle"  style='margin-left:5px;' (click)="selectPeriod($event)">A</span>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Shape</span><input class="inputText" type="text" style="width:22%;" formControlName="boxpointStyle">
+                <span class="trow" style="width:25%; margin-left:10px;"> Display shape</span><input class="inputText" type="text" style="width:22%;" formControlName="boxusePointStyle">
+            </div>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Color</span>
+                <input class="inputText" type="text" style="width:22%;" (input)="onColorFieldEdit('box')" formControlName="boxcolor">
+                <span class="trow myColor rh-swatch" [style.background-color]="selColor.box" (click)="openColorPicker('box')">&nbsp;</span>
+            </div>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Font size</span><input class="inputText" type="text" style="width:22%;" formControlName="boxfontSize">
+                <span class="trow" style="width:25%; margin-left:10px;"> Radius</span><input class="inputText" type="text" style="width:22%;" formControlName="boxradius">
+            </div>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> Font weight</span><input class="inputText" type="text" style="width:22%;" formControlName="boxfontWeight">
+                <span class="trow" style="width:25%; margin-left:10px;"> Font family</span><input class="inputText" type="text" style="width:22%;" formControlName="boxfontFamily">
+            </div>
+
+            <div class="rh-row" style="margin-top:15px;">
+                <span class="trow" style="width:100px;"> view axis X &amp; Y</span><span class="circle" style="margin-left:10px;" (click)="viewAxis()">A</span>
+            </div>
+            <div class="rh-row" style="margin-top:15px;">
+                <span class="trow" style="width:25%;"> stackedX</span><input class="inputText" type="text" style="width:22%;" formControlName="stackedX" placeholder="true/false">
+                <span class="trow" style="width:25%; margin-left:10px;"> stackedY</span><input class="inputText" type="text" style="width:22%;" formControlName="stackedY" placeholder="true/false">
+            </div>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> ratio</span><input class="inputText" type="text" style="width:22%;" formControlName="ratio">
+            </div>
+            <div class="rh-row">
+                <span class="trow" style="width:25%;"> period</span>
+                <input class="inputText" type="text" style="width:30%;" formControlName="period" placeholder="daily/weekly">
+                @if (period === 'weekly') {
+                    <span class="trow" style="width:25%;"> nb of weeks</span><input class="inputText" type="number" style="width:30%;" formControlName="nbWeeks">
                 }
-                @if (isPeriodSelected()  && tabLock[5].lock===1){
-                    <div class="dropdown" >
-                        <div class="Straight-content" style="margin-left:90px;">
-                            <div  class="StraightDropDown " [style.height.px]="tabPeriod.length * 30" >
-                                @for (action of tabPeriod; track action; let m=$index;){    
-                                    <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                (click)="selectPeriod($event)" id="selectedPeriod" [value]="action" >{{action}}
-                                    </li>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                @if (isLocked) { <span class="circle" style="margin-left:5px;" (click)="openOptionList('period')">A</span> }
+                @if (openList() === 'period') {
+                    <ng-container *ngTemplateOutlet="optionList; context: { kind: 'period', items: tabPeriod, left: 90, top: 0, h: tabPeriod.length * 30, w: null }" />
                 }
-            </div> 
-            @if (selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'){
-                <div style="width:100%; display:inline-block; margin-top:5px;">
-                    <span class="trow" style="width:25%; "> start date</span>
-                    <input  type="date"  class='inputText' style="width:36%;" formControlName="startRange"  > 
+            </div>
+            @if (period === '' || period === 'daily') {
+                <div class="rh-row">
+                    <span class="trow" style="width:25%;"> start date</span><input type="date" class="inputText" style="width:36%;" formControlName="startRange">
+                </div>
+                <div class="rh-row">
+                    <span class="trow" style="width:25%;"> end date</span><input type="date" class="inputText" style="width:36%;" formControlName="endRange">
                 </div>
             }
-            @if (selectChart.controls['period'].value==='' || selectChart.controls['period'].value==='daily'){
-                <div style="width:100%; display:inline-block; margin-top:5px;">
-                    <span class="trow" style="width:25%; "> end date</span>
-                    <input  type="date"   class='inputText' style="width:36%;" formControlName="endRange"  > 
-                </div>
-        }
         </form>
 
-        <!-- ************* SELECTION OF LABELS FOR THIS CHART ************* -->
+        <!-- items to consider for this chart -->
         <div class="skipLine">&nbsp;</div>
-        <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the items to consider for this chart</div>
-       @for (tab of ConfigChartHealth.barDefault.datasets.labels; track tab; let i=$index;){
-            @if (ConfigChartHealth.barDefault.datasets.fieldsToSelect[i]===true){
-                <span  style="width:47%; display:inline-block; margin-left:10px;">
-                    <span style="width:5%;">
-                        @if (selectedFields[i]==='N'){
-                            <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  [id]="'A-' + i"  value="Y"  >  
-                        } @else {
-                             <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  [id]="'A-' + i"  value="Y" checked="checked" >
-                        }
-                    </span>
-                    <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
-                    @if (selectedFields[i]==='Y'){
-                        <span style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [id]="'labelColor-' + i" [style.background-color]="tabOfLabelsColor[i]" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
-                    }
-                </span>
-            }
-        }
+        <div class="rh-note">Select the items to consider for this chart</div>
+        <ng-container *ngTemplateOutlet="fieldPick; context: {
+            kind: 'label', names: ConfigChartHealth.barDefault.datasets.labels, enabled: ConfigChartHealth.barDefault.datasets.fieldsToSelect,
+            selected: selectedFields, colors: tabOfLabelsColor }" />
 
-        <!-- ************* SELECTION OF LIMIT LABELS FOR THIS CHART ************* -->
         <div class="skipLine">&nbsp;</div>
-        <div style="width:99%; display:inline-block; margin-left:10px; color:blue;">Select the 'LIMIT' items to consider for this chart</div>
-        @for (tab of ConfigChartHealth.barDefault.datasets.labelsLimits; track tab; let i=$index;){
-            @if (ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect[i]===true){   
-                <span style="width:47%; display:inline-block; margin-left:10px;">
-                    <span style="width:5%;">
-                        @if (selectedLimitFields[i]==='N'){
-                            <input style="width:20px;" (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"   class="theRadioButt" type="radio"  [id]="'L-' + i"  value="Y"  >  
-                        } @else {
-                             <input style="width:20px;"  (click)='SelRadio($event)' [disabled]="tabLock[5].lock!==1"  class="theRadioButt" type="radio"  [id]="'L-' + i"  value="Y" checked="checked" >
-                        }
-                    </span>
-                
-                    <div style="width:50%; padding-top:-2px; margin-left:10px; color:blue; display:inline-block; " >{{tab}}</div>
-                    @if (selectedLimitFields[i]==='Y'){    
-                        <span style="width:20px; height:20px; margin-left:10px; border:1px solid black;" [id]="'labelLimitColor-' + i" [style.background-color]="tabOfLimitLabelsColor[i]" class="trow myColor" (click)="selectLabelColor($event)" >&nbsp;</span>            
-                    }
-                </span>
-            }
-        }
-        
+        <div class="rh-note">Select the 'LIMIT' items to consider for this chart</div>
+        <ng-container *ngTemplateOutlet="fieldPick; context: {
+            kind: 'limit', names: ConfigChartHealth.barDefault.datasets.labelsLimits, enabled: ConfigChartHealth.barDefault.datasets.fieldsLimitsToSelect,
+            selected: selectedLimitFields, colors: tabOfLimitLabelsColor }" />
+
         <div class="skipLine">&nbsp;</div>
-        @if (errorMsg!==''){
+        @if (errorMsg !== '') {
             <span style="color:red; font-size:14px; width:90%; margin-left:30px;">{{errorMsg}}</span>
         }
-        <!-- ************* PROCESS or CANCEL PARAMETERS FOR THIS CHART# ************* --><!--saveFn('save')-->
-        @if (tabLock[5].lock===1){
-            <div class="skipLine">&nbsp;</div>
 
-            @if (IsSaveConfirmed()){
-                <span style="width:100%; display:inline-block;  background-color: lightskyblue;">
-                    <form  [formGroup]="SpecificForm" >
+        <!-- process / cancel / save -->
+        @if (isLocked) {
+            <div class="skipLine">&nbsp;</div>
+            @if (IsSaveConfirmed()) {
+                <span style="width:100%; display:inline-block; background-color:lightskyblue;">
+                    <form [formGroup]="SpecificForm">
                         <div class="skipLine">&nbsp;</div>
-                        <div class="msg"  >
+                        <div class="msg">
                             Please enter the name of the file to save :
-                            <input type='text' style="width:240px;" formControlName="FileName" >
+                            <input type="text" style="width:240px;" formControlName="FileName">
                         </div>
                         <div class="skipLine">&nbsp;</div>
-                        <div style="width:100%; display:inline-block; ">
-                            <span style="width:240px; margin-left:20px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span> 
-                            <button id='All-1' class="sizeButtons" (click)="saveFn()">Yes</button>
-                            <button id='All-2' class="sizeButtons" (click)="cancelTheSave()"> No</button>
+                        <div style="width:100%; display:inline-block;">
+                            <span style="width:240px; margin-left:20px; display:inline-block; color:blue; font-weight:bolder;">Confirm your data can be saved </span>
+                            <button class="sizeButtons" (click)="saveFn()">Yes</button>
+                            <button class="sizeButtons" (click)="cancelTheSave()"> No</button>
                         </div>
                         <div class="skipLine">&nbsp;</div>
-                    </form>        
+                    </form>
                 </span>
-            }
-            @if (!IsSaveConfirmed()){            
-                <button class="sizeButtons" id="save" style='margin-left:30px; width:90px; height:45px;' type='Submit'  (click)="ConfirmSave($event)" > Save this chart & process it
-                </button>
-                <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="fnSelectChart()"> Process this chart
-                </button>
-                <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="cancelFn('cancelOne')"> Cancel updates for this chart
-                </button>
+            } @else {
+                <button class="sizeButtons rh-btn" (click)="confirmSave($event, 'save')"> Save this chart &amp; process it</button>
+                <button class="sizeButtons rh-btn" (click)="fnSelectChart()"> Process this chart</button>
+                <button class="sizeButtons rh-btn" (click)="cancelFn('cancelOne')"> Cancel updates for this chart</button>
                 <div class="skipLine">&nbsp;</div>
-                <button class="sizeButtons" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="cancelFn('cancelAll')"> Cancel updates for all charts
-                </button>
-                <button class="sizeButtons"  id="saveAll" style='margin-left:30px; width:90px; height:45px;' type='Submit' id="submit" (click)="ConfirmSave($event)"> Save all charts
-                </button>
+                <button class="sizeButtons rh-btn" (click)="cancelFn('cancelAll')"> Cancel updates for all charts</button>
+                <button class="sizeButtons rh-btn" (click)="confirmSave($event, 'saveAll')"> Save all charts</button>
             }
         }
         <div class="skipLine">&nbsp;</div>
     }
 </div>
 
-
+<!-- ───────────── parameters for ALL charts ───────────── -->
 <div class="skipLine">&nbsp;</div>
-<div style="width:95%; max-width:410px; margin-left:20px; border:solid 2px blue; display:block;">
-    <div style="margin-top:8px; text-align: center; width:100%; display:block; font-size:16px; color:blue; float:right">CHANGE PARAMETERS FOR ALL CHARTS
-    </div>
-
-    <form  [formGroup]="paramAllCharts" style="margin-left:20px;">
-        <div style="width:100%; display:inline-block;">
-            <div class="skipLine">&nbsp;</div>
-            <div style="width:100%; display:inline-block;  margin-top:5px;">    
-                <span class="trow" style="width:25%; "> period</span>
-                <input  type="text"   class='inputText' style="width:46%;" formControlName="period" placeholder="daily/weekly/monthly" value="period"> 
-                @if (tabLock[5].lock===1){
-                    <span id="selPeriod" class="circle" style='margin-left:5px;' (click)="selectPeriodAll($event)">A</span>
-                }
-                @if (isPeriodSelected()  && tabLock[5].lock===1){
-                    <div class="dropdown" >
-                        <div class="Straight-content" style="margin-left:90px;">
-                            <div  class="StraightDropDown " [style.height.px]="tabPeriod.length * 30" >
-                                @for (action of tabPeriod; track action; let m=$index;){
-                                    <li class="Straight-options "  [class]=" {'colorEven': m % 2 ===0, 'colorOdd': m % 2 !==0}" 
-                                                (click)="selectPeriodAll($event)" id="selectedPeriod" [value]="action" >{{action}}
-                                    </li>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-            
-            </div> 
-            <div style="width:100%; display:inline-block; margin-top:5px;" >
-                <span class="trow" style="width:25%; "> start date</span>
-                <input  type="date"  class='inputText' style="width:46%;" formControlName="startRange" value="startRange" > 
-            </div>
-            <div style="width:100%; display:inline-block; margin-top:5px;" >
-                <span class="trow" style="width:25%; "> end date</span>
-                <input  type="date"   class='inputText' style="width:46%;" formControlName="endRange"  value="endRange">             
-            </div>
+<div class="rh-box">
+    <div class="rh-dialog-title">CHANGE PARAMETERS FOR ALL CHARTS</div>
+    <form [formGroup]="paramAllCharts" style="margin-left:20px;">
+        <div class="skipLine">&nbsp;</div>
+        <div class="rh-row">
+            <span class="trow" style="width:25%;"> period</span>
+            <input type="text" class="inputText" style="width:46%;" formControlName="period" placeholder="daily/weekly">
+            @if (isLocked) { <span class="circle" style="margin-left:5px;" (click)="openOptionList('periodAll')">A</span> }
+            @if (openList() === 'periodAll') {
+                <ng-container *ngTemplateOutlet="optionList; context: { kind: 'periodAll', items: tabPeriod, left: 90, top: 0, h: tabPeriod.length * 30, w: null }" />
+            }
+        </div>
+        <div class="rh-row">
+            <span class="trow" style="width:25%;"> start date</span><input type="date" class="inputText" style="width:46%;" formControlName="startRange">
+        </div>
+        <div class="rh-row">
+            <span class="trow" style="width:25%;"> end date</span><input type="date" class="inputText" style="width:46%;" formControlName="endRange">
         </div>
     </form>
     <div class="skipLine">&nbsp;</div>
-    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="clear" (click)="forAllCharts($event)"> Clear fields
-    </button>
-    <button class="sizeButtons" style='margin-left:30px; width:80px; height:35px;' type='Submit' id="apply" (click)="forAllCharts($event)"> Process
-    </button>
+    <button class="sizeButtons" style="margin-left:30px; width:80px; height:35px;" (click)="forAllCharts('clear')"> Clear fields</button>
+    <button class="sizeButtons" style="margin-left:30px; width:80px; height:35px;" (click)="forAllCharts('apply')"> Process</button>
     <div class="skipLine">&nbsp;</div>
 </div>
 <div class="skipLine">&nbsp;</div>
 
-<!--   **************************** CANVAS **************************** -->
-
-    <div style="overflow-x:scroll; display:inline-block;  border:1px red solid;" >
-        <div style=" border:1px blue solid; padding-top:50px;" 
-            [style.background-color]="canvas[0].background" [style.margin-left.px]="canvas[0].marginLeft"
-            [style.width.px]="canvas[0].width" [style.height.px]="canvas[0].height">
-            <canvas #baseChart [id]="tabCanvasId[0]">
-            </canvas>
+<!-- ───────────── canvases ───────────── -->
+@for (c of canvas; track $index) {
+    <div style="overflow-x:scroll; display:inline-block;">
+        <div style="border:1px blue solid; padding-top:50px;"
+             [style.background-color]="c.background" [style.margin-left.px]="c.marginLeft"
+             [style.width.px]="c.width" [style.height.px]="c.height">
+            <canvas #baseChart [id]="'canvas' + ($index + 1)"></canvas>
         </div>
     </div>
     <div class="skipLine">&nbsp;</div>
-    
-    <div style="overflow-x:scroll; display:inline-block; " >
-        <div style=" border:1px blue solid; padding-top:50px;" 
-            [style.background-color]="canvas[1].background" [style.margin-left.px]="canvas[1].marginLeft"
-            [style.width.px]="canvas[1].width" [style.height.px]="canvas[1].height">
-            <canvas #baseChart [id]="tabCanvasId[1]">
-            </canvas>
-        </div>
-    </div>
-
-    <div class="skipLine">&nbsp;</div>
-    <div style="overflow-x:scroll; display:inline-block;" >
-        <div style=" border:1px blue solid; padding-top:50px;" 
-                [style.background-color]="canvas[2].background" [style.margin-left.px]="canvas[2].marginLeft"
-                [style.width.px]="canvas[2].width" [style.height.px]="canvas[2].height">
-            <canvas #baseChart [id]="tabCanvasId[2]"
-        
-            >
-            </canvas>
-        </div>
-    </div>
-
-    <div class="skipLine">&nbsp;</div>
-    <div style="overflow-x:scroll; display:inline-block;" >
-        <div style=" border:1px blue solid; padding-top:50px;" 
-                [style.background-color]="canvas[3].background" [style.margin-left.px]="canvas[3].marginLeft"
-                [style.width.px]="canvas[3].width" [style.height.px]="canvas[3].height">
-            <canvas #baseChart [id]="tabCanvasId[3]">
-            </canvas>
-        </div>
-    </div>
-    <div class="skipLine">&nbsp;</div>
-    @if (isTestLineChart===true){
-        <div style="overflow-x:scroll; display:inline-block;" >
-            <div style=" border:1px blue solid; padding-top:50px;" 
-                    [style.background-color]="canvas[3].background" [style.margin-left.px]="canvas[3].marginLeft"
-                    [style.width.px]="canvas[3].width" [style.height.px]="canvas[3].height">
-                <canvas #baseChart id="myLineCanvas"
-            
-                >
-                </canvas>
-            </div>
-        </div>
-    }
-    <div class="skipLine">&nbsp;</div>
-    <div style="overflow-x:scroll; display:inline-block;" >
-        <div style=" border:1px blue solid; padding-top:50px;" 
-                [style.background-color]="canvas[2].background" [style.margin-left.px]="canvas[2].marginLeft"
-                [style.width.px]="canvas[2].width" [style.height.px]="canvas[2].height">
-            <canvas #baseChart [id]="tabCanvasId[4]"
-        
-            >
-            </canvas>
-        </div>
-    </div>
-
-<!-- check data value when debugging iPhone -->
- @if (isPosDivSlider===true){
-    <div style="width:90%; max-width:410px; margin-left:20px; border:solid 2px blue; display:inline-block; height:480px;">
-        <ul   style="list-style-type: none" >
-            <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
-                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.Height}}</span>
-                @if (isPosDivSliderTrue===true){    
-                    <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Height}}</span>
-                }
-                <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
-                <span style="width:25%; display:inline-block;">{{posDivPosSlider.Top}}</span>
-                @if (isPosDivSliderTrue===true){
-                    <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Top}}</span>
-                }
-                <span style="width:55%; display:inline-block; margin-top:5px; ">offsetLeft: </span>
-                <span style="width:25%; display:inline-block;">{{posDivPosSlider.Left}}</span>
-                @if (isPosDivSliderTrue===true){
-                    <span  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.Left}}</span>
-                }
-            <span style="width:100%; display:inline-block; margin-top:5px; ">parentElement </span>    
-                <ul>
-                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.parentElement.offsetHeight}} </span>
-                     @if (isPosDivSliderTrue===true){    
-                        <span  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetHeight}} </span>
-                     }
-                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
-                        <span style="width:25%; display:inline-block;">{{posDivPosSlider.parentElement.offsetTop}}</span>
-                     @if (isPosDivSliderTrue===true){        
-                        <span  style="width:20%; display:inline-block;">{{posDivPosSliderTrue.parentElement.offsetTop}}</span>
-                     }
-                </ul>
-            <span style="width:100%; display:inline-block; margin-top:5px; ">offsetParent</span>
-                <ul>
-                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetHeight: </span> 
-                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
-                     @if (isPosDivSliderTrue===true){
-                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
-                     }
-                    <span style="width:55%; display:inline-block; margin-top:5px; ">offsetTop: </span>
-                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.offsetParent.offsetHeight}}</span>
-                     @if (isPosDivSliderTrue===true){
-                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.offsetParent.offsetHeight}}</span>
-                     }
-                </ul>
-
-            <span style="width:100%; display:inline-block; margin-top:5px; ">docDivRecipeTable.getBoundingClientRect()</span>
-                <ul>
-                    <span style="width:55%; display:inline-block; margin-top:5px;">Height: </span>
-                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Height}}</span>
-                    @if (isPosDivSliderTrue===true){
-                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Height}} </span>
-                    }
-                    <span style="width:55%; display:inline-block; margin-top:5px; ">Top: </span>
-                    <span style="width:25%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
-                     @if (isPosDivSliderTrue===true){
-                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Top}}</span>
-                     }
-                    <span style="width:55%; display:inline-block; margin-top:5px; ">Bottom: </span>
-                    <span style="width:25%; display:inline-block;">{{posDivPosSlider.ClientRect.Bottom}}</span>
-                     @if (isPosDivSliderTrue===true){
-                        <span style="width:20%; display:inline-block;">{{posDivPosSliderTrue.ClientRect.Bottom}}</span>
-                    }
-                    
-                </ul>
-            <span style="width:55%; display:inline-block; margin-top:5px; ">clientY: </span><span style="width:45%; display:inline-block;">{{eventClientY}}</span>
-            <span style="width:55%; display:inline-block; margin-top:5px; ">pageY: </span><span style="width:45%; display:inline-block;">{{eventPageY}} </span>
-        </ul>
-    </div>
 }
