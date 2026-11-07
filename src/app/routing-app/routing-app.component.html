@@ -1,12 +1,5 @@
-<head>
 
-</head>
-
-<body>
-<section>
-
-
-<div *ngIf="isDisplayLogos===true">
+@if (isDisplayLogos()){
 
     <div class='mylogo smcirclesize example_one'>
         <div class='smwhitecircle'>
@@ -51,7 +44,7 @@
             <span  class='xlITConsulting'>IT Consulting</span >
         </div>
     </div>
-</div>
+}
 
 <!--
 <div *ngIf="isDisplayTelephone===true" style="margin-top:200px;">
@@ -59,7 +52,7 @@
 </div>
 -->
 <!-- ================== SLIDER ================== -->
-<div *ngIf="isDisplaySlider===true">
+@if (isDisplaySlider()){
     
     <div class='sliderposition'>
         <p style='margin-left:30px;'> Default range slider:</p>
@@ -73,47 +66,48 @@
         <p style='margin-left:30px;'> Value: {{otherValue}} & myValue = {{myValue}}</p>
         <br> {{msgReturnValue}}
     </div> 
-</div>
+}
 
   
 <!-- ==== Test @Input and @Output  ======= -->
-
-<div style='margin-left:30px; color:red; font-size: 14px;' *ngIf='Error_Access_Server!==""'>{{Error_Access_Server}}</div>
+@if (Error_Access_Server()!==""){]
+<div style='margin-left:30px; color:red; font-size: 14px;'>{{Error_Access_Server()}}</div>
+}
 <div id="posBeforeColorPicker"></div>
-<div *ngIf="isDisplayColorPicker===true">
+@if (isDisplayColorPicker()){
     <div class='color-wrapper'>
         <app-color-picker ></app-color-picker>
     </div>
-
-</div> 
+} 
 
 
  <!--   === display websites to learn specific Angular features using TABLE-->
- <div *ngIf="Error_Access_Server==='' && isDisplayCSSTable===true">
+ @if (Error_Access_Server()==='' && isDisplayCSSTable()){
         <div class='BlockTable'> 
             <span style='margin-left:40px;'>Use CSS TABLE</span>
-            <table class="myWebSites"  *ngFor = "let theList of AngularWebSite; let i=index">
-                    <tr *ngIf = "i===0 else header">
+            <table class="myWebSites">
+                @for (theList of AngularWebSite; track $index; let i=$index){
+                    @if (i===0){    
+                        <tr >
                     <!-- don't display anything --> 
                     </tr>
-                    <ng-template  #header>
-                        <tr *ngIf = "i===1 else OddRow">
+                    } @else if (i===1){
+                        <tr >
                             <th > {{theList.topic}}</th>
                             <th > {{theList.url}}</th>
                         </tr>
-                    </ng-template>
-                    <ng-template  #OddRow>
-                        <tr *ngIf = "i % 2 ===0; else EvenRow">
+                    } @else if (i % 2 ===0){
+                        <tr >
                         <td > <a  class='TableText BlockSizeSubject' href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></td>
                         <td > <span class='TableText BlockSizeURL'>{{theList.url}}</span></td>
                         </tr>
-                    </ng-template>
-                    <ng-template  #EvenRow>
+                    } @else {
                         <tr class='even'>
                         <td > <a  class='TableText BlockSizeSubject' href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></td>
                         <td > <span class='TableText BlockSizeURL'>{{theList.url}}</span></td>
                         </tr>
-                    </ng-template>
+                    }
+                }
             </table>
         </div>
 
@@ -122,25 +116,24 @@
     
     <div class='BlockTable'>
         <span style='margin-left:40px;'>Use CSS GRID</span>
-        <ul  *ngFor = "let theList of AngularWebSite; let i=index">
-            <span class='tableTopicURL' *ngIf = "i===0; else header">
-            </span>
-            <ng-template  #header>
-                <li class='tableTopicURL' *ngIf = "i===1; else test">
+        @for (theList of AngularWebSite; track $index; let i=$index){
+            @if (i===0){
+                <span class='tableTopicURL'></span>
+            } @else if (i===1){
+                <li class='tableTopicURL'>
                     <span class='boxTopic'> {{theList.topic}}</span>
                     <span class='boxURL'> {{theList.url}}</span>
                 </li>
-            </ng-template>  
-            <ng-template  #test>
+            } @else { 
                 <li class='tableTopicURL'>
                     <span class='boxTopic'><a href='{{theList.url}}' target='_blank'>  {{theList.topic}}</a></span>
                     <span class='boxURL'> {{theList.url}}</span>
                 </li>
-                </ng-template>
-        </ul>
+            }
+        }
             
     </div>
-</div>
+}
 <!--   === UPLOAD and SAVE file(s)-->
 
 
@@ -150,7 +143,7 @@
     (change)="onFileSelected($event)">
 
 --> 
-<div *ngIf="isDisplayUploadFile===true">
+@if (isDisplayUploadFile()){
     <div class='division'>      
     <h1> UPLOAD FILE</h1>
     </div>
@@ -163,7 +156,7 @@
     </button> 
     
     <p style='margin-left:40px; margin-top:20px; color: blue;'> File name: {{uploadFileName}}</p>
-</div>    
+}   
    
 
     <!--
@@ -173,7 +166,7 @@
     <pre>{{readFileContent}}</pre>
     <hr>
     -->
-<div *ngIf="isDisplaySaveDownload===true">
+@if (isDisplaySaveDownload()){
     <div class='division'> 
     <h1>SAVE FILE & DOWNLOAD</h1>
     </div>
@@ -188,10 +181,10 @@
     </button> 
     
     </div>
-</div>
+}
     
 
-<div *ngIf="isDisplaySaveDownload===true">   
+@if (isDisplaySaveDownload()){>   
     <div class='divisiontwo'> 
         <h1>UPLOAD with http method using fake json server or file.io </h1>
     </div>
@@ -230,21 +223,21 @@
     
     <div class="skipLine">&nbsp;</div>
     <br><br>
-</div> 
+}
 
     <!-- ========= TEST ENCRYPTION -->
-
-    <div *ngIf="isDisplayEncrypt===true" style='background-color:lightgrey; border:grey solid 2px; margin-top:10px; margin-left:20px; width:450px; display:inline-block;'>
+@if (isDisplayEncrypt()){
+    <div style='background-color:lightgrey; border:grey solid 2px; margin-top:10px; margin-left:20px; width:450px; display:inline-block;'>
 
         <span style='display:inline-block; border:solid 0px red; width:100%; height:30px; padding-top:5px; color:blue; font-size:16px; text-align: center;' >ENCRYPTION</span>
     
-        <div style="width:80%; display:inline-block;padding-left:20px; color:red; font-size:14px;" >{{Crypto_Error}}</div>
+        <div style="width:80%; display:inline-block;padding-left:20px; color:red; font-size:14px;" >{{Crypto_Error()}}</div>
         
         <label class="myLabel" >Decrypt is </label>
-        <input  class="myInput" type='text' [(ngModel)]="Decrypt" placeholder={{Decrypt}} >
+        <input  class="myInput" type='text' [(ngModel)]="Decrypt" placeholder={{Decrypt()}} >
         <div class="skipLine" style="height:1px;">&nbsp;</div>
         <label class="myLabel" >Encrypt is </label>
-        <input class="myInput" placeholder={{Encrypt}} type='text'[(ngModel)]="Encrypt">
+        <input class="myInput" placeholder={{Encrypt()}} type='text'[(ngModel)]="Encrypt">
         <div class="skipLine" style="height:1px;">&nbsp;</div>
         <label class="myLabel" >Crypto iFour </label>
         <input class="myInput" style="width:60px;" placeholder={{Crypto_iFour}} type='number'[(ngModel)]="Crypto_iFour">
@@ -280,19 +273,12 @@
             <div style='margin-top:0px;  margin-left:10px; width:100%; border:0px solid blue; display:inline-flex;'>
                 <button class="sizeButtons" id='1' style='display:inline-block; margin-left:30px;width:80px; height:45px; font-size:14px;'  (click)="onCrypt('Encrypt')">Encrypt</button>
                 <button class="sizeButtons" id='2' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'   (click)="onCrypt('Decrypt')">Decrypt</button>
-                <!--
-                <button class="sizeButtons" id='3' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px; '  (click)="onSave('Encrypt')">Save Encrypt</button>
-                <button class="sizeButtons" id='4' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'  (click)="onRead()">Read record</button>
-                -->
                 <button class="sizeButtons" id='5' style='display:inline-block; margin-left:10px; width:80px; height:45px; font-size:14px;'  (click)="onClear()">Clear</button>
             
             </div>
         </div>
     
     </div>
-
-
-</section>
-</body>
+}
 
 

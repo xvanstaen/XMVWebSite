@@ -1,24 +1,14 @@
-import { Component, OnInit, ViewChild, AfterViewInit,SimpleChanges,
-  Output, Input, HostListener, EventEmitter } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
-
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { Component, OnInit, signal, SimpleChanges,
+   Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatIconModule} from '@angular/material/icon';
-import { MatDialogModule} from '@angular/material/dialog';
-import { CommonModule,  DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormGroup,UntypedFormControl, FormControl, Validators, FormBuilder, FormArray} from '@angular/forms';
+import { FormGroup, FormControl, Validators,} from '@angular/forms';
 
 import { ColorPickerComponent } from '../color-picker/color-picker.component';
-//import * as CryptoJS from 'crypto-js';  
 import { Injectable } from '@angular/core';
-import { interval, lastValueFrom } from 'rxjs';
-//import { HttpErrorHandler, HandleError } from '../http-error-handler.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-//import { catchError } from 'rxjs/operators'
-//import { throwError } from 'rxjs';
 
 import { configServer } from '../JsonServerClass';
 
@@ -40,15 +30,10 @@ export class RoutingAppComponent implements OnInit {
 
   @Input() selectApps:number=0;
   @Input() configServer=new configServer;
+  
+  debug:boolean=false;
 
-  EventHTTPReceived:Array<boolean>=[];
-  id_Animation:Array<number>=[];
-  TabLoop:Array<number>=[];
-  NbWaitHTTP:number=0;
-
-
-  Error_Access_Server:string='';
-
+  Error_Access_Server=signal<string>("");
 
   UserId_Data:any={
     id: 0,
@@ -83,7 +68,6 @@ export class RoutingAppComponent implements OnInit {
   HTTPstring:string='';
   JsonServer:string='';
 
-
   Length_Array:number=0;
 
   uploadFileName: string='';
@@ -114,15 +98,15 @@ export class RoutingAppComponent implements OnInit {
   
 
   // Boolean to display the features 
-  isDisplayLogos:boolean=false;
-  isDisplayTelephone:boolean=false;
-  isDisplaySlider:boolean=false;
-  isDisplayColorPicker:boolean=false;
-  isDisplayCSSTable:boolean=false;
-  isDisplayUploadFile:boolean=false;
-  isDisplaySaveDownload:boolean=false;
+  isDisplayLogos=signal<boolean>(false);
+  isDisplayTelephone=signal<boolean>(false);
+  isDisplaySlider=signal<boolean>(false);
+  isDisplayColorPicker=signal<boolean>(false);
+  isDisplayCSSTable=signal<boolean>(false);
+  isDisplayUploadFile=signal<boolean>(false);
+  isDisplaySaveDownload=signal<boolean>(false);
 
-  isDisplayEncrypt:boolean=false;
+  isDisplayEncrypt=signal<boolean>(false);
 
   TheSelectDisplays: FormGroup = new FormGroup({ 
     Logos: new FormControl('N', { nonNullable: true }),
@@ -135,10 +119,10 @@ export class RoutingAppComponent implements OnInit {
     KEHP: new FormControl('N', { nonNullable: true }),
 })
 
-Encrypt:string='';
-Decrypt:string='LIM!12monica#Chin';
+Encrypt=signal<string>("");
+Decrypt=signal<string>("LIM!12monica#Chin");
 Crypto_Method:string='AES';
-Crypto_Error:string='';
+Crypto_Error=signal<string>("");
 Crypto_Key:number=2;
 Crypto_iFour:number=0;
 Server_Type:string='Google';
@@ -176,13 +160,13 @@ Encrypt_Data={
 
 ngOnInit() {
    this.getPosDiv();
-   //console.log('routing-app - init --- configServer.google='+this.configServer.googleServer);
+   //this.log('routing-app - init --- configServer.google='+this.configServer.googleServer);
 
-    // console.log('ngOnInit of routing-test.ts')
+    // this.log('ngOnInit of routing-test.ts')
     this.my_input_child1='red';
     this.my_input_child2='red';
     this.selected_color =this.my_input_child1;
-    this.Error_Access_Server='';
+    this.Error_Access_Server.set("");
     this.HTTPstring='http://localhost:3000/myTopicsURL/';
     
     // get the first item to know the size of the table which is stored in element '.topic'
@@ -211,7 +195,7 @@ displayCSSTable(){
       // retrieve the entire table
       this.http.get<any>(this.HTTPstring)
           .subscribe(data => {
-                //console.log('data = ', data);
+                //this.log('data = ', data);
                 this.AngularWebSite=data;
             }
             )
@@ -230,53 +214,53 @@ displayCSSTable(){
     const NoYes=event.substring(0,1);
     if (i==='1'){
       if (NoYes==='Y'){
-          this.isDisplayLogos=true;
+          this.isDisplayLogos.set(true);
       } else {
-          this.isDisplayLogos=false;
+          this.isDisplayLogos.set(false);
       }
     } else if (i==='2'){
         if (NoYes==='Y'){
-          this.isDisplayTelephone=true;
+          this.isDisplayTelephone.set(true);
         } else {
-          this.isDisplayTelephone=false;
+          this.isDisplayTelephone.set(false);
         }
     } else if (i==='3'){
         if (NoYes==='Y'){
-          this.isDisplaySlider=true;
+          this.isDisplaySlider.set(true);
         } else {
-          this.isDisplaySlider=false;
+          this.isDisplaySlider.set(false);
         }
       } else if (i==='4'){
         if (NoYes==='Y'){
-          this.isDisplayColorPicker=true;
+          this.isDisplayColorPicker.set(true);
         } else {
-          this.isDisplayColorPicker=false;
+          this.isDisplayColorPicker.set(false);
         }
       } else if (i==='5'){
         if (NoYes==='Y'){
-          this.isDisplayEncrypt=true;
+          this.isDisplayEncrypt.set(true);
         } else {
-          this.isDisplayEncrypt=false;
+          this.isDisplayEncrypt.set(false);
         }
       } 
       else if (i==='6'){
         if (NoYes==='Y'){
           this.displayCSSTable();
-          this.isDisplayCSSTable=true;
+          this.isDisplayCSSTable.set(true);
         } else {
-          this.isDisplayCSSTable=false;
+          this.isDisplayCSSTable.set(false);
         }
       } else if (i==='7'){
         if (NoYes==='Y'){
-          this.isDisplayUploadFile=true;
+          this.isDisplayUploadFile.set(true);
         } else {
-          this.isDisplayUploadFile=false;
+          this.isDisplayUploadFile.set(false);
         }
       } else if (i==='8'){
         if (NoYes==='Y'){
-          this.isDisplaySaveDownload=true;
+          this.isDisplaySaveDownload.set(true);
         } else {
-          this.isDisplaySaveDownload=false;
+          this.isDisplaySaveDownload.set(false);
         }
       }
   }
@@ -285,15 +269,15 @@ displayCSSTable(){
 
 
 Server_Error(error:HttpErrorResponse){
-  this.Error_Access_Server='Cannot access server for '+ error.url;
-  // console.log('error',error);
+  this.Error_Access_Server.set('Cannot access server for '+ error.url);
+  // this.log('error',error);
 }
 
 
 //@HostListener('window:touchstart', ['$event'])
 //@HostListener('window:touchmove', ['$event'])
 //@HostListener('window:touchend', ['$event'])
-isTouch:boolean=false;
+isTouch=signal<boolean>(false);
 touchValue:number=0;
 selectedPos={x:0,y:0};
 msg:string='';
@@ -305,7 +289,7 @@ myEvent={
   id:""
 }
 onTouchStart(event:any){
-  this.isTouch=true;
+  this.isTouch.set(true);
   this.myEvent.currentTargetV=event.currentTarget.value;
   this.myEvent.targetV=event.target.value;
   this.myEvent.id=event.target.id;
@@ -333,13 +317,13 @@ this.msg=this.msg+' touch.pageX='+touch.pageX+'  touch.pageY=' + touch.pageY + '
 msgMove:string='';
 onTouchEnd(event:TouchEvent){
   this.msg='event.type = '+event.type;
-  this.isTouch=false;
+  this.isTouch.set(false);
   this.msgMove='';
   this.nbMoves=0;
 
 }
 onTouchMove(event:TouchEvent){
-  if (this.isTouch===true){
+  if (this.isTouch()){
     this.nbMoves++;
     this.msgMove='nbMoves='+this.nbMoves;
     this.onTouchStart(event);
@@ -355,10 +339,10 @@ returnValue(event:any){
   }
   this.otherValue = event.currentTarget.valueAsNumber;
   this.myValue=Number(event.currentTarget.value);
-  // console.log('event',this.mystring,  event );
+  // this.log('event',this.mystring,  event );
   //this.mySlider = document.getElementById("myRange");
   //this.myValue =this.mySlider.value;
-  // console.log('values: myOutput', this.otherValue, 'myValue=', this.myValue);
+  // this.log('values: myOutput', this.otherValue, 'myValue=', this.myValue);
   }
 
 ClearDiv(){
@@ -386,7 +370,7 @@ ClearDiv(){
         When the change event gets triggered, the file is not automatically uploaded to the backend by the browser. 
         Instead, we will need to trigger an HTTP request ourselves, in response to the change event.
       */
-     // console.log('event file ', event);
+     // this.log('event file ', event);
     const file:File = event.target.files[0];
     this.uploadFileName = file.name;
     this.uploadFileContent = await file.text(); 
@@ -398,13 +382,13 @@ ClearDiv(){
     // if needs to be sent to JSONserver then needs to trigger process related to HTTP  
     this.http.post('http://localhost:3000/posts',this.data )
         .subscribe(res => {
-              console.log('content =', this.data);
+              this.log('content =', this.data);
               alert('Uploaded Successfully');
     })
     this.data.file='QWERTYIASDFGUXCBV';
     this.http.put('http://localhost:3000/posts/4',this.data )
         .subscribe(res => {
-              console.log('content =', this.data);
+              this.log('content =', this.data);
               alert('Uploaded Successfully');
     })
 
@@ -412,7 +396,7 @@ ClearDiv(){
   
   public async getTextFile(file:any) {
         this.uploadFileContent = await file.text(); 
-        console.log('in getTextFile = ', this.uploadFileContent);
+        this.log('in getTextFile = ', this.uploadFileContent);
     return(this.uploadFileContent);
   }
   
@@ -431,9 +415,9 @@ ClearDiv(){
     const file = new Blob([fileContent], { type: "text/plain" });
   
     const link = document.createElement("a");
-    console.log('Link ',link);
+    this.log('Link ',link);
     link.href = URL.createObjectURL(file);
-    console.log('link.href', link.href);
+    this.log('link.href', link.href);
     link.download = fileName;
     link.click();
     link.remove(); 
@@ -463,64 +447,64 @@ ClearDiv(){
   
   onCrypt(event:any){
   
-    this.Crypto_Error='';
+    this.Crypto_Error.set("");
    
     if (event==='Encrypt'){
   
-        if (this.Decrypt===''){
-          this.Crypto_Error="Decrypt field is empty";
+        if (this.Decrypt()===''){
+          this.Crypto_Error.set("Decrypt field is empty");
         } else if (this.Crypto_Method==='AES' || this.Crypto_Method==='DES'){
-          this.Encrypt="";
-          this.ManageGoogleService.encryptAllFn(this.configServer,this.Decrypt,this.Crypto_Key,this.Crypto_Method, this.Crypto_iFour, JSON.stringify(this.auth) )
+          this.Encrypt.set("");
+          this.ManageGoogleService.encryptAllFn(this.configServer,this.Decrypt(),this.Crypto_Key,this.Crypto_Method, this.Crypto_iFour, JSON.stringify(this.auth) )
           .subscribe((data ) => {
     
               if (data.response !== 'Key invalid'){
-                this.Encrypt=data.response;
-                console.log(this.Decrypt, " , ", this.Encrypt);
+                this.Encrypt.set(data.response);
+                this.log(this.Decrypt(), " , ", this.Encrypt());
               } else {
-                this.Crypto_Error='encrypt request failed; invalid key';
+                this.Crypto_Error.set('encrypt request failed; invalid key');
               }
             }, 
             err => {
-              console.log(JSON.stringify(err));
-              this.Crypto_Error='encrypt request failed; error code=' + err.status; 
+              this.log(JSON.stringify(err));
+              this.Crypto_Error.set('encrypt request failed; error code=' + err.status); 
             })
         }
   
      
           else { 
-            this.Crypto_Error="Wrong method for crypto. Must be either 'AES' or 'DES'" 
+            this.Crypto_Error.set("Wrong method for crypto. Must be either 'AES' or 'DES'");
         } 
   
     } else { // event = Decrypt
       
-        if (this.Encrypt===''){
-          this.Crypto_Error="Encrypt field is empty";
+        if (this.Encrypt()===""){
+          this.Crypto_Error.set("Encrypt field is empty");
         } else
         if (this.Crypto_Method==='AES' || this.Crypto_Method==='DES'){
-          this.Decrypt="";
-          this.ManageGoogleService.decryptAllFn(this.configServer,this.Encrypt,this.Crypto_Key,this.Crypto_Method,  this.Crypto_iFour, JSON.stringify(this.auth))
+          this.Decrypt.set("");
+          this.ManageGoogleService.decryptAllFn(this.configServer,this.Encrypt(),this.Crypto_Key,this.Crypto_Method,  this.Crypto_iFour, JSON.stringify(this.auth))
           .subscribe((data ) => {
-            console.log(data);
+            this.log(data);
             if (data.response !== 'Key invalid' && data.response !== ''){
-              this.Decrypt=data.response;
-              console.log(this.Decrypt, " , ", this.Encrypt);
+              this.Decrypt.set(data.response);
+              this.log(this.Decrypt(), " , ", this.Encrypt());
             } else  {
               if (data.response === 'Key invalid'){
-                this.Crypto_Error='decrypt request failed; invalid key';
+                this.Crypto_Error.set('decrypt request failed; invalid key');
               } else {
-                this.Crypto_Error='encrypted data could not be decrypted';
+                this.Crypto_Error.set('encrypted data could not be decrypted');
               }
             }
           }, 
           err => {
-              console.log(JSON.stringify(err));
-              this.Crypto_Error='decrypt request failed; error code=' + err.status; 
+              this.log(JSON.stringify(err));
+              this.Crypto_Error.set('decrypt request failed; error code=' + err.status); 
           } )
         
         
         } else { 
-          this.Crypto_Error="Wrong method for crypto. Must be either 'AES' or 'DES'"
+          this.Crypto_Error.set("Wrong method for crypto. Must be either 'AES' or 'DES'");
         } 
         
       }
@@ -528,8 +512,8 @@ ClearDiv(){
   
   }
   onClear(){
-    this.Decrypt='';
-    this.Encrypt='';
+    this.Decrypt.set("");
+    this.Encrypt.set("")
   }
   
      
@@ -566,41 +550,6 @@ requestPromise() {
   }) 
 }
 
-ngOnChanges(changes: SimpleChanges) { 
-  //console.log(changes);
-  //console.log('routing-app - ngOnChanges --- configServer.google='+this.configServer.googleServer);
-  }
-
-
-GetRecord(Bucket:string,GoogleObject:string, iWait:number){
-
-    this.EventHTTPReceived[iWait]=false;
-    this.NbWaitHTTP++;
-    this.waitHTTP(this.TabLoop[iWait],30000,iWait);
-    this.ManageGoogleService.getContentObject(this.configServer, Bucket, GoogleObject )
-        .subscribe((data ) => { 
-          this.EventHTTPReceived[iWait]=true;
-          const a = data;
-         }
-        );
-}  
-
-waitHTTP(loop:number, max_loop:number, eventNb:number){
-  const pas=500;
-  if (loop%pas === 0){
-    console.log('waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop);
-  }
- loop++
-  
-  this.id_Animation[eventNb]=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
-  if (loop>max_loop || this.EventHTTPReceived[eventNb]===true ){
-            console.log('exit waitHTTP ==> loop=' + loop + ' max_loop=' + max_loop + ' this.EventHTTPReceived=' + 
-                    this.EventHTTPReceived[eventNb] );
-            if (this.EventHTTPReceived[eventNb]===true ){
-                    window.cancelAnimationFrame(this.id_Animation[eventNb]);
-            }    
-      }  
-  }
 
 submit(event:any){
     const formData = new FormData();
@@ -622,7 +571,7 @@ submit(event:any){
       const upload$ = this.http.post("http://localhost:3000/posts", formData);
 
       upload$.subscribe(res => {
-        console.log(res);
+        this.log(res);
         this.myMSG='Uploaded Successfully.' + JSON.stringify(res);
         alert(this.myMSG);
       });
@@ -643,17 +592,17 @@ submit(event:any){
 
             reader.onload = function () {
       
-              console.log('reader.result = ', reader.result);
+              this.log('reader.result = ', reader.result);
             };
             reader.onerror = function (error) {
-              console.log('Error: ', error);
+              this.log('Error: ', error);
             };
             this.myMSG = reader.result as string;
      
        */     
       
       // myText contains data returned by getTextFile and is equivalent to this.uploadFileContent
-      //function(value) {console.log('the value ', value)}
+      //function(value) {this.log('the value ', value)}
       
       const myReader=this.requestPromise().then((result) => {
         this.mystring=JSON.stringify(result);
@@ -664,7 +613,7 @@ submit(event:any){
         this.data.other='$$$$$$$$$';
         this.data.desc='===========';
      
-        //console.log ('== data = ', this.data);
+        //this.log ('== data = ', this.data);
         this.http.post('http://localhost:3000/myfile',this.data )
             .subscribe(res => {
               alert('Uploaded Successfully.');
@@ -675,7 +624,7 @@ submit(event:any){
       /*-------
       this.http.post('http://localhost:3000/posts',formData)
         .subscribe(res => {
-          console.log(res);
+          this.log(res);
           this.myMSG='Uploaded Successfully.' + JSON.stringify(res);
           alert(this.myMSG);
         })
@@ -733,5 +682,9 @@ submit(event:any){
 
 
   */
+
+  private log(...args: unknown[]) {
+    if (this.debug) console.log('[Routing-app:]', ...args);
+  }
 
 }
